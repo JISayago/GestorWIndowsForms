@@ -20,6 +20,7 @@ namespace AccesoDatos
 
                 return new GestorContextDB(optionsBuilder.Options);
             }
-        }
+
+    }
     
 }

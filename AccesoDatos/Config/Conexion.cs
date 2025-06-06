@@ -20,7 +20,7 @@ namespace AccesoDatos.Config
 
         public static string ObtenerCadenaConexion()
         {
-            var ruta = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"Config\configc.json.enc"));
+            var ruta = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\AccesoDatos\Config\configc.json.enc"));
 
             var clave = "canto-lover-ncgm";
             var iv = "noveoporquenodot";
@@ -36,9 +36,9 @@ namespace AccesoDatos.Config
             var json = sr.ReadToEnd();
 
             var datos = JsonSerializer.Deserialize<ConexionInfo>(json);
-
-            Console.WriteLine($"Server={datos.Servidor};Database={datos.BaseDeDatos};User Id={datos.Usuario};Password={datos.Password};TrustServerCertificate=True;");
+          
             return $"Server={datos.Servidor};Database={datos.BaseDeDatos};User Id={datos.Usuario};Password={datos.Password};TrustServerCertificate=True;";
         }
+       
     }
 }
