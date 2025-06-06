@@ -265,6 +265,9 @@ ServiceFabricBackup/
 *.mdf
 *.ldf
 *.ndf
+Config/configc.json.enc
+*.json.enc
+
 
 # Business Intelligence projects
 *.rdl.data

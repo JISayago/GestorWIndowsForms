@@ -28,12 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            lblConexion = new Label();
+            SuspendLayout();
+            // 
+            // lblConexion
+            // 
+            lblConexion.AutoSize = true;
+            lblConexion.Location = new Point(83, 142);
+            lblConexion.Name = "lblConexion";
+            lblConexion.Size = new Size(38, 15);
+            lblConexion.TabIndex = 0;
+            lblConexion.Text = "label1";
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Controls.Add(lblConexion);
+            Name = "Form1";
+            Text = "Form1";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Label lblConexion;
     }
 }
