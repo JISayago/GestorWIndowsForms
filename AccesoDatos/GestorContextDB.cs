@@ -11,8 +11,7 @@ namespace AccesoDatos
     public class GestorContextDB : DbContext
     {
        
-            public GestorContextDB(DbContextOptions<GestorContextDB> options) : base(options) { }
-
+        public GestorContextDB(DbContextOptions<GestorContextDB> options) : base(options) { }
         public DbSet<Persona> Personas { get; set; }
         public DbSet<Empleado> Empleados { get; set; }
         public DbSet<DetallesVenta> DetallesVentas { get; set; }
@@ -37,15 +36,15 @@ namespace AccesoDatos
 
                 entity.HasKey(p => p.PersonaId);
 
-                entity.Property(p => p.Nombre).HasMaxLength(500).IsRequired();
-                entity.Property(p => p.Apellido).HasMaxLength(500).IsRequired();
-                entity.Property(p => p.Dni).HasMaxLength(500).IsRequired();
-                entity.Property(p => p.Cuil).HasMaxLength(500).IsRequired();
-                entity.Property(p => p.Telefono).HasMaxLength(500).IsRequired();
+                entity.Property(p => p.Nombre).HasMaxLength(50).IsRequired();
+                entity.Property(p => p.Apellido).HasMaxLength(50).IsRequired();
+                entity.Property(p => p.Dni).HasMaxLength(15).IsRequired();
+                entity.Property(p => p.Cuil).HasMaxLength(15).IsRequired();
+                entity.Property(p => p.Telefono).HasMaxLength(20).IsRequired();
 
-                entity.Property(p => p.Telefono2).HasMaxLength(500);
-                entity.Property(p => p.Email).HasMaxLength(500);
-                entity.Property(p => p.Direccion).HasMaxLength(500);
+                entity.Property(p => p.Telefono2).HasMaxLength(20);
+                entity.Property(p => p.Email).HasMaxLength(100);
+                entity.Property(p => p.Direccion).HasMaxLength(100);
 
                 entity.Property(p => p.FechaNacimiento).HasColumnType("date");
                 entity.Property(p => p.EstaEliminado).IsRequired();
@@ -60,18 +59,15 @@ namespace AccesoDatos
             modelBuilder.Entity<Empleado>(entity =>
             {
                 entity.ToTable("Empleados");
-
                 entity.HasKey(e => e.PersonaId);
-
                 entity.Property(e => e.PersonaId).HasColumnName("PersonaId");
-                entity.Property(e => e.Legajo).HasColumnName("legajo").HasMaxLength(500);
+                entity.Property(e => e.Legajo).HasColumnName("legajo").HasMaxLength(20);
                 entity.Property(e => e.FechaIngreso).HasColumnName("fechaIngreso").HasColumnType("date");
                 entity.Property(e => e.FechaEgreso).HasColumnName("fechaEgreso").HasColumnType("date");
-                entity.Property(e => e.Estado).HasColumnName("estado");
-                entity.Property(e => e.Username).HasColumnName("username");
-                entity.Property(e => e.Pass).HasColumnName("pass");
+                entity.Property(e => e.Estado).HasColumnName("estado").IsRequired();
+                entity.Property(e => e.Username).HasColumnName("username").HasMaxLength(100);
+                entity.Property(e => e.Pass).HasColumnName("pass").HasMaxLength(200);
                 entity.Property(e => e.UsuarioEstaHabilitado).HasColumnName("usuarioestahabilitado");
-
 
                 // Relación 1 a 1 con Persona
                 entity.HasOne(e => e.Persona)
@@ -115,14 +111,15 @@ namespace AccesoDatos
                     .HasMaxLength(1000);
 
                 entity.Property(p => p.EstaEliminado)
-                    .HasColumnName("esta_eliminado");
+                    .HasColumnName("esta_eliminado")
+                    .IsRequired();
 
                 entity.Property(p => p.Estado)
                     .HasColumnName("estado");
 
                 entity.Property(p => p.Medida)
                     .HasColumnName("medida")
-                    .HasMaxLength(50);
+                    .HasMaxLength(20);
 
                 entity.Property(p => p.UnidadMedida)
                     .HasColumnName("unidad_medida")
@@ -171,7 +168,8 @@ namespace AccesoDatos
 
                 entity.Property(e => e.Subtotal)
                     .HasColumnName("subtotal")
-                    .HasColumnType("decimal(18,2)");
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
 
                 entity.HasOne(d => d.Venta)
                     .WithMany(v => v.DetallesVentas)
@@ -201,18 +199,21 @@ namespace AccesoDatos
 
                 entity.Property(e => e.NumeroVenta)
                     .HasColumnName("numeroVenta")
-                    .HasMaxLength(500);
+                    .HasMaxLength(200);
 
                 entity.Property(e => e.FechaVenta)
                     .HasColumnName("fecha_venta")
-                    .HasColumnType("date");
+                    .HasColumnType("date")
+                    .IsRequired();
 
                 entity.Property(e => e.Total)
                     .HasColumnName("total")
-                    .HasColumnType("decimal(18,2)");
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
 
                 entity.Property(e => e.Estado)
-                    .HasColumnName("estado");
+                    .HasColumnName("estado")
+                    .IsRequired();
 
                 entity.Property(e => e.Detalle)
                     .HasColumnName("detalle")
@@ -257,7 +258,8 @@ namespace AccesoDatos
 
                 entity.Property(e => e.Monto)
                     .HasColumnName("monto")
-                    .HasColumnType("decimal(18,2)");
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
 
                 entity.HasOne(e => e.Venta)
                     .WithMany(v => v.VentaPagoDetalles)
@@ -287,7 +289,7 @@ namespace AccesoDatos
 
                 entity.Property(tp => tp.Detalle)
                     .HasColumnName("detalle")
-                    .HasMaxLength(500);
+                    .HasMaxLength(250);
 
                 entity.Property(tp => tp.Codigo)
                     .HasColumnName("codigo")
@@ -306,14 +308,15 @@ namespace AccesoDatos
 
                 entity.Property(e => e.Nombre)
                     .HasColumnName("nombre")
-                    .HasMaxLength(500)
+                    .HasMaxLength(100)
                     .IsRequired();
 
                 entity.Property(e => e.DetalleRol)
                     .HasColumnName("detalleRol");
 
                 entity.Property(e => e.CodigoRol)
-                    .HasColumnName("codigo_rol");
+                    .HasColumnName("codigo_rol")
+                    .IsRequired();
 
                 entity.HasIndex(e => e.CodigoRol)
                     .IsUnique();
@@ -343,7 +346,7 @@ namespace AccesoDatos
                 entity.HasKey(e => e.CategoriaId);
                 entity.Property(e => e.Nombre)
                       .IsRequired()
-                      .HasMaxLength(500);
+                      .HasMaxLength(100);
             });
 
             // MARCA
@@ -354,7 +357,7 @@ namespace AccesoDatos
                 entity.HasKey(e => e.MarcaId);
                 entity.Property(e => e.Nombre)
                       .IsRequired()
-                      .HasMaxLength(500);
+                      .HasMaxLength(100);
             });
 
             //EMPELADO ROL
