@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AccesoDatos.Migrations
 {
     /// <inheritdoc />
-    public partial class PrimeraMigracion : Migration
+    public partial class MigracionInicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,7 @@ namespace AccesoDatos.Migrations
                 {
                     CategoriaId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
+                    Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,7 +30,7 @@ namespace AccesoDatos.Migrations
                 {
                     MarcaId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
+                    Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,7 +43,7 @@ namespace AccesoDatos.Migrations
                 {
                     id_Rol = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    nombre = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     detalleRol = table.Column<long>(type: "bigint", nullable: false),
                     codigo_rol = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -59,7 +59,7 @@ namespace AccesoDatos.Migrations
                     id_TipoPago = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    detalle = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    detalle = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     codigo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
@@ -81,7 +81,7 @@ namespace AccesoDatos.Migrations
                     descripcion = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     esta_eliminado = table.Column<bool>(type: "bit", nullable: false),
                     estado = table.Column<int>(type: "int", nullable: false),
-                    medida = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    medida = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     unidad_medida = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     CategoriaId = table.Column<long>(type: "bigint", nullable: true),
                     MarcaId = table.Column<long>(type: "bigint", nullable: true)
@@ -140,12 +140,12 @@ namespace AccesoDatos.Migrations
                 columns: table => new
                 {
                     PersonaId = table.Column<long>(type: "bigint", nullable: false),
-                    legajo = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    legajo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     fechaIngreso = table.Column<DateTime>(type: "date", nullable: false),
                     fechaEgreso = table.Column<DateTime>(type: "date", nullable: true),
                     estado = table.Column<int>(type: "int", nullable: false),
-                    username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    pass = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    pass = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     usuarioestahabilitado = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -186,14 +186,14 @@ namespace AccesoDatos.Migrations
                 {
                     PersonaId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Apellido = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Dni = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Cuil = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Telefono = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Telefono2 = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Direccion = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Apellido = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Dni = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    Cuil = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    Telefono = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Telefono2 = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Direccion = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     FechaNacimiento = table.Column<DateTime>(type: "date", nullable: true),
                     EstaEliminado = table.Column<bool>(type: "bit", nullable: false),
                     EmpleadoPersonaId = table.Column<long>(type: "bigint", nullable: true)
@@ -215,7 +215,7 @@ namespace AccesoDatos.Migrations
                     id_Venta = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     id_Empleado = table.Column<long>(type: "bigint", nullable: false),
-                    numeroVenta = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    numeroVenta = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     fecha_venta = table.Column<DateTime>(type: "date", nullable: false),
                     total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     estado = table.Column<int>(type: "int", nullable: false),
