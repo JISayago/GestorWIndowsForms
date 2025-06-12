@@ -1,0 +1,15 @@
+﻿
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <!-- Si necesitas compatibilidad con viejo .NET 4.6, ponlo en TargetFrameworks -->
+    <!-- aquí sólo .NET 8.0 para simplificar -->
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Presentacion.Constantes\Presentacion.Constantes.csproj" />
+  </ItemGroup>
+</Project>
+
