@@ -36,6 +36,8 @@ namespace AccesoDatos
 
                 entity.HasKey(p => p.PersonaId);
 
+                entity.Property(p => p.PersonaId)
+                      .ValueGeneratedOnAdd();
                 entity.Property(p => p.Nombre).HasMaxLength(50).IsRequired();
                 entity.Property(p => p.Apellido).HasMaxLength(50).IsRequired();
                 entity.Property(p => p.Dni).HasMaxLength(15).IsRequired();

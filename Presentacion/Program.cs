@@ -1,6 +1,8 @@
-using Servicios; // Asegurate de agregar esta referencia
+using AccesoDatos;
+using AccesoDatos.Config;
+using Presentacion.AccesoAlSistema;
 using Servicios.Seguridad;
-using System.Windows.Forms;
+
 
 namespace Presentacion
 {
@@ -27,7 +29,24 @@ namespace Presentacion
                 );
                 return;
             }
-            Application.Run(new Form1());
+            else
+            {
+                var context = new GestorContextDBFactory().CreateDbContext(null);
+                DatosUsuarioInicial.Inicializar(context);
+
+                var login = new LoginForm();
+                login.ShowDialog();
+
+                if (login.PuedeAccederAlSistema)
+                {
+                    Application.Run(new Form1());
+                }
+                else
+                {
+                    Application.Exit();
+                }
+            }
+                
         }
        }
 }
