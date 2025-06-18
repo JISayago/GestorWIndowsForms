@@ -1,6 +1,6 @@
 ﻿namespace Presentacion.FBase
 {
-    partial class FormularioBaseABM
+    partial class FBaseABM
     {
         /// <summary>
         /// Required designer variable.
@@ -97,15 +97,15 @@
             toolStripButton3.Size = new Size(60, 87);
             toolStripButton3.Text = "toolStripButton3";
             // 
-            // FormularioBaseABM
+            // FBaseABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
-            Name = "FormularioBaseABM";
-            Text = "FormularioBaseABM";
+            Name = "FBaseABM";
+            Text = "FBaseABM";
             panel1.ResumeLayout(false);
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();

@@ -1,6 +1,6 @@
 ﻿namespace Presentacion.FBase
 {
-    partial class FormularioBaseConsulta
+    partial class FBaseConsulta
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormularioBaseConsulta));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FBaseConsulta));
             panel1 = new Panel();
             toolStrip1 = new ToolStrip();
             toolStripButton1 = new ToolStripButton();
@@ -188,7 +188,7 @@
             checkBox1.Text = "Mostrar elementos eliminados";
             checkBox1.UseVisualStyleBackColor = true;
             // 
-            // FormularioBaseConsulta
+            // FBaseConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -197,8 +197,8 @@
             Controls.Add(dataGridView1);
             Controls.Add(panel2);
             Controls.Add(panel1);
-            Name = "FormularioBaseConsulta";
-            Text = "FormularioBaseConsulta";
+            Name = "FBaseConsulta";
+            Text = "FBaseConsulta";
             panel1.ResumeLayout(false);
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();

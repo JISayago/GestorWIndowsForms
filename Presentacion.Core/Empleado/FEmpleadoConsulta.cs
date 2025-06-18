@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Presentacion.FBase;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,11 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Presentacion.FBase
+namespace Presentacion.Core.Empleado
 {
-    public partial class FormularioBaseABM : Form
+    public partial class FEmpleadoConsulta : FBaseConsulta
     {
-        public FormularioBaseABM()
+        public FEmpleadoConsulta()
         {
             InitializeComponent();
         }
