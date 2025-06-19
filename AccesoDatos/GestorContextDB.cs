@@ -51,10 +51,12 @@ namespace AccesoDatos
                 entity.Property(p => p.FechaNacimiento).HasColumnType("date");
                 entity.Property(p => p.EstaEliminado).IsRequired();
 
-                entity.HasOne(p => p.Empleado)
+                /*entity.HasOne(p => p.Empleado)
                       .WithOne(e => e.Persona)
                       .HasForeignKey<Empleado>(e => e.PersonaId)
-                      .OnDelete(DeleteBehavior.Restrict);
+                      .OnDelete(DeleteBehavior.Restrict);*/
+
+                
             });
 
             // EMPLEADO

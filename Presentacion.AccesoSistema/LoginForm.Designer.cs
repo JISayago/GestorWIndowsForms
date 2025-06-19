@@ -67,8 +67,10 @@
             // 
             txtPass.Location = new Point(42, 115);
             txtPass.Name = "txtPass";
+            txtPass.PasswordChar = '*';
             txtPass.Size = new Size(351, 23);
             txtPass.TabIndex = 3;
+            txtPass.UseSystemPasswordChar = true;
             // 
             // lblUsuario
             // 
@@ -99,7 +101,10 @@
             Controls.Add(txtUsuario);
             Controls.Add(btnCancelar);
             Controls.Add(btnIngresar);
+            MaximumSize = new Size(438, 250);
+            MinimumSize = new Size(438, 250);
             Name = "LoginForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "LoginForm";
             ResumeLayout(false);
             PerformLayout();

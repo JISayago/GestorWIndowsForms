@@ -14,8 +14,9 @@ namespace Presentacion.AccesoAlSistema
     public partial class LoginForm : Form
     {
         private readonly IAccesoSistema _accesoSistema;
+
         public bool PuedeAccederAlSistema { get; protected set; }
-        
+               
         private string msge;
         private string pass;
         private string username;

@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentacion.FBase", "Prese
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentacion.Constantes", "Presentacion.Constantes\Presentacion.Constantes.csproj", "{58610091-080D-49EF-B1A3-236EED1FDC50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicioAccesoSistema", "ServicioAccesoSistema\ServicioAccesoSistema.csproj", "{EF7E3410-F6D0-4A95-A5DB-00FE8842EE15}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servicios.AccesoSistema", "ServicioAccesoSistema\Servicios.AccesoSistema.csproj", "{EF7E3410-F6D0-4A95-A5DB-00FE8842EE15}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentacion.AccesoAlSistema", "Presentacion.AccesoSistema\Presentacion.AccesoAlSistema.csproj", "{CA42A3C9-2B9C-4449-A664-4E42C058993E}"
 EndProject
