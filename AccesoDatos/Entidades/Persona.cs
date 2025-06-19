@@ -32,6 +32,7 @@ namespace AccesoDatos.Entidades
 
         public bool EstaEliminado { get; set; }
 
-        public Empleado? Empleado { get; set; } // Relación 1:1 (opcional)
+        //public Empleado? Empleado { get; set; } // Relación 1:1 (opcional) esto lo vamo a sacar
+
     }
 }
