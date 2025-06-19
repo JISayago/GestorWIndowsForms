@@ -29,96 +29,91 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
-            toolStrip1 = new ToolStrip();
-            toolStripButton1 = new ToolStripButton();
-            toolStripButton2 = new ToolStripButton();
+            BarraSuperiorBotones = new ToolStrip();
+            btnEjecutar = new ToolStripButton();
+            btnLimpiar = new ToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
-            toolStripButton3 = new ToolStripButton();
+            btnSalir = new ToolStripButton();
             panel1.SuspendLayout();
-            toolStrip1.SuspendLayout();
+            BarraSuperiorBotones.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(toolStrip1);
-            panel1.Location = new Point(12, 1);
+            panel1.Controls.Add(BarraSuperiorBotones);
+            panel1.Location = new Point(12, 12);
             panel1.Name = "panel1";
-            panel1.Size = new Size(776, 102);
+            panel1.Size = new Size(760, 53);
             panel1.TabIndex = 0;
             // 
-            // toolStrip1
+            // BarraSuperiorBotones
             // 
-            toolStrip1.AutoSize = false;
-            toolStrip1.BackColor = SystemColors.AppWorkspace;
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton2, toolStripSeparator1, toolStripButton3 });
-            toolStrip1.Location = new Point(0, 0);
-            toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(776, 90);
-            toolStrip1.TabIndex = 0;
-            toolStrip1.Text = "toolStrip1";
+            BarraSuperiorBotones.BackColor = SystemColors.AppWorkspace;
+            BarraSuperiorBotones.Items.AddRange(new ToolStripItem[] { btnEjecutar, btnLimpiar, toolStripSeparator1, btnSalir });
+            BarraSuperiorBotones.Location = new Point(0, 0);
+            BarraSuperiorBotones.Name = "BarraSuperiorBotones";
+            BarraSuperiorBotones.Size = new Size(760, 25);
+            BarraSuperiorBotones.TabIndex = 0;
+            BarraSuperiorBotones.Text = "toolStrip1";
             // 
-            // toolStripButton1
+            // btnEjecutar
             // 
-            toolStripButton1.AutoSize = false;
-            toolStripButton1.BackColor = SystemColors.ActiveCaption;
-            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripButton1.ImageTransparentColor = Color.Magenta;
-            toolStripButton1.Margin = new Padding(1, 1, 1, 2);
-            toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new Size(60, 87);
-            toolStripButton1.Text = "toolStripButton1";
+            btnEjecutar.BackColor = SystemColors.ButtonHighlight;
+            btnEjecutar.ImageTransparentColor = Color.Magenta;
+            btnEjecutar.Name = "btnEjecutar";
+            btnEjecutar.Size = new Size(53, 86);
+            btnEjecutar.Text = "Ejecutar";
+            btnEjecutar.TextImageRelation = TextImageRelation.ImageAboveText;
             // 
-            // toolStripButton2
+            // btnLimpiar
             // 
-            toolStripButton2.AutoSize = false;
-            toolStripButton2.BackColor = SystemColors.ActiveCaption;
-            toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripButton2.ImageTransparentColor = Color.Magenta;
-            toolStripButton2.Margin = new Padding(1, 1, 1, 2);
-            toolStripButton2.Name = "toolStripButton2";
-            toolStripButton2.Size = new Size(60, 87);
-            toolStripButton2.Text = "toolStripButton2";
+            btnLimpiar.BackColor = SystemColors.ButtonHighlight;
+            btnLimpiar.ImageTransparentColor = Color.Magenta;
+            btnLimpiar.Name = "btnLimpiar";
+            btnLimpiar.Size = new Size(51, 86);
+            btnLimpiar.Text = "Limpiar";
+            btnLimpiar.TextImageRelation = TextImageRelation.ImageAboveText;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.BackColor = SystemColors.ActiveCaption;
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(6, 90);
+            toolStripSeparator1.Size = new Size(6, 89);
             // 
-            // toolStripButton3
+            // btnSalir
             // 
-            toolStripButton3.Alignment = ToolStripItemAlignment.Right;
-            toolStripButton3.AutoSize = false;
-            toolStripButton3.BackColor = SystemColors.ActiveCaption;
-            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripButton3.ImageTransparentColor = Color.Magenta;
-            toolStripButton3.Margin = new Padding(1, 1, 1, 2);
-            toolStripButton3.Name = "toolStripButton3";
-            toolStripButton3.Size = new Size(60, 87);
-            toolStripButton3.Text = "toolStripButton3";
+            btnSalir.Alignment = ToolStripItemAlignment.Right;
+            btnSalir.BackColor = SystemColors.ButtonHighlight;
+            btnSalir.ImageTransparentColor = Color.Magenta;
+            btnSalir.Name = "btnSalir";
+            btnSalir.Size = new Size(33, 86);
+            btnSalir.Text = "Salir";
+            btnSalir.TextImageRelation = TextImageRelation.ImageAboveText;
             // 
             // FBaseABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(784, 561);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            MaximumSize = new Size(800, 600);
             Name = "FBaseABM";
             Text = "FBaseABM";
             panel1.ResumeLayout(false);
-            toolStrip1.ResumeLayout(false);
-            toolStrip1.PerformLayout();
+            panel1.PerformLayout();
+            BarraSuperiorBotones.ResumeLayout(false);
+            BarraSuperiorBotones.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
         private Panel panel1;
-        private ToolStrip toolStrip1;
-        private ToolStripButton toolStripButton1;
-        private ToolStripButton toolStripButton2;
+        private ToolStrip BarraSuperiorBotones;
+        private ToolStripButton btnEjecutar;
+        private ToolStripButton btnLimpiar;
         private ToolStripSeparator toolStripSeparator1;
-        private ToolStripButton toolStripButton3;
+        private ToolStripButton btnSalir;
     }
 }
