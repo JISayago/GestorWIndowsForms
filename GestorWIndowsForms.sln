@@ -22,6 +22,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servicios.AccesoSistema", "ServicioAccesoSistema\Servicios.AccesoSistema.csproj", "{EF7E3410-F6D0-4A95-A5DB-00FE8842EE15}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentacion.AccesoAlSistema", "Presentacion.AccesoSistema\Presentacion.AccesoAlSistema.csproj", "{CA42A3C9-2B9C-4449-A664-4E42C058993E}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentacion.Core", "Presentacion.Core\Presentacion.Core.csproj", "{95B3F561-D51A-4EC6-941D-2255388FD7C7}"
 EndProject
 Global
