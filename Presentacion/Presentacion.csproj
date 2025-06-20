@@ -10,7 +10,7 @@
 
   <ItemGroup>
    
-    <ProjectReference Include="..\Presentacion.AccesoSistema\Presentacion.AccesoAlSistema.csproj" />
+    <ProjectReference Include="..\Presentacion.AccesoAlSistema\Presentacion.AccesoAlSistema.csproj" />
    
     <ProjectReference Include="..\Servicios\Servicios.csproj" />
   </ItemGroup>
