@@ -1,14 +1,14 @@
-﻿namespace Presentacion
+﻿namespace Presentacion.FBase
 {
-    partial class Form1
+    partial class FBase
     {
         /// <summary>
-        ///  Required designer variable.
+        /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        ///  Clean up any resources being used.
+        /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
@@ -20,40 +20,31 @@
             base.Dispose(disposing);
         }
 
+        protected System.Windows.Forms.ErrorProvider error;//daud errores
         #region Windows Form Designer generated code
 
         /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
-            lblConexion = new Label();
             SuspendLayout();
             // 
-            // lblConexion
-            // 
-            lblConexion.AutoSize = true;
-            lblConexion.Location = new Point(83, 142);
-            lblConexion.Name = "lblConexion";
-            lblConexion.Size = new Size(38, 15);
-            lblConexion.TabIndex = 0;
-            lblConexion.Text = "label1";
-            // 
-            // Form1
+            // FBase
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(lblConexion);
-            Name = "Form1";
-            Text = "Form1";
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "FBase";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "FBase";
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private Label lblConexion;
     }
 }
