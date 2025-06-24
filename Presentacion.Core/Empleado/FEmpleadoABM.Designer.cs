@@ -48,18 +48,13 @@
             txtDireccion = new TextBox();
             dateTimePicker1 = new DateTimePicker();
             dateTimePicker2 = new DateTimePicker();
-            pnlFoto = new Panel();
-            imgFotoEmpleado = new PictureBox();
-            btnAgregarImagen = new Button();
-            pnlFoto.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)imgFotoEmpleado).BeginInit();
             SuspendLayout();
             // 
             // lblLegajo
             // 
             lblLegajo.AutoSize = true;
             lblLegajo.Font = new Font("Segoe UI", 9.75F);
-            lblLegajo.Location = new Point(19, 132);
+            lblLegajo.Location = new Point(92, 76);
             lblLegajo.Name = "lblLegajo";
             lblLegajo.Size = new Size(47, 17);
             lblLegajo.TabIndex = 1;
@@ -69,7 +64,7 @@
             // 
             lblFechaIngreso.AutoSize = true;
             lblFechaIngreso.Font = new Font("Segoe UI", 9.75F);
-            lblFechaIngreso.Location = new Point(323, 135);
+            lblFechaIngreso.Location = new Point(396, 79);
             lblFechaIngreso.Name = "lblFechaIngreso";
             lblFechaIngreso.Size = new Size(65, 17);
             lblFechaIngreso.TabIndex = 2;
@@ -79,7 +74,7 @@
             // 
             lblApellido.AutoSize = true;
             lblApellido.Font = new Font("Segoe UI", 9.75F);
-            lblApellido.Location = new Point(19, 165);
+            lblApellido.Location = new Point(92, 109);
             lblApellido.Name = "lblApellido";
             lblApellido.Size = new Size(56, 17);
             lblApellido.TabIndex = 3;
@@ -89,7 +84,7 @@
             // 
             lblDni.AutoSize = true;
             lblDni.Font = new Font("Segoe UI", 9.75F);
-            lblDni.Location = new Point(19, 239);
+            lblDni.Location = new Point(92, 183);
             lblDni.Name = "lblDni";
             lblDni.Size = new Size(30, 17);
             lblDni.TabIndex = 4;
@@ -99,7 +94,7 @@
             // 
             lblNombre.AutoSize = true;
             lblNombre.Font = new Font("Segoe UI", 9.75F);
-            lblNombre.Location = new Point(19, 201);
+            lblNombre.Location = new Point(92, 145);
             lblNombre.Name = "lblNombre";
             lblNombre.Size = new Size(57, 17);
             lblNombre.TabIndex = 5;
@@ -109,7 +104,7 @@
             // 
             lblCuil.AutoSize = true;
             lblCuil.Font = new Font("Segoe UI", 9.75F);
-            lblCuil.Location = new Point(337, 237);
+            lblCuil.Location = new Point(410, 181);
             lblCuil.Name = "lblCuil";
             lblCuil.Size = new Size(34, 17);
             lblCuil.TabIndex = 6;
@@ -119,7 +114,7 @@
             // 
             lblTelefono.AutoSize = true;
             lblTelefono.Font = new Font("Segoe UI", 9.75F);
-            lblTelefono.Location = new Point(17, 278);
+            lblTelefono.Location = new Point(90, 222);
             lblTelefono.Name = "lblTelefono";
             lblTelefono.Size = new Size(58, 17);
             lblTelefono.TabIndex = 7;
@@ -129,7 +124,7 @@
             // 
             lblCelular.AutoSize = true;
             lblCelular.Font = new Font("Segoe UI", 9.75F);
-            lblCelular.Location = new Point(323, 276);
+            lblCelular.Location = new Point(396, 220);
             lblCelular.Name = "lblCelular";
             lblCelular.Size = new Size(48, 17);
             lblCelular.TabIndex = 8;
@@ -138,7 +133,7 @@
             // lblDireccion
             // 
             lblDireccion.AutoSize = true;
-            lblDireccion.Location = new Point(17, 356);
+            lblDireccion.Location = new Point(90, 300);
             lblDireccion.Name = "lblDireccion";
             lblDireccion.Size = new Size(57, 15);
             lblDireccion.TabIndex = 9;
@@ -147,7 +142,7 @@
             // lblFechaNacimiento
             // 
             lblFechaNacimiento.AutoSize = true;
-            lblFechaNacimiento.Location = new Point(290, 321);
+            lblFechaNacimiento.Location = new Point(363, 265);
             lblFechaNacimiento.Name = "lblFechaNacimiento";
             lblFechaNacimiento.Size = new Size(81, 15);
             lblFechaNacimiento.TabIndex = 10;
@@ -156,7 +151,7 @@
             // txtLegajo
             // 
             txtLegajo.Font = new Font("Segoe UI", 9.75F);
-            txtLegajo.Location = new Point(86, 131);
+            txtLegajo.Location = new Point(159, 75);
             txtLegajo.Name = "txtLegajo";
             txtLegajo.Size = new Size(214, 25);
             txtLegajo.TabIndex = 11;
@@ -164,7 +159,7 @@
             // txtApellido
             // 
             txtApellido.Font = new Font("Segoe UI", 9.75F);
-            txtApellido.Location = new Point(86, 164);
+            txtApellido.Location = new Point(159, 108);
             txtApellido.Name = "txtApellido";
             txtApellido.Size = new Size(492, 25);
             txtApellido.TabIndex = 12;
@@ -172,7 +167,7 @@
             // txtNombre
             // 
             txtNombre.Font = new Font("Segoe UI", 9.75F);
-            txtNombre.Location = new Point(86, 199);
+            txtNombre.Location = new Point(159, 143);
             txtNombre.Name = "txtNombre";
             txtNombre.Size = new Size(492, 25);
             txtNombre.TabIndex = 13;
@@ -180,7 +175,7 @@
             // txtDni
             // 
             txtDni.Font = new Font("Segoe UI", 9.75F);
-            txtDni.Location = new Point(86, 236);
+            txtDni.Location = new Point(159, 180);
             txtDni.Name = "txtDni";
             txtDni.Size = new Size(214, 25);
             txtDni.TabIndex = 14;
@@ -188,7 +183,7 @@
             // txtCuil
             // 
             txtCuil.Font = new Font("Segoe UI", 9.75F);
-            txtCuil.Location = new Point(377, 234);
+            txtCuil.Location = new Point(450, 178);
             txtCuil.Name = "txtCuil";
             txtCuil.Size = new Size(201, 25);
             txtCuil.TabIndex = 15;
@@ -196,7 +191,7 @@
             // txtCelular
             // 
             txtCelular.Font = new Font("Segoe UI", 9.75F);
-            txtCelular.Location = new Point(377, 273);
+            txtCelular.Location = new Point(450, 217);
             txtCelular.Name = "txtCelular";
             txtCelular.Size = new Size(201, 25);
             txtCelular.TabIndex = 16;
@@ -204,7 +199,7 @@
             // txtTelefono
             // 
             txtTelefono.Font = new Font("Segoe UI", 9.75F);
-            txtTelefono.Location = new Point(86, 275);
+            txtTelefono.Location = new Point(159, 219);
             txtTelefono.Name = "txtTelefono";
             txtTelefono.Size = new Size(214, 25);
             txtTelefono.TabIndex = 17;
@@ -212,57 +207,30 @@
             // txtDireccion
             // 
             txtDireccion.Font = new Font("Segoe UI", 9.75F);
-            txtDireccion.Location = new Point(80, 351);
+            txtDireccion.Location = new Point(153, 295);
             txtDireccion.Name = "txtDireccion";
             txtDireccion.Size = new Size(498, 25);
             txtDireccion.TabIndex = 18;
             // 
             // dateTimePicker1
             // 
-            dateTimePicker1.Location = new Point(394, 131);
+            dateTimePicker1.Location = new Point(467, 75);
             dateTimePicker1.Name = "dateTimePicker1";
             dateTimePicker1.Size = new Size(184, 23);
             dateTimePicker1.TabIndex = 19;
             // 
             // dateTimePicker2
             // 
-            dateTimePicker2.Location = new Point(377, 313);
+            dateTimePicker2.Location = new Point(450, 257);
             dateTimePicker2.Name = "dateTimePicker2";
             dateTimePicker2.Size = new Size(201, 23);
             dateTimePicker2.TabIndex = 20;
             // 
-            // pnlFoto
-            // 
-            pnlFoto.Controls.Add(imgFotoEmpleado);
-            pnlFoto.Controls.Add(btnAgregarImagen);
-            pnlFoto.Location = new Point(600, 131);
-            pnlFoto.Name = "pnlFoto";
-            pnlFoto.Size = new Size(183, 217);
-            pnlFoto.TabIndex = 21;
-            // 
-            // imgFotoEmpleado
-            // 
-            imgFotoEmpleado.Location = new Point(3, 3);
-            imgFotoEmpleado.Name = "imgFotoEmpleado";
-            imgFotoEmpleado.Size = new Size(177, 166);
-            imgFotoEmpleado.TabIndex = 1;
-            imgFotoEmpleado.TabStop = false;
-            // 
-            // btnAgregarImagen
-            // 
-            btnAgregarImagen.Location = new Point(3, 180);
-            btnAgregarImagen.Name = "btnAgregarImagen";
-            btnAgregarImagen.Size = new Size(182, 34);
-            btnAgregarImagen.TabIndex = 0;
-            btnAgregarImagen.Text = "Agregar Imagen";
-            btnAgregarImagen.UseVisualStyleBackColor = true;
-            // 
-            // FormularioEmpleadoABM
+            // FEmpleadoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(pnlFoto);
+            ClientSize = new Size(784, 450);
             Controls.Add(dateTimePicker2);
             Controls.Add(dateTimePicker1);
             Controls.Add(txtDireccion);
@@ -305,9 +273,6 @@
             Controls.SetChildIndex(txtDireccion, 0);
             Controls.SetChildIndex(dateTimePicker1, 0);
             Controls.SetChildIndex(dateTimePicker2, 0);
-            Controls.SetChildIndex(pnlFoto, 0);
-            pnlFoto.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)imgFotoEmpleado).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -334,8 +299,5 @@
         private TextBox txtDireccion;
         private DateTimePicker dateTimePicker1;
         private DateTimePicker dateTimePicker2;
-        private Panel pnlFoto;
-        private PictureBox imgFotoEmpleado;
-        private Button btnAgregarImagen;
     }
 }
