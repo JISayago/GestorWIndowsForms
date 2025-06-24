@@ -10,8 +10,4 @@
     <ProjectReference Include="..\AccesoDatos\AccesoDatos.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="LogicaNegocio\" />
-  </ItemGroup>
-
 </Project>
