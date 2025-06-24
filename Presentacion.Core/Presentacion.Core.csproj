@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Presentacion.FBase\Presentacion.FBase.csproj" />
+    <Folder Include="Marca\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Marca\" />
+    <ProjectReference Include="..\Presentacion.FBase\Presentacion.FBase.csproj" />
   </ItemGroup>
 
 </Project>
