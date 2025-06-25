@@ -39,7 +39,7 @@ namespace Presentacion
 
                 if (login.PuedeAccederAlSistema)
                 {
-                    Application.Run(new Form1());
+                    Application.Run(new VentanaPrincipal());
                 }
                 else
                 {
