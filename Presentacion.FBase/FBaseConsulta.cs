@@ -38,7 +38,7 @@ namespace Presentacion.FBase
 
         public virtual void EjecutarBtnNuevo()
         {
-            throw new NotImplementedException();
+           
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)

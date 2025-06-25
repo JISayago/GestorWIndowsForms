@@ -64,6 +64,7 @@ namespace Presentacion.FBase
             this.Close();
         }
 
+
         public virtual void FBaseABM_Load(object sender, EventArgs e)
         {
             if (TipoOperacion == TipoOperacion.Eliminar || TipoOperacion == TipoOperacion.Modificar)
@@ -128,6 +129,10 @@ namespace Presentacion.FBase
         public virtual bool EjecutarComandoNuevo()
         {
             return false;
+        }
+        public virtual void Inicializador(long? entidadId)
+        {
+
         }
     }
 }

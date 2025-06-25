@@ -1,4 +1,5 @@
 ﻿using Presentacion.FBase;
+using Presentacion.FormulariosBase.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,12 @@ namespace Presentacion.Core.Empleado
         public FEmpleadoConsulta()
         {
             InitializeComponent();
+        }
+
+        public override void EjecutarBtnNuevo()
+        {
+            var FormularioEmpleadoABM = new FEmpleadoABM(TipoOperacion.Nuevo);
+            FormularioEmpleadoABM.ShowDialog();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Servicios.LogicaNegocio.Empleado.DTO;
+﻿using Servicios.Helpers;
+using Servicios.LogicaNegocio.Empleado.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Servicios.LogicaNegocio.Empleado
     {
         IEnumerable<EmpleadoDTO> ObtenerEmpleados();
 
-        long Insertar(EmpleadoDTO empleadoDto);
+        EstadoOperacion Insertar(EmpleadoDTO empleadoDto);
 
         void Modificar(EmpleadoDTO empleadoDto);
 

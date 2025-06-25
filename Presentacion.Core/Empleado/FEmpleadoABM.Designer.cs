@@ -46,8 +46,10 @@
             txtCelular = new TextBox();
             txtTelefono = new TextBox();
             txtDireccion = new TextBox();
-            dateTimePicker1 = new DateTimePicker();
-            dateTimePicker2 = new DateTimePicker();
+            dtpFIngreso = new DateTimePicker();
+            dtpFNacimiento = new DateTimePicker();
+            txtEmail = new TextBox();
+            label1 = new Label();
             SuspendLayout();
             // 
             // lblLegajo
@@ -212,27 +214,46 @@
             txtDireccion.Size = new Size(498, 25);
             txtDireccion.TabIndex = 18;
             // 
-            // dateTimePicker1
+            // dtpFIngreso
             // 
-            dateTimePicker1.Location = new Point(467, 75);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(184, 23);
-            dateTimePicker1.TabIndex = 19;
+            dtpFIngreso.Location = new Point(467, 75);
+            dtpFIngreso.Name = "dtpFIngreso";
+            dtpFIngreso.Size = new Size(184, 23);
+            dtpFIngreso.TabIndex = 19;
             // 
-            // dateTimePicker2
+            // dtpFNacimiento
             // 
-            dateTimePicker2.Location = new Point(450, 257);
-            dateTimePicker2.Name = "dateTimePicker2";
-            dateTimePicker2.Size = new Size(201, 23);
-            dateTimePicker2.TabIndex = 20;
+            dtpFNacimiento.Location = new Point(450, 257);
+            dtpFNacimiento.Name = "dtpFNacimiento";
+            dtpFNacimiento.Size = new Size(201, 23);
+            dtpFNacimiento.TabIndex = 20;
+            // 
+            // txtEmail
+            // 
+            txtEmail.Font = new Font("Segoe UI", 9.75F);
+            txtEmail.Location = new Point(153, 326);
+            txtEmail.Name = "txtEmail";
+            txtEmail.Size = new Size(498, 25);
+            txtEmail.TabIndex = 22;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(90, 331);
+            label1.Name = "label1";
+            label1.Size = new Size(36, 15);
+            label1.TabIndex = 21;
+            label1.Text = "Email";
             // 
             // FEmpleadoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 450);
-            Controls.Add(dateTimePicker2);
-            Controls.Add(dateTimePicker1);
+            Controls.Add(txtEmail);
+            Controls.Add(label1);
+            Controls.Add(dtpFNacimiento);
+            Controls.Add(dtpFIngreso);
             Controls.Add(txtDireccion);
             Controls.Add(txtTelefono);
             Controls.Add(txtCelular);
@@ -271,8 +292,10 @@
             Controls.SetChildIndex(txtCelular, 0);
             Controls.SetChildIndex(txtTelefono, 0);
             Controls.SetChildIndex(txtDireccion, 0);
-            Controls.SetChildIndex(dateTimePicker1, 0);
-            Controls.SetChildIndex(dateTimePicker2, 0);
+            Controls.SetChildIndex(dtpFIngreso, 0);
+            Controls.SetChildIndex(dtpFNacimiento, 0);
+            Controls.SetChildIndex(label1, 0);
+            Controls.SetChildIndex(txtEmail, 0);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -297,7 +320,9 @@
         private TextBox txtCelular;
         private TextBox txtTelefono;
         private TextBox txtDireccion;
-        private DateTimePicker dateTimePicker1;
-        private DateTimePicker dateTimePicker2;
+        private DateTimePicker dtpFIngreso;
+        private DateTimePicker dtpFNacimiento;
+        private TextBox txtEmail;
+        private Label label1;
     }
 }
