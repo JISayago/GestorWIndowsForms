@@ -1,14 +1,4 @@
 ﻿using Presentacion.FormulariosBase.DTO;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Presentacion.FBase
 {
@@ -19,7 +9,19 @@ namespace Presentacion.FBase
         public FBase()
         {
             InitializeComponent();
-            _listaControlesObligatorios = new List<ControlDTO>();
+            if (!DesignMode)
+            {
+                _listaControlesObligatorios = new List<ControlDTO>();
+
+                // Si tienes más lógica (suscribir eventos, cargar imágenes...)
+                // muévela aquí dentro o al Load
+                this.Load += FBase_Load;
+            }
+        }
+        private void FBase_Load(object sender, EventArgs e)
+        {
+            // Aquí ya estás en tiempo de ejecución, no en diseño.
+            // Suscribe eventos, asigna Image, etc.
         }
         public virtual void DesactivarControles(object obj)
         {
@@ -163,7 +165,7 @@ namespace Presentacion.FBase
 
                     if (ctrolPanel is PictureBox)
                     {
-                        ((PictureBox)ctrolPanel).Image = Constantes.Imagenes.ImagenUsuario;
+                        ((PictureBox)ctrolPanel).Image = Constantes.Imagenes.ImgPerfilUsuario;
                     }
                 }
             }

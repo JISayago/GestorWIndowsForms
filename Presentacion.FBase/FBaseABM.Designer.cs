@@ -63,7 +63,7 @@
             btnEjecutar.BackColor = SystemColors.ButtonHighlight;
             btnEjecutar.ImageTransparentColor = Color.Magenta;
             btnEjecutar.Name = "btnEjecutar";
-            btnEjecutar.Size = new Size(53, 25);
+            btnEjecutar.Size = new Size(53, 22);
             btnEjecutar.Text = "Ejecutar";
             btnEjecutar.TextImageRelation = TextImageRelation.ImageAboveText;
             btnEjecutar.Click += btnEjecutar_Click;
@@ -73,16 +73,16 @@
             btnLimpiar.BackColor = SystemColors.ButtonHighlight;
             btnLimpiar.ImageTransparentColor = Color.Magenta;
             btnLimpiar.Name = "btnLimpiar";
-            btnLimpiar.Size = new Size(51, 25);
+            btnLimpiar.Size = new Size(51, 22);
             btnLimpiar.Text = "Limpiar";
             btnLimpiar.TextImageRelation = TextImageRelation.ImageAboveText;
+            btnLimpiar.Click += btnLimpiar_Click;
             // 
             // toolStripSeparatorSpring
             // 
-            toolStripSeparatorSpring.AutoSize = false;
-            toolStripSeparatorSpring.BackColor = SystemColors.ActiveCaption;
-            toolStripSeparatorSpring.Name = "toolStripSeparatorSpring";
-            toolStripSeparatorSpring.Size = new Size(6, 25);
+            toolStripSeparator1.BackColor = SystemColors.ActiveCaption;
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(6, 25);
             // 
             // btnSalir
             // 
@@ -90,9 +90,10 @@
             btnSalir.BackColor = SystemColors.ButtonHighlight;
             btnSalir.ImageTransparentColor = Color.Magenta;
             btnSalir.Name = "btnSalir";
-            btnSalir.Size = new Size(33, 25);
+            btnSalir.Size = new Size(33, 22);
             btnSalir.Text = "Salir";
             btnSalir.TextImageRelation = TextImageRelation.ImageAboveText;
+            btnSalir.Click += btnSalir_Click;
             // 
             // FBaseABM
             // 
@@ -104,6 +105,7 @@
             MaximumSize = new Size(800, 600);
             Name = "FBaseABM";
             Text = "FBaseABM";
+            Load += FBaseABM_Load;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             BarraSuperiorBotones.ResumeLayout(false);
