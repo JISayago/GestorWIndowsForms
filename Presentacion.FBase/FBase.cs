@@ -13,13 +13,11 @@ namespace Presentacion.FBase
             this.components = new System.ComponentModel.Container();
             this.error = new System.Windows.Forms.ErrorProvider(this.components);
 
-            // Si tienes más lógica (suscribir eventos, cargar imágenes...)
-            // muévela aquí dentro o al Load
+ 
         }
         private void FBase_Load(object sender, EventArgs e)
         {
-            // Aquí ya estás en tiempo de ejecución, no en diseño.
-            // Suscribe eventos, asigna Image, etc.
+        
         }
         public virtual void DesactivarControles(object obj)
         {

@@ -86,13 +86,13 @@ namespace Presentacion.Core.Empleado
             var response = _empleadoServicio.Insertar(nuevoEmpleado);
             if (response.Exitoso)
             {
-                MessageBox.Show(@"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Exclamation);
+                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                   MessageBoxIcon.Information);
                 return true; 
             }
             else
             {
-                MessageBox.Show(@"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                    MessageBoxIcon.Error);
                 return false;
             }
