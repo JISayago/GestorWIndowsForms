@@ -66,6 +66,7 @@
             btnEjecutar.Size = new Size(53, 25);
             btnEjecutar.Text = "Ejecutar";
             btnEjecutar.TextImageRelation = TextImageRelation.ImageAboveText;
+            btnEjecutar.Click += btnEjecutar_Click;
             // 
             // btnLimpiar
             // 

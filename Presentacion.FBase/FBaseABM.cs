@@ -16,5 +16,14 @@ namespace Presentacion.FBase
         {
             InitializeComponent();
         }
+
+        public  void btnEjecutar_Click(object sender, EventArgs e)
+        {
+            Ejectuar();
+        }
+
+        public virtual void Ejectuar()
+        {
+        }
     }
 }

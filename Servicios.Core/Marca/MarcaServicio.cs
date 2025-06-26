@@ -12,17 +12,47 @@ namespace Servicios.Core.Marca
     {
         public void Eliminar(long marcaId)
         {
-            throw new NotImplementedException();
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var marca = context.Marcas.FirstOrDefault(x => x.MarcaId == marcaId);
+
+            if (marca == null)
+                throw new Exception("No se encontró la marca.");
+
+            // Eliminación lógica
+            //marca.EstaEliminado = true;
+
+            context.SaveChanges();
         }
 
         public long Insertar(MarcaDTO marcaDTO)
         {
-            throw new NotImplementedException();
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var nuevaMarca = new AccesoDatos.Entidades.Marca
+            {
+                Nombre = marcaDTO.Nombre, // o marcaDTO.Descripcion si ese es el campo real
+            };
+
+            context.Marcas.Add(nuevaMarca);
+            context.SaveChanges(); // Guarda en la DB
+
+            return nuevaMarca.MarcaId; // Devuelve el ID generado
         }
 
         public void Modificar(MarcaDTO marcaDTO)
         {
-            throw new NotImplementedException();
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var marca = context.Marcas.FirstOrDefault(x => x.MarcaId == marcaDTO.Id);
+
+            if (marca == null)
+                throw new Exception("No se encontró la marca.");
+
+            // Modificar los campos
+            marca.Nombre = marcaDTO.Nombre;
+
+            context.SaveChanges();
         }
 
         public IEnumerable<MarcaDTO> ObtenerMarca(string cadenaBuscar)

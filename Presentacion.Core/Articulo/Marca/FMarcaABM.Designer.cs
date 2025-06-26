@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             label3 = new Label();
-            textBox1 = new TextBox();
+            txtMarca = new TextBox();
             lblMarca = new Label();
             SuspendLayout();
             // 
@@ -43,13 +43,13 @@
             label3.TabIndex = 7;
             label3.Text = "Campo Obligatorio (*)";
             // 
-            // textBox1
+            // txtMarca
             // 
-            textBox1.Font = new Font("Segoe UI", 15.75F);
-            textBox1.Location = new Point(130, 79);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(219, 35);
-            textBox1.TabIndex = 6;
+            txtMarca.Font = new Font("Segoe UI", 15.75F);
+            txtMarca.Location = new Point(130, 79);
+            txtMarca.Name = "txtMarca";
+            txtMarca.Size = new Size(219, 35);
+            txtMarca.TabIndex = 6;
             // 
             // lblMarca
             // 
@@ -67,12 +67,12 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(404, 171);
             Controls.Add(label3);
-            Controls.Add(textBox1);
+            Controls.Add(txtMarca);
             Controls.Add(lblMarca);
             Name = "FMarcaABM";
             Text = "FMarcaABM";
             Controls.SetChildIndex(lblMarca, 0);
-            Controls.SetChildIndex(textBox1, 0);
+            Controls.SetChildIndex(txtMarca, 0);
             Controls.SetChildIndex(label3, 0);
             ResumeLayout(false);
             PerformLayout();
@@ -81,7 +81,7 @@
         #endregion
 
         private Label label3;
-        private TextBox textBox1;
+        private TextBox txtMarca;
         private Label lblMarca;
     }
 }
