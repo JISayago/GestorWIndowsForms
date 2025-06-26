@@ -32,7 +32,7 @@
             BarraSuperiorBotones = new ToolStrip();
             btnEjecutar = new ToolStripButton();
             btnLimpiar = new ToolStripButton();
-            toolStripSeparator1 = new ToolStripSeparator();
+            toolStripSeparatorSpring = new ToolStripLabel();
             btnSalir = new ToolStripButton();
             panel1.SuspendLayout();
             BarraSuperiorBotones.SuspendLayout();
@@ -40,19 +40,21 @@
             // 
             // panel1
             // 
+            panel1.AutoSize = true;
             panel1.Controls.Add(BarraSuperiorBotones);
-            panel1.Location = new Point(12, 12);
+            panel1.Dock = DockStyle.Top;
+            panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(760, 53);
+            panel1.Size = new Size(784, 28);
             panel1.TabIndex = 0;
             // 
             // BarraSuperiorBotones
             // 
             BarraSuperiorBotones.BackColor = SystemColors.AppWorkspace;
-            BarraSuperiorBotones.Items.AddRange(new ToolStripItem[] { btnEjecutar, btnLimpiar, toolStripSeparator1, btnSalir });
+            BarraSuperiorBotones.Items.AddRange(new ToolStripItem[] { btnEjecutar, btnLimpiar, toolStripSeparatorSpring, btnSalir });
             BarraSuperiorBotones.Location = new Point(0, 0);
             BarraSuperiorBotones.Name = "BarraSuperiorBotones";
-            BarraSuperiorBotones.Size = new Size(760, 25);
+            BarraSuperiorBotones.Size = new Size(784, 28);
             BarraSuperiorBotones.TabIndex = 0;
             BarraSuperiorBotones.Text = "toolStrip1";
             // 
@@ -61,7 +63,7 @@
             btnEjecutar.BackColor = SystemColors.ButtonHighlight;
             btnEjecutar.ImageTransparentColor = Color.Magenta;
             btnEjecutar.Name = "btnEjecutar";
-            btnEjecutar.Size = new Size(53, 86);
+            btnEjecutar.Size = new Size(53, 25);
             btnEjecutar.Text = "Ejecutar";
             btnEjecutar.TextImageRelation = TextImageRelation.ImageAboveText;
             // 
@@ -70,15 +72,16 @@
             btnLimpiar.BackColor = SystemColors.ButtonHighlight;
             btnLimpiar.ImageTransparentColor = Color.Magenta;
             btnLimpiar.Name = "btnLimpiar";
-            btnLimpiar.Size = new Size(51, 86);
+            btnLimpiar.Size = new Size(51, 25);
             btnLimpiar.Text = "Limpiar";
             btnLimpiar.TextImageRelation = TextImageRelation.ImageAboveText;
             // 
-            // toolStripSeparator1
+            // toolStripSeparatorSpring
             // 
-            toolStripSeparator1.BackColor = SystemColors.ActiveCaption;
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(6, 89);
+            toolStripSeparatorSpring.AutoSize = false;
+            toolStripSeparatorSpring.BackColor = SystemColors.ActiveCaption;
+            toolStripSeparatorSpring.Name = "toolStripSeparatorSpring";
+            toolStripSeparatorSpring.Size = new Size(6, 25);
             // 
             // btnSalir
             // 
@@ -86,7 +89,7 @@
             btnSalir.BackColor = SystemColors.ButtonHighlight;
             btnSalir.ImageTransparentColor = Color.Magenta;
             btnSalir.Name = "btnSalir";
-            btnSalir.Size = new Size(33, 86);
+            btnSalir.Size = new Size(33, 25);
             btnSalir.Text = "Salir";
             btnSalir.TextImageRelation = TextImageRelation.ImageAboveText;
             // 
@@ -105,6 +108,7 @@
             BarraSuperiorBotones.ResumeLayout(false);
             BarraSuperiorBotones.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -113,7 +117,7 @@
         private ToolStrip BarraSuperiorBotones;
         private ToolStripButton btnEjecutar;
         private ToolStripButton btnLimpiar;
-        private ToolStripSeparator toolStripSeparator1;
         private ToolStripButton btnSalir;
+        private ToolStripLabel toolStripSeparatorSpring;
     }
 }

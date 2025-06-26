@@ -11,8 +11,4 @@
     <ProjectReference Include="..\Presentacion.FBase\Presentacion.FBase.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Marca\" />
-  </ItemGroup>
-
 </Project>
