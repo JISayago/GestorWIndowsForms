@@ -196,9 +196,9 @@
             cbxEstaEliminado.AutoSize = true;
             cbxEstaEliminado.Location = new Point(104, 19);
             cbxEstaEliminado.Name = "cbxEstaEliminado";
-            cbxEstaEliminado.Size = new Size(186, 19);
+            cbxEstaEliminado.Size = new Size(211, 19);
             cbxEstaEliminado.TabIndex = 3;
-            cbxEstaEliminado.Text = "Mostrar elementos eliminados";
+            cbxEstaEliminado.Text = "Mostrar sólo elementos eliminados";
             cbxEstaEliminado.UseVisualStyleBackColor = true;
             cbxEstaEliminado.CheckedChanged += cbxEstaEliminado_CheckedChanged;
             // 
@@ -233,7 +233,6 @@
         private TextBox txtBuscar;
         private Label label1;
         private Button btnBuscar;
-        private DataGridView dgvGrilla;
         private CheckBox cbxEstaEliminado;
         private ToolStripButton btnNuevo;
         private ToolStripButton btnEliminar;
@@ -244,5 +243,6 @@
         private ToolStripButton btnImprimir;
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripButton btnSalir;
+        protected DataGridView dgvGrilla;
     }
 }

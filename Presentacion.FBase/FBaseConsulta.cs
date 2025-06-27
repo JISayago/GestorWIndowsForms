@@ -14,6 +14,7 @@ namespace Presentacion.FBase
     {
         protected long? entidadID;
         protected bool puedeEjecutarComando;
+        protected string respuestaTest;
         public FBaseConsulta()
         {
             InitializeComponent();
@@ -29,6 +30,7 @@ namespace Presentacion.FBase
 
             entidadID = null;
             puedeEjecutarComando = false;
+            dgvGrilla.RowEnter += DgvGrilla_RowEnter;
         }
 
         private void btnNuevo_Click(object sender, EventArgs e)
@@ -68,6 +70,7 @@ namespace Presentacion.FBase
         }
         private bool HayDatosCargados()
         {
+            
             return dgvGrilla.RowCount > 0;
         }
         private void btnModificar_Click(object sender, EventArgs e)
@@ -75,7 +78,7 @@ namespace Presentacion.FBase
             EjecutarBtnModificar();
         }
 
-        private void EjecutarBtnModificar()
+        public virtual void EjecutarBtnModificar()
         {
             if (HayDatosCargados())
             {
@@ -96,12 +99,12 @@ namespace Presentacion.FBase
             }
         }
 
-        private void btnActualizar_Click(object sender, EventArgs e)
+        public virtual void btnActualizar_Click(object sender, EventArgs e)
         {
             ActualizarDatos(dgvGrilla, string.Empty, cbxEstaEliminado, BarraLateralBotones);
         }
 
-        private void ActualizarDatos(DataGridView dgvGrilla, string empty, CheckBox check, ToolStrip barraLateralBotones)
+        public virtual void ActualizarDatos(DataGridView dgvGrilla, string empty, CheckBox check, ToolStrip barraLateralBotones)
         {
             if (check.Checked)
             {
@@ -128,12 +131,29 @@ namespace Presentacion.FBase
         }
         public virtual void RowEnter(DataGridViewCellEventArgs e)
         {
-            if (HayDatosCargados())
+            try
             {
-                entidadID = (long?)dgvGrilla["Id", e.RowIndex].Value;
+                entidadID = null;
+
+                // Validamos índice y existencia de columna
+                if (e.RowIndex < 0 || !HayDatosCargados() || !dgvGrilla.Columns.Contains("Id"))
+                    return;
+
+                var fila = dgvGrilla.Rows[e.RowIndex];
+
+                // Validamos que la fila y la celda no sean nulas
+                if (fila == null || fila.IsNewRow)
+                    return;
+
+                var celda = fila.Cells["Id"];
+                if (celda == null || celda.Value == null || celda.Value == DBNull.Value)
+                    return;
+
+                entidadID = Convert.ToInt64(celda.Value);
             }
-            else
+            catch (Exception ex)
             {
+                MessageBox.Show($"Error al intentar obtener el ID de la fila seleccionada: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 entidadID = null;
             }
         }
@@ -152,9 +172,10 @@ namespace Presentacion.FBase
         {
             EjecutarBtnEliminarLoad();
             ResetearGrilla(dgvGrilla);
+            //hacerlo en cada consulta
         }
 
-        private void ResetearGrilla(DataGridView grilla)
+        public virtual void ResetearGrilla(DataGridView grilla)
         {
             for (int i = 0; i < grilla.ColumnCount; i++)
             {
@@ -162,12 +183,12 @@ namespace Presentacion.FBase
             }
         }
 
-        private void EjecutarBtnEliminarLoad()
+        public virtual void EjecutarBtnEliminarLoad()
         {
             ActualizarDatos(dgvGrilla, string.Empty, cbxEstaEliminado, BarraLateralBotones);
         }
 
-        private void btnBuscar_Click_1(object sender, EventArgs e)
+        public virtual void btnBuscar_Click_1(object sender, EventArgs e)
         {
             ActualizarDatos(dgvGrilla, txtBuscar.Text, cbxEstaEliminado, BarraLateralBotones);
         }
@@ -179,7 +200,7 @@ namespace Presentacion.FBase
 
         public virtual void EjecutarMostrarEliminados()
         {
-            throw new NotImplementedException();
+            ActualizarDatos(dgvGrilla, txtBuscar.Text, cbxEstaEliminado, BarraLateralBotones);
         }
     }
 }

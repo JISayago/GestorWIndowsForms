@@ -78,7 +78,7 @@ namespace Presentacion.FBase
             }
         }
 
-        public virtual void CargarDatos(object entidadId)
+        public virtual void CargarDatos(long? entidadId)
         {
             
         }

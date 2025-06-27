@@ -56,6 +56,62 @@ namespace Presentacion.Core.Empleado
 
         }
 
+        public override void CargarDatos(long? entidadId)
+        {
+            if (!entidadId.HasValue)
+            {
+                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+
+                this.Close();
+            }
+
+            if (TipoOperacion == TipoOperacion.Eliminar)
+            {
+                btnLimpiar.Enabled = false;
+            }
+
+            var empleado = _empleadoServicio.ObtenerEmpleadoPorId(entidadId.Value);
+
+            MessageBox.Show($"{empleado.Nombre}");
+
+
+            /*
+            // Datos Personales
+            nudLegajo.Minimum = 1;
+            nudLegajo.Maximum = 9999999999;
+            nudLegajo.Value = empleado.Legajo;
+
+            txtApellido.Text = empleado.Apellido;
+            txtNombre.Text = empleado.Nombre;
+            txtDni.Text = empleado.Dni;
+            txtTelefono.Text = empleado.Telefono;
+            txtCelular.Text = empleado.Celular;
+            txtEmail.Text = empleado.Email;
+            txtCuil.Text = empleado.Cuil;
+            dtpFechaNacimiento.Value = empleado.FechaNacimiento;
+            imgFotoEmpleado.Image = Convertir_Bytes_Imagen(empleado.Foto);
+
+            // Datos Direccion
+            txtCalle.Text = empleado.Calle;
+            txtNumero.Text = empleado.Numero.ToString();
+            txtPiso.Text = empleado.Piso;
+            txtDepartamento.Text = empleado.Dpto;
+            txtCasa.Text = empleado.Casa;
+            txtLote.Text = empleado.Lote;
+            txtManzana.Text = empleado.Mza;
+            txtBarrio.Text = empleado.Barrio;
+
+            CargarComboBox(cmbProvincia, _provinciaServicio.ObtenerProvincia(string.Empty), "Descripcion", "Id");
+
+            cmbProvincia.SelectedItem = empleado.ProvinciaId;
+
+            if (cmbProvincia.Items.Count > 0)
+            {
+                CargarComboBox(cmbLocalidad, _localidadServicio.ObtenerLocalidadPorProvincia(empleado.ProvinciaId, string.Empty), "Descripcion", "Id");
+            }
+            */
+        }
+
 
         public override bool EjecutarComandoNuevo()
         {

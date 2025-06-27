@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AccesoDatos.Entidades;
 using Servicios.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Servicios.LogicaNegocio.Empleado
 {
@@ -73,9 +74,110 @@ namespace Servicios.LogicaNegocio.Empleado
             throw new NotImplementedException();
         }
 
-        public IEnumerable<EmpleadoDTO> ObtenerEmpleados()
+        public EmpleadoDTO ObtenerEmpleadoPorId(long personaId)
         {
-            throw new NotImplementedException();
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var empleado = context.Empleados
+                 .AsNoTracking()
+                 .Include(e => e.Persona)
+                 .Where(e => e.Persona != null && e.PersonaId == personaId && !e.Persona.EstaEliminado)
+                 .Select(e => new EmpleadoDTO
+                 {
+                     PersonaId = e.PersonaId,
+                     Nombre = e.Persona.Nombre,
+                     Apellido = e.Persona.Apellido,
+                     Dni = e.Persona.Dni,
+                     Cuil = e.Persona.Cuil,
+                     Telefono = e.Persona.Telefono,
+                     Telefono2 = e.Persona.Telefono2,
+                     Email = e.Persona.Email,
+                     Direccion = e.Persona.Direccion,
+                     FechaNacimiento = e.Persona.FechaNacimiento,
+                     EstaEliminado = e.Persona.EstaEliminado,
+                     Legajo = e.Legajo,
+                     FechaIngreso = e.FechaIngreso,
+                     FechaEgreso = e.FechaEgreso,
+                     Estado = e.Estado,
+                     Username = e.Username,
+                     Pass = e.Pass,
+                     UsuarioEstaHabilitado = e.UsuarioEstaHabilitado
+                 })
+                 .FirstOrDefault();
+            return empleado;
+        }
+
+        public IEnumerable<EmpleadoDTO> ObtenerEmpleados(string cadenabuscar)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var empleados = context.Empleados
+                .AsNoTracking()
+                .Include(e => e.Persona)
+                  .Where(e => e.Persona != null && !e.Persona.EstaEliminado && (e.Persona.Nombre.Contains(cadenabuscar)
+                                || e.Persona.Apellido.Contains(cadenabuscar)
+                                || e.Persona.Dni == (cadenabuscar)
+                                || e.Persona.Email == (cadenabuscar)))
+                .Select(e => new EmpleadoDTO
+                {
+                    PersonaId = e.PersonaId,
+                    Nombre = e.Persona.Nombre,
+                    Apellido = e.Persona.Apellido,
+                    Dni = e.Persona.Dni,
+                    Cuil = e.Persona.Cuil,
+                    Telefono = e.Persona.Telefono,
+                    Telefono2 = e.Persona.Telefono2,
+                    Email = e.Persona.Email,
+                    Direccion = e.Persona.Direccion,
+                    FechaNacimiento = e.Persona.FechaNacimiento,
+                    EstaEliminado = e.Persona.EstaEliminado,
+                    Legajo = e.Legajo,
+                    FechaIngreso = e.FechaIngreso,
+                    FechaEgreso = e.FechaEgreso,
+                    Estado = e.Estado,
+                    Username = e.Username,
+                    Pass = e.Pass,
+                    UsuarioEstaHabilitado = e.UsuarioEstaHabilitado
+                })
+                .ToList();
+
+            return empleados;
+        }
+
+        public IEnumerable<EmpleadoDTO> ObtenerEmpleadosEliminados(string cadenabuscar)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var empleados = context.Empleados
+                .AsNoTracking()
+                .Include(e => e.Persona)
+                .Where(e => e.Persona != null && e.Persona.EstaEliminado && (e.Persona.Nombre.Contains(cadenabuscar)
+                                || e.Persona.Apellido.Contains(cadenabuscar)
+                                || e.Persona.Dni == (cadenabuscar)
+                                || e.Persona.Email == (cadenabuscar)))
+                .Select(e => new EmpleadoDTO
+                {
+                    PersonaId = e.PersonaId,
+                    Nombre = e.Persona.Nombre,
+                    Apellido = e.Persona.Apellido,
+                    Dni = e.Persona.Dni,
+                    Cuil = e.Persona.Cuil,
+                    Telefono = e.Persona.Telefono,
+                    Telefono2 = e.Persona.Telefono2,
+                    Email = e.Persona.Email,
+                    Direccion = e.Persona.Direccion,
+                    FechaNacimiento = e.Persona.FechaNacimiento,
+                    EstaEliminado = e.Persona.EstaEliminado,
+                    Legajo = e.Legajo,
+                    FechaIngreso = e.FechaIngreso,
+                    FechaEgreso = e.FechaEgreso,
+                    Estado = e.Estado,
+                    Username = e.Username,
+                    Pass = e.Pass,
+                    UsuarioEstaHabilitado = e.UsuarioEstaHabilitado
+                })
+                .ToList();
+
+            return empleados;
         }
     }
 }

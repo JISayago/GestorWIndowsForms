@@ -10,10 +10,11 @@ namespace Servicios.LogicaNegocio.Empleado
 {
     public interface IEmpleadoServicio
     {
-        IEnumerable<EmpleadoDTO> ObtenerEmpleados();
+        IEnumerable<EmpleadoDTO> ObtenerEmpleados(string cadenabuscar);
+        IEnumerable<EmpleadoDTO> ObtenerEmpleadosEliminados(string cadenabuscar);
 
         EstadoOperacion Insertar(EmpleadoDTO empleadoDto);
-
+        EmpleadoDTO ObtenerEmpleadoPorId(long personaId);
         void Modificar(EmpleadoDTO empleadoDto);
 
         void Eliminar(long empleadoId);
