@@ -21,7 +21,7 @@ namespace Servicios.LogicaNegocio.Empleado
                     .Include(e => e.Persona)
                     .FirstOrDefault(x => x.PersonaId == empleadoId);
 
-                if (empleadoEliminar == null || empleadoEliminar.Persona.EstaEliminado) throw new Exception($"{empleadoEliminar.Persona} No se encontro el Empleado");
+                if (empleadoEliminar == null || empleadoEliminar.Persona.EstaEliminado) throw new Exception($" No se encontro el Empleado: {empleadoEliminar.Persona}");
 
                 empleadoEliminar.Persona.EstaEliminado = true;
 
@@ -29,7 +29,7 @@ namespace Servicios.LogicaNegocio.Empleado
             return new EstadoOperacion
             {
                 Exitoso = true,
-                Mensaje = $"El empleado {empleadoEliminar.Persona.Nombre} fue eliminado correctamente."
+                Mensaje = $"El empleado {empleadoEliminar.Persona.Nombre} {empleadoEliminar.Persona.Apellido} fue eliminado correctamente."
             };
         }
 
@@ -139,7 +139,7 @@ namespace Servicios.LogicaNegocio.Empleado
             return new EstadoOperacion
             {
                 Exitoso = true,
-                Mensaje = $"Empleado modificado correctamente.FIN:{empleadoEditar.FechaIngreso}, FNA:{persona.FechaNacimiento}",
+                Mensaje = "Empleado modificado correctamente.",
                 EmpleadoId = empleadoEditar.PersonaId
             };
         }

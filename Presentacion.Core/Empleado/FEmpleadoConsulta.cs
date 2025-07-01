@@ -45,7 +45,7 @@ namespace Presentacion.Core.Empleado
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
-            grilla.Columns["PersonaId"].Visible = true;
+            grilla.Columns["PersonaId"].Visible = false;
             grilla.Columns["PersonaId"].Name = "Id";
 
             grilla.Columns["Legajo"].Visible = true;

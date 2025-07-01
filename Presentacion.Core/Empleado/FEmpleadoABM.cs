@@ -87,7 +87,6 @@ namespace Presentacion.Core.Empleado
             dtpFNacimiento.Value = (DateTime)empleado.FechaNacimiento;
             txtTelefono.Text = empleado.Telefono;
             dtpFIngreso.Value = empleado.FechaIngreso;
-            if (entidadId.HasValue) { MessageBox.Show($"FI:{empleado.FechaIngreso}, FN: {empleado.FechaNacimiento}");}
         }
 
 
@@ -118,6 +117,7 @@ namespace Presentacion.Core.Empleado
             };
 
             var response = _empleadoServicio.Insertar(nuevoEmpleado);
+
             if (response.Exitoso)
             {
                 MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,

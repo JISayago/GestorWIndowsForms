@@ -89,8 +89,8 @@ namespace Presentacion.FBase
                 case TipoOperacion.Nuevo:
                     if (EjecutarComandoNuevo())
                     {
-                        MessageBox.Show(@"Los datos se Guardaron Correctamente.", @"Atención", MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+                        /*MessageBox.Show(@"Los datos se Guardaron Correctamente.", @"Atención", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);*/
                         Limpiar(this);
                         RealizoAlgunaOperacion = true;
                     }
@@ -98,8 +98,8 @@ namespace Presentacion.FBase
                 case TipoOperacion.Eliminar:
                     if (EjecutarComandoEliminar())
                     {
-                        MessageBox.Show(@"Los datos se Eliminaron Correctamente.", @"Atención", MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+                        /*MessageBox.Show(@"Los datos se Eliminaron Correctamente.", @"Atención", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);*/
                         RealizoAlgunaOperacion = true;
                         this.Close();
                     }
@@ -107,8 +107,8 @@ namespace Presentacion.FBase
                 case TipoOperacion.Modificar:
                     if (EjecutarComandoModificar())
                     {
-                        MessageBox.Show(@"Los datos se Modificaron Correctamente.", @"Atención", MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+                        /*MessageBox.Show(@"Los datos se Modificaron Correctamente.", @"Atención", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);*/
                         RealizoAlgunaOperacion = true;
                         this.Close();
                     }
