@@ -1,4 +1,5 @@
 ﻿using Presentacion.FBase;
+using Presentacion.FormulariosBase.Helpers;
 using Servicios.Core.Marca;
 using Servicios.Core.Marca.DTO;
 using System;
@@ -15,11 +16,23 @@ namespace Presentacion.Core.Marca
 {
     public partial class FMarcaABM : FBaseABM
     {
-        private readonly IMarcaServicio _marcaServicio = new MarcaServicio();
+        private readonly IMarcaServicio _marcaServicio;
 
-        public FMarcaABM()
+        public override void FBaseABM_Load(object sender, EventArgs e)
+        {
+            base.FBaseABM_Load(sender, e);
+            Inicializador(EntidadID);
+        }
+
+        private void Inicializador(long? entidadID)
+        {
+
+        }
+
+        public FMarcaABM(TipoOperacion tipoOperacion, long? entidadId = null) :base(tipoOperacion,entidadId)
         {
             InitializeComponent();
+            _marcaServicio = new MarcaServicio();
         }
 
         public override void Ejectuar()
@@ -31,6 +44,6 @@ namespace Presentacion.Core.Marca
 
             _marcaServicio.Insertar(marcaNueva);
         }
-
+        
     }
 }
