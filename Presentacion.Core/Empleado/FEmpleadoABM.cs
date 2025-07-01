@@ -8,10 +8,13 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace Presentacion.Core.Empleado
 {
@@ -72,44 +75,19 @@ namespace Presentacion.Core.Empleado
 
             var empleado = _empleadoServicio.ObtenerEmpleadoPorId(entidadId.Value);
 
-            MessageBox.Show($"{empleado.Nombre}");
-
-
-            /*
             // Datos Personales
-            nudLegajo.Minimum = 1;
-            nudLegajo.Maximum = 9999999999;
-            nudLegajo.Value = empleado.Legajo;
-
             txtApellido.Text = empleado.Apellido;
             txtNombre.Text = empleado.Nombre;
-            txtDni.Text = empleado.Dni;
-            txtTelefono.Text = empleado.Telefono;
-            txtCelular.Text = empleado.Celular;
-            txtEmail.Text = empleado.Email;
+            txtLegajo.Text = empleado.Legajo;
+            txtDireccion.Text = empleado.Direccion;
+            txtCelular.Text = empleado.Telefono2;
             txtCuil.Text = empleado.Cuil;
-            dtpFechaNacimiento.Value = empleado.FechaNacimiento;
-            imgFotoEmpleado.Image = Convertir_Bytes_Imagen(empleado.Foto);
-
-            // Datos Direccion
-            txtCalle.Text = empleado.Calle;
-            txtNumero.Text = empleado.Numero.ToString();
-            txtPiso.Text = empleado.Piso;
-            txtDepartamento.Text = empleado.Dpto;
-            txtCasa.Text = empleado.Casa;
-            txtLote.Text = empleado.Lote;
-            txtManzana.Text = empleado.Mza;
-            txtBarrio.Text = empleado.Barrio;
-
-            CargarComboBox(cmbProvincia, _provinciaServicio.ObtenerProvincia(string.Empty), "Descripcion", "Id");
-
-            cmbProvincia.SelectedItem = empleado.ProvinciaId;
-
-            if (cmbProvincia.Items.Count > 0)
-            {
-                CargarComboBox(cmbLocalidad, _localidadServicio.ObtenerLocalidadPorProvincia(empleado.ProvinciaId, string.Empty), "Descripcion", "Id");
-            }
-            */
+            txtDni.Text = empleado.Dni;
+            txtEmail.Text = empleado.Email;
+            dtpFNacimiento.Value = (DateTime)empleado.FechaNacimiento;
+            txtTelefono.Text = empleado.Telefono;
+            dtpFIngreso.Value = empleado.FechaIngreso;
+            if (entidadId.HasValue) { MessageBox.Show($"FI:{empleado.FechaIngreso}, FN: {empleado.FechaNacimiento}");}
         }
 
 
@@ -136,7 +114,7 @@ namespace Presentacion.Core.Empleado
                 FechaNacimiento = dtpFNacimiento.Value,
                 Telefono2 = txtCelular.Text,
                 EstaEliminado = false,
-                FechaIngreso = dtpFNacimiento.Value
+                FechaIngreso = dtpFIngreso.Value
             };
 
             var response = _empleadoServicio.Insertar(nuevoEmpleado);
@@ -152,6 +130,79 @@ namespace Presentacion.Core.Empleado
                    MessageBoxIcon.Error);
                 return false;
             }
+        }
+
+        public override bool EjecutarComandoEliminar()
+        {
+            if (!EntidadID.HasValue)
+            {
+                MessageBox.Show(@"´Por favor seleccione un empleado válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                return false;
+
+            }
+            if (TipoOperacion == TipoOperacion.Eliminar)
+            {
+               var response = _empleadoServicio.Eliminar((long)EntidadID);
+                if (response.Exitoso)
+                {
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       MessageBoxIcon.Information);
+                    return true;
+                }
+                else
+                {
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       MessageBoxIcon.Error);
+                    return false;
+                }
+               
+            }
+            return false;
+        }
+        public override bool EjecutarComandoModificar()
+        {
+            if (!EntidadID.HasValue)
+            {
+                MessageBox.Show(@"´Por favor seleccione un empleado válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                return false;
+
+            }
+            if (TipoOperacion == TipoOperacion.Modificar)
+            {
+
+                var empleadoEditar = new EmpleadoDTO
+                {
+                    Apellido = txtApellido.Text,
+                    Nombre = txtNombre.Text,
+                    Legajo = txtLegajo.Text,
+                    Direccion = txtDireccion.Text,
+                    Telefono = txtCelular.Text,
+                    Cuil = txtCuil.Text,
+                    Dni = txtDni.Text,
+                    Email = txtEmail.Text,
+                    FechaNacimiento = dtpFNacimiento.Value,
+                    Telefono2 = txtCelular.Text,
+                    EstaEliminado = false,
+                    FechaIngreso = dtpFIngreso.Value
+                };
+
+                    var response = _empleadoServicio.Modificar(empleadoEditar,EntidadID);
+
+                    if (response.Exitoso)
+                    {
+                        MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                           MessageBoxIcon.Information);
+                        return true;
+                    }
+                    else
+                    {
+                        MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                           MessageBoxIcon.Error);
+                        return false;
+                    }
+
+            }
+            return false;
         }
     }
 }

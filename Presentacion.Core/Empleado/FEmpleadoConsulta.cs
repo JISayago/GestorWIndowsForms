@@ -90,15 +90,32 @@ namespace Presentacion.Core.Empleado
                 toolStrip.Enabled = true;
             }
         }
+
+        public override void EjecutarBtnModificar()
+        {
+            base.EjecutarBtnModificar();
+            if (puedeEjecutarComando)
+            {
+                var FormularioABMEmpleado = new FEmpleadoABM(TipoOperacion.Modificar, entidadID);
+                FormularioABMEmpleado.ShowDialog();
+                ActualizarSegunOperacion(FormularioABMEmpleado.RealizoAlgunaOperacion);
+            }
+        }
         public override void EjecutarBtnEliminar()
         {
             base.EjecutarBtnEliminar();
-            MessageBox.Show($"{respuestaTest}");
             if (puedeEjecutarComando)
             {
                 var FormularioABMEmpleado = new FEmpleadoABM(TipoOperacion.Eliminar, entidadID);
                 FormularioABMEmpleado.ShowDialog();
-                // ActualizarSegunOperacion(FormularioABMEmpleado.RealizoAlgunaOperacion);
+                ActualizarSegunOperacion(FormularioABMEmpleado.RealizoAlgunaOperacion);
+            }
+        }
+        private void ActualizarSegunOperacion(bool realizoOperacion)
+        {
+            if (realizoOperacion)
+            {
+                ActualizarDatos(dgvGrilla, string.Empty, cbxEstaEliminado, BarraLateralBotones);
             }
         }
         public override void EjecutarMostrarEliminados()

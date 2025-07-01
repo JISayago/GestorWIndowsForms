@@ -228,12 +228,10 @@
         #endregion
 
         private Panel panel1;
-        private ToolStrip BarraLateralBotones;
         private Panel panel2;
         private TextBox txtBuscar;
         private Label label1;
         private Button btnBuscar;
-        private CheckBox cbxEstaEliminado;
         private ToolStripButton btnNuevo;
         private ToolStripButton btnEliminar;
         private ToolStripButton btnModificar;
@@ -244,5 +242,7 @@
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripButton btnSalir;
         protected DataGridView dgvGrilla;
+        protected CheckBox cbxEstaEliminado;
+        protected ToolStrip BarraLateralBotones;
     }
 }

@@ -15,8 +15,8 @@ namespace Servicios.LogicaNegocio.Empleado
 
         EstadoOperacion Insertar(EmpleadoDTO empleadoDto);
         EmpleadoDTO ObtenerEmpleadoPorId(long personaId);
-        void Modificar(EmpleadoDTO empleadoDto);
+        EstadoOperacion Modificar(EmpleadoDTO empleadoDto, long? empleadoId);
 
-        void Eliminar(long empleadoId);
+        EstadoOperacion Eliminar(long empleadoId);
     }
 }

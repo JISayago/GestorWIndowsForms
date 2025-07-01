@@ -14,9 +14,23 @@ namespace Servicios.LogicaNegocio.Empleado
 {
     public class EmpleadoServicio : IEmpleadoServicio
     {
-        public void Eliminar(long empleadoId)
+        public EstadoOperacion Eliminar(long empleadoId)
         {
-            throw new NotImplementedException();
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+            var empleadoEliminar = context.Empleados
+                    .Include(e => e.Persona)
+                    .FirstOrDefault(x => x.PersonaId == empleadoId);
+
+                if (empleadoEliminar == null || empleadoEliminar.Persona.EstaEliminado) throw new Exception($"{empleadoEliminar.Persona} No se encontro el Empleado");
+
+                empleadoEliminar.Persona.EstaEliminado = true;
+
+                context.SaveChanges();
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = $"El empleado {empleadoEliminar.Persona.Nombre} fue eliminado correctamente."
+            };
         }
 
         public EstadoOperacion Insertar(EmpleadoDTO empleadoDto)
@@ -69,9 +83,65 @@ namespace Servicios.LogicaNegocio.Empleado
 
         }
 
-        public void Modificar(EmpleadoDTO empleadoDto)
+        public EstadoOperacion Modificar(EmpleadoDTO empleadoDto, long? empleadoId)
         {
-            throw new NotImplementedException();
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var empleadoEditar = context.Empleados
+                .Include(e => e.Persona)
+                .FirstOrDefault(x => x.PersonaId == empleadoId);
+
+            if (empleadoEditar == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Empleado no encontrado."
+                };
+            }
+
+            bool dniDuplicado = context.Personas
+                .Any(p => p.Dni == empleadoDto.Dni && p.PersonaId != empleadoEditar.PersonaId);
+
+            if (dniDuplicado)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Ya existe una persona con el mismo DNI."
+                };
+            }
+
+            var persona = empleadoEditar.Persona;
+            persona.Nombre = empleadoDto.Nombre;
+            persona.Apellido = empleadoDto.Apellido;
+            persona.Dni = empleadoDto.Dni;
+            persona.Cuil = empleadoDto.Cuil;
+            persona.Telefono = empleadoDto.Telefono;
+            persona.Telefono2 = empleadoDto.Telefono2;
+            persona.Email = empleadoDto.Email;
+            persona.Direccion = empleadoDto.Direccion;
+            persona.EstaEliminado = empleadoDto.EstaEliminado;
+            persona.FechaNacimiento = empleadoDto.FechaNacimiento;
+
+            empleadoEditar.Legajo = empleadoDto.Legajo;
+            empleadoEditar.FechaIngreso = empleadoDto.FechaIngreso;
+            empleadoEditar.FechaEgreso = empleadoDto.FechaEgreso;
+            empleadoEditar.Estado = empleadoDto.Estado;
+            empleadoEditar.Username = "";//deberia ser Null
+            empleadoEditar.Pass = "";//deberia ser Null
+            empleadoEditar.UsuarioEstaHabilitado = empleadoDto.UsuarioEstaHabilitado;
+
+
+            
+            context.SaveChanges();
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = $"Empleado modificado correctamente.FIN:{empleadoEditar.FechaIngreso}, FNA:{persona.FechaNacimiento}",
+                EmpleadoId = empleadoEditar.PersonaId
+            };
         }
 
         public EmpleadoDTO ObtenerEmpleadoPorId(long personaId)
