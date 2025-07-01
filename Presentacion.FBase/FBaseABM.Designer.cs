@@ -34,6 +34,7 @@
             btnLimpiar = new ToolStripButton();
             toolStripSeparatorSpring = new ToolStripLabel();
             btnSalir = new ToolStripButton();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             panel1.SuspendLayout();
             BarraSuperiorBotones.SuspendLayout();
             SuspendLayout();
@@ -106,6 +107,7 @@
             Name = "FBaseABM";
             Text = "FBaseABM";
             Load += FBaseABM_Load;
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             BarraSuperiorBotones.ResumeLayout(false);
@@ -119,8 +121,8 @@
         private Panel panel1;
         private ToolStrip BarraSuperiorBotones;
         private ToolStripButton btnEjecutar;
-        private ToolStripButton btnLimpiar;
+        private ToolStripSeparator toolStripSeparator1;
         private ToolStripButton btnSalir;
-        private ToolStripLabel toolStripSeparatorSpring;
+        protected ToolStripButton btnLimpiar;
     }
 }

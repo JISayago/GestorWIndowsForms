@@ -1,6 +1,7 @@
 using AccesoDatos;
 using AccesoDatos.Config;
 using Presentacion.AccesoAlSistema;
+using Presentacion.Core.Empleado;
 using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Seguridad;
@@ -20,34 +21,35 @@ namespace Presentacion
 
             ApplicationConfiguration.Initialize();
 
-            // Verificar conexiÛn antes de iniciar la app
-             if (!PruebaConexion.ProbarConexion())
-             {
-                 MessageBox.Show(
-                     "No se pudo establecer conexiÛn con la base de datos.\nLa aplicaciÛn se cerrar·.",
-                     "Error de conexiÛn",
-                     MessageBoxButtons.OK,
-                     MessageBoxIcon.Error
-                 );
-                 return;
-             }
-             else
-             {
-                 var context = new GestorContextDBFactory().CreateDbContext(null);
-                 DatosUsuarioInicial.Inicializar(context);
+            // Verificar conexi√≥n antes de iniciar la app
+            if (!PruebaConexion.ProbarConexion())
+            {
+                MessageBox.Show(
+                    "No se pudo establecer conexi√≥n con la base de datos.\nLa aplicaci√≥n se cerrar√°.",
+                    "Error de conexi√≥n",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+            else
+            {
+                var context = new GestorContextDBFactory().CreateDbContext(null);
+                DatosUsuarioInicial.Inicializar(context);
 
-                 var login = new LoginForm();
-                 login.ShowDialog();
+                var login = new LoginForm();
+                login.ShowDialog();
 
-                 if (login.PuedeAccederAlSistema)
-                 {
-                     Application.Run(new Form1());
-                 }
-                 else
-                 {
-                     Application.Exit();
-                 }
-             }
+                if (login.PuedeAccederAlSistema)
+                {
+                    Application.Run(new VentanaPrincipal());
+                }
+                else
+                {
+                    Application.Exit();
+                }
+            }     
+
         }
-       }
+    }
 }

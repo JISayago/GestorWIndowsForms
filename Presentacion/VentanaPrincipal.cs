@@ -3,10 +3,10 @@ using Presentacion.FormulariosBase.Helpers;
 
 namespace Presentacion
 {
-    public partial class Form1 : Form
+    public partial class VentanaPrincipal : Form
     {
-
-        public Form1()
+      
+        public VentanaPrincipal()
         {
             InitializeComponent();
 

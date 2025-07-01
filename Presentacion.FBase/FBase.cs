@@ -9,19 +9,15 @@ namespace Presentacion.FBase
         public FBase()
         {
             InitializeComponent();
-            if (!DesignMode)
-            {
                 _listaControlesObligatorios = new List<ControlDTO>();
+            this.components = new System.ComponentModel.Container();
+            this.error = new System.Windows.Forms.ErrorProvider(this.components);
 
-                // Si tienes más lógica (suscribir eventos, cargar imágenes...)
-                // muévela aquí dentro o al Load
-                this.Load += FBase_Load;
-            }
+ 
         }
         private void FBase_Load(object sender, EventArgs e)
         {
-            // Aquí ya estás en tiempo de ejecución, no en diseño.
-            // Suscribe eventos, asigna Image, etc.
+        
         }
         public virtual void DesactivarControles(object obj)
         {
@@ -233,7 +229,7 @@ namespace Presentacion.FBase
             }
         }
 
-        public virtual void Control_Validated(object sender, System.EventArgs e)
+       public virtual void Control_Validated(object sender, System.EventArgs e)
         {
             if (sender is TextBox)
             {

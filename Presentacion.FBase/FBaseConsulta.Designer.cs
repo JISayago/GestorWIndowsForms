@@ -62,12 +62,16 @@
             // 
             // BarraLateralBotones
             // 
+            BarraLateralBotones.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             BarraLateralBotones.BackColor = SystemColors.AppWorkspace;
-            BarraLateralBotones.Dock = DockStyle.Left;
+            BarraLateralBotones.CanOverflow = false;
+            BarraLateralBotones.Dock = DockStyle.None;
             BarraLateralBotones.Items.AddRange(new ToolStripItem[] { btnNuevo, btnEliminar, btnModificar, toolStripSeparator1, btnActualizar, toolStripSeparator2, btnImprimir, toolStripSeparator3, btnSalir });
+            BarraLateralBotones.LayoutStyle = ToolStripLayoutStyle.VerticalStackWithOverflow;
             BarraLateralBotones.Location = new Point(0, 0);
             BarraLateralBotones.Name = "BarraLateralBotones";
-            BarraLateralBotones.Size = new Size(64, 537);
+            BarraLateralBotones.Size = new Size(64, 276);
+            BarraLateralBotones.Stretch = true;
             BarraLateralBotones.TabIndex = 0;
             BarraLateralBotones.Text = "toolStrip1";
             // 
@@ -76,7 +80,7 @@
             btnNuevo.Image = (Image)resources.GetObject("btnNuevo.Image");
             btnNuevo.ImageTransparentColor = Color.Magenta;
             btnNuevo.Name = "btnNuevo";
-            btnNuevo.Size = new Size(61, 35);
+            btnNuevo.Size = new Size(62, 35);
             btnNuevo.Text = "Nuevo";
             btnNuevo.TextImageRelation = TextImageRelation.TextAboveImage;
             btnNuevo.Click += btnNuevo_Click;
@@ -86,7 +90,7 @@
             btnEliminar.Image = (Image)resources.GetObject("btnEliminar.Image");
             btnEliminar.ImageTransparentColor = Color.Magenta;
             btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(61, 35);
+            btnEliminar.Size = new Size(62, 35);
             btnEliminar.Text = "Eliminar";
             btnEliminar.TextImageRelation = TextImageRelation.TextAboveImage;
             btnEliminar.Click += btnEliminar_Click;
@@ -96,7 +100,7 @@
             btnModificar.Image = (Image)resources.GetObject("btnModificar.Image");
             btnModificar.ImageTransparentColor = Color.Magenta;
             btnModificar.Name = "btnModificar";
-            btnModificar.Size = new Size(61, 35);
+            btnModificar.Size = new Size(62, 35);
             btnModificar.Text = "Modificar";
             btnModificar.TextImageRelation = TextImageRelation.TextAboveImage;
             btnModificar.Click += btnModificar_Click;
@@ -104,14 +108,14 @@
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(61, 6);
+            toolStripSeparator1.Size = new Size(62, 6);
             // 
             // btnActualizar
             // 
             btnActualizar.Image = (Image)resources.GetObject("btnActualizar.Image");
             btnActualizar.ImageTransparentColor = Color.Magenta;
             btnActualizar.Name = "btnActualizar";
-            btnActualizar.Size = new Size(61, 35);
+            btnActualizar.Size = new Size(62, 35);
             btnActualizar.Text = "Actualizar";
             btnActualizar.TextImageRelation = TextImageRelation.TextAboveImage;
             btnActualizar.Click += btnActualizar_Click;
@@ -119,14 +123,14 @@
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(61, 6);
+            toolStripSeparator2.Size = new Size(62, 6);
             // 
             // btnImprimir
             // 
             btnImprimir.Image = (Image)resources.GetObject("btnImprimir.Image");
             btnImprimir.ImageTransparentColor = Color.Magenta;
             btnImprimir.Name = "btnImprimir";
-            btnImprimir.Size = new Size(61, 35);
+            btnImprimir.Size = new Size(62, 35);
             btnImprimir.Text = "Imprimir";
             btnImprimir.TextImageRelation = TextImageRelation.TextAboveImage;
             btnImprimir.Click += btnImprimir_Click;
@@ -134,7 +138,7 @@
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new Size(61, 6);
+            toolStripSeparator3.Size = new Size(62, 6);
             // 
             // btnSalir
             // 
@@ -142,7 +146,7 @@
             btnSalir.Image = (Image)resources.GetObject("btnSalir.Image");
             btnSalir.ImageTransparentColor = Color.Magenta;
             btnSalir.Name = "btnSalir";
-            btnSalir.Size = new Size(61, 35);
+            btnSalir.Size = new Size(62, 35);
             btnSalir.Text = "Salir";
             btnSalir.TextImageRelation = TextImageRelation.TextAboveImage;
             btnSalir.Click += btnSalir_Click;
@@ -185,6 +189,7 @@
             // 
             // dgvGrilla
             // 
+            dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvGrilla.Location = new Point(108, 50);
             dgvGrilla.Name = "dgvGrilla";
@@ -196,9 +201,9 @@
             cbxEstaEliminado.AutoSize = true;
             cbxEstaEliminado.Location = new Point(104, 19);
             cbxEstaEliminado.Name = "cbxEstaEliminado";
-            cbxEstaEliminado.Size = new Size(186, 19);
+            cbxEstaEliminado.Size = new Size(211, 19);
             cbxEstaEliminado.TabIndex = 3;
-            cbxEstaEliminado.Text = "Mostrar elementos eliminados";
+            cbxEstaEliminado.Text = "Mostrar sólo elementos eliminados";
             cbxEstaEliminado.UseVisualStyleBackColor = true;
             cbxEstaEliminado.CheckedChanged += cbxEstaEliminado_CheckedChanged;
             // 
@@ -206,13 +211,17 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoScroll = true;
+            AutoSize = true;
             ClientSize = new Size(784, 561);
             Controls.Add(cbxEstaEliminado);
             Controls.Add(dgvGrilla);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Name = "FBaseConsulta";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FBaseConsulta";
+            WindowState = FormWindowState.Maximized;
             Load += FBaseConsulta_Load;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
@@ -226,15 +235,10 @@
         }
 
         #endregion
-
-        private Panel panel1;
-        private ToolStrip BarraLateralBotones;
         private Panel panel2;
         private TextBox txtBuscar;
         private Label label1;
         private Button btnBuscar;
-        private DataGridView dgvGrilla;
-        private CheckBox cbxEstaEliminado;
         private ToolStripButton btnNuevo;
         private ToolStripButton btnEliminar;
         private ToolStripButton btnModificar;
@@ -244,5 +248,9 @@
         private ToolStripButton btnImprimir;
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripButton btnSalir;
+        protected DataGridView dgvGrilla;
+        protected CheckBox cbxEstaEliminado;
+        protected Panel panel1;
+        protected ToolStrip BarraLateralBotones;
     }
 }
