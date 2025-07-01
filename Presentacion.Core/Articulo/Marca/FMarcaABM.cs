@@ -1,7 +1,8 @@
 ﻿using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
-using Servicios.Core.Marca;
-using Servicios.Core.Marca.DTO;
+
+using Servicios.Marca;
+using Servicios.Marca.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,7 +36,7 @@ namespace Presentacion.Core.Marca
             _marcaServicio = new MarcaServicio();
         }
 
-        public override void Ejectuar()
+        /*public override void Ejectuar()
         {
             var marcaNueva = new MarcaDTO
             {
@@ -43,7 +44,7 @@ namespace Presentacion.Core.Marca
             };
 
             _marcaServicio.Insertar(marcaNueva);
-        }
+        }*/
         
     }
 }

@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Presentacion.FBase\Presentacion.FBase.csproj" />
-    <ProjectReference Include="..\Servicios.Core\Servicios.Core.csproj" />
+    <ProjectReference Include="..\Servicios\Servicios.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 using Presentacion.Core.Marca;
+using Presentacion.FormulariosBase.Helpers;
 
 namespace Presentacion
 {
@@ -13,7 +14,7 @@ namespace Presentacion
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var fmarca = new FMarcaABM();
+            var fmarca = new FMarcaABM(TipoOperacion.Nuevo);
             fmarca.Show();
         }
     }

@@ -130,13 +130,13 @@ namespace Presentacion.FBase
             return false;
         }
 
-        public  void btnEjecutar_Click(object sender, EventArgs e)
+        /*public  void btnEjecutar_Click(object sender, EventArgs e)
         {
             Ejectuar();
         }
 
         public virtual void Ejectuar()
         {
-        }
+        }*/
     }
 }

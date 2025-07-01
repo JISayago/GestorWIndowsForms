@@ -80,9 +80,9 @@
             // 
             // toolStripSeparatorSpring
             // 
-            toolStripSeparator1.BackColor = SystemColors.ActiveCaption;
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(6, 25);
+            toolStripSeparatorSpring.BackColor = SystemColors.ActiveCaption;
+            toolStripSeparatorSpring.Name = "toolStripSeparator1";
+            toolStripSeparatorSpring.Size = new Size(6, 25);
             // 
             // btnSalir
             // 
