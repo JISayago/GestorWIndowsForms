@@ -1,4 +1,5 @@
 ﻿using AccesoDatos;
+using AccesoDatos.Entidades;
 using Servicios.Marca.DTO;
 using System;
 using System.Collections.Generic;
@@ -57,12 +58,46 @@ namespace Servicios.Marca
 
         public IEnumerable<MarcaDTO> ObtenerMarca(string cadenaBuscar)
         {
-            throw new NotImplementedException();
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            return context.Marcas
+                .Where(x => /*!x.EstaEliminado &&*/ x.Nombre.Contains(cadenaBuscar))
+                .Select(x => new MarcaDTO
+                {
+                    Id = x.MarcaId,
+                    Nombre = x.Nombre
+                })
+                .ToList();
         }
 
-        public MarcaDTO ObtenerPorId(long marca)
+        public IEnumerable<MarcaDTO> ObtenerMarcaEliminada(string cadenaBuscar)
         {
-            throw new NotImplementedException();
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            return context.Marcas
+                .Where(x => /*x.EstaEliminado &&*/ x.Nombre.Contains(cadenaBuscar))
+                .Select(x => new MarcaDTO
+                {
+                    Id = x.MarcaId,
+                    Nombre = x.Nombre
+                })
+                .ToList();
+        }
+
+        public MarcaDTO ObtenerPorId(long marcaId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var marca = context.Marcas.FirstOrDefault(x => x.MarcaId == marcaId);
+
+            /*if (marca == null)
+                throw new Exception("No se encontró la marca.");
+            */
+            return new MarcaDTO
+            {
+                Id = marca.MarcaId,
+                Nombre = marca.Nombre
+            };
         }
     }
 }

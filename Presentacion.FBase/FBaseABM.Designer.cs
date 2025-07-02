@@ -32,7 +32,6 @@
             BarraSuperiorBotones = new ToolStrip();
             btnEjecutar = new ToolStripButton();
             btnLimpiar = new ToolStripButton();
-            toolStripSeparatorSpring = new ToolStripLabel();
             btnSalir = new ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             panel1.SuspendLayout();
@@ -52,7 +51,7 @@
             // BarraSuperiorBotones
             // 
             BarraSuperiorBotones.BackColor = SystemColors.AppWorkspace;
-            BarraSuperiorBotones.Items.AddRange(new ToolStripItem[] { btnEjecutar, btnLimpiar, toolStripSeparatorSpring, btnSalir });
+            BarraSuperiorBotones.Items.AddRange(new ToolStripItem[] { btnEjecutar, btnLimpiar, /*toolStripSeparator1,*/ btnSalir });
             BarraSuperiorBotones.Location = new Point(0, 0);
             BarraSuperiorBotones.Name = "BarraSuperiorBotones";
             BarraSuperiorBotones.Size = new Size(784, 28);
@@ -78,15 +77,15 @@
             btnLimpiar.Text = "Limpiar";
             btnLimpiar.TextImageRelation = TextImageRelation.ImageAboveText;
             btnLimpiar.Click += btnLimpiar_Click;
+            /*// 
+            // toolStripSeparator1
             // 
-            // toolStripSeparatorSpring
-            // 
-            toolStripSeparatorSpring.BackColor = SystemColors.ActiveCaption;
-            toolStripSeparatorSpring.Name = "toolStripSeparator1";
-            toolStripSeparatorSpring.Size = new Size(6, 25);
+            toolStripSeparator1.BackColor = SystemColors.ActiveCaption;
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(6, 25);
             // 
             // btnSalir
-            // 
+            //*/ 
             btnSalir.Alignment = ToolStripItemAlignment.Right;
             btnSalir.BackColor = SystemColors.ButtonHighlight;
             btnSalir.ImageTransparentColor = Color.Magenta;

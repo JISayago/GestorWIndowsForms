@@ -11,7 +11,7 @@ namespace Servicios.Marca
     {
         IEnumerable<MarcaDTO> ObtenerMarca(string cadenaBuscar);
 
-        //IEnumerable<MarcaDTO> ObtenerMarcaEliminada(string cadenaBuscar);
+        IEnumerable<MarcaDTO> ObtenerMarcaEliminada(string cadenaBuscar);
 
         MarcaDTO ObtenerPorId(long marca);
 
