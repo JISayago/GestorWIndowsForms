@@ -10,6 +10,6 @@ namespace Servicios.Helpers
     {
         public bool Exitoso { get; set; }   
         public string Mensaje { get; set; }
-        public long? EmpleadoId { get; set; }  
+        public long? EntidadId { get; set; }  
     }
 }

@@ -11,7 +11,7 @@ namespace Servicios.LogicaNegocio.Empleado.Rol.DTO
     {
         public long RolId { get; set; }
         public string Nombre { get; set; }
-        public string DetalleRol { get; set; }
-        public string CodigoRol { get; set; }
+        public long DetalleRol { get; set; }
+        public long CodigoRol { get; set; }
     }
 }
