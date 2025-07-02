@@ -21,14 +21,16 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
                 return new EstadoOperacion
                 {
                     Exitoso = false,
-                    Mensaje = "Ya existe una persona con el mismo DNI."
+                    Mensaje = "Ya existe una Rol con el mismo Codigo."
                 };
 
             var rol = new AccesoDatos.Entidades.Rol
             {
                 Nombre = rolDto.Nombre,
-                DetalleRol = rolDto.DetalleRol,
-                CodigoRol = rolDto.CodigoRol,
+                /*DetalleRol = rolDto.DetalleRol,
+                CodigoRol = rolDto.CodigoRol,*/
+                DetalleRol = 1,
+                CodigoRol = 1,
                
             };
 
@@ -37,7 +39,7 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
             return new EstadoOperacion
             {
                 Exitoso = true,
-                Mensaje = "Empleado creado correctamente.",
+                Mensaje = "Rol creado correctamente.",
                 EntidadId = rol.RolId
             };
         }
