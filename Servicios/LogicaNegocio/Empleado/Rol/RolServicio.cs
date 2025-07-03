@@ -46,10 +46,8 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
             var rol = new AccesoDatos.Entidades.Rol
             {
                 Nombre = rolDto.Nombre,
-                /*DetalleRol = rolDto.DetalleRol,
-                CodigoRol = rolDto.CodigoRol,*/
-                DetalleRol = 1,
-                CodigoRol = 1,
+                DetalleRol = rolDto.DetalleRol,
+                CodigoRol = rolDto.CodigoRol,
                
             };
 
