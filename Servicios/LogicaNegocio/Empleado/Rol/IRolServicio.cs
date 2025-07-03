@@ -11,11 +11,11 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
 {
     public  interface IRolServicio
     {
-        //IEnumerable<RolDTO> ObtenerRoles(string cadenabuscar);
-        //IEnumerable<RolDTO> ObtenerRolesEliminados(string cadenabuscar);
+        IEnumerable<RolDTO> ObtenerRoles(string cadenabuscar);
+        IEnumerable<RolDTO> ObtenerRolesEliminados(string cadenabuscar);
         EstadoOperacion Insertar(RolDTO rolDto);
-        //EmpleadoDTO ObtenerRolPorId(long rolId);
-        //EstadoOperacion Modificar(RolDTO rolDto, long? rolId);
-        //EstadoOperacion Eliminar(long rolId);
+        RolDTO ObtenerRolPorId(long rolId);
+        EstadoOperacion Modificar(RolDTO rolDto, long? rolId);
+        EstadoOperacion Eliminar(long rolId);
     }
 }

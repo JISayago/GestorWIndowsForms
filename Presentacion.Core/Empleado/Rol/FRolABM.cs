@@ -80,6 +80,100 @@ namespace Presentacion.Core.Empleado.Rol
                 return false;
             }
         }
+        public override void Inicializador(long? entidadId)
+        {
+
+        }
+
+        public override void CargarDatos(long? entidadId)
+        {
+            if (!entidadId.HasValue)
+            {
+                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+
+                this.Close();
+            }
+
+            if (TipoOperacion == TipoOperacion.Eliminar)
+            {
+                btnLimpiar.Enabled = false;
+            }
+
+            var rol = _rolServicio.ObtenerRolPorId(entidadId.Value);
+
+            // Datos Personales
+            txtNombre.Text = rol.Nombre;
+            txtCodigoRol.Text = Convert.ToString(rol.CodigoRol);
+            txtDescripcionRol.Text = Convert.ToString(rol.DetalleRol);
+            
+        }
+
+
+        public override bool EjecutarComandoEliminar()
+        {
+            if (!EntidadID.HasValue)
+            {
+                MessageBox.Show(@"´Por favor seleccione un Rol válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                return false;
+
+            }
+            if (TipoOperacion == TipoOperacion.Eliminar)
+            {
+                var response = _rolServicio.Eliminar((long)EntidadID);
+                if (response.Exitoso)
+                {
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       MessageBoxIcon.Information);
+                    return true;
+                }
+                else
+                {
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       MessageBoxIcon.Error);
+                    return false;
+                }
+
+            }
+            return false;
+        }
+        public override bool EjecutarComandoModificar()
+        {
+            if (!EntidadID.HasValue)
+            {
+                MessageBox.Show(@"´Por favor seleccione un Rol válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                return false;
+
+            }
+            if (TipoOperacion == TipoOperacion.Modificar)
+            {
+
+                var rolEditar = new RolDTO
+                {
+                    Nombre = txtNombre.Text,
+                    //CodigoRol = txtCodigoRol.Text,
+                    //DetalleRol = txtDescripcionRol.Text,
+                    CodigoRol = Convert.ToInt64(txtCodigoRol.Text),
+                    DetalleRol = Convert.ToInt64(txtDescripcionRol.Text),
+                };
+
+                var response = _rolServicio.Modificar(rolEditar, EntidadID);
+
+                if (response.Exitoso)
+                {
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       MessageBoxIcon.Information);
+                    return true;
+                }
+                else
+                {
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       MessageBoxIcon.Error);
+                    return false;
+                }
+
+            }
+            return false;
+        }
 
     }
 }
