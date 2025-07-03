@@ -57,7 +57,7 @@ namespace Servicios.LogicaNegocio.Articulo.Categoria
             {
                 Exitoso = true,
                 Mensaje = "Categoria creada correctamente.",
-                Id = nuevaCategoria.CategoriaId
+                EntidadId = nuevaCategoria.CategoriaId
             };
         }
 
@@ -100,7 +100,7 @@ namespace Servicios.LogicaNegocio.Articulo.Categoria
             {
                 Exitoso = true,
                 Mensaje = "Categoria modificada correctamente.",
-                Id = categoriaEditar.CategoriaId
+                EntidadId = categoriaEditar.CategoriaId
             };
         }
 
