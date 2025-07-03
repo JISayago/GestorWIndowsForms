@@ -49,7 +49,7 @@ namespace Presentacion.Core.Empleado.Rol
 
             grilla.Columns["Nombre"].Visible = true;
             grilla.Columns["Nombre"].Width = 100;
-            
+
             grilla.Columns["CodigoRol"].Visible = true;
             grilla.Columns["CodigoRol"].Width = 100;
             grilla.Columns["DetalleRol"].HeaderText = "Código";
@@ -74,7 +74,7 @@ namespace Presentacion.Core.Empleado.Rol
             {
                 grilla.DataSource = _rolServicio.ObtenerRoles(cadenaBuscar);
                 toolStrip.Enabled = true;
-               
+
             }
         }
         public override void EjecutarBtnModificar()
@@ -108,5 +108,16 @@ namespace Presentacion.Core.Empleado.Rol
         {
         }
 
+        private void btnAsignacionRoles_Click(object sender, EventArgs e)
+        {
+            EjecutarBtnAsignacionRoles();
+        }
+
+        private void EjecutarBtnAsignacionRoles()
+        {
+                var FormularioAsignacionRolesEmpleados = new FAsignacionRolesEmpleados();
+                FormularioAsignacionRolesEmpleados.ShowDialog();
+                //ActualizarSegunOperacion(FormularioAsignacionRolesEmpleados.RealizoAlgunaOperacion);
+        }
     }
 }
