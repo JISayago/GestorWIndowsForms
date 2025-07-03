@@ -58,10 +58,8 @@ namespace Presentacion.Core.Empleado.Rol
             var nuevoRol = new RolDTO
             {
                 Nombre = txtNombre.Text,
-                //CodigoRol = txtCodigoRol.Text,
-                //DetalleRol = txtDescripcionRol.Text,
-                CodigoRol = 1,
-                DetalleRol = 1,
+                CodigoRol = txtCodigoRol.Text,
+                DetalleRol = txtDescripcionRol.Text,
             };
             
 
@@ -152,8 +150,8 @@ namespace Presentacion.Core.Empleado.Rol
                     Nombre = txtNombre.Text,
                     //CodigoRol = txtCodigoRol.Text,
                     //DetalleRol = txtDescripcionRol.Text,
-                    CodigoRol = Convert.ToInt64(txtCodigoRol.Text),
-                    DetalleRol = Convert.ToInt64(txtDescripcionRol.Text),
+                    CodigoRol = txtCodigoRol.Text,
+                    DetalleRol = txtDescripcionRol.Text,
                 };
 
                 var response = _rolServicio.Modificar(rolEditar, EntidadID);

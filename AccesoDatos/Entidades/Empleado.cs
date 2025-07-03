@@ -17,8 +17,8 @@ namespace AccesoDatos.Entidades
         public DateTime? FechaEgreso { get; set; } // Puede ser null si sigue trabajando
 
         public int Estado { get; set; }
-        public string Username { get; set; } // tiene que aceptar null
-        public string Pass { get; set; }// tiene que aceptar null
+        public string? Username { get; set; }
+        public string? Pass { get; set; }
         public bool UsuarioEstaHabilitado { get; set; } = true;
 
         // Relaciones

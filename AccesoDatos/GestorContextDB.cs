@@ -316,10 +316,13 @@ namespace AccesoDatos
                     .IsRequired();
 
                 entity.Property(e => e.DetalleRol)
-                    .HasColumnName("detalleRol");
+                    .HasColumnName("detalleRol")
+                    .HasMaxLength(200)
+                    .IsRequired();
 
                 entity.Property(e => e.CodigoRol)
                     .HasColumnName("codigo_rol")
+                    .HasMaxLength(50)
                     .IsRequired();
 
                 entity.HasIndex(e => e.CodigoRol)
@@ -358,7 +361,7 @@ namespace AccesoDatos
             {
                 entity.ToTable("Marcas");
 
-                entity.HasKey(e => e.MarcaId);
+                entity.HasKey(e => e.CategoriaId);
                 entity.Property(e => e.Nombre)
                       .IsRequired()
                       .HasMaxLength(100);

@@ -31,22 +31,22 @@
             menuStrip1 = new MenuStrip();
             toolStripMenuItem1 = new ToolStripMenuItem();
             aDMINISTRACIONToolStripMenuItem = new ToolStripMenuItem();
-            aRTICULOToolStripMenuItem = new ToolStripMenuItem();
             empleadoToolStripMenuItem = new ToolStripMenuItem();
+            tipoPagoToolStripMenuItem = new ToolStripMenuItem();
+            gastosToolStripMenuItem = new ToolStripMenuItem();
+            aRTICULOToolStripMenuItem = new ToolStripMenuItem();
             categoriaToolStripMenuItem = new ToolStripMenuItem();
             marcaToolStripMenuItem = new ToolStripMenuItem();
-            tipoPagoToolStripMenuItem = new ToolStripMenuItem();
             articuloToolStripMenuItem1 = new ToolStripMenuItem();
+            vENTASToolStripMenuItem = new ToolStripMenuItem();
+            cONFIGToolStripMenuItem = new ToolStripMenuItem();
             lblUsuarioLogueado = new Label();
             lblNombreUsuario = new Label();
             sqlCommand1 = new Microsoft.Data.SqlClient.SqlCommand();
-            vENTASToolStripMenuItem = new ToolStripMenuItem();
-            gastosToolStripMenuItem = new ToolStripMenuItem();
             btnVenta = new Button();
             btnCaja = new Button();
             btnStock = new Button();
             btnMovimientos = new Button();
-            cONFIGToolStripMenuItem = new ToolStripMenuItem();
             dataGridView1 = new DataGridView();
             panel1 = new Panel();
             menuStrip1.SuspendLayout();
@@ -75,6 +75,24 @@
             aDMINISTRACIONToolStripMenuItem.Size = new Size(118, 20);
             aDMINISTRACIONToolStripMenuItem.Text = "ADMINISTRACION";
             // 
+            // empleadoToolStripMenuItem
+            // 
+            empleadoToolStripMenuItem.Name = "empleadoToolStripMenuItem";
+            empleadoToolStripMenuItem.Size = new Size(128, 22);
+            empleadoToolStripMenuItem.Text = "Empleado";
+            // 
+            // tipoPagoToolStripMenuItem
+            // 
+            tipoPagoToolStripMenuItem.Name = "tipoPagoToolStripMenuItem";
+            tipoPagoToolStripMenuItem.Size = new Size(128, 22);
+            tipoPagoToolStripMenuItem.Text = "Tipo Pago";
+            // 
+            // gastosToolStripMenuItem
+            // 
+            gastosToolStripMenuItem.Name = "gastosToolStripMenuItem";
+            gastosToolStripMenuItem.Size = new Size(128, 22);
+            gastosToolStripMenuItem.Text = "Gastos";
+            // 
             // aRTICULOToolStripMenuItem
             // 
             aRTICULOToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { categoriaToolStripMenuItem, marcaToolStripMenuItem, articuloToolStripMenuItem1 });
@@ -82,17 +100,12 @@
             aRTICULOToolStripMenuItem.Size = new Size(81, 20);
             aRTICULOToolStripMenuItem.Text = "PRODUCTO";
             // 
-            // empleadoToolStripMenuItem
-            // 
-            empleadoToolStripMenuItem.Name = "empleadoToolStripMenuItem";
-            empleadoToolStripMenuItem.Size = new Size(180, 22);
-            empleadoToolStripMenuItem.Text = "Empleado";
-            // 
             // categoriaToolStripMenuItem
             // 
             categoriaToolStripMenuItem.Name = "categoriaToolStripMenuItem";
             categoriaToolStripMenuItem.Size = new Size(180, 22);
             categoriaToolStripMenuItem.Text = "Categoria";
+            categoriaToolStripMenuItem.Click += categoriaToolStripMenuItem_Click;
             // 
             // marcaToolStripMenuItem
             // 
@@ -100,17 +113,23 @@
             marcaToolStripMenuItem.Size = new Size(180, 22);
             marcaToolStripMenuItem.Text = "Marca";
             // 
-            // tipoPagoToolStripMenuItem
-            // 
-            tipoPagoToolStripMenuItem.Name = "tipoPagoToolStripMenuItem";
-            tipoPagoToolStripMenuItem.Size = new Size(180, 22);
-            tipoPagoToolStripMenuItem.Text = "Tipo Pago";
-            // 
             // articuloToolStripMenuItem1
             // 
             articuloToolStripMenuItem1.Name = "articuloToolStripMenuItem1";
             articuloToolStripMenuItem1.Size = new Size(180, 22);
             articuloToolStripMenuItem1.Text = "Articulo";
+            // 
+            // vENTASToolStripMenuItem
+            // 
+            vENTASToolStripMenuItem.Name = "vENTASToolStripMenuItem";
+            vENTASToolStripMenuItem.Size = new Size(61, 20);
+            vENTASToolStripMenuItem.Text = "VENTAS";
+            // 
+            // cONFIGToolStripMenuItem
+            // 
+            cONFIGToolStripMenuItem.Name = "cONFIGToolStripMenuItem";
+            cONFIGToolStripMenuItem.Size = new Size(72, 20);
+            cONFIGToolStripMenuItem.Text = "CONFIG??";
             // 
             // lblUsuarioLogueado
             // 
@@ -136,18 +155,6 @@
             // 
             sqlCommand1.CommandTimeout = 30;
             sqlCommand1.EnableOptimizedParameterBinding = false;
-            // 
-            // vENTASToolStripMenuItem
-            // 
-            vENTASToolStripMenuItem.Name = "vENTASToolStripMenuItem";
-            vENTASToolStripMenuItem.Size = new Size(61, 20);
-            vENTASToolStripMenuItem.Text = "VENTAS";
-            // 
-            // gastosToolStripMenuItem
-            // 
-            gastosToolStripMenuItem.Name = "gastosToolStripMenuItem";
-            gastosToolStripMenuItem.Size = new Size(180, 22);
-            gastosToolStripMenuItem.Text = "Gastos";
             // 
             // btnVenta
             // 
@@ -184,12 +191,6 @@
             btnMovimientos.TabIndex = 16;
             btnMovimientos.Text = "MOVIMIENTOS";
             btnMovimientos.UseVisualStyleBackColor = true;
-            // 
-            // cONFIGToolStripMenuItem
-            // 
-            cONFIGToolStripMenuItem.Name = "cONFIGToolStripMenuItem";
-            cONFIGToolStripMenuItem.Size = new Size(72, 20);
-            cONFIGToolStripMenuItem.Text = "CONFIG??";
             // 
             // dataGridView1
             // 

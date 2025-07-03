@@ -1,6 +1,7 @@
 using AccesoDatos;
 using AccesoDatos.Config;
 using Presentacion.AccesoAlSistema;
+using Presentacion.Core.Categoria;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
 using Presentacion.FBase;
@@ -43,7 +44,7 @@ namespace Presentacion
 
                 if (login.PuedeAccederAlSistema)
                 {
-                    Application.Run(new FEmpleadoConsulta());
+                    Application.Run(new FCategoriaConsulta());
                 }
                 else
                 {
