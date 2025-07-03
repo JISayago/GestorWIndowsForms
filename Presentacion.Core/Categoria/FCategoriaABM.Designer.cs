@@ -28,29 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
-            textBox1 = new TextBox();
+            lblCategoria = new Label();
+            txtCategoria = new TextBox();
             label2 = new Label();
             label3 = new Label();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
-            // label1
+            // lblCategoria
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 15.75F);
-            label1.Location = new Point(17, 165);
-            label1.Name = "label1";
-            label1.Size = new Size(102, 30);
-            label1.TabIndex = 1;
-            label1.Text = "Categoria";
+            lblCategoria.AutoSize = true;
+            lblCategoria.Font = new Font("Segoe UI", 15.75F);
+            lblCategoria.Location = new Point(17, 165);
+            lblCategoria.Name = "lblCategoria";
+            lblCategoria.Size = new Size(102, 30);
+            lblCategoria.TabIndex = 1;
+            lblCategoria.Text = "Categoria";
             // 
-            // textBox1
+            // txtCategoria
             // 
-            textBox1.Font = new Font("Segoe UI", 15.75F);
-            textBox1.Location = new Point(130, 162);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(219, 35);
-            textBox1.TabIndex = 2;
+            txtCategoria.Font = new Font("Segoe UI", 15.75F);
+            txtCategoria.Location = new Point(130, 162);
+            txtCategoria.Name = "txtCategoria";
+            txtCategoria.Size = new Size(219, 35);
+            txtCategoria.TabIndex = 2;
             // 
             // label2
             // 
@@ -74,25 +75,26 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(784, 450);
             Controls.Add(label3);
             Controls.Add(label2);
-            Controls.Add(textBox1);
-            Controls.Add(label1);
+            Controls.Add(txtCategoria);
+            Controls.Add(lblCategoria);
             Name = "FCategoriaABM";
             Text = "FCategoriaABM";
-            Controls.SetChildIndex(label1, 0);
-            Controls.SetChildIndex(textBox1, 0);
+            Controls.SetChildIndex(lblCategoria, 0);
+            Controls.SetChildIndex(txtCategoria, 0);
             Controls.SetChildIndex(label2, 0);
             Controls.SetChildIndex(label3, 0);
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private Label label1;
-        private TextBox textBox1;
+        private Label lblCategoria;
+        private TextBox txtCategoria;
         private Label label2;
         private Label label3;
     }
