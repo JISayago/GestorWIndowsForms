@@ -1,4 +1,5 @@
 ﻿using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Empleado.Rol;
@@ -115,7 +116,7 @@ namespace Presentacion.Core.Empleado.Rol
 
         private void EjecutarBtnAsignacionRoles()
         {
-                var FormularioAsignacionRolesEmpleados = new FAsignacionRolesEmpleados();
+                var FormularioAsignacionRolesEmpleados = new FAsignacionRolesEmpleados(TipoAsignacionRol.Nuevo);
                 FormularioAsignacionRolesEmpleados.ShowDialog();
                 //ActualizarSegunOperacion(FormularioAsignacionRolesEmpleados.RealizoAlgunaOperacion);
         }
