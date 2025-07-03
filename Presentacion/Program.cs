@@ -2,6 +2,7 @@ using AccesoDatos;
 using AccesoDatos.Config;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Empleado;
+using Presentacion.Core.Empleado.Rol;
 using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Seguridad;
@@ -42,7 +43,7 @@ namespace Presentacion
 
                 if (login.PuedeAccederAlSistema)
                 {
-                    Application.Run(new VentanaPrincipal());
+                    Application.Run(new FRolConsulta());
                 }
                 else
                 {

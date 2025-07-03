@@ -78,7 +78,7 @@ namespace Servicios.LogicaNegocio.Empleado
             {
                 Exitoso = true,
                 Mensaje = "Empleado creado correctamente.",
-                Id = empleado.PersonaId
+                EntidadId = empleado.PersonaId
             };
 
         }
@@ -140,7 +140,7 @@ namespace Servicios.LogicaNegocio.Empleado
             {
                 Exitoso = true,
                 Mensaje = "Empleado modificado correctamente.",
-                Id = empleadoEditar.PersonaId
+                EntidadId = empleadoEditar.PersonaId
             };
         }
 
