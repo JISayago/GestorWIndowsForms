@@ -78,19 +78,19 @@
             // empleadoToolStripMenuItem
             // 
             empleadoToolStripMenuItem.Name = "empleadoToolStripMenuItem";
-            empleadoToolStripMenuItem.Size = new Size(128, 22);
+            empleadoToolStripMenuItem.Size = new Size(180, 22);
             empleadoToolStripMenuItem.Text = "Empleado";
             // 
             // tipoPagoToolStripMenuItem
             // 
             tipoPagoToolStripMenuItem.Name = "tipoPagoToolStripMenuItem";
-            tipoPagoToolStripMenuItem.Size = new Size(128, 22);
+            tipoPagoToolStripMenuItem.Size = new Size(180, 22);
             tipoPagoToolStripMenuItem.Text = "Tipo Pago";
             // 
             // gastosToolStripMenuItem
             // 
             gastosToolStripMenuItem.Name = "gastosToolStripMenuItem";
-            gastosToolStripMenuItem.Size = new Size(128, 22);
+            gastosToolStripMenuItem.Size = new Size(180, 22);
             gastosToolStripMenuItem.Text = "Gastos";
             // 
             // aRTICULOToolStripMenuItem
@@ -103,20 +103,20 @@
             // categoriaToolStripMenuItem
             // 
             categoriaToolStripMenuItem.Name = "categoriaToolStripMenuItem";
-            categoriaToolStripMenuItem.Size = new Size(180, 22);
+            categoriaToolStripMenuItem.Size = new Size(125, 22);
             categoriaToolStripMenuItem.Text = "Categoria";
             categoriaToolStripMenuItem.Click += categoriaToolStripMenuItem_Click;
             // 
             // marcaToolStripMenuItem
             // 
             marcaToolStripMenuItem.Name = "marcaToolStripMenuItem";
-            marcaToolStripMenuItem.Size = new Size(180, 22);
+            marcaToolStripMenuItem.Size = new Size(125, 22);
             marcaToolStripMenuItem.Text = "Marca";
             // 
             // articuloToolStripMenuItem1
             // 
             articuloToolStripMenuItem1.Name = "articuloToolStripMenuItem1";
-            articuloToolStripMenuItem1.Size = new Size(180, 22);
+            articuloToolStripMenuItem1.Size = new Size(125, 22);
             articuloToolStripMenuItem1.Text = "Articulo";
             // 
             // vENTASToolStripMenuItem
@@ -134,12 +134,12 @@
             // lblUsuarioLogueado
             // 
             lblUsuarioLogueado.AutoSize = true;
-            lblUsuarioLogueado.Font = new Font("Segoe UI", 11.25F);
+            lblUsuarioLogueado.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblUsuarioLogueado.Location = new Point(12, 537);
             lblUsuarioLogueado.Name = "lblUsuarioLogueado";
-            lblUsuarioLogueado.Size = new Size(133, 20);
+            lblUsuarioLogueado.Size = new Size(144, 21);
             lblUsuarioLogueado.TabIndex = 2;
-            lblUsuarioLogueado.Text = "Usuario Logueado:";
+            lblUsuarioLogueado.Text = "Usuario Logueado :";
             // 
             // lblNombreUsuario
             // 
@@ -147,9 +147,8 @@
             lblNombreUsuario.Font = new Font("Segoe UI", 11.25F);
             lblNombreUsuario.Location = new Point(156, 537);
             lblNombreUsuario.Name = "lblNombreUsuario";
-            lblNombreUsuario.Size = new Size(36, 20);
+            lblNombreUsuario.Size = new Size(0, 20);
             lblNombreUsuario.TabIndex = 3;
-            lblNombreUsuario.Text = "user";
             // 
             // sqlCommand1
             // 
