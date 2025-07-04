@@ -1,5 +1,6 @@
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Categoria;
+using Presentacion.Core.Empleado;
 using ServicioAccesoSistema.AccesoSistema;
 
 namespace Presentacion
@@ -28,6 +29,13 @@ namespace Presentacion
         {
             var fmarca = new FCategoriaConsulta();
             fmarca.Show();
+        }
+
+        private void empleadoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fEmpleado = new FEmpleadoConsulta();
+            fEmpleado.Show();
+
         }
     }
 }

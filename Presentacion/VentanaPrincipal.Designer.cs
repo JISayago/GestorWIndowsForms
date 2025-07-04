@@ -80,6 +80,7 @@
             empleadoToolStripMenuItem.Name = "empleadoToolStripMenuItem";
             empleadoToolStripMenuItem.Size = new Size(180, 22);
             empleadoToolStripMenuItem.Text = "Empleado";
+            empleadoToolStripMenuItem.Click += empleadoToolStripMenuItem_Click;
             // 
             // tipoPagoToolStripMenuItem
             // 
