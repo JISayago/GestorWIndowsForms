@@ -49,6 +49,7 @@
             btnMovimientos = new Button();
             dataGridView1 = new DataGridView();
             panel1 = new Panel();
+            rolesToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel1.SuspendLayout();
@@ -77,6 +78,7 @@
             // 
             // empleadoToolStripMenuItem
             // 
+            empleadoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { rolesToolStripMenuItem });
             empleadoToolStripMenuItem.Name = "empleadoToolStripMenuItem";
             empleadoToolStripMenuItem.Size = new Size(180, 22);
             empleadoToolStripMenuItem.Text = "Empleado";
@@ -211,6 +213,13 @@
             panel1.Size = new Size(750, 40);
             panel1.TabIndex = 18;
             // 
+            // rolesToolStripMenuItem
+            // 
+            rolesToolStripMenuItem.Name = "rolesToolStripMenuItem";
+            rolesToolStripMenuItem.Size = new Size(180, 22);
+            rolesToolStripMenuItem.Text = "Roles";
+            rolesToolStripMenuItem.Click += rolesToolStripMenuItem_Click;
+            // 
             // VentanaPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -255,5 +264,6 @@
         private ToolStripMenuItem cONFIGToolStripMenuItem;
         private DataGridView dataGridView1;
         private Panel panel1;
+        private ToolStripMenuItem rolesToolStripMenuItem;
     }
 }

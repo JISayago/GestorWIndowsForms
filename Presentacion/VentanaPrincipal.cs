@@ -1,6 +1,7 @@
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Categoria;
 using Presentacion.Core.Empleado;
+using Presentacion.Core.Empleado.Rol;
 using ServicioAccesoSistema.AccesoSistema;
 
 namespace Presentacion
@@ -36,6 +37,12 @@ namespace Presentacion
             var fEmpleado = new FEmpleadoConsulta();
             fEmpleado.Show();
 
+        }
+
+        private void rolesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var FRoles = new FRolConsulta();
+            FRoles.Show();
         }
     }
 }
