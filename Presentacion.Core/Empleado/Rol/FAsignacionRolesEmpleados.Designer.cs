@@ -28,14 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
+            cbxEmpleado = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
+            // 
+            // cbxEmpleado
+            // 
+            cbxEmpleado.FormattingEnabled = true;
+            cbxEmpleado.Location = new Point(121, 60);
+            cbxEmpleado.Name = "cbxEmpleado";
+            cbxEmpleado.Size = new Size(315, 23);
+            cbxEmpleado.TabIndex = 0;
             // 
             // FAsignacionRolesEmpleados
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(cbxEmpleado);
             Name = "FAsignacionRolesEmpleados";
             Text = "FAsignacionRolesEmpleados";
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
@@ -43,5 +53,7 @@
         }
 
         #endregion
+
+        private ComboBox cbxEmpleado;
     }
 }

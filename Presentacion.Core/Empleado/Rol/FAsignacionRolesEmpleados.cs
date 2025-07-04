@@ -35,15 +35,21 @@ namespace Presentacion.Core.Empleado.Rol
             EntidadID = entidadID;
             RealizoAlgunaOperacion = false;
 
-            if (TipoAsignacionRol == TipoAsignacionRol.Existente)
+            var empleados = _empleadoServicio.ObtenerEmpleados(string.Empty);
+            CargarComboBox(cbxEmpleado, empleados, "Nombre", "PersonaId");
+
+            if (tipoAsignacionRol == TipoAsignacionRol.Existente)
             {
                 CargarDatos(entidadID);
-            }
 
-           //            AgregarControlesObligatorios(txtNombre, "Nombre del Rol");
-           // AgregarControlesObligatorios(txtCodigoRol, "Código del Rol");
-            //AgregarControlesObligatorios(txtDescripcionRol, "Descripcion del Rol");
+                if (entidadID.HasValue && empleados.Any(e => e.PersonaId == entidadID.Value))
+                {
+                    cbxEmpleado.SelectedValue = entidadID.Value;
+                    cbxEmpleado.Enabled = false;
+                }
+            }
         }
+
 
         private void CargarDatos(long? entidadId)
         {
@@ -66,6 +72,12 @@ namespace Presentacion.Core.Empleado.Rol
                 MessageBox.Show($"Cargar Datos de Empelado {empleado.Apellido}", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             
+        }
+        public  void CargarComboBox(ComboBox cmb, object datos, string propiedadMostrar, string propiedadDevolver)
+        {
+            cmb.DataSource = datos;
+            cmb.DisplayMember = propiedadMostrar;
+            cmb.ValueMember = propiedadDevolver;
         }
     }
 }
