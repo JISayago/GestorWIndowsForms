@@ -20,9 +20,9 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
             var rolEliminar = context.Roles
                     .FirstOrDefault(x => x.RolId == rolId);
 
-            if (rolEliminar == null /*|| rolEliminar.EstaEliminado*/) throw new Exception($" No se encontro el Rol: {rolEliminar.Nombre}");
+            if (rolEliminar == null || rolEliminar.EstaEliminado) throw new Exception($" No se encontro el Rol: {rolEliminar.Nombre}");
 
-            //rolEliminar.EstaEliminado = true;
+            rolEliminar.EstaEliminado = true;
 
             context.SaveChanges();
             return new EstadoOperacion
@@ -97,7 +97,7 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
 
             var roles = context.Roles
                 .AsNoTracking()
-                .Where(e => e.Nombre.Contains(cadenabuscar)) // || e.CodigoRol.Contains(cadenabuscar) !e.EstaEliminado
+                .Where(e => e.Nombre.Contains(cadenabuscar) && !e.EstaEliminado)
                 .Select(e => new RolDTO
                 {
                     RolId = e.RolId,
@@ -117,7 +117,7 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
 
             var roles = context.Roles
                 .AsNoTracking()
-                .Where(e => e.Nombre.Contains(cadenabuscar)) // || e.CodigoRol.Contains(cadenabuscar) e.EstaEliminado)
+                .Where(e => e.Nombre.Contains(cadenabuscar) && e.EstaEliminado)
                 .Select(e => new RolDTO
                 {
                     RolId = e.RolId,

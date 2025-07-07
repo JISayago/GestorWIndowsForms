@@ -106,6 +106,7 @@ namespace Presentacion.Core.Empleado.Rol
         }
         public override void EjecutarMostrarEliminados()
         {
+            base.EjecutarMostrarEliminados();
         }
 
         private void btnAsignacionRoles_Click(object sender, EventArgs e)
