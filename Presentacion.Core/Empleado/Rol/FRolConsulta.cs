@@ -53,7 +53,7 @@ namespace Presentacion.Core.Empleado.Rol
 
             grilla.Columns["CodigoRol"].Visible = true;
             grilla.Columns["CodigoRol"].Width = 100;
-            grilla.Columns["DetalleRol"].HeaderText = "Código";
+            grilla.Columns["CodigoRol"].HeaderText = "Código";
 
             grilla.Columns["DetalleRol"].Visible = true;
             grilla.Columns["DetalleRol"].HeaderText = "Detalle";

@@ -44,7 +44,7 @@ namespace Presentacion
 
                 if (login.PuedeAccederAlSistema)
                 {
-                    Application.Run(new FRolConsulta());
+                    Application.Run(new FEmpleadoConsulta());
                 }
                 else
                 {
