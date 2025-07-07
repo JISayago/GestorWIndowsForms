@@ -4,14 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicios.LogicaNegocio.Articulo.Categoria.DTO
+namespace Servicios.LogicaNegocio.Articulo.Marca.DTO
 {
-    public class CategoriaDTO
+    public class MarcaDTO
     {
         public long Id { get; set; }
-
         public string Nombre { get; set; }
-
         public bool EstaEliminado { get; set; }
 
     }
