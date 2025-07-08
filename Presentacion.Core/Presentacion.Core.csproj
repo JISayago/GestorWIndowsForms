@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Marca\" />
+    <Compile Remove="Marca\**" />
+    <EmbeddedResource Remove="Marca\**" />
+    <None Remove="Marca\**" />
   </ItemGroup>
 
   <ItemGroup>

@@ -32,6 +32,7 @@
             toolStripMenuItem1 = new ToolStripMenuItem();
             aDMINISTRACIONToolStripMenuItem = new ToolStripMenuItem();
             empleadoToolStripMenuItem = new ToolStripMenuItem();
+            rolesToolStripMenuItem = new ToolStripMenuItem();
             tipoPagoToolStripMenuItem = new ToolStripMenuItem();
             gastosToolStripMenuItem = new ToolStripMenuItem();
             aRTICULOToolStripMenuItem = new ToolStripMenuItem();
@@ -49,7 +50,6 @@
             btnMovimientos = new Button();
             dataGridView1 = new DataGridView();
             panel1 = new Panel();
-            rolesToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel1.SuspendLayout();
@@ -80,20 +80,27 @@
             // 
             empleadoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { rolesToolStripMenuItem });
             empleadoToolStripMenuItem.Name = "empleadoToolStripMenuItem";
-            empleadoToolStripMenuItem.Size = new Size(180, 22);
+            empleadoToolStripMenuItem.Size = new Size(128, 22);
             empleadoToolStripMenuItem.Text = "Empleado";
             empleadoToolStripMenuItem.Click += empleadoToolStripMenuItem_Click;
+            // 
+            // rolesToolStripMenuItem
+            // 
+            rolesToolStripMenuItem.Name = "rolesToolStripMenuItem";
+            rolesToolStripMenuItem.Size = new Size(102, 22);
+            rolesToolStripMenuItem.Text = "Roles";
+            rolesToolStripMenuItem.Click += rolesToolStripMenuItem_Click;
             // 
             // tipoPagoToolStripMenuItem
             // 
             tipoPagoToolStripMenuItem.Name = "tipoPagoToolStripMenuItem";
-            tipoPagoToolStripMenuItem.Size = new Size(180, 22);
+            tipoPagoToolStripMenuItem.Size = new Size(128, 22);
             tipoPagoToolStripMenuItem.Text = "Tipo Pago";
             // 
             // gastosToolStripMenuItem
             // 
             gastosToolStripMenuItem.Name = "gastosToolStripMenuItem";
-            gastosToolStripMenuItem.Size = new Size(180, 22);
+            gastosToolStripMenuItem.Size = new Size(128, 22);
             gastosToolStripMenuItem.Text = "Gastos";
             // 
             // aRTICULOToolStripMenuItem
@@ -106,20 +113,21 @@
             // categoriaToolStripMenuItem
             // 
             categoriaToolStripMenuItem.Name = "categoriaToolStripMenuItem";
-            categoriaToolStripMenuItem.Size = new Size(125, 22);
+            categoriaToolStripMenuItem.Size = new Size(180, 22);
             categoriaToolStripMenuItem.Text = "Categoria";
             categoriaToolStripMenuItem.Click += categoriaToolStripMenuItem_Click;
             // 
             // marcaToolStripMenuItem
             // 
             marcaToolStripMenuItem.Name = "marcaToolStripMenuItem";
-            marcaToolStripMenuItem.Size = new Size(125, 22);
+            marcaToolStripMenuItem.Size = new Size(180, 22);
             marcaToolStripMenuItem.Text = "Marca";
+            marcaToolStripMenuItem.Click += marcaToolStripMenuItem_Click;
             // 
             // articuloToolStripMenuItem1
             // 
             articuloToolStripMenuItem1.Name = "articuloToolStripMenuItem1";
-            articuloToolStripMenuItem1.Size = new Size(125, 22);
+            articuloToolStripMenuItem1.Size = new Size(180, 22);
             articuloToolStripMenuItem1.Text = "Articulo";
             // 
             // vENTASToolStripMenuItem
@@ -212,13 +220,6 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(750, 40);
             panel1.TabIndex = 18;
-            // 
-            // rolesToolStripMenuItem
-            // 
-            rolesToolStripMenuItem.Name = "rolesToolStripMenuItem";
-            rolesToolStripMenuItem.Size = new Size(180, 22);
-            rolesToolStripMenuItem.Text = "Roles";
-            rolesToolStripMenuItem.Click += rolesToolStripMenuItem_Click;
             // 
             // VentanaPrincipal
             // 
