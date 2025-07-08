@@ -59,6 +59,7 @@ namespace Presentacion.AccesoAlSistema
                         Nombre = uLogeado.Nombre,
                         Apellido = uLogeado.Apellido,
                         Username = uLogeado.Username,
+
                     };
                     MessageBox.Show(response.Mensaje, "Ingreso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     PuedeAccederAlSistema = true;

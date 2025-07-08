@@ -29,9 +29,10 @@ namespace Presentacion
 
         private void categoriaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var fmarca = new FCategoriaConsulta();
 
-            fmarca.Show();
+            var fCategoria = new FCategoriaConsulta();
+
+            fCategoria.Show();
         }
 
         private void empleadoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -45,6 +46,13 @@ namespace Presentacion
         {
             var FRoles = new FRolConsulta();
             FRoles.Show();
+        }
+
+        private void marcaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fmarca = new FMarcaConsulta();
+
+            fmarca.Show();
         }
     }
 }
