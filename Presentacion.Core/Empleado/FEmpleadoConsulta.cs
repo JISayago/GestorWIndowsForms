@@ -1,4 +1,6 @@
-﻿using Presentacion.FBase;
+﻿using Presentacion.Core.Empleado.Rol;
+using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Empleado;
 using System;
@@ -123,6 +125,42 @@ namespace Presentacion.Core.Empleado
             base.EjecutarMostrarEliminados();
         }
 
+        private void btnAsignacionRoles_Click(object sender, EventArgs e)
+        {
+            ControlCargaExistencaDatos();
+            if (puedeEjecutarComando)
+            {
+            EjecutarAsignacionRoles();
+            }
+        }
 
+        private void EjecutarAsignacionRoles()
+        {
+            var FormularioAsignacionRolesEmpleados = new FAsignacionRolesEmpleados(TipoAsignacionRol.Existente, entidadID);
+            FormularioAsignacionRolesEmpleados.ShowDialog();
+            //ActualizarSegunOperacion(FormularioAsignacionRolesEmpleados.RealizoAlgunaOperacion);
+        }
+
+        public void ControlCargaExistencaDatos()
+        {
+            if (dgvGrilla.RowCount > 0)
+            {
+                if (!entidadID.HasValue)
+                {
+                    MessageBox.Show("Por favor seleccione un registro.");
+                    puedeEjecutarComando = false;
+                    return;
+                }
+                else
+                {
+                    puedeEjecutarComando = true;
+                }
+            }
+            else
+            {
+                MessageBox.Show("No hay Datos Cargados.");
+            }
+        }
     }
 }
+
