@@ -1,8 +1,8 @@
 ﻿using Azure;
 using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
-using Servicios.LogicaNegocio.Articulo.Categoria;
-using Servicios.LogicaNegocio.Articulo.Categoria.DTO;
+using Servicios.LogicaNegocio.Articulo.Marca;
+using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,11 +13,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Presentacion.Core.Categoria
+namespace Presentacion.Core.Articulo.Marca
 {
-    public partial class FCategoriaABM : FBaseABM
+    public partial class FMarcaABM : FBaseABM
     {
-        private readonly ICategoriaServicio _CategoriaServicio;
+        private readonly IMarcaServicio _marcaServicio;
 
 
         public override void FBaseABM_Load(object sender, EventArgs e)
@@ -26,12 +26,12 @@ namespace Presentacion.Core.Categoria
             Inicializador(EntidadID);
         }
 
-        public FCategoriaABM(TipoOperacion tipoOperacion, long? entidadId = null)
+        public FMarcaABM(TipoOperacion tipoOperacion, long? entidadId = null)
             : base(tipoOperacion, entidadId)
         {
             InitializeComponent();
 
-            _CategoriaServicio = new CategoriaServicio();
+            _marcaServicio = new MarcaServicio();
 
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
             {
@@ -43,15 +43,15 @@ namespace Presentacion.Core.Categoria
                 DesactivarControles(this);
             }
 
-            AgregarControlesObligatorios(txtCategoria, "Categoria");
+            AgregarControlesObligatorios(txtMarca, "Marca");
         }
 
         public override void Inicializador(long? entidadId)
         {
             /*if (entidadId.HasValue) return;
 
-            txtCategoria.KeyPress += Validacion.NoSimbolos;
-            txtCategoria.KeyPress += Validacion.NoNumeros;
+            txtMarca.KeyPress += Validacion.NoSimbolos;
+            txtMarca.KeyPress += Validacion.NoNumeros;
             */
         }
 
@@ -77,11 +77,11 @@ namespace Presentacion.Core.Categoria
                 btnLimpiar.Enabled = false;
             }
 
-            var Categoria = _CategoriaServicio.ObtenerPorId(entidadId.Value);
+            var marca = _marcaServicio.ObtenerPorId(entidadId.Value);
 
-            if (Categoria != null)
+            if (marca != null)
             {
-                txtCategoria.Text = Categoria.Nombre;
+                txtMarca.Text = marca.Nombre;
             }
             else
             {
@@ -98,15 +98,13 @@ namespace Presentacion.Core.Categoria
                     MessageBoxIcon.Error);
                 return false;
             }
-
-            var CategoriaNueva = new CategoriaDTO
+            var marcaNueva = new MarcaDTO
             {
-                Nombre = txtCategoria.Text,
+                Nombre = txtMarca.Text,
                 EstaEliminado = false
 
             };
-
-            var response = _CategoriaServicio.Insertar(CategoriaNueva);
+            var response = _marcaServicio.Insertar(marcaNueva);
 
             if (response.Exitoso)
             {
@@ -127,13 +125,13 @@ namespace Presentacion.Core.Categoria
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show(@"´Por favor seleccione una categoria válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(@"´Por favor seleccione una marca válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
 
             }
             if (TipoOperacion == TipoOperacion.Eliminar)
             {
-                var response = _CategoriaServicio.Eliminar((long)EntidadID);
+                var response = _marcaServicio.Eliminar((long)EntidadID);
                 if (response.Exitoso)
                 {
                     MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
@@ -149,6 +147,7 @@ namespace Presentacion.Core.Categoria
 
             }
             return false;
+
         }
 
         public override bool EjecutarComandoModificar()
@@ -163,16 +162,17 @@ namespace Presentacion.Core.Categoria
             {
                 if (!EntidadID.HasValue)
                 {
-                    MessageBox.Show(@"´Por favor seleccione un empleado válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    MessageBox.Show(@"´Por favor seleccione un marca válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return false;
 
                 }
-                var CategoriaModificar = new CategoriaDTO
+                
+                var MarcaModificar = new MarcaDTO
                 {
                     Id = EntidadID.Value,
-                    Nombre = txtCategoria.Text,
+                    Nombre = txtMarca.Text,
                 };
-                var response = _CategoriaServicio.Modificar(CategoriaModificar);
+                var response = _marcaServicio.Modificar(MarcaModificar);
 
                 if (response.Exitoso)
                 {
@@ -189,6 +189,7 @@ namespace Presentacion.Core.Categoria
 
             }
             return true;
+
         }
     }
 }

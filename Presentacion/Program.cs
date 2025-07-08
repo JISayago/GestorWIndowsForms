@@ -45,6 +45,7 @@ namespace Presentacion
                 if (login.PuedeAccederAlSistema)
                 {
                     Application.Run(new VentanaPrincipal(login._usuarioLogeado));
+
                 }
                 else
                 {

@@ -1,4 +1,5 @@
 using Presentacion.AccesoAlSistema;
+using Presentacion.Core.Articulo.Marca;
 using Presentacion.Core.Categoria;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
@@ -29,6 +30,7 @@ namespace Presentacion
         private void categoriaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var fmarca = new FCategoriaConsulta();
+
             fmarca.Show();
         }
 
