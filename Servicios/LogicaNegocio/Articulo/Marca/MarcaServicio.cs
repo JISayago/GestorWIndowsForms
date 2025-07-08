@@ -96,7 +96,7 @@ namespace Servicios.LogicaNegocio.Articulo.Marca
             return new EstadoOperacion
             {
                 Exitoso = true,
-                Mensaje = "Categoria modificada correctamente.",
+                Mensaje = "Marca modificada correctamente.",
                 EntidadId = marcaEditar.CategoriaId
             };
         }

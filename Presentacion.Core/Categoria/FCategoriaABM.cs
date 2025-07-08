@@ -102,7 +102,7 @@ namespace Presentacion.Core.Categoria
             var CategoriaNueva = new CategoriaDTO
             {
                 Nombre = txtCategoria.Text,
-                //EstaEliminado = false
+                EstaEliminado = false
 
             };
 
@@ -127,7 +127,7 @@ namespace Presentacion.Core.Categoria
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show(@"´Por favor seleccione un empleado válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(@"´Por favor seleccione una categoria válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
 
             }
@@ -161,13 +161,12 @@ namespace Presentacion.Core.Categoria
             }
             if (TipoOperacion == TipoOperacion.Modificar)
             {
-                /*if (!EntidadID.HasValue)
+                if (!EntidadID.HasValue)
                 {
-                    MessageBox.Show(@"´Por favor seleccione un empleado válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    MessageBox.Show(@"´Por favor seleccione un empleado válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return false;
 
                 }
-                */
                 var CategoriaModificar = new CategoriaDTO
                 {
                     Id = EntidadID.Value,

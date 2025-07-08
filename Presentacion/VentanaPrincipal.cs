@@ -1,3 +1,4 @@
+using Presentacion.Core.Articulo.Marca;
 using Presentacion.Core.Categoria;
 
 namespace Presentacion
@@ -13,7 +14,7 @@ namespace Presentacion
 
         private void categoriaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var fmarca = new FCategoriaConsulta();
+            var fmarca = new FMarcaConsulta();
 
             fmarca.Show();
         }

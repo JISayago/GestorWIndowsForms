@@ -1,4 +1,5 @@
-﻿using Presentacion.FBase;
+﻿using Azure;
+using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
@@ -100,21 +101,52 @@ namespace Presentacion.Core.Articulo.Marca
             var marcaNueva = new MarcaDTO
             {
                 Nombre = txtMarca.Text,
-                //EstaEliminado = false
+                EstaEliminado = false
 
             };
-            _marcaServicio.Insertar(marcaNueva);
-            return true;
+            var response = _marcaServicio.Insertar(marcaNueva);
+
+            if (response.Exitoso)
+            {
+                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                   MessageBoxIcon.Information);
+                return true;
+            }
+            else
+            {
+                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                   MessageBoxIcon.Error);
+                return false;
+            }
 
         }
 
         public override bool EjecutarComandoEliminar()
         {
-            if (EntidadID == null) return false;
+            if (!EntidadID.HasValue)
+            {
+                MessageBox.Show(@"´Por favor seleccione una marca válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                return false;
 
-            _marcaServicio.Eliminar(EntidadID.Value);
+            }
+            if (TipoOperacion == TipoOperacion.Eliminar)
+            {
+                var response = _marcaServicio.Eliminar((long)EntidadID);
+                if (response.Exitoso)
+                {
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       MessageBoxIcon.Information);
+                    return true;
+                }
+                else
+                {
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       MessageBoxIcon.Error);
+                    return false;
+                }
 
-            return true;
+            }
+            return false;
 
         }
 
@@ -126,13 +158,36 @@ namespace Presentacion.Core.Articulo.Marca
                     MessageBoxIcon.Error);
                 return false;
             }
-            var marcaModificar = new MarcaDTO
+            if (TipoOperacion == TipoOperacion.Modificar)
             {
-                Id = EntidadID.Value,
-                Nombre = txtMarca.Text,
-            };
-            _marcaServicio.Modificar(marcaModificar);
+                if (!EntidadID.HasValue)
+                {
+                    MessageBox.Show(@"´Por favor seleccione un marca válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    return false;
 
+                }
+                
+                var MarcaModificar = new MarcaDTO
+                {
+                    Id = EntidadID.Value,
+                    Nombre = txtMarca.Text,
+                };
+                var response = _marcaServicio.Modificar(MarcaModificar);
+
+                if (response.Exitoso)
+                {
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    return true;
+                }
+                else
+                {
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return false;
+                }
+
+            }
             return true;
 
         }
