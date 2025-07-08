@@ -11,13 +11,6 @@ namespace ServicioAccesoSistema.AccesoSistema
 {
     public class AccesoSistema : IAccesoSistema
     {
-        public string error = "";
-        public string usuarioLogeado = "-";
-        public long ObtenerId(string nombreUsuario)
-        {
-            throw new NotImplementedException();
-
-        }
         public bool VerificarSiUsuarioEstaBloqueado(string username)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -42,14 +35,17 @@ namespace ServicioAccesoSistema.AccesoSistema
             return true;
         }
 
-        public string LogeoAlSistema(string username, string pass)
+        public EstadoOperacion LogeoAlSistema(string username, string pass)
         {
             if (VerificarSiExisteUsuario(username))
             {
                 if (VerificarSiUsuarioEstaBloqueado(username))
                 {
-                    error = "Usuario bloqueado. Por favor comuníquese con un Administrador.";
-                    return error;
+                    
+                    return new EstadoOperacion{
+                        Exitoso = false,
+                        Mensaje = "Usuario bloqueado. Por favor comuníquese con un Administrador."
+                    };
                 }
 
                 using var context = new GestorContextDBFactory().CreateDbContext(null);

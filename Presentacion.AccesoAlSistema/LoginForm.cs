@@ -1,4 +1,5 @@
 ﻿using ServicioAccesoSistema.AccesoSistema;
+using Servicios.LogicaNegocio.Empleado;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,21 +15,22 @@ namespace Presentacion.AccesoAlSistema
     public partial class LoginForm : Form
     {
         private readonly IAccesoSistema _accesoSistema;
-
+        private readonly IEmpleadoServicio _empleadoServicio;
+        public UsuarioLogeado _usuarioLogeado { get; protected set; }
         public bool PuedeAccederAlSistema { get; protected set; }
                
-        private string msge;
         private string pass;
         private string username;
 
 
-        public LoginForm() : this(new AccesoSistema())
+        public LoginForm() : this(new AccesoSistema(), new EmpleadoServicio())
         {
             InitializeComponent();
         }
-        public LoginForm(IAccesoSistema accesoSistema)
+        public LoginForm(IAccesoSistema accesoSistema, IEmpleadoServicio empleadoServicio)
         {
             _accesoSistema = accesoSistema;
+            _empleadoServicio = empleadoServicio;
         }
 
         private void btnIngresar_Click(object sender, EventArgs e)
@@ -42,17 +44,28 @@ namespace Presentacion.AccesoAlSistema
             {
                 username = txtUsuario.Text;
                 pass = txtPass.Text;
-                msge = _accesoSistema.LogeoAlSistema(username, pass);
-                if (msge != "-")
+                var response = _accesoSistema.LogeoAlSistema(username, pass);
+                if (!response.Exitoso)
                 {
-                    MessageBox.Show(msge, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
-                    MessageBox.Show("Bienvenido/a", "Ingreso Correcto", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    var uLogeado = _empleadoServicio.ObtenerEmpleadoPorId((long)response.EntidadId);
+                    if (uLogeado.PersonaId != null) { 
+                    _usuarioLogeado = new UsuarioLogeado
+                    {
+                        PersonaId = uLogeado.PersonaId,
+                        Nombre = uLogeado.Nombre,
+                        Apellido = uLogeado.Apellido,
+                        Username = uLogeado.Username,
+
+                    };
+                    MessageBox.Show(response.Mensaje, "Ingreso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     PuedeAccederAlSistema = true;
-                    this.Close();
                 }
+                    this.Close();
+    }
             }
             else
             {

@@ -32,6 +32,7 @@
             toolStripMenuItem1 = new ToolStripMenuItem();
             aDMINISTRACIONToolStripMenuItem = new ToolStripMenuItem();
             empleadoToolStripMenuItem = new ToolStripMenuItem();
+            rolesToolStripMenuItem = new ToolStripMenuItem();
             tipoPagoToolStripMenuItem = new ToolStripMenuItem();
             gastosToolStripMenuItem = new ToolStripMenuItem();
             aRTICULOToolStripMenuItem = new ToolStripMenuItem();
@@ -77,9 +78,18 @@
             // 
             // empleadoToolStripMenuItem
             // 
+            empleadoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { rolesToolStripMenuItem });
             empleadoToolStripMenuItem.Name = "empleadoToolStripMenuItem";
             empleadoToolStripMenuItem.Size = new Size(128, 22);
             empleadoToolStripMenuItem.Text = "Empleado";
+            empleadoToolStripMenuItem.Click += empleadoToolStripMenuItem_Click;
+            // 
+            // rolesToolStripMenuItem
+            // 
+            rolesToolStripMenuItem.Name = "rolesToolStripMenuItem";
+            rolesToolStripMenuItem.Size = new Size(102, 22);
+            rolesToolStripMenuItem.Text = "Roles";
+            rolesToolStripMenuItem.Click += rolesToolStripMenuItem_Click;
             // 
             // tipoPagoToolStripMenuItem
             // 
@@ -112,6 +122,7 @@
             marcaToolStripMenuItem.Name = "marcaToolStripMenuItem";
             marcaToolStripMenuItem.Size = new Size(180, 22);
             marcaToolStripMenuItem.Text = "Marca";
+            marcaToolStripMenuItem.Click += marcaToolStripMenuItem_Click;
             // 
             // articuloToolStripMenuItem1
             // 
@@ -134,12 +145,12 @@
             // lblUsuarioLogueado
             // 
             lblUsuarioLogueado.AutoSize = true;
-            lblUsuarioLogueado.Font = new Font("Segoe UI", 11.25F);
+            lblUsuarioLogueado.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblUsuarioLogueado.Location = new Point(12, 537);
             lblUsuarioLogueado.Name = "lblUsuarioLogueado";
-            lblUsuarioLogueado.Size = new Size(133, 20);
+            lblUsuarioLogueado.Size = new Size(144, 21);
             lblUsuarioLogueado.TabIndex = 2;
-            lblUsuarioLogueado.Text = "Usuario Logueado:";
+            lblUsuarioLogueado.Text = "Usuario Logueado :";
             // 
             // lblNombreUsuario
             // 
@@ -147,9 +158,8 @@
             lblNombreUsuario.Font = new Font("Segoe UI", 11.25F);
             lblNombreUsuario.Location = new Point(156, 537);
             lblNombreUsuario.Name = "lblNombreUsuario";
-            lblNombreUsuario.Size = new Size(36, 20);
+            lblNombreUsuario.Size = new Size(0, 20);
             lblNombreUsuario.TabIndex = 3;
-            lblNombreUsuario.Text = "user";
             // 
             // sqlCommand1
             // 
@@ -255,5 +265,6 @@
         private ToolStripMenuItem cONFIGToolStripMenuItem;
         private DataGridView dataGridView1;
         private Panel panel1;
+        private ToolStripMenuItem rolesToolStripMenuItem;
     }
 }
