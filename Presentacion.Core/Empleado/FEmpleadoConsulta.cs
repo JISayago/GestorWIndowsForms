@@ -130,7 +130,7 @@ namespace Presentacion.Core.Empleado
             ControlCargaExistencaDatos();
             if (puedeEjecutarComando)
             {
-            EjecutarAsignacionRoles();
+                EjecutarAsignacionRoles();
             }
         }
 
@@ -159,6 +159,26 @@ namespace Presentacion.Core.Empleado
             else
             {
                 MessageBox.Show("No hay Datos Cargados.");
+            }
+        }
+
+        private void btnCrearUsuario_Click(object sender, EventArgs e)
+        {
+            ControlCargaExistencaDatos();
+            if (puedeEjecutarComando)
+            {
+                var empleado = _empleadoServicio.ObtenerEmpleadoPorId(entidadID.Value);
+                if(string.IsNullOrEmpty(empleado.Username))
+                {
+                    var formularioCrearUsuario = new FEmpleadoCrearUsuario(empleado.PersonaId);
+                    formularioCrearUsuario.ShowDialog();
+                }
+                else
+                {
+                    MessageBox.Show($"El empleado {empleado.Nombre} {empleado.Apellido} ya cuenta con el usuario asignado: {empleado.Username}", "Usuario Existente", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+                
             }
         }
     }

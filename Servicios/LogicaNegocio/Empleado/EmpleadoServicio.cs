@@ -9,11 +9,14 @@ using System.Threading.Tasks;
 using AccesoDatos.Entidades;
 using Servicios.Helpers;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Servicios.LogicaNegocio.Empleado
 {
     public class EmpleadoServicio : IEmpleadoServicio
     {
+        
+
         public EstadoOperacion Eliminar(long empleadoId)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
