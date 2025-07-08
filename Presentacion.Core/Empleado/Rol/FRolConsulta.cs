@@ -1,4 +1,5 @@
 ﻿using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Empleado.Rol;
@@ -52,7 +53,7 @@ namespace Presentacion.Core.Empleado.Rol
 
             grilla.Columns["CodigoRol"].Visible = true;
             grilla.Columns["CodigoRol"].Width = 100;
-            grilla.Columns["DetalleRol"].HeaderText = "Código";
+            grilla.Columns["CodigoRol"].HeaderText = "Código";
 
             grilla.Columns["DetalleRol"].Visible = true;
             grilla.Columns["DetalleRol"].HeaderText = "Detalle";
@@ -116,7 +117,7 @@ namespace Presentacion.Core.Empleado.Rol
 
         private void EjecutarBtnAsignacionRoles()
         {
-                var FormularioAsignacionRolesEmpleados = new FAsignacionRolesEmpleados();
+                var FormularioAsignacionRolesEmpleados = new FAsignacionRolesEmpleados(TipoAsignacionRol.Nuevo);
                 FormularioAsignacionRolesEmpleados.ShowDialog();
                 //ActualizarSegunOperacion(FormularioAsignacionRolesEmpleados.RealizoAlgunaOperacion);
         }

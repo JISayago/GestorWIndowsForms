@@ -1,6 +1,6 @@
-﻿namespace Presentacion.Core.Categoria
+﻿namespace Presentacion.Core.Articulo.Marca
 {
-    partial class FCategoriaABM
+    partial class FMarcaABM
     {
         /// <summary>
         /// Required designer variable.
@@ -28,52 +28,52 @@
         /// </summary>
         private void InitializeComponent()
         {
-            lblCategoria = new Label();
-            txtCategoria = new TextBox();
             label3 = new Label();
+            txtMarca = new TextBox();
+            lblMarca = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
-            // 
-            // lblCategoria
-            // 
-            lblCategoria.AutoSize = true;
-            lblCategoria.Font = new Font("Segoe UI", 15.75F);
-            lblCategoria.Location = new Point(17, 165);
-            lblCategoria.Name = "lblCategoria";
-            lblCategoria.Size = new Size(102, 30);
-            lblCategoria.TabIndex = 1;
-            lblCategoria.Text = "Categoria";
-            // 
-            // txtCategoria
-            // 
-            txtCategoria.Font = new Font("Segoe UI", 15.75F);
-            txtCategoria.Location = new Point(130, 162);
-            txtCategoria.Name = "txtCategoria";
-            txtCategoria.Size = new Size(219, 35);
-            txtCategoria.TabIndex = 2;
             // 
             // label3
             // 
             label3.AutoSize = true;
             label3.ForeColor = Color.Red;
-            label3.Location = new Point(224, 200);
+            label3.Location = new Point(240, 149);
             label3.Name = "label3";
             label3.Size = new Size(125, 15);
-            label3.TabIndex = 4;
+            label3.TabIndex = 7;
             label3.Text = "Campo Obligatorio (*)";
             // 
-            // FCategoriaABM
+            // txtMarca
+            // 
+            txtMarca.Font = new Font("Segoe UI", 15.75F);
+            txtMarca.Location = new Point(146, 111);
+            txtMarca.Name = "txtMarca";
+            txtMarca.Size = new Size(219, 35);
+            txtMarca.TabIndex = 6;
+            // 
+            // lblMarca
+            // 
+            lblMarca.AutoSize = true;
+            lblMarca.Font = new Font("Segoe UI", 15.75F);
+            lblMarca.Location = new Point(33, 114);
+            lblMarca.Name = "lblMarca";
+            lblMarca.Size = new Size(71, 30);
+            lblMarca.TabIndex = 5;
+            lblMarca.Text = "Marca";
+            // 
+            // FMarcaABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 450);
             Controls.Add(label3);
-            Controls.Add(txtCategoria);
-            Controls.Add(lblCategoria);
-            Name = "FCategoriaABM";
-            Text = "FCategoriaABM";
-            Controls.SetChildIndex(lblCategoria, 0);
-            Controls.SetChildIndex(txtCategoria, 0);
+            Controls.Add(txtMarca);
+            Controls.Add(lblMarca);
+            Name = "FMarcaABM";
+            Text = "FMarcaABM";
+            Controls.SetChildIndex(lblMarca, 0);
+            Controls.SetChildIndex(txtMarca, 0);
             Controls.SetChildIndex(label3, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
@@ -82,8 +82,8 @@
 
         #endregion
 
-        private Label lblCategoria;
-        private TextBox txtCategoria;
         private Label label3;
+        private TextBox txtMarca;
+        private Label lblMarca;
     }
 }

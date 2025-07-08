@@ -12,7 +12,10 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
     public  interface IRolServicio
     {
         IEnumerable<RolDTO> ObtenerRoles(string cadenabuscar);
+        IEnumerable<RolDTO> ObtenerRolesAsignadosAEmpleados(long empleadoId);
         IEnumerable<RolDTO> ObtenerRolesEliminados(string cadenabuscar);
+
+        EstadoOperacion ActualizarRolesDeEmpleado(List<RolDTO> rolesAsignados, long empleadoId, DateTime fechaAsignacion);
         EstadoOperacion Insertar(RolDTO rolDto);
         RolDTO ObtenerRolPorId(long rolId);
         EstadoOperacion Modificar(RolDTO rolDto, long? rolId);
