@@ -23,7 +23,7 @@ namespace Servicios.LogicaNegocio.Articulo.Categoria
                 throw new Exception("No se encontró la categoria.");
 
             // Eliminación lógica
-            //marca.EstaEliminado = true;
+            categoriaEliminar.EstaEliminado = true;
 
             context.SaveChanges();
 
@@ -68,9 +68,6 @@ namespace Servicios.LogicaNegocio.Articulo.Categoria
             var categoriaEditar = context.Categorias.FirstOrDefault(x => x.CategoriaId == categoriaDTO.Id);
 
             if (categoriaEditar == null)
-                throw new Exception("No se encontró la categoria.");
-
-            if (categoriaEditar == null)
             {
                 return new EstadoOperacion
                 {
@@ -109,7 +106,7 @@ namespace Servicios.LogicaNegocio.Articulo.Categoria
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             return context.Categorias
-                .Where(x => /*!x.EstaEliminado &&*/ x.Nombre.Contains(cadenaBuscar))
+                .Where(x => !x.EstaEliminado && x.Nombre.Contains(cadenaBuscar))
                 .Select(x => new CategoriaDTO
                 {
                     Id = x.CategoriaId,
@@ -123,7 +120,7 @@ namespace Servicios.LogicaNegocio.Articulo.Categoria
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             return context.Categorias
-                .Where(x => /*x.EstaEliminado &&*/ x.Nombre.Contains(cadenaBuscar))
+                .Where(x => x.EstaEliminado && x.Nombre.Contains(cadenaBuscar))
                 .Select(x => new CategoriaDTO
                 {
                     Id = x.CategoriaId,
@@ -138,9 +135,9 @@ namespace Servicios.LogicaNegocio.Articulo.Categoria
 
             var categoria = context.Categorias.FirstOrDefault(x => x.CategoriaId == categoriaId);
 
-            /*if (marca == null)
+            if (categoria == null)
                 throw new Exception("No se encontró la marca.");
-            */
+            
             return new CategoriaDTO
             {
                 Id = categoria.CategoriaId,
