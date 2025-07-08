@@ -30,7 +30,7 @@
         {
             btnAsignacionRoles = new Button();
             btnCrearUsuario = new Button();
-            panel1.SuspendLayout();
+           // panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1

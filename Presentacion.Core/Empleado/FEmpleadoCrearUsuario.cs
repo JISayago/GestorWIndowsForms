@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Presentacion.FBase.Helpers;
 using Servicios.LogicaNegocio.Empleado.DTO;
+using AccesoDatos.Entidades;
 
 namespace Presentacion.Core.Empleado
 {
@@ -36,12 +37,27 @@ namespace Presentacion.Core.Empleado
 
         private void FEmpleadoCrearUsuario_Load(object sender, EventArgs e)
         {
-            CrearNombreUsuario(_empleadoDto.Apellido, _empleadoDto.Nombre, _empleadoDto.PersonaId);
+            /*var respuesta = MessageBox.Show($"¿Desea crear manual o con el formato Jorge Pérez {rolDisponibleSeleccionado.Nombre.ToUpper()} del empleado {empleado.Nombre} {empleado.Apellido} (usuario: {empleado.Username})?",
+            "Confirmar acción",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question);
+            if (respuesta == DialogResult.Yes)*/
+            // CrearNombreUsuario(_empleadoDto.Apellido, _empleadoDto.Nombre, _empleadoDto.PersonaId);
         }
-        private void CrearNombreUsuario(string apellido, string nombre,long empleadoId)
+        private void CrearNombreUsuario(string apellido, string nombre, long empleadoId)
         {
             var response = _usuarioServicio.CrearUsuario(nombre, apellido, empleadoId);
             MessageBox.Show(response.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        }
+
+        private void cbxHabilitarEdicionNombre_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnCrearUsuario_Click(object sender, EventArgs e)
+        {
 
         }
     }
