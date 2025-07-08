@@ -1,5 +1,6 @@
 ﻿using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
+using Servicios.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,26 +51,24 @@ namespace ServicioAccesoSistema.AccesoSistema
                     error = "Usuario bloqueado. Por favor comuníquese con un Administrador.";
                     return error;
                 }
-                else
+
+                using var context = new GestorContextDBFactory().CreateDbContext(null);
+                var empleado = context.Empleados
+                    .FirstOrDefault(e => e.Username == username);
+
+                if (empleado == null || !HashPass.VerifyPassword(pass, empleado.Pass))
                 {
-                    using var context = new GestorContextDBFactory().CreateDbContext(null);
-                    var empleado = context.Empleados
-                    .FirstOrDefault(e =>
-                    e.Username == username &&
-                    e.Pass == pass);
-                    if (empleado == null)
-                    {
-                        error = "El usuario y/o la contraseña son incorrectos";
-                        return error;
-                    }
-                    else
-                    {
-                        return usuarioLogeado;
-                    }
+                    error = "El usuario y/o la contraseña son incorrectos";
+                    return error;
                 }
+
+                // Login exitoso
+                return usuarioLogeado;
             }
+
             error = "Usuario no encontrado. Por favor comuníquese con un Administrador.";
             return error;
         }
+
     }
 }

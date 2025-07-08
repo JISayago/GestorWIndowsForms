@@ -65,6 +65,8 @@ namespace Servicios.LogicaNegocio.Empleado
 
                 // Asignar y guardar
                 empleado.Username = usuarioNuevo;
+                empleado.Pass = HashPass.HashPassword("PassGenerica");
+                empleado.Estado = 1; // Activo
                 context.SaveChanges();
 
                 return new EstadoOperacion
