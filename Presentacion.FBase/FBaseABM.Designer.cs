@@ -34,6 +34,7 @@
             btnLimpiar = new ToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
             btnSalir = new ToolStripButton();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             panel1.SuspendLayout();
             BarraSuperiorBotones.SuspendLayout();
             SuspendLayout();
@@ -61,24 +62,26 @@
             btnEjecutar.BackColor = SystemColors.ButtonHighlight;
             btnEjecutar.ImageTransparentColor = Color.Magenta;
             btnEjecutar.Name = "btnEjecutar";
-            btnEjecutar.Size = new Size(53, 86);
+            btnEjecutar.Size = new Size(53, 22);
             btnEjecutar.Text = "Ejecutar";
             btnEjecutar.TextImageRelation = TextImageRelation.ImageAboveText;
+            btnEjecutar.Click += btnEjecutar_Click;
             // 
             // btnLimpiar
             // 
             btnLimpiar.BackColor = SystemColors.ButtonHighlight;
             btnLimpiar.ImageTransparentColor = Color.Magenta;
             btnLimpiar.Name = "btnLimpiar";
-            btnLimpiar.Size = new Size(51, 86);
+            btnLimpiar.Size = new Size(51, 22);
             btnLimpiar.Text = "Limpiar";
             btnLimpiar.TextImageRelation = TextImageRelation.ImageAboveText;
+            btnLimpiar.Click += btnLimpiar_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.BackColor = SystemColors.ActiveCaption;
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(6, 89);
+            toolStripSeparator1.Size = new Size(6, 25);
             // 
             // btnSalir
             // 
@@ -86,9 +89,10 @@
             btnSalir.BackColor = SystemColors.ButtonHighlight;
             btnSalir.ImageTransparentColor = Color.Magenta;
             btnSalir.Name = "btnSalir";
-            btnSalir.Size = new Size(33, 86);
+            btnSalir.Size = new Size(33, 22);
             btnSalir.Text = "Salir";
             btnSalir.TextImageRelation = TextImageRelation.ImageAboveText;
+            btnSalir.Click += btnSalir_Click;
             // 
             // FBaseABM
             // 
@@ -100,6 +104,8 @@
             MaximumSize = new Size(800, 600);
             Name = "FBaseABM";
             Text = "FBaseABM";
+            Load += FBaseABM_Load;
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             BarraSuperiorBotones.ResumeLayout(false);
@@ -112,8 +118,8 @@
         private Panel panel1;
         private ToolStrip BarraSuperiorBotones;
         private ToolStripButton btnEjecutar;
-        private ToolStripButton btnLimpiar;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripButton btnSalir;
+        protected ToolStripButton btnLimpiar;
     }
 }

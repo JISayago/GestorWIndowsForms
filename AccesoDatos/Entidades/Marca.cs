@@ -10,9 +10,10 @@ namespace AccesoDatos.Entidades
     public class Marca
     {
         [Key]
-        public long MarcaId { get; set; }
+        public long CategoriaId { get; set; }
         public string Nombre { get; set; }
 
+        public bool EstaEliminado { get; set; }
         // Relación inversa (1 a muchos con Productos)
         public ICollection<Producto> Productos { get; set; }
     }

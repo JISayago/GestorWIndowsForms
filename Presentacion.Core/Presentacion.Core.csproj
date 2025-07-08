@@ -8,11 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Presentacion.FBase\Presentacion.FBase.csproj" />
+    <Compile Remove="Marca\**" />
+    <EmbeddedResource Remove="Marca\**" />
+    <None Remove="Marca\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Marca\" />
+    <ProjectReference Include="..\Presentacion.FBase\Presentacion.FBase.csproj" />
+    <ProjectReference Include="..\Servicios\Servicios.csproj" />
   </ItemGroup>
 
 </Project>

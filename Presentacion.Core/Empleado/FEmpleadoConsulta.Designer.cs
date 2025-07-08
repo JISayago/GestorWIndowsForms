@@ -28,12 +28,40 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "FEmpleadoConsulta";
+            btnAsignacionRoles = new Button();
+            panel1.SuspendLayout();
+            SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(btnAsignacionRoles);
+            panel1.Controls.SetChildIndex(btnAsignacionRoles, 0);
+            // 
+            // btnAsignacionRoles
+            // 
+            btnAsignacionRoles.Location = new Point(3, 232);
+            btnAsignacionRoles.Name = "btnAsignacionRoles";
+            btnAsignacionRoles.Size = new Size(75, 57);
+            btnAsignacionRoles.TabIndex = 1;
+            btnAsignacionRoles.Text = "Asignación Roles";
+            btnAsignacionRoles.UseVisualStyleBackColor = true;
+            btnAsignacionRoles.Click += btnAsignacionRoles_Click;
+            // 
+            // FEmpleadoConsulta
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 552);
+            Name = "FEmpleadoConsulta";
+            Text = "FEmpleadoConsulta";
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Button btnAsignacionRoles;
     }
 }

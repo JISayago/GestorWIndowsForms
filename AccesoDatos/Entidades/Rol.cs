@@ -12,8 +12,10 @@ namespace AccesoDatos.Entidades
         [Key]
         public long RolId { get; set; }
         public string Nombre { get; set; }
-        public long DetalleRol { get; set; }
-        public long CodigoRol { get; set; }
+        public string DetalleRol { get; set; }
+        public string CodigoRol { get; set; }
+
+        public bool EstaEliminado { get; set; }
         public ICollection<EmpleadoRol> EmpleadosRoles { get; set; }
 
     }

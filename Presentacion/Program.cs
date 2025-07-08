@@ -1,6 +1,11 @@
 using AccesoDatos;
 using AccesoDatos.Config;
 using Presentacion.AccesoAlSistema;
+using Presentacion.Core.Categoria;
+using Presentacion.Core.Empleado;
+using Presentacion.Core.Empleado.Rol;
+using Presentacion.FBase;
+using Presentacion.FormulariosBase.Helpers;
 using Servicios.Seguridad;
 
 
@@ -18,12 +23,12 @@ namespace Presentacion
 
             ApplicationConfiguration.Initialize();
 
-            // Verificar conexiÛn antes de iniciar la app
+            // Verificar conexi√≥n antes de iniciar la app
             if (!PruebaConexion.ProbarConexion())
             {
                 MessageBox.Show(
-                    "No se pudo establecer conexiÛn con la base de datos.\nLa aplicaciÛn se cerrar·.",
-                    "Error de conexiÛn",
+                    "No se pudo establecer conexi√≥n con la base de datos.\nLa aplicaci√≥n se cerrar√°.",
+                    "Error de conexi√≥n",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
@@ -39,14 +44,15 @@ namespace Presentacion
 
                 if (login.PuedeAccederAlSistema)
                 {
-                    Application.Run(new Form1());
+                    Application.Run(new VentanaPrincipal(login._usuarioLogeado));
+
                 }
                 else
                 {
                     Application.Exit();
                 }
-            }
-                
+            }     
+
         }
-       }
+    }
 }

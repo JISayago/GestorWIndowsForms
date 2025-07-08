@@ -1,14 +1,4 @@
 ﻿using Presentacion.FormulariosBase.DTO;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Presentacion.FBase
 {
@@ -19,7 +9,15 @@ namespace Presentacion.FBase
         public FBase()
         {
             InitializeComponent();
-            _listaControlesObligatorios = new List<ControlDTO>();
+                _listaControlesObligatorios = new List<ControlDTO>();
+            this.components = new System.ComponentModel.Container();
+            this.error = new System.Windows.Forms.ErrorProvider(this.components);
+
+ 
+        }
+        private void FBase_Load(object sender, EventArgs e)
+        {
+        
         }
         public virtual void DesactivarControles(object obj)
         {
@@ -163,7 +161,7 @@ namespace Presentacion.FBase
 
                     if (ctrolPanel is PictureBox)
                     {
-                        ((PictureBox)ctrolPanel).Image = Constantes.Imagenes.ImagenUsuario;
+                        ((PictureBox)ctrolPanel).Image = Constantes.Imagenes.ImgPerfilUsuario;
                     }
                 }
             }
@@ -231,7 +229,7 @@ namespace Presentacion.FBase
             }
         }
 
-        public virtual void Control_Validated(object sender, System.EventArgs e)
+       public virtual void Control_Validated(object sender, System.EventArgs e)
         {
             if (sender is TextBox)
             {

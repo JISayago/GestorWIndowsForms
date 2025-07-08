@@ -15,6 +15,8 @@ namespace AccesoDatos.Entidades
         public string Detalle { get; set; }
         public string Codigo { get; set; }
 
+        public bool EstaEliminado { get; set; }
+
         // Si lo usás en Ventas más adelante:
         // public ICollection<Venta> Ventas { get; set; }
     }

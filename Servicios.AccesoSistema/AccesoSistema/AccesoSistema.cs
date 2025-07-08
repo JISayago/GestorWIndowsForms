@@ -1,5 +1,6 @@
 ﻿using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
+using Servicios.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +11,6 @@ namespace ServicioAccesoSistema.AccesoSistema
 {
     public class AccesoSistema : IAccesoSistema
     {
-        public string error = "";
-        public string usuarioLogeado = "-";
-        public long ObtenerId(string nombreUsuario)
-        {
-            throw new NotImplementedException();
-
-        }
         public bool VerificarSiUsuarioEstaBloqueado(string username)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -41,14 +35,17 @@ namespace ServicioAccesoSistema.AccesoSistema
             return true;
         }
 
-        public string LogeoAlSistema(string username, string pass)
+        public EstadoOperacion LogeoAlSistema(string username, string pass)
         {
             if (VerificarSiExisteUsuario(username))
             {
                 if (VerificarSiUsuarioEstaBloqueado(username))
                 {
-                    error = "Usuario bloqueado. Por favor comuníquese con un Administrador.";
-                    return error;
+                    
+                    return new EstadoOperacion{
+                        Exitoso = false,
+                        Mensaje = "Usuario bloqueado. Por favor comuníquese con un Administrador."
+                    };
                 }
                 else
                 {
@@ -59,17 +56,28 @@ namespace ServicioAccesoSistema.AccesoSistema
                     e.Pass == pass);
                     if (empleado == null)
                     {
-                        error = "El usuario y/o la contraseña son incorrectos";
-                        return error;
+                        return new EstadoOperacion
+                        {
+                            Exitoso = false,
+                            Mensaje = "El usuario y/o la contraseña son incorrectos",
+                        };
                     }
                     else
                     {
-                        return usuarioLogeado;
+                        return new EstadoOperacion
+                        {
+                            Exitoso = true,
+                            Mensaje = $"¡Ingreso Exitoso!, Bienvenido {empleado.Username}",
+                            EntidadId = empleado.PersonaId
+                        };
                     }
                 }
             }
-            error = "Usuario no encontrado. Por favor comuníquese con un Administrador.";
-            return error;
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = "Usuario no encontrado. Por favor comuníquese con un Administrador."
+            };
         }
     }
 }

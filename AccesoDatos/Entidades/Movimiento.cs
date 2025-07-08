@@ -14,6 +14,8 @@ namespace AccesoDatos.Entidades
         public long? IdVenta { get; set; }     // Nullable si no siempre hay venta asociada
         public int TipoMovimiento { get; set; }
 
+        public bool EstaEliminado { get; set; }
+
         // Navegación
         public Venta Venta { get; set; }
     }

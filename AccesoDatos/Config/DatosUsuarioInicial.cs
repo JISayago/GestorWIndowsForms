@@ -13,7 +13,7 @@ namespace AccesoDatos.Config
         public static void Inicializar(GestorContextDB context)
         {
             // Aplica migraciones pendientes
-            context.Database.Migrate();
+            //context.Database.Migrate();
 
             // Si ya existe un usuario admin, no hacer nada
             if (context.Empleados.Any(e => e.Username == "admin"))

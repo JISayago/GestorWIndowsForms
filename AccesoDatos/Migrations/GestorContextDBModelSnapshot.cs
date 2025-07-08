@@ -30,6 +30,9 @@ namespace AccesoDatos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("CategoriaId"));
 
+                    b.Property<bool>("EstaEliminado")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -99,13 +102,11 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("legajo");
 
                     b.Property<string>("Pass")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("pass");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("username");
@@ -147,18 +148,21 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.Marca", b =>
                 {
-                    b.Property<long>("MarcaId")
+                    b.Property<long>("CategoriaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("MarcaId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("CategoriaId"));
+
+                    b.Property<bool>("EstaEliminado")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("MarcaId");
+                    b.HasKey("CategoriaId");
 
                     b.ToTable("Marcas", (string)null);
                 });
@@ -170,6 +174,9 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("MovimientoId"));
+
+                    b.Property<bool>("EstaEliminado")
+                        .HasColumnType("bit");
 
                     b.Property<long?>("IdVenta")
                         .HasColumnType("bigint");
@@ -274,7 +281,7 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_Marca");
 
-                    b.Property<long?>("MarcaId")
+                    b.Property<long?>("MarcaCategoriaId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Medida")
@@ -309,7 +316,7 @@ namespace AccesoDatos.Migrations
 
                     b.HasIndex("IdMarca");
 
-                    b.HasIndex("MarcaId");
+                    b.HasIndex("MarcaCategoriaId");
 
                     b.ToTable("Productos", (string)null);
                 });
@@ -323,13 +330,20 @@ namespace AccesoDatos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("RolId"));
 
-                    b.Property<long>("CodigoRol")
-                        .HasColumnType("bigint")
+                    b.Property<string>("CodigoRol")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("codigo_rol");
 
-                    b.Property<long>("DetalleRol")
-                        .HasColumnType("bigint")
+                    b.Property<string>("DetalleRol")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
                         .HasColumnName("detalleRol");
+
+                    b.Property<bool>("EstaEliminado")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -365,6 +379,9 @@ namespace AccesoDatos.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)")
                         .HasColumnName("detalle");
+
+                    b.Property<bool>("EstaEliminado")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -528,7 +545,7 @@ namespace AccesoDatos.Migrations
 
                     b.HasOne("AccesoDatos.Entidades.Marca", null)
                         .WithMany("Productos")
-                        .HasForeignKey("MarcaId");
+                        .HasForeignKey("MarcaCategoriaId");
 
                     b.Navigation("Categoria");
 
