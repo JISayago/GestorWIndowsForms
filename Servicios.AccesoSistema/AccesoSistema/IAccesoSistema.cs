@@ -1,4 +1,5 @@
 ﻿using AccesoDatos.Entidades;
+using Servicios.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,8 @@ namespace ServicioAccesoSistema.AccesoSistema
 {
     public interface IAccesoSistema
     {
-        string LogeoAlSistema(string username, string pass);
+        EstadoOperacion LogeoAlSistema(string username, string pass);
         bool VerificarSiExisteUsuario(string username);
         bool VerificarSiUsuarioEstaBloqueado(string nombreUsuario);
-        long ObtenerId(string nombreUsuario);
     }
 }
