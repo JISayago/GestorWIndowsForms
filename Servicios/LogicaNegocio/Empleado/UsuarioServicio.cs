@@ -1,18 +1,109 @@
 ﻿using AccesoDatos;
+using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
+using Servicios.LogicaNegocio.Empleado.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Servicios.LogicaNegocio.Empleado
 {
     public class UsuarioServicio : IUsuarioServicio
     {
-        public EstadoOperacion CrearUsuario(string nombre, string apellido, long empleadoId)
+        public EstadoOperacion ActualziarPassPrimerIngreso(long usuarioId, string pass)
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var empleado = context.Empleados
+             .Include(e => e.Persona)
+                 .FirstOrDefault(x => x.PersonaId == usuarioId);
+
+            if (empleado == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Error al encontrar el empelado",
+                };
+            }
+
+            empleado.Pass = HashPass.HashPassword(pass);
+            empleado.Estado = 1;
+            context.SaveChanges();
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = "Usuario creado con exito!",
+                EntidadId = empleado.PersonaId
+            };
+
+        }
+
+        public EstadoOperacion CrearUsuario(UsuarioDTO usuario)
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var empleado = context.Empleados
+             .Include(e => e.Persona)
+                 .FirstOrDefault(x => x.PersonaId == usuario.PersonaId);
+
+            if (empleado == null)
+            {
+
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "Error al encontrar el empelado",
+                    EntidadId = empleado.PersonaId
+                };
+            }
+
+            // Verificar si ya tiene usuario
+            if (!string.IsNullOrEmpty(empleado.Username))
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = $"El empleado {empleado.Persona.Nombre} {empleado.Persona.Apellido} ya tiene un usuario asignado: {empleado.Username}",
+                    EntidadId = empleado.PersonaId
+                };
+            }
+            empleado.Username = usuario.Username;
+            empleado.Pass = HashPass.HashPassword(usuario.Pass);
+            empleado.Estado = usuario.Estado;
+            context.SaveChanges();
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = "Usuario creado con exito!",
+                EntidadId = empleado.PersonaId
+            };
+
+
+        }
+
+        public bool ExisteUsuario(string nombreUsuario)
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            try
+            {
+                string nombreUsuarioLimpio = nombreUsuario.Trim().ToLower();
+                return context.Empleados.Any(u => u.Username.ToLower() == nombreUsuarioLimpio);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        public UsuarioDTO GeneracionNombreUsuario(string nombre, string apellido, long empleadoId)
         {
             int contadorLetras = 1;
             int digito = 1;
@@ -41,62 +132,85 @@ namespace Servicios.LogicaNegocio.Empleado
 
                 // Buscar al empleado
                 var empleado = context.Empleados
-                    .Include(e => e.Persona)
+                .Include(e => e.Persona)
                     .FirstOrDefault(x => x.PersonaId == empleadoId);
 
                 if (empleado == null)
                 {
-                    return new EstadoOperacion
+                    return new UsuarioDTO
                     {
-                        Exitoso = false,
-                        Mensaje = "Empleado no encontrado."
+                        PersonaId = 0,
+                        Username = "Error al encontrar el empelado",
+                        Pass = "",
+                        Estado = 0
                     };
+
                 }
 
                 // Verificar si ya tiene usuario
                 if (!string.IsNullOrEmpty(empleado.Username))
                 {
-                    return new EstadoOperacion
+                    return new UsuarioDTO
                     {
-                        Exitoso = false,
-                        Mensaje = $"El empleado {empleado.Persona.Nombre} {empleado.Persona.Apellido} ya tiene un usuario asignado: {empleado.Username}"
+                        PersonaId = 0,
+                        Username = $"El empleado {empleado.Persona.Nombre} {empleado.Persona.Apellido} ya tiene un usuario asignado: {empleado.Username}",
+                        Pass = "",
+                        Estado = 0
                     };
                 }
 
                 // Asignar y guardar
                 empleado.Username = usuarioNuevo;
-                empleado.Pass = HashPass.HashPassword("PassGenerica");
+                empleado.Pass = HashPass.HashPassword("123456789");
                 empleado.Estado = 1; // Activo
-                context.SaveChanges();
+                //context.SaveChanges();
 
-                return new EstadoOperacion
+                return new UsuarioDTO
                 {
-                    Exitoso = true,
-                    Mensaje = $"Usuario creado correctamente: {usuarioNuevo}",
-                    EntidadId = empleado.PersonaId
+                    PersonaId = empleado.PersonaId,
+                    Username = empleado.Username,
+                    Pass = empleado.Pass,
+                    Estado = empleado.Estado
                 };
             }
             catch (Exception ex)
             {
-                return new EstadoOperacion
+                return new UsuarioDTO
                 {
-                    Exitoso = false,
-                    Mensaje = $"Error al crear el usuario: {ex.Message}"
+                    PersonaId = 0,
+                    Username = "Error al asignar el nombre de usuario.",
+                    Pass = "",
+                    Estado = 0
                 };
             }
         }
 
-        public bool ExisteUsuario(string nombreUsuario)
+        public UsuarioDTO ObtenerUsuarioPorId(long usuarioId)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            try
+            var usuario = context.Empleados
+                .Include(e => e.Persona)
+                .FirstOrDefault(x => x.PersonaId == usuarioId);
+            if (usuario != null)
             {
-                return context.Empleados.Any(u => u.Username.Equals(nombreUsuario, StringComparison.OrdinalIgnoreCase));
+                return new UsuarioDTO
+                {
+                    PersonaId = usuario.PersonaId,
+                    Username = usuario.Username,
+                    Pass = usuario.Pass,
+                    Estado = usuario.Estado
+                };
             }
-            catch (Exception ex)
+            else
             {
-                throw new Exception("Error al buscar usuario existente", ex);
+                return new UsuarioDTO
+                {
+                    PersonaId = 0,
+                    Username = "Usuario no encontrado",
+                    Pass = "",
+                    Estado = 0
+                };
             }
         }
     }

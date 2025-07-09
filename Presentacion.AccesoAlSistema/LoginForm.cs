@@ -18,7 +18,7 @@ namespace Presentacion.AccesoAlSistema
         private readonly IEmpleadoServicio _empleadoServicio;
         public UsuarioLogeado _usuarioLogeado { get; protected set; }
         public bool PuedeAccederAlSistema { get; protected set; }
-               
+
         private string pass;
         private string username;
 
@@ -44,28 +44,39 @@ namespace Presentacion.AccesoAlSistema
             {
                 username = txtUsuario.Text;
                 pass = txtPass.Text;
-                var response = _accesoSistema.LogeoAlSistema(username, pass);
-                if (!response.Exitoso)
+                var PrimerIngreso = _accesoSistema.PrimerIngreso(username, pass);
+                if (!PrimerIngreso.Exitoso)
                 {
-                    MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    var response = _accesoSistema.LogeoAlSistema(username, pass);
+                    if (!response.Exitoso)
+                    {
+                        MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        var uLogeado = _empleadoServicio.ObtenerEmpleadoPorId((long)response.EntidadId);
+                        if (uLogeado.PersonaId != null)
+                        {
+                            _usuarioLogeado = new UsuarioLogeado
+                            {
+                                PersonaId = uLogeado.PersonaId,
+                                Nombre = uLogeado.Nombre,
+                                Apellido = uLogeado.Apellido,
+                                Username = uLogeado.Username,
+
+                            };
+                            MessageBox.Show(response.Mensaje, "Ingreso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            PuedeAccederAlSistema = true;
+                        }
+                        this.Close();
+                    }
                 }
                 else
                 {
-                    var uLogeado = _empleadoServicio.ObtenerEmpleadoPorId((long)response.EntidadId);
-                    if (uLogeado.PersonaId != null) { 
-                    _usuarioLogeado = new UsuarioLogeado
-                    {
-                        PersonaId = uLogeado.PersonaId,
-                        Nombre = uLogeado.Nombre,
-                        Apellido = uLogeado.Apellido,
-                        Username = uLogeado.Username,
-
-                    };
-                    MessageBox.Show(response.Mensaje, "Ingreso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    PuedeAccederAlSistema = true;
+                    MessageBox.Show("Primer Ingreso, actualizar contraseña", "Accion Primer Ingreso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    var FActualizacionNuevaPass = new ActualizarPass((long)PrimerIngreso.EntidadId);
+                    FActualizacionNuevaPass.ShowDialog();
                 }
-                    this.Close();
-    }
             }
             else
             {
@@ -76,6 +87,11 @@ namespace Presentacion.AccesoAlSistema
         private void btnCancelar_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void lblPass_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
