@@ -23,6 +23,7 @@ namespace AccesoDatos
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<Marca> Marcas { get; set; }
         public DbSet<EmpleadoRol> EmpleadoRoles { get; set; }
+        public DbSet<CategoriaProducto> CategoriasProductos { get; set; }
         public DbSet<VentaPagoDetalle> VentaPagosDetalles { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
@@ -90,9 +91,6 @@ namespace AccesoDatos
                 entity.Property(p => p.ProductoId)
                     .HasColumnName("ProductoId");
 
-                entity.Property(p => p.IdCategoria)
-                    .HasColumnName("id_Categoria");
-
                 entity.Property(p => p.IdMarca)
                     .HasColumnName("id_Marca");
 
@@ -129,12 +127,7 @@ namespace AccesoDatos
                     .HasColumnName("unidad_medida")
                     .HasMaxLength(50);
 
-                // 🔗 Relaciones con Marca y Categoría
-                entity.HasOne(p => p.Categoria)
-                    .WithMany()
-                    .HasForeignKey(p => p.IdCategoria)
-                    .OnDelete(DeleteBehavior.SetNull);
-
+                // 🔗 Relaciones con Marca
                 entity.HasOne(p => p.Marca)
                     .WithMany()
                     .HasForeignKey(p => p.IdMarca)
@@ -387,8 +380,24 @@ namespace AccesoDatos
                       .HasForeignKey(e => e.IdRol)
                       .OnDelete(DeleteBehavior.Restrict);
             });
+
+            //CATEGORIA PRODUCTO
+            modelBuilder.Entity<CategoriaProducto>(entity =>
+            {
+                entity.ToTable("Categorias_Productos");
+
+                entity.HasKey(e => e.CategoriaProductoId);
+
+                entity.HasOne(cp => cp.Producto)
+                      .WithMany(p => p.CategoriasProductos)
+                      .HasForeignKey(cp => cp.IdProducto)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(cp => cp.Categoria)
+                      .WithMany(c => c.CategoriasProductos)
+                      .HasForeignKey(cp => cp.IdCategoria)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
         }
-
-
     }
 }
