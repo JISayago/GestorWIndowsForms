@@ -361,7 +361,7 @@ namespace AccesoDatos
             {
                 entity.ToTable("Marcas");
 
-                entity.HasKey(e => e.CategoriaId);
+                entity.HasKey(e => e.MarcaId);
                 entity.Property(e => e.Nombre)
                       .IsRequired()
                       .HasMaxLength(100);

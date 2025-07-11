@@ -10,7 +10,7 @@ namespace AccesoDatos.Entidades
     public class Marca
     {
         [Key]
-        public long CategoriaId { get; set; }
+        public long MarcaId { get; set; }
         public string Nombre { get; set; }
 
         public bool EstaEliminado { get; set; }

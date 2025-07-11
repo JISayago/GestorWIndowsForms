@@ -16,7 +16,7 @@ namespace Servicios.LogicaNegocio.Articulo.Marca
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var marcaEliminar = context.Marcas.FirstOrDefault(x => x.CategoriaId == marcaId);
+            var marcaEliminar = context.Marcas.FirstOrDefault(x => x.MarcaId == marcaId);
 
 
             if (marcaEliminar == null)
@@ -57,7 +57,7 @@ namespace Servicios.LogicaNegocio.Articulo.Marca
             {
                 Exitoso = true,
                 Mensaje = "Marca creada correctamente.",
-                EntidadId = nuevaMarca.CategoriaId
+                EntidadId = nuevaMarca.MarcaId
             }; // Devuelve el ID generado
         }
 
@@ -65,7 +65,7 @@ namespace Servicios.LogicaNegocio.Articulo.Marca
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var marcaEditar = context.Marcas.FirstOrDefault(x => x.CategoriaId == marcaDTO.Id);
+            var marcaEditar = context.Marcas.FirstOrDefault(x => x.MarcaId == marcaDTO.Id);
 
             if (marcaEditar == null)
             {
@@ -97,7 +97,7 @@ namespace Servicios.LogicaNegocio.Articulo.Marca
             {
                 Exitoso = true,
                 Mensaje = "Marca modificada correctamente.",
-                EntidadId = marcaEditar.CategoriaId
+                EntidadId = marcaEditar.MarcaId
             };
         }
 
@@ -109,7 +109,7 @@ namespace Servicios.LogicaNegocio.Articulo.Marca
                 .Where(x => !x.EstaEliminado && x.Nombre.Contains(cadenaBuscar))
                 .Select(x => new MarcaDTO
                 {
-                    Id = x.CategoriaId,
+                    Id = x.MarcaId,
                     Nombre = x.Nombre
                 })
                 .ToList();
@@ -123,7 +123,7 @@ namespace Servicios.LogicaNegocio.Articulo.Marca
                 .Where(x => x.EstaEliminado && x.Nombre.Contains(cadenaBuscar))
                 .Select(x => new MarcaDTO
                 {
-                    Id = x.CategoriaId,
+                    Id = x.MarcaId,
                     Nombre = x.Nombre
                 })
                 .ToList();
@@ -133,14 +133,14 @@ namespace Servicios.LogicaNegocio.Articulo.Marca
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var marcaBusqueda = context.Marcas.FirstOrDefault(x => x.CategoriaId == marca);
+            var marcaBusqueda = context.Marcas.FirstOrDefault(x => x.MarcaId == marca);
 
             if (marcaBusqueda == null)
                 throw new Exception("No se encontró la marca.");
 
             return new MarcaDTO
             {
-                Id = marcaBusqueda.CategoriaId,
+                Id = marcaBusqueda.MarcaId,
                 Nombre = marcaBusqueda.Nombre
             };
         }
