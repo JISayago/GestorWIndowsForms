@@ -36,7 +36,8 @@ namespace Servicios.LogicaNegocio.Empleado.DTO
         public string Legajo { get; set; }
         public DateTime FechaIngreso { get; set; }
         public DateTime? FechaEgreso { get; set; } // Puede ser null si sigue trabajando
-        public int Estado { get; set; }
+        public int Estado { get; set; } 
+        public string EstadoDescripcion { get; set; } 
         public string Username { get; set; }
         public string Pass { get; set; }
         public bool UsuarioEstaHabilitado { get; set; } = true;

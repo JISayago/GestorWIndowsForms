@@ -72,8 +72,9 @@ namespace Presentacion.Core.Empleado
             grilla.Columns["Telefono"].Visible = true;
             grilla.Columns["Telefono"].Width = 100;
 
-            grilla.Columns["Estado"].Visible = true;
-            grilla.Columns["Estado"].Width = 100;
+            grilla.Columns["EstadoDescripcion"].Visible = true;
+            grilla.Columns["EstadoDescripcion"].Width = 100;
+            grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
         }
 
         public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
