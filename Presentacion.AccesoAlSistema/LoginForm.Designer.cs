@@ -91,6 +91,7 @@
             lblPass.Size = new Size(67, 15);
             lblPass.TabIndex = 5;
             lblPass.Text = "Contraseña";
+            lblPass.Click += lblPass_Click;
             // 
             // LoginForm
             // 

@@ -12,11 +12,10 @@ namespace Servicios.LogicaNegocio.Empleado
     {
         IEnumerable<EmpleadoDTO> ObtenerEmpleados(string cadenabuscar);
         IEnumerable<EmpleadoDTO> ObtenerEmpleadosEliminados(string cadenabuscar);
-
         EstadoOperacion Insertar(EmpleadoDTO empleadoDto);
         EmpleadoDTO ObtenerEmpleadoPorId(long personaId);
         EstadoOperacion Modificar(EmpleadoDTO empleadoDto, long? empleadoId);
-
         EstadoOperacion Eliminar(long empleadoId);
+        
     }
 }

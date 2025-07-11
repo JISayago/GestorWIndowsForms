@@ -41,43 +41,67 @@ namespace ServicioAccesoSistema.AccesoSistema
             {
                 if (VerificarSiUsuarioEstaBloqueado(username))
                 {
-                    
-                    return new EstadoOperacion{
+
+                    return new EstadoOperacion {
                         Exitoso = false,
                         Mensaje = "Usuario bloqueado. Por favor comuníquese con un Administrador."
                     };
                 }
-                else
+
+                using var context = new GestorContextDBFactory().CreateDbContext(null);
+                var empleado = context.Empleados
+                    .FirstOrDefault(e => e.Username == username);
+
+                if (empleado == null || !HashPass.VerifyPassword(pass, empleado.Pass))
                 {
-                    using var context = new GestorContextDBFactory().CreateDbContext(null);
-                    var empleado = context.Empleados
-                    .FirstOrDefault(e =>
-                    e.Username == username &&
-                    e.Pass == pass);
-                    if (empleado == null)
+
+                    return new EstadoOperacion
                     {
-                        return new EstadoOperacion
-                        {
-                            Exitoso = false,
-                            Mensaje = "El usuario y/o la contraseña son incorrectos",
-                        };
-                    }
-                    else
-                    {
-                        return new EstadoOperacion
-                        {
-                            Exitoso = true,
-                            Mensaje = $"¡Ingreso Exitoso!, Bienvenido {empleado.Username}",
-                            EntidadId = empleado.PersonaId
-                        };
-                    }
+                        Exitoso = false,
+                        Mensaje = "El usuario y/o la contraseña son incorrectos"
+                    };
+
                 }
+
+                // Login exitoso
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "Ingreso Exitoso!",
+                    EntidadId = empleado.PersonaId
+                };
             }
             return new EstadoOperacion
             {
-                Exitoso = true,
+                Exitoso = false,
                 Mensaje = "Usuario no encontrado. Por favor comuníquese con un Administrador."
             };
+
+        }
+
+        public EstadoOperacion PrimerIngreso(string nombreUsuario, string pass)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var empleado = context.Empleados
+                .FirstOrDefault(e => e.Username == nombreUsuario);
+            if (empleado == null || empleado.Estado == 1 || pass != "123456789")
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "El usuario no existe o no es un primer ingreso."
+                };
+            }
+            else
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "Primer ingreso exitoso. Por favor, cambie su contraseña.",
+                    EntidadId = empleado.PersonaId
+                };
+
+            }
         }
     }
 }

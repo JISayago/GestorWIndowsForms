@@ -29,13 +29,16 @@
         private void InitializeComponent()
         {
             btnAsignacionRoles = new Button();
-            panel1.SuspendLayout();
+            btnCrearUsuario = new Button();
+           // panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
+            panel1.Controls.Add(btnCrearUsuario);
             panel1.Controls.Add(btnAsignacionRoles);
             panel1.Controls.SetChildIndex(btnAsignacionRoles, 0);
+            panel1.Controls.SetChildIndex(btnCrearUsuario, 0);
             // 
             // btnAsignacionRoles
             // 
@@ -46,6 +49,16 @@
             btnAsignacionRoles.Text = "Asignación Roles";
             btnAsignacionRoles.UseVisualStyleBackColor = true;
             btnAsignacionRoles.Click += btnAsignacionRoles_Click;
+            // 
+            // btnCrearUsuario
+            // 
+            btnCrearUsuario.Location = new Point(3, 310);
+            btnCrearUsuario.Name = "btnCrearUsuario";
+            btnCrearUsuario.Size = new Size(75, 42);
+            btnCrearUsuario.TabIndex = 2;
+            btnCrearUsuario.Text = "Crear Usuario";
+            btnCrearUsuario.UseVisualStyleBackColor = true;
+            btnCrearUsuario.Click += btnCrearUsuario_Click;
             // 
             // FEmpleadoConsulta
             // 
@@ -63,5 +76,6 @@
         #endregion
 
         private Button btnAsignacionRoles;
+        private Button btnCrearUsuario;
     }
 }

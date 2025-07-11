@@ -72,8 +72,9 @@ namespace Presentacion.Core.Empleado
             grilla.Columns["Telefono"].Visible = true;
             grilla.Columns["Telefono"].Width = 100;
 
-            grilla.Columns["Estado"].Visible = true;
-            grilla.Columns["Estado"].Width = 100;
+            grilla.Columns["EstadoDescripcion"].Visible = true;
+            grilla.Columns["EstadoDescripcion"].Width = 100;
+            grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
         }
 
         public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
@@ -130,7 +131,7 @@ namespace Presentacion.Core.Empleado
             ControlCargaExistencaDatos();
             if (puedeEjecutarComando)
             {
-            EjecutarAsignacionRoles();
+                EjecutarAsignacionRoles();
             }
         }
 
@@ -159,6 +160,16 @@ namespace Presentacion.Core.Empleado
             else
             {
                 MessageBox.Show("No hay Datos Cargados.");
+            }
+        }
+
+        private void btnCrearUsuario_Click(object sender, EventArgs e)
+        {
+            ControlCargaExistencaDatos();
+            if (puedeEjecutarComando)
+            {
+                var formularioCrearUsuario = new FEmpleadoCrearUsuario(entidadID);
+                formularioCrearUsuario.ShowDialog();
             }
         }
     }

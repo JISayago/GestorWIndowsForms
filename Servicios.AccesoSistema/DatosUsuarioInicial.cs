@@ -1,15 +1,16 @@
 ﻿using AccesoDatos.Entidades;
-using Microsoft.EntityFrameworkCore;
+using AccesoDatos;
+using Servicios.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AccesoDatos.Config
+namespace Servicios.AccesoSistema
 {
-    public static class DatosUsuarioInicial
-    { 
+    public class DatosUsuarioInicial
+    {
         public static void Inicializar(GestorContextDB context)
         {
             // Aplica migraciones pendientes
@@ -44,7 +45,8 @@ namespace AccesoDatos.Config
                 FechaIngreso = DateTime.Today,
                 Estado = 1,
                 Username = "admin",
-                Pass = "admin123", // Reemplazá esto con un hash si lo vas a encriptar
+                Pass = HashPass.HashPassword("Admin123")
+                , // Reemplazá esto con un hash si lo vas a encriptar
                 UsuarioEstaHabilitado = true
             };
 
