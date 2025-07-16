@@ -1,9 +1,9 @@
 ﻿using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
-using Servicios.LogicaNegocio.Empleado;
-using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Empleado.Rol;
 using Servicios.LogicaNegocio.Empleado.Rol.DTO;
+using Servicios.LogicaNegocio.TipoPago;
+using Servicios.LogicaNegocio.TipoPago.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,22 +14,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Presentacion.Core.Empleado.Rol
+namespace Presentacion.Core.TipoPago
 {
-    public partial class FRolABM : FBaseABM
+    public partial class FTipoPagoABM : FBaseABM
     {
-
-        private readonly IRolServicio _rolServicio;
+        private readonly ITipoPagoServicio _tipoPagoServicio;
 
         public override void FBaseABM_Load(object sender, EventArgs e)
         {
             base.FBaseABM_Load(sender, e);
             Inicializador(EntidadID);
         }
-        public FRolABM(TipoOperacion tipoOperacion, long? entidadID = null) : base(tipoOperacion, entidadID)
+        public FTipoPagoABM(TipoOperacion tipoOperacion, long? entidadID = null) : base(tipoOperacion, entidadID)
         {
             InitializeComponent();
-            _rolServicio = new RolServicio();
+            _tipoPagoServicio = new TipoPagoServicio();
 
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
             {
@@ -41,9 +40,9 @@ namespace Presentacion.Core.Empleado.Rol
                 DesactivarControles(this);
             }
 
-            AgregarControlesObligatorios(txtNombre, "Nombre del Rol");
-            AgregarControlesObligatorios(txtCodigoRol, "Código del Rol");
-            AgregarControlesObligatorios(txtDescripcionRol, "Descripcion del Rol");
+            AgregarControlesObligatorios(txtNombre, "Nombre del Tipo de pago");
+            AgregarControlesObligatorios(txtCodigo, "Código del Tipo de pago");
+            AgregarControlesObligatorios(txtDescripcion, "Descripcion del Tipo de pago");
         }
         public override bool EjecutarComandoNuevo()
         {
@@ -55,15 +54,15 @@ namespace Presentacion.Core.Empleado.Rol
                 return false;
             }
 
-            var nuevoRol = new RolDTO
+            var nuevoTipoPago = new TipoPagoDTO
             {
                 Nombre = txtNombre.Text,
-                CodigoRol = txtCodigoRol.Text,
-                DetalleRol = txtDescripcionRol.Text,
+                Codigo = txtCodigo.Text,
+                Detalle = txtDescripcion.Text,
             };
-            
 
-            var response = _rolServicio.Insertar(nuevoRol);
+
+            var response = _tipoPagoServicio.Insertar(nuevoTipoPago);
 
             if (response.Exitoso)
             {
@@ -97,13 +96,13 @@ namespace Presentacion.Core.Empleado.Rol
                 btnLimpiar.Enabled = false;
             }
 
-            var rol = _rolServicio.ObtenerRolPorId(entidadId.Value);
+            var tipoPago = _tipoPagoServicio.ObtenerTipoPagoPorId(entidadId.Value);
 
             // Datos Personales
-            txtNombre.Text = rol.Nombre;
-            txtCodigoRol.Text = rol.CodigoRol;
-            txtDescripcionRol.Text =rol.DetalleRol;
-            
+            txtNombre.Text = tipoPago.Nombre;
+            txtCodigo.Text =tipoPago.Codigo;
+            txtDescripcion.Text = tipoPago.Detalle;
+
         }
 
 
@@ -117,7 +116,7 @@ namespace Presentacion.Core.Empleado.Rol
             }
             if (TipoOperacion == TipoOperacion.Eliminar)
             {
-                var response = _rolServicio.Eliminar((long)EntidadID);
+                var response = _tipoPagoServicio.Eliminar((long)EntidadID);
                 if (response.Exitoso)
                 {
                     MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
@@ -145,16 +144,14 @@ namespace Presentacion.Core.Empleado.Rol
             if (TipoOperacion == TipoOperacion.Modificar)
             {
 
-                var rolEditar = new RolDTO
+                var tipoPagoEditar = new TipoPagoDTO
                 {
                     Nombre = txtNombre.Text,
-                    //CodigoRol = txtCodigoRol.Text,
-                    //DetalleRol = txtDescripcionRol.Text,
-                    CodigoRol = txtCodigoRol.Text,
-                    DetalleRol = txtDescripcionRol.Text,
+                    Codigo = txtCodigo.Text,
+                    Detalle = txtDescripcion.Text,
                 };
 
-                var response = _rolServicio.Modificar(rolEditar, EntidadID);
+                var response = _tipoPagoServicio.Modificar(tipoPagoEditar, EntidadID);
 
                 if (response.Exitoso)
                 {
