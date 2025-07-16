@@ -3,14 +3,14 @@ using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Empleado.DTO;
-using Servicios.LogicaNegocio.TipoPago.DTO;
+using Servicios.LogicaNegocio.Venta.TipoPago.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicios.LogicaNegocio.TipoPago
+namespace Servicios.LogicaNegocio.Venta.TipoPago
 {
     public class TipoPagoServicio : ITipoPagoServicio
     {
