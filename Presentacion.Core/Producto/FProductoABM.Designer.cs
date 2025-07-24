@@ -32,10 +32,20 @@
             lblMarca = new Label();
             lblPrecioCosto = new Label();
             lblPrecioVenta = new Label();
-            textBox1 = new TextBox();
-            textBox3 = new TextBox();
-            textBox2 = new TextBox();
-            textBox4 = new TextBox();
+            txtProducto = new TextBox();
+            txtPrecioCosto = new TextBox();
+            txtPrecioVenta = new TextBox();
+            txtMarca = new TextBox();
+            lblStock = new Label();
+            txtStock = new TextBox();
+            lblEstado = new Label();
+            txtEstado = new TextBox();
+            lblCategoria = new Label();
+            lblMedida = new Label();
+            lblUnidadMedida = new Label();
+            txtMedida = new TextBox();
+            txtUnidadMedida = new TextBox();
+            txtCategoria = new TextBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
@@ -60,7 +70,7 @@
             // lblPrecioCosto
             // 
             lblPrecioCosto.AutoSize = true;
-            lblPrecioCosto.Location = new Point(20, 147);
+            lblPrecioCosto.Location = new Point(85, 210);
             lblPrecioCosto.Name = "lblPrecioCosto";
             lblPrecioCosto.Size = new Size(74, 15);
             lblPrecioCosto.TabIndex = 3;
@@ -69,49 +79,139 @@
             // lblPrecioVenta
             // 
             lblPrecioVenta.AutoSize = true;
-            lblPrecioVenta.Location = new Point(216, 147);
+            lblPrecioVenta.Location = new Point(281, 210);
             lblPrecioVenta.Name = "lblPrecioVenta";
             lblPrecioVenta.Size = new Size(72, 15);
             lblPrecioVenta.TabIndex = 4;
             lblPrecioVenta.Text = "Precio Venta";
             // 
-            // textBox1
+            // txtProducto
             // 
-            textBox1.Location = new Point(97, 100);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(362, 23);
-            textBox1.TabIndex = 5;
+            txtProducto.Location = new Point(97, 105);
+            txtProducto.Name = "txtProducto";
+            txtProducto.Size = new Size(362, 23);
+            txtProducto.TabIndex = 5;
             // 
-            // textBox3
+            // txtPrecioCosto
             // 
-            textBox3.Location = new Point(97, 139);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(100, 23);
-            textBox3.TabIndex = 7;
+            txtPrecioCosto.Location = new Point(162, 207);
+            txtPrecioCosto.Name = "txtPrecioCosto";
+            txtPrecioCosto.Size = new Size(100, 23);
+            txtPrecioCosto.TabIndex = 7;
             // 
-            // textBox2
+            // txtPrecioVenta
             // 
-            textBox2.Location = new Point(294, 139);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(100, 23);
-            textBox2.TabIndex = 8;
+            txtPrecioVenta.Location = new Point(359, 207);
+            txtPrecioVenta.Name = "txtPrecioVenta";
+            txtPrecioVenta.Size = new Size(100, 23);
+            txtPrecioVenta.TabIndex = 8;
             // 
-            // textBox4
+            // txtMarca
             // 
-            textBox4.Location = new Point(133, 285);
-            textBox4.Name = "textBox4";
-            textBox4.Size = new Size(100, 23);
-            textBox4.TabIndex = 9;
+            txtMarca.Location = new Point(511, 104);
+            txtMarca.Name = "txtMarca";
+            txtMarca.Size = new Size(100, 23);
+            txtMarca.TabIndex = 9;
+            // 
+            // lblStock
+            // 
+            lblStock.AutoSize = true;
+            lblStock.Location = new Point(465, 159);
+            lblStock.Name = "lblStock";
+            lblStock.Size = new Size(36, 15);
+            lblStock.TabIndex = 10;
+            lblStock.Text = "Stock";
+            // 
+            // txtStock
+            // 
+            txtStock.Location = new Point(507, 156);
+            txtStock.Name = "txtStock";
+            txtStock.Size = new Size(100, 23);
+            txtStock.TabIndex = 11;
+            // 
+            // lblEstado
+            // 
+            lblEstado.AutoSize = true;
+            lblEstado.Location = new Point(617, 159);
+            lblEstado.Name = "lblEstado";
+            lblEstado.Size = new Size(42, 15);
+            lblEstado.TabIndex = 12;
+            lblEstado.Text = "Estado";
+            // 
+            // txtEstado
+            // 
+            txtEstado.Location = new Point(672, 156);
+            txtEstado.Name = "txtEstado";
+            txtEstado.Size = new Size(100, 23);
+            txtEstado.TabIndex = 13;
+            // 
+            // lblCategoria
+            // 
+            lblCategoria.AutoSize = true;
+            lblCategoria.Location = new Point(617, 108);
+            lblCategoria.Name = "lblCategoria";
+            lblCategoria.Size = new Size(58, 15);
+            lblCategoria.TabIndex = 15;
+            lblCategoria.Text = "Categoria";
+            // 
+            // lblMedida
+            // 
+            lblMedida.AutoSize = true;
+            lblMedida.Location = new Point(109, 159);
+            lblMedida.Name = "lblMedida";
+            lblMedida.Size = new Size(47, 15);
+            lblMedida.TabIndex = 16;
+            lblMedida.Text = "Medida";
+            // 
+            // lblUnidadMedida
+            // 
+            lblUnidadMedida.AutoSize = true;
+            lblUnidadMedida.Location = new Point(265, 159);
+            lblUnidadMedida.Name = "lblUnidadMedida";
+            lblUnidadMedida.Size = new Size(88, 15);
+            lblUnidadMedida.TabIndex = 17;
+            lblUnidadMedida.Text = "Unidad Medida";
+            // 
+            // txtMedida
+            // 
+            txtMedida.Location = new Point(159, 156);
+            txtMedida.Name = "txtMedida";
+            txtMedida.Size = new Size(100, 23);
+            txtMedida.TabIndex = 18;
+            // 
+            // txtUnidadMedida
+            // 
+            txtUnidadMedida.Location = new Point(359, 156);
+            txtUnidadMedida.Name = "txtUnidadMedida";
+            txtUnidadMedida.Size = new Size(100, 23);
+            txtUnidadMedida.TabIndex = 19;
+            // 
+            // txtCategoria
+            // 
+            txtCategoria.Location = new Point(672, 104);
+            txtCategoria.Name = "txtCategoria";
+            txtCategoria.Size = new Size(100, 23);
+            txtCategoria.TabIndex = 20;
             // 
             // FProductoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 450);
-            Controls.Add(textBox4);
-            Controls.Add(textBox2);
-            Controls.Add(textBox3);
-            Controls.Add(textBox1);
+            Controls.Add(txtCategoria);
+            Controls.Add(txtUnidadMedida);
+            Controls.Add(txtMedida);
+            Controls.Add(lblUnidadMedida);
+            Controls.Add(lblMedida);
+            Controls.Add(lblCategoria);
+            Controls.Add(txtEstado);
+            Controls.Add(lblEstado);
+            Controls.Add(txtStock);
+            Controls.Add(lblStock);
+            Controls.Add(txtMarca);
+            Controls.Add(txtPrecioVenta);
+            Controls.Add(txtPrecioCosto);
+            Controls.Add(txtProducto);
             Controls.Add(lblPrecioVenta);
             Controls.Add(lblPrecioCosto);
             Controls.Add(lblMarca);
@@ -122,10 +222,20 @@
             Controls.SetChildIndex(lblMarca, 0);
             Controls.SetChildIndex(lblPrecioCosto, 0);
             Controls.SetChildIndex(lblPrecioVenta, 0);
-            Controls.SetChildIndex(textBox1, 0);
-            Controls.SetChildIndex(textBox3, 0);
-            Controls.SetChildIndex(textBox2, 0);
-            Controls.SetChildIndex(textBox4, 0);
+            Controls.SetChildIndex(txtProducto, 0);
+            Controls.SetChildIndex(txtPrecioCosto, 0);
+            Controls.SetChildIndex(txtPrecioVenta, 0);
+            Controls.SetChildIndex(txtMarca, 0);
+            Controls.SetChildIndex(lblStock, 0);
+            Controls.SetChildIndex(txtStock, 0);
+            Controls.SetChildIndex(lblEstado, 0);
+            Controls.SetChildIndex(txtEstado, 0);
+            Controls.SetChildIndex(lblCategoria, 0);
+            Controls.SetChildIndex(lblMedida, 0);
+            Controls.SetChildIndex(lblUnidadMedida, 0);
+            Controls.SetChildIndex(txtMedida, 0);
+            Controls.SetChildIndex(txtUnidadMedida, 0);
+            Controls.SetChildIndex(txtCategoria, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -137,9 +247,19 @@
         private Label lblMarca;
         private Label lblPrecioCosto;
         private Label lblPrecioVenta;
-        private TextBox textBox1;
-        private TextBox textBox3;
-        private TextBox textBox2;
-        private TextBox textBox4;
+        private TextBox txtProducto;
+        private TextBox txtPrecioCosto;
+        private TextBox txtPrecioVenta;
+        private TextBox txtMarca;
+        private Label lblStock;
+        private TextBox txtStock;
+        private Label lblEstado;
+        private TextBox txtEstado;
+        private Label lblCategoria;
+        private Label lblMedida;
+        private Label lblUnidadMedida;
+        private TextBox txtMedida;
+        private TextBox txtUnidadMedida;
+        private TextBox txtCategoria;
     }
 }

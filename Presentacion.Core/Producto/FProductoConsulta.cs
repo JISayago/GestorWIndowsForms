@@ -32,9 +32,9 @@ namespace Presentacion.Core.Producto
             base.ResetearGrilla(grilla);
 
 
-            grilla.Columns["Nombre"].Visible = true;
-            grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            grilla.Columns["Nombre"].HeaderText = "Producto";
+            grilla.Columns["Descripcion"].Visible = true;
+            grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            grilla.Columns["Descripcion"].HeaderText = "Producto";
 
         }
 

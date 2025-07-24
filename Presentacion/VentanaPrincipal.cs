@@ -3,6 +3,7 @@ using Presentacion.Core.Articulo.Marca;
 using Presentacion.Core.Categoria;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
+using Presentacion.Core.Producto;
 using ServicioAccesoSistema.AccesoSistema;
 
 namespace Presentacion
@@ -53,6 +54,13 @@ namespace Presentacion
             var fmarca = new FMarcaConsulta();
 
             fmarca.Show();
+        }
+
+        private void articuloToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            var fProducto = new FProductoConsulta();
+
+            fProducto.Show();
         }
     }
 }

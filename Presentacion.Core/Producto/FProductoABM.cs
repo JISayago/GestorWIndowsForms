@@ -1,6 +1,7 @@
 ﻿using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Producto;
+using Servicios.LogicaNegocio.Producto.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,6 +42,8 @@ namespace Presentacion.Core.Producto
             }
 
             AgregarControlesObligatorios(txtProducto, "Producto");
+            AgregarControlesObligatorios(txtStock, "Stock");
+
         }
 
         public override void Inicializador(long? entidadId)
@@ -78,7 +81,7 @@ namespace Presentacion.Core.Producto
 
             if (Producto != null)
             {
-                txtProducto.Text = Producto.Nombre;
+                txtProducto.Text = Producto.Descripcion;
             }
             else
             {
@@ -97,10 +100,18 @@ namespace Presentacion.Core.Producto
             }
             var ProductoNueva = new ProductoDTO
             {
-                Nombre = txtProducto.Text,
+                Descripcion = txtProducto.Text,
+                Stock = int.Parse(txtStock.Text),
+                PrecioCosto = int.Parse(txtPrecioCosto.Text),
+                PrecioVenta =  int.Parse(txtPrecioVenta.Text),
+                Estado = int.Parse(txtEstado.Text),
+                Medida = txtMedida.Text,
+                UnidadMedida = txtUnidadMedida.Text,
+                IdMarca = int.Parse(txtMarca.Text),
+                CategoriaIds = txtCategoria.Text.Split(',').Select(id => long.Parse(id.Trim())).ToList(),
                 EstaEliminado = false
-
             };
+
             var response = _ProductoServicio.Insertar(ProductoNueva);
 
             if (response.Exitoso)
@@ -166,10 +177,11 @@ namespace Presentacion.Core.Producto
 
                 var ProductoModificar = new ProductoDTO
                 {
-                    Id = EntidadID.Value,
-                    Nombre = txtProducto.Text,
+                    ProductoId = EntidadID.Value,
+                    Descripcion = txtProducto.Text
                 };
-                var response = _ProductoServicio.Modificar(ProductoModificar);
+
+                var response = _ProductoServicio.Modificar(ProductoModificar, ProductoModificar.ProductoId);
 
                 if (response.Exitoso)
                 {
