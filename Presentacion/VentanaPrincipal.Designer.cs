@@ -128,8 +128,9 @@
             // articuloToolStripMenuItem1
             // 
             articuloToolStripMenuItem1.Name = "articuloToolStripMenuItem1";
-            articuloToolStripMenuItem1.Size = new Size(125, 22);
-            articuloToolStripMenuItem1.Text = "Articulo";
+            articuloToolStripMenuItem1.Size = new Size(180, 22);
+            articuloToolStripMenuItem1.Text = "Producto";
+            articuloToolStripMenuItem1.Click += articuloToolStripMenuItem1_Click;
             // 
             // vENTASToolStripMenuItem
             // 
