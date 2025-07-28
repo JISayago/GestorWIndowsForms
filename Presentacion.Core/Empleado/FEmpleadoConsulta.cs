@@ -20,6 +20,7 @@ namespace Presentacion.Core.Empleado
         private readonly IEmpleadoServicio _empleadoServicio;
         public long? empleadoSeleccionado = null;
         public bool soloSeleccion;
+        public bool vieneDeCargaVendedor = false;
         public FEmpleadoConsulta() : this(new EmpleadoServicio())
         {
             InitializeComponent();
@@ -30,14 +31,34 @@ namespace Presentacion.Core.Empleado
             _empleadoServicio = empleadoServicio;
             soloSeleccion = false;
         }
-        public FEmpleadoConsulta(bool soloSeleccion)
+        public FEmpleadoConsulta(bool _vieneDeCargaVendedor) :this(new EmpleadoServicio())
         {
             InitializeComponent();
-            this.soloSeleccion = soloSeleccion;
-            if (soloSeleccion) MessageBox.Show("Seleccione el empleado con doble click");
-            _empleadoServicio = new EmpleadoServicio();
-        }
+            this.vieneDeCargaVendedor = _vieneDeCargaVendedor;
+            if (vieneDeCargaVendedor)
+            {
+                btnSeleccionarVendedor.Visible = true;
+                btnSeleccionarVendedor.Enabled = true;
+            }
+            else
+            {
+                btnSeleccionarVendedor.Visible = false;
+                btnSeleccionarVendedor.Enabled = false;
+            }
+            // this.soloSeleccion = soloSeleccion;
+            //if (soloSeleccion) MessageBox.Show("Seleccione el empleado con doble click");
+            //_empleadoServicio = new EmpleadoServicio();
 
+        }
+        /*  public override void EjecutarDobleClickFila()
+          {
+              if (soloSeleccion)
+              {
+                  Console.WriteLine("In ClienteCons");
+                  empleadoSeleccionado = (long)entidadID;
+                  Close();
+              }
+          }*/
         public override void EjecutarBtnNuevo()
         {
             var FormularioEmpleadoABM = new FEmpleadoABM(TipoOperacion.Nuevo);
@@ -171,6 +192,16 @@ namespace Presentacion.Core.Empleado
                 var formularioCrearUsuario = new FEmpleadoCrearUsuario(entidadID);
                 formularioCrearUsuario.ShowDialog();
             }
+        }
+
+        private void btnSeleccionarVendedor_Click(object sender, EventArgs e)
+        {
+            ControlCargaExistencaDatos();
+            if (!puedeEjecutarComando) return;
+
+            empleadoSeleccionado = (long)entidadID;
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
     }
 }

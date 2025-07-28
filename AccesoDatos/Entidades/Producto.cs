@@ -12,11 +12,10 @@ namespace AccesoDatos.Entidades
         [Key]
         public long ProductoId { get; set; }
         public long? IdMarca { get; set; }
-
         public int Stock { get; set; }
         public decimal PrecioCosto { get; set; }
         public decimal PrecioVenta { get; set; }
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
         public bool EstaEliminado { get; set; }
         public int Estado { get; set; }
         public string Medida { get; set; }

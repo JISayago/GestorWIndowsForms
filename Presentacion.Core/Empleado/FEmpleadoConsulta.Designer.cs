@@ -30,15 +30,18 @@
         {
             btnAsignacionRoles = new Button();
             btnCrearUsuario = new Button();
-           // panel1.SuspendLayout();
+            btnSeleccionarVendedor = new Button();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
+            panel1.Controls.Add(btnSeleccionarVendedor);
             panel1.Controls.Add(btnCrearUsuario);
             panel1.Controls.Add(btnAsignacionRoles);
             panel1.Controls.SetChildIndex(btnAsignacionRoles, 0);
             panel1.Controls.SetChildIndex(btnCrearUsuario, 0);
+            panel1.Controls.SetChildIndex(btnSeleccionarVendedor, 0);
             // 
             // btnAsignacionRoles
             // 
@@ -60,6 +63,18 @@
             btnCrearUsuario.UseVisualStyleBackColor = true;
             btnCrearUsuario.Click += btnCrearUsuario_Click;
             // 
+            // btnSeleccionarVendedor
+            // 
+            btnSeleccionarVendedor.Enabled = false;
+            btnSeleccionarVendedor.Location = new Point(3, 370);
+            btnSeleccionarVendedor.Name = "btnSeleccionarVendedor";
+            btnSeleccionarVendedor.Size = new Size(75, 55);
+            btnSeleccionarVendedor.TabIndex = 3;
+            btnSeleccionarVendedor.Text = "Seleccionar Vendedor";
+            btnSeleccionarVendedor.UseVisualStyleBackColor = true;
+            btnSeleccionarVendedor.Visible = false;
+            btnSeleccionarVendedor.Click += btnSeleccionarVendedor_Click;
+            // 
             // FEmpleadoConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -77,5 +92,6 @@
 
         private Button btnAsignacionRoles;
         private Button btnCrearUsuario;
+        private Button btnSeleccionarVendedor;
     }
 }

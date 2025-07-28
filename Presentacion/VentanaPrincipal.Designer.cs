@@ -43,13 +43,13 @@
             cONFIGToolStripMenuItem = new ToolStripMenuItem();
             lblUsuarioLogueado = new Label();
             lblNombreUsuario = new Label();
-            sqlCommand1 = new Microsoft.Data.SqlClient.SqlCommand();
             btnVenta = new Button();
             btnCaja = new Button();
             btnStock = new Button();
             btnMovimientos = new Button();
             dataGridView1 = new DataGridView();
             panel1 = new Panel();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel1.SuspendLayout();
@@ -80,7 +80,7 @@
             // 
             empleadoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { rolesToolStripMenuItem });
             empleadoToolStripMenuItem.Name = "empleadoToolStripMenuItem";
-            empleadoToolStripMenuItem.Size = new Size(180, 22);
+            empleadoToolStripMenuItem.Size = new Size(128, 22);
             empleadoToolStripMenuItem.Text = "Empleado";
             empleadoToolStripMenuItem.Click += empleadoToolStripMenuItem_Click;
             // 
@@ -94,14 +94,14 @@
             // tipoPagoToolStripMenuItem
             // 
             tipoPagoToolStripMenuItem.Name = "tipoPagoToolStripMenuItem";
-            tipoPagoToolStripMenuItem.Size = new Size(180, 22);
+            tipoPagoToolStripMenuItem.Size = new Size(128, 22);
             tipoPagoToolStripMenuItem.Text = "Tipo Pago";
             tipoPagoToolStripMenuItem.Click += tipoPagoToolStripMenuItem_Click;
             // 
             // gastosToolStripMenuItem
             // 
             gastosToolStripMenuItem.Name = "gastosToolStripMenuItem";
-            gastosToolStripMenuItem.Size = new Size(180, 22);
+            gastosToolStripMenuItem.Size = new Size(128, 22);
             gastosToolStripMenuItem.Text = "Gastos";
             // 
             // aRTICULOToolStripMenuItem
@@ -114,21 +114,21 @@
             // categoriaToolStripMenuItem
             // 
             categoriaToolStripMenuItem.Name = "categoriaToolStripMenuItem";
-            categoriaToolStripMenuItem.Size = new Size(125, 22);
+            categoriaToolStripMenuItem.Size = new Size(180, 22);
             categoriaToolStripMenuItem.Text = "Categoria";
             categoriaToolStripMenuItem.Click += categoriaToolStripMenuItem_Click;
             // 
             // marcaToolStripMenuItem
             // 
             marcaToolStripMenuItem.Name = "marcaToolStripMenuItem";
-            marcaToolStripMenuItem.Size = new Size(125, 22);
+            marcaToolStripMenuItem.Size = new Size(180, 22);
             marcaToolStripMenuItem.Text = "Marca";
             marcaToolStripMenuItem.Click += marcaToolStripMenuItem_Click;
             // 
             // articuloToolStripMenuItem1
             // 
             articuloToolStripMenuItem1.Name = "articuloToolStripMenuItem1";
-            articuloToolStripMenuItem1.Size = new Size(125, 22);
+            articuloToolStripMenuItem1.Size = new Size(180, 22);
             articuloToolStripMenuItem1.Text = "Articulo";
             // 
             // vENTASToolStripMenuItem
@@ -162,11 +162,6 @@
             lblNombreUsuario.Size = new Size(0, 20);
             lblNombreUsuario.TabIndex = 3;
             // 
-            // sqlCommand1
-            // 
-            sqlCommand1.CommandTimeout = 30;
-            sqlCommand1.EnableOptimizedParameterBinding = false;
-            // 
             // btnVenta
             // 
             btnVenta.Location = new Point(596, 0);
@@ -175,6 +170,7 @@
             btnVenta.TabIndex = 12;
             btnVenta.Text = "VENTA";
             btnVenta.UseVisualStyleBackColor = true;
+            btnVenta.Click += btnVenta_Click;
             // 
             // btnCaja
             // 
@@ -236,6 +232,7 @@
             MinimumSize = new Size(800, 600);
             Name = "VentanaPrincipal";
             Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
@@ -258,7 +255,6 @@
         private Label lblNombreUsuario;
         private ToolStripMenuItem gastosToolStripMenuItem;
         private ToolStripMenuItem vENTASToolStripMenuItem;
-        private Microsoft.Data.SqlClient.SqlCommand sqlCommand1;
         private Button btnVenta;
         private Button btnCaja;
         private Button btnStock;

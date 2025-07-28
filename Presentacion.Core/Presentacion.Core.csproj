@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Presentacion.AccesoAlSistema\Presentacion.AccesoAlSistema.csproj" />
     <ProjectReference Include="..\Presentacion.FBase\Presentacion.FBase.csproj" />
     <ProjectReference Include="..\Servicios\Servicios.csproj" />
   </ItemGroup>
