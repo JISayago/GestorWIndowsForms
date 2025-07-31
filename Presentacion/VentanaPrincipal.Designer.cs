@@ -80,7 +80,7 @@
             // 
             empleadoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { rolesToolStripMenuItem });
             empleadoToolStripMenuItem.Name = "empleadoToolStripMenuItem";
-            empleadoToolStripMenuItem.Size = new Size(128, 22);
+            empleadoToolStripMenuItem.Size = new Size(180, 22);
             empleadoToolStripMenuItem.Text = "Empleado";
             empleadoToolStripMenuItem.Click += empleadoToolStripMenuItem_Click;
             // 
@@ -94,13 +94,14 @@
             // tipoPagoToolStripMenuItem
             // 
             tipoPagoToolStripMenuItem.Name = "tipoPagoToolStripMenuItem";
-            tipoPagoToolStripMenuItem.Size = new Size(128, 22);
+            tipoPagoToolStripMenuItem.Size = new Size(180, 22);
             tipoPagoToolStripMenuItem.Text = "Tipo Pago";
+            tipoPagoToolStripMenuItem.Click += tipoPagoToolStripMenuItem_Click;
             // 
             // gastosToolStripMenuItem
             // 
             gastosToolStripMenuItem.Name = "gastosToolStripMenuItem";
-            gastosToolStripMenuItem.Size = new Size(128, 22);
+            gastosToolStripMenuItem.Size = new Size(180, 22);
             gastosToolStripMenuItem.Text = "Gastos";
             // 
             // aRTICULOToolStripMenuItem
@@ -113,14 +114,14 @@
             // categoriaToolStripMenuItem
             // 
             categoriaToolStripMenuItem.Name = "categoriaToolStripMenuItem";
-            categoriaToolStripMenuItem.Size = new Size(180, 22);
+            categoriaToolStripMenuItem.Size = new Size(125, 22);
             categoriaToolStripMenuItem.Text = "Categoria";
             categoriaToolStripMenuItem.Click += categoriaToolStripMenuItem_Click;
             // 
             // marcaToolStripMenuItem
             // 
             marcaToolStripMenuItem.Name = "marcaToolStripMenuItem";
-            marcaToolStripMenuItem.Size = new Size(180, 22);
+            marcaToolStripMenuItem.Size = new Size(125, 22);
             marcaToolStripMenuItem.Text = "Marca";
             marcaToolStripMenuItem.Click += marcaToolStripMenuItem_Click;
             // 
