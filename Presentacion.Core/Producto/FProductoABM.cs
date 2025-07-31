@@ -1,5 +1,7 @@
-﻿using Presentacion.FBase;
+﻿using AccesoDatos.Entidades;
+using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.LogicaNegocio.Articulo.Marca;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
 using System;
@@ -17,6 +19,7 @@ namespace Presentacion.Core.Producto
     public partial class FProductoABM : FBaseABM
     {
         private readonly IProductoServicio _ProductoServicio;
+        private readonly IMarcaServicio _MarcaServicio;
 
         public override void FBaseABM_Load(object sender, EventArgs e)
         {
@@ -30,6 +33,7 @@ namespace Presentacion.Core.Producto
             InitializeComponent();
 
             _ProductoServicio = new ProductoServicio();
+            _MarcaServicio = new MarcaServicio();
 
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
             {
@@ -43,7 +47,17 @@ namespace Presentacion.Core.Producto
 
             AgregarControlesObligatorios(txtProducto, "Producto");
             AgregarControlesObligatorios(txtStock, "Stock");
+            AgregarControlesObligatorios(cmbMarca, "Marca");
 
+            var marcas = _MarcaServicio.ObtenerMarca("").ToList();
+
+            cmbMarca.DisplayMember = "Nombre"; // lo que se muestra
+            cmbMarca.ValueMember = "Id";
+            cmbMarca.DataSource = marcas;
+
+            cmbMarca.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbMarca.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbMarca.DropDownStyle = ComboBoxStyle.DropDown;
         }
 
         public override void Inicializador(long? entidadId)
@@ -103,11 +117,11 @@ namespace Presentacion.Core.Producto
                 Descripcion = txtProducto.Text,
                 Stock = int.Parse(txtStock.Text),
                 PrecioCosto = int.Parse(txtPrecioCosto.Text),
-                PrecioVenta =  int.Parse(txtPrecioVenta.Text),
+                PrecioVenta = int.Parse(txtPrecioVenta.Text),
                 Estado = int.Parse(txtEstado.Text),
                 Medida = txtMedida.Text,
                 UnidadMedida = txtUnidadMedida.Text,
-                IdMarca = int.Parse(txtMarca.Text),
+                IdMarca = (long)cmbMarca.SelectedValue,
                 CategoriaIds = txtCategoria.Text.Split(',').Select(id => long.Parse(id.Trim())).ToList(),
                 EstaEliminado = false
             };
@@ -198,6 +212,11 @@ namespace Presentacion.Core.Producto
 
             }
             return true;
+
+        }
+
+        private void txtMarca_TextChanged(object sender, EventArgs e)
+        {
 
         }
     }
