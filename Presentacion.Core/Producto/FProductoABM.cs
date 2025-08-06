@@ -20,6 +20,8 @@ namespace Presentacion.Core.Producto
     {
         private readonly IProductoServicio _ProductoServicio;
         private readonly IMarcaServicio _MarcaServicio;
+        protected long? EntidadID;
+        private List<long> _categoriasSeleccionadas = new List<long>();
 
         public override void FBaseABM_Load(object sender, EventArgs e)
         {
@@ -44,11 +46,11 @@ namespace Presentacion.Core.Producto
             {
                 DesactivarControles(this);
             }
-
+            /*
             AgregarControlesObligatorios(txtProducto, "Producto");
             AgregarControlesObligatorios(txtStock, "Stock");
             AgregarControlesObligatorios(cmbMarca, "Marca");
-
+            */
             var marcas = _MarcaServicio.ObtenerMarca("").ToList();
 
             cmbMarca.DisplayMember = "Nombre"; // lo que se muestra
@@ -58,6 +60,8 @@ namespace Presentacion.Core.Producto
             cmbMarca.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             cmbMarca.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbMarca.DropDownStyle = ComboBoxStyle.DropDown;
+
+            EntidadID = entidadId;
         }
 
         public override void Inicializador(long? entidadId)
@@ -122,7 +126,7 @@ namespace Presentacion.Core.Producto
                 Medida = txtMedida.Text,
                 UnidadMedida = txtUnidadMedida.Text,
                 IdMarca = (long)cmbMarca.SelectedValue,
-                CategoriaIds = txtCategoria.Text.Split(',').Select(id => long.Parse(id.Trim())).ToList(),
+                CategoriaIds = _categoriasSeleccionadas.ToList(),
                 EstaEliminado = false
             };
 
@@ -215,9 +219,18 @@ namespace Presentacion.Core.Producto
 
         }
 
-        private void txtMarca_TextChanged(object sender, EventArgs e)
+        private void btnCategorias_Click(object sender, EventArgs e)
         {
+            var fCategoriaProducto = new Categoria.FAsignacionCategoriaProducto();
 
+            if (fCategoriaProducto.ShowDialog() == DialogResult.OK)
+            {
+                // Guardamos internamente las categorías elegidas por el usuario
+                _categoriasSeleccionadas = fCategoriaProducto.CategoriasSeleccionadas;
+
+                // Si querés mostrarlas en una textbox invisible o label:
+                //txtCategoria.Text = string.Join(",", _categoriasSeleccionadas);
+            }
         }
     }
 }
