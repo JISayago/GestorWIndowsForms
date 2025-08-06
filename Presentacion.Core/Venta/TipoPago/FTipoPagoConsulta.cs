@@ -46,7 +46,7 @@ namespace Presentacion.Core.TipoPago
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
-            grilla.Columns["TipoPagoId"].Visible = true;
+            grilla.Columns["TipoPagoId"].Visible = false;
             grilla.Columns["TipoPagoId"].Name = "Id";
 
             grilla.Columns["Nombre"].Visible = true;

@@ -3,6 +3,7 @@ using Presentacion.Core.Articulo.Marca;
 using Presentacion.Core.Categoria;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
+using Presentacion.Core.Producto;
 using Presentacion.Core.TipoPago;
 using Presentacion.Core.Venta;
 using ServicioAccesoSistema.AccesoSistema;
@@ -57,6 +58,11 @@ namespace Presentacion
             fmarca.Show();
         }
 
+        private void articuloToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            var fProducto = new FProductoConsulta();
+
+            fProducto.Show();
         private void tipoPagoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var fTipoPago = new FTipoPagoConsulta();
