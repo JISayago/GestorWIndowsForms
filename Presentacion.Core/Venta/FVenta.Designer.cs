@@ -176,6 +176,7 @@
             btnCargarProducto.TabIndex = 12;
             btnCargarProducto.Text = "Cargar Producto";
             btnCargarProducto.UseVisualStyleBackColor = true;
+            btnCargarProducto.Click += btnCargarProducto_Click;
             // 
             // txtProductoCargado
             // 

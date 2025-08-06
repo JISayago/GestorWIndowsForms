@@ -2,10 +2,14 @@
 using Microsoft.VisualBasic.Devices;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Empleado;
+using Presentacion.Core.Producto;
 using Presentacion.Core.Venta.TipoPago;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Empleado.DTO;
+using Servicios.LogicaNegocio.Empleado.Rol.DTO;
+using Servicios.LogicaNegocio.Producto;
+using Servicios.LogicaNegocio.Producto.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,12 +32,13 @@ namespace Presentacion.Core.Venta
         private bool esUsuarioLogeado;
         private bool esConsumidorFinal;
         private System.Windows.Forms.Timer timer;
-        private decimal _totalVenta = 9240.12m;
-        private decimal _subTotalVenta;
+        private decimal _totalVenta = 0.00m;
+        private decimal _subTotalVenta = 0.00m;
         private string descripcionVenta = "";
         //configuracion tomada del json de config.
         private bool _incluirIva = true;
         private bool _incluirCtaCte = true;
+        private List<ProductoDTO> productosVenta;
 
         public FVenta(long usuarioLogeadoID)
         {
@@ -46,7 +51,7 @@ namespace Presentacion.Core.Venta
                 pagoParcial = false,
                 saldoPendiente = 0.00m,
             };
-        
+
             _usuarioLogeadoID = usuarioLogeadoID;
         }
 
@@ -56,7 +61,6 @@ namespace Presentacion.Core.Venta
             MyTimer.Interval = 1000;
             MyTimer.Tick += new EventHandler(MyTimer_Tick);
             MyTimer.Start();
-
 
             var usuarioLogeado = _empleadoServicio.ObtenerEmpleadoPorId(_usuarioLogeadoID);
             _usuarioLogeado = new UsuarioLogeado
@@ -73,10 +77,15 @@ namespace Presentacion.Core.Venta
             esUsuarioLogeado = true;
             btnCargarVendedor.Enabled = false;
             btnCargarCliente.Enabled = false;
-            cbxIncluirCtaCte.Checked = true; 
+            cbxIncluirCtaCte.Checked = true;
             cbxIncluirIva.Checked = true;
+            CalcularTotal();
+            txtSubtotal.Text = _subTotalVenta.ToString("C2");
             txtTotal.Text = _totalVenta.ToString("C2");
             ActualizarCamposInicio();
+            productosVenta = new List<ProductoDTO>();
+            dgvProductos.DataSource = productosVenta;
+            ResetearGrilla(dgvProductos);
         }
         private void MyTimer_Tick(object sender, EventArgs e)
         {
@@ -201,7 +210,82 @@ namespace Presentacion.Core.Venta
         private void cbxIncluirIva_CheckedChanged(object sender, EventArgs e)
         {
             _incluirIva = cbxIncluirIva.Checked;
+            CalcularTotal();
             ActualizarCamposInicio();
+        }
+
+        private void btnCargarProducto_Click(object sender, EventArgs e)
+        {
+            if (!cbxEnOferta.Checked)
+            {
+                var fProductos = new FProductoConsulta();
+
+                if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
+                {
+                    var idProducto = fProductos.productoSeleccionado.Value;
+
+
+                    var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
+                    if (producto == null) return;
+                    productosVenta.Add(producto);
+                    MessageBox.Show($"Producto {productosVenta[0].Descripcion}");
+                    txtProductoCargado.Text = $"{producto.Descripcion}";
+                    ActualizarGrillas();
+                    ResetearGrilla(dgvProductos);
+                    CalcularTotal();
+
+
+                }
+            }
+        }
+        private void CalcularTotal()
+        {
+            if (_incluirIva)
+            {
+                if (dgvProductos.RowCount > 0)
+                {
+                    _subTotalVenta = productosVenta.Sum(p => p.PrecioVenta);
+                }
+                else 
+                {
+                    _subTotalVenta = 0.00m;
+                }
+                _totalVenta = _subTotalVenta + (_subTotalVenta * 0.21m);
+            }
+            else
+            {
+                _totalVenta = _subTotalVenta;
+            }
+            txtSubtotal.Text = _subTotalVenta.ToString("C2");
+            txtTotal.Text = _totalVenta.ToString("C2");
+        }
+
+        private void ActualizarGrillas()
+        {
+
+            dgvProductos.DataSource = null;
+            dgvProductos.DataSource = productosVenta;
+
+        }
+        public virtual void IniciarGrilla(DataGridView grilla)
+        {
+            for (int i = 0; i < grilla.ColumnCount; i++)
+            {
+                grilla.Columns[i].Visible = false;
+            }
+        }
+
+        private void ResetearGrilla(DataGridView grilla)
+        {
+            for (int i = 0; i < grilla.ColumnCount; i++)
+            {
+                grilla.Columns[i].Visible = false;
+            }
+            grilla.Columns["ProductoId"].Visible = false;
+            grilla.Columns["ProductoId"].Name = "Id";
+
+            grilla.Columns["Descripcion"].Visible = true;
+            grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
         }
     }
 }

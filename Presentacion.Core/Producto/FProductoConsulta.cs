@@ -1,5 +1,6 @@
 ﻿using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Producto;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,9 @@ namespace Presentacion.Core.Producto
     {
         private readonly IProductoServicio _ProductoServicio;
 
+
+        public long? productoSeleccionado = null;
+        private bool vieneDeCargaProducto = false;
         public FProductoConsulta() : this(new ProductoServicio())
         {
             InitializeComponent();
@@ -26,11 +30,29 @@ namespace Presentacion.Core.Producto
         {
             _ProductoServicio = ProductoServicio;
         }
+        public FProductoConsulta(bool _vieneDeCargaProducto) : this(new ProductoServicio())
+        {
+            InitializeComponent();
+            this.vieneDeCargaProducto = _vieneDeCargaProducto;
+            if (vieneDeCargaProducto)
+            {
+                btnSeleccionarProducto.Visible = true;
+                btnSeleccionarProducto.Enabled = true;
+            }
+            else
+            {
+                btnSeleccionarProducto.Visible = false;
+                btnSeleccionarProducto.Enabled = false;
+            }
+
+        }
 
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
 
+            grilla.Columns["ProductoId"].Visible = false;
+            grilla.Columns["ProductoId"].Name = "Id";
 
             grilla.Columns["Descripcion"].Visible = true;
             grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -90,6 +112,36 @@ namespace Presentacion.Core.Producto
             var FormularioABMProducto = new FProductoABM(TipoOperacion.Nuevo);
             FormularioABMProducto.ShowDialog();
             ActualizarSegunOperacion(FormularioABMProducto.RealizoAlgunaOperacion);
+        }
+        public void ControlCargaExistencaDatos()
+        {
+            if (dgvGrilla.RowCount > 0)
+            {
+                if (!entidadID.HasValue)
+                {
+                    MessageBox.Show("Por favor seleccione un registro.");
+                    puedeEjecutarComando = false;
+                    return;
+                }
+                else
+                {
+                    puedeEjecutarComando = true;
+                }
+            }
+            else
+            {
+                MessageBox.Show("No hay Datos Cargados.");
+            }
+        }
+
+        private void btnSeleccionarProducto_Click(object sender, EventArgs e)
+        {
+            ControlCargaExistencaDatos();
+            if (!puedeEjecutarComando) return;
+
+             productoSeleccionado = (long)entidadID;
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
     }
 }

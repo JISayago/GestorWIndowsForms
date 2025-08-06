@@ -63,6 +63,7 @@ namespace Presentacion
             var fProducto = new FProductoConsulta();
 
             fProducto.Show();
+        }
         private void tipoPagoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var fTipoPago = new FTipoPagoConsulta();
