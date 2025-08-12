@@ -20,36 +20,18 @@ namespace Presentacion.Core.Producto.Categoria
 {
     public partial class FAsignacionCategoriaProducto : FBase.FBase
     {
-
-        /*
-         Cargar los datos de categorias en el datagrid , 
-         si el producto ya tiene asignadas cargarlas en el datagrid y marcar las categorias que ya tiene asignadas.
-
-         Permitir seleccionar varias categorias y asignarlas al producto, si el producto ya tiene asignadas las categorias, permitir desasignarlas.
-
-         Boton de aceptar para guardar los cambios y cerrar el formulario.
-
-            
-         */
-
         private readonly IProductoServicio _productoServicio;
         private readonly ICategoriaServicio _categoriaServicio;
         private List<CategoriaDTO> _categoriasDisponibles;
+        protected long? EntidadID;
         public List<long> CategoriasSeleccionadas { get; private set; } = new List<long>();
 
         public FAsignacionCategoriaProducto()
         {
             InitializeComponent();
-
-            //EntidadID = entidadID;
-            _productoServicio = new ProductoServicio();
-            _categoriaServicio = new CategoriaServicio();
-
-            //CargarDatos(entidadID);
-            InicializacionGrillas();
         }
 
-        /* public FAsignacionCategoriaProducto(long? entidadID = null) : this()
+        public FAsignacionCategoriaProducto(long? entidadID) : this()
          {
              EntidadID = entidadID;
              _productoServicio = new ProductoServicio();
@@ -58,7 +40,6 @@ namespace Presentacion.Core.Producto.Categoria
              CargarDatos(entidadID);
              InicializacionGrillas();
          }
-        */
 
         private void CargarDatos(long? entidadId)
         {
@@ -67,40 +48,40 @@ namespace Presentacion.Core.Producto.Categoria
                 var producto = _productoServicio.ObtenerProductoPorId(entidadId.Value);
                 MessageBox.Show(producto.CategoriaIds.ToString());
             }
-
-        }
-
-        private void ActualizarGrillas()
-        {
-
-            dvgCategoriasProducto.DataSource = null;
-            dvgCategoriasProducto.DataSource = _categoriasDisponibles;
-
-            /*
-            if (EntidadID.HasValue)
-            {
-                var categoriasProducto = _productoServicio.ObtenerCategoriasPorProductoId(EntidadID.Value); // List<long> o List<CategoriaDTO>
-
-                foreach (DataGridViewRow row in dvgCategoriasProducto.Rows)
-                {
-                    var categoria = row.DataBoundItem as CategoriaDTO;
-                    if (categoria != null && categoriasProducto.Any(c => c == categoria.Id || c.Id == categoria.Id))
-                    {
-                        row.Cells["Seleccionado"].Value = true;
-                    }
-                }
-            }
-            */
         }
 
         private void InicializacionGrillas()
         {
             _categoriasDisponibles = _categoriaServicio.ObtenerCategoria(string.Empty).ToList();
 
-
-
-            ActualizarGrillas();
+            ActualizarGrillas(EntidadID);
             ResetearGrillas(dvgCategoriasProducto);
+        }
+
+        private void ActualizarGrillas(long? EntidadID)
+        {
+
+            dvgCategoriasProducto.DataSource = null;
+            dvgCategoriasProducto.DataSource = _categoriasDisponibles;
+
+
+            if (EntidadID.HasValue)
+            {
+                var categoriasProducto = _productoServicio.ObtenerProductoPorId(EntidadID.Value); // List<long> o List<CategoriaDTO>
+
+
+                foreach (DataGridViewRow row in dvgCategoriasProducto.Rows)
+                {
+                    //buscar todas las id de categoria disponibles xq en el dgv tengo solo el id de categoriaProducto
+
+                    var categoria = row.DataBoundItem as CategoriaDTO;
+
+                    if (categoria != null && categoriasProducto.CategoriaIds.Contains(categoria.Id))
+                    {
+                        row.Cells["Seleccionado"].Value = true;
+                    }
+                }
+            }        
         }
 
         private void ResetearGrillas(DataGridView grillaCategorias)
@@ -140,6 +121,19 @@ namespace Presentacion.Core.Producto.Categoria
 
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+        private void EnsureSeleccionadoColumn()
+        {
+            if (!dvgCategoriasProducto.Columns.Contains("Seleccionado"))
+            {
+                var checkColumn = new DataGridViewCheckBoxColumn()
+                {
+                    Name = "Seleccionado",
+                    HeaderText = "Seleccionar",
+                    TrueValue = true,
+                    FalseValue = false
+                };
+            }
         }
     }
 }

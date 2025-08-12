@@ -36,6 +36,7 @@ namespace Presentacion.Core.Producto
 
             _ProductoServicio = new ProductoServicio();
             _MarcaServicio = new MarcaServicio();
+            EntidadID = entidadId;
 
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
             {
@@ -100,6 +101,12 @@ namespace Presentacion.Core.Producto
             if (Producto != null)
             {
                 txtProducto.Text = Producto.Descripcion;
+                txtEstado.Text = Producto.Estado.ToString();
+                txtMedida.Text = Producto.Medida;
+                txtUnidadMedida.Text = Producto.UnidadMedida;
+                txtStock.Text = Producto.Stock.ToString();
+                txtPrecioCosto.Text = Producto.PrecioCosto.ToString();
+                txtPrecioVenta.Text = Producto.PrecioVenta.ToString();
             }
             else
             {
@@ -221,7 +228,7 @@ namespace Presentacion.Core.Producto
 
         private void btnCategorias_Click(object sender, EventArgs e)
         {
-            var fCategoriaProducto = new Categoria.FAsignacionCategoriaProducto();
+            var fCategoriaProducto = new Categoria.FAsignacionCategoriaProducto(EntidadID);
 
             if (fCategoriaProducto.ShowDialog() == DialogResult.OK)
             {

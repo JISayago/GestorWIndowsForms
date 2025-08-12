@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             dvgCategoriasProducto = new DataGridView();
-            btnAgregarCategoria = new Button();
-            btnQuitarCategoria = new Button();
             btnAceptar = new Button();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dvgCategoriasProducto).BeginInit();
@@ -44,27 +42,9 @@
             dvgCategoriasProducto.Size = new Size(308, 222);
             dvgCategoriasProducto.TabIndex = 0;
             // 
-            // btnAgregarCategoria
-            // 
-            btnAgregarCategoria.Location = new Point(12, 240);
-            btnAgregarCategoria.Name = "btnAgregarCategoria";
-            btnAgregarCategoria.Size = new Size(80, 32);
-            btnAgregarCategoria.TabIndex = 1;
-            btnAgregarCategoria.Text = "Agregar";
-            btnAgregarCategoria.UseVisualStyleBackColor = true;
-            // 
-            // btnQuitarCategoria
-            // 
-            btnQuitarCategoria.Location = new Point(240, 240);
-            btnQuitarCategoria.Name = "btnQuitarCategoria";
-            btnQuitarCategoria.Size = new Size(80, 32);
-            btnQuitarCategoria.TabIndex = 2;
-            btnQuitarCategoria.Text = "Quitar";
-            btnQuitarCategoria.UseVisualStyleBackColor = true;
-            // 
             // btnAceptar
             // 
-            btnAceptar.Location = new Point(98, 240);
+            btnAceptar.Location = new Point(98, 247);
             btnAceptar.Name = "btnAceptar";
             btnAceptar.Size = new Size(136, 32);
             btnAceptar.TabIndex = 3;
@@ -78,8 +58,6 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(335, 291);
             Controls.Add(btnAceptar);
-            Controls.Add(btnQuitarCategoria);
-            Controls.Add(btnAgregarCategoria);
             Controls.Add(dvgCategoriasProducto);
             Name = "FAsignacionCategoriaProducto";
             Text = "FAsignacionCategoriaProducto";
@@ -91,8 +69,6 @@
         #endregion
 
         private DataGridView dvgCategoriasProducto;
-        private Button btnAgregarCategoria;
-        private Button btnQuitarCategoria;
         private Button btnAceptar;
     }
 }
