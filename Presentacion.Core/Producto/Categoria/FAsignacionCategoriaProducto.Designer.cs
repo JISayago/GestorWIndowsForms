@@ -61,6 +61,7 @@
             Controls.Add(dvgCategoriasProducto);
             Name = "FAsignacionCategoriaProducto";
             Text = "FAsignacionCategoriaProducto";
+            Load += FAsignacionCategoriaProducto_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ((System.ComponentModel.ISupportInitialize)dvgCategoriasProducto).EndInit();
             ResumeLayout(false);

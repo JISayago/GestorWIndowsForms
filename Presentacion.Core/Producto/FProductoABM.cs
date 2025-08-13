@@ -200,10 +200,18 @@ namespace Presentacion.Core.Producto
 
                 }
 
-                var ProductoModificar = new ProductoDTO
+                var ProductoModificar = new ProductoDTO //completar con los datos del producto a modificar
                 {
-                    ProductoId = EntidadID.Value,
-                    Descripcion = txtProducto.Text
+                    Descripcion = txtProducto.Text,
+                    Stock = int.Parse(txtStock.Text),
+                    PrecioCosto = int.Parse(txtPrecioCosto.Text),
+                    PrecioVenta = int.Parse(txtPrecioVenta.Text),
+                    Estado = int.Parse(txtEstado.Text),
+                    Medida = txtMedida.Text,
+                    UnidadMedida = txtUnidadMedida.Text,
+                    IdMarca = (long)cmbMarca.SelectedValue,
+                    CategoriaIds = _categoriasSeleccionadas.ToList(),
+                    EstaEliminado = false
                 };
 
                 var response = _ProductoServicio.Modificar(ProductoModificar, ProductoModificar.ProductoId);
@@ -228,6 +236,8 @@ namespace Presentacion.Core.Producto
 
         private void btnCategorias_Click(object sender, EventArgs e)
         {
+            //si existe el id recien entrar a fcategoriaProducto
+
             var fCategoriaProducto = new Categoria.FAsignacionCategoriaProducto(EntidadID);
 
             if (fCategoriaProducto.ShowDialog() == DialogResult.OK)

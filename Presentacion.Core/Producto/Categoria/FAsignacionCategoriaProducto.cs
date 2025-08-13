@@ -32,21 +32,21 @@ namespace Presentacion.Core.Producto.Categoria
         }
 
         public FAsignacionCategoriaProducto(long? entidadID) : this()
-         {
-             EntidadID = entidadID;
-             _productoServicio = new ProductoServicio();
-             _categoriaServicio = new CategoriaServicio();
+        {
+            EntidadID = entidadID;
+            _productoServicio = new ProductoServicio();
+            _categoriaServicio = new CategoriaServicio();
 
-             CargarDatos(entidadID);
-             InicializacionGrillas();
-         }
+            CargarDatos(entidadID);
+            InicializacionGrillas();
+        }
 
         private void CargarDatos(long? entidadId)
         {
             if (entidadId.HasValue)
             {
                 var producto = _productoServicio.ObtenerProductoPorId(entidadId.Value);
-                MessageBox.Show(producto.CategoriaIds.ToString());
+                //MessageBox.Show(producto.CategoriaIds.ToString());
             }
         }
 
@@ -65,7 +65,7 @@ namespace Presentacion.Core.Producto.Categoria
             dvgCategoriasProducto.DataSource = _categoriasDisponibles;
 
 
-            if (EntidadID.HasValue)
+            /*if (EntidadID.HasValue)
             {
                 var categoriasProducto = _productoServicio.ObtenerProductoPorId(EntidadID.Value); // List<long> o List<CategoriaDTO>
 
@@ -81,7 +81,7 @@ namespace Presentacion.Core.Producto.Categoria
                         row.Cells["Seleccionado"].Value = true;
                     }
                 }
-            }        
+            } */
         }
 
         private void ResetearGrillas(DataGridView grillaCategorias)
@@ -122,17 +122,26 @@ namespace Presentacion.Core.Producto.Categoria
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
-        private void EnsureSeleccionadoColumn()
+
+        private void FAsignacionCategoriaProducto_Load(object sender, EventArgs e)
         {
-            if (!dvgCategoriasProducto.Columns.Contains("Seleccionado"))
+            if (EntidadID.HasValue)
             {
-                var checkColumn = new DataGridViewCheckBoxColumn()
+                var categoriasProducto = _productoServicio.ObtenerProductoPorId(EntidadID.Value); // List<long> o List<CategoriaDTO>
+
+
+                foreach (DataGridViewRow row in dvgCategoriasProducto.Rows)
                 {
-                    Name = "Seleccionado",
-                    HeaderText = "Seleccionar",
-                    TrueValue = true,
-                    FalseValue = false
-                };
+                    //buscar todas las id de categoria disponibles xq en el dgv tengo solo el id de categoriaProducto
+
+                    var categoria = row.DataBoundItem as CategoriaDTO;
+
+                    if (categoria != null && categoriasProducto.CategoriaIds.Contains(categoria.Id))
+                    {
+                        row.Cells["Seleccionado"].Value = true;
+                        var texto = $"idcategoria{row.Cells["Id"].Value}";
+                    }
+                }
             }
         }
     }
