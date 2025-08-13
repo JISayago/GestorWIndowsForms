@@ -32,18 +32,9 @@ namespace Presentacion.Core.Producto
         }
         public FProductoConsulta(bool _vieneDeCargaProducto) : this(new ProductoServicio())
         {
+            vieneDeCargaProducto = _vieneDeCargaProducto;
             InitializeComponent();
-            this.vieneDeCargaProducto = _vieneDeCargaProducto;
-            if (vieneDeCargaProducto)
-            {
-                btnSeleccionarProducto.Visible = true;
-                btnSeleccionarProducto.Enabled = true;
-            }
-            else
-            {
-                btnSeleccionarProducto.Visible = false;
-                btnSeleccionarProducto.Enabled = false;
-            }
+          
 
         }
 
@@ -139,9 +130,23 @@ namespace Presentacion.Core.Producto
             ControlCargaExistencaDatos();
             if (!puedeEjecutarComando) return;
 
-             productoSeleccionado = (long)entidadID;
+            productoSeleccionado = (long)entidadID;
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private void FProductoConsulta_Load(object sender, EventArgs e)
+        {
+            if (vieneDeCargaProducto)
+            {
+                btnSeleccionarProducto.Visible = true;
+                btnSeleccionarProducto.Enabled = true;
+            }
+            else
+            {
+                btnSeleccionarProducto.Visible = false;
+                btnSeleccionarProducto.Enabled = false;
+            }
         }
     }
 }

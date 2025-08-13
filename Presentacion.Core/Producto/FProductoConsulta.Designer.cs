@@ -54,6 +54,7 @@
             ClientSize = new Size(800, 561);
             Name = "FProductoConsulta";
             Text = "FProductoConsulta";
+            Load += FProductoConsulta_Load;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);

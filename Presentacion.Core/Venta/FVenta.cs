@@ -222,7 +222,7 @@ namespace Presentacion.Core.Venta
         {
             if (!cbxEnOferta.Checked)
             {
-                var fProductos = new FProductoConsulta();
+                var fProductos = new FProductoConsulta(true);
 
                 if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
                 {
