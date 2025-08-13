@@ -42,6 +42,24 @@ namespace Presentacion
 
                 var login = new LoginForm();
                 login.ShowDialog();
+                if (login._usuarioLogeado == null || string.IsNullOrEmpty(login._usuarioLogeado.Username))
+                {
+                    MessageBox.Show("Error: usuario no válido.");
+                    return;
+                }
+
+                Application.ThreadException += (s, e) =>
+                {
+                    MessageBox.Show($"Excepción no manejada (UI thread):\n{e.Exception.ToString()}",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                };
+
+                AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+                {
+                    var ex = e.ExceptionObject as Exception;
+                    MessageBox.Show($"Excepción no manejada (otro thread):\n{ex?.ToString()}",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                };
 
                 if (login.PuedeAccederAlSistema)
                 {

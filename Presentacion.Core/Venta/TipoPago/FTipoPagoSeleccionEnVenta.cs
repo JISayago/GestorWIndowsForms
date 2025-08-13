@@ -61,5 +61,15 @@ namespace Presentacion.Core.Venta.TipoPago
                 btnCtaCte.Enabled = false;
             }
         }
+
+        private void btnQR_Click(object sender, EventArgs e)
+        {
+            SeleccionTipoPago(TipoDePago.QR);
+        }
+
+        private void btnCheque_Click(object sender, EventArgs e)
+        {
+            SeleccionTipoPago(TipoDePago.Cheque);
+        }
     }
 }

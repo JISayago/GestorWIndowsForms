@@ -13,5 +13,8 @@ namespace Servicios.Helpers
         Credito = 2, 
         Debito = 3, 
         CtaCte = 4,
+        QR = 5,
+        Cheque = 6,
+        Otro = 7
     }
 }

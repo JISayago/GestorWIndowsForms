@@ -189,7 +189,6 @@ namespace Presentacion.Core.Venta
 
         private TipoDePago AsignarTipoPagoAPago()
         {
-            MessageBox.Show($"Este {_datosVenta.IncluirCtaCte.ToString()}");
             using var fFormaPagoSeleccionada = new FTipoPagoSeleccionEnVenta(_datosVenta.IncluirCtaCte);
 
             if (fFormaPagoSeleccionada.ShowDialog() == DialogResult.OK)
@@ -349,9 +348,9 @@ namespace Presentacion.Core.Venta
                     return;
                 }
 
-                if (pago1 < 500)
+                if (pago1 < 10)
                 {
-                    MessageBox.Show("El monto mínimo permitido es $500.");
+                    MessageBox.Show("El monto mínimo permitido es $10.");
                     cbxConfirmPago1.Checked = false;
                     cbxConfirmPago1.Enabled = true;
                     return;

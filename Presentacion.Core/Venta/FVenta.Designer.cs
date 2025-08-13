@@ -41,15 +41,12 @@
             cbxConsumidorFinal = new CheckBox();
             btnCargarProducto = new Button();
             txtProductoCargado = new TextBox();
-            txtCantidad = new TextBox();
-            lblCantidad = new Label();
             dgvProductos = new DataGridView();
             lblHoraMinutos = new Label();
             lblHoraHoy = new Label();
             lblTotal = new Label();
             lblSubtotal = new Label();
             cbxEnOferta = new CheckBox();
-            lblDescuento = new Label();
             lblNroVenta = new Label();
             lblNro = new Label();
             cbxUsuarioLogeado = new CheckBox();
@@ -62,8 +59,9 @@
             txtTotal = new TextBox();
             lblDetallesDeVenta = new Label();
             txtAreaDetallesVenta = new TextBox();
-            cbxIncluirIva = new CheckBox();
             cbxIncluirCtaCte = new CheckBox();
+            lblPorcentajeDescuento = new Label();
+            cbxAplicarDescuento = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
             SuspendLayout();
@@ -186,29 +184,21 @@
             txtProductoCargado.Size = new Size(423, 23);
             txtProductoCargado.TabIndex = 11;
             // 
-            // txtCantidad
-            // 
-            txtCantidad.Location = new Point(628, 117);
-            txtCantidad.Name = "txtCantidad";
-            txtCantidad.Size = new Size(59, 23);
-            txtCantidad.TabIndex = 13;
-            // 
-            // lblCantidad
-            // 
-            lblCantidad.AutoSize = true;
-            lblCantidad.Location = new Point(691, 121);
-            lblCantidad.Name = "lblCantidad";
-            lblCantidad.Size = new Size(55, 15);
-            lblCantidad.TabIndex = 14;
-            lblCantidad.Text = "Cantidad";
-            // 
             // dgvProductos
             // 
+            dgvProductos.AllowUserToAddRows = false;
+            dgvProductos.AllowUserToDeleteRows = false;
+            dgvProductos.AllowUserToResizeRows = false;
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvProductos.EditMode = DataGridViewEditMode.EditProgrammatically;
             dgvProductos.Location = new Point(14, 156);
+            dgvProductos.MultiSelect = false;
             dgvProductos.Name = "dgvProductos";
             dgvProductos.Size = new Size(1072, 302);
             dgvProductos.TabIndex = 15;
+            dgvProductos.CellClick += dgvProductos_CellClick;
+            dgvProductos.RowEnter += dgvProductos_RowEnter;
+            dgvProductos.SelectionChanged += dgvProductos_SelectionChanged;
             // 
             // lblHoraMinutos
             // 
@@ -249,21 +239,12 @@
             // cbxEnOferta
             // 
             cbxEnOferta.AutoSize = true;
-            cbxEnOferta.Location = new Point(763, 120);
+            cbxEnOferta.Location = new Point(628, 120);
             cbxEnOferta.Name = "cbxEnOferta";
             cbxEnOferta.Size = new Size(137, 19);
             cbxEnOferta.TabIndex = 20;
             cbxEnOferta.Text = "Producto/s en Oferta";
             cbxEnOferta.UseVisualStyleBackColor = true;
-            // 
-            // lblDescuento
-            // 
-            lblDescuento.AutoSize = true;
-            lblDescuento.Location = new Point(911, 472);
-            lblDescuento.Name = "lblDescuento";
-            lblDescuento.Size = new Size(76, 15);
-            lblDescuento.TabIndex = 21;
-            lblDescuento.Text = "Descuento/s:";
             // 
             // lblNroVenta
             // 
@@ -342,10 +323,11 @@
             // 
             // txtDescuento
             // 
-            txtDescuento.Location = new Point(993, 464);
+            txtDescuento.Location = new Point(993, 466);
             txtDescuento.Name = "txtDescuento";
             txtDescuento.Size = new Size(93, 23);
             txtDescuento.TabIndex = 34;
+            txtDescuento.TextChanged += txtDescuento_TextChanged;
             // 
             // txtTotal
             // 
@@ -374,21 +356,10 @@
             txtAreaDetallesVenta.Size = new Size(709, 71);
             txtAreaDetallesVenta.TabIndex = 37;
             // 
-            // cbxIncluirIva
-            // 
-            cbxIncluirIva.AutoSize = true;
-            cbxIncluirIva.Location = new Point(763, 511);
-            cbxIncluirIva.Name = "cbxIncluirIva";
-            cbxIncluirIva.Size = new Size(77, 19);
-            cbxIncluirIva.TabIndex = 38;
-            cbxIncluirIva.Text = "Incluir Iva";
-            cbxIncluirIva.UseVisualStyleBackColor = true;
-            cbxIncluirIva.CheckedChanged += cbxIncluirIva_CheckedChanged;
-            // 
             // cbxIncluirCtaCte
             // 
             cbxIncluirCtaCte.AutoSize = true;
-            cbxIncluirCtaCte.Location = new Point(763, 486);
+            cbxIncluirCtaCte.Location = new Point(763, 501);
             cbxIncluirCtaCte.Name = "cbxIncluirCtaCte";
             cbxIncluirCtaCte.Size = new Size(110, 19);
             cbxIncluirCtaCte.TabIndex = 39;
@@ -396,13 +367,36 @@
             cbxIncluirCtaCte.UseVisualStyleBackColor = true;
             cbxIncluirCtaCte.CheckedChanged += cbxIncluirCtaCte_CheckedChanged;
             // 
+            // lblPorcentajeDescuento
+            // 
+            lblPorcentajeDescuento.AutoSize = true;
+            lblPorcentajeDescuento.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblPorcentajeDescuento.Location = new Point(959, 464);
+            lblPorcentajeDescuento.Name = "lblPorcentajeDescuento";
+            lblPorcentajeDescuento.Size = new Size(28, 25);
+            lblPorcentajeDescuento.TabIndex = 40;
+            lblPorcentajeDescuento.Text = "%";
+            // 
+            // cbxAplicarDescuento
+            // 
+            cbxAplicarDescuento.AutoSize = true;
+            cbxAplicarDescuento.Enabled = false;
+            cbxAplicarDescuento.Location = new Point(763, 469);
+            cbxAplicarDescuento.Name = "cbxAplicarDescuento";
+            cbxAplicarDescuento.Size = new Size(122, 19);
+            cbxAplicarDescuento.TabIndex = 41;
+            cbxAplicarDescuento.Text = "Aplicar Descuento";
+            cbxAplicarDescuento.UseVisualStyleBackColor = true;
+            cbxAplicarDescuento.CheckedChanged += cbxAplicarDescuento_CheckedChanged;
+            // 
             // FVenta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1108, 630);
+            Controls.Add(cbxAplicarDescuento);
+            Controls.Add(lblPorcentajeDescuento);
             Controls.Add(cbxIncluirCtaCte);
-            Controls.Add(cbxIncluirIva);
             Controls.Add(txtAreaDetallesVenta);
             Controls.Add(lblDetallesDeVenta);
             Controls.Add(txtTotal);
@@ -415,15 +409,12 @@
             Controls.Add(txtVendedorAsignado);
             Controls.Add(lblNro);
             Controls.Add(lblNroVenta);
-            Controls.Add(lblDescuento);
             Controls.Add(cbxEnOferta);
             Controls.Add(lblSubtotal);
             Controls.Add(lblTotal);
             Controls.Add(lblHoraMinutos);
             Controls.Add(lblHoraHoy);
             Controls.Add(dgvProductos);
-            Controls.Add(lblCantidad);
-            Controls.Add(txtCantidad);
             Controls.Add(btnCargarProducto);
             Controls.Add(txtProductoCargado);
             Controls.Add(cbxConsumidorFinal);
@@ -461,15 +452,12 @@
         private CheckBox cbxConsumidorFinal;
         private Button btnCargarProducto;
         private TextBox txtProductoCargado;
-        private TextBox txtCantidad;
-        private Label lblCantidad;
         private DataGridView dgvProductos;
         private Label lblHoraMinutos;
         private Label lblHoraHoy;
         private Label lblTotal;
         private Label lblSubtotal;
         private CheckBox cbxEnOferta;
-        private Label lblDescuento;
         private Label lblNroVenta;
         private Label lblNro;
         private CheckBox cbxUsuarioLogeado;
@@ -482,7 +470,8 @@
         private TextBox txtTotal;
         private Label lblDetallesDeVenta;
         private TextBox txtAreaDetallesVenta;
-        private CheckBox cbxIncluirIva;
         private CheckBox cbxIncluirCtaCte;
+        private Label lblPorcentajeDescuento;
+        private CheckBox cbxAplicarDescuento;
     }
 }

@@ -166,7 +166,7 @@ namespace Servicios.LogicaNegocio.Producto
             {
                 ProductoId = e.ProductoId,
                 IdMarca = e.IdMarca ?? 0,
-                MarcaNombre = e.Marca.Nombre,
+                MarcaNombre = "",
                 Stock = e.Stock,
                 PrecioCosto = e.PrecioCosto,
                 PrecioVenta = e.PrecioVenta,

@@ -33,6 +33,8 @@
             btnCredito = new Button();
             btnDébito = new Button();
             btnCtaCte = new Button();
+            btnQR = new Button();
+            btnCheque = new Button();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
@@ -78,7 +80,7 @@
             // 
             // btnCtaCte
             // 
-            btnCtaCte.Location = new Point(463, 31);
+            btnCtaCte.Location = new Point(252, 194);
             btnCtaCte.Name = "btnCtaCte";
             btnCtaCte.Size = new Size(144, 61);
             btnCtaCte.TabIndex = 4;
@@ -86,11 +88,33 @@
             btnCtaCte.UseVisualStyleBackColor = true;
             btnCtaCte.Click += btnCtaCte_Click;
             // 
+            // btnQR
+            // 
+            btnQR.Location = new Point(463, 116);
+            btnQR.Name = "btnQR";
+            btnQR.Size = new Size(144, 61);
+            btnQR.TabIndex = 5;
+            btnQR.Text = "QR";
+            btnQR.UseVisualStyleBackColor = true;
+            btnQR.Click += btnQR_Click;
+            // 
+            // btnCheque
+            // 
+            btnCheque.Location = new Point(463, 31);
+            btnCheque.Name = "btnCheque";
+            btnCheque.Size = new Size(144, 61);
+            btnCheque.TabIndex = 6;
+            btnCheque.Text = "Cheque";
+            btnCheque.UseVisualStyleBackColor = true;
+            btnCheque.Click += btnCheque_Click;
+            // 
             // FTipoPagoSeleccionEnVenta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(637, 220);
+            ClientSize = new Size(700, 287);
+            Controls.Add(btnCheque);
+            Controls.Add(btnQR);
             Controls.Add(btnCtaCte);
             Controls.Add(btnDébito);
             Controls.Add(btnCredito);
@@ -110,5 +134,7 @@
         private Button btnCredito;
         private Button btnDébito;
         private Button btnCtaCte;
+        private Button btnQR;
+        private Button btnCheque;
     }
 }

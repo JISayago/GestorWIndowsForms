@@ -1,4 +1,5 @@
 ﻿using AccesoDatos.Entidades;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic.Devices;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Empleado;
@@ -10,6 +11,7 @@ using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Empleado.Rol.DTO;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Venta.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,11 +36,13 @@ namespace Presentacion.Core.Venta
         private System.Windows.Forms.Timer timer;
         private decimal _totalVenta = 0.00m;
         private decimal _subTotalVenta = 0.00m;
+        private decimal _porcentajeDescuento = 0.00m;
         private string descripcionVenta = "";
         //configuracion tomada del json de config.
-        private bool _incluirIva = true;
         private bool _incluirCtaCte = true;
-        private List<ProductoDTO> productosVenta;
+        //private List<ItemVentaDTO> itemsVenta;
+          private BindingList<ItemVentaDTO> itemsVenta;
+        private bool _actualizandoGrilla = false;
 
         public FVenta(long usuarioLogeadoID)
         {
@@ -53,6 +57,9 @@ namespace Presentacion.Core.Venta
             };
 
             _usuarioLogeadoID = usuarioLogeadoID;
+
+            // Inicializamos itemsVenta como BindingList
+            itemsVenta = new BindingList<ItemVentaDTO>();
         }
 
         private void FVenta_Load(object sender, EventArgs e)
@@ -78,13 +85,13 @@ namespace Presentacion.Core.Venta
             btnCargarVendedor.Enabled = false;
             btnCargarCliente.Enabled = false;
             cbxIncluirCtaCte.Checked = true;
-            cbxIncluirIva.Checked = true;
+            dgvProductos.AllowUserToAddRows = false;
             CalcularTotal();
             txtSubtotal.Text = _subTotalVenta.ToString("C2");
             txtTotal.Text = _totalVenta.ToString("C2");
             ActualizarCamposInicio();
-            productosVenta = new List<ProductoDTO>();
-            dgvProductos.DataSource = productosVenta;
+            itemsVenta = new BindingList<ItemVentaDTO>();
+            dgvProductos.DataSource = itemsVenta;  // bind directo
             ResetearGrilla(dgvProductos);
         }
         private void MyTimer_Tick(object sender, EventArgs e)
@@ -138,6 +145,11 @@ namespace Presentacion.Core.Venta
         }
         private void btnConfirmarYFPago_Click(object sender, EventArgs e)
         {
+            if (_totalVenta == 0)
+            {
+                MessageBox.Show("Debe cargar al menos un producto antes de confirmar la venta.");
+                return;
+            }
             if (finalizarVenta)
             {
                 this.DialogResult = DialogResult.OK;
@@ -148,7 +160,6 @@ namespace Presentacion.Core.Venta
             DatosVenta datosVenta = new DatosVenta
             {
                 Total = _totalVenta,
-                IncluirIva = _incluirIva,
                 IncluirCtaCte = _incluirCtaCte
             };
             var fConfirmarVenta = new FConfirmacionVenta(datosVenta);
@@ -207,13 +218,6 @@ namespace Presentacion.Core.Venta
             ActualizarCamposInicio();
         }
 
-        private void cbxIncluirIva_CheckedChanged(object sender, EventArgs e)
-        {
-            _incluirIva = cbxIncluirIva.Checked;
-            CalcularTotal();
-            ActualizarCamposInicio();
-        }
-
         private void btnCargarProducto_Click(object sender, EventArgs e)
         {
             if (!cbxEnOferta.Checked)
@@ -222,51 +226,59 @@ namespace Presentacion.Core.Venta
 
                 if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
                 {
-                    var idProducto = fProductos.productoSeleccionado.Value;
 
+                    var idProducto = fProductos.productoSeleccionado.Value;
 
                     var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
                     if (producto == null) return;
-                    productosVenta.Add(producto);
-                    MessageBox.Show($"Producto {productosVenta[0].Descripcion}");
-                    txtProductoCargado.Text = $"{producto.Descripcion}";
-                    ActualizarGrillas();
-                    ResetearGrilla(dgvProductos);
-                    CalcularTotal();
 
+                    var fCantidad = new FCantidadItem();
+                    if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
+                    {
+                        var cantidad = fCantidad.cantidad;
+                        var itemVenta = new ItemVentaDTO
+                        {
+                            ItemId = producto.ProductoId,
+                            Descripcion = producto.Descripcion,
+                            PrecioVenta = producto.PrecioVenta,
+                            Cantidad = cantidad,
+                            Medida = producto.Medida,
+                            UnidadMedida = producto.UnidadMedida,
+                            EsOferta = false
+                        };
 
+                        itemsVenta.Add(itemVenta);  // Solo agregamos a la BindingList
+                        txtProductoCargado.Text = $"{itemVenta.Descripcion}";
+                        // No necesitas reasignar DataSource ni resetear grilla acá
+                        CalcularTotal();
+                    }
                 }
             }
         }
         private void CalcularTotal()
         {
-            if (_incluirIva)
+            if (dgvProductos.RowCount > 0)
             {
-                if (dgvProductos.RowCount > 0)
-                {
-                    _subTotalVenta = productosVenta.Sum(p => p.PrecioVenta);
-                }
-                else 
-                {
-                    _subTotalVenta = 0.00m;
-                }
-                _totalVenta = _subTotalVenta + (_subTotalVenta * 0.21m);
+                _subTotalVenta = itemsVenta.Sum(p => p.PrecioVenta * p.Cantidad);
+
             }
             else
             {
-                _totalVenta = _subTotalVenta;
+                _subTotalVenta = 0.00m;
             }
+            _totalVenta = _subTotalVenta; //iria el descuento por porcentaje.
+            txtTotal.Text = _totalVenta.ToString("C2");
             txtSubtotal.Text = _subTotalVenta.ToString("C2");
             txtTotal.Text = _totalVenta.ToString("C2");
         }
 
         private void ActualizarGrillas()
         {
-
-            dgvProductos.DataSource = null;
-            dgvProductos.DataSource = productosVenta;
-
+            dgvProductos.Refresh(); // refresca la visualización
         }
+
+
+
         public virtual void IniciarGrilla(DataGridView grilla)
         {
             for (int i = 0; i < grilla.ColumnCount; i++)
@@ -281,11 +293,132 @@ namespace Presentacion.Core.Venta
             {
                 grilla.Columns[i].Visible = false;
             }
-            grilla.Columns["ProductoId"].Visible = false;
-            grilla.Columns["ProductoId"].Name = "Id";
+            grilla.Columns["ItemId"].Visible = false;
+            grilla.Columns["ItemId"].DisplayIndex = 0;
 
             grilla.Columns["Descripcion"].Visible = true;
             grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            grilla.Columns["Descripcion"].DisplayIndex = 1;
+
+            grilla.Columns["Medida"].Visible = true;
+            grilla.Columns["Medida"].Width = 100;
+            grilla.Columns["Medida"].DisplayIndex = 2;
+
+            grilla.Columns["UnidadMedida"].Visible = true;
+            grilla.Columns["UnidadMedida"].Width = 100;
+            grilla.Columns["UnidadMedida"].DisplayIndex = 3;
+
+            grilla.Columns["Cantidad"].Visible = true;
+            grilla.Columns["Cantidad"].Width = 100;
+            grilla.Columns["Cantidad"].DisplayIndex = 4;
+
+            grilla.Columns["PrecioVenta"].Visible = true;
+            grilla.Columns["PrecioVenta"].Width = 100;
+            grilla.Columns["PrecioVenta"].DisplayIndex = 5;
+
+
         }
+
+        private void cbxAplicarDescuento_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbxAplicarDescuento.Checked)
+            {
+                if (string.IsNullOrWhiteSpace(txtDescuento.Text))
+                {
+                    MessageBox.Show("Ingrese un porcentaje de descuento.");
+                    cbxAplicarDescuento.Checked = false;
+                    return;
+                }
+
+                if (decimal.TryParse(txtDescuento.Text, out decimal porcentaje))
+                {
+                    if (porcentaje < 1 || porcentaje > 100)
+                    {
+                        MessageBox.Show("El descuento debe estar entre 1% y 100%.");
+                        cbxAplicarDescuento.Checked = false;
+                        return;
+                    }
+
+                    _porcentajeDescuento = porcentaje / 100;
+
+                    CalcularTotal();
+                }
+                else
+                {
+                    MessageBox.Show("Ingrese un número válido.");
+                    cbxAplicarDescuento.Checked = false;
+                }
+            }
+            else
+            {
+                // Si se desactiva el descuento, volver a los valores originales
+                txtDescuento.Text = string.Empty;
+                CalcularTotal();
+
+            }
+        }
+
+
+        private void txtDescuento_TextChanged(object sender, EventArgs e)
+        {
+            if (!txtDescuento.Text.IsNullOrEmpty())
+            {
+                cbxAplicarDescuento.Enabled = true;
+            }
+            else
+            {
+                cbxAplicarDescuento.Enabled = false;
+            }
+        }
+
+        private void dgvProductos_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (_actualizandoGrilla) return;
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+
+            var fila = dgvProductos.Rows[e.RowIndex];
+            if (fila == null || fila.IsNewRow) return;
+
+            // Aquí tu código seguro para manejar el click
+        }
+
+        private void dgvProductos_SelectionChanged(object sender, EventArgs e)
+        {
+            if (_actualizandoGrilla) return;
+            if (dgvProductos.CurrentRow == null) return;
+            if (dgvProductos.CurrentRow.IsNewRow) return;
+
+            if (!dgvProductos.Columns.Contains("ItemId")) return;
+
+            var val = dgvProductos.CurrentRow.Cells["ItemId"].Value;
+            if (val == null || val == DBNull.Value) return;
+
+            // Lógica segura con val
+        }
+
+        private void dgvProductos_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (_actualizandoGrilla) return;
+
+            if (e.RowIndex < 0 || e.RowIndex >= dgvProductos.Rows.Count)
+                return;
+
+            var fila = dgvProductos.Rows[e.RowIndex];
+            if (fila == null || fila.IsNewRow)
+                return;
+
+            if (!dgvProductos.Columns.Contains("ItemId"))
+                return;
+
+            var celda = fila.Cells["ItemId"];
+            if (celda?.Value == null || celda.Value == DBNull.Value)
+                return;
+
+            long entidadID = Convert.ToInt64(celda.Value);
+            // tu lógica...
+        }
+
+
     }
+
 }

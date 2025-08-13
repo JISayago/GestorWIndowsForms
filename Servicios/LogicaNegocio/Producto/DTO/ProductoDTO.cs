@@ -9,7 +9,7 @@ namespace Servicios.LogicaNegocio.Producto.DTO
     public class ProductoDTO
     {
         public long ProductoId { get; set; }
-        public long IdMarca { get; set; }
+        public long? IdMarca { get; set; }
 
         public int Stock { get; set; }
         public decimal PrecioCosto { get; set; }
