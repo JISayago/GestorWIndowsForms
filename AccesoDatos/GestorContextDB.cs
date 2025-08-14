@@ -186,6 +186,7 @@ namespace AccesoDatos
 
                 entity.Property(e => e.Cantidad)
                     .HasColumnName("cantidad")
+                    .HasColumnType("decimal(18,2)")
                     .IsRequired();
 
                 entity.Property(e => e.Subtotal)
