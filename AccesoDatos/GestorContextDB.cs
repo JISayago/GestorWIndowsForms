@@ -204,8 +204,7 @@ namespace AccesoDatos
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-
-            //VENTA
+            // VENTA
             modelBuilder.Entity<Venta>(entity =>
             {
                 entity.ToTable("Ventas");
@@ -219,8 +218,12 @@ namespace AccesoDatos
                     .HasColumnName("id_Empleado")
                     .IsRequired();
 
+                entity.Property(e => e.IdVendedor)
+                    .HasColumnName("id_Vendedor")
+                    .IsRequired();
+
                 entity.Property(e => e.NumeroVenta)
-                    .HasColumnName("numeroVenta")
+                    .HasColumnName("numero_venta")
                     .HasMaxLength(200);
 
                 entity.Property(e => e.FechaVenta)
@@ -233,6 +236,16 @@ namespace AccesoDatos
                     .HasColumnType("decimal(18,2)")
                     .IsRequired();
 
+                entity.Property(e => e.TotalSinDescuento)
+                    .HasColumnName("total_sin_descuento")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.Descuento)
+                    .HasColumnName("descuento")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
                 entity.Property(e => e.Estado)
                     .HasColumnName("estado")
                     .IsRequired();
@@ -241,19 +254,32 @@ namespace AccesoDatos
                     .HasColumnName("detalle")
                     .HasMaxLength(500);
 
-                // 🔗 Relación con Empleado
+                entity.Property(e => e.MontoAdeudado)
+                    .HasColumnName("monto_adeudado")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.MontoPagado)
+                    .HasColumnName("monto_pagado")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                // Relaciones
                 entity.HasOne(e => e.Empleado)
                     .WithMany(emp => emp.Ventas)
                     .HasForeignKey(e => e.IdEmpleado)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                // 🔗 Relación uno a muchos con DetallesVenta
+                entity.HasOne(e => e.Vendedor)
+                    .WithMany() // o .WithMany(emp => emp.VentasComoVendedor) si definís la colección
+                    .HasForeignKey(e => e.IdVendedor)
+                    .OnDelete(DeleteBehavior.Restrict);
+
                 entity.HasMany(e => e.DetallesVentas)
                     .WithOne(dv => dv.Venta)
                     .HasForeignKey(dv => dv.IdVenta)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                // 🔗 Relación uno a muchos con VentasPagos (para múltiples métodos de pago)
                 entity.HasMany(e => e.VentaPagoDetalles)
                     .WithOne(vp => vp.Venta)
                     .HasForeignKey(vp => vp.IdVenta)
