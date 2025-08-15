@@ -22,6 +22,7 @@ namespace AccesoDatos
         public DbSet<Movimiento> Movimientos { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<Marca> Marcas { get; set; }
+        public DbSet<Rubro> Rubros { get; set; }
         public DbSet<EmpleadoRol> EmpleadoRoles { get; set; }
         public DbSet<CategoriaProducto> CategoriasProductos { get; set; }
         public DbSet<VentaPagoDetalle> VentaPagosDetalles { get; set; }
@@ -91,11 +92,9 @@ namespace AccesoDatos
                 entity.Property(p => p.ProductoId)
                     .HasColumnName("ProductoId");
 
-                entity.Property(p => p.IdMarca)
-                    .HasColumnName("id_Marca");
-
                 entity.Property(p => p.Stock)
                     .HasColumnName("stock")
+                    .HasColumnType("decimal(18,2)")
                     .IsRequired();
 
                 entity.Property(p => p.PrecioCosto)
@@ -127,11 +126,37 @@ namespace AccesoDatos
                     .HasColumnName("unidad_medida")
                     .HasMaxLength(50);
 
+                entity.Property(p => p.Codigo)
+                    .HasColumnName("codigo")
+                    .HasMaxLength(50);
+
+                entity.Property(p => p.CodigoBarra)
+                    .HasColumnName("codigo_barra")
+                    .HasMaxLength(50);
+
+                entity.Property(p => p.IvaIncluidoPrecioFinal)
+                    .HasColumnName("iva_inluido_precio_final")
+                    .IsRequired();
+
+                entity.Property(p => p.EsFraccionable)
+                    .HasColumnName("es_fraccionable")
+                    .IsRequired();
+
+                entity.Property(p => p.IdMarca)
+                    .HasColumnName("id_Marca");
+
+                entity.Property(p => p.IdRubro)
+                    .HasColumnName("id_Rubro");
+
                 // 🔗 Relaciones con Marca
                 entity.HasOne(p => p.Marca)
-                    .WithMany()
-                    .HasForeignKey(p => p.IdMarca)
-                    .OnDelete(DeleteBehavior.SetNull);
+                    .WithMany(m => m.Productos)
+                    .HasForeignKey(p => p.IdMarca);
+
+                // 🔗 Relaciones con Rubro
+                entity.HasOne(p => p.Rubro)
+                    .WithMany(r => r.Productos)
+                    .HasForeignKey(p => p.IdRubro);
 
                 // 🔗 Relación con DetallesVenta
                 entity.HasMany(p => p.DetallesVentas)
@@ -358,6 +383,23 @@ namespace AccesoDatos
                 entity.Property(e => e.Nombre)
                       .IsRequired()
                       .HasMaxLength(100);
+                entity.HasMany(m => m.Productos)
+                      .WithOne(p => p.Marca)
+                      .HasForeignKey(p => p.IdMarca);
+            });
+
+            // RUBRO
+            modelBuilder.Entity<Rubro>(entity =>
+            {
+                entity.ToTable("Rubros");
+
+                entity.HasKey(e => e.RubroId);
+                entity.Property(e => e.Nombre)
+                      .IsRequired()
+                      .HasMaxLength(100);
+                entity.HasMany(m => m.Productos)
+                      .WithOne(p => p.Rubro)
+                      .HasForeignKey(p => p.IdRubro);
             });
 
             //EMPELADO ROL
