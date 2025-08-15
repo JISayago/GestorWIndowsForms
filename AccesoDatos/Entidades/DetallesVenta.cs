@@ -14,7 +14,7 @@ namespace AccesoDatos.Entidades
 
         public long IdVenta { get; set; }
         public long IdProducto { get; set; }
-        public int Cantidad { get; set; }
+        public decimal Cantidad { get; set; }
         public decimal Subtotal { get; set; }
 
         // Relaciones
