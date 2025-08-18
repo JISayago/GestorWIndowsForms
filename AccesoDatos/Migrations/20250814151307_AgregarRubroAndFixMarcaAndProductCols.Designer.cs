@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20250814151307_AgregarRubroAndFixMarcaAndProductCols")]
+    partial class AgregarRubroAndFixMarcaAndProductCols
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,8 +78,8 @@ namespace AccesoDatos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("DetalleVentaId"));
 
-                    b.Property<decimal>("Cantidad")
-                        .HasColumnType("decimal(18,2)")
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int")
                         .HasColumnName("cantidad");
 
                     b.Property<long>("IdProducto")
@@ -457,10 +460,6 @@ namespace AccesoDatos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("VentaId"));
 
-                    b.Property<decimal>("Descuento")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("descuento");
-
                     b.Property<string>("Detalle")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -479,37 +478,19 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_Empleado");
 
-                    b.Property<long>("IdVendedor")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_Vendedor");
-
-                    b.Property<decimal>("MontoAdeudado")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("monto_adeudado");
-
-                    b.Property<decimal>("MontoPagado")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("monto_pagado");
-
                     b.Property<string>("NumeroVenta")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)")
-                        .HasColumnName("numero_venta");
+                        .HasColumnName("numeroVenta");
 
                     b.Property<decimal>("Total")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("total");
 
-                    b.Property<decimal>("TotalSinDescuento")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("total_sin_descuento");
-
                     b.HasKey("VentaId");
 
                     b.HasIndex("IdEmpleado");
-
-                    b.HasIndex("IdVendedor");
 
                     b.ToTable("Ventas", (string)null);
                 });
@@ -649,15 +630,7 @@ namespace AccesoDatos.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AccesoDatos.Entidades.Empleado", "Vendedor")
-                        .WithMany()
-                        .HasForeignKey("IdVendedor")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Empleado");
-
-                    b.Navigation("Vendedor");
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.VentaPagoDetalle", b =>
