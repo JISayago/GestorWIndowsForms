@@ -133,9 +133,9 @@ namespace Servicios.LogicaNegocio.Producto
                  .Select(e => new ProductoDTO
                  {
                      ProductoId = e.ProductoId,
-                     IdMarca = e.IdMarca ?? 0,
+                     IdMarca = e.IdMarca,
                      MarcaNombre = e.Marca.Nombre,
-                     Stock = e.Stock,
+                     Stock = Convert.ToDecimal(e.Stock),
                      PrecioCosto = e.PrecioCosto,
                      PrecioVenta = e.PrecioVenta,
                      Descripcion = e.Descripcion,
@@ -165,9 +165,9 @@ namespace Servicios.LogicaNegocio.Producto
             .Select(e => new ProductoDTO
             {
                 ProductoId = e.ProductoId,
-                IdMarca = e.IdMarca ?? 0,
-                MarcaNombre = "",
-                Stock = e.Stock,
+                IdMarca = e.IdMarca,
+                MarcaNombre = e.Marca.Nombre,
+                Stock = Convert.ToDecimal(e.Stock),
                 PrecioCosto = e.PrecioCosto,
                 PrecioVenta = e.PrecioVenta,
                 Descripcion = e.Descripcion,
@@ -197,9 +197,9 @@ namespace Servicios.LogicaNegocio.Producto
             .Select(e => new ProductoDTO
             {
                 ProductoId = e.ProductoId,
-                IdMarca = e.IdMarca ?? 0,
+                IdMarca = e.IdMarca,
                 MarcaNombre = e.Marca.Nombre,
-                Stock = e.Stock,
+                Stock = Convert.ToDecimal(e.Stock),
                 PrecioCosto = e.PrecioCosto,
                 PrecioVenta = e.PrecioVenta,
                 Descripcion = e.Descripcion,

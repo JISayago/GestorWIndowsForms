@@ -11,7 +11,7 @@ namespace Servicios.LogicaNegocio.Producto.DTO
         public long ProductoId { get; set; }
         public long? IdMarca { get; set; }
 
-        public int Stock { get; set; }
+        public decimal Stock { get; set; }
         public decimal PrecioCosto { get; set; }
         public decimal PrecioVenta { get; set; }
         public string Descripcion { get; set; }
