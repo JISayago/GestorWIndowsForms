@@ -4,6 +4,7 @@ using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Producto.Rubro;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,6 +21,7 @@ namespace Presentacion.Core.Producto
     {
         private readonly IProductoServicio _ProductoServicio;
         private readonly IMarcaServicio _MarcaServicio;
+        private readonly IRubroServicio _RubroServicio;
         protected long? EntidadID;
         private List<long> _categoriasSeleccionadas = new List<long>();
 
@@ -36,6 +38,7 @@ namespace Presentacion.Core.Producto
 
             _ProductoServicio = new ProductoServicio();
             _MarcaServicio = new MarcaServicio();
+            _RubroServicio = new RubroServicio();
             EntidadID = entidadId;
 
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
@@ -62,6 +65,15 @@ namespace Presentacion.Core.Producto
             cmbMarca.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbMarca.DropDownStyle = ComboBoxStyle.DropDown;
 
+            var rubros = _RubroServicio.ObtenerRubro("").ToList();
+
+            cmbRubro.DisplayMember = "Nombre"; // lo que se muestra
+            cmbRubro.ValueMember = "Id";
+            cmbRubro.DataSource = rubros;
+
+            cmbRubro.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbRubro.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbRubro.DropDownStyle = ComboBoxStyle.DropDown;
 
             EntidadID = entidadId;
         }
