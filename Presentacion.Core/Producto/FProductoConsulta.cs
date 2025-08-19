@@ -31,6 +31,8 @@ namespace Presentacion.Core.Producto
         {
             base.ResetearGrilla(grilla);
 
+            grilla.Columns["ProductoId"].Visible = false;
+            grilla.Columns["ProductoId"].Name = "Id";
 
             grilla.Columns["Descripcion"].Visible = true;
             grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
