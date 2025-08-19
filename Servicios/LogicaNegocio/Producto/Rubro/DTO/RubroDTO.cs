@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicios.LogicaNegocio.Articulo.Marca.DTO
+namespace Servicios.LogicaNegocio.Producto.Rubro.DTO
 {
-    public class MarcaDTO
+    public class RubroDTO
     {
         public long Id { get; set; }
         public string Nombre { get; set; }

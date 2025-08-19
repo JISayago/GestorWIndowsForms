@@ -50,6 +50,7 @@
             btnMovimientos = new Button();
             dataGridView1 = new DataGridView();
             panel1 = new Panel();
+            rubroToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel1.SuspendLayout();
@@ -80,7 +81,7 @@
             // 
             empleadoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { rolesToolStripMenuItem });
             empleadoToolStripMenuItem.Name = "empleadoToolStripMenuItem";
-            empleadoToolStripMenuItem.Size = new Size(180, 22);
+            empleadoToolStripMenuItem.Size = new Size(128, 22);
             empleadoToolStripMenuItem.Text = "Empleado";
             empleadoToolStripMenuItem.Click += empleadoToolStripMenuItem_Click;
             // 
@@ -94,19 +95,19 @@
             // tipoPagoToolStripMenuItem
             // 
             tipoPagoToolStripMenuItem.Name = "tipoPagoToolStripMenuItem";
-            tipoPagoToolStripMenuItem.Size = new Size(180, 22);
+            tipoPagoToolStripMenuItem.Size = new Size(128, 22);
             tipoPagoToolStripMenuItem.Text = "Tipo Pago";
             tipoPagoToolStripMenuItem.Click += tipoPagoToolStripMenuItem_Click;
             // 
             // gastosToolStripMenuItem
             // 
             gastosToolStripMenuItem.Name = "gastosToolStripMenuItem";
-            gastosToolStripMenuItem.Size = new Size(180, 22);
+            gastosToolStripMenuItem.Size = new Size(128, 22);
             gastosToolStripMenuItem.Text = "Gastos";
             // 
             // aRTICULOToolStripMenuItem
             // 
-            aRTICULOToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { categoriaToolStripMenuItem, marcaToolStripMenuItem, articuloToolStripMenuItem1 });
+            aRTICULOToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { categoriaToolStripMenuItem, marcaToolStripMenuItem, articuloToolStripMenuItem1, rubroToolStripMenuItem });
             aRTICULOToolStripMenuItem.Name = "aRTICULOToolStripMenuItem";
             aRTICULOToolStripMenuItem.Size = new Size(81, 20);
             aRTICULOToolStripMenuItem.Text = "PRODUCTO";
@@ -114,14 +115,14 @@
             // categoriaToolStripMenuItem
             // 
             categoriaToolStripMenuItem.Name = "categoriaToolStripMenuItem";
-            categoriaToolStripMenuItem.Size = new Size(125, 22);
+            categoriaToolStripMenuItem.Size = new Size(180, 22);
             categoriaToolStripMenuItem.Text = "Categoria";
             categoriaToolStripMenuItem.Click += categoriaToolStripMenuItem_Click;
             // 
             // marcaToolStripMenuItem
             // 
             marcaToolStripMenuItem.Name = "marcaToolStripMenuItem";
-            marcaToolStripMenuItem.Size = new Size(125, 22);
+            marcaToolStripMenuItem.Size = new Size(180, 22);
             marcaToolStripMenuItem.Text = "Marca";
             marcaToolStripMenuItem.Click += marcaToolStripMenuItem_Click;
             // 
@@ -223,6 +224,13 @@
             panel1.Size = new Size(750, 40);
             panel1.TabIndex = 18;
             // 
+            // rubroToolStripMenuItem
+            // 
+            rubroToolStripMenuItem.Name = "rubroToolStripMenuItem";
+            rubroToolStripMenuItem.Size = new Size(180, 22);
+            rubroToolStripMenuItem.Text = "Rubro";
+            rubroToolStripMenuItem.Click += rubroToolStripMenuItem_Click;
+            // 
             // VentanaPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -268,5 +276,6 @@
         private DataGridView dataGridView1;
         private Panel panel1;
         private ToolStripMenuItem rolesToolStripMenuItem;
+        private ToolStripMenuItem rubroToolStripMenuItem;
     }
 }

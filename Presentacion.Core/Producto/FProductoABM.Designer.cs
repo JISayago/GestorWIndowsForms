@@ -46,6 +46,8 @@
             txtUnidadMedida = new TextBox();
             cmbMarca = new ComboBox();
             btnCategorias = new Button();
+            cmbRubro = new ComboBox();
+            lblRubro = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
@@ -61,7 +63,7 @@
             // lblMarca
             // 
             lblMarca.AutoSize = true;
-            lblMarca.Location = new Point(426, 112);
+            lblMarca.Location = new Point(413, 112);
             lblMarca.Name = "lblMarca";
             lblMarca.Size = new Size(40, 15);
             lblMarca.TabIndex = 2;
@@ -109,7 +111,7 @@
             // lblStock
             // 
             lblStock.AutoSize = true;
-            lblStock.Location = new Point(426, 159);
+            lblStock.Location = new Point(413, 159);
             lblStock.Name = "lblStock";
             lblStock.Size = new Size(36, 15);
             lblStock.TabIndex = 10;
@@ -117,7 +119,7 @@
             // 
             // txtStock
             // 
-            txtStock.Location = new Point(474, 153);
+            txtStock.Location = new Point(461, 153);
             txtStock.Name = "txtStock";
             txtStock.Size = new Size(100, 23);
             txtStock.TabIndex = 11;
@@ -125,7 +127,7 @@
             // lblEstado
             // 
             lblEstado.AutoSize = true;
-            lblEstado.Location = new Point(426, 210);
+            lblEstado.Location = new Point(413, 210);
             lblEstado.Name = "lblEstado";
             lblEstado.Size = new Size(42, 15);
             lblEstado.TabIndex = 12;
@@ -133,7 +135,7 @@
             // 
             // txtEstado
             // 
-            txtEstado.Location = new Point(474, 204);
+            txtEstado.Location = new Point(461, 204);
             txtEstado.Name = "txtEstado";
             txtEstado.Size = new Size(100, 23);
             txtEstado.TabIndex = 13;
@@ -141,7 +143,7 @@
             // lblCategoria
             // 
             lblCategoria.AutoSize = true;
-            lblCategoria.Location = new Point(615, 108);
+            lblCategoria.Location = new Point(612, 208);
             lblCategoria.Name = "lblCategoria";
             lblCategoria.Size = new Size(58, 15);
             lblCategoria.TabIndex = 15;
@@ -182,14 +184,14 @@
             // cmbMarca
             // 
             cmbMarca.FormattingEnabled = true;
-            cmbMarca.Location = new Point(474, 105);
+            cmbMarca.Location = new Point(461, 109);
             cmbMarca.Name = "cmbMarca";
-            cmbMarca.Size = new Size(121, 23);
+            cmbMarca.Size = new Size(100, 23);
             cmbMarca.TabIndex = 21;
             // 
             // btnCategorias
             // 
-            btnCategorias.Location = new Point(679, 104);
+            btnCategorias.Location = new Point(676, 204);
             btnCategorias.Name = "btnCategorias";
             btnCategorias.Size = new Size(75, 23);
             btnCategorias.TabIndex = 22;
@@ -197,11 +199,30 @@
             btnCategorias.UseVisualStyleBackColor = true;
             btnCategorias.Click += btnCategorias_Click;
             // 
+            // cmbRubro
+            // 
+            cmbRubro.FormattingEnabled = true;
+            cmbRubro.Location = new Point(627, 108);
+            cmbRubro.Name = "cmbRubro";
+            cmbRubro.Size = new Size(99, 23);
+            cmbRubro.TabIndex = 24;
+            // 
+            // lblRubro
+            // 
+            lblRubro.AutoSize = true;
+            lblRubro.Location = new Point(582, 111);
+            lblRubro.Name = "lblRubro";
+            lblRubro.Size = new Size(39, 15);
+            lblRubro.TabIndex = 23;
+            lblRubro.Text = "Rubro";
+            // 
             // FProductoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 450);
+            Controls.Add(cmbRubro);
+            Controls.Add(lblRubro);
             Controls.Add(btnCategorias);
             Controls.Add(cmbMarca);
             Controls.Add(txtUnidadMedida);
@@ -240,6 +261,8 @@
             Controls.SetChildIndex(txtUnidadMedida, 0);
             Controls.SetChildIndex(cmbMarca, 0);
             Controls.SetChildIndex(btnCategorias, 0);
+            Controls.SetChildIndex(lblRubro, 0);
+            Controls.SetChildIndex(cmbRubro, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -265,5 +288,7 @@
         private TextBox txtUnidadMedida;
         private ComboBox cmbMarca;
         private Button btnCategorias;
+        private ComboBox cmbRubro;
+        private Label lblRubro;
     }
 }

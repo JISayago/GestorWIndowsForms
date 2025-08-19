@@ -62,6 +62,7 @@ namespace Presentacion.Core.Producto
             cmbMarca.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbMarca.DropDownStyle = ComboBoxStyle.DropDown;
 
+
             EntidadID = entidadId;
         }
 
