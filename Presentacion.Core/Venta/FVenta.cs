@@ -1,32 +1,22 @@
-﻿using AccesoDatos.Entidades;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic.Devices;
+﻿using Microsoft.IdentityModel.Tokens;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Producto;
-using Presentacion.Core.Venta.TipoPago;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Empleado;
-using Servicios.LogicaNegocio.Empleado.DTO;
-using Servicios.LogicaNegocio.Empleado.Rol.DTO;
 using Servicios.LogicaNegocio.Producto;
-using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Venta;
 using Servicios.LogicaNegocio.Venta.DTO;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Presentacion.Core.Venta
 {
     public partial class FVenta : FBase.FBase
     {
+        private readonly IVentaServicio _ventaServicio;
         private readonly IEmpleadoServicio _empleadoServicio;
+        private long idVendedor = 0;
+        private VentaDTO _venta;
         private bool finalizarVenta = false;
         private CuerpoDetalleVenta _cuerpoDetalleVenta;
         private readonly long _usuarioLogeadoID;
@@ -41,17 +31,20 @@ namespace Presentacion.Core.Venta
         //configuracion tomada del json de config.
         private bool _incluirCtaCte = true;
         //private List<ItemVentaDTO> itemsVenta;
-          private BindingList<ItemVentaDTO> itemsVenta;
+        private BindingList<ItemVentaDTO> itemsVenta;
+        private List<FormaPago> tipoDePagosVenta;
         private bool _actualizandoGrilla = false;
 
         public FVenta(long usuarioLogeadoID)
         {
             InitializeComponent();
+            _ventaServicio = new VentaServicio();
+
 
             _empleadoServicio = new EmpleadoServicio();
             _cuerpoDetalleVenta = new CuerpoDetalleVenta
             {
-                tiposDePago = new List<Pago>(),
+                tiposDePago = new List<FormaPago>(),
                 pagoParcial = false,
                 saldoPendiente = 0.00m,
             };
@@ -64,6 +57,8 @@ namespace Presentacion.Core.Venta
 
         private void FVenta_Load(object sender, EventArgs e)
         {
+            _ventaServicio.GenerateNextNumeroVenta();
+            lblNro.Text = _ventaServicio.GenerateNextNumeroVenta().ToString();
             System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
             MyTimer.Interval = 1000;
             MyTimer.Tick += new EventHandler(MyTimer_Tick);
@@ -82,6 +77,7 @@ namespace Presentacion.Core.Venta
             esConsumidorFinal = true;
             cbxUsuarioLogeado.Checked = true;
             esUsuarioLogeado = true;
+            idVendedor = _usuarioLogeadoID; // Asignamos el ID del usuario logueado como vendedor por defecto
             btnCargarVendedor.Enabled = false;
             btnCargarCliente.Enabled = false;
             cbxIncluirCtaCte.Checked = true;
@@ -135,8 +131,8 @@ namespace Presentacion.Core.Venta
                 {
                     var idEmpleado = fEmpleado.empleadoSeleccionado.Value;
 
-
                     var vendedor = new EmpleadoServicio().ObtenerEmpleadoPorId(idEmpleado);
+                    idVendedor = vendedor.PersonaId; 
 
                     txtVendedorAsignado.Text = $"{vendedor.Username} ({vendedor.Nombre} {vendedor.Apellido})";
 
@@ -153,7 +149,20 @@ namespace Presentacion.Core.Venta
             if (finalizarVenta)
             {
                 this.DialogResult = DialogResult.OK;
-                // funcion de guardar venta
+                _venta = new VentaDTO
+                {
+                    NumeroVenta = lblNro.Text,
+                    IdEmpleado = _usuarioLogeadoID,
+                    IdVendedor = idVendedor,
+                    FechaVenta = DateTime.Now,
+                    Total = _totalVenta,
+                    TotalSinDescuento = _totalVenta,//actualziar para cuando maneje descuentos
+                    Descuento = _porcentajeDescuento,
+                    Detalle = Convert.ToString(_cuerpoDetalleVenta),
+                    Items = itemsVenta.ToList(),
+                    TiposDePagoSeleccionado = tipoDePagosVenta,
+                };
+                _ventaServicio.NuevaVenta(_venta);
                 this.Close();
                 return;
             }
@@ -165,6 +174,7 @@ namespace Presentacion.Core.Venta
             var fConfirmarVenta = new FConfirmacionVenta(datosVenta);
             if (fConfirmarVenta.ShowDialog() == DialogResult.OK)
             {
+                //tipoDePagosVenta
 
                 var tipoPagosSeleccionados = fConfirmarVenta.pagos;
                 if (tipoPagosSeleccionados.Count == 0)
@@ -173,12 +183,15 @@ namespace Presentacion.Core.Venta
                     return;
                 }
                 _cuerpoDetalleVenta.tiposDePago = tipoPagosSeleccionados;
+                tipoDePagosVenta = tipoPagosSeleccionados;
+
                 _cuerpoDetalleVenta.saldoPendiente = fConfirmarVenta.MontoPendiente;
+
                 if (fConfirmarVenta.MontoPendiente > 0.00m)
                 {
                     _cuerpoDetalleVenta.pagoParcial = true;
                 }
-
+             
                 txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoTP();
 
                 if (tipoPagosSeleccionados.Count > 0)

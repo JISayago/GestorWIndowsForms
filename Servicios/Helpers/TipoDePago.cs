@@ -8,13 +8,13 @@ namespace Servicios.Helpers
 {
     public enum TipoDePago
     {
-        Efectivo = 0,
-        Transferencia = 1,
-        Credito = 2, 
-        Debito = 3, 
-        CtaCte = 4,
-        QR = 5,
-        Cheque = 6,
-        Otro = 7
+        Efectivo = 1,
+        Transferencia = 2,
+        Credito = 3, 
+        Debito = 4, 
+        CtaCte = 5,
+        QR = 6,
+        Cheque = 7,
+        Otro = 8
     }
 }

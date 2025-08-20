@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AccesoDatos.Entidades;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +11,11 @@ namespace Servicios.LogicaNegocio.Producto.DTO
     public class ProductoDTO
     {
         public long ProductoId { get; set; }
-        public long? IdMarca { get; set; }
-
+        public long IdMarca { get; set; }
+        public string Codigo { get; set; }
+        public string CodigoBarra { get; set; }
+        public bool EsFraccionable { get; set; }
+        public bool IvaIncluidoPrecioFinal { get; set; }
         public decimal Stock { get; set; }
         public decimal PrecioCosto { get; set; }
         public decimal PrecioVenta { get; set; }
@@ -27,3 +32,4 @@ namespace Servicios.LogicaNegocio.Producto.DTO
         public List<long> CategoriaIds { get; set; }
     }
 }
+

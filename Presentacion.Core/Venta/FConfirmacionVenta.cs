@@ -17,7 +17,7 @@ namespace Presentacion.Core.Venta
     {
         private decimal TotalVenta;
         public decimal MontoPendiente;
-        public List<Pago> pagos = new List<Pago>();
+        public List<FormaPago> pagos = new List<FormaPago>();
         public DatosVenta _datosVenta = new DatosVenta();
 
         public FConfirmacionVenta(DatosVenta dv)
@@ -42,11 +42,11 @@ namespace Presentacion.Core.Venta
 
         private void FConfirmacionVenta_Load(object sender, EventArgs e)
         {
-            pagos = new List<Pago>
+            pagos = new List<FormaPago>
     {
-        new Pago { Numero = 1, Monto = 0, TipoDePago = null },
-        new Pago { Numero = 2, Monto = 0, TipoDePago = null },
-        new Pago { Numero = 3, Monto = 0, TipoDePago = null }
+        new FormaPago { Numero = 1, Monto = 0, TipoDePago = null },
+        new FormaPago { Numero = 2, Monto = 0, TipoDePago = null },
+        new FormaPago { Numero = 3, Monto = 0, TipoDePago = null }
     };
 
             nudCantidadPagos.Minimum = 1;

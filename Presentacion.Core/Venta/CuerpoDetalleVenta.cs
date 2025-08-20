@@ -9,7 +9,7 @@ namespace Presentacion.Core.Venta
 {
     public class CuerpoDetalleVenta
     {
-        public List<Pago> tiposDePago;
+        public List<FormaPago> tiposDePago;
         public bool pagoParcial { get; set; }
         public decimal saldoPendiente { get; set; } = 0.00m;
 

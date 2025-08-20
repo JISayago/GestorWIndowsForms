@@ -107,7 +107,7 @@ namespace Presentacion.Core.Producto
                 Estado = int.Parse(txtEstado.Text),
                 Medida = txtMedida.Text,
                 UnidadMedida = txtUnidadMedida.Text,
-                IdMarca = null,
+                IdMarca = 1,
                 CategoriaIds = txtCategoria.Text.Split(',').Select(id => long.Parse(id.Trim())).ToList(),
                 EstaEliminado = false
             };

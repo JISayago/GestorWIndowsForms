@@ -69,7 +69,7 @@
             // lblHoy
             // 
             lblHoy.AutoSize = true;
-            lblHoy.Location = new Point(704, 9);
+            lblHoy.Location = new Point(695, 7);
             lblHoy.Name = "lblHoy";
             lblHoy.Size = new Size(41, 15);
             lblHoy.TabIndex = 0;
@@ -78,7 +78,7 @@
             // lblFechaHoy
             // 
             lblFechaHoy.AutoSize = true;
-            lblFechaHoy.Location = new Point(745, 10);
+            lblFechaHoy.Location = new Point(736, 8);
             lblFechaHoy.Name = "lblFechaHoy";
             lblFechaHoy.Size = new Size(53, 15);
             lblFechaHoy.TabIndex = 1;
@@ -203,7 +203,7 @@
             // lblHoraMinutos
             // 
             lblHoraMinutos.AutoSize = true;
-            lblHoraMinutos.Location = new Point(871, 10);
+            lblHoraMinutos.Location = new Point(862, 8);
             lblHoraMinutos.Name = "lblHoraMinutos";
             lblHoraMinutos.Size = new Size(49, 15);
             lblHoraMinutos.TabIndex = 17;
@@ -212,7 +212,7 @@
             // lblHoraHoy
             // 
             lblHoraHoy.AutoSize = true;
-            lblHoraHoy.Location = new Point(834, 9);
+            lblHoraHoy.Location = new Point(825, 7);
             lblHoraHoy.Name = "lblHoraHoy";
             lblHoraHoy.Size = new Size(36, 15);
             lblHoraHoy.TabIndex = 16;
@@ -249,7 +249,7 @@
             // lblNroVenta
             // 
             lblNroVenta.AutoSize = true;
-            lblNroVenta.Location = new Point(976, 8);
+            lblNroVenta.Location = new Point(928, 8);
             lblNroVenta.Name = "lblNroVenta";
             lblNroVenta.Size = new Size(62, 15);
             lblNroVenta.TabIndex = 26;
@@ -258,11 +258,11 @@
             // lblNro
             // 
             lblNro.AutoSize = true;
-            lblNro.Location = new Point(1037, 8);
+            lblNro.Location = new Point(989, 8);
             lblNro.Name = "lblNro";
-            lblNro.Size = new Size(49, 15);
+            lblNro.Size = new Size(97, 15);
             lblNro.TabIndex = 27;
-            lblNro.Text = "0000001";
+            lblNro.Text = "000000000000000";
             // 
             // cbxUsuarioLogeado
             // 
