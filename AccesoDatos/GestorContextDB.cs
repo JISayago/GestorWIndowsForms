@@ -26,6 +26,9 @@ namespace AccesoDatos
         public DbSet<EmpleadoRol> EmpleadoRoles { get; set; }
         public DbSet<CategoriaProducto> CategoriasProductos { get; set; }
         public DbSet<VentaPagoDetalle> VentaPagosDetalles { get; set; }
+        public DbSet<OfertaDescuento> OfertasDescuentos{ get; set; }
+        public DbSet<ProductosEnOfertaDescuentos> ProductosEnOfertasDescuentos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
 
@@ -467,6 +470,113 @@ namespace AccesoDatos
                       .HasForeignKey(cp => cp.IdCategoria)
                       .OnDelete(DeleteBehavior.Restrict);
             });
+            // OFERTA DESCUENTO
+            modelBuilder.Entity<OfertaDescuento>(entity =>
+            {
+                entity.ToTable("OfertasDescuentos");
+
+                entity.HasKey(o => o.OfertaDescuentoId);
+
+                entity.Property(o => o.OfertaDescuentoId)
+                      .HasColumnName("id_OfertaDescuento");
+
+                entity.Property(o => o.Descripcion)
+                      .HasColumnName("descripcion")
+                      .HasMaxLength(500)
+                      .IsRequired();
+
+                entity.Property(o => o.PrecioFinal)
+                      .HasColumnName("precio_final")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+
+                entity.Property(o => o.PrecioOriginal)
+                      .HasColumnName("precio_original")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+
+                entity.Property(o => o.DescuentoTotalFinal)
+                      .HasColumnName("descuento_total_final")
+                      .HasColumnType("decimal(18,2)");
+
+                entity.Property(o => o.PorcentajeDescuento)
+                      .HasColumnName("porcentaje_descuento")
+                      .HasColumnType("decimal(5,2)");
+
+                entity.Property(o => o.FechaInicio)
+                      .HasColumnName("fecha_inicio")
+                      .HasColumnType("date")
+                      .IsRequired();
+
+                entity.Property(o => o.FechaFin)
+                      .HasColumnName("fecha_fin")
+                      .HasColumnType("date");
+
+                entity.Property(o => o.CantidadProductosDentroOferta)
+                      .HasColumnName("cantidad_productos_dentro_oferta")
+                      .HasColumnType("decimal(18,2)");
+
+                entity.Property(o => o.EstaActiva)
+                      .HasColumnName("esta_activa")
+                      .IsRequired();
+
+                entity.Property(o => o.EsUnSoloProducto)
+                      .HasColumnName("es_un_solo_producto")
+                      .IsRequired();
+
+                // 🔗 Relación 1:N con ProductosEnOfertaDescuentos
+                entity.HasMany(o => o.Productos)
+                      .WithOne(po => po.Oferta)
+                      .HasForeignKey(po => po.OfertaId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+
+            // PRODUCTOS EN OFERTA DESCUENTOS
+            modelBuilder.Entity<ProductosEnOfertaDescuentos>(entity =>
+            {
+                entity.ToTable("ProductosEnOfertaDescuentos");
+
+                entity.HasKey(po => po.ProductosEnOfertaDescuentosId);
+
+                entity.Property(po => po.ProductosEnOfertaDescuentosId)
+                      .HasColumnName("id_ProductosEnOfertaDescuento");
+
+                entity.Property(po => po.OfertaId)
+                      .HasColumnName("id_OfertaDescuento")
+                      .IsRequired();
+
+                entity.Property(po => po.ProductoId)
+                      .HasColumnName("id_Producto")
+                      .IsRequired();
+
+                entity.Property(po => po.Cantidad)
+                      .HasColumnName("cantidad")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+
+                entity.Property(po => po.PrecioUnitarioOferta)
+                      .HasColumnName("precio_unitario_oferta")
+                      .HasColumnType("decimal(18,2)");
+
+                entity.Property(po => po.DescuentoPorcentaje)
+                      .HasColumnName("descuento_porcentaje")
+                      .HasColumnType("decimal(5,2)");
+
+                // 🔗 Relación con Producto
+                entity.HasOne(po => po.Producto)
+                      .WithMany() // si querés, podés agregar ICollection<ProductosEnOfertaDescuentos> en Producto
+                      .HasForeignKey(po => po.ProductoId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                // 🔗 Relación con OfertaDescuento
+                entity.HasOne(po => po.Oferta)
+                      .WithMany(o => o.Productos)
+                      .HasForeignKey(po => po.OfertaId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+
         }
     }
 }
