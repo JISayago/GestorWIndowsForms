@@ -6,7 +6,8 @@ using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
 using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
-using Servicios.AccesoSistema;
+using Servicios.Helpers;
+using Servicios.Helpers.DatosObligatorios;
 using Servicios.Seguridad;
 
 
@@ -37,8 +38,9 @@ namespace Presentacion
             }
             else
             {
-                var context = new GestorContextDBFactory().CreateDbContext(null);
-                DatosUsuarioInicial.Inicializar(context);
+
+                var inicializadorDatosObligatorios = new InicializadorDatosObligatorios();
+                inicializadorDatosObligatorios.InicializadorDatos();
 
                 var login = new LoginForm();
                 login.ShowDialog();
