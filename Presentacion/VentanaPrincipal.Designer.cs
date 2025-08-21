@@ -49,7 +49,7 @@
             btnMovimientos = new Button();
             dataGridView1 = new DataGridView();
             panel1 = new Panel();
-            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
+            rubroToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel1.SuspendLayout();
@@ -106,7 +106,7 @@
             // 
             // aRTICULOToolStripMenuItem
             // 
-            aRTICULOToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { categoriaToolStripMenuItem, marcaToolStripMenuItem, articuloToolStripMenuItem1 });
+            aRTICULOToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { categoriaToolStripMenuItem, marcaToolStripMenuItem, articuloToolStripMenuItem1, rubroToolStripMenuItem });
             aRTICULOToolStripMenuItem.Name = "aRTICULOToolStripMenuItem";
             aRTICULOToolStripMenuItem.Size = new Size(81, 20);
             aRTICULOToolStripMenuItem.Text = "PRODUCTO";
@@ -219,6 +219,13 @@
             panel1.Size = new Size(750, 40);
             panel1.TabIndex = 18;
             // 
+            // rubroToolStripMenuItem
+            // 
+            rubroToolStripMenuItem.Name = "rubroToolStripMenuItem";
+            rubroToolStripMenuItem.Size = new Size(180, 22);
+            rubroToolStripMenuItem.Text = "Rubro";
+            rubroToolStripMenuItem.Click += rubroToolStripMenuItem_Click;
+            // 
             // VentanaPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -264,5 +271,6 @@
         private DataGridView dataGridView1;
         private Panel panel1;
         private ToolStripMenuItem rolesToolStripMenuItem;
+        private ToolStripMenuItem rubroToolStripMenuItem;
     }
 }

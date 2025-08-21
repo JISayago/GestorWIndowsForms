@@ -4,6 +4,7 @@ using Presentacion.Core.Categoria;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
 using Presentacion.Core.Producto;
+using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
 using Presentacion.Core.Venta;
 using ServicioAccesoSistema.AccesoSistema;
@@ -68,6 +69,12 @@ namespace Presentacion
         {
             var fTipoPago = new FTipoPagoConsulta();
             fTipoPago.Show();
+        }
+
+        private void rubroToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fRubro = new FRubroConsulta();
+            fRubro.Show();
         }
 
         private void btnVenta_Click(object sender, EventArgs e)

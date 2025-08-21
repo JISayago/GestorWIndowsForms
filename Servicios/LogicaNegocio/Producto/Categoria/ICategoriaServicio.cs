@@ -14,7 +14,7 @@ namespace Servicios.LogicaNegocio.Articulo.Categoria
 
         IEnumerable<CategoriaDTO> ObtenerCategoriaEliminada(string cadenaBuscar);
 
-        CategoriaDTO ObtenerPorId(long marca);
+        CategoriaDTO ObtenerPorId(long categoria);
 
         EstadoOperacion Insertar(CategoriaDTO categoriaDTO); /* agregar estado operacion a las funciones abm*/
 

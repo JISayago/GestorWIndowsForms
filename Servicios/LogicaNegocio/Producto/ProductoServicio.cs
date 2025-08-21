@@ -53,6 +53,11 @@ namespace Servicios.LogicaNegocio.Producto
                 Medida = productoDto.Medida,
                 UnidadMedida = productoDto.UnidadMedida,
                 IdMarca = productoDto.IdMarca,
+                IdRubro = productoDto.IdRubro,
+                Codigo = productoDto.Codigo,
+                CodigoBarra = productoDto.CodigoBarra,
+                IvaIncluidoPrecioFinal = productoDto.IvaIncluidoPrecioFinal,
+                EsFraccionable = productoDto.EsFraccionable,
                 CategoriasProductos = productoDto.CategoriaIds
                     .Select(id => new CategoriaProducto
                     {
@@ -101,6 +106,11 @@ namespace Servicios.LogicaNegocio.Producto
             productoEditar.Medida = productoDto.Medida;
             productoEditar.UnidadMedida = productoDto.UnidadMedida;
             productoEditar.IdMarca = productoDto.IdMarca;
+            productoEditar.IdRubro = productoDto.IdRubro;
+            productoEditar.Codigo = productoDto.Codigo;
+            productoEditar.CodigoBarra = productoDto.CodigoBarra;
+            productoEditar.IvaIncluidoPrecioFinal = productoDto.IvaIncluidoPrecioFinal;
+            productoEditar.EsFraccionable = productoDto.EsFraccionable;
 
             foreach (var categoriaId in productoDto.CategoriaIds)
             {
@@ -134,7 +144,9 @@ namespace Servicios.LogicaNegocio.Producto
                  {
                      ProductoId = e.ProductoId,
                      IdMarca = e.IdMarca,
+                     IdRubro = e.IdRubro,
                      MarcaNombre = e.Marca.Nombre,
+                     RubroNombre = e.Rubro.Nombre,
                      Stock = Convert.ToDecimal(e.Stock),
                      PrecioCosto = e.PrecioCosto,
                      PrecioVenta = e.PrecioVenta,
@@ -143,6 +155,10 @@ namespace Servicios.LogicaNegocio.Producto
                      Estado = e.Estado,
                      Medida = e.Medida,
                      UnidadMedida = e.UnidadMedida,
+                     Codigo = e.Codigo,
+                     CodigoBarra = e.CodigoBarra,
+                     IvaIncluidoPrecioFinal = e.IvaIncluidoPrecioFinal,
+                     EsFraccionable = e.EsFraccionable,
                      CategoriaIds = e.CategoriasProductos
                         .Select(cp => cp.IdCategoria)
                         .ToList()
@@ -166,11 +182,9 @@ namespace Servicios.LogicaNegocio.Producto
             {
                 ProductoId = e.ProductoId,
                 IdMarca = e.IdMarca,
+                IdRubro = e.IdRubro,
                 MarcaNombre = e.Marca.Nombre,
-                Codigo = e.Codigo,
-                CodigoBarra = e.CodigoBarra,
-                EsFraccionable = e.EsFraccionable,
-                IvaIncluidoPrecioFinal = e.IvaIncluidoPrecioFinal,
+                RubroNombre = e.Rubro.Nombre,
                 Stock = Convert.ToDecimal(e.Stock),
                 PrecioCosto = e.PrecioCosto,
                 PrecioVenta = e.PrecioVenta,
@@ -179,6 +193,10 @@ namespace Servicios.LogicaNegocio.Producto
                 Estado = e.Estado,
                 Medida = e.Medida,
                 UnidadMedida = e.UnidadMedida,
+                Codigo = e.Codigo,
+                CodigoBarra = e.CodigoBarra,
+                IvaIncluidoPrecioFinal = e.IvaIncluidoPrecioFinal,
+                EsFraccionable = e.EsFraccionable,
                 CategoriaIds = e.CategoriasProductos
                         .Select(cp => cp.IdCategoria)
                         .ToList()
@@ -202,7 +220,9 @@ namespace Servicios.LogicaNegocio.Producto
             {
                 ProductoId = e.ProductoId,
                 IdMarca = e.IdMarca,
+                IdRubro = e.IdRubro,
                 MarcaNombre = e.Marca.Nombre,
+                RubroNombre = e.Rubro.Nombre,
                 Stock = Convert.ToDecimal(e.Stock),
                 PrecioCosto = e.PrecioCosto,
                 PrecioVenta = e.PrecioVenta,
@@ -211,6 +231,10 @@ namespace Servicios.LogicaNegocio.Producto
                 Estado = e.Estado,
                 Medida = e.Medida,
                 UnidadMedida = e.UnidadMedida,
+                Codigo = e.Codigo,
+                CodigoBarra = e.CodigoBarra,
+                IvaIncluidoPrecioFinal = e.IvaIncluidoPrecioFinal,
+                EsFraccionable = e.EsFraccionable,
                 CategoriaIds = e.CategoriasProductos
                         .Select(cp => cp.IdCategoria)
                         .ToList()

@@ -1,7 +1,10 @@
-﻿using Presentacion.FBase;
+﻿using AccesoDatos.Entidades;
+using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.LogicaNegocio.Articulo.Marca;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Producto.Rubro;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +20,10 @@ namespace Presentacion.Core.Producto
     public partial class FProductoABM : FBaseABM
     {
         private readonly IProductoServicio _ProductoServicio;
+        private readonly IMarcaServicio _MarcaServicio;
+        private readonly IRubroServicio _RubroServicio;
+        protected long? EntidadID;
+        private List<long> _categoriasSeleccionadas = new List<long>();
 
         public override void FBaseABM_Load(object sender, EventArgs e)
         {
@@ -30,6 +37,9 @@ namespace Presentacion.Core.Producto
             InitializeComponent();
 
             _ProductoServicio = new ProductoServicio();
+            _MarcaServicio = new MarcaServicio();
+            _RubroServicio = new RubroServicio();
+            EntidadID = entidadId;
 
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
             {
@@ -40,10 +50,32 @@ namespace Presentacion.Core.Producto
             {
                 DesactivarControles(this);
             }
-
+            /*
             AgregarControlesObligatorios(txtProducto, "Producto");
             AgregarControlesObligatorios(txtStock, "Stock");
+            AgregarControlesObligatorios(cmbMarca, "Marca");
+            */
+            var marcas = _MarcaServicio.ObtenerMarca("").ToList();
 
+            cmbMarca.DisplayMember = "Nombre"; // lo que se muestra
+            cmbMarca.ValueMember = "Id";
+            cmbMarca.DataSource = marcas;
+
+            cmbMarca.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbMarca.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbMarca.DropDownStyle = ComboBoxStyle.DropDown;
+
+            var rubros = _RubroServicio.ObtenerRubro("").ToList();
+
+            cmbRubro.DisplayMember = "Nombre"; // lo que se muestra
+            cmbRubro.ValueMember = "Id";
+            cmbRubro.DataSource = rubros;
+
+            cmbRubro.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbRubro.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbRubro.DropDownStyle = ComboBoxStyle.DropDown;
+
+            EntidadID = entidadId;
         }
 
         public override void Inicializador(long? entidadId)
@@ -82,6 +114,12 @@ namespace Presentacion.Core.Producto
             if (Producto != null)
             {
                 txtProducto.Text = Producto.Descripcion;
+                txtEstado.Text = Producto.Estado.ToString();
+                txtMedida.Text = Producto.Medida;
+                txtUnidadMedida.Text = Producto.UnidadMedida;
+                txtStock.Text = Producto.Stock.ToString();
+                txtPrecioCosto.Text = Producto.PrecioCosto.ToString();
+                txtPrecioVenta.Text = Producto.PrecioVenta.ToString();
             }
             else
             {
@@ -103,12 +141,12 @@ namespace Presentacion.Core.Producto
                 Descripcion = txtProducto.Text,
                 Stock = int.Parse(txtStock.Text),
                 PrecioCosto = int.Parse(txtPrecioCosto.Text),
-                PrecioVenta =  int.Parse(txtPrecioVenta.Text),
+                PrecioVenta = int.Parse(txtPrecioVenta.Text),
                 Estado = int.Parse(txtEstado.Text),
                 Medida = txtMedida.Text,
                 UnidadMedida = txtUnidadMedida.Text,
-                IdMarca = 1,
-                CategoriaIds = txtCategoria.Text.Split(',').Select(id => long.Parse(id.Trim())).ToList(),
+                IdMarca = (long)cmbMarca.SelectedValue,
+                CategoriaIds = _categoriasSeleccionadas.ToList(),
                 EstaEliminado = false
             };
 
@@ -175,10 +213,18 @@ namespace Presentacion.Core.Producto
 
                 }
 
-                var ProductoModificar = new ProductoDTO
+                var ProductoModificar = new ProductoDTO //completar con los datos del producto a modificar
                 {
-                    ProductoId = EntidadID.Value,
-                    Descripcion = txtProducto.Text
+                    Descripcion = txtProducto.Text,
+                    Stock = int.Parse(txtStock.Text),
+                    PrecioCosto = int.Parse(txtPrecioCosto.Text),
+                    PrecioVenta = int.Parse(txtPrecioVenta.Text),
+                    Estado = int.Parse(txtEstado.Text),
+                    Medida = txtMedida.Text,
+                    UnidadMedida = txtUnidadMedida.Text,
+                    IdMarca = (long)cmbMarca.SelectedValue,
+                    CategoriaIds = _categoriasSeleccionadas.ToList(),
+                    EstaEliminado = false
                 };
 
                 var response = _ProductoServicio.Modificar(ProductoModificar, ProductoModificar.ProductoId);
@@ -199,6 +245,22 @@ namespace Presentacion.Core.Producto
             }
             return true;
 
+        }
+
+        private void btnCategorias_Click(object sender, EventArgs e)
+        {
+            //si existe el id recien entrar a fcategoriaProducto
+
+            var fCategoriaProducto = new Categoria.FAsignacionCategoriaProducto(EntidadID);
+
+            if (fCategoriaProducto.ShowDialog() == DialogResult.OK)
+            {
+                // Guardamos internamente las categorías elegidas por el usuario
+                _categoriasSeleccionadas = fCategoriaProducto.CategoriasSeleccionadas;
+
+                // Si querés mostrarlas en una textbox invisible o label:
+                //txtCategoria.Text = string.Join(",", _categoriasSeleccionadas);
+            }
         }
     }
 }
