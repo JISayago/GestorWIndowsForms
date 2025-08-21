@@ -335,6 +335,12 @@ namespace AccesoDatos
                     .HasColumnName("nombre")
                     .HasMaxLength(100)
                     .IsRequired();
+                entity.Property(tp => tp.NumeroReferencia)
+                .HasColumnName("numero_referencia")
+                .IsRequired();
+
+                entity.Property(tp => tp.MetodoPagoHabilitado)
+                            .HasColumnName("metodo_pago_habilitado");
 
                 entity.Property(tp => tp.Detalle)
                     .HasColumnName("detalle")
