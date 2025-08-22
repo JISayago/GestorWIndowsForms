@@ -3,7 +3,7 @@ using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Empleado.Rol;
-using Servicios.LogicaNegocio.TipoPago;
+using Servicios.LogicaNegocio.Venta.TipoPago;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

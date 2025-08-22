@@ -6,11 +6,12 @@ using Presentacion.Core.Empleado.Rol;
 using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
+using Presentacion.Core.Venta;
 using ServicioAccesoSistema.AccesoSistema;
 
 namespace Presentacion
 {
-    public partial class VentanaPrincipal : Form
+    public partial class VentanaPrincipal : FBase.FBase
     {
         private readonly UsuarioLogeado _usuarioLogeado;
 
@@ -74,6 +75,12 @@ namespace Presentacion
         {
             var fRubro = new FRubroConsulta();
             fRubro.Show();
+        }
+
+        private void btnVenta_Click(object sender, EventArgs e)
+        {
+            var FVenta = new FVenta(_usuarioLogeado.PersonaId);
+            FVenta.Show();
         }
     }
 }

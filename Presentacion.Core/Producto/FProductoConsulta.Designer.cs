@@ -28,12 +28,41 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "FProductoConsulta";
+            btnSeleccionarProducto = new Button();
+            panel1.SuspendLayout();
+            SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(btnSeleccionarProducto);
+            panel1.Controls.SetChildIndex(btnSeleccionarProducto, 0);
+            // 
+            // btnSeleccionarProducto
+            // 
+            btnSeleccionarProducto.Location = new Point(8, 272);
+            btnSeleccionarProducto.Name = "btnSeleccionarProducto";
+            btnSeleccionarProducto.Size = new Size(75, 44);
+            btnSeleccionarProducto.TabIndex = 1;
+            btnSeleccionarProducto.Text = "Seleccionar Producto";
+            btnSeleccionarProducto.UseVisualStyleBackColor = true;
+            btnSeleccionarProducto.Click += btnSeleccionarProducto_Click;
+            // 
+            // FProductoConsulta
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 561);
+            Name = "FProductoConsulta";
+            Text = "FProductoConsulta";
+            Load += FProductoConsulta_Load;
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Button btnSeleccionarProducto;
     }
 }

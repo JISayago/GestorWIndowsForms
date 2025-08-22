@@ -1,21 +1,20 @@
-﻿using System;
+﻿using AccesoDatos.Entidades;
+using Azure;
+using Servicios.Helpers;
+using Servicios.LogicaNegocio.Venta.TipoPago.DTO;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AccesoDatos.Entidades
+namespace Servicios.LogicaNegocio.Venta.DTO
 {
-    public class Venta
+    public  class VentaDTO
     {
-        [Key]
         public long VentaId { get; set; }
         public long IdEmpleado { get; set; }
-
-        public Empleado Empleado { get; set; }
         public long IdVendedor { get; set; }
-        public Empleado Vendedor { get; set; }
         public string NumeroVenta { get; set; }
         public DateTime FechaVenta { get; set; }
         public decimal Total { get; set; }
@@ -25,9 +24,7 @@ namespace AccesoDatos.Entidades
         public string Detalle { get; set; }
         public decimal MontoAdeudado { get; set; }
         public decimal MontoPagado { get; set; }
-
-        public ICollection<DetallesVenta> DetallesVentas { get; set; }
-
-        public ICollection<VentaPagoDetalle> VentaPagoDetalles { get; set; }
+        public List<ItemVentaDTO> Items { get; set; }
+        public List<FormaPago> TiposDePagoSeleccionado { get; set; }
     }
 }

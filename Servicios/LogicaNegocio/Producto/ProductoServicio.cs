@@ -53,9 +53,10 @@ namespace Servicios.LogicaNegocio.Producto
                 Medida = productoDto.Medida,
                 UnidadMedida = productoDto.UnidadMedida,
                 IdMarca = productoDto.IdMarca,
-                IdRubro = productoDto.IdRubro,
-                Codigo = productoDto.Codigo,
-                CodigoBarra = productoDto.CodigoBarra,
+                //IdRubro = productoDto.IdRubro,
+                IdRubro = 1,
+                Codigo = productoDto.Codigo ?? "01",
+                CodigoBarra = productoDto.CodigoBarra ?? "01",
                 IvaIncluidoPrecioFinal = productoDto.IvaIncluidoPrecioFinal,
                 EsFraccionable = productoDto.EsFraccionable,
                 CategoriasProductos = productoDto.CategoriaIds

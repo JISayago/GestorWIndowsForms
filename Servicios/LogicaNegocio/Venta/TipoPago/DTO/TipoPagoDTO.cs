@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicios.LogicaNegocio.TipoPago.DTO
+namespace Servicios.LogicaNegocio.Venta.TipoPago.DTO
 {
     public class TipoPagoDTO
     {
@@ -13,5 +13,7 @@ namespace Servicios.LogicaNegocio.TipoPago.DTO
         public string Detalle { get; set; }
         public string Codigo { get; set; }
         public bool EstaEliminado { get; set; }
+        public int NumeroReferencia { get; set; }
+        public bool MetodoPagoHabilitado { get; set; }
     }
 }

@@ -6,7 +6,8 @@ using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
 using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
-using Servicios.AccesoSistema;
+using Servicios.Helpers;
+using Servicios.Helpers.DatosObligatorios;
 using Servicios.Seguridad;
 
 
@@ -37,11 +38,30 @@ namespace Presentacion
             }
             else
             {
-                var context = new GestorContextDBFactory().CreateDbContext(null);
-                DatosUsuarioInicial.Inicializar(context);
+
+                var inicializadorDatosObligatorios = new InicializadorDatosObligatorios();
+                inicializadorDatosObligatorios.InicializadorDatos();
 
                 var login = new LoginForm();
                 login.ShowDialog();
+                if (login._usuarioLogeado == null || string.IsNullOrEmpty(login._usuarioLogeado.Username))
+                {
+                    MessageBox.Show("Error: usuario no válido.");
+                    return;
+                }
+
+                Application.ThreadException += (s, e) =>
+                {
+                    MessageBox.Show($"Excepción no manejada (UI thread):\n{e.Exception.ToString()}",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                };
+
+                AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+                {
+                    var ex = e.ExceptionObject as Exception;
+                    MessageBox.Show($"Excepción no manejada (otro thread):\n{ex?.ToString()}",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                };
 
                 if (login.PuedeAccederAlSistema)
                 {

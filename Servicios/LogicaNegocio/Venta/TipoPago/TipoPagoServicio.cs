@@ -3,14 +3,14 @@ using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Empleado.DTO;
-using Servicios.LogicaNegocio.TipoPago.DTO;
+using Servicios.LogicaNegocio.Venta.TipoPago.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicios.LogicaNegocio.TipoPago
+namespace Servicios.LogicaNegocio.Venta.TipoPago
 {
     public class TipoPagoServicio : ITipoPagoServicio
     {
@@ -115,8 +115,29 @@ namespace Servicios.LogicaNegocio.TipoPago
                      TipoPagoId = tp.TipoPagoId,
                      Nombre = tp.Nombre,
                      Codigo = tp.Codigo,
-                     Detalle= tp.Detalle,
-                     EstaEliminado= tp.EstaEliminado,
+                     Detalle = tp.Detalle,
+                     EstaEliminado = tp.EstaEliminado,
+                     NumeroReferencia = tp.NumeroReferencia,
+                     MetodoPagoHabilitado = tp.MetodoPagoHabilitado
+                 })
+                 .FirstOrDefault();
+            return tipoPago;
+        }
+        public TipoPagoDTO ObtenerTipoPagoPorNumero(int numero_referencia)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var tipoPago = context.TiposPago
+                 .AsNoTracking()
+                 .Where(tp => tp.NumeroReferencia == numero_referencia && !tp.EstaEliminado)
+                 .Select(tp => new TipoPagoDTO
+                 {
+                     TipoPagoId = tp.TipoPagoId,
+                     Nombre = tp.Nombre,
+                     Codigo = tp.Codigo,
+                     Detalle = tp.Detalle,
+                     EstaEliminado = tp.EstaEliminado,
+                     NumeroReferencia = tp.NumeroReferencia,
+                     MetodoPagoHabilitado = tp.MetodoPagoHabilitado
                  })
                  .FirstOrDefault();
             return tipoPago;
@@ -137,6 +158,9 @@ namespace Servicios.LogicaNegocio.TipoPago
                 Nombre = x.Nombre,
                 Codigo = x.Codigo,
                 Detalle = x.Detalle,
+                EstaEliminado = x.EstaEliminado,
+                NumeroReferencia = x.NumeroReferencia,
+                MetodoPagoHabilitado = x.MetodoPagoHabilitado
             })
             .ToList();
 
@@ -159,6 +183,9 @@ namespace Servicios.LogicaNegocio.TipoPago
                    Nombre = x.Nombre,
                    Codigo = x.Codigo,
                    Detalle = x.Detalle,
+                   EstaEliminado = x.EstaEliminado,
+                   NumeroReferencia = x.NumeroReferencia,
+                   MetodoPagoHabilitado = x.MetodoPagoHabilitado
                })
                 .ToList();
 

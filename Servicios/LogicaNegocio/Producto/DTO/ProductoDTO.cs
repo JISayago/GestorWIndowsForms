@@ -1,5 +1,6 @@
 ﻿using Microsoft.Identity.Client;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,3 +35,4 @@ namespace Servicios.LogicaNegocio.Producto.DTO
         public List<long> CategoriaIds { get; set; }
     }
 }
+

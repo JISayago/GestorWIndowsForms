@@ -2,8 +2,8 @@
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Empleado.Rol;
 using Servicios.LogicaNegocio.Empleado.Rol.DTO;
-using Servicios.LogicaNegocio.TipoPago;
-using Servicios.LogicaNegocio.TipoPago.DTO;
+using Servicios.LogicaNegocio.Venta.TipoPago.DTO;
+using Servicios.LogicaNegocio.Venta.TipoPago;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

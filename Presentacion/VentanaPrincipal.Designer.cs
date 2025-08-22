@@ -43,7 +43,6 @@
             cONFIGToolStripMenuItem = new ToolStripMenuItem();
             lblUsuarioLogueado = new Label();
             lblNombreUsuario = new Label();
-            sqlCommand1 = new Microsoft.Data.SqlClient.SqlCommand();
             btnVenta = new Button();
             btnCaja = new Button();
             btnStock = new Button();
@@ -164,11 +163,6 @@
             lblNombreUsuario.Size = new Size(0, 20);
             lblNombreUsuario.TabIndex = 3;
             // 
-            // sqlCommand1
-            // 
-            sqlCommand1.CommandTimeout = 30;
-            sqlCommand1.EnableOptimizedParameterBinding = false;
-            // 
             // btnVenta
             // 
             btnVenta.Location = new Point(596, 0);
@@ -177,6 +171,7 @@
             btnVenta.TabIndex = 12;
             btnVenta.Text = "VENTA";
             btnVenta.UseVisualStyleBackColor = true;
+            btnVenta.Click += btnVenta_Click;
             // 
             // btnCaja
             // 
@@ -245,6 +240,7 @@
             MinimumSize = new Size(800, 600);
             Name = "VentanaPrincipal";
             Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
@@ -267,7 +263,6 @@
         private Label lblNombreUsuario;
         private ToolStripMenuItem gastosToolStripMenuItem;
         private ToolStripMenuItem vENTASToolStripMenuItem;
-        private Microsoft.Data.SqlClient.SqlCommand sqlCommand1;
         private Button btnVenta;
         private Button btnCaja;
         private Button btnStock;

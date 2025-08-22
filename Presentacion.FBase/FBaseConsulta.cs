@@ -47,7 +47,15 @@ namespace Presentacion.FBase
         {
             EjecutarBtnEliminar();
         }
+        public virtual void EjecutarDobleClickFila()
+        {
 
+        }
+
+        private void DgvGrilla_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            EjecutarDobleClickFila();
+        }
         public virtual void EjecutarBtnEliminar()
         {
             if (HayDatosCargados())

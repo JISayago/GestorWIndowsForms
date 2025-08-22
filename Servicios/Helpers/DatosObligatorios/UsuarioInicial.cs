@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicios.AccesoSistema
+namespace Servicios.Helpers.DatosObligatorios
 {
-    public class DatosUsuarioInicial
+    public class UsuarioInicial
     {
         public static void Inicializar(GestorContextDB context)
         {
