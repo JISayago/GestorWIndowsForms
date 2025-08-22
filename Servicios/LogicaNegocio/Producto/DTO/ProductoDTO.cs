@@ -22,10 +22,10 @@ namespace Servicios.LogicaNegocio.Producto.DTO
         public int Estado { get; set; }
         public string Medida { get; set; }
         public string UnidadMedida { get; set; }
-        public string? Codigo { get; set; }
-        public string? CodigoBarra { get; set; }
-        public bool IvaIncluidoPrecioFinal { get; set; }
-        public bool EsFraccionable { get; set; }
+        public string? Codigo { get; set; } //
+        public string? CodigoBarra { get; set; } //
+        public bool IvaIncluidoPrecioFinal { get; set; } //
+        public bool EsFraccionable { get; set; } //
 
         // Relación simplificada
         public string MarcaNombre { get; set; }
