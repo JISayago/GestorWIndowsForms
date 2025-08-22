@@ -183,19 +183,10 @@ namespace Presentacion.Core.Venta
 
         }
 
-        private void CargarFormaDePago(Label label, int numeroPago, Button btn)
+        private TipoDePago AsignarTipoPagoAPago(int numeroPago)
         {
-            var tipoSeleccionado = AsignarTipoPagoAPago();
-            pagos[numeroPago - 1].TipoDePago = tipoSeleccionado;
-            
-            label.Text = tipoSeleccionado.ToString();
-            btn.Text = "Cambiar Forma de Pago";
-
-        }
-
-        private TipoDePago AsignarTipoPagoAPago()
-        {
-            using var fFormaPagoSeleccionada = new FTipoPagoSeleccionEnVenta(_datosVenta.IncluirCtaCte,pagos);
+            // pasamos el indice actual (numeroPago - 1) para que el dialogo excluya esa posición del conteo
+            using var fFormaPagoSeleccionada = new FTipoPagoSeleccionEnVenta(_datosVenta.IncluirCtaCte, pagos, numeroPago - 1);
 
             if (fFormaPagoSeleccionada.ShowDialog() == DialogResult.OK)
             {
@@ -203,6 +194,15 @@ namespace Presentacion.Core.Venta
             }
 
             return TipoDePago.Efectivo;
+        }
+
+        private void CargarFormaDePago(Label label, int numeroPago, Button btn)
+        {
+            var tipoSeleccionado = AsignarTipoPagoAPago(numeroPago); // ahora le paso numeroPago
+            pagos[numeroPago - 1].TipoDePago = tipoSeleccionado;
+
+            label.Text = tipoSeleccionado.ToString();
+            btn.Text = "Cambiar Forma de Pago";
         }
 
         private void btnTipoPago2_Click(object sender, EventArgs e)

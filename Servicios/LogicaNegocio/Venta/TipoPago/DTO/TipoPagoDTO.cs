@@ -13,5 +13,7 @@ namespace Servicios.LogicaNegocio.Venta.TipoPago.DTO
         public string Detalle { get; set; }
         public string Codigo { get; set; }
         public bool EstaEliminado { get; set; }
+        public int NumeroReferencia { get; set; }
+        public bool MetodoPagoHabilitado { get; set; }
     }
 }

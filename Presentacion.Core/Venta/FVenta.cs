@@ -158,11 +158,12 @@ namespace Presentacion.Core.Venta
                     Total = _totalVenta,
                     TotalSinDescuento = _totalVenta,//actualziar para cuando maneje descuentos
                     Descuento = _porcentajeDescuento,
-                    Detalle = Convert.ToString(_cuerpoDetalleVenta),
+                    Detalle = Convert.ToString(_cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta)),
                     Items = itemsVenta.ToList(),
                     TiposDePagoSeleccionado = tipoDePagosVenta,
                 };
                 _ventaServicio.NuevaVenta(_venta);
+                MessageBox.Show("Venta confirmada exitosamente.");
                 this.Close();
                 return;
             }

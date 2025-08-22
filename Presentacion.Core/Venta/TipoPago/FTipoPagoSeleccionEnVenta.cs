@@ -16,11 +16,17 @@ namespace Presentacion.Core.Venta.TipoPago
         public TipoDePago tipoPagoSeleccionado { get; private set; }
         public bool _incluirCtaCte { get; private set; }
         public List<FormaPago> _pagos { get; private set; }
-        public FTipoPagoSeleccionEnVenta(bool incluirCtaCte,List<FormaPago> pagos)
+        private int _indexActual; // índice que estamos editando (puede ser -1 si es nuevo)
+
+        // array de límites: si ya lo tenés en otro lado, usá ese. Aquí lo dejo como ejemplo.
+        private readonly int[] listPagosCantidades = new int[8] { 1, 2, 1, 1, 1, 1, 1, 1 };
+
+        public FTipoPagoSeleccionEnVenta(bool incluirCtaCte, List<FormaPago> pagos, int indexActual)
         {
             InitializeComponent();
             _incluirCtaCte = incluirCtaCte;
             _pagos = pagos;
+            _indexActual = indexActual;
         }
 
         private void btnEfectivo_Click(object sender, EventArgs e)
@@ -50,13 +56,48 @@ namespace Presentacion.Core.Venta.TipoPago
 
         private void SeleccionTipoPago(TipoDePago tp)
         {
-            //el tipo pago es la uicacion del array del limitador de pagos 
-            // tengo que pasar el array de pagos para ver si ya contiene ese tipo de pago
-            // y si l
+            if (!PuedeSeleccionar(tp, out int permitido, out int yaUsados))
+            {
+                MessageBox.Show($"No se puede seleccionar '{tp}'. Solo se permiten {permitido} de este tipo y ya hay {yaUsados}.", "Límite alcanzado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             tipoPagoSeleccionado = tp;
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
+        private bool PuedeSeleccionar(TipoDePago tp, out int permitido, out int yaUsados)
+        {
+            permitido = 0;
+            yaUsados = 0;
+
+            // índice en el array (enum empieza en 1)
+            int idx = (int)tp - 1;
+
+            if (idx < 0 || idx >= listPagosCantidades.Length)
+            {
+                // si el enum no mapea al array, permitimos por defecto (o seteálo como quieras)
+                permitido = int.MaxValue;
+                return true;
+            }
+
+            permitido = listPagosCantidades[idx];
+
+            if (_pagos == null)
+            {
+                yaUsados = 0;
+                return permitido > 0;
+            }
+
+            // contamos cuántas veces aparece 'tp' en _pagos EXCLUYENDO el índice que estamos editando
+            yaUsados = _pagos
+                .Select((p, index) => new { p, index })
+                .Count(x => x.index != _indexActual && x.p != null && x.p.TipoDePago == tp);
+
+            // si yaUsados < permitido -> podemos agregar/usar
+            return yaUsados < permitido;
+        }
+
 
         private void FTipoPagoSeleccionEnVenta_Load(object sender, EventArgs e)
         {

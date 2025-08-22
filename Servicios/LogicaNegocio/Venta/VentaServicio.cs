@@ -3,6 +3,7 @@ using AccesoDatos.Entidades;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
+using Servicios.LogicaNegocio.Venta.TipoPago;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,11 +112,12 @@ namespace Servicios.LogicaNegocio.Venta
 
                 if (ventaDto.TiposDePagoSeleccionado != null && ventaDto.TiposDePagoSeleccionado.Any())
                 {
+                    var servicioTP = new TipoPagoServicio();
                     var pagos = ventaDto.TiposDePagoSeleccionado.Select(p => new AccesoDatos.Entidades.VentaPagoDetalle
                     {
                         IdVenta = venta.VentaId,
-                        //IdTipoPago = Convert.ToInt64(p.TipoDePago.Value),
-                        IdTipoPago = 1,
+                        IdTipoPago = p.TipoDePago.HasValue? servicioTP.ObtenerTipoPagoPorNumero(Convert.ToInt32(p.TipoDePago.Value)).TipoPagoId
+                            : 0,
                         Monto = p.Monto
                     }).ToList();
 
