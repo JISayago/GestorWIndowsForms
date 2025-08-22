@@ -120,6 +120,12 @@ namespace Presentacion.Core.Producto
                 txtStock.Text = Producto.Stock.ToString();
                 txtPrecioCosto.Text = Producto.PrecioCosto.ToString();
                 txtPrecioVenta.Text = Producto.PrecioVenta.ToString();
+                txtCodigo.Text = Producto.Codigo;
+                txtCodigoBarra.Text = Producto.CodigoBarra;
+                chkIvaIncluido.Checked = Producto.IvaIncluidoPrecioFinal;
+                chkEsFraccionable.Checked = Producto.EsFraccionable;
+                cmbMarca.SelectedValue = Producto.IdMarca;
+                cmbRubro.SelectedValue = Producto.IdRubro;
             }
             else
             {
@@ -139,16 +145,23 @@ namespace Presentacion.Core.Producto
             var ProductoNueva = new ProductoDTO
             {
                 Descripcion = txtProducto.Text,
-                Stock = int.Parse(txtStock.Text),
-                PrecioCosto = int.Parse(txtPrecioCosto.Text),
-                PrecioVenta = int.Parse(txtPrecioVenta.Text),
+                Stock = decimal.Parse(txtStock.Text),
+                PrecioCosto = decimal.Parse(txtPrecioCosto.Text),
+                PrecioVenta = decimal.Parse(txtPrecioVenta.Text),
                 Estado = int.Parse(txtEstado.Text),
                 Medida = txtMedida.Text,
                 UnidadMedida = txtUnidadMedida.Text,
+                Codigo = txtCodigo.Text,
+                CodigoBarra = txtCodigoBarra.Text,
+                IvaIncluidoPrecioFinal = chkIvaIncluido.Checked,
+                EsFraccionable = chkEsFraccionable.Checked,
                 IdMarca = (long)cmbMarca.SelectedValue,
+                IdRubro = (long)cmbRubro.SelectedValue,
                 CategoriaIds = _categoriasSeleccionadas.ToList(),
                 EstaEliminado = false
             };
+
+            //ARREGLAR LOS PARSE y TIPOS DE DATOS
 
             var response = _ProductoServicio.Insertar(ProductoNueva);
 
@@ -212,22 +225,27 @@ namespace Presentacion.Core.Producto
                     return false;
 
                 }
-
+                //ARREGLAR LOS PARSE y TIPOS DE DATOS
                 var ProductoModificar = new ProductoDTO //completar con los datos del producto a modificar
                 {
                     Descripcion = txtProducto.Text,
-                    Stock = int.Parse(txtStock.Text),
-                    PrecioCosto = int.Parse(txtPrecioCosto.Text),
-                    PrecioVenta = int.Parse(txtPrecioVenta.Text),
+                    Stock = decimal.Parse(txtStock.Text),
+                    PrecioCosto = decimal.Parse(txtPrecioCosto.Text),
+                    PrecioVenta = decimal.Parse(txtPrecioVenta.Text),
                     Estado = int.Parse(txtEstado.Text),
                     Medida = txtMedida.Text,
                     UnidadMedida = txtUnidadMedida.Text,
+                    Codigo = txtCodigo.Text,
+                    CodigoBarra = txtCodigoBarra.Text,
+                    IvaIncluidoPrecioFinal = chkIvaIncluido.Checked,
+                    EsFraccionable = chkEsFraccionable.Checked,
                     IdMarca = (long)cmbMarca.SelectedValue,
+                    IdRubro = (long)cmbRubro.SelectedValue,
                     CategoriaIds = _categoriasSeleccionadas.ToList(),
                     EstaEliminado = false
                 };
 
-                var response = _ProductoServicio.Modificar(ProductoModificar, ProductoModificar.ProductoId);
+                var response = _ProductoServicio.Modificar(ProductoModificar, EntidadID);
 
                 if (response.Exitoso)
                 {

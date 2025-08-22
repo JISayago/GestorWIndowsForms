@@ -48,6 +48,12 @@
             btnCategorias = new Button();
             cmbRubro = new ComboBox();
             lblRubro = new Label();
+            txtCodigo = new TextBox();
+            txtCodigoBarra = new TextBox();
+            lblCodigo = new Label();
+            lblCodigoBarra = new Label();
+            chkIvaIncluido = new CheckBox();
+            chkEsFraccionable = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
@@ -111,7 +117,7 @@
             // lblStock
             // 
             lblStock.AutoSize = true;
-            lblStock.Location = new Point(413, 159);
+            lblStock.Location = new Point(413, 211);
             lblStock.Name = "lblStock";
             lblStock.Size = new Size(36, 15);
             lblStock.TabIndex = 10;
@@ -119,7 +125,7 @@
             // 
             // txtStock
             // 
-            txtStock.Location = new Point(461, 153);
+            txtStock.Location = new Point(461, 205);
             txtStock.Name = "txtStock";
             txtStock.Size = new Size(100, 23);
             txtStock.TabIndex = 11;
@@ -127,7 +133,7 @@
             // lblEstado
             // 
             lblEstado.AutoSize = true;
-            lblEstado.Location = new Point(413, 210);
+            lblEstado.Location = new Point(413, 262);
             lblEstado.Name = "lblEstado";
             lblEstado.Size = new Size(42, 15);
             lblEstado.TabIndex = 12;
@@ -135,7 +141,7 @@
             // 
             // txtEstado
             // 
-            txtEstado.Location = new Point(461, 204);
+            txtEstado.Location = new Point(461, 256);
             txtEstado.Name = "txtEstado";
             txtEstado.Size = new Size(100, 23);
             txtEstado.TabIndex = 13;
@@ -143,7 +149,7 @@
             // lblCategoria
             // 
             lblCategoria.AutoSize = true;
-            lblCategoria.Location = new Point(612, 208);
+            lblCategoria.Location = new Point(587, 116);
             lblCategoria.Name = "lblCategoria";
             lblCategoria.Size = new Size(58, 15);
             lblCategoria.TabIndex = 15;
@@ -191,7 +197,7 @@
             // 
             // btnCategorias
             // 
-            btnCategorias.Location = new Point(676, 204);
+            btnCategorias.Location = new Point(651, 112);
             btnCategorias.Name = "btnCategorias";
             btnCategorias.Size = new Size(75, 23);
             btnCategorias.TabIndex = 22;
@@ -202,7 +208,7 @@
             // cmbRubro
             // 
             cmbRubro.FormattingEnabled = true;
-            cmbRubro.Location = new Point(627, 108);
+            cmbRubro.Location = new Point(461, 156);
             cmbRubro.Name = "cmbRubro";
             cmbRubro.Size = new Size(99, 23);
             cmbRubro.TabIndex = 24;
@@ -210,17 +216,75 @@
             // lblRubro
             // 
             lblRubro.AutoSize = true;
-            lblRubro.Location = new Point(582, 111);
+            lblRubro.Location = new Point(414, 161);
             lblRubro.Name = "lblRubro";
             lblRubro.Size = new Size(39, 15);
             lblRubro.TabIndex = 23;
             lblRubro.Text = "Rubro";
+            // 
+            // txtCodigo
+            // 
+            txtCodigo.Location = new Point(97, 256);
+            txtCodigo.Name = "txtCodigo";
+            txtCodigo.Size = new Size(100, 23);
+            txtCodigo.TabIndex = 25;
+            // 
+            // txtCodigoBarra
+            // 
+            txtCodigoBarra.Location = new Point(300, 256);
+            txtCodigoBarra.Name = "txtCodigoBarra";
+            txtCodigoBarra.Size = new Size(100, 23);
+            txtCodigoBarra.TabIndex = 26;
+            // 
+            // lblCodigo
+            // 
+            lblCodigo.AutoSize = true;
+            lblCodigo.Location = new Point(31, 259);
+            lblCodigo.Name = "lblCodigo";
+            lblCodigo.Size = new Size(46, 15);
+            lblCodigo.TabIndex = 27;
+            lblCodigo.Text = "Codigo";
+            // 
+            // lblCodigoBarra
+            // 
+            lblCodigoBarra.AutoSize = true;
+            lblCodigoBarra.Location = new Point(218, 259);
+            lblCodigoBarra.Name = "lblCodigoBarra";
+            lblCodigoBarra.Size = new Size(76, 15);
+            lblCodigoBarra.TabIndex = 28;
+            lblCodigoBarra.Text = "Codigo Barra";
+            // 
+            // chkIvaIncluido
+            // 
+            chkIvaIncluido.AutoSize = true;
+            chkIvaIncluido.Location = new Point(587, 156);
+            chkIvaIncluido.Name = "chkIvaIncluido";
+            chkIvaIncluido.Size = new Size(170, 19);
+            chkIvaIncluido.TabIndex = 29;
+            chkIvaIncluido.Text = "Iva Incluido en Precio Final ";
+            chkIvaIncluido.UseVisualStyleBackColor = true;
+            // 
+            // chkEsFraccionable
+            // 
+            chkEsFraccionable.AutoSize = true;
+            chkEsFraccionable.Location = new Point(587, 202);
+            chkEsFraccionable.Name = "chkEsFraccionable";
+            chkEsFraccionable.Size = new Size(107, 19);
+            chkEsFraccionable.TabIndex = 30;
+            chkEsFraccionable.Text = "Es Fraccionable";
+            chkEsFraccionable.UseVisualStyleBackColor = true;
             // 
             // FProductoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 450);
+            Controls.Add(chkEsFraccionable);
+            Controls.Add(chkIvaIncluido);
+            Controls.Add(lblCodigoBarra);
+            Controls.Add(lblCodigo);
+            Controls.Add(txtCodigoBarra);
+            Controls.Add(txtCodigo);
             Controls.Add(cmbRubro);
             Controls.Add(lblRubro);
             Controls.Add(btnCategorias);
@@ -263,6 +327,12 @@
             Controls.SetChildIndex(btnCategorias, 0);
             Controls.SetChildIndex(lblRubro, 0);
             Controls.SetChildIndex(cmbRubro, 0);
+            Controls.SetChildIndex(txtCodigo, 0);
+            Controls.SetChildIndex(txtCodigoBarra, 0);
+            Controls.SetChildIndex(lblCodigo, 0);
+            Controls.SetChildIndex(lblCodigoBarra, 0);
+            Controls.SetChildIndex(chkIvaIncluido, 0);
+            Controls.SetChildIndex(chkEsFraccionable, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -290,5 +360,11 @@
         private Button btnCategorias;
         private ComboBox cmbRubro;
         private Label lblRubro;
+        private TextBox txtCodigo;
+        private TextBox txtCodigoBarra;
+        private Label lblCodigo;
+        private Label lblCodigoBarra;
+        private CheckBox chkIvaIncluido;
+        private CheckBox chkEsFraccionable;
     }
 }

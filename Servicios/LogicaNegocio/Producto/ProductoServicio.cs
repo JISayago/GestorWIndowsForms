@@ -175,6 +175,7 @@ namespace Servicios.LogicaNegocio.Producto
             var producto = context.Productos
             .AsNoTracking()
             .Include(e => e.Marca)
+            .Include(e => e.Rubro)
             .Include(e => e.CategoriasProductos)
             .Where(e => !e.EstaEliminado && (e.Descripcion.Contains(cadenabuscar) || e.Marca.Nombre.Contains(cadenabuscar)))
             .ToList()
