@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20250821173529_AddOfertaYProductoOferta")]
+    partial class AddOfertaYProductoOferta
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -531,19 +534,11 @@ namespace AccesoDatos.Migrations
                     b.Property<bool>("EstaEliminado")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("MetodoPagoHabilitado")
-                        .HasColumnType("bit")
-                        .HasColumnName("metodo_pago_habilitado");
-
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("nombre");
-
-                    b.Property<int>("NumeroReferencia")
-                        .HasColumnType("int")
-                        .HasColumnName("numero_referencia");
 
                     b.HasKey("TipoPagoId");
 

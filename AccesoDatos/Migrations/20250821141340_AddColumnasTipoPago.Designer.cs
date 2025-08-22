@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20250821141340_AddColumnasTipoPago")]
+    partial class AddColumnasTipoPago
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -214,62 +217,6 @@ namespace AccesoDatos.Migrations
                     b.ToTable("Movimientos", (string)null);
                 });
 
-            modelBuilder.Entity("AccesoDatos.Entidades.OfertaDescuento", b =>
-                {
-                    b.Property<long>("OfertaDescuentoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_OfertaDescuento");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("OfertaDescuentoId"));
-
-                    b.Property<decimal?>("CantidadProductosDentroOferta")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("cantidad_productos_dentro_oferta");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("descripcion");
-
-                    b.Property<decimal?>("DescuentoTotalFinal")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("descuento_total_final");
-
-                    b.Property<bool>("EsUnSoloProducto")
-                        .HasColumnType("bit")
-                        .HasColumnName("es_un_solo_producto");
-
-                    b.Property<bool>("EstaActiva")
-                        .HasColumnType("bit")
-                        .HasColumnName("esta_activa");
-
-                    b.Property<DateTime?>("FechaFin")
-                        .HasColumnType("date")
-                        .HasColumnName("fecha_fin");
-
-                    b.Property<DateTime>("FechaInicio")
-                        .HasColumnType("date")
-                        .HasColumnName("fecha_inicio");
-
-                    b.Property<decimal?>("PorcentajeDescuento")
-                        .HasColumnType("decimal(5,2)")
-                        .HasColumnName("porcentaje_descuento");
-
-                    b.Property<decimal>("PrecioFinal")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_final");
-
-                    b.Property<decimal>("PrecioOriginal")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_original");
-
-                    b.HasKey("OfertaDescuentoId");
-
-                    b.ToTable("OfertasDescuentos", (string)null);
-                });
-
             modelBuilder.Entity("AccesoDatos.Entidades.Persona", b =>
                 {
                     b.Property<long>("PersonaId")
@@ -408,44 +355,6 @@ namespace AccesoDatos.Migrations
                     b.HasIndex("IdRubro");
 
                     b.ToTable("Productos", (string)null);
-                });
-
-            modelBuilder.Entity("AccesoDatos.Entidades.ProductosEnOfertaDescuentos", b =>
-                {
-                    b.Property<long>("ProductosEnOfertaDescuentosId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_ProductosEnOfertaDescuento");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ProductosEnOfertaDescuentosId"));
-
-                    b.Property<decimal>("Cantidad")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("cantidad");
-
-                    b.Property<decimal?>("DescuentoPorcentaje")
-                        .HasColumnType("decimal(5,2)")
-                        .HasColumnName("descuento_porcentaje");
-
-                    b.Property<long>("OfertaId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_OfertaDescuento");
-
-                    b.Property<decimal?>("PrecioUnitarioOferta")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_unitario_oferta");
-
-                    b.Property<long>("ProductoId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_Producto");
-
-                    b.HasKey("ProductosEnOfertaDescuentosId");
-
-                    b.HasIndex("OfertaId");
-
-                    b.HasIndex("ProductoId");
-
-                    b.ToTable("ProductosEnOfertaDescuentos", (string)null);
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.Rol", b =>
@@ -743,25 +652,6 @@ namespace AccesoDatos.Migrations
                     b.Navigation("Rubro");
                 });
 
-            modelBuilder.Entity("AccesoDatos.Entidades.ProductosEnOfertaDescuentos", b =>
-                {
-                    b.HasOne("AccesoDatos.Entidades.OfertaDescuento", "Oferta")
-                        .WithMany("Productos")
-                        .HasForeignKey("OfertaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AccesoDatos.Entidades.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Oferta");
-
-                    b.Navigation("Producto");
-                });
-
             modelBuilder.Entity("AccesoDatos.Entidades.Venta", b =>
                 {
                     b.HasOne("AccesoDatos.Entidades.Empleado", "Empleado")
@@ -813,11 +703,6 @@ namespace AccesoDatos.Migrations
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.Marca", b =>
-                {
-                    b.Navigation("Productos");
-                });
-
-            modelBuilder.Entity("AccesoDatos.Entidades.OfertaDescuento", b =>
                 {
                     b.Navigation("Productos");
                 });
