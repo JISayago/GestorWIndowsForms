@@ -73,8 +73,6 @@ namespace Presentacion.Core.Venta
 
         private void nudCantidadPagos_ValueChanged(object sender, EventArgs e)
         {
-            if (!cbxPorcentaje.Checked)
-            {
                 decimal.TryParse(txtPago1.Text, out var pago1);
 
                 if (pago1 == TotalVenta)
@@ -85,14 +83,11 @@ namespace Presentacion.Core.Venta
                     nudCantidadPagos.Value = 1;
                     return;
                 }
-            }
 
-            if (cbxPorcentaje.Checked)
-                cbxPorcentaje_CheckedChanged(sender, e);
-            else
                 ActualizarMultiplesPagos();
         }
         private void ActualizarMultiplesPagos()
+           
         {
             decimal.TryParse(txtPago1.Text, out decimal pago1);
             decimal.TryParse(txtPago2.Text, out decimal pago2);
@@ -177,19 +172,30 @@ namespace Presentacion.Core.Venta
         }
         private void btnTipoPago1_Click(object sender, EventArgs e)
         {
-            CargarFormaDePago(lblFormaPago1, 1);
+            if (cbxConfirmPago1.Checked)
+            {
+                CargarFormaDePago(lblFormaPago1, 1, btnTipoPago1);
+            }
+            else
+            {
+                MessageBox.Show("Debe confirmar el Monto a pagar antes de seleccionar la forma de pago.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
         }
 
-        private void CargarFormaDePago(Label label, int numeroPago)
+        private void CargarFormaDePago(Label label, int numeroPago, Button btn)
         {
             var tipoSeleccionado = AsignarTipoPagoAPago();
             pagos[numeroPago - 1].TipoDePago = tipoSeleccionado;
+            
             label.Text = tipoSeleccionado.ToString();
+            btn.Text = "Cambiar Forma de Pago";
+
         }
 
         private TipoDePago AsignarTipoPagoAPago()
         {
-            using var fFormaPagoSeleccionada = new FTipoPagoSeleccionEnVenta(_datosVenta.IncluirCtaCte);
+            using var fFormaPagoSeleccionada = new FTipoPagoSeleccionEnVenta(_datosVenta.IncluirCtaCte,pagos);
 
             if (fFormaPagoSeleccionada.ShowDialog() == DialogResult.OK)
             {
@@ -201,140 +207,30 @@ namespace Presentacion.Core.Venta
 
         private void btnTipoPago2_Click(object sender, EventArgs e)
         {
-            CargarFormaDePago(lblFormaPago2, 2);
+            if (cbxConfirmPago2.Checked)
+            {
+            CargarFormaDePago(lblFormaPago2, 2, btnTipoPago2);
+            }
+            else
+            {
+                MessageBox.Show("Debe confirmar el Monto a pagar antes de seleccionar la forma de pago.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
-
         private void btnTipoPago3_Click(object sender, EventArgs e)
         {
-            CargarFormaDePago(lblFormaPago3, 3);
+
+            if (cbxConfirmPago3.Checked)
+            {
+            CargarFormaDePago(lblFormaPago3, 3, btnTipoPago3);
+            }
+            else
+            {
+                MessageBox.Show("Debe confirmar el Monto a pagar antes de seleccionar la forma de pago.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
      
 
-        private void cbxPorcentaje_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cbxPorcentaje.Checked)
-            {
-                int cantidad = (int)nudCantidadPagos.Value;
-
-                decimal porcentajeBase = Math.Floor(100m / cantidad);
-                decimal resto = 100m - (porcentajeBase * (cantidad - 1));
-
-                txtPorcentajePago1.Text = porcentajeBase.ToString("N0");
-                txtPorcentajePago2.Text = cantidad >= 2 ? porcentajeBase.ToString("N0") : "0";
-                txtPorcentajePago3.Text = cantidad == 3 ? resto.ToString("N0") : "0";
-
-                txtPorcentajePago1.Enabled = true;
-                txtPorcentajePago2.Enabled = cantidad >= 2;
-                txtPorcentajePago3.Enabled = cantidad == 3;
-
-                CalcularPagosPorPorcentaje();
-            }
-            else
-            {
-                txtPorcentajePago1.Enabled = false;
-                txtPorcentajePago2.Enabled = false;
-                txtPorcentajePago3.Enabled = false;
-
-                txtPago1.ReadOnly = false;
-                txtPago2.ReadOnly = false;
-                txtPago3.ReadOnly = false;
-
-                ActualizarMultiplesPagos();
-            }
-        }
-        private void CalcularPagosPorPorcentaje()
-        {
-            decimal porcentaje1 = 0, porcentaje2 = 0, porcentaje3 = 0;
-
-            // Parsear los valores de porcentaje
-            decimal.TryParse(txtPorcentajePago1.Text, out porcentaje1);
-            decimal.TryParse(txtPorcentajePago2.Text, out porcentaje2);
-            decimal.TryParse(txtPorcentajePago3.Text, out porcentaje3);
-
-            decimal totalPorcentaje = porcentaje1 + porcentaje2 + porcentaje3;
-
-            // Calcular pagos a partir del porcentaje
-            pagos[0].Monto = Math.Round((TotalVenta * porcentaje1) / 100, 2);
-            pagos[1].Monto = Math.Round((TotalVenta * porcentaje2) / 100, 2);
-            pagos[2].Monto = Math.Round((TotalVenta * porcentaje3) / 100, 2);
-
-            txtPago1.Text = pagos[0].Monto.ToString("N2");
-            txtPago2.Text = pagos[1].Monto.ToString("N2");
-            txtPago3.Text = pagos[2].Monto.ToString("N2");
-
-            txtPago1.ReadOnly = true;
-            txtPago2.ReadOnly = true;
-            txtPago3.ReadOnly = true;
-
-            txtPago1.Enabled = true;
-            txtPago2.Enabled = (int)nudCantidadPagos.Value >= 2;
-            txtPago3.Enabled = (int)nudCantidadPagos.Value == 3;
-
-            MontoPendiente = TotalVenta - pagos.Sum(p => p.Monto);
-            lblMontoPendiente.Text = MontoPendiente.ToString("C2");
-        }
-
-
-        private void txtPorcentajePago1_Leave(object sender, EventArgs e)
-        {
-            if (cbxPorcentaje.Checked)
-                AjustarPorcentajesDesde(txtPorcentajePago1, 1);
-        }
-
-        private void txtPorcentajePago2_Leave(object sender, EventArgs e)
-        {
-            if (cbxPorcentaje.Checked)
-                AjustarPorcentajesDesde(txtPorcentajePago1, 2);
-        }
-
-        private void txtPorcentajePago3_Leave(object sender, EventArgs e)
-        {
-            if (cbxPorcentaje.Checked)
-                AjustarPorcentajesDesde(txtPorcentajePago1, 3);
-        }
-        private void AjustarPorcentajesDesde(TextBox origen, int origenIndex)
-        {
-            int cantidad = (int)nudCantidadPagos.Value;
-
-            // Leer el valor que el usuario modificó
-            decimal.TryParse(origen.Text, out decimal porcentajeOrigen);
-
-            if (porcentajeOrigen < 0 || porcentajeOrigen > 100)
-            {
-                MessageBox.Show("El porcentaje debe estar entre 0 y 100.");
-                origen.Text = "0";
-                return;
-            }
-
-            // Distribuir el resto entre los otros
-            decimal restante = 100m - porcentajeOrigen;
-
-            TextBox[] porcentajes = new[] { txtPorcentajePago1, txtPorcentajePago2, txtPorcentajePago3 };
-            int[] indicesActivos = Enumerable.Range(0, cantidad).Where(i => i + 1 != origenIndex).ToArray();
-
-            if (indicesActivos.Length == 0)
-            {
-                // Solo un campo, no hay que ajustar nada
-                origen.Text = "100";
-                CalcularPagosPorPorcentaje();
-                return;
-            }
-
-            decimal porcentajeRepartido = Math.Floor(restante / indicesActivos.Length);
-            decimal porcentajeUltimo = restante - porcentajeRepartido * (indicesActivos.Length - 1);
-
-            for (int i = 0; i < indicesActivos.Length; i++)
-            {
-                int index = indicesActivos[i];
-                if (i == indicesActivos.Length - 1)
-                    porcentajes[index].Text = porcentajeUltimo.ToString("N0");
-                else
-                    porcentajes[index].Text = porcentajeRepartido.ToString("N0");
-            }
-
-            CalcularPagosPorPorcentaje();
-        }
 
         private void cbxConfirmPago1_CheckedChanged(object sender, EventArgs e)
         {
@@ -378,6 +274,10 @@ namespace Presentacion.Core.Venta
                     txtPago3.Enabled = false;
                     cbxConfirmPago2.Enabled = false;
                     cbxConfirmPago3.Enabled = false;
+                }
+                if (cbxConfirmPago1.Checked)
+                {
+                    CargarFormaDePago(lblFormaPago1, 1, btnTipoPago1);
                 }
             }
             else
@@ -446,6 +346,10 @@ namespace Presentacion.Core.Venta
                     txtPago3.Enabled = false;
                     cbxConfirmPago3.Enabled = false;
                 }
+                if (cbxConfirmPago2.Checked)
+                {
+                    CargarFormaDePago(lblFormaPago2, 2, btnTipoPago2);
+                }
             }
             else
             {
@@ -497,6 +401,10 @@ namespace Presentacion.Core.Venta
 
                 pagos[2].Monto = pago3;
                 nudCantidadPagos.Value = 3;
+                if (cbxConfirmPago3.Checked)
+                {
+                    CargarFormaDePago(lblFormaPago3, 3, btnTipoPago3);
+                }
             }
             else
             {

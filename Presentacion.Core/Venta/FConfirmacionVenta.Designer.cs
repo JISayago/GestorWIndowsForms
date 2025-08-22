@@ -51,10 +51,6 @@
             lblTotal = new Label();
             lblPendienteDePago = new Label();
             lblMontoPendiente = new Label();
-            cbxPorcentaje = new CheckBox();
-            txtPorcentajePago1 = new TextBox();
-            txtPorcentajePago2 = new TextBox();
-            txtPorcentajePago3 = new TextBox();
             cbxConfirmPago1 = new CheckBox();
             cbxConfirmPago2 = new CheckBox();
             cbxConfirmPago3 = new CheckBox();
@@ -81,7 +77,7 @@
             // 
             // btnTipoPago1
             // 
-            btnTipoPago1.Location = new Point(394, 63);
+            btnTipoPago1.Location = new Point(315, 63);
             btnTipoPago1.Name = "btnTipoPago1";
             btnTipoPago1.Size = new Size(162, 23);
             btnTipoPago1.TabIndex = 33;
@@ -177,7 +173,7 @@
             // 
             // btnTipoPago2
             // 
-            btnTipoPago2.Location = new Point(394, 96);
+            btnTipoPago2.Location = new Point(315, 96);
             btnTipoPago2.Name = "btnTipoPago2";
             btnTipoPago2.Size = new Size(162, 23);
             btnTipoPago2.TabIndex = 47;
@@ -187,7 +183,7 @@
             // 
             // btnTipoPago3
             // 
-            btnTipoPago3.Location = new Point(394, 126);
+            btnTipoPago3.Location = new Point(315, 126);
             btnTipoPago3.Name = "btnTipoPago3";
             btnTipoPago3.Size = new Size(162, 23);
             btnTipoPago3.TabIndex = 48;
@@ -198,7 +194,7 @@
             // lblPagoSeleccionado
             // 
             lblPagoSeleccionado.AutoSize = true;
-            lblPagoSeleccionado.Location = new Point(288, 44);
+            lblPagoSeleccionado.Location = new Point(282, 43);
             lblPagoSeleccionado.Name = "lblPagoSeleccionado";
             lblPagoSeleccionado.Size = new Size(90, 15);
             lblPagoSeleccionado.TabIndex = 49;
@@ -207,7 +203,7 @@
             // lblFormaPago1
             // 
             lblFormaPago1.AutoSize = true;
-            lblFormaPago1.Location = new Point(284, 70);
+            lblFormaPago1.Location = new Point(205, 70);
             lblFormaPago1.Name = "lblFormaPago1";
             lblFormaPago1.Size = new Size(94, 15);
             lblFormaPago1.TabIndex = 50;
@@ -216,7 +212,7 @@
             // lblFormaPago2
             // 
             lblFormaPago2.AutoSize = true;
-            lblFormaPago2.Location = new Point(284, 100);
+            lblFormaPago2.Location = new Point(205, 100);
             lblFormaPago2.Name = "lblFormaPago2";
             lblFormaPago2.Size = new Size(94, 15);
             lblFormaPago2.TabIndex = 51;
@@ -225,7 +221,7 @@
             // lblFormaPago3
             // 
             lblFormaPago3.AutoSize = true;
-            lblFormaPago3.Location = new Point(284, 130);
+            lblFormaPago3.Location = new Point(205, 130);
             lblFormaPago3.Name = "lblFormaPago3";
             lblFormaPago3.Size = new Size(94, 15);
             lblFormaPago3.TabIndex = 52;
@@ -267,44 +263,6 @@
             lblMontoPendiente.TabIndex = 56;
             lblMontoPendiente.Text = "0";
             // 
-            // cbxPorcentaje
-            // 
-            cbxPorcentaje.AutoSize = true;
-            cbxPorcentaje.Location = new Point(223, 40);
-            cbxPorcentaje.Name = "cbxPorcentaje";
-            cbxPorcentaje.Size = new Size(36, 19);
-            cbxPorcentaje.TabIndex = 57;
-            cbxPorcentaje.Text = "%";
-            cbxPorcentaje.UseVisualStyleBackColor = true;
-            cbxPorcentaje.CheckedChanged += cbxPorcentaje_CheckedChanged;
-            // 
-            // txtPorcentajePago1
-            // 
-            txtPorcentajePago1.Enabled = false;
-            txtPorcentajePago1.Location = new Point(220, 63);
-            txtPorcentajePago1.Name = "txtPorcentajePago1";
-            txtPorcentajePago1.Size = new Size(36, 23);
-            txtPorcentajePago1.TabIndex = 58;
-            txtPorcentajePago1.Leave += txtPorcentajePago1_Leave;
-            // 
-            // txtPorcentajePago2
-            // 
-            txtPorcentajePago2.Enabled = false;
-            txtPorcentajePago2.Location = new Point(220, 93);
-            txtPorcentajePago2.Name = "txtPorcentajePago2";
-            txtPorcentajePago2.Size = new Size(36, 23);
-            txtPorcentajePago2.TabIndex = 59;
-            txtPorcentajePago2.Leave += txtPorcentajePago2_Leave;
-            // 
-            // txtPorcentajePago3
-            // 
-            txtPorcentajePago3.Enabled = false;
-            txtPorcentajePago3.Location = new Point(220, 122);
-            txtPorcentajePago3.Name = "txtPorcentajePago3";
-            txtPorcentajePago3.Size = new Size(36, 23);
-            txtPorcentajePago3.TabIndex = 60;
-            txtPorcentajePago3.Leave += txtPorcentajePago3_Leave;
-            // 
             // cbxConfirmPago1
             // 
             cbxConfirmPago1.AutoSize = true;
@@ -339,14 +297,10 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(578, 221);
+            ClientSize = new Size(497, 221);
             Controls.Add(cbxConfirmPago3);
             Controls.Add(cbxConfirmPago2);
             Controls.Add(cbxConfirmPago1);
-            Controls.Add(txtPorcentajePago3);
-            Controls.Add(txtPorcentajePago2);
-            Controls.Add(txtPorcentajePago1);
-            Controls.Add(cbxPorcentaje);
             Controls.Add(lblMontoPendiente);
             Controls.Add(lblPendienteDePago);
             Controls.Add(lblTotal);
@@ -404,10 +358,6 @@
         private Label lblTotal;
         private Label lblPendienteDePago;
         private Label lblMontoPendiente;
-        private CheckBox cbxPorcentaje;
-        private TextBox txtPorcentajePago1;
-        private TextBox txtPorcentajePago2;
-        private TextBox txtPorcentajePago3;
         private CheckBox cbxConfirmPago1;
         private CheckBox cbxConfirmPago2;
         private CheckBox cbxConfirmPago3;

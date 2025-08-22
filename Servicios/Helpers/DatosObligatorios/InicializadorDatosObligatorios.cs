@@ -19,6 +19,7 @@ namespace Servicios.Helpers.DatosObligatorios
         public void InicializadorDatos()
         {
             InicializarAdmin();
+            IniciarTiposDePago();
         }
         private void InicializarAdmin()
         {
@@ -27,7 +28,7 @@ namespace Servicios.Helpers.DatosObligatorios
         }
         private void IniciarTiposDePago()
         {
-
+            TipoDePagoInicial.Inicializar(Context);
         }
     }
 }

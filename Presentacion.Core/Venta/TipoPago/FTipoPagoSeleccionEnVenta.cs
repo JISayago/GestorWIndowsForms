@@ -15,10 +15,12 @@ namespace Presentacion.Core.Venta.TipoPago
     {
         public TipoDePago tipoPagoSeleccionado { get; private set; }
         public bool _incluirCtaCte { get; private set; }
-        public FTipoPagoSeleccionEnVenta(bool incluirCtaCte)
+        public List<FormaPago> _pagos { get; private set; }
+        public FTipoPagoSeleccionEnVenta(bool incluirCtaCte,List<FormaPago> pagos)
         {
             InitializeComponent();
             _incluirCtaCte = incluirCtaCte;
+            _pagos = pagos;
         }
 
         private void btnEfectivo_Click(object sender, EventArgs e)
@@ -48,6 +50,9 @@ namespace Presentacion.Core.Venta.TipoPago
 
         private void SeleccionTipoPago(TipoDePago tp)
         {
+            //el tipo pago es la uicacion del array del limitador de pagos 
+            // tengo que pasar el array de pagos para ver si ya contiene ese tipo de pago
+            // y si l
             tipoPagoSeleccionado = tp;
             this.DialogResult = DialogResult.OK;
             this.Close();
