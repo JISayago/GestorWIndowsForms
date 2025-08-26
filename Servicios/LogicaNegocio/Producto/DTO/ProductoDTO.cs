@@ -24,12 +24,12 @@ namespace Servicios.LogicaNegocio.Producto.DTO
         public string UnidadMedida { get; set; }
         public string? Codigo { get; set; } //
         public string? CodigoBarra { get; set; } //
-        public bool IvaIncluidoPrecioFinal { get; set; } //
-        public bool EsFraccionable { get; set; } //
+        public bool IvaIncluidoPrecioFinal { get; set; } //accionable { get; set; } //
 
         // Relación simplificada
         public string MarcaNombre { get; set; }
         public string RubroNombre { get; set; }
+        public bool EsFr
 
         // Relación a múltiples categorías
         public List<long> CategoriaIds { get; set; }
