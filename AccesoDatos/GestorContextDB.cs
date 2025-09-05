@@ -28,6 +28,9 @@ namespace AccesoDatos
         public DbSet<VentaPagoDetalle> VentaPagosDetalles { get; set; }
         public DbSet<OfertaDescuento> OfertasDescuentos{ get; set; }
         public DbSet<ProductosEnOfertaDescuentos> ProductosEnOfertasDescuentos { get; set; }
+        public DbSet<Cliente> Cliente { get; set; }
+        public DbSet<CuentaCorriente> CuentaCorriente { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
@@ -582,7 +585,70 @@ namespace AccesoDatos
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
+            // CUENTA CORRIENTE
+            modelBuilder.Entity<CuentaCorriente>(entity =>
+            {
+                entity.ToTable("CuentasCorrientes");
+                entity.HasKey(cc => cc.CuentaCorrienteId);
+                entity.Property(cc => cc.CuentaCorrienteId)
+                      .HasColumnName("CuentaCorrienteId")
+                      .ValueGeneratedOnAdd();
+                entity.Property(cc => cc.Saldo)
+                      .HasColumnName("saldo")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+                entity.Property(cc => cc.LimiteCredito)
+                      .HasColumnName("limite_credito")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+                entity.Property(cc => cc.EstaEliminado)
+                      .HasColumnName("esta_eliminado")
+                      .IsRequired();
+                // Relación uno a muchos con Cliente
+                entity.HasMany(cc => cc.Clientes)
+                      .WithOne(c => c.CuentaCorriente)
+                      .HasForeignKey(c => c.CuentaCorrienteId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
 
+            // CLIENTE
+            modelBuilder.Entity<Cliente>(entity =>
+            {
+                entity.ToTable("Clientes");
+                entity.HasKey(c => c.PersonaId);
+                entity.Property(c => c.PersonaId)
+                      .HasColumnName("PersonaId");
+                entity.Property(c => c.CuentaCorrienteId)
+                      .HasColumnName("CuentaCorrienteId")
+                      .IsRequired();
+                entity.Property(c => c.NumeroCliente)
+                      .HasColumnName("numero_cliente")
+                      .HasMaxLength(50)
+                      .IsRequired();
+                entity.Property(c => c.FechaAlta)
+                      .HasColumnName("fecha_alta")
+                      .HasColumnType("date")
+                      .IsRequired();
+                entity.Property(c => c.FechaBaja)
+                      .HasColumnName("fecha_baja")
+                      .HasColumnType("date");
+                entity.Property(c => c.Estado)
+                      .HasColumnName("estado")
+                      .IsRequired();
+                entity.Property(c => c.EstadoDescripcion)
+                      .HasColumnName("estado_descripcion")
+                      .HasMaxLength(200);
+                // Relación 1 a 1 con Persona
+                entity.HasOne(c => c.Persona)
+                      .WithOne()
+                      .HasForeignKey<Cliente>(c => c.PersonaId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                // Relación muchos a uno con CuentaCorriente
+                entity.HasOne(c => c.CuentaCorriente)
+                      .WithMany(cc => cc.Clientes)
+                      .HasForeignKey(c => c.CuentaCorrienteId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }
