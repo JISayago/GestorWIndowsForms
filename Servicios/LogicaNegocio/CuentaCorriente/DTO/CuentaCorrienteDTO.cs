@@ -9,6 +9,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente.DTO
     public class CuentaCorrienteDTO
     {
         public long CuentaCorrienteId { get; set; }
+        public string nombreCuentaCorriente { get; set; }
         public decimal Saldo { get; set; }
         public decimal LimiteCredito { get; set; }
         public bool EstaEliminado { get; set; }

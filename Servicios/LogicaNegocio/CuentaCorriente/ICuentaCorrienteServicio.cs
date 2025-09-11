@@ -11,10 +11,10 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
     public interface ICuentaCorrienteServicio
     {
         IEnumerable<CuentaCorrienteDTO> ObtenerCuentaCorrientes(string cadenabuscar);
-        IEnumerable<CuentaCorrienteDTO> ObtenerCuentaCorrientesEliminados(string cadenabuscar);
+        IEnumerable<CuentaCorrienteDTO> ObtenerCuentaCorrientesEliminada(string cadenabuscar);
         CuentaCorrienteDTO ObtenerCuentaCorrientePorId(long cuentacorrienteId);
         EstadoOperacion Insertar(CuentaCorrienteDTO cuentacorrienteDto);
-        EstadoOperacion Modificar(CuentaCorrienteDTO cuentacorrienteDto, long? cuentacorrienteId);
+        EstadoOperacion Modificar(CuentaCorrienteDTO cuentacorrienteDto);
         EstadoOperacion Eliminar(long cuentacorrienteId);
     }
 }
