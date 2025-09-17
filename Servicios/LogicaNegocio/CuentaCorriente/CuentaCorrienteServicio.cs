@@ -160,5 +160,11 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 })
                 .ToList();
         }
+
+        // =====================
+        // LOGICA DE NEGOCIO
+        // =====================
+
+
     }
 }

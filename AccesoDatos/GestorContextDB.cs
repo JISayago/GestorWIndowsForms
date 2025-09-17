@@ -593,14 +593,24 @@ namespace AccesoDatos
                 entity.Property(cc => cc.CuentaCorrienteId)
                       .HasColumnName("CuentaCorrienteId")
                       .ValueGeneratedOnAdd();
+                entity.Property(cc => cc.NombreCuentaCorriente)
+                      .HasColumnName("nombre_cuenta_corriente")
+                      .HasMaxLength(100)
+                      .IsRequired();
                 entity.Property(cc => cc.Saldo)
                       .HasColumnName("saldo")
                       .HasColumnType("decimal(18,2)")
                       .IsRequired();
-                entity.Property(cc => cc.LimiteCredito)
-                      .HasColumnName("limite_credito")
+                entity.Property(cc => cc.LimiteDeuda)
+                      .HasColumnName("limite_deuda")
                       .HasColumnType("decimal(18,2)")
                       .IsRequired();
+                entity.Property(cc => cc.LimiteDeudaActivo)
+                      .HasColumnName("limite_deuda_activo")
+                      .IsRequired();
+                entity.Property(cc => cc.FechaVencimiento)
+                      .HasColumnName("fecha_vencimiento")
+                      .HasColumnType("date");
                 entity.Property(cc => cc.EstaEliminado)
                       .HasColumnName("esta_eliminado")
                       .IsRequired();
