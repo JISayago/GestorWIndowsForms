@@ -32,17 +32,20 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            /*if (context.CuentaCorriente.Any(p => p.numn == cuentacorrienteDTO.Nombre))
+            if (context.CuentaCorriente.Any(p => p.NombreCuentaCorriente == cuentacorrienteDto.nombreCuentaCorriente))
                 return new EstadoOperacion
                 {
                     Exitoso = false,
                     Mensaje = "Ya existe una cuentacorriente con el mismo nombre"
                 };
-            */
+            
             var nuevaCuentaCorriente = new AccesoDatos.Entidades.CuentaCorriente
             {
                 Saldo = cuentacorrienteDto.Saldo,
-                LimiteCredito = cuentacorrienteDto.LimiteCredito,
+                NombreCuentaCorriente = cuentacorrienteDto.nombreCuentaCorriente,
+                LimiteDeuda = cuentacorrienteDto.LimiteDeuda,
+                LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo,
+                FechaVencimiento = cuentacorrienteDto.FechaVencimiento,
                 EstaEliminado = false
             };
 
@@ -73,7 +76,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             }
             
             bool cuentacorrienteDuplicada = context.CuentaCorriente
-                .Any(p => p.nombreCuentaCorriente == cuentacorrienteDto.nombreCuentaCorriente && p.nombreCuentaCorriente != cuentacorrienteEditar.nombreCuentaCorriente);
+                .Any(p => p.NombreCuentaCorriente == cuentacorrienteDto.nombreCuentaCorriente && p.NombreCuentaCorriente != cuentacorrienteEditar.NombreCuentaCorriente);
             
             if (cuentacorrienteDuplicada)
             {
@@ -86,7 +89,10 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             
             // Modificar los campos
             cuentacorrienteEditar.Saldo = cuentacorrienteDto.Saldo;
-            cuentacorrienteEditar.LimiteCredito = cuentacorrienteDto.LimiteCredito;
+            cuentacorrienteEditar.LimiteDeuda = cuentacorrienteDto.LimiteDeuda;
+            cuentacorrienteEditar.LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo;
+            cuentacorrienteEditar.FechaVencimiento = cuentacorrienteDto.FechaVencimiento;
+            cuentacorrienteEditar.NombreCuentaCorriente = cuentacorrienteDto.nombreCuentaCorriente;
 
             context.SaveChanges();
 
@@ -110,7 +116,12 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             return new CuentaCorrienteDTO
             {
                 Saldo = cuentacorrienteBusqueda.Saldo,
-                LimiteCredito = cuentacorrienteBusqueda.LimiteCredito
+                LimiteDeuda = cuentacorrienteBusqueda.LimiteDeuda,
+                nombreCuentaCorriente = cuentacorrienteBusqueda.NombreCuentaCorriente,
+                LimiteDeudaActivo = cuentacorrienteBusqueda.LimiteDeudaActivo,
+                FechaVencimiento = cuentacorrienteBusqueda.FechaVencimiento,
+                CuentaCorrienteId = cuentacorrienteBusqueda.CuentaCorrienteId
+            
             };
         }
 
@@ -119,11 +130,15 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             return context.CuentaCorriente
-                .Where(x => !x.EstaEliminado && x.nombreCuentaCorriente.Contains(cadenaBuscar))
+                .Where(x => !x.EstaEliminado && x.NombreCuentaCorriente.Contains(cadenaBuscar))
                 .Select(x => new CuentaCorrienteDTO
                 {
                     Saldo = x.Saldo,
-                    LimiteCredito = x.LimiteCredito
+                    LimiteDeuda = x.LimiteDeuda,
+                    nombreCuentaCorriente = x.NombreCuentaCorriente,
+                    LimiteDeudaActivo = x.LimiteDeudaActivo,
+                    FechaVencimiento = x.FechaVencimiento,
+                    CuentaCorrienteId = x.CuentaCorrienteId
                 })
                 .ToList();
         }
@@ -133,11 +148,15 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             return context.CuentaCorriente
-                .Where(x => x.EstaEliminado && x.nombreCuentaCorriente.Contains(cadenaBuscar))
+                .Where(x => x.EstaEliminado && x.NombreCuentaCorriente.Contains(cadenaBuscar))
                 .Select(x => new CuentaCorrienteDTO
                 {
                     Saldo = x.Saldo,
-                    LimiteCredito = x.LimiteCredito
+                    LimiteDeuda = x.LimiteDeuda,
+                    nombreCuentaCorriente = x.NombreCuentaCorriente,
+                    LimiteDeudaActivo = x.LimiteDeudaActivo,
+                    FechaVencimiento = x.FechaVencimiento,
+                    CuentaCorrienteId = x.CuentaCorrienteId
                 })
                 .ToList();
         }

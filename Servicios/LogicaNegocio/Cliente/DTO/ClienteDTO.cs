@@ -22,10 +22,10 @@ namespace Servicios.LogicaNegocio.Cliente.DTO
         public bool EstaEliminado { get; set; }
 
         //Datos CLIENTE
-        public string NumeroCliente { get; set; }
-        public DateTime FechaAlta { get; set; }
+        public string NumeroCliente { get; set; } //Borrarlo????
+        public DateTime FechaAlta { get; set; } //Cargar al crear entidad
         public DateTime? FechaBaja { get; set; } // Puede ser null si sigue siendo cliente
-        public int Estado { get; set; }
+        public int Estado { get; set; } //Que tipos de estados puede tener un cliente?
         public string EstadoDescripcion { get; set; }
 
     }
