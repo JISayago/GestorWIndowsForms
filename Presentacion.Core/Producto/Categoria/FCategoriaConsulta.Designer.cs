@@ -28,12 +28,40 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "FCategoriaConsulta";
+            btnSeleccionarCategoria = new Button();
+            panel1.SuspendLayout();
+            SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(btnSeleccionarCategoria);
+            panel1.Controls.SetChildIndex(btnSeleccionarCategoria, 0);
+            // 
+            // btnSeleccionarCategoria
+            // 
+            btnSeleccionarCategoria.Location = new Point(3, 259);
+            btnSeleccionarCategoria.Name = "btnSeleccionarCategoria";
+            btnSeleccionarCategoria.Size = new Size(75, 78);
+            btnSeleccionarCategoria.TabIndex = 1;
+            btnSeleccionarCategoria.Text = "Seleccionar Categoria";
+            btnSeleccionarCategoria.UseVisualStyleBackColor = true;
+            btnSeleccionarCategoria.Click += btnSeleccionarCategoria_Click;
+            // 
+            // FCategoriaConsulta
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 561);
+            Name = "FCategoriaConsulta";
+            Text = "FCategoriaConsulta";
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Button btnSeleccionarCategoria;
     }
 }

@@ -529,6 +529,63 @@ namespace AccesoDatos
                 entity.Property(o => o.EsUnSoloProducto)
                       .HasColumnName("es_un_solo_producto")
                       .IsRequired();
+               
+                entity.Property(o => o.Codigo)
+                      .HasColumnName("codigo")
+                      .HasMaxLength(50)
+                      .IsRequired();
+
+                entity.Property(o => o.Detalle)
+                      .HasColumnName("detalle")
+                      .HasMaxLength(200)
+                      .IsRequired();
+
+                entity.Property(o => o.TieneLimiteDeStock)
+                      .HasColumnName("tiene_limite_de_stock")
+                      .IsRequired();
+
+
+                entity.Property(o => o.CantidadLimiteDeStock)
+                .HasColumnName("cantidad_limite_de_stock")
+                .HasColumnType("decimal(18,2)");
+
+                entity.Property(o => o.esOfertaPorGrupo)
+                      .HasColumnName("es_oferta_por_grupo")
+                      .IsRequired();
+
+                // FK y propiedades nuevas
+                entity.Property(o => o.IdMarca)
+                      .HasColumnName("id_marca");
+
+                entity.Property(o => o.IdRubro)
+                      .HasColumnName("id_rubro");
+
+                entity.Property(o => o.IdCategoria)
+                      .HasColumnName("id_categoria");
+
+                entity.Property(o => o.GrupoNombre)
+                      .HasColumnName("grupo_nombre")
+                      .HasMaxLength(200);
+
+                entity.Property(o => o.esOfertaPorGrupo)
+                      .HasColumnName("es_oferta_por_grupo")
+                      .IsRequired();
+
+               
+                entity.HasOne(o => o.Marca)
+                      .WithMany() 
+                      .HasForeignKey(o => o.IdMarca)
+                      .OnDelete(DeleteBehavior.SetNull); 
+
+                entity.HasOne(o => o.Rubro)
+                      .WithMany()
+                      .HasForeignKey(o => o.IdRubro)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(o => o.Categoria)
+                      .WithMany()
+                      .HasForeignKey(o => o.IdCategoria)
+                      .OnDelete(DeleteBehavior.SetNull);
 
                 // 🔗 Relación 1:N con ProductosEnOfertaDescuentos
                 entity.HasMany(o => o.Productos)
@@ -561,13 +618,21 @@ namespace AccesoDatos
                       .HasColumnType("decimal(18,2)")
                       .IsRequired();
 
-                entity.Property(po => po.PrecioUnitarioOferta)
-                      .HasColumnName("precio_unitario_oferta")
-                      .HasColumnType("decimal(18,2)");
+                entity.Property(po => po.CantidadVendidaPorLimite)
+                      .HasColumnName("cantidad_vendida_por_limite")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
 
-                entity.Property(po => po.DescuentoPorcentaje)
-                      .HasColumnName("descuento_porcentaje")
-                      .HasColumnType("decimal(5,2)");
+                entity.Property(po => po.PrecioConDescuento)
+                      .HasColumnName("precio_con_descuento")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+
+                entity.Property(po => po.PrecioOrginal)
+                      .HasColumnName("precio_original")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+
 
                 // 🔗 Relación con Producto
                 entity.HasOne(po => po.Producto)

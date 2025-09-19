@@ -3,6 +3,7 @@ using Presentacion.Core.Articulo.Marca;
 using Presentacion.Core.Categoria;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
+using Presentacion.Core.Oferta;
 using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
@@ -81,6 +82,14 @@ namespace Presentacion
         {
             var FVenta = new FVenta(_usuarioLogeado.PersonaId);
             FVenta.Show();
+        }
+
+        private void ofertasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            /*var FOferta = new FOfertaConsulta();
+            FOferta.Show();*/
+            var FOferta = new FSeleccionTipoOferta();
+            FOferta.Show();
         }
     }
 }

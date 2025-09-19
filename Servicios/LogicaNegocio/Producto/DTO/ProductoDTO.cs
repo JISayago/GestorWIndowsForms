@@ -29,7 +29,7 @@ namespace Servicios.LogicaNegocio.Producto.DTO
         // Relación simplificada
         public string MarcaNombre { get; set; }
         public string RubroNombre { get; set; }
-        public bool EsFr
+        public bool EsFraccionable { get; set; } //
 
         // Relación a múltiples categorías
         public List<long> CategoriaIds { get; set; }

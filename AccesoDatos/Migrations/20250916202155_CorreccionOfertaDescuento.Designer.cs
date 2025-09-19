@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20250916202155_CorreccionOfertaDescuento")]
+    partial class CorreccionOfertaDescuento
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -471,20 +474,19 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("cantidad");
 
                     b.Property<decimal>("CantidadVendidaPorLimite")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("cantidad_vendida_por_limite");
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("DescuentoPorcentaje")
+                        .HasColumnType("decimal(5,2)")
+                        .HasColumnName("descuento_porcentaje");
 
                     b.Property<long>("OfertaId")
                         .HasColumnType("bigint")
                         .HasColumnName("id_OfertaDescuento");
 
-                    b.Property<decimal>("PrecioConDescuento")
+                    b.Property<decimal?>("PrecioUnitarioOferta")
                         .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_con_descuento");
-
-                    b.Property<decimal>("PrecioOrginal")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_original");
+                        .HasColumnName("precio_unitario_oferta");
 
                     b.Property<long>("ProductoId")
                         .HasColumnType("bigint")

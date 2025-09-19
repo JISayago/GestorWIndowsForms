@@ -28,12 +28,40 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "FRubroConsulta";
+            btnRubroSeleccion = new Button();
+            panel1.SuspendLayout();
+            SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(btnRubroSeleccion);
+            panel1.Controls.SetChildIndex(btnRubroSeleccion, 0);
+            // 
+            // btnRubroSeleccion
+            // 
+            btnRubroSeleccion.Location = new Point(8, 256);
+            btnRubroSeleccion.Name = "btnRubroSeleccion";
+            btnRubroSeleccion.Size = new Size(75, 79);
+            btnRubroSeleccion.TabIndex = 1;
+            btnRubroSeleccion.Text = "Seleccionar Rubro";
+            btnRubroSeleccion.UseVisualStyleBackColor = true;
+            btnRubroSeleccion.Click += btnRubroSeleccion_Click;
+            // 
+            // FRubroConsulta
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 561);
+            Name = "FRubroConsulta";
+            Text = "FRubroConsulta";
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Button btnRubroSeleccion;
     }
 }

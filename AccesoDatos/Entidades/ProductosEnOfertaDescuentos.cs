@@ -19,8 +19,11 @@ namespace AccesoDatos.Entidades
         public Producto Producto { get; set; }
 
         public decimal Cantidad { get; set; }
-        public decimal? PrecioUnitarioOferta { get; set; } // opcional
 
-        public decimal? DescuentoPorcentaje { get; set; } // opcional
-    }
+        public decimal? CantidadVendidaPorLimite { get; set; }
+
+        public decimal PrecioOrginal { get; set; }
+        public decimal PrecioConDescuento { get; set; }
+
+        }
 }

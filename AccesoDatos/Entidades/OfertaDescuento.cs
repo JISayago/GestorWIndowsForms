@@ -21,6 +21,19 @@ namespace AccesoDatos.Entidades
         public decimal? CantidadProductosDentroOferta { get; set; }
         public bool EstaActiva { get; set; } 
         public bool EsUnSoloProducto { get; set; }
+        public string Detalle { get; set; }
+        public string Codigo { get; set; }
+        public bool esOfertaPorGrupo { get; set; }
+        public bool TieneLimiteDeStock { get; set; }
+        public decimal? CantidadLimiteDeStock { get; set; }
+        public long? IdMarca { get; set; }
+        public long? IdRubro { get; set; }
+        public long? IdCategoria { get; set; }
+        public string? GrupoNombre { get; set; }
+
+        public Marca? Marca { get; set; }
+        public Rubro? Rubro { get; set; }
+        public Categoria? Categoria { get; set; }
         public ICollection<ProductosEnOfertaDescuentos> Productos { get; set; } = new List<ProductosEnOfertaDescuentos>();
     }
 }

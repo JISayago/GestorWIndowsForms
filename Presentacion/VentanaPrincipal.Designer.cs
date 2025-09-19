@@ -39,6 +39,7 @@
             categoriaToolStripMenuItem = new ToolStripMenuItem();
             marcaToolStripMenuItem = new ToolStripMenuItem();
             articuloToolStripMenuItem1 = new ToolStripMenuItem();
+            rubroToolStripMenuItem = new ToolStripMenuItem();
             vENTASToolStripMenuItem = new ToolStripMenuItem();
             cONFIGToolStripMenuItem = new ToolStripMenuItem();
             lblUsuarioLogueado = new Label();
@@ -49,7 +50,8 @@
             btnMovimientos = new Button();
             dataGridView1 = new DataGridView();
             panel1 = new Panel();
-            rubroToolStripMenuItem = new ToolStripMenuItem();
+            ofertasToolStripMenuItem = new ToolStripMenuItem();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel1.SuspendLayout();
@@ -132,6 +134,13 @@
             articuloToolStripMenuItem1.Text = "Producto";
             articuloToolStripMenuItem1.Click += articuloToolStripMenuItem1_Click;
             // 
+            // rubroToolStripMenuItem
+            // 
+            rubroToolStripMenuItem.Name = "rubroToolStripMenuItem";
+            rubroToolStripMenuItem.Size = new Size(180, 22);
+            rubroToolStripMenuItem.Text = "Rubro";
+            rubroToolStripMenuItem.Click += rubroToolStripMenuItem_Click;
+            // 
             // vENTASToolStripMenuItem
             // 
             vENTASToolStripMenuItem.Name = "vENTASToolStripMenuItem";
@@ -140,6 +149,7 @@
             // 
             // cONFIGToolStripMenuItem
             // 
+            cONFIGToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { ofertasToolStripMenuItem });
             cONFIGToolStripMenuItem.Name = "cONFIGToolStripMenuItem";
             cONFIGToolStripMenuItem.Size = new Size(72, 20);
             cONFIGToolStripMenuItem.Text = "CONFIG??";
@@ -219,12 +229,12 @@
             panel1.Size = new Size(750, 40);
             panel1.TabIndex = 18;
             // 
-            // rubroToolStripMenuItem
+            // ofertasToolStripMenuItem
             // 
-            rubroToolStripMenuItem.Name = "rubroToolStripMenuItem";
-            rubroToolStripMenuItem.Size = new Size(180, 22);
-            rubroToolStripMenuItem.Text = "Rubro";
-            rubroToolStripMenuItem.Click += rubroToolStripMenuItem_Click;
+            ofertasToolStripMenuItem.Name = "ofertasToolStripMenuItem";
+            ofertasToolStripMenuItem.Size = new Size(180, 22);
+            ofertasToolStripMenuItem.Text = "Ofertas";
+            ofertasToolStripMenuItem.Click += ofertasToolStripMenuItem_Click;
             // 
             // VentanaPrincipal
             // 
@@ -272,5 +282,6 @@
         private Panel panel1;
         private ToolStripMenuItem rolesToolStripMenuItem;
         private ToolStripMenuItem rubroToolStripMenuItem;
+        private ToolStripMenuItem ofertasToolStripMenuItem;
     }
 }

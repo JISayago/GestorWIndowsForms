@@ -8,6 +8,7 @@ namespace Presentacion.Core.Producto.Rubro
     public partial class FRubroConsulta : FBaseConsulta
     {
         private readonly IRubroServicio _rubroServicio;
+        public long? rubroSeleccionado = null;
 
         public FRubroConsulta() : this(new RubroServicio())
         {
@@ -82,6 +83,13 @@ namespace Presentacion.Core.Producto.Rubro
             var FormularioABMRubro = new FRubroABM(TipoOperacion.Nuevo);
             FormularioABMRubro.ShowDialog();
             ActualizarSegunOperacion(FormularioABMRubro.RealizoAlgunaOperacion);
+        }
+
+        private void btnRubroSeleccion_Click(object sender, EventArgs e)
+        {
+            rubroSeleccionado = (long)entidadID;
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
     }
 }

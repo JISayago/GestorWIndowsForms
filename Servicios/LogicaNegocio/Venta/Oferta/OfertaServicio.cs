@@ -12,20 +12,60 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Servicios.LogicaNegocio.Venta.Oferta
 {
-        public class OfertaServicio : IOfertaServicio
-        {
-            public EstadoOperacion Insertar(OfertaDTO dto)
-            {
-                using var context = new GestorContextDBFactory().CreateDbContext(null);
+    public class OfertaServicio : IOfertaServicio
+    {
+        /*  public EstadoOperacion Insertar(OfertaDTO dto)
+          {
+              using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-                // Validar duplicados
+              // Validar duplicados
+              if (context.OfertasDescuentos.Any(o => o.Descripcion == dto.Descripcion))
+              {
+                  return new EstadoOperacion
+                  {
+                      Exitoso = false,
+                      Mensaje = "Ya existe una oferta con la misma descripción."
+                  };
+              }
+
+              var entidad = new OfertaDescuento
+              {
+                  Descripcion = dto.Descripcion,
+                  PrecioFinal = dto.PrecioFinal,
+                  PrecioOriginal = dto.PrecioOriginal,
+                  DescuentoTotalFinal = dto.DescuentoTotalFinal,
+                  PorcentajeDescuento = dto.PorcentajeDescuento,
+                  FechaInicio = dto.FechaInicio,
+                  FechaFin = dto.FechaFin,
+                  CantidadProductosDentroOferta = dto.CantidadProductosDentroOferta,
+                  EstaActiva = dto.EstaActiva,
+                  EsUnSoloProducto = dto.EsUnSoloProducto,
+                  IdMarca = dto.IdMarca,
+                  IdRubro = dto.IdRubro,
+                  IdCategoria = dto.IdCategoria,
+                  GrupoNombre = dto.GrupoNombre,
+              };
+
+              context.OfertasDescuentos.Add(entidad);
+              context.SaveChanges();
+
+              return new EstadoOperacion
+              {
+                  Exitoso = true,
+                  Mensaje = "Oferta creada correctamente.",
+                  EntidadId = entidad.OfertaDescuentoId
+              };
+          }*/
+        public EstadoOperacion Insertar(OfertaDTO dto)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            using var transaction = context.Database.BeginTransaction();
+
+            try
+            {
                 if (context.OfertasDescuentos.Any(o => o.Descripcion == dto.Descripcion))
                 {
-                    return new EstadoOperacion
-                    {
-                        Exitoso = false,
-                        Mensaje = "Ya existe una oferta con la misma descripción."
-                    };
+                    return new EstadoOperacion { Exitoso = false, Mensaje = "Ya existe una oferta con la misma descripción." };
                 }
 
                 var entidad = new OfertaDescuento
@@ -40,135 +80,82 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                     CantidadProductosDentroOferta = dto.CantidadProductosDentroOferta,
                     EstaActiva = dto.EstaActiva,
                     EsUnSoloProducto = dto.EsUnSoloProducto,
-                    Productos = dto.Productos.ToList()
+                    Detalle = dto.Detalle ?? string.Empty,
+                    Codigo = dto.Codigo,
+                    esOfertaPorGrupo = dto.esOfertaPorGrupo,
+                    TieneLimiteDeStock = dto.TieneLimiteDeStock,
+                    CantidadLimiteDeStock = dto.CantidadLimiteDeStock,
+                    IdMarca = dto.IdMarca,
+                    IdRubro = dto.IdRubro,
+                    IdCategoria = dto.IdCategoria,
+                    GrupoNombre = dto.GrupoNombre
                 };
 
                 context.OfertasDescuentos.Add(entidad);
                 context.SaveChanges();
 
+                var ofertaIdGenerado = entidad.OfertaDescuentoId;
+
+                if (dto.Productos != null && dto.Productos.Any())
+                {
+                    var resultadoProductos = CrearProductosEnOferta(
+                        context,
+                        ofertaId: ofertaIdGenerado,
+                        dto.Productos,
+                        cantidadLimiteDeStock: dto.CantidadLimiteDeStock
+                    );
+
+                    if (!resultadoProductos.Exitoso)
+                    {
+                        transaction.Rollback();
+                        return resultadoProductos; 
+                    }
+                }
+
+                transaction.Commit();
+
                 return new EstadoOperacion
                 {
                     Exitoso = true,
                     Mensaje = "Oferta creada correctamente.",
-                    EntidadId = entidad.OfertaDescuentoId
+                    EntidadId = ofertaIdGenerado
                 };
             }
-
-            public EstadoOperacion Modificar(long ofertaId, OfertaDTO dto)
+            catch (Exception ex)
             {
-                using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-                var oferta = context.OfertasDescuentos
-                    .Include(o => o.Productos)
-                    .FirstOrDefault(o => o.OfertaDescuentoId == ofertaId);
-
-                if (oferta == null)
-                {
-                    return new EstadoOperacion
-                    {
-                        Exitoso = false,
-                        Mensaje = "La oferta no fue encontrada."
-                    };
-                }
-
-                oferta.Descripcion = dto.Descripcion;
-                oferta.PrecioFinal = dto.PrecioFinal;
-                oferta.PrecioOriginal = dto.PrecioOriginal;
-                oferta.DescuentoTotalFinal = dto.DescuentoTotalFinal;
-                oferta.PorcentajeDescuento = dto.PorcentajeDescuento;
-                oferta.FechaInicio = dto.FechaInicio;
-                oferta.FechaFin = dto.FechaFin;
-                oferta.CantidadProductosDentroOferta = dto.CantidadProductosDentroOferta;
-                oferta.EstaActiva = dto.EstaActiva;
-                oferta.EsUnSoloProducto = dto.EsUnSoloProducto;
-
-                // Actualizar productos en la oferta
-                oferta.Productos.Clear();
-                foreach (var prod in dto.Productos)
-                {
-                    oferta.Productos.Add(prod);
-                }
-
-                context.SaveChanges();
-
-                return new EstadoOperacion
-                {
-                    Exitoso = true,
-                    Mensaje = "Oferta modificada correctamente.",
-                    EntidadId = oferta.OfertaDescuentoId
-                };
-            }
-
-            public EstadoOperacion Eliminar(long ofertaId)
-            {
-                using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-                var oferta = context.OfertasDescuentos.FirstOrDefault(o => o.OfertaDescuentoId == ofertaId);
-                if (oferta == null)
-                    throw new Exception("No se encontró la oferta.");
-
-                context.SaveChanges();
-
-                return new EstadoOperacion
-                {
-                    Exitoso = true,
-                    Mensaje = $"La oferta {oferta.Descripcion} fue eliminada correctamente."
-                };
-            }
-
-            public OfertaDTO ObtenerPorId(long ofertaId)
-            {
-                using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-                var oferta = context.OfertasDescuentos
-                    .AsNoTracking()
-                    .Include(o => o.Productos)
-                    .FirstOrDefault(o => o.OfertaDescuentoId == ofertaId);
-
-                if (oferta == null) return null;
-
-                return new OfertaDTO
-                {
-                    OfertaDescuentoId = oferta.OfertaDescuentoId,
-                    Descripcion = oferta.Descripcion,
-                    PrecioFinal = oferta.PrecioFinal,
-                    PrecioOriginal = oferta.PrecioOriginal,
-                    DescuentoTotalFinal = oferta.DescuentoTotalFinal,
-                    PorcentajeDescuento = oferta.PorcentajeDescuento,
-                    FechaInicio = oferta.FechaInicio,
-                    FechaFin = oferta.FechaFin,
-                    CantidadProductosDentroOferta = oferta.CantidadProductosDentroOferta,
-                    EstaActiva = oferta.EstaActiva,
-                    EsUnSoloProducto = oferta.EsUnSoloProducto,
-                    Productos = oferta.Productos.ToList()
-                };
-            }
-
-            public IEnumerable<OfertaDTO> ObtenerTodas(string cadenaBuscar)
-            {
-                using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-                var query = context.OfertasDescuentos
-                    .AsNoTracking()
-                    .Include(o => o.Productos)
-                    .Where(o => (string.IsNullOrEmpty(cadenaBuscar) ||
-                                 o.Descripcion.Contains(cadenaBuscar)));
-
-                return query.Select(o => new OfertaDTO
-                {
-                    OfertaDescuentoId = o.OfertaDescuentoId,
-                    Descripcion = o.Descripcion,
-                    PrecioFinal = o.PrecioFinal,
-                    PrecioOriginal = o.PrecioOriginal,
-                    DescuentoTotalFinal = o.DescuentoTotalFinal,
-                    PorcentajeDescuento = o.PorcentajeDescuento,
-                    FechaInicio = o.FechaInicio,
-                    FechaFin = o.FechaFin,
-                    CantidadProductosDentroOferta = o.CantidadProductosDentroOferta,
-                    EstaActiva = o.EstaActiva,
-                    EsUnSoloProducto = o.EsUnSoloProducto,
-                    Productos = o.Productos.ToList()
-                }).ToList();
+                transaction.Rollback();
+                return new EstadoOperacion { Exitoso = false, Mensaje = "Error al crear la oferta:  aqui" + ex.Message };
             }
         }
+
+        private EstadoOperacion CrearProductosEnOferta(
+            GestorContextDB context,
+            long ofertaId,
+            ICollection<ProductosEnOfertaDescuentosDTO> productosDto,
+            decimal? cantidadLimiteDeStock = null
+        )
+        {
+            if (productosDto == null || !productosDto.Any())
+            {
+                return new EstadoOperacion { Exitoso = true, Mensaje = "No hay productos para agregar." };
+            }
+
+            var entidadesHijas = productosDto.Select(p => new ProductosEnOfertaDescuentos
+            {
+                OfertaId = ofertaId,
+                ProductoId = p.ProductoOfertaId,
+                Cantidad = p.Cantidad,
+                CantidadVendidaPorLimite = 0.0m, 
+                PrecioOrginal = p.PrecioVenta,
+                PrecioConDescuento = 0.0m
+            }).ToList();
+
+            // Insertar las filas hijas
+            context.Set<ProductosEnOfertaDescuentos>().AddRange(entidadesHijas);
+            context.SaveChanges();
+
+            return new EstadoOperacion { Exitoso = true, Mensaje = "Productos en oferta creados correctamente." };
+        }
+
+    }
 }

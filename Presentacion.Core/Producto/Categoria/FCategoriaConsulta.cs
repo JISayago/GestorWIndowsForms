@@ -16,6 +16,7 @@ namespace Presentacion.Core.Categoria
     public partial class FCategoriaConsulta : FBaseConsulta
     {
         private readonly ICategoriaServicio _CategoriaServicio;
+        public long? categoriaSeleccionada = null;
 
         public FCategoriaConsulta() : this(new CategoriaServicio())
         {
@@ -90,6 +91,13 @@ namespace Presentacion.Core.Categoria
             var FABMCategoria = new FCategoriaABM(TipoOperacion.Nuevo);
             FABMCategoria.ShowDialog();
             ActualizarSegunOperacion(FABMCategoria.RealizoAlgunaOperacion);
+        }
+
+        private void btnSeleccionarCategoria_Click(object sender, EventArgs e)
+        {
+            categoriaSeleccionada = (long)entidadID;
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
     }
 }

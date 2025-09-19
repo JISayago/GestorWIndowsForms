@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20250904195011_AddColumnsEntidadesPorGrupoOferta")]
+    partial class AddColumnsEntidadesPorGrupoOferta
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -223,13 +226,12 @@ namespace AccesoDatos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("OfertaDescuentoId"));
 
-                    b.Property<decimal?>("CantidadLimiteDeStock")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("cantidad_limite_de_stock");
-
                     b.Property<decimal?>("CantidadProductosDentroOferta")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("cantidad_productos_dentro_oferta");
+
+                    b.Property<long?>("CategoriaId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
@@ -247,10 +249,9 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("descuento_total_final");
 
-                    b.Property<string>("Detalle")
-                        .IsRequired()
+                    b.Property<bool>("Detalle")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
+                        .HasColumnType("bit")
                         .HasColumnName("detalle");
 
                     b.Property<bool>("EsUnSoloProducto")
@@ -270,21 +271,19 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("fecha_inicio");
 
                     b.Property<string>("GrupoNombre")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("grupo_nombre");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long?>("IdCategoria")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_categoria");
+                        .HasColumnType("bigint");
 
                     b.Property<long?>("IdMarca")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_marca");
+                        .HasColumnType("bigint");
 
                     b.Property<long?>("IdRubro")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_rubro");
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("MarcaId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal?>("PorcentajeDescuento")
                         .HasColumnType("decimal(5,2)")
@@ -298,9 +297,8 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("precio_original");
 
-                    b.Property<bool>("TieneLimiteDeStock")
-                        .HasColumnType("bit")
-                        .HasColumnName("tiene_limite_de_stock");
+                    b.Property<long?>("RubroId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("esOfertaPorGrupo")
                         .HasColumnType("bit")
@@ -308,11 +306,11 @@ namespace AccesoDatos.Migrations
 
                     b.HasKey("OfertaDescuentoId");
 
-                    b.HasIndex("IdCategoria");
+                    b.HasIndex("CategoriaId");
 
-                    b.HasIndex("IdMarca");
+                    b.HasIndex("MarcaId");
 
-                    b.HasIndex("IdRubro");
+                    b.HasIndex("RubroId");
 
                     b.ToTable("OfertasDescuentos", (string)null);
                 });
@@ -470,21 +468,17 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("cantidad");
 
-                    b.Property<decimal>("CantidadVendidaPorLimite")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("cantidad_vendida_por_limite");
+                    b.Property<decimal?>("DescuentoPorcentaje")
+                        .HasColumnType("decimal(5,2)")
+                        .HasColumnName("descuento_porcentaje");
 
                     b.Property<long>("OfertaId")
                         .HasColumnType("bigint")
                         .HasColumnName("id_OfertaDescuento");
 
-                    b.Property<decimal>("PrecioConDescuento")
+                    b.Property<decimal?>("PrecioUnitarioOferta")
                         .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_con_descuento");
-
-                    b.Property<decimal>("PrecioOrginal")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_original");
+                        .HasColumnName("precio_unitario_oferta");
 
                     b.Property<long>("ProductoId")
                         .HasColumnType("bigint")
@@ -779,18 +773,15 @@ namespace AccesoDatos.Migrations
                 {
                     b.HasOne("AccesoDatos.Entidades.Categoria", "Categoria")
                         .WithMany()
-                        .HasForeignKey("IdCategoria")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("CategoriaId");
 
                     b.HasOne("AccesoDatos.Entidades.Marca", "Marca")
                         .WithMany()
-                        .HasForeignKey("IdMarca")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("MarcaId");
 
                     b.HasOne("AccesoDatos.Entidades.Rubro", "Rubro")
                         .WithMany()
-                        .HasForeignKey("IdRubro")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("RubroId");
 
                     b.Navigation("Categoria");
 
