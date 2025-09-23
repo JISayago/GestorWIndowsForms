@@ -52,7 +52,7 @@ namespace Servicios.LogicaNegocio.Cliente
                 FechaNacimiento = clienteDto.FechaNacimiento
             };
 
-            context.Personas.Add(persona);
+            context.Personas.Add(persona); //Ser carga antes una persona que un cliente, en caso de no cargar el cliente igual se carga la persona
             context.SaveChanges();
 
             var cliente = new AccesoDatos.Entidades.Cliente

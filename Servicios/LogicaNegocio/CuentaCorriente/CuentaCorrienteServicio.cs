@@ -70,11 +70,12 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             }; // Devuelve el ID generado
         }
 
-        public EstadoOperacion Modificar(CuentaCorrienteDTO cuentacorrienteDto)
+        public EstadoOperacion Modificar(CuentaCorrienteDTO cuentacorrienteDto, long? cuentacorrienteId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var cuentacorrienteEditar = context.CuentaCorriente.FirstOrDefault(x => x.CuentaCorrienteId == cuentacorrienteDto.CuentaCorrienteId);
+            var cuentacorrienteEditar = context.CuentaCorriente
+                .FirstOrDefault(x => x.CuentaCorrienteId == cuentacorrienteId);
 
             if (cuentacorrienteEditar == null)
             {

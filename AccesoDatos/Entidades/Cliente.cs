@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,8 +12,8 @@ namespace AccesoDatos.Entidades
     {
         [Key]
         public long PersonaId { get; set; }  // Mismo ID que la persona
-        public long CuentaCorrienteId { get; set; } // ID de la cuenta corriente asociada
-        public string NumeroCliente { get; set; }
+        public long? CuentaCorrienteId { get; set; } // ID de la cuenta corriente asociada // puede ser null MOD MIGRACION
+        public string NumeroCliente { get; set; } //Borrar luego
         public DateTime FechaAlta { get; set; }
         public DateTime? FechaBaja { get; set; } // Puede ser null si sigue siendo cliente
         public int Estado { get; set; }
