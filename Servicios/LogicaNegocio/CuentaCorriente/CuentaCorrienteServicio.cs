@@ -1,6 +1,9 @@
 ﻿using AccesoDatos;
+using AccesoDatos.Entidades;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
+using Servicios.LogicaNegocio.Producto.DTO;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Servicios.LogicaNegocio.CuentaCorriente
 {
@@ -32,7 +35,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            if (context.CuentaCorriente.Any(p => p.NombreCuentaCorriente == cuentacorrienteDto.nombreCuentaCorriente))
+            if (context.CuentaCorriente.Any(p => p.NombreCuentaCorriente == cuentacorrienteDto.NombreCuentaCorriente))
                 return new EstadoOperacion
                 {
                     Exitoso = false,
@@ -41,12 +44,19 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             
             var nuevaCuentaCorriente = new AccesoDatos.Entidades.CuentaCorriente
             {
+                NombreCuentaCorriente = cuentacorrienteDto.NombreCuentaCorriente,
                 Saldo = cuentacorrienteDto.Saldo,
-                NombreCuentaCorriente = cuentacorrienteDto.nombreCuentaCorriente,
                 LimiteDeuda = cuentacorrienteDto.LimiteDeuda,
                 LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo,
                 FechaVencimiento = cuentacorrienteDto.FechaVencimiento,
-                EstaEliminado = false
+                EstaEliminado = false,
+                // Convertimos los DNIs a objetos de entidad
+                CuentaCorrienteAutorizado = cuentacorrienteDto.DniAutorizados
+                    .Select(dni => new CuentaCorrienteAutorizado
+                    {
+                        Dni = dni
+                    })
+                    .ToList()
             };
 
             context.CuentaCorriente.Add(nuevaCuentaCorriente);
@@ -76,7 +86,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             }
             
             bool cuentacorrienteDuplicada = context.CuentaCorriente
-                .Any(p => p.NombreCuentaCorriente == cuentacorrienteDto.nombreCuentaCorriente && p.NombreCuentaCorriente != cuentacorrienteEditar.NombreCuentaCorriente);
+                .Any(p => p.NombreCuentaCorriente == cuentacorrienteDto.NombreCuentaCorriente && p.NombreCuentaCorriente != cuentacorrienteEditar.NombreCuentaCorriente);
             
             if (cuentacorrienteDuplicada)
             {
@@ -86,13 +96,31 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     Mensaje = "Ya existe una cuenta corriente con le mismo nombre."
                 };
             }
-            
+
             // Modificar los campos
+            cuentacorrienteEditar.NombreCuentaCorriente = cuentacorrienteDto.NombreCuentaCorriente;
             cuentacorrienteEditar.Saldo = cuentacorrienteDto.Saldo;
             cuentacorrienteEditar.LimiteDeuda = cuentacorrienteDto.LimiteDeuda;
             cuentacorrienteEditar.LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo;
             cuentacorrienteEditar.FechaVencimiento = cuentacorrienteDto.FechaVencimiento;
-            cuentacorrienteEditar.NombreCuentaCorriente = cuentacorrienteDto.nombreCuentaCorriente;
+
+            /* Actualizar DNIs cuentacorrienteautorizado
+            // Eliminamos los existentes
+            cuentacorrienteEditar.CuentaCorrienteAutorizado.Clear();
+            if (cuentacorrienteDto.DniCuentaCorrienteAutorizado != null)
+            {
+                cuentacorrienteEditar.CuentaCorrienteAutorizado = cuentacorrienteDto.DniCuentaCorrienteAutorizado
+                    .Select(a => new CuentaCorrienteAutorizado
+                    {
+                        Dni = a
+                    }).ToList();//probar si anda bien
+            }
+
+            */
+            cuentacorrienteEditar.CuentaCorrienteAutorizado.Clear();
+
+            foreach (var dni in cuentacorrienteDto.DniAutorizados)
+                cuentacorrienteEditar.CuentaCorrienteAutorizado.Add(new AccesoDatos.Entidades.CuentaCorrienteAutorizado { Dni = dni });
 
             context.SaveChanges();
 
@@ -117,11 +145,11 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             {
                 Saldo = cuentacorrienteBusqueda.Saldo,
                 LimiteDeuda = cuentacorrienteBusqueda.LimiteDeuda,
-                nombreCuentaCorriente = cuentacorrienteBusqueda.NombreCuentaCorriente,
+                NombreCuentaCorriente = cuentacorrienteBusqueda.NombreCuentaCorriente,
                 LimiteDeudaActivo = cuentacorrienteBusqueda.LimiteDeudaActivo,
                 FechaVencimiento = cuentacorrienteBusqueda.FechaVencimiento,
-                CuentaCorrienteId = cuentacorrienteBusqueda.CuentaCorrienteId
-            
+                CuentaCorrienteId = cuentacorrienteBusqueda.CuentaCorrienteId,
+                DniAutorizados = cuentacorrienteBusqueda.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
             };
         }
 
@@ -135,10 +163,13 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 {
                     Saldo = x.Saldo,
                     LimiteDeuda = x.LimiteDeuda,
-                    nombreCuentaCorriente = x.NombreCuentaCorriente,
+                    NombreCuentaCorriente = x.NombreCuentaCorriente,
                     LimiteDeudaActivo = x.LimiteDeudaActivo,
                     FechaVencimiento = x.FechaVencimiento,
-                    CuentaCorrienteId = x.CuentaCorrienteId
+                    CuentaCorrienteId = x.CuentaCorrienteId,
+                    DniAutorizados = x.CuentaCorrienteAutorizado
+                        .Select(c => c.Dni)
+                        .ToList()
                 })
                 .ToList();
         }
@@ -153,10 +184,13 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 {
                     Saldo = x.Saldo,
                     LimiteDeuda = x.LimiteDeuda,
-                    nombreCuentaCorriente = x.NombreCuentaCorriente,
+                    NombreCuentaCorriente = x.NombreCuentaCorriente,
                     LimiteDeudaActivo = x.LimiteDeudaActivo,
                     FechaVencimiento = x.FechaVencimiento,
-                    CuentaCorrienteId = x.CuentaCorrienteId
+                    CuentaCorrienteId = x.CuentaCorrienteId,
+                    DniAutorizados = x.CuentaCorrienteAutorizado
+                        .Select(cp => cp.Dni)
+                        .ToList()
                 })
                 .ToList();
         }
@@ -164,7 +198,107 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         // =====================
         // LOGICA DE NEGOCIO
         // =====================
+        public bool DniAutorizado(long cuentaId, string dni)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var cuenta = context.CuentaCorriente
+                .Where(c => c.CuentaCorrienteId == cuentaId && !c.EstaEliminado)
+                .Select(c => new { c.CuentaCorrienteAutorizado })
+                .FirstOrDefault();
 
+            return cuenta != null && cuenta.CuentaCorrienteAutorizado.Any(a => a.Dni == Convert.ToInt64(dni));
+        }
 
+        public bool PuedeComprar(long cuentaId, decimal monto)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId && !c.EstaEliminado);
+            if (cuenta == null) return false;
+
+            if (cuenta.EstadoCuentaCorriente != (int)EstadoCuentaCorriente.Activa) return false;
+            if (cuenta.LimiteDeudaActivo && (cuenta.Saldo - monto) < -cuenta.LimiteDeuda) return false;
+            if (cuenta.FechaVencimiento.HasValue && cuenta.FechaVencimiento.Value < DateTime.Now) return false;
+
+            return true;
+        }
+
+        public decimal SaldoDisponible(long cuentaId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId);
+            if (cuenta == null) return 0;
+
+            if (cuenta.LimiteDeudaActivo)
+            {
+                return cuenta.Saldo + cuenta.LimiteDeuda;
+            }
+
+            return cuenta.Saldo;
+        }
+
+        /*
+        public decimal SaldoDisponible(long cuentaId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId);
+            if (cuenta == null) return 0;
+
+            return cuenta.LimiteDeudaActivo ? cuenta.Saldo + cuenta.LimiteDeuda : decimal.MaxValue;
+        }*/
+
+        public EstadoOperacion RegistrarCompra(long cuentaId, string dniCliente, decimal monto, string descripcion = "Compra")
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId);
+            if (cuenta == null) throw new Exception("Cuenta corriente no encontrada");
+
+            if (!DniAutorizado(cuentaId, dniCliente))
+                throw new Exception("DNI no autorizado");
+
+            if (!PuedeComprar(cuentaId, monto))
+                throw new Exception("No puede realizar la compra");
+
+            cuenta.Saldo -= monto;
+
+            // Registrar movimiento
+            cuenta.MovimientosCuentaCorriente ??= new List<AccesoDatos.Entidades.MovimientoCuentaCorriente>();
+            cuenta.MovimientosCuentaCorriente.Add(new AccesoDatos.Entidades.MovimientoCuentaCorriente
+            {
+                Fecha = DateTime.Now,
+                Monto = -monto,
+                Descripcion = descripcion,
+                TipoMovimientoCCorriente = 2,
+                CuentaCorrienteId = cuenta.CuentaCorrienteId
+            });
+
+            context.SaveChanges();
+
+            return new EstadoOperacion { Exitoso = true, Mensaje = "Compra registrada correctamente" };
+        }
+
+        public EstadoOperacion RegistrarPago(long cuentaId, decimal monto, string descripcion = "Pago")
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId);
+            if (cuenta == null) throw new Exception("Cuenta corriente no encontrada");
+
+            cuenta.Saldo += monto;
+
+            // Registrar movimiento
+            cuenta.MovimientosCuentaCorriente ??= new List<AccesoDatos.Entidades.MovimientoCuentaCorriente>();
+            cuenta.MovimientosCuentaCorriente.Add(new AccesoDatos.Entidades.MovimientoCuentaCorriente
+            {
+                Fecha = DateTime.Now,
+                Monto = monto,
+                Descripcion = descripcion,
+                TipoMovimientoCCorriente = 1,
+                CuentaCorrienteId = cuenta.CuentaCorrienteId
+            });
+
+            context.SaveChanges();
+
+            return new EstadoOperacion { Exitoso = true, Mensaje = "Pago registrado correctamente" };
+        }
     }
 }

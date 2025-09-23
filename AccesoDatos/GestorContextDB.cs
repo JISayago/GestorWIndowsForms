@@ -30,6 +30,8 @@ namespace AccesoDatos
         public DbSet<ProductosEnOfertaDescuentos> ProductosEnOfertasDescuentos { get; set; }
         public DbSet<Cliente> Cliente { get; set; }
         public DbSet<CuentaCorriente> CuentaCorriente { get; set; }
+        public DbSet<MovimientoCuentaCorriente> MovimientoCuentaCorriente { get; set; }
+        public DbSet<CuentaCorrienteAutorizado> CuentaCorrienteAutorizados { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -619,6 +621,16 @@ namespace AccesoDatos
                       .WithOne(c => c.CuentaCorriente)
                       .HasForeignKey(c => c.CuentaCorrienteId)
                       .OnDelete(DeleteBehavior.Restrict);
+                // Relación uno a muchos con MovimientoCuentaCorriente
+                entity.HasMany(cc => cc.MovimientosCuentaCorriente)
+                      .WithOne(mc => mc.CuentaCorriente)
+                      .HasForeignKey(mc => mc.CuentaCorrienteId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                // Relación uno a muchos con CuentaCorrienteAutorizado
+                entity.HasMany(cc => cc.CuentaCorrienteAutorizado)
+                      .WithOne(cca => cca.CuentaCorriente)
+                      .HasForeignKey(cca => cca.CuentaCorrienteId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
 
             // CLIENTE
@@ -658,6 +670,61 @@ namespace AccesoDatos
                       .WithMany(cc => cc.Clientes)
                       .HasForeignKey(c => c.CuentaCorrienteId)
                       .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // MOVIMIENTO CUENTA CORRIENTE
+            modelBuilder.Entity<MovimientoCuentaCorriente>(entity =>
+            {
+                entity.ToTable("MovimientosCuentaCorrientes");
+                entity.HasKey(mc => mc.MovimientoCuentaCorrienteId);
+                entity.Property(mc => mc.MovimientoCuentaCorrienteId)
+                      .HasColumnName("MovimientoCuentaCorrienteId")
+                      .ValueGeneratedOnAdd();
+                entity.Property(mc => mc.CuentaCorrienteId)
+                      .HasColumnName("CuentaCorrienteId")
+                      .IsRequired();
+                entity.Property(mc => mc.TipoMovimientoCCorriente)
+                      .HasColumnName("tipo_movimiento")
+                      .IsRequired();
+                entity.Property(mc => mc.Monto)
+                      .HasColumnName("monto")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+                entity.Property(mc => mc.Fecha)
+                      .HasColumnName("fecha")
+                      .HasColumnType("date")
+                      .IsRequired();
+                entity.Property(mc => mc.Descripcion)
+                      .HasColumnName("descripcion")
+                      .HasMaxLength(500);
+                // Relación muchos a uno con CuentaCorriente
+                entity.HasOne(mc => mc.CuentaCorriente)
+                      .WithMany(cc => cc.MovimientosCuentaCorriente)
+                      .HasForeignKey(mc => mc.CuentaCorrienteId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // CUENTA CORRIENTE AUTORIZADO
+            modelBuilder.Entity<CuentaCorrienteAutorizado>(entity =>
+            {
+                entity.ToTable("CuentaCorrienteAutorizados");
+                entity.HasKey(cca => cca.CuentaCorrienteAutorizadoId);
+
+                entity.Property(cca => cca.CuentaCorrienteAutorizadoId)
+                      .HasColumnName("CuentaCorrienteAutorizadoId")
+                      .ValueGeneratedOnAdd();
+                entity.Property(cca => cca.CuentaCorrienteId)
+                      .HasColumnName("CuentaCorrienteId")
+                      .IsRequired();
+                entity.Property(cca => cca.Dni)
+                      .HasColumnName("dni")
+                      .HasMaxLength(15)
+                      .IsRequired();
+                /*Relación muchos a uno con CuentaCorriente
+                entity.HasOne(cca => cca.CuentaCorriente)
+                      .WithMany(cc => cc.CuentaCorrienteAutorizado)
+                      .HasForeignKey(cca => cca.CuentaCorrienteId)
+                      .OnDelete(DeleteBehavior.Restrict);*/
             });
         }
     }
