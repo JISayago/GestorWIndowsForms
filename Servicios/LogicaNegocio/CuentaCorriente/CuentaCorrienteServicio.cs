@@ -1,5 +1,6 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
+using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
 using Servicios.LogicaNegocio.Producto.DTO;
@@ -75,6 +76,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var cuentacorrienteEditar = context.CuentaCorriente
+                .Include(x => x.CuentaCorrienteAutorizado)
                 .FirstOrDefault(x => x.CuentaCorrienteId == cuentacorrienteId);
 
             if (cuentacorrienteEditar == null)
@@ -136,8 +138,15 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         public CuentaCorrienteDTO ObtenerCuentaCorrientePorId(long cuentacorrienteId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
+            /*
+            var cuentacorrienteBusqueda = context.CuentaCorriente
+                .FirstOrDefault(x => x.CuentaCorrienteId == cuentacorrienteId);
+            */
 
-            var cuentacorrienteBusqueda = context.CuentaCorriente.FirstOrDefault(x => x.CuentaCorrienteId == cuentacorrienteId);
+            var cuentacorrienteBusqueda = context.CuentaCorriente
+                .Include(x => x.CuentaCorrienteAutorizado)
+                .Include(x => x.MovimientosCuentaCorriente)
+                .FirstOrDefault(x => x.CuentaCorrienteId == cuentacorrienteId);
 
             if (cuentacorrienteBusqueda == null)
                 throw new Exception("No se encontró la cuentacorriente.");
