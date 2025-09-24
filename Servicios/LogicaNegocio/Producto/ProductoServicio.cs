@@ -3,6 +3,7 @@ using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -244,6 +245,40 @@ namespace Servicios.LogicaNegocio.Producto
             .ToList();
 
             return producto;
+        }
+
+        public IEnumerable<ProductosEnOfertaDescuentosDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(
+          long? MarcaId = null, long? RubroId = null, long? CategoriaId = null)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var query = context.Productos
+                .AsNoTracking()
+                .Where(p => !p.EstaEliminado); 
+
+            if (MarcaId.HasValue)
+                query = query.Where(p => p.IdMarca == MarcaId.Value);
+
+            if (RubroId.HasValue)
+                query = query.Where(p => p.IdRubro == RubroId.Value);
+
+            if (CategoriaId.HasValue)
+                query = query.Where(p => p.CategoriasProductos.Any(cp => cp.IdCategoria == CategoriaId.Value));
+
+            var productos = query
+                .Select(p => new ProductosEnOfertaDescuentosDTO
+                {
+                    ProductoOfertaId = p.ProductoId,
+                    Cantidad = p.Stock,
+                    Codigo = p.Codigo,
+                    CodigoBarra = p.CodigoBarra,
+                    PrecioVenta = p.PrecioVenta,
+                    PrecioCosto = p.PrecioCosto,
+                    Descripcion = p.Descripcion
+                })
+                .ToList();
+
+            return productos;
         }
     }
 }

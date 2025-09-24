@@ -61,7 +61,7 @@ namespace Presentacion.Core.Oferta
         {
             if (_tipoOferta == TipoOferta.Grupo)
             {
-                var FOfertaGrupo = new FOfertaGrupoABM();
+                var FOfertaGrupo = new FOfertaGrupoABM(TipoOferta.Grupo);
                 FOfertaGrupo.ShowDialog();
                 this.Close();
             }

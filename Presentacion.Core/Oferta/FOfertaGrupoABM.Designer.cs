@@ -44,10 +44,10 @@
             txtPrecioDescuentoPesos = new TextBox();
             txtDescripcion = new TextBox();
             lbl = new Label();
-            textBox1 = new TextBox();
+            txtDetalle = new TextBox();
             lblDetalle = new Label();
             lblCodigo = new Label();
-            textBox2 = new TextBox();
+            txtCodigoOferta = new TextBox();
             dtpFechaFin = new DateTimePicker();
             dtpFechaInicio = new DateTimePicker();
             lblFechaFin = new Label();
@@ -60,7 +60,17 @@
             dgvProductos = new DataGridView();
             btnQuitarProducto = new Button();
             btnCargarProductosAlcanzados = new Button();
+            btnDevolverAOferta = new Button();
+            label2 = new Label();
+            dgvProductosQuitados = new DataGridView();
+            lblNumeroProductoQuitados = new Label();
+            lblCantidadProductosQuitados = new Label();
+            cbxEstaActiva = new CheckBox();
+            cbxLimiteCumplirStock = new CheckBox();
+            lblLimiteStock = new Label();
+            txtLimiteStock = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvProductosQuitados).BeginInit();
             SuspendLayout();
             // 
             // lblCantidadProductos
@@ -75,7 +85,7 @@
             // btnCargarGrupoMarca
             // 
             btnCargarGrupoMarca.Enabled = false;
-            btnCargarGrupoMarca.Location = new Point(83, 105);
+            btnCargarGrupoMarca.Location = new Point(418, 115);
             btnCargarGrupoMarca.Name = "btnCargarGrupoMarca";
             btnCargarGrupoMarca.Size = new Size(161, 32);
             btnCargarGrupoMarca.TabIndex = 27;
@@ -86,7 +96,7 @@
             // cbxMarca
             // 
             cbxMarca.AutoSize = true;
-            cbxMarca.Location = new Point(137, 80);
+            cbxMarca.Location = new Point(472, 90);
             cbxMarca.Name = "cbxMarca";
             cbxMarca.Size = new Size(59, 19);
             cbxMarca.TabIndex = 30;
@@ -97,7 +107,7 @@
             // cbxRubro
             // 
             cbxRubro.AutoSize = true;
-            cbxRubro.Location = new Point(354, 79);
+            cbxRubro.Location = new Point(689, 89);
             cbxRubro.Name = "cbxRubro";
             cbxRubro.Size = new Size(58, 19);
             cbxRubro.TabIndex = 31;
@@ -108,7 +118,7 @@
             // cbxCategoria
             // 
             cbxCategoria.AutoSize = true;
-            cbxCategoria.Location = new Point(583, 79);
+            cbxCategoria.Location = new Point(918, 89);
             cbxCategoria.Name = "cbxCategoria";
             cbxCategoria.Size = new Size(77, 19);
             cbxCategoria.TabIndex = 32;
@@ -120,7 +130,7 @@
             // 
             lblTitulo.AutoSize = true;
             lblTitulo.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblTitulo.Location = new Point(93, 22);
+            lblTitulo.Location = new Point(428, 32);
             lblTitulo.Name = "lblTitulo";
             lblTitulo.Size = new Size(611, 30);
             lblTitulo.TabIndex = 33;
@@ -128,7 +138,7 @@
             // 
             // txtMarca
             // 
-            txtMarca.Location = new Point(86, 152);
+            txtMarca.Location = new Point(421, 162);
             txtMarca.Name = "txtMarca";
             txtMarca.ReadOnly = true;
             txtMarca.Size = new Size(158, 23);
@@ -147,7 +157,7 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(428, 921);
+            btnCancelar.Location = new Point(710, 906);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(75, 23);
             btnCancelar.TabIndex = 41;
@@ -156,17 +166,18 @@
             // 
             // btnCrear
             // 
-            btnCrear.Location = new Point(334, 921);
+            btnCrear.Location = new Point(616, 906);
             btnCrear.Name = "btnCrear";
             btnCrear.Size = new Size(75, 23);
             btnCrear.TabIndex = 40;
             btnCrear.Text = "Crear";
             btnCrear.UseVisualStyleBackColor = true;
+            btnCrear.Click += btnCrear_Click;
             // 
             // cbxDescuentoPorcentaje
             // 
             cbxDescuentoPorcentaje.AutoSize = true;
-            cbxDescuentoPorcentaje.Location = new Point(428, 769);
+            cbxDescuentoPorcentaje.Location = new Point(710, 754);
             cbxDescuentoPorcentaje.Name = "cbxDescuentoPorcentaje";
             cbxDescuentoPorcentaje.Size = new Size(201, 19);
             cbxDescuentoPorcentaje.TabIndex = 39;
@@ -176,7 +187,7 @@
             // cbxDescuentoPesos
             // 
             cbxDescuentoPesos.AutoSize = true;
-            cbxDescuentoPesos.Location = new Point(134, 767);
+            cbxDescuentoPesos.Location = new Point(416, 752);
             cbxDescuentoPesos.Name = "cbxDescuentoPesos";
             cbxDescuentoPesos.Size = new Size(201, 19);
             cbxDescuentoPesos.TabIndex = 38;
@@ -185,21 +196,21 @@
             // 
             // txtPrecioDescuentoPorcentaje
             // 
-            txtPrecioDescuentoPorcentaje.Location = new Point(428, 788);
+            txtPrecioDescuentoPorcentaje.Location = new Point(710, 773);
             txtPrecioDescuentoPorcentaje.Name = "txtPrecioDescuentoPorcentaje";
             txtPrecioDescuentoPorcentaje.Size = new Size(301, 23);
             txtPrecioDescuentoPorcentaje.TabIndex = 37;
             // 
             // txtPrecioDescuentoPesos
             // 
-            txtPrecioDescuentoPesos.Location = new Point(127, 788);
+            txtPrecioDescuentoPesos.Location = new Point(409, 773);
             txtPrecioDescuentoPesos.Name = "txtPrecioDescuentoPesos";
             txtPrecioDescuentoPesos.Size = new Size(285, 23);
             txtPrecioDescuentoPesos.TabIndex = 36;
             // 
             // txtDescripcion
             // 
-            txtDescripcion.Location = new Point(118, 590);
+            txtDescripcion.Location = new Point(400, 575);
             txtDescripcion.Multiline = true;
             txtDescripcion.Name = "txtDescripcion";
             txtDescripcion.ReadOnly = true;
@@ -209,24 +220,24 @@
             // lbl
             // 
             lbl.AutoSize = true;
-            lbl.Location = new Point(118, 572);
+            lbl.Location = new Point(400, 557);
             lbl.Name = "lbl";
             lbl.Size = new Size(69, 15);
             lbl.TabIndex = 42;
             lbl.Text = "Descripcion";
             // 
-            // textBox1
+            // txtDetalle
             // 
-            textBox1.Location = new Point(118, 676);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(602, 50);
-            textBox1.TabIndex = 44;
+            txtDetalle.Location = new Point(400, 661);
+            txtDetalle.Multiline = true;
+            txtDetalle.Name = "txtDetalle";
+            txtDetalle.Size = new Size(602, 50);
+            txtDetalle.TabIndex = 44;
             // 
             // lblDetalle
             // 
             lblDetalle.AutoSize = true;
-            lblDetalle.Location = new Point(118, 658);
+            lblDetalle.Location = new Point(400, 643);
             lblDetalle.Name = "lblDetalle";
             lblDetalle.Size = new Size(43, 15);
             lblDetalle.TabIndex = 45;
@@ -235,29 +246,29 @@
             // lblCodigo
             // 
             lblCodigo.AutoSize = true;
-            lblCodigo.Location = new Point(118, 520);
+            lblCodigo.Location = new Point(400, 505);
             lblCodigo.Name = "lblCodigo";
             lblCodigo.Size = new Size(108, 15);
             lblCodigo.TabIndex = 47;
             lblCodigo.Text = "Codigo de la oferta";
             // 
-            // textBox2
+            // txtCodigoOferta
             // 
-            textBox2.Location = new Point(118, 538);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(602, 23);
-            textBox2.TabIndex = 46;
+            txtCodigoOferta.Location = new Point(400, 523);
+            txtCodigoOferta.Name = "txtCodigoOferta";
+            txtCodigoOferta.Size = new Size(602, 23);
+            txtCodigoOferta.TabIndex = 46;
             // 
             // dtpFechaFin
             // 
-            dtpFechaFin.Location = new Point(452, 855);
+            dtpFechaFin.Location = new Point(734, 840);
             dtpFechaFin.Name = "dtpFechaFin";
             dtpFechaFin.Size = new Size(200, 23);
             dtpFechaFin.TabIndex = 51;
             // 
             // dtpFechaInicio
             // 
-            dtpFechaInicio.Location = new Point(190, 855);
+            dtpFechaInicio.Location = new Point(472, 840);
             dtpFechaInicio.Name = "dtpFechaInicio";
             dtpFechaInicio.Size = new Size(200, 23);
             dtpFechaInicio.TabIndex = 50;
@@ -265,7 +276,7 @@
             // lblFechaFin
             // 
             lblFechaFin.AutoSize = true;
-            lblFechaFin.Location = new Point(452, 837);
+            lblFechaFin.Location = new Point(734, 822);
             lblFechaFin.Name = "lblFechaFin";
             lblFechaFin.Size = new Size(57, 15);
             lblFechaFin.TabIndex = 49;
@@ -274,7 +285,7 @@
             // lblFechaInicio
             // 
             lblFechaInicio.AutoSize = true;
-            lblFechaInicio.Location = new Point(190, 837);
+            lblFechaInicio.Location = new Point(472, 822);
             lblFechaInicio.Name = "lblFechaInicio";
             lblFechaInicio.Size = new Size(70, 15);
             lblFechaInicio.TabIndex = 48;
@@ -282,7 +293,7 @@
             // 
             // txtRubro
             // 
-            txtRubro.Location = new Point(307, 151);
+            txtRubro.Location = new Point(642, 161);
             txtRubro.Name = "txtRubro";
             txtRubro.ReadOnly = true;
             txtRubro.Size = new Size(158, 23);
@@ -292,7 +303,7 @@
             // btnCargarGrupoRubro
             // 
             btnCargarGrupoRubro.Enabled = false;
-            btnCargarGrupoRubro.Location = new Point(304, 104);
+            btnCargarGrupoRubro.Location = new Point(639, 114);
             btnCargarGrupoRubro.Name = "btnCargarGrupoRubro";
             btnCargarGrupoRubro.Size = new Size(161, 32);
             btnCargarGrupoRubro.TabIndex = 64;
@@ -302,7 +313,7 @@
             // 
             // txtCategoria
             // 
-            txtCategoria.Location = new Point(546, 151);
+            txtCategoria.Location = new Point(881, 161);
             txtCategoria.Name = "txtCategoria";
             txtCategoria.ReadOnly = true;
             txtCategoria.Size = new Size(158, 23);
@@ -312,7 +323,7 @@
             // btnCargarGrupoCategoria
             // 
             btnCargarGrupoCategoria.Enabled = false;
-            btnCargarGrupoCategoria.Location = new Point(543, 104);
+            btnCargarGrupoCategoria.Location = new Point(878, 114);
             btnCargarGrupoCategoria.Name = "btnCargarGrupoCategoria";
             btnCargarGrupoCategoria.Size = new Size(161, 32);
             btnCargarGrupoCategoria.TabIndex = 66;
@@ -340,6 +351,7 @@
             dgvProductos.Name = "dgvProductos";
             dgvProductos.Size = new Size(602, 155);
             dgvProductos.TabIndex = 69;
+            dgvProductos.RowEnter += dgvProductos_RowEnter;
             // 
             // btnQuitarProducto
             // 
@@ -349,10 +361,11 @@
             btnQuitarProducto.TabIndex = 71;
             btnQuitarProducto.Text = "Quitar Producto";
             btnQuitarProducto.UseVisualStyleBackColor = true;
+            btnQuitarProducto.Click += btnQuitarProducto_Click;
             // 
             // btnCargarProductosAlcanzados
             // 
-            btnCargarProductosAlcanzados.Location = new Point(240, 202);
+            btnCargarProductosAlcanzados.Location = new Point(575, 212);
             btnCargarProductosAlcanzados.Name = "btnCargarProductosAlcanzados";
             btnCargarProductosAlcanzados.Size = new Size(285, 32);
             btnCargarProductosAlcanzados.TabIndex = 72;
@@ -360,11 +373,107 @@
             btnCargarProductosAlcanzados.UseVisualStyleBackColor = true;
             btnCargarProductosAlcanzados.Click += btnCargarProductosAlcanzados_Click;
             // 
+            // btnDevolverAOferta
+            // 
+            btnDevolverAOferta.Location = new Point(760, 448);
+            btnDevolverAOferta.Name = "btnDevolverAOferta";
+            btnDevolverAOferta.Size = new Size(161, 32);
+            btnDevolverAOferta.TabIndex = 77;
+            btnDevolverAOferta.Text = "Volver a Oferta";
+            btnDevolverAOferta.UseVisualStyleBackColor = true;
+            btnDevolverAOferta.Click += btnDevolverAOferta_Click;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(763, 269);
+            label2.Name = "label2";
+            label2.Size = new Size(0, 15);
+            label2.TabIndex = 76;
+            // 
+            // dgvProductosQuitados
+            // 
+            dgvProductosQuitados.AllowUserToAddRows = false;
+            dgvProductosQuitados.AllowUserToDeleteRows = false;
+            dgvProductosQuitados.AllowUserToResizeRows = false;
+            dgvProductosQuitados.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvProductosQuitados.EditMode = DataGridViewEditMode.EditProgrammatically;
+            dgvProductosQuitados.Location = new Point(756, 287);
+            dgvProductosQuitados.MultiSelect = false;
+            dgvProductosQuitados.Name = "dgvProductosQuitados";
+            dgvProductosQuitados.Size = new Size(602, 155);
+            dgvProductosQuitados.TabIndex = 75;
+            // 
+            // lblNumeroProductoQuitados
+            // 
+            lblNumeroProductoQuitados.AutoSize = true;
+            lblNumeroProductoQuitados.Font = new Font("Segoe UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblNumeroProductoQuitados.Location = new Point(1011, 251);
+            lblNumeroProductoQuitados.Name = "lblNumeroProductoQuitados";
+            lblNumeroProductoQuitados.Size = new Size(52, 37);
+            lblNumeroProductoQuitados.TabIndex = 74;
+            lblNumeroProductoQuitados.Text = "N1";
+            // 
+            // lblCantidadProductosQuitados
+            // 
+            lblCantidadProductosQuitados.AutoSize = true;
+            lblCantidadProductosQuitados.Location = new Point(760, 269);
+            lblCantidadProductosQuitados.Name = "lblCantidadProductosQuitados";
+            lblCantidadProductosQuitados.Size = new Size(245, 15);
+            lblCantidadProductosQuitados.TabIndex = 73;
+            lblCantidadProductosQuitados.Text = "Cantidad Productos Alcanzados por la oferta:";
+            // 
+            // cbxEstaActiva
+            // 
+            cbxEstaActiva.AutoSize = true;
+            cbxEstaActiva.Location = new Point(201, 97);
+            cbxEstaActiva.Name = "cbxEstaActiva";
+            cbxEstaActiva.Size = new Size(95, 19);
+            cbxEstaActiva.TabIndex = 78;
+            cbxEstaActiva.Text = "Oferta Activa";
+            cbxEstaActiva.UseVisualStyleBackColor = true;
+            // 
+            // cbxLimiteCumplirStock
+            // 
+            cbxLimiteCumplirStock.AutoSize = true;
+            cbxLimiteCumplirStock.Location = new Point(201, 122);
+            cbxLimiteCumplirStock.Name = "cbxLimiteCumplirStock";
+            cbxLimiteCumplirStock.Size = new Size(131, 19);
+            cbxLimiteCumplirStock.TabIndex = 79;
+            cbxLimiteCumplirStock.Text = "Hasta cumplir stock";
+            cbxLimiteCumplirStock.UseVisualStyleBackColor = true;
+            // 
+            // lblLimiteStock
+            // 
+            lblLimiteStock.AutoSize = true;
+            lblLimiteStock.Location = new Point(201, 144);
+            lblLimiteStock.Name = "lblLimiteStock";
+            lblLimiteStock.Size = new Size(140, 15);
+            lblLimiteStock.TabIndex = 81;
+            lblLimiteStock.Text = "Limite de Stock en Oferta";
+            // 
+            // txtLimiteStock
+            // 
+            txtLimiteStock.Enabled = false;
+            txtLimiteStock.Location = new Point(201, 162);
+            txtLimiteStock.Name = "txtLimiteStock";
+            txtLimiteStock.Size = new Size(137, 23);
+            txtLimiteStock.TabIndex = 80;
+            // 
             // FOfertaGrupoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 1061);
+            ClientSize = new Size(1571, 1061);
+            Controls.Add(lblLimiteStock);
+            Controls.Add(txtLimiteStock);
+            Controls.Add(cbxLimiteCumplirStock);
+            Controls.Add(cbxEstaActiva);
+            Controls.Add(btnDevolverAOferta);
+            Controls.Add(label2);
+            Controls.Add(dgvProductosQuitados);
+            Controls.Add(lblNumeroProductoQuitados);
+            Controls.Add(lblCantidadProductosQuitados);
             Controls.Add(btnCargarProductosAlcanzados);
             Controls.Add(btnQuitarProducto);
             Controls.Add(label1);
@@ -378,9 +487,9 @@
             Controls.Add(lblFechaFin);
             Controls.Add(lblFechaInicio);
             Controls.Add(lblCodigo);
-            Controls.Add(textBox2);
+            Controls.Add(txtCodigoOferta);
             Controls.Add(lblDetalle);
-            Controls.Add(textBox1);
+            Controls.Add(txtDetalle);
             Controls.Add(txtDescripcion);
             Controls.Add(lbl);
             Controls.Add(btnCancelar);
@@ -401,6 +510,7 @@
             Text = "FOfertaGrupoABM";
             Load += FOfertaGrupoABM_Load;
             ((System.ComponentModel.ISupportInitialize)dgvProductos).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvProductosQuitados).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -423,10 +533,10 @@
         private TextBox txtPrecioDescuentoPesos;
         private TextBox txtDescripcion;
         private Label lbl;
-        private TextBox textBox1;
+        private TextBox txtDetalle;
         private Label lblDetalle;
         private Label lblCodigo;
-        private TextBox textBox2;
+        private TextBox txtCodigoOferta;
         private DateTimePicker dtpFechaFin;
         private DateTimePicker dtpFechaInicio;
         private Label lblFechaFin;
@@ -439,5 +549,14 @@
         private DataGridView dgvProductos;
         private Button btnQuitarProducto;
         private Button btnCargarProductosAlcanzados;
+        private Button btnDevolverAOferta;
+        private Label label2;
+        private DataGridView dgvProductosQuitados;
+        private Label lblNumeroProductoQuitados;
+        private Label lblCantidadProductosQuitados;
+        private CheckBox cbxEstaActiva;
+        private CheckBox cbxLimiteCumplirStock;
+        private Label lblLimiteStock;
+        private TextBox txtLimiteStock;
     }
 }
