@@ -99,8 +99,10 @@ namespace Presentacion.Core.CuentaCorriente
                 FechaVencimiento = dtpFechaVencimiento.Value,
                 LimiteDeudaActivo = chkbLimiteDeuda.Checked,
                 LimiteDeuda = Convert.ToDecimal(txtLimiteDeuda.Text),
-                DniAutorizados = dgvDni.Rows.Cast<DataGridViewRow>()
-                                  .Select(r => Convert.ToInt64(r.Cells["DNI"].Value))
+                DniAutorizados = dgvDni.Rows
+                                  .Cast<DataGridViewRow>()
+                                  .Where(r => r.Cells["Dni"].Value != null)
+                                  .Select(r => Convert.ToInt64(r.Cells["Dni"].Value))
                                   .ToList(),
                 EstaEliminado = false,
             };

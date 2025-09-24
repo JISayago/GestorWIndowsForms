@@ -1,12 +1,18 @@
-﻿using Presentacion.FBase;
+﻿using AccesoDatos.Entidades;
+using Presentacion.Core.CuentaCorriente;
+using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.LogicaNegocio.Articulo.Marca;
 using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.Cliente.DTO;
+using Servicios.LogicaNegocio.CuentaCorriente;
 
 namespace Presentacion.Core.Cliente
 {
     public partial class FClienteABM : FBaseABM
     {
+        private readonly ICuentaCorrienteServicio _CuentaCorrienteServicio;
+
         public FClienteABM()
         {
             InitializeComponent();
@@ -22,6 +28,7 @@ namespace Presentacion.Core.Cliente
         {
             InitializeComponent();
             _clienteServicio = new ClienteServicio();
+            _CuentaCorrienteServicio = new CuentaCorrienteServicio();
 
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
             {
@@ -32,6 +39,16 @@ namespace Presentacion.Core.Cliente
             {
                 DesactivarControles(this);
             }
+
+            var cuentasCorrientes = _CuentaCorrienteServicio.ObtenerCuentaCorrientes("").ToList();
+
+            cmbCuentaCorriente.DisplayMember = "NombreCuentaCorriente"; // lo que se muestra
+            cmbCuentaCorriente.ValueMember = "CuentaCorrienteId";
+            cmbCuentaCorriente.DataSource = cuentasCorrientes;
+
+            cmbCuentaCorriente.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbCuentaCorriente.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbCuentaCorriente.DropDownStyle = ComboBoxStyle.DropDown;
 
             AgregarControlesObligatorios(txtApellido, "Apellido");
             AgregarControlesObligatorios(txtNombre, "Nombre");
@@ -72,6 +89,8 @@ namespace Presentacion.Core.Cliente
             txtEmail.Text = cliente.Email;
             dtpFNacimiento.Value = (DateTime)cliente.FechaNacimiento;
             txtTelefono.Text = cliente.Telefono;
+            // Datos Cliente
+            cmbCuentaCorriente.SelectedValue = cliente.CuentaCorrienteId.HasValue ? cliente.CuentaCorrienteId.Value : -1;
         }
 
 
@@ -98,6 +117,7 @@ namespace Presentacion.Core.Cliente
                 Telefono2 = txtCelular.Text,
                 NumeroCliente = "0", //Asignar un valor adecuado si es necesario
                 Estado = 1, //Activo por defecto
+                CuentaCorrienteId = cmbCuentaCorriente.SelectedValue != null ? (long?)cmbCuentaCorriente.SelectedValue : null,
                 EstaEliminado = false,
             };
 
@@ -188,5 +208,14 @@ namespace Presentacion.Core.Cliente
             }
             return false;
         }
+
+        private void btnCuentaCorriente_Click(object sender, EventArgs e)
+        {
+            var fCuentaCorriente = new FCuentaCorrienteConsulta();
+            fCuentaCorriente.ShowDialog();
+        }
+
+
+
     }
 }

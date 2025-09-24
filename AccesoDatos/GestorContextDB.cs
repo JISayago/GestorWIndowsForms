@@ -627,10 +627,10 @@ namespace AccesoDatos
                       .HasForeignKey(mc => mc.CuentaCorrienteId)
                       .OnDelete(DeleteBehavior.Restrict);
                 // Relación uno a muchos con CuentaCorrienteAutorizado
-                entity.HasMany(cc => cc.CuentaCorrienteAutorizado)
-                      .WithOne(cca => cca.CuentaCorriente)
-                      .HasForeignKey(cca => cca.CuentaCorrienteId)
-                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasMany(c => c.CuentaCorrienteAutorizado)
+                      .WithOne() // sin navegación inversa
+                      .HasForeignKey(a => a.CuentaCorrienteId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
             // CLIENTE
@@ -718,7 +718,6 @@ namespace AccesoDatos
                       .IsRequired();
                 entity.Property(cca => cca.Dni)
                       .HasColumnName("dni")
-                      .HasMaxLength(15)
                       .IsRequired();
                 /*Relación muchos a uno con CuentaCorriente
                 entity.HasOne(cca => cca.CuentaCorriente)

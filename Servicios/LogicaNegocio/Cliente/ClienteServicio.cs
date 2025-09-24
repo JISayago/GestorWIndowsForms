@@ -60,6 +60,7 @@ namespace Servicios.LogicaNegocio.Cliente
                 PersonaId = persona.PersonaId,
                 NumeroCliente = clienteDto.NumeroCliente,
                 FechaAlta = clienteDto.FechaAlta,
+                CuentaCorriente = clienteDto != null ? context.CuentaCorriente.Find(clienteDto.CuentaCorrienteId) : null,
                 Estado = 0
             };
 

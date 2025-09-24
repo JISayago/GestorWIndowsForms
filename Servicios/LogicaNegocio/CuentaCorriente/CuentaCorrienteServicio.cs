@@ -190,6 +190,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             return context.CuentaCorriente
                 .Where(x => x.EstaEliminado && x.NombreCuentaCorriente.Contains(cadenaBuscar))
+                .Include(x => x.CuentaCorrienteAutorizado)
                 .Select(x => new CuentaCorrienteDTO
                 {
                     Saldo = x.Saldo,

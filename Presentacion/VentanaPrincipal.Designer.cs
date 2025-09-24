@@ -35,6 +35,8 @@
             rolesToolStripMenuItem = new ToolStripMenuItem();
             tipoPagoToolStripMenuItem = new ToolStripMenuItem();
             gastosToolStripMenuItem = new ToolStripMenuItem();
+            cuentaCorrienteToolStripMenuItem = new ToolStripMenuItem();
+            clienteToolStripMenuItem = new ToolStripMenuItem();
             aRTICULOToolStripMenuItem = new ToolStripMenuItem();
             categoriaToolStripMenuItem = new ToolStripMenuItem();
             marcaToolStripMenuItem = new ToolStripMenuItem();
@@ -50,8 +52,6 @@
             btnMovimientos = new Button();
             dataGridView1 = new DataGridView();
             panel1 = new Panel();
-            cuentaCorrienteToolStripMenuItem = new ToolStripMenuItem();
-            clienteToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
@@ -106,6 +106,21 @@
             gastosToolStripMenuItem.Name = "gastosToolStripMenuItem";
             gastosToolStripMenuItem.Size = new Size(180, 22);
             gastosToolStripMenuItem.Text = "Gastos";
+            // 
+            // cuentaCorrienteToolStripMenuItem
+            // 
+            cuentaCorrienteToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { clienteToolStripMenuItem });
+            cuentaCorrienteToolStripMenuItem.Name = "cuentaCorrienteToolStripMenuItem";
+            cuentaCorrienteToolStripMenuItem.Size = new Size(180, 22);
+            cuentaCorrienteToolStripMenuItem.Text = "Cuenta Corriente";
+            cuentaCorrienteToolStripMenuItem.Click += cuentaCorrienteToolStripMenuItem_Click;
+            // 
+            // clienteToolStripMenuItem
+            // 
+            clienteToolStripMenuItem.Name = "clienteToolStripMenuItem";
+            clienteToolStripMenuItem.Size = new Size(180, 22);
+            clienteToolStripMenuItem.Text = "Cliente";
+            clienteToolStripMenuItem.Click += clienteToolStripMenuItem_Click;
             // 
             // aRTICULOToolStripMenuItem
             // 
@@ -228,20 +243,6 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(750, 40);
             panel1.TabIndex = 18;
-            // 
-            // cuentaCorrienteToolStripMenuItem
-            // 
-            cuentaCorrienteToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { clienteToolStripMenuItem });
-            cuentaCorrienteToolStripMenuItem.Name = "cuentaCorrienteToolStripMenuItem";
-            cuentaCorrienteToolStripMenuItem.Size = new Size(180, 22);
-            cuentaCorrienteToolStripMenuItem.Text = "Cuenta Corriente";
-            cuentaCorrienteToolStripMenuItem.Click += cuentaCorrienteToolStripMenuItem_Click;
-            // 
-            // clienteToolStripMenuItem
-            // 
-            clienteToolStripMenuItem.Name = "clienteToolStripMenuItem";
-            clienteToolStripMenuItem.Size = new Size(180, 22);
-            clienteToolStripMenuItem.Text = "Cliente";
             // 
             // VentanaPrincipal
             // 

@@ -2,6 +2,7 @@ using AccesoDatos.Entidades;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Articulo.Marca;
 using Presentacion.Core.Categoria;
+using Presentacion.Core.Cliente;
 using Presentacion.Core.CuentaCorriente;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
@@ -89,6 +90,12 @@ namespace Presentacion
         {
             var FCuentaCorriente = new FCuentaCorrienteConsulta();
             FCuentaCorriente.Show();
+        }
+
+        private void clienteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var FCliente = new FClienteConsulta();
+            FCliente.Show();
         }
     }
 }

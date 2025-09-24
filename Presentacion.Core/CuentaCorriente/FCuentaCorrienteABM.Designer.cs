@@ -140,8 +140,9 @@
             // DNI
             // 
             DNI.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            DNI.HeaderText = "DNI";
+            DNI.HeaderText = "Dni";
             DNI.Name = "DNI";
+            DNI.ReadOnly = true;
             // 
             // lblDni
             // 

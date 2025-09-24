@@ -27,6 +27,7 @@ namespace Servicios.LogicaNegocio.Cliente.DTO
         public DateTime? FechaBaja { get; set; } // Puede ser null si sigue siendo cliente
         public int Estado { get; set; } //Que tipos de estados puede tener un cliente?
         public string EstadoDescripcion { get; set; }
+        public long? CuentaCorrienteId { get; set; } // Puede ser null si no tiene cuenta corriente asociada
 
     }
 }
