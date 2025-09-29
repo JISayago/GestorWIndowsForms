@@ -33,7 +33,7 @@
             label1 = new Label();
             lblLimiteCuenta = new Label();
             lblFechaVencimiento = new Label();
-            chkbLimiteDeuda = new CheckBox();
+            chkLimiteDeuda = new CheckBox();
             txtNombreCC = new TextBox();
             txtLimiteDeuda = new TextBox();
             txtSaldo = new TextBox();
@@ -90,15 +90,16 @@
             lblFechaVencimiento.TabIndex = 5;
             lblFechaVencimiento.Text = "Fecha vencimiento";
             // 
-            // chkbLimiteDeuda
+            // chkLimiteDeuda
             // 
-            chkbLimiteDeuda.AutoSize = true;
-            chkbLimiteDeuda.Location = new Point(484, 184);
-            chkbLimiteDeuda.Name = "chkbLimiteDeuda";
-            chkbLimiteDeuda.Size = new Size(146, 19);
-            chkbLimiteDeuda.TabIndex = 7;
-            chkbLimiteDeuda.Text = "Limite de deuda activo";
-            chkbLimiteDeuda.UseVisualStyleBackColor = true;
+            chkLimiteDeuda.AutoSize = true;
+            chkLimiteDeuda.Location = new Point(484, 184);
+            chkLimiteDeuda.Name = "chkLimiteDeuda";
+            chkLimiteDeuda.Size = new Size(146, 19);
+            chkLimiteDeuda.TabIndex = 7;
+            chkLimiteDeuda.Text = "Limite de deuda activo";
+            chkLimiteDeuda.UseVisualStyleBackColor = true;
+            chkLimiteDeuda.CheckedChanged += chkbLimiteDeuda_CheckedChanged;
             // 
             // txtNombreCC
             // 
@@ -142,7 +143,6 @@
             DNI.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             DNI.HeaderText = "Dni";
             DNI.Name = "DNI";
-            DNI.ReadOnly = true;
             // 
             // lblDni
             // 
@@ -164,7 +164,7 @@
             Controls.Add(txtSaldo);
             Controls.Add(txtLimiteDeuda);
             Controls.Add(txtNombreCC);
-            Controls.Add(chkbLimiteDeuda);
+            Controls.Add(chkLimiteDeuda);
             Controls.Add(lblFechaVencimiento);
             Controls.Add(lblLimiteCuenta);
             Controls.Add(label1);
@@ -172,12 +172,13 @@
             Controls.Add(lblccorriente);
             Name = "FCuentaCorrienteABM";
             Text = "FCuentaCorrienteABM";
+            Load += FCuentaCorrienteABM_Load;
             Controls.SetChildIndex(lblccorriente, 0);
             Controls.SetChildIndex(lblSaldo, 0);
             Controls.SetChildIndex(label1, 0);
             Controls.SetChildIndex(lblLimiteCuenta, 0);
             Controls.SetChildIndex(lblFechaVencimiento, 0);
-            Controls.SetChildIndex(chkbLimiteDeuda, 0);
+            Controls.SetChildIndex(chkLimiteDeuda, 0);
             Controls.SetChildIndex(txtNombreCC, 0);
             Controls.SetChildIndex(txtLimiteDeuda, 0);
             Controls.SetChildIndex(txtSaldo, 0);
@@ -197,7 +198,7 @@
         private Label label1;
         private Label lblLimiteCuenta;
         private Label lblFechaVencimiento;
-        private CheckBox chkbLimiteDeuda;
+        private CheckBox chkLimiteDeuda;
         private TextBox txtNombreCC;
         private TextBox txtLimiteDeuda;
         private TextBox txtSaldo;

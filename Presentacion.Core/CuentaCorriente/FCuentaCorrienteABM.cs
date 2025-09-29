@@ -74,7 +74,7 @@ namespace Presentacion.Core.CuentaCorriente
             txtNombreCC.Text = cuentacorriente.NombreCuentaCorriente;
             txtSaldo.Text = cuentacorriente.Saldo.ToString(); // FIX: Assign the value as string
             dtpFechaVencimiento.Value = (DateTime)cuentacorriente.FechaVencimiento;
-            chkbLimiteDeuda.Checked = cuentacorriente.LimiteDeudaActivo;
+            chkLimiteDeuda.Checked = cuentacorriente.LimiteDeudaActivo;
             txtLimiteDeuda.Text = cuentacorriente.LimiteDeuda.ToString();
 
             dgvDni.DataSource = cuentacorriente.DniAutorizados.Select(x => new { DNI = x }).ToList();
@@ -97,7 +97,7 @@ namespace Presentacion.Core.CuentaCorriente
                 NombreCuentaCorriente = txtNombreCC.Text,
                 Saldo = Convert.ToDecimal(txtSaldo.Text),
                 FechaVencimiento = dtpFechaVencimiento.Value,
-                LimiteDeudaActivo = chkbLimiteDeuda.Checked,
+                LimiteDeudaActivo = chkLimiteDeuda.Checked,
                 LimiteDeuda = Convert.ToDecimal(txtLimiteDeuda.Text),
                 DniAutorizados = dgvDni.Rows
                                   .Cast<DataGridViewRow>()
@@ -166,7 +166,7 @@ namespace Presentacion.Core.CuentaCorriente
                     NombreCuentaCorriente = txtNombreCC.Text,
                     Saldo = Convert.ToDecimal(txtSaldo.Text),
                     FechaVencimiento = dtpFechaVencimiento.Value,
-                    LimiteDeudaActivo = chkbLimiteDeuda.Checked,
+                    LimiteDeudaActivo = chkLimiteDeuda.Checked,
                     LimiteDeuda = Convert.ToDecimal(txtLimiteDeuda.Text),
                     DniAutorizados = dgvDni.Rows.Cast<DataGridViewRow>()
                                       .Select(r => Convert.ToInt64(r.Cells["DNI"].Value))
@@ -191,6 +191,31 @@ namespace Presentacion.Core.CuentaCorriente
 
             }
             return false;
+        }
+
+        private void chkbLimiteDeuda_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkLimiteDeuda.Checked)
+            {
+                // Habilitar el textbox y darle foco
+                txtLimiteDeuda.Enabled = true;
+
+                // Si está vacío, poner valor base 0
+                if (string.IsNullOrWhiteSpace(txtLimiteDeuda.Text))
+                    txtLimiteDeuda.Text = "0";
+            }
+            else
+            {
+                // Deshabilitar el textbox y resetear a 0
+                txtLimiteDeuda.Enabled = false;
+                txtLimiteDeuda.Text = "0";
+            }
+        }
+
+        private void FCuentaCorrienteABM_Load(object sender, EventArgs e)
+        {
+            txtLimiteDeuda.Enabled = false;
+            txtLimiteDeuda.Text = "0";
         }
     }
 }

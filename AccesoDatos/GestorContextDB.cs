@@ -595,6 +595,9 @@ namespace AccesoDatos
                 entity.Property(cc => cc.CuentaCorrienteId)
                       .HasColumnName("CuentaCorrienteId")
                       .ValueGeneratedOnAdd();
+                entity.Property(cc => cc.ClienteId)
+                      .HasColumnName("ClienteId")
+                      .IsRequired();
                 entity.Property(cc => cc.NombreCuentaCorriente)
                       .HasColumnName("nombre_cuenta_corriente")
                       .HasMaxLength(100)
@@ -616,10 +619,10 @@ namespace AccesoDatos
                 entity.Property(cc => cc.EstaEliminado)
                       .HasColumnName("esta_eliminado")
                       .IsRequired();
-                // Relación uno a muchos con Cliente
-                entity.HasMany(cc => cc.Clientes)
+                // Relación uno a uno con Cliente
+                entity.HasOne(cc => cc.Cliente)
                       .WithOne(c => c.CuentaCorriente)
-                      .HasForeignKey(c => c.CuentaCorrienteId)
+                      .HasForeignKey<Cliente>(c => c.CuentaCorrienteId)
                       .OnDelete(DeleteBehavior.Restrict);
                 // Relación uno a muchos con MovimientoCuentaCorriente
                 entity.HasMany(cc => cc.MovimientosCuentaCorriente)
@@ -641,8 +644,7 @@ namespace AccesoDatos
                 entity.Property(c => c.PersonaId)
                       .HasColumnName("PersonaId");
                 entity.Property(c => c.CuentaCorrienteId)
-                      .HasColumnName("CuentaCorrienteId")
-                      .IsRequired();
+                      .HasColumnName("CuentaCorrienteId");
                 entity.Property(c => c.NumeroCliente)
                       .HasColumnName("numero_cliente")
                       .HasMaxLength(50)
@@ -665,10 +667,10 @@ namespace AccesoDatos
                       .WithOne()
                       .HasForeignKey<Cliente>(c => c.PersonaId)
                       .OnDelete(DeleteBehavior.Restrict);
-                // Relación muchos a uno con CuentaCorriente
+                // Relación uno a uno con CuentaCorriente
                 entity.HasOne(c => c.CuentaCorriente)
-                      .WithMany(cc => cc.Clientes)
-                      .HasForeignKey(c => c.CuentaCorrienteId)
+                      .WithOne(cc => cc.Cliente)
+                      .HasForeignKey<CuentaCorriente>(c => c.ClienteId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -719,11 +721,6 @@ namespace AccesoDatos
                 entity.Property(cca => cca.Dni)
                       .HasColumnName("dni")
                       .IsRequired();
-                /*Relación muchos a uno con CuentaCorriente
-                entity.HasOne(cca => cca.CuentaCorriente)
-                      .WithMany(cc => cc.CuentaCorrienteAutorizado)
-                      .HasForeignKey(cca => cca.CuentaCorrienteId)
-                      .OnDelete(DeleteBehavior.Restrict);*/
             });
         }
     }

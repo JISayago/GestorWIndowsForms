@@ -11,6 +11,7 @@ namespace AccesoDatos.Entidades
     {
         [Key]
         public long CuentaCorrienteId { get; set; }
+        public long ClienteId { get; set; }
         public string NombreCuentaCorriente { get; set; } //N
         public decimal Saldo { get; set; } // puede ser negativo (ej: -500 = debe 500)
         public decimal LimiteDeuda { get; set; } // cuánto puede deber como máximo
@@ -19,8 +20,7 @@ namespace AccesoDatos.Entidades
         public DateTime? FechaVencimiento { get; set; } //venciemiento de la cuenta corriente
         public int EstadoCuentaCorriente { get; set; } = 0; // 
 
-
-        public ICollection<Cliente> Clientes { get; set; }
+        public Cliente Cliente { get; set; } 
         public ICollection<MovimientoCuentaCorriente> MovimientosCuentaCorriente { get; set; }
         public ICollection<CuentaCorrienteAutorizado> CuentaCorrienteAutorizado { get; set; } // Dni autorizados a usar la cuenta corriente
     }
