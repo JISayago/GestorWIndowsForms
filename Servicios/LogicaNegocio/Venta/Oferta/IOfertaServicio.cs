@@ -11,6 +11,7 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
     public interface IOfertaServicio
     {
         public EstadoOperacion Insertar(OfertaDTO dto);
-       // public EstadoOperacion Modificar(long ofertaId, OfertaDTO dto);
+        public List<OfertaDTO> ObtenerOfertas(string cadenaBuscar);
+        public OfertaDTO ObtenerOfertaPorId(long idOFerta);
     }
 }

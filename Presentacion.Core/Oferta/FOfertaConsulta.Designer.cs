@@ -28,12 +28,40 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "FOfertaConsulta";
+            btnSeleccionarParaVenta = new Button();
+            panel1.SuspendLayout();
+            SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(btnSeleccionarParaVenta);
+            panel1.Controls.SetChildIndex(btnSeleccionarParaVenta, 0);
+            // 
+            // btnSeleccionarParaVenta
+            // 
+            btnSeleccionarParaVenta.Location = new Point(3, 241);
+            btnSeleccionarParaVenta.Name = "btnSeleccionarParaVenta";
+            btnSeleccionarParaVenta.Size = new Size(75, 85);
+            btnSeleccionarParaVenta.TabIndex = 1;
+            btnSeleccionarParaVenta.Text = "Seleccionar para venta";
+            btnSeleccionarParaVenta.UseVisualStyleBackColor = true;
+            btnSeleccionarParaVenta.Click += btnSeleccionarParaVenta_Click;
+            // 
+            // FOfertaConsulta
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 561);
+            Name = "FOfertaConsulta";
+            Text = "FOfertaConsulta";
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Button btnSeleccionarParaVenta;
     }
 }

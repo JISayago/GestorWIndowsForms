@@ -14,6 +14,94 @@ namespace Servicios.LogicaNegocio.Producto
 {
     public class ProductoServicio : IProductoServicio
     {
+        public ProductosEnOfertaDescuentosDTO? ControlarProductoEstaEnOfertaPorId(long productoId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            // Intentamos buscar primero la oferta (con producto incluido)
+            var prodOfer = context.ProductosEnOfertasDescuentos
+                .AsNoTracking()
+                .Include(x => x.Producto)
+                .Include(x => x.Oferta)
+                .FirstOrDefault(x => x.ProductoId == productoId);
+
+            // Si no hay oferta, buscamos el producto directo
+            var producto = prodOfer?.Producto
+                           ?? context.Productos
+                           .Include(x => x.Marca)
+                           .Include(x => x.Rubro)
+                           .Include(x => x.CategoriasProductos)
+                                    .AsNoTracking()
+                                    .FirstOrDefault(p => p.ProductoId == productoId);
+
+            var oferta = prodOfer?.Oferta ?? context.OfertasDescuentos
+                .Include(o => o.Marca)
+                .Include(o => o.Rubro)
+                .Include(o => o.Categoria)
+                .AsNoTracking()
+                .FirstOrDefault(o => o.OfertaDescuentoId == prodOfer.OfertaId);
+
+            if (producto == null) return null;
+            if (oferta == null) return null;
+
+            // Armamos el DTO en un solo lugar
+            var dto = new ProductosEnOfertaDescuentosDTO
+            {
+                ProductoOfertaId = prodOfer.ProductoId, 
+                Cantidad = prodOfer.Cantidad,
+                PrecioEnOferta = prodOfer.PrecioConDescuento,
+                Oferta =  new OfertaDTO
+                {
+                    OfertaDescuentoId = oferta.OfertaDescuentoId,
+                    Descripcion = oferta.Descripcion,
+                    PrecioFinal = oferta.PrecioFinal,
+                    PrecioOriginal = oferta.PrecioOriginal,
+                    DescuentoTotalFinal = oferta.DescuentoTotalFinal,
+                    PorcentajeDescuento = oferta.PorcentajeDescuento,
+                    FechaInicio = oferta.FechaInicio,
+                    FechaFin = oferta.FechaFin,
+                    CantidadProductosDentroOferta = oferta.CantidadProductosDentroOferta,
+                    EstaActiva = oferta.EstaActiva,
+                    EsUnSoloProducto = oferta.EsUnSoloProducto,
+                    Detalle = oferta.Detalle,
+                    Codigo = oferta.Codigo,
+                    esOfertaPorGrupo = oferta.esOfertaPorGrupo,
+                    TieneLimiteDeStock = oferta.TieneLimiteDeStock,
+                    CantidadLimiteDeStock = oferta.CantidadLimiteDeStock,
+                    IdMarca = oferta.IdMarca,
+                    IdRubro = oferta.IdRubro,
+                    IdCategoria = oferta.IdCategoria,
+                    GrupoNombre = oferta.GrupoNombre,
+                },
+                Producto = new ProductoDTO
+                {
+                    ProductoId = producto.ProductoId,
+                    IdMarca = producto.IdMarca,
+                    IdRubro = producto.IdRubro,
+                    Stock = producto.Stock,
+                    PrecioCosto = producto.PrecioCosto,
+                    PrecioVenta = producto.PrecioVenta,
+                    Descripcion = producto.Descripcion,
+                    EstaEliminado = producto.EstaEliminado,
+                    Estado = producto.Estado,
+                    Medida = producto.Medida,
+                    UnidadMedida = producto.UnidadMedida,
+                    Codigo = producto.Codigo,
+                    CodigoBarra = producto.CodigoBarra,
+                    IvaIncluidoPrecioFinal = producto.IvaIncluidoPrecioFinal,
+                    MarcaNombre = producto.Marca?.Nombre,
+                    RubroNombre = producto.Rubro?.Nombre,
+                    EsFraccionable = producto.EsFraccionable,
+                    CategoriaIds = producto.CategoriasProductos?.Select(c => c.IdCategoria).ToList() ?? new List<long>()
+                }
+            };
+
+            return dto;
+        }
+
+
+
+
         public EstadoOperacion Eliminar(long productoId)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -247,14 +335,18 @@ namespace Servicios.LogicaNegocio.Producto
             return producto;
         }
 
-        public IEnumerable<ProductosEnOfertaDescuentosDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(
-          long? MarcaId = null, long? RubroId = null, long? CategoriaId = null)
+        public IEnumerable<ProductoDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(
+     long? MarcaId = null, long? RubroId = null, long? CategoriaId = null)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
+            // Partimos de la entidad Productos (solo productos, sin considerar tablas de ofertas)
             var query = context.Productos
                 .AsNoTracking()
-                .Where(p => !p.EstaEliminado); 
+                .Include(p => p.Marca)
+                .Include(p => p.Rubro)
+                .Include(p => p.CategoriasProductos)
+                .Where(p => !p.EstaEliminado); // solo productos activos
 
             if (MarcaId.HasValue)
                 query = query.Where(p => p.IdMarca == MarcaId.Value);
@@ -265,20 +357,35 @@ namespace Servicios.LogicaNegocio.Producto
             if (CategoriaId.HasValue)
                 query = query.Where(p => p.CategoriasProductos.Any(cp => cp.IdCategoria == CategoriaId.Value));
 
+            // Proyección directa a DTO
             var productos = query
-                .Select(p => new ProductosEnOfertaDescuentosDTO
+                .Select(p => new ProductoDTO
                 {
-                    ProductoOfertaId = p.ProductoId,
-                    Cantidad = p.Stock,
+                    ProductoId = p.ProductoId,
+                    IdMarca = p.IdMarca,
+                    IdRubro = p.IdRubro,
+                    Stock = p.Stock,
+                    PrecioCosto = p.PrecioCosto,
+                    PrecioVenta = p.PrecioVenta,
+                    Descripcion = p.Descripcion,
+                    EstaEliminado = p.EstaEliminado,
+                    Estado = p.Estado,
+                    Medida = p.Medida,
+                    UnidadMedida = p.UnidadMedida,
                     Codigo = p.Codigo,
                     CodigoBarra = p.CodigoBarra,
-                    PrecioVenta = p.PrecioVenta,
-                    PrecioCosto = p.PrecioCosto,
-                    Descripcion = p.Descripcion
+                    IvaIncluidoPrecioFinal = p.IvaIncluidoPrecioFinal,
+                    MarcaNombre = p.Marca != null ? p.Marca.Nombre : null,
+                    RubroNombre = p.Rubro != null ? p.Rubro.Nombre : null,
+                    EsFraccionable = p.EsFraccionable,
+                    CategoriaIds = p.CategoriasProductos != null
+                        ? p.CategoriasProductos.Select(cp => cp.IdCategoria).ToList()
+                        : new List<long>()
                 })
                 .ToList();
 
             return productos;
         }
+
     }
 }

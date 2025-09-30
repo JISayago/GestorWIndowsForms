@@ -179,9 +179,9 @@
             cbxDescuentoPorcentaje.AutoSize = true;
             cbxDescuentoPorcentaje.Location = new Point(710, 754);
             cbxDescuentoPorcentaje.Name = "cbxDescuentoPorcentaje";
-            cbxDescuentoPorcentaje.Size = new Size(201, 19);
+            cbxDescuentoPorcentaje.Size = new Size(205, 19);
             cbxDescuentoPorcentaje.TabIndex = 39;
-            cbxDescuentoPorcentaje.Text = "Precio de la Oferta/Descuento ($)";
+            cbxDescuentoPorcentaje.Text = "Precio de la Oferta/Descuento (%)";
             cbxDescuentoPorcentaje.UseVisualStyleBackColor = true;
             // 
             // cbxDescuentoPesos
@@ -346,10 +346,10 @@
             dgvProductos.AllowUserToResizeRows = false;
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductos.EditMode = DataGridViewEditMode.EditProgrammatically;
-            dgvProductos.Location = new Point(83, 287);
+            dgvProductos.Location = new Point(12, 287);
             dgvProductos.MultiSelect = false;
             dgvProductos.Name = "dgvProductos";
-            dgvProductos.Size = new Size(602, 155);
+            dgvProductos.Size = new Size(735, 155);
             dgvProductos.TabIndex = 69;
             dgvProductos.RowEnter += dgvProductos_RowEnter;
             // 
@@ -401,7 +401,7 @@
             dgvProductosQuitados.Location = new Point(756, 287);
             dgvProductosQuitados.MultiSelect = false;
             dgvProductosQuitados.Name = "dgvProductosQuitados";
-            dgvProductosQuitados.Size = new Size(602, 155);
+            dgvProductosQuitados.Size = new Size(803, 155);
             dgvProductosQuitados.TabIndex = 75;
             // 
             // lblNumeroProductoQuitados
@@ -432,6 +432,7 @@
             cbxEstaActiva.TabIndex = 78;
             cbxEstaActiva.Text = "Oferta Activa";
             cbxEstaActiva.UseVisualStyleBackColor = true;
+            cbxEstaActiva.CheckedChanged += cbxEstaActiva_CheckedChanged;
             // 
             // cbxLimiteCumplirStock
             // 

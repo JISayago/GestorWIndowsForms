@@ -1,4 +1,6 @@
 ﻿using Microsoft.Identity.Client;
+using Servicios.LogicaNegocio.Articulo.Marca.DTO;
+using Servicios.LogicaNegocio.Producto.Rubro.DTO;
 using System;
 using System.Collections;
 using System.Collections.Generic;

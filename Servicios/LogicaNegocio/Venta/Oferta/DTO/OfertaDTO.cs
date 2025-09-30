@@ -1,6 +1,7 @@
 ﻿using AccesoDatos.Entidades;
 using Servicios.LogicaNegocio.Articulo.Categoria.DTO;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
+using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Producto.Rubro.DTO;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,6 @@ namespace Servicios.LogicaNegocio.Venta.Oferta.DTO
         public RubroDTO? Rubro { get; set; }
         public CategoriaDTO? Categoria { get; set; }
 
-        public ICollection<ProductosEnOfertaDescuentosDTO> Productos { get; set; } = new List<ProductosEnOfertaDescuentosDTO>();
+        public ICollection<ProductoDTO> Productos { get; set; } = new List<ProductoDTO>();
     }
 }

@@ -1,12 +1,15 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using AccesoDatos.Entidades;
+using Microsoft.IdentityModel.Tokens;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Empleado;
+using Presentacion.Core.Oferta;
 using Presentacion.Core.Producto;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Venta;
 using Servicios.LogicaNegocio.Venta.DTO;
+using Servicios.LogicaNegocio.Venta.Oferta;
 using System.ComponentModel;
 
 namespace Presentacion.Core.Venta
@@ -15,6 +18,7 @@ namespace Presentacion.Core.Venta
     {
         private readonly IVentaServicio _ventaServicio;
         private readonly IEmpleadoServicio _empleadoServicio;
+        private readonly IOfertaServicio _ofertaServicio;
         private long idVendedor = 0;
         private VentaDTO _venta;
         private bool finalizarVenta = false;
@@ -34,6 +38,7 @@ namespace Presentacion.Core.Venta
         private BindingList<ItemVentaDTO> itemsVenta;
         private List<FormaPago> tipoDePagosVenta;
         private bool _actualizandoGrilla = false;
+        private bool cargarOferta = false;
 
         public FVenta(long usuarioLogeadoID)
         {
@@ -48,7 +53,7 @@ namespace Presentacion.Core.Venta
                 pagoParcial = false,
                 saldoPendiente = 0.00m,
             };
-
+            _ofertaServicio = new OfertaServicio();
             _usuarioLogeadoID = usuarioLogeadoID;
 
             // Inicializamos itemsVenta como BindingList
@@ -132,7 +137,7 @@ namespace Presentacion.Core.Venta
                     var idEmpleado = fEmpleado.empleadoSeleccionado.Value;
 
                     var vendedor = new EmpleadoServicio().ObtenerEmpleadoPorId(idEmpleado);
-                    idVendedor = vendedor.PersonaId; 
+                    idVendedor = vendedor.PersonaId;
 
                     txtVendedorAsignado.Text = $"{vendedor.Username} ({vendedor.Nombre} {vendedor.Apellido})";
 
@@ -192,7 +197,7 @@ namespace Presentacion.Core.Venta
                 {
                     _cuerpoDetalleVenta.pagoParcial = true;
                 }
-             
+
                 txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoTP();
 
                 if (tipoPagosSeleccionados.Count > 0)
@@ -234,7 +239,7 @@ namespace Presentacion.Core.Venta
 
         private void btnCargarProducto_Click(object sender, EventArgs e)
         {
-            if (!cbxEnOferta.Checked)
+            if (!cargarOferta)
             {
                 var fProductos = new FProductoConsulta(true);
 
@@ -243,8 +248,9 @@ namespace Presentacion.Core.Venta
 
                     var idProducto = fProductos.productoSeleccionado.Value;
 
-                    var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
-                    if (producto == null) return;
+                    //var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
+                    var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
+                    if (ofertaDesc == null) return;
 
                     var fCantidad = new FCantidadItem();
                     if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
@@ -252,12 +258,13 @@ namespace Presentacion.Core.Venta
                         var cantidad = fCantidad.cantidad;
                         var itemVenta = new ItemVentaDTO
                         {
-                            ItemId = producto.ProductoId,
-                            Descripcion = producto.Descripcion,
-                            PrecioVenta = producto.PrecioVenta,
+                            ItemId = ofertaDesc.Producto.ProductoId,
+                            Descripcion = ofertaDesc.Producto.Descripcion,
+                            PrecioVenta = ofertaDesc.Producto.PrecioVenta,
+                            PrecioOferta = ofertaDesc.PrecioEnOferta,
                             Cantidad = cantidad,
-                            Medida = producto.Medida,
-                            UnidadMedida = producto.UnidadMedida,
+                            Medida = ofertaDesc.Producto.Medida,
+                            UnidadMedida = ofertaDesc.Producto.UnidadMedida,
                             EsOferta = false
                         };
 
@@ -268,13 +275,61 @@ namespace Presentacion.Core.Venta
                     }
                 }
             }
+            else
+            {
+                var Fofertas = new FOfertaConsulta(true);
+
+                if (Fofertas.ShowDialog() == DialogResult.OK && Fofertas.ofertaSeleccionada.HasValue)
+                {
+                    var idOferta = Fofertas.ofertaSeleccionada.Value;
+
+                    var Oferta = _ofertaServicio.ObtenerOfertaPorId(idOferta);
+                    var OfertaVenta = new ItemVentaDTO
+                    {
+                        ItemId = Oferta.OfertaDescuentoId,
+                        Descripcion = Oferta.Descripcion,
+                        PrecioVenta = Oferta.PrecioOriginal,
+                        PrecioOferta = Oferta.PrecioFinal,
+                        Cantidad = (decimal)Oferta.CantidadProductosDentroOferta,
+                        Medida = string.Empty,
+                        UnidadMedida = string.Empty,
+                        EsOferta = true
+                    };
+
+                    itemsVenta.Add(OfertaVenta);  // Solo agregamos a la BindingList
+                    txtProductoCargado.Text = $"{OfertaVenta.Descripcion}";
+                    // No necesitas reasignar DataSource ni resetear grilla acá
+                    CalcularTotal();
+
+                }
+               
+            }
         }
         private void CalcularTotal()
         {
             if (dgvProductos.RowCount > 0)
             {
-                _subTotalVenta = itemsVenta.Sum(p => p.PrecioVenta * p.Cantidad);
+                decimal total = 0m;
 
+                foreach (var item in itemsVenta)
+                {
+                    decimal subtotal;
+
+                    if (item.EsOferta)
+                    {
+                        // Caso oferta → el precio ya es total de la oferta, no depende de Cantidad
+                        subtotal = item.PrecioOferta;
+                    }
+                    else
+                    {
+                        // Caso producto normal → precio * cantidad
+                        subtotal = item.PrecioVenta * item.Cantidad;
+                    }
+
+                    total += subtotal;
+                }
+
+                _subTotalVenta = total;
             }
             else
             {
@@ -329,6 +384,10 @@ namespace Presentacion.Core.Venta
             grilla.Columns["PrecioVenta"].Visible = true;
             grilla.Columns["PrecioVenta"].Width = 100;
             grilla.Columns["PrecioVenta"].DisplayIndex = 5;
+
+            grilla.Columns["PrecioOferta"].Visible = true;
+            grilla.Columns["PrecioOferta"].Width = 100;
+            grilla.Columns["PrecioOferta"].DisplayIndex = 5;
 
 
         }
@@ -432,7 +491,11 @@ namespace Presentacion.Core.Venta
             // tu lógica...
         }
 
-
+        private void cbxEnOferta_CheckedChanged(object sender, EventArgs e)
+        {
+            cargarOferta = cbxEnOferta.Checked;
+            btnCargarProducto.Text = cargarOferta ? "Cargar Oferta" : "Cargar Producto";
+        }
     }
 
 }

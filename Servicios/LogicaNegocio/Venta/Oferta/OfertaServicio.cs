@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Servicios.LogicaNegocio.Producto.DTO;
 
 namespace Servicios.LogicaNegocio.Venta.Oferta
 {
@@ -100,15 +101,16 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 {
                     var resultadoProductos = CrearProductosEnOferta(
                         context,
-                        ofertaId: ofertaIdGenerado,
-                        dto.Productos,
+                        ofertaId: ofertaIdGenerado,         // <-- pasar el id generado
+                        ofertaDto: dto,
+                        productosDto: dto.Productos,
                         cantidadLimiteDeStock: dto.CantidadLimiteDeStock
                     );
 
                     if (!resultadoProductos.Exitoso)
                     {
                         transaction.Rollback();
-                        return resultadoProductos; 
+                        return resultadoProductos;
                     }
                 }
 
@@ -124,14 +126,14 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
             catch (Exception ex)
             {
                 transaction.Rollback();
-                return new EstadoOperacion { Exitoso = false, Mensaje = "Error al crear la oferta:  aqui" + ex.Message };
+                return new EstadoOperacion { Exitoso = false, Mensaje = "Error al crear la oferta: " + ex.Message };
             }
         }
-
         private EstadoOperacion CrearProductosEnOferta(
             GestorContextDB context,
             long ofertaId,
-            ICollection<ProductosEnOfertaDescuentosDTO> productosDto,
+            OfertaDTO ofertaDto,
+            ICollection<ProductoDTO> productosDto,
             decimal? cantidadLimiteDeStock = null
         )
         {
@@ -140,22 +142,98 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 return new EstadoOperacion { Exitoso = true, Mensaje = "No hay productos para agregar." };
             }
 
+            // Asegurar porcentaje (si es null lo tratamos como 0)
+            var porcentaje = ofertaDto.PorcentajeDescuento ?? 0m;
+
             var entidadesHijas = productosDto.Select(p => new ProductosEnOfertaDescuentos
             {
                 OfertaId = ofertaId,
-                ProductoId = p.ProductoOfertaId,
-                Cantidad = p.Cantidad,
-                CantidadVendidaPorLimite = 0.0m, 
+                ProductoId = p.ProductoId,
+                Cantidad = 0.0m,
+                CantidadVendidaPorLimite = 0.0m,//agregart el limite segun corresponda
                 PrecioOrginal = p.PrecioVenta,
-                PrecioConDescuento = 0.0m
+                PrecioConDescuento = p.PrecioVenta * (1 - (porcentaje / 100m))
             }).ToList();
 
-            // Insertar las filas hijas
             context.Set<ProductosEnOfertaDescuentos>().AddRange(entidadesHijas);
             context.SaveChanges();
 
             return new EstadoOperacion { Exitoso = true, Mensaje = "Productos en oferta creados correctamente." };
         }
+        public List<OfertaDTO> ObtenerOfertas(string cadenaBuscar)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var ofertas = context.OfertasDescuentos
+                .Where(o => string.IsNullOrEmpty(cadenaBuscar) || o.Descripcion.Contains(cadenaBuscar) || o.Codigo.Contains(cadenaBuscar))
+                .Include(o => o.Productos)
+                .ToList()
+                .Select(x => new OfertaDTO
+                {
+                    OfertaDescuentoId = x.OfertaDescuentoId,
+                    Descripcion = x.Descripcion,
+                    PrecioFinal = x.PrecioFinal,
+                    PrecioOriginal = x.PrecioOriginal,
+                    DescuentoTotalFinal = x.DescuentoTotalFinal,
+                    PorcentajeDescuento = x.PorcentajeDescuento,
+                    FechaInicio = x.FechaInicio,
+                    FechaFin = x.FechaFin,
+                    CantidadProductosDentroOferta = x.CantidadProductosDentroOferta,
+                    EstaActiva = x.EstaActiva,
+                    EsUnSoloProducto = x.EsUnSoloProducto,
+                    Detalle = x.Detalle,
+                    Codigo = x.Codigo,
+                    esOfertaPorGrupo = x.esOfertaPorGrupo,
+                    TieneLimiteDeStock = x.TieneLimiteDeStock,
+                    CantidadLimiteDeStock = x.CantidadLimiteDeStock,
+                    IdMarca = x.IdMarca,
+                    IdRubro = x.IdRubro,
+                    IdCategoria = x.IdCategoria,
+                    GrupoNombre = x.GrupoNombre,
+                    Productos = x.Productos.Select(p => new ProductoDTO
+                    {
+                        ProductoId = p.ProductoId,
+                        PrecioVenta = p.PrecioOrginal
+                    }).ToList()
+                })
+            .ToList();
+            return ofertas;
+        }
 
+        public OfertaDTO ObtenerOfertaPorId(long idOFerta)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var oferta = context.OfertasDescuentos
+                .Include(o => o.Productos)
+                .Where(o => o.OfertaDescuentoId == idOFerta)
+                .Select(x => new OfertaDTO
+                {
+                    OfertaDescuentoId = x.OfertaDescuentoId,
+                    Descripcion = x.Descripcion,
+                    PrecioFinal = x.PrecioFinal,
+                    PrecioOriginal = x.PrecioOriginal,
+                    DescuentoTotalFinal = x.DescuentoTotalFinal,
+                    PorcentajeDescuento = x.PorcentajeDescuento,
+                    FechaInicio = x.FechaInicio,
+                    FechaFin = x.FechaFin,
+                    CantidadProductosDentroOferta = x.CantidadProductosDentroOferta,
+                    EstaActiva = x.EstaActiva,
+                    EsUnSoloProducto = x.EsUnSoloProducto,
+                    Detalle = x.Detalle,
+                    Codigo = x.Codigo,
+                    esOfertaPorGrupo = x.esOfertaPorGrupo,
+                    TieneLimiteDeStock = x.TieneLimiteDeStock,
+                    CantidadLimiteDeStock = x.CantidadLimiteDeStock,
+                    IdMarca = x.IdMarca,
+                    IdRubro = x.IdRubro,
+                    IdCategoria = x.IdCategoria,
+                    GrupoNombre = x.GrupoNombre,
+                    Productos = x.Productos.Select(p => new ProductoDTO
+                    {
+                        ProductoId = p.ProductoId,
+                        PrecioVenta = p.PrecioOrginal
+                    }).ToList()
+                }).FirstOrDefault();
+            return oferta;
+        }
     }
 }

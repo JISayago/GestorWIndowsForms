@@ -8,6 +8,7 @@ using Servicios.LogicaNegocio.Articulo.Categoria;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using Servicios.LogicaNegocio.Empleado.Rol.DTO;
 using Servicios.LogicaNegocio.Producto;
+using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Producto.Rubro;
 using Servicios.LogicaNegocio.Venta.Oferta;
 using Servicios.LogicaNegocio.Venta.Oferta.DTO;
@@ -52,9 +53,10 @@ namespace Presentacion.Core.Oferta
         private long? _productoId;
         private string _descripcion = "Oferta Compuesta: filtrado";
         private decimal cantidadTotalEnOferta = 0.0m;
+        private decimal cantidadTotalFueraOferta = 0.0m;
 
-        private BindingList<ProductosEnOfertaDescuentosDTO> _productosOfertaDTO;
-        private BindingList<ProductosEnOfertaDescuentosDTO> _productosOfertaDTOQuitarDeOferta;
+        private BindingList<ProductoDTO> _productosParaOfertaDTO;
+        private BindingList<ProductoDTO> _productosParaQuitarDeOfertaDTO;
 
         public FOfertaGrupoABM(TipoOferta tipoOferta)
         {
@@ -128,14 +130,17 @@ namespace Presentacion.Core.Oferta
         {
             dgvProductos.AllowUserToAddRows = false;
             dgvProductosQuitados.AllowUserToAddRows = false;
-            _productosOfertaDTO = new BindingList<ProductosEnOfertaDescuentosDTO>();
-            _productosOfertaDTOQuitarDeOferta = new BindingList<ProductosEnOfertaDescuentosDTO>();
+            _productosParaOfertaDTO = new BindingList<ProductoDTO>();
+            _productosParaQuitarDeOfertaDTO = new BindingList<ProductoDTO>();
             dtpFechaInicio.Value = DateTime.Now;
             dtpFechaFin.Value = DateTime.Now.AddDays(1);
             _fechaInicio = dtpFechaInicio.Value;
             _fechaFin = dtpFechaFin.Value;
+            lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
+            lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
             ActualizarGrillas();
             ResetearGrillas(dgvProductos, dgvProductosQuitados);
+
         }
 
         private void btnCargarGrupoRubro_Click(object sender, EventArgs e)
@@ -183,9 +188,16 @@ namespace Presentacion.Core.Oferta
             MessageBox.Show($"marcaid: {_marcaId}");
             MessageBox.Show($"rubroid: {_rubroId}");
             MessageBox.Show($"categoriaid: {_categoriaId}");
-            var productos = _productoServicio.ObtenerProductosPorMarcaRubroCategoriaParaOferta(_marcaId, _rubroId, _categoriaId);
-            _productosOfertaDTO = new BindingList<ProductosEnOfertaDescuentosDTO>(productos.ToList());
-            dgvProductos.DataSource = _productosOfertaDTO;
+            var productosOfertasDto = _productoServicio.ObtenerProductosPorMarcaRubroCategoriaParaOferta(_marcaId, _rubroId, _categoriaId);
+
+            MessageBox.Show($"productosOfertasDto: {productosOfertasDto.Count()}");
+
+            _productosParaOfertaDTO = new BindingList<ProductoDTO>(productosOfertasDto.ToList());
+            dgvProductos.DataSource = _productosParaOfertaDTO;
+            cantidadTotalEnOferta = _productosParaOfertaDTO.Count();
+            cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO.Count();
+            lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
+            lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
 
             _descripcion = $"({_descripcion} M-{_marcaN}C-{_categoriaN}) + cant{cantidadTotalEnOferta}";
             txtDescripcion.Text = _descripcion;
@@ -203,66 +215,70 @@ namespace Presentacion.Core.Oferta
 
         private void ResetearGrillas(DataGridView grilaProductosOferta, DataGridView grillaProductosQuitados)
         {
-            //deberia crear un itemOferta
             for (int i = 0; i < grilaProductosOferta.ColumnCount; i++)
             {
                 grilaProductosOferta.Columns[i].Visible = false;
+                grillaProductosQuitados.Columns[i].Visible = false;
             }
-            grilaProductosOferta.Columns["ProductoOfertaId"].Visible = false;
-            grilaProductosOferta.Columns["ProductoOfertaId"].DisplayIndex = 0;
+            //dentro de la oferta
+            grilaProductosOferta.Columns["ProductoId"].Visible = false;
+            grilaProductosOferta.Columns["ProductoId"].DisplayIndex = 0;
 
             grilaProductosOferta.Columns["Descripcion"].Visible = true;
             grilaProductosOferta.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             grilaProductosOferta.Columns["Descripcion"].DisplayIndex = 1;
+            grilaProductosOferta.Columns["Descripcion"].HeaderText = "Descripción";
 
-            grilaProductosOferta.Columns["Cantidad"].Visible = true;
-            grilaProductosOferta.Columns["Cantidad"].Width = 100;
-            grilaProductosOferta.Columns["Cantidad"].DisplayIndex = 2;
+            grilaProductosOferta.Columns["Stock"].Visible = true;
+            grilaProductosOferta.Columns["Stock"].Width = 100;
+            grilaProductosOferta.Columns["Stock"].DisplayIndex = 2;
+            grilaProductosOferta.Columns["Stock"].HeaderText = "Cantidad disponible";
+
             grilaProductosOferta.Columns["Codigo"].Visible = true;
             grilaProductosOferta.Columns["Codigo"].Width = 100;
-            grilaProductosOferta.Columns["Codigo"].DisplayIndex = 3;
-
-            /*grilla.Columns["Cantidad"].Visible = true;
-            grilla.Columns["Cantidad"].Width = 100;
-            grilla.Columns["Cantidad"].DisplayIndex = 4;*/
+            grilaProductosOferta.Columns["Codigo"].DisplayIndex = 2;
+            grilaProductosOferta.Columns["Codigo"].HeaderText = "Código";
 
             grilaProductosOferta.Columns["PrecioVenta"].Visible = true;
             grilaProductosOferta.Columns["PrecioVenta"].Width = 100;
             grilaProductosOferta.Columns["PrecioVenta"].DisplayIndex = 5;
+            grilaProductosOferta.Columns["PrecioVenta"].HeaderText = "Precio Venta";
+
             grilaProductosOferta.Columns["PrecioCosto"].Visible = true;
             grilaProductosOferta.Columns["PrecioCosto"].Width = 100;
             grilaProductosOferta.Columns["PrecioCosto"].DisplayIndex = 5;
-            if (_productoId.HasValue)
-            {
-                for (int i = 0; i < grillaProductosQuitados.ColumnCount; i++)
-                {
-                    grillaProductosQuitados.Columns[i].Visible = false;
-                }
-                grillaProductosQuitados.Columns["ProductoOfertaId"].Visible = false;
-                grillaProductosQuitados.Columns["ProductoOfertaId"].DisplayIndex = 0;
+            grilaProductosOferta.Columns["PrecioCosto"].HeaderText = "Precio Costo";
 
-                grillaProductosQuitados.Columns["Descripcion"].Visible = true;
-                grillaProductosQuitados.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                grillaProductosQuitados.Columns["Descripcion"].DisplayIndex = 1;
+            //quitados de la oferta
 
-                grillaProductosQuitados.Columns["Cantidad"].Visible = true;
-                grillaProductosQuitados.Columns["Cantidad"].Width = 100;
-                grillaProductosQuitados.Columns["Cantidad"].DisplayIndex = 2;
-                grillaProductosQuitados.Columns["Codigo"].Visible = true;
-                grillaProductosQuitados.Columns["Codigo"].Width = 100;
-                grillaProductosQuitados.Columns["Codigo"].DisplayIndex = 3;
 
-                /*grilla.Columns["Cantidad"].Visible = true;
-                grilla.Columns["Cantidad"].Width = 100;
-                grilla.Columns["Cantidad"].DisplayIndex = 4;*/
+            grillaProductosQuitados.Columns["ProductoId"].Visible = false;
+            grillaProductosQuitados.Columns["ProductoId"].DisplayIndex = 0;
 
-                grillaProductosQuitados.Columns["PrecioVenta"].Visible = true;
-                grillaProductosQuitados.Columns["PrecioVenta"].Width = 100;
-                grillaProductosQuitados.Columns["PrecioVenta"].DisplayIndex = 5;
-                grillaProductosQuitados.Columns["PrecioCosto"].Visible = true;
-                grillaProductosQuitados.Columns["PrecioCosto"].Width = 100;
-                grillaProductosQuitados.Columns["PrecioCosto"].DisplayIndex = 5;
-            }
+            grillaProductosQuitados.Columns["Descripcion"].Visible = true;
+            grillaProductosQuitados.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            grillaProductosQuitados.Columns["Descripcion"].DisplayIndex = 1;
+            grillaProductosQuitados.Columns["Descripcion"].HeaderText = "Descripción";
+
+            grillaProductosQuitados.Columns["Stock"].Visible = true;
+            grillaProductosQuitados.Columns["Stock"].Width = 100;
+            grillaProductosQuitados.Columns["Stock"].DisplayIndex = 2;
+            grillaProductosQuitados.Columns["Stock"].HeaderText = "Cantidad disponible";
+
+            grillaProductosQuitados.Columns["Codigo"].Visible = true;
+            grillaProductosQuitados.Columns["Codigo"].Width = 100;
+            grillaProductosQuitados.Columns["Codigo"].DisplayIndex = 2;
+            grillaProductosQuitados.Columns["Codigo"].HeaderText = "Código";
+
+            grillaProductosQuitados.Columns["PrecioVenta"].Visible = true;
+            grillaProductosQuitados.Columns["PrecioVenta"].Width = 100;
+            grillaProductosQuitados.Columns["PrecioVenta"].DisplayIndex = 5;
+            grillaProductosQuitados.Columns["PrecioVenta"].HeaderText = "Precio Venta"; ;
+
+            grillaProductosQuitados.Columns["PrecioCosto"].Visible = true;
+            grillaProductosQuitados.Columns["PrecioCosto"].Width = 100;
+            grillaProductosQuitados.Columns["PrecioCosto"].DisplayIndex = 5;
+            grillaProductosQuitados.Columns["PrecioCosto"].HeaderText = "Precio Costo";
 
         }
         private void dgvProductos_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -280,9 +296,9 @@ namespace Presentacion.Core.Oferta
             if (dgvProductos.CurrentRow == null) return;
             if (dgvProductos.CurrentRow.IsNewRow) return;
 
-            if (!dgvProductos.Columns.Contains("ProductoOfertaId")) return;
+            if (!dgvProductos.Columns.Contains("ProductoId")) return;
 
-            var val = dgvProductos.CurrentRow.Cells["ProductoOfertaId"].Value;
+            var val = dgvProductos.CurrentRow.Cells["ProductoId"].Value;
             if (val == null || val == DBNull.Value) return;
 
             // Lógica segura con val
@@ -298,10 +314,10 @@ namespace Presentacion.Core.Oferta
             if (fila == null || fila.IsNewRow)
                 return;
 
-            if (!dgvProductos.Columns.Contains("ProductoOfertaId"))
+            if (!dgvProductos.Columns.Contains("ProductoId"))
                 return;
 
-            var celda = fila.Cells["ProductoOfertaId"];
+            var celda = fila.Cells["ProductoId"];
             if (celda?.Value == null || celda.Value == DBNull.Value)
                 return;
 
@@ -310,10 +326,10 @@ namespace Presentacion.Core.Oferta
         private void ActualizarGrillas()
         {
             dgvProductos.DataSource = null;
-            dgvProductos.DataSource = _productosOfertaDTO;
+            dgvProductos.DataSource = _productosParaOfertaDTO;
 
             dgvProductosQuitados.DataSource = null;
-            dgvProductosQuitados.DataSource = _productosOfertaDTOQuitarDeOferta;
+            dgvProductosQuitados.DataSource = _productosParaQuitarDeOfertaDTO;
         }
         private void btnQuitarProducto_Click(object sender, EventArgs e)
         {
@@ -333,8 +349,8 @@ namespace Presentacion.Core.Oferta
             if (respuesta != DialogResult.Yes) return;
 
             // Buscar el elemento real en la lista por ID (evita problemas de referencia)
-            var productoEnLista = _productosOfertaDTO
-                .FirstOrDefault(p => p.ProductoOfertaId == productoSeleccionado.ProductoOfertaId);
+            var productoEnLista = _productosParaOfertaDTO
+                .FirstOrDefault(p => p.ProductoId == productoSeleccionado.ProductoId);
 
 
             if (productoEnLista == null)
@@ -344,17 +360,22 @@ namespace Presentacion.Core.Oferta
             }
 
             // Mover entre listas
-            _productosOfertaDTO.Remove(productoEnLista);
-            _productosOfertaDTOQuitarDeOferta.Add(productoEnLista);
+            _productosParaOfertaDTO.Remove(productoEnLista);
+            _productosParaQuitarDeOfertaDTO.Add(productoEnLista);
+
+            cantidadTotalEnOferta = _productosParaOfertaDTO.Count();
+            cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO.Count();
+            lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
+            lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
 
             // Forzar refresco si fuera necesario (normalmente no hace falta)
-            var cm = (CurrencyManager)BindingContext[_productosOfertaDTO];
+            var cm = (CurrencyManager)BindingContext[_productosParaOfertaDTO];
             cm.Refresh();
         }
 
-        private ProductosEnOfertaDescuentosDTO ObtenerProducto(DataGridView grillaProductosOferta)
+        private ProductoDTO ObtenerProducto(DataGridView grillaProductosOferta)
         {
-            if (grillaProductosOferta.CurrentRow != null && grillaProductosOferta.CurrentRow.DataBoundItem is ProductosEnOfertaDescuentosDTO producto)
+            if (grillaProductosOferta.CurrentRow != null && grillaProductosOferta.CurrentRow.DataBoundItem is ProductoDTO producto)
                 return producto;
 
             return null;
@@ -377,8 +398,8 @@ namespace Presentacion.Core.Oferta
             if (respuesta != DialogResult.Yes) return;
 
             // Buscar el elemento real en la lista por ID (evita problemas de referencia)
-            var productoEnListaParaDevolver = _productosOfertaDTOQuitarDeOferta
-                .FirstOrDefault(p => p.ProductoOfertaId == productoSeleccionado.ProductoOfertaId);
+            var productoEnListaParaDevolver = _productosParaQuitarDeOfertaDTO
+                .FirstOrDefault(p => p.ProductoId == productoSeleccionado.ProductoId);
 
 
             if (productoEnListaParaDevolver == null)
@@ -388,11 +409,16 @@ namespace Presentacion.Core.Oferta
             }
 
             // Mover entre listas
-            _productosOfertaDTOQuitarDeOferta.Remove(productoEnListaParaDevolver);
-            _productosOfertaDTO.Add(productoEnListaParaDevolver);
+            _productosParaQuitarDeOfertaDTO.Remove(productoEnListaParaDevolver);
+            _productosParaOfertaDTO.Add(productoEnListaParaDevolver);
 
+            cantidadTotalEnOferta = _productosParaOfertaDTO.Count();
+            cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO.Count();
+
+            lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
+            lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
             // Forzar refresco si fuera necesario (normalmente no hace falta)
-            var cm = (CurrencyManager)BindingContext[_productosOfertaDTOQuitarDeOferta];
+            var cm = (CurrencyManager)BindingContext[_productosParaQuitarDeOfertaDTO];
             cm.Refresh();
         }
 
@@ -422,18 +448,20 @@ namespace Presentacion.Core.Oferta
             try
             {
                 btnCrear.Enabled = false;
-
+                var hora = DateTime.Now;
+                var desc = txtDescripcion.Text?.Trim();
+                var porcDesc = txtPrecioDescuentoPorcentaje.Text;
                 var ofertaDto = new OfertaDTO
                 {
-                    Descripcion = txtDescripcion.Text?.Trim(),
+                    Descripcion = $"{desc}{hora.ToString()}",
                     PrecioFinal = _precioFinal,
-                    PrecioOriginal = 1000m,
+                    PrecioOriginal = -1m,
                     DescuentoTotalFinal = 1, //_precioOriginal - _precioFinal,
-                    PorcentajeDescuento = 0.0m,//Convert.ToDecimal(txtPrecioDescuentoPorcentaje.Text),
+                    PorcentajeDescuento = Convert.ToDecimal(porcDesc),//Convert.ToDecimal(txtPrecioDescuentoPorcentaje.Text),
                     FechaInicio = dtpFechaInicio.Value,
                     FechaFin = dtpFechaFin.Value,
-                    CantidadProductosDentroOferta = 1,//_cantidadProductos, // si esto puede ser null, convertí igual
-                    EstaActiva = cbxEstaActiva.Checked,//cbxEstaActiva.Checked,
+                    CantidadProductosDentroOferta = Convert.ToDecimal(cantidadTotalEnOferta),//_cantidadProductos, // si esto puede ser null, convertí igual
+                    EstaActiva = _ofertaActiva,//cbxEstaActiva.Checked,
                     EsUnSoloProducto = false,
                     Detalle = txtDetalle.Text?.Trim(),
                     Codigo = txtCodigoOferta.Text?.Trim(),
@@ -444,7 +472,7 @@ namespace Presentacion.Core.Oferta
                     IdRubro = _rubroId,
                     IdCategoria = _categoriaId,
                     GrupoNombre = $"{_marcaN}-{_rubroN}-{_categoriaN}",
-                    Productos = _productosOfertaDTO.ToList()
+                    Productos = _productosParaOfertaDTO.ToList()
                 };
 
                 var resultado = _ofertaServicio.Insertar(ofertaDto);
@@ -472,6 +500,11 @@ namespace Presentacion.Core.Oferta
             {
                 btnCrear.Enabled = true;
             }
+        }
+
+        private void cbxEstaActiva_CheckedChanged(object sender, EventArgs e)
+        {
+            _ofertaActiva = cbxEstaActiva.Checked;
         }
     }
 }

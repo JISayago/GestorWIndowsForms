@@ -39,7 +39,7 @@ namespace Presentacion.Core.Oferta
         private decimal _precioFinal;
         private decimal _precioOriginal;
         private List<ProductosEnOfertaDescuentos> _productosDentroDeLaOferta;//oldver
-        private BindingList<ProductosEnOfertaDescuentosDTO> _productosOfertaDTO;
+        private BindingList<ProductoDTO> _productosOfertaDTO;
         private BindingList<ProductoDTO> _productosParaOferta;
         private readonly TipoOferta _tipoOferta;
         private string _textoDescriptivo;
@@ -182,31 +182,33 @@ namespace Presentacion.Core.Oferta
             {
                 grilla.Columns[i].Visible = false;
             }
-            grilla.Columns["ProductoOfertaId"].Visible = false;
-            grilla.Columns["ProductoOfertaId"].DisplayIndex = 0;
+            grilla.Columns["ProductoId"].Visible = false;
+            grilla.Columns["ProductoId"].DisplayIndex = 0;
 
             grilla.Columns["Descripcion"].Visible = true;
             grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             grilla.Columns["Descripcion"].DisplayIndex = 1;
+            grilla.Columns["Descripcion"].HeaderText = "Descripción";
 
-            grilla.Columns["Cantidad"].Visible = true;
-            grilla.Columns["Cantidad"].Width = 100;
-            grilla.Columns["Cantidad"].DisplayIndex = 2;
+            grilla.Columns["Stock"].Visible = true;
+            grilla.Columns["Stock"].Width = 100;
+            grilla.Columns["Stock"].DisplayIndex = 2;
+            grilla.Columns["Stock"].HeaderText = "Cantidad disponible";
 
             grilla.Columns["Codigo"].Visible = true;
             grilla.Columns["Codigo"].Width = 100;
-            grilla.Columns["Codigo"].DisplayIndex = 3;
-
-            /*grilla.Columns["Cantidad"].Visible = true;
-            grilla.Columns["Cantidad"].Width = 100;
-            grilla.Columns["Cantidad"].DisplayIndex = 4;*/
+            grilla.Columns["Codigo"].DisplayIndex = 2;
+            grilla.Columns["Codigo"].HeaderText = "Código";
 
             grilla.Columns["PrecioVenta"].Visible = true;
             grilla.Columns["PrecioVenta"].Width = 100;
             grilla.Columns["PrecioVenta"].DisplayIndex = 5;
+            grilla.Columns["PrecioVenta"].HeaderText = "Precio Venta";
+
             grilla.Columns["PrecioCosto"].Visible = true;
             grilla.Columns["PrecioCosto"].Width = 100;
             grilla.Columns["PrecioCosto"].DisplayIndex = 5;
+            grilla.Columns["PrecioCosto"].HeaderText = "Precio Costo";
 
         }
         private void dgvProductos_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -224,9 +226,9 @@ namespace Presentacion.Core.Oferta
             if (dgvProductos.CurrentRow == null) return;
             if (dgvProductos.CurrentRow.IsNewRow) return;
 
-            if (!dgvProductos.Columns.Contains("ProductoOfertaId")) return;
+            if (!dgvProductos.Columns.Contains("ProductoId")) return;
 
-            var val = dgvProductos.CurrentRow.Cells["ProductoOfertaId"].Value;
+            var val = dgvProductos.CurrentRow.Cells["ProductoId"].Value;
             if (val == null || val == DBNull.Value) return;
 
             // Lógica segura con val
@@ -242,10 +244,10 @@ namespace Presentacion.Core.Oferta
             if (fila == null || fila.IsNewRow)
                 return;
 
-            if (!dgvProductos.Columns.Contains("ProductoOfertaId"))
+            if (!dgvProductos.Columns.Contains("ProductoId"))
                 return;
 
-            var celda = fila.Cells["ProductoOfertaId"];
+            var celda = fila.Cells["ProductoId"];
             if (celda?.Value == null || celda.Value == DBNull.Value)
                 return;
 
@@ -263,18 +265,23 @@ namespace Presentacion.Core.Oferta
                 var idProducto = fProductos.productoSeleccionado.Value;
 
                 var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
+
                 if (producto == null) return;
 
                 var fCantidad = new FCantidadItem();
                 if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
                 {
                     var cantidad = fCantidad.cantidad;
-                    /*var productoDto = new ProductoDTO
+                    var productoDto = new ProductoDTO
                     {
-                        Descripcion = producto.Descripcion,
+                        ProductoId = producto.ProductoId,
+                        IdMarca = producto.IdMarca,
+                        IdRubro = producto.IdMarca,
                         Stock = producto.Stock,
                         PrecioCosto = producto.PrecioCosto,
                         PrecioVenta = producto.PrecioVenta,
+                        Descripcion = producto.Descripcion,
+                        EstaEliminado = producto.EstaEliminado,
                         Estado = producto.Estado,
                         Medida = producto.Medida,
                         UnidadMedida = producto.UnidadMedida,
@@ -282,19 +289,20 @@ namespace Presentacion.Core.Oferta
                         CodigoBarra = producto.CodigoBarra,
                         IvaIncluidoPrecioFinal = producto.IvaIncluidoPrecioFinal,
                         EsFraccionable = producto.EsFraccionable,
-                        IdMarca = producto.IdMarca,
-                        IdRubro = producto.IdMarca,
+                        MarcaNombre = string.Empty,
+                        RubroNombre = string.Empty,
                         CategoriaIds = producto.CategoriaIds,
-                        EstaEliminado = producto.EstaEliminado
                     };
+
+                    var parcial = productoDto;
 
                     _productosParaOferta.Add(productoDto);  // Solo agregamos a la BindingList7
                     _descripcion = $"({_descripcion} {productoDto.Descripcion} codigo:{productoDto.Codigo} cantidad:{cantidad}) + ";
                     txtDescripcion.Text = _descripcion;
                     _cantidadProductos = _cantidadProductos + cantidad;
-                    lblCantidadProductos.Text = $"Cantidad Productos: {_cantidadProductos}";*/
+                    lblCantidadProductos.Text = $"Cantidad Productos: {_cantidadProductos}";
 
-                    var productoOfertaDto = new ProductosEnOfertaDescuentosDTO
+                  /*  var productoOfertaDto = new ProductosEnOfertaDescuentosDTO
                     {
                         ProductoOfertaId = producto.ProductoId,
                         Descripcion = producto.Descripcion,
@@ -308,29 +316,21 @@ namespace Presentacion.Core.Oferta
                     _descripcion = $"({_descripcion} {productoOfertaDto.Descripcion} codigo:{productoOfertaDto.Codigo} cantidad:{cantidad}) + ";
                     txtDescripcion.Text = _descripcion;
                     _cantidadProductos = _cantidadProductos + cantidad;
-                    lblCantidadProductos.Text = $"Cantidad Productos: {_cantidadProductos}";
+                    lblCantidadProductos.Text = $"Cantidad Productos: {_cantidadProductos}";*/
                 }
             }
         }
 
         private void FOfertaABM_Load(object sender, EventArgs e)
         {
-            /* dgvProductos.AllowUserToAddRows = false;
+             dgvProductos.AllowUserToAddRows = false;
              _productosParaOferta = new BindingList<ProductoDTO>();
              dgvProductos.DataSource = _productosParaOferta;  // bind directo
              dtpFechaInicio.Value = DateTime.Now;
              dtpFechaFin.Value = DateTime.Now.AddDays(1);
              _fechaInicio = dtpFechaInicio.Value;
              _fechaFin = dtpFechaFin.Value;
-             ResetearGrilla(dgvProductos);*/
-            dgvProductos.AllowUserToAddRows = false;
-            _productosOfertaDTO = new BindingList<ProductosEnOfertaDescuentosDTO>();
-            dgvProductos.DataSource = _productosOfertaDTO;  // bind directo
-            dtpFechaInicio.Value = DateTime.Now;
-            dtpFechaFin.Value = DateTime.Now.AddDays(1);
-            _fechaInicio = dtpFechaInicio.Value;
-            _fechaFin = dtpFechaFin.Value;
-            ResetearGrilla(dgvProductos);
+             ResetearGrilla(dgvProductos);
         }
 
         private void cbxEsUnSoloProducto_CheckedChanged(object sender, EventArgs e)
@@ -415,7 +415,7 @@ namespace Presentacion.Core.Oferta
                     //OfertaDescuentoId = 0, // si corresponde dejar 0 para nuevo registro
                     Descripcion = txtDescripcion.Text?.Trim(),
                     PrecioFinal = _precioFinal,
-                    PrecioOriginal = _precioOriginal,
+                    PrecioOriginal = 0.0m,
                     DescuentoTotalFinal = _precioOriginal - _precioFinal,
                     PorcentajeDescuento = 0.0m,//Convert.ToDecimal(txtPrecioDescuentoPorcentaje.Text),
                     FechaInicio = dtpFechaInicio.Value,
@@ -432,7 +432,7 @@ namespace Presentacion.Core.Oferta
                     IdRubro = null,
                     IdCategoria = null,
                     GrupoNombre = string.Empty,
-                    Productos = _productosOfertaDTO.ToList()
+                    Productos = _productosParaOferta.ToList()
                 };
 
                 var resultado = _ofertaServicio.Insertar(ofertaDto);
@@ -477,7 +477,7 @@ namespace Presentacion.Core.Oferta
                 MessageBox.Show("Debe ingresar un valor en el campo de descuento");
                 return;
             }
-            if (_productosOfertaDTO.Count == 0)
+            if (_productosParaOferta.Count == 0)
             {
                 MessageBox.Show("Debe agregar al menos un producto a la oferta");
                 return;
@@ -485,7 +485,7 @@ namespace Presentacion.Core.Oferta
             if (_precioMontoFijo)
             {
                 _precioFinal = decimal.TryParse((txtPrecioDescuentoPesos.Text), out decimal precioFinal) ? precioFinal : 0.0m;
-                _precioOriginal = _productosOfertaDTO.Sum(x => x.PrecioVenta * x.Cantidad);
+               // _precioOriginal = _productosOfertaDTO.Sum(x => x.Producto.PrecioVenta * x.Cantidad);
                 txtPrecioTotalOfertaAplicada.Text = _precioFinal.ToString("N2");
                 txtPrecioTotalRealProductos.Text = _precioOriginal.ToString("N2");
                 txtPrecioTotalPerdido.Text = (_precioOriginal - _precioFinal).ToString("N2");
