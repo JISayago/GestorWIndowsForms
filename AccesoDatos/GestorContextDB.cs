@@ -28,6 +28,11 @@ namespace AccesoDatos
         public DbSet<VentaPagoDetalle> VentaPagosDetalles { get; set; }
         public DbSet<OfertaDescuento> OfertasDescuentos{ get; set; }
         public DbSet<ProductosEnOfertaDescuentos> ProductosEnOfertasDescuentos { get; set; }
+        public DbSet<Cliente> Cliente { get; set; }
+        public DbSet<CuentaCorriente> CuentaCorriente { get; set; }
+        public DbSet<MovimientoCuentaCorriente> MovimientoCuentaCorriente { get; set; }
+        public DbSet<CuentaCorrienteAutorizado> CuentaCorrienteAutorizados { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
@@ -582,7 +587,141 @@ namespace AccesoDatos
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
+            // CUENTA CORRIENTE
+            modelBuilder.Entity<CuentaCorriente>(entity =>
+            {
+                entity.ToTable("CuentasCorrientes");
+                entity.HasKey(cc => cc.CuentaCorrienteId);
+                entity.Property(cc => cc.CuentaCorrienteId)
+                      .HasColumnName("CuentaCorrienteId")
+                      .ValueGeneratedOnAdd();
+                entity.Property(cc => cc.ClienteId)
+                      .HasColumnName("ClienteId")
+                      .IsRequired();
+                entity.Property(cc => cc.NombreCuentaCorriente)
+                      .HasColumnName("nombre_cuenta_corriente")
+                      .HasMaxLength(100)
+                      .IsRequired();
+                entity.Property(cc => cc.Saldo)
+                      .HasColumnName("saldo")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+                entity.Property(cc => cc.LimiteDeuda)
+                      .HasColumnName("limite_deuda")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+                entity.Property(cc => cc.LimiteDeudaActivo)
+                      .HasColumnName("limite_deuda_activo")
+                      .IsRequired();
+                entity.Property(cc => cc.FechaVencimiento)
+                      .HasColumnName("fecha_vencimiento")
+                      .HasColumnType("date");
+                entity.Property(cc => cc.EstaEliminado)
+                      .HasColumnName("esta_eliminado")
+                      .IsRequired();
+                // Relación uno a uno con Cliente
+                entity.HasOne(cc => cc.Cliente)
+                      .WithOne(c => c.CuentaCorriente)
+                      .HasForeignKey<Cliente>(c => c.CuentaCorrienteId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                // Relación uno a muchos con MovimientoCuentaCorriente
+                entity.HasMany(cc => cc.MovimientosCuentaCorriente)
+                      .WithOne(mc => mc.CuentaCorriente)
+                      .HasForeignKey(mc => mc.CuentaCorrienteId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                // Relación uno a muchos con CuentaCorrienteAutorizado
+                entity.HasMany(c => c.CuentaCorrienteAutorizado)
+                      .WithOne() // sin navegación inversa
+                      .HasForeignKey(a => a.CuentaCorrienteId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
 
+            // CLIENTE
+            modelBuilder.Entity<Cliente>(entity =>
+            {
+                entity.ToTable("Clientes");
+                entity.HasKey(c => c.PersonaId);
+                entity.Property(c => c.PersonaId)
+                      .HasColumnName("PersonaId");
+                entity.Property(c => c.CuentaCorrienteId)
+                      .HasColumnName("CuentaCorrienteId");
+                entity.Property(c => c.NumeroCliente)
+                      .HasColumnName("numero_cliente")
+                      .HasMaxLength(50)
+                      .IsRequired();
+                entity.Property(c => c.FechaAlta)
+                      .HasColumnName("fecha_alta")
+                      .HasColumnType("date")
+                      .IsRequired();
+                entity.Property(c => c.FechaBaja)
+                      .HasColumnName("fecha_baja")
+                      .HasColumnType("date");
+                entity.Property(c => c.Estado)
+                      .HasColumnName("estado")
+                      .IsRequired();
+                entity.Property(c => c.EstadoDescripcion)
+                      .HasColumnName("estado_descripcion")
+                      .HasMaxLength(200);
+                // Relación 1 a 1 con Persona
+                entity.HasOne(c => c.Persona)
+                      .WithOne()
+                      .HasForeignKey<Cliente>(c => c.PersonaId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                // Relación uno a uno con CuentaCorriente
+                entity.HasOne(c => c.CuentaCorriente)
+                      .WithOne(cc => cc.Cliente)
+                      .HasForeignKey<CuentaCorriente>(c => c.ClienteId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // MOVIMIENTO CUENTA CORRIENTE
+            modelBuilder.Entity<MovimientoCuentaCorriente>(entity =>
+            {
+                entity.ToTable("MovimientosCuentaCorrientes");
+                entity.HasKey(mc => mc.MovimientoCuentaCorrienteId);
+                entity.Property(mc => mc.MovimientoCuentaCorrienteId)
+                      .HasColumnName("MovimientoCuentaCorrienteId")
+                      .ValueGeneratedOnAdd();
+                entity.Property(mc => mc.CuentaCorrienteId)
+                      .HasColumnName("CuentaCorrienteId")
+                      .IsRequired();
+                entity.Property(mc => mc.TipoMovimientoCCorriente)
+                      .HasColumnName("tipo_movimiento")
+                      .IsRequired();
+                entity.Property(mc => mc.Monto)
+                      .HasColumnName("monto")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+                entity.Property(mc => mc.Fecha)
+                      .HasColumnName("fecha")
+                      .HasColumnType("date")
+                      .IsRequired();
+                entity.Property(mc => mc.Descripcion)
+                      .HasColumnName("descripcion")
+                      .HasMaxLength(500);
+                // Relación muchos a uno con CuentaCorriente
+                entity.HasOne(mc => mc.CuentaCorriente)
+                      .WithMany(cc => cc.MovimientosCuentaCorriente)
+                      .HasForeignKey(mc => mc.CuentaCorrienteId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // CUENTA CORRIENTE AUTORIZADO
+            modelBuilder.Entity<CuentaCorrienteAutorizado>(entity =>
+            {
+                entity.ToTable("CuentaCorrienteAutorizados");
+                entity.HasKey(cca => cca.CuentaCorrienteAutorizadoId);
+
+                entity.Property(cca => cca.CuentaCorrienteAutorizadoId)
+                      .HasColumnName("CuentaCorrienteAutorizadoId")
+                      .ValueGeneratedOnAdd();
+                entity.Property(cca => cca.CuentaCorrienteId)
+                      .HasColumnName("CuentaCorrienteId")
+                      .IsRequired();
+                entity.Property(cca => cca.Dni)
+                      .HasColumnName("dni")
+                      .IsRequired();
+            });
         }
     }
 }
