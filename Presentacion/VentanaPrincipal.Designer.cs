@@ -44,6 +44,7 @@
             rubroToolStripMenuItem = new ToolStripMenuItem();
             vENTASToolStripMenuItem = new ToolStripMenuItem();
             cONFIGToolStripMenuItem = new ToolStripMenuItem();
+            ofertasToolStripMenuItem = new ToolStripMenuItem();
             lblUsuarioLogueado = new Label();
             lblNombreUsuario = new Label();
             btnVenta = new Button();
@@ -52,7 +53,6 @@
             btnMovimientos = new Button();
             dataGridView1 = new DataGridView();
             panel1 = new Panel();
-            ofertasToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
@@ -114,14 +114,14 @@
             cuentaCorrienteToolStripMenuItem.Name = "cuentaCorrienteToolStripMenuItem";
             cuentaCorrienteToolStripMenuItem.Size = new Size(180, 22);
             cuentaCorrienteToolStripMenuItem.Text = "Cuenta Corriente";
-            cuentaCorrienteToolStripMenuItem.Click += cuentaCorrienteToolStripMenuItem_Click;
+            cuentaCorrienteToolStripMenuItem.Click += cuentaCorrienteToolStripMenuItem_Click_1;
             // 
             // clienteToolStripMenuItem
             // 
             clienteToolStripMenuItem.Name = "clienteToolStripMenuItem";
             clienteToolStripMenuItem.Size = new Size(180, 22);
             clienteToolStripMenuItem.Text = "Cliente";
-            clienteToolStripMenuItem.Click += clienteToolStripMenuItem_Click;
+            clienteToolStripMenuItem.Click += clienteToolStripMenuItem_Click_1;
             // 
             // aRTICULOToolStripMenuItem
             // 
@@ -154,7 +154,7 @@
             // rubroToolStripMenuItem
             // 
             rubroToolStripMenuItem.Name = "rubroToolStripMenuItem";
-            rubroToolStripMenuItem.Size = new Size(180, 22);
+            rubroToolStripMenuItem.Size = new Size(125, 22);
             rubroToolStripMenuItem.Text = "Rubro";
             rubroToolStripMenuItem.Click += rubroToolStripMenuItem_Click;
             // 
@@ -170,6 +170,13 @@
             cONFIGToolStripMenuItem.Name = "cONFIGToolStripMenuItem";
             cONFIGToolStripMenuItem.Size = new Size(72, 20);
             cONFIGToolStripMenuItem.Text = "CONFIG??";
+            // 
+            // ofertasToolStripMenuItem
+            // 
+            ofertasToolStripMenuItem.Name = "ofertasToolStripMenuItem";
+            ofertasToolStripMenuItem.Size = new Size(112, 22);
+            ofertasToolStripMenuItem.Text = "Ofertas";
+            ofertasToolStripMenuItem.Click += ofertasToolStripMenuItem_Click;
             // 
             // lblUsuarioLogueado
             // 
@@ -246,13 +253,6 @@
             panel1.Size = new Size(750, 40);
             panel1.TabIndex = 18;
             // 
-            // ofertasToolStripMenuItem
-            // 
-            ofertasToolStripMenuItem.Name = "ofertasToolStripMenuItem";
-            ofertasToolStripMenuItem.Size = new Size(180, 22);
-            ofertasToolStripMenuItem.Text = "Ofertas";
-            ofertasToolStripMenuItem.Click += ofertasToolStripMenuItem_Click;
-            // 
             // VentanaPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -300,5 +300,7 @@
         private ToolStripMenuItem rolesToolStripMenuItem;
         private ToolStripMenuItem rubroToolStripMenuItem;
         private ToolStripMenuItem ofertasToolStripMenuItem;
+        private ToolStripMenuItem cuentaCorrienteToolStripMenuItem;
+        private ToolStripMenuItem clienteToolStripMenuItem;
     }
 }

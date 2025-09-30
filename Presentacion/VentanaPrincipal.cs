@@ -106,5 +106,17 @@ namespace Presentacion
             var FOferta = new FSeleccionTipoOferta();
             FOferta.Show();
         }
+
+        private void cuentaCorrienteToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            var FCuentaCorriente = new FCuentaCorrienteConsulta();
+            FCuentaCorriente.Show();
+        }
+
+        private void clienteToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            var FCliente = new FClienteConsulta();
+            FCliente.Show();
+        }
     }
 }
