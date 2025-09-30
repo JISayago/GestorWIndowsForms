@@ -18,39 +18,46 @@ namespace Servicios.LogicaNegocio.Producto
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            // Intentamos buscar primero la oferta (con producto incluido)
+            // Intentamos buscar primero la relación producto-en-oferta (puede ser null)
             var prodOfer = context.ProductosEnOfertasDescuentos
                 .AsNoTracking()
                 .Include(x => x.Producto)
                 .Include(x => x.Oferta)
                 .FirstOrDefault(x => x.ProductoId == productoId);
 
-            // Si no hay oferta, buscamos el producto directo
+            // Si no hay relación, traigo el producto directamente (con sus navegaciones necesarias)
             var producto = prodOfer?.Producto
                            ?? context.Productos
-                           .Include(x => x.Marca)
-                           .Include(x => x.Rubro)
-                           .Include(x => x.CategoriasProductos)
-                                    .AsNoTracking()
-                                    .FirstOrDefault(p => p.ProductoId == productoId);
+                                .Include(x => x.Marca)
+                                .Include(x => x.Rubro)
+                                .Include(x => x.CategoriasProductos)
+                                .AsNoTracking()
+                                .FirstOrDefault(p => p.ProductoId == productoId);
 
-            var oferta = prodOfer?.Oferta ?? context.OfertasDescuentos
-                .Include(o => o.Marca)
-                .Include(o => o.Rubro)
-                .Include(o => o.Categoria)
-                .AsNoTracking()
-                .FirstOrDefault(o => o.OfertaDescuentoId == prodOfer.OfertaId);
+            if (producto == null)
+                return null; // No existe el producto
 
-            if (producto == null) return null;
-            if (oferta == null) return null;
+            // Solo busco la oferta si prodOfer existe y tiene un Id de oferta válido
+            OfertaDescuento? oferta = null;
 
-            // Armamos el DTO en un solo lugar
+            if (prodOfer != null && prodOfer.OfertaId > 0) // ajuste según el tipo real de OfertaId
+            {
+                oferta = context.OfertasDescuentos
+                    .Include(o => o.Marca)
+                    .Include(o => o.Rubro)
+                    .Include(o => o.Categoria)
+                    .AsNoTracking()
+                    .FirstOrDefault(o => o.OfertaDescuentoId == prodOfer.OfertaId);
+            }
+
+            // Aquí NO fallamos si oferta == null: devolvemos el DTO con Oferta = null
             var dto = new ProductosEnOfertaDescuentosDTO
             {
-                ProductoOfertaId = prodOfer.ProductoId, 
-                Cantidad = prodOfer.Cantidad,
-                PrecioEnOferta = prodOfer.PrecioConDescuento,
-                Oferta =  new OfertaDTO
+                // Si prodOfer es null usamos el id del producto; si existe, usamos los valores de prodOfer
+                ProductoOfertaId = prodOfer?.ProductoId ?? producto.ProductoId,
+                Cantidad = prodOfer?.Cantidad ?? 0m,
+                PrecioEnOferta = prodOfer?.PrecioConDescuento ?? 0m,
+                Oferta = oferta == null ? null : new OfertaDTO
                 {
                     OfertaDescuentoId = oferta.OfertaDescuentoId,
                     Descripcion = oferta.Descripcion,
@@ -98,6 +105,7 @@ namespace Servicios.LogicaNegocio.Producto
 
             return dto;
         }
+
 
 
 
