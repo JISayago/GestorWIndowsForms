@@ -44,6 +44,7 @@
             rubroToolStripMenuItem = new ToolStripMenuItem();
             vENTASToolStripMenuItem = new ToolStripMenuItem();
             cONFIGToolStripMenuItem = new ToolStripMenuItem();
+            ofertasToolStripMenuItem = new ToolStripMenuItem();
             lblUsuarioLogueado = new Label();
             lblNombreUsuario = new Label();
             btnVenta = new Button();
@@ -113,14 +114,14 @@
             cuentaCorrienteToolStripMenuItem.Name = "cuentaCorrienteToolStripMenuItem";
             cuentaCorrienteToolStripMenuItem.Size = new Size(180, 22);
             cuentaCorrienteToolStripMenuItem.Text = "Cuenta Corriente";
-            cuentaCorrienteToolStripMenuItem.Click += cuentaCorrienteToolStripMenuItem_Click;
+            cuentaCorrienteToolStripMenuItem.Click += cuentaCorrienteToolStripMenuItem_Click_1;
             // 
             // clienteToolStripMenuItem
             // 
             clienteToolStripMenuItem.Name = "clienteToolStripMenuItem";
             clienteToolStripMenuItem.Size = new Size(180, 22);
             clienteToolStripMenuItem.Text = "Cliente";
-            clienteToolStripMenuItem.Click += clienteToolStripMenuItem_Click;
+            clienteToolStripMenuItem.Click += clienteToolStripMenuItem_Click_1;
             // 
             // aRTICULOToolStripMenuItem
             // 
@@ -165,9 +166,17 @@
             // 
             // cONFIGToolStripMenuItem
             // 
+            cONFIGToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { ofertasToolStripMenuItem });
             cONFIGToolStripMenuItem.Name = "cONFIGToolStripMenuItem";
             cONFIGToolStripMenuItem.Size = new Size(72, 20);
             cONFIGToolStripMenuItem.Text = "CONFIG??";
+            // 
+            // ofertasToolStripMenuItem
+            // 
+            ofertasToolStripMenuItem.Name = "ofertasToolStripMenuItem";
+            ofertasToolStripMenuItem.Size = new Size(112, 22);
+            ofertasToolStripMenuItem.Text = "Ofertas";
+            ofertasToolStripMenuItem.Click += ofertasToolStripMenuItem_Click;
             // 
             // lblUsuarioLogueado
             // 
@@ -290,6 +299,7 @@
         private Panel panel1;
         private ToolStripMenuItem rolesToolStripMenuItem;
         private ToolStripMenuItem rubroToolStripMenuItem;
+        private ToolStripMenuItem ofertasToolStripMenuItem;
         private ToolStripMenuItem cuentaCorrienteToolStripMenuItem;
         private ToolStripMenuItem clienteToolStripMenuItem;
     }

@@ -16,6 +16,7 @@ namespace Presentacion.Core.Articulo.Marca
     public partial class FMarcaConsulta : FBaseConsulta
     {
         private readonly IMarcaServicio _marcaServicio;
+        public long? marcaSeleccionada = null;
 
         public FMarcaConsulta() : this(new MarcaServicio())
         {
@@ -91,5 +92,12 @@ namespace Presentacion.Core.Articulo.Marca
             FormularioABMMarca.ShowDialog();
             ActualizarSegunOperacion(FormularioABMMarca.RealizoAlgunaOperacion);
         }
+
+        private void btnSeleccionarMarca_Click(object sender, EventArgs e)
+        {
+            marcaSeleccionada = (long)entidadID;
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+    }
     }
 }

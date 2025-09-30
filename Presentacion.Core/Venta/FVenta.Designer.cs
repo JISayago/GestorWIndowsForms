@@ -245,6 +245,7 @@
             cbxEnOferta.TabIndex = 20;
             cbxEnOferta.Text = "Producto/s en Oferta";
             cbxEnOferta.UseVisualStyleBackColor = true;
+            cbxEnOferta.CheckedChanged += cbxEnOferta_CheckedChanged;
             // 
             // lblNroVenta
             // 

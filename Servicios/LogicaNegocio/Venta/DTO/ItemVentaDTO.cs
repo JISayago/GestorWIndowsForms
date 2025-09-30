@@ -11,6 +11,7 @@ namespace Servicios.LogicaNegocio.Venta.DTO
         public long ItemId { get; set; }
         public decimal Cantidad { get; set; }
         public decimal PrecioVenta { get; set; }
+        public decimal PrecioOferta { get; set; }
         public string Descripcion { get; set; }
         public string Medida { get; set; }
         public string UnidadMedida { get; set; }

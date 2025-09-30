@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20250916202155_CorreccionOfertaDescuento")]
+    partial class CorreccionOfertaDescuento
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,119 +67,6 @@ namespace AccesoDatos.Migrations
                     b.HasIndex("IdProducto");
 
                     b.ToTable("Categorias_Productos", (string)null);
-                });
-
-            modelBuilder.Entity("AccesoDatos.Entidades.Cliente", b =>
-                {
-                    b.Property<long>("PersonaId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("PersonaId");
-
-                    b.Property<long?>("CuentaCorrienteId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("CuentaCorrienteId");
-
-                    b.Property<int>("Estado")
-                        .HasColumnType("int")
-                        .HasColumnName("estado");
-
-                    b.Property<string>("EstadoDescripcion")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("estado_descripcion");
-
-                    b.Property<DateTime>("FechaAlta")
-                        .HasColumnType("date")
-                        .HasColumnName("fecha_alta");
-
-                    b.Property<DateTime?>("FechaBaja")
-                        .HasColumnType("date")
-                        .HasColumnName("fecha_baja");
-
-                    b.Property<string>("NumeroCliente")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("numero_cliente");
-
-                    b.HasKey("PersonaId");
-
-                    b.ToTable("Clientes", (string)null);
-                });
-
-            modelBuilder.Entity("AccesoDatos.Entidades.CuentaCorriente", b =>
-                {
-                    b.Property<long>("CuentaCorrienteId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("CuentaCorrienteId");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("CuentaCorrienteId"));
-
-                    b.Property<long>("ClienteId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("ClienteId");
-
-                    b.Property<bool>("EstaEliminado")
-                        .HasColumnType("bit")
-                        .HasColumnName("esta_eliminado");
-
-                    b.Property<int>("EstadoCuentaCorriente")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("FechaVencimiento")
-                        .HasColumnType("date")
-                        .HasColumnName("fecha_vencimiento");
-
-                    b.Property<decimal>("LimiteDeuda")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("limite_deuda");
-
-                    b.Property<bool>("LimiteDeudaActivo")
-                        .HasColumnType("bit")
-                        .HasColumnName("limite_deuda_activo");
-
-                    b.Property<string>("NombreCuentaCorriente")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("nombre_cuenta_corriente");
-
-                    b.Property<decimal>("Saldo")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("saldo");
-
-                    b.HasKey("CuentaCorrienteId");
-
-                    b.HasIndex("ClienteId")
-                        .IsUnique();
-
-                    b.ToTable("CuentasCorrientes", (string)null);
-                });
-
-            modelBuilder.Entity("AccesoDatos.Entidades.CuentaCorrienteAutorizado", b =>
-                {
-                    b.Property<long>("CuentaCorrienteAutorizadoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("CuentaCorrienteAutorizadoId");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("CuentaCorrienteAutorizadoId"));
-
-                    b.Property<long>("CuentaCorrienteId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("CuentaCorrienteId");
-
-                    b.Property<long>("Dni")
-                        .HasColumnType("bigint")
-                        .HasColumnName("dni");
-
-                    b.HasKey("CuentaCorrienteAutorizadoId");
-
-                    b.HasIndex("CuentaCorrienteId");
-
-                    b.ToTable("CuentaCorrienteAutorizados", (string)null);
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.DetallesVenta", b =>
@@ -325,44 +215,6 @@ namespace AccesoDatos.Migrations
                     b.HasIndex("IdVenta");
 
                     b.ToTable("Movimientos", (string)null);
-                });
-
-            modelBuilder.Entity("AccesoDatos.Entidades.MovimientoCuentaCorriente", b =>
-                {
-                    b.Property<long>("MovimientoCuentaCorrienteId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("MovimientoCuentaCorrienteId");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("MovimientoCuentaCorrienteId"));
-
-                    b.Property<long>("CuentaCorrienteId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("CuentaCorrienteId");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("descripcion");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("date")
-                        .HasColumnName("fecha");
-
-                    b.Property<decimal>("Monto")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("monto");
-
-                    b.Property<int>("TipoMovimientoCCorriente")
-                        .HasColumnType("int")
-                        .HasColumnName("tipo_movimiento");
-
-                    b.HasKey("MovimientoCuentaCorrienteId");
-
-                    b.HasIndex("CuentaCorrienteId");
-
-                    b.ToTable("MovimientosCuentaCorrientes", (string)null);
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.OfertaDescuento", b =>
@@ -622,20 +474,19 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("cantidad");
 
                     b.Property<decimal>("CantidadVendidaPorLimite")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("cantidad_vendida_por_limite");
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("DescuentoPorcentaje")
+                        .HasColumnType("decimal(5,2)")
+                        .HasColumnName("descuento_porcentaje");
 
                     b.Property<long>("OfertaId")
                         .HasColumnType("bigint")
                         .HasColumnName("id_OfertaDescuento");
 
-                    b.Property<decimal>("PrecioConDescuento")
+                    b.Property<decimal?>("PrecioUnitarioOferta")
                         .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_con_descuento");
-
-                    b.Property<decimal>("PrecioOrginal")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_original");
+                        .HasColumnName("precio_unitario_oferta");
 
                     b.Property<long>("ProductoId")
                         .HasColumnType("bigint")
@@ -867,37 +718,6 @@ namespace AccesoDatos.Migrations
                     b.Navigation("Producto");
                 });
 
-            modelBuilder.Entity("AccesoDatos.Entidades.Cliente", b =>
-                {
-                    b.HasOne("AccesoDatos.Entidades.Persona", "Persona")
-                        .WithOne()
-                        .HasForeignKey("AccesoDatos.Entidades.Cliente", "PersonaId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Persona");
-                });
-
-            modelBuilder.Entity("AccesoDatos.Entidades.CuentaCorriente", b =>
-                {
-                    b.HasOne("AccesoDatos.Entidades.Cliente", "Cliente")
-                        .WithOne("CuentaCorriente")
-                        .HasForeignKey("AccesoDatos.Entidades.CuentaCorriente", "ClienteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Cliente");
-                });
-
-            modelBuilder.Entity("AccesoDatos.Entidades.CuentaCorrienteAutorizado", b =>
-                {
-                    b.HasOne("AccesoDatos.Entidades.CuentaCorriente", null)
-                        .WithMany("CuentaCorrienteAutorizado")
-                        .HasForeignKey("CuentaCorrienteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("AccesoDatos.Entidades.DetallesVenta", b =>
                 {
                     b.HasOne("AccesoDatos.Entidades.Producto", "Producto")
@@ -955,17 +775,6 @@ namespace AccesoDatos.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Venta");
-                });
-
-            modelBuilder.Entity("AccesoDatos.Entidades.MovimientoCuentaCorriente", b =>
-                {
-                    b.HasOne("AccesoDatos.Entidades.CuentaCorriente", "CuentaCorriente")
-                        .WithMany("MovimientosCuentaCorriente")
-                        .HasForeignKey("CuentaCorrienteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CuentaCorriente");
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.OfertaDescuento", b =>
@@ -1071,19 +880,6 @@ namespace AccesoDatos.Migrations
             modelBuilder.Entity("AccesoDatos.Entidades.Categoria", b =>
                 {
                     b.Navigation("CategoriasProductos");
-                });
-
-            modelBuilder.Entity("AccesoDatos.Entidades.Cliente", b =>
-                {
-                    b.Navigation("CuentaCorriente")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AccesoDatos.Entidades.CuentaCorriente", b =>
-                {
-                    b.Navigation("CuentaCorrienteAutorizado");
-
-                    b.Navigation("MovimientosCuentaCorriente");
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.Empleado", b =>

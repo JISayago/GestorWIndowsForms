@@ -6,6 +6,7 @@ using Presentacion.Core.Cliente;
 using Presentacion.Core.CuentaCorriente;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
+using Presentacion.Core.Oferta;
 using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
@@ -93,6 +94,26 @@ namespace Presentacion
         }
 
         private void clienteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var FCliente = new FClienteConsulta();
+            FCliente.Show();
+        }
+
+        private void ofertasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            /*var FOferta = new FOfertaConsulta();
+            FOferta.Show();*/
+            var FOferta = new FSeleccionTipoOferta();
+            FOferta.Show();
+        }
+
+        private void cuentaCorrienteToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            var FCuentaCorriente = new FCuentaCorrienteConsulta();
+            FCuentaCorriente.Show();
+        }
+
+        private void clienteToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             var FCliente = new FClienteConsulta();
             FCliente.Show();

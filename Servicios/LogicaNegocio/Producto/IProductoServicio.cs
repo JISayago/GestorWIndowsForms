@@ -1,5 +1,6 @@
 ﻿using Servicios.Helpers;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,12 @@ namespace Servicios.LogicaNegocio.Producto
         IEnumerable<ProductoDTO> ObtenerProductos(string cadenabuscar);
         IEnumerable<ProductoDTO> ObtenerProductosEliminados(string cadenabuscar);
         ProductoDTO ObtenerProductoPorId(long productoId);
+        ProductosEnOfertaDescuentosDTO ControlarProductoEstaEnOfertaPorId(long productoId);
+
         EstadoOperacion Insertar(ProductoDTO productoDto);
         EstadoOperacion Modificar(ProductoDTO productoDto, long? productoId);
         EstadoOperacion Eliminar(long productoId);
+
+        IEnumerable<ProductoDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(long? MarcaId = null, long? RubroId = null, long? CategoriaId = null);
     }
 }

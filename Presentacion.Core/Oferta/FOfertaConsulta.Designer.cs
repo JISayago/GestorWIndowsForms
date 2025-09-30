@@ -1,6 +1,6 @@
-﻿namespace Presentacion.Core.Producto.Rubro
+﻿namespace Presentacion.Core.Oferta
 {
-    partial class FRubroConsulta
+    partial class FOfertaConsulta
     {
         /// <summary>
         /// Required designer variable.
@@ -28,32 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnRubroSeleccion = new Button();
+            btnSeleccionarParaVenta = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(btnRubroSeleccion);
-            panel1.Controls.SetChildIndex(btnRubroSeleccion, 0);
+            panel1.Controls.Add(btnSeleccionarParaVenta);
+            panel1.Controls.SetChildIndex(btnSeleccionarParaVenta, 0);
             // 
-            // btnRubroSeleccion
+            // btnSeleccionarParaVenta
             // 
-            btnRubroSeleccion.Location = new Point(8, 256);
-            btnRubroSeleccion.Name = "btnRubroSeleccion";
-            btnRubroSeleccion.Size = new Size(75, 79);
-            btnRubroSeleccion.TabIndex = 1;
-            btnRubroSeleccion.Text = "Seleccionar Rubro";
-            btnRubroSeleccion.UseVisualStyleBackColor = true;
-            btnRubroSeleccion.Click += btnRubroSeleccion_Click;
+            btnSeleccionarParaVenta.Location = new Point(3, 241);
+            btnSeleccionarParaVenta.Name = "btnSeleccionarParaVenta";
+            btnSeleccionarParaVenta.Size = new Size(75, 85);
+            btnSeleccionarParaVenta.TabIndex = 1;
+            btnSeleccionarParaVenta.Text = "Seleccionar para venta";
+            btnSeleccionarParaVenta.UseVisualStyleBackColor = true;
+            btnSeleccionarParaVenta.Click += btnSeleccionarParaVenta_Click;
             // 
-            // FRubroConsulta
+            // FOfertaConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 561);
-            Name = "FRubroConsulta";
-            Text = "FRubroConsulta";
+            Name = "FOfertaConsulta";
+            Text = "FOfertaConsulta";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
@@ -62,6 +62,6 @@
 
         #endregion
 
-        private Button btnRubroSeleccion;
+        private Button btnSeleccionarParaVenta;
     }
 }
