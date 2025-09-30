@@ -29,5 +29,7 @@ namespace Servicios.LogicaNegocio.Cliente.DTO
         public string EstadoDescripcion { get; set; }
         public long? CuentaCorrienteId { get; set; } // Puede ser null si no tiene cuenta corriente asociada
 
+        public string NombreCompleto => $"{Nombre} {Apellido}";
+
     }
 }

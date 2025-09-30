@@ -1,5 +1,7 @@
-﻿using Presentacion.FBase;
+﻿using AccesoDatos.Entidades;
+using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.CuentaCorriente;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
 using System;
@@ -21,6 +23,7 @@ namespace Presentacion.Core.CuentaCorriente
             InitializeComponent();
         }
         private readonly ICuentaCorrienteServicio _cuentacorrienteServicio;
+        private readonly IClienteServicio _clienteServicio;
 
         public override void FBaseABM_Load(object sender, EventArgs e)
         {
@@ -31,6 +34,7 @@ namespace Presentacion.Core.CuentaCorriente
         {
             InitializeComponent();
             _cuentacorrienteServicio = new CuentaCorrienteServicio();
+            _clienteServicio = new ClienteServicio();
 
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
             {
@@ -43,6 +47,17 @@ namespace Presentacion.Core.CuentaCorriente
             }
 
             dtpFechaVencimiento.MinDate = DateTime.Now;
+
+            var clientes = _clienteServicio.ObtenerClientes("").ToList();
+
+            cmbClientes.DisplayMember = "NombreCompleto"; // lo que se muestra
+            cmbClientes.ValueMember = "PersonaId";
+            cmbClientes.DataSource = clientes;
+
+            cmbClientes.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbClientes.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbClientes.DropDownStyle = ComboBoxStyle.DropDown;
+
 
             AgregarControlesObligatorios(txtNombreCC, "Nombre Cuenta Corriente");
             AgregarControlesObligatorios(txtSaldo, "Saldo");
@@ -68,7 +83,7 @@ namespace Presentacion.Core.CuentaCorriente
             }
 
             var cuentacorriente = _cuentacorrienteServicio.ObtenerCuentaCorrientePorId(entidadId.Value);
-
+            var clienteDeCuentaCorriente = _clienteServicio.ObtenerClientes(cuentacorriente.ClienteId.ToString()).ToList();
             // Datos Personales
 
             txtNombreCC.Text = cuentacorriente.NombreCuentaCorriente;
@@ -76,6 +91,11 @@ namespace Presentacion.Core.CuentaCorriente
             dtpFechaVencimiento.Value = (DateTime)cuentacorriente.FechaVencimiento;
             chkLimiteDeuda.Checked = cuentacorriente.LimiteDeudaActivo;
             txtLimiteDeuda.Text = cuentacorriente.LimiteDeuda.ToString();
+            txtLimiteDeuda.Enabled = cuentacorriente.LimiteDeudaActivo;
+            cmbClientes.DisplayMember = "NombreCompleto"; // lo que se muestra
+            cmbClientes.ValueMember = "PersonaId";
+            cmbClientes.DataSource = clienteDeCuentaCorriente;
+            cmbClientes.Enabled = false; // No se puede cambiar el cliente asociado en la modificación
 
             dgvDni.DataSource = cuentacorriente.DniAutorizados.Select(x => new { DNI = x }).ToList();
 
@@ -99,6 +119,7 @@ namespace Presentacion.Core.CuentaCorriente
                 FechaVencimiento = dtpFechaVencimiento.Value,
                 LimiteDeudaActivo = chkLimiteDeuda.Checked,
                 LimiteDeuda = Convert.ToDecimal(txtLimiteDeuda.Text),
+                ClienteId = (long)cmbClientes.SelectedValue,
                 DniAutorizados = dgvDni.Rows
                                   .Cast<DataGridViewRow>()
                                   .Where(r => r.Cells["Dni"].Value != null)
@@ -214,8 +235,7 @@ namespace Presentacion.Core.CuentaCorriente
 
         private void FCuentaCorrienteABM_Load(object sender, EventArgs e)
         {
-            txtLimiteDeuda.Enabled = false;
-            txtLimiteDeuda.Text = "0";
+          
         }
     }
 }

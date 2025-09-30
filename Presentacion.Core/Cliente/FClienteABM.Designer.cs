@@ -46,8 +46,6 @@
             lblNombre = new Label();
             lblDni = new Label();
             lblApellido = new Label();
-            cmbCuentaCorriente = new ComboBox();
-            lblCuentaCorriente = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
@@ -209,30 +207,11 @@
             lblApellido.TabIndex = 25;
             lblApellido.Text = "Apellido";
             // 
-            // cmbCuentaCorriente
-            // 
-            cmbCuentaCorriente.FormattingEnabled = true;
-            cmbCuentaCorriente.Location = new Point(631, 200);
-            cmbCuentaCorriente.Name = "cmbCuentaCorriente";
-            cmbCuentaCorriente.Size = new Size(121, 23);
-            cmbCuentaCorriente.TabIndex = 45;
-            // 
-            // lblCuentaCorriente
-            // 
-            lblCuentaCorriente.AutoSize = true;
-            lblCuentaCorriente.Location = new Point(616, 177);
-            lblCuentaCorriente.Name = "lblCuentaCorriente";
-            lblCuentaCorriente.Size = new Size(156, 15);
-            lblCuentaCorriente.TabIndex = 46;
-            lblCuentaCorriente.Text = "Cuenta Corriente del Cliente";
-            // 
             // FClienteABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 423);
-            Controls.Add(lblCuentaCorriente);
-            Controls.Add(cmbCuentaCorriente);
             Controls.Add(txtEmail);
             Controls.Add(label1);
             Controls.Add(dtpFNacimiento);
@@ -271,8 +250,6 @@
             Controls.SetChildIndex(dtpFNacimiento, 0);
             Controls.SetChildIndex(label1, 0);
             Controls.SetChildIndex(txtEmail, 0);
-            Controls.SetChildIndex(cmbCuentaCorriente, 0);
-            Controls.SetChildIndex(lblCuentaCorriente, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -298,7 +275,5 @@
         private Label lblNombre;
         private Label lblDni;
         private Label lblApellido;
-        private ComboBox cmbCuentaCorriente;
-        private Label lblCuentaCorriente;
     }
 }

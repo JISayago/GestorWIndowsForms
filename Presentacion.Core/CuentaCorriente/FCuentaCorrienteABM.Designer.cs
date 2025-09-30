@@ -41,6 +41,8 @@
             dgvDni = new DataGridView();
             DNI = new DataGridViewTextBoxColumn();
             lblDni = new Label();
+            lblCliente = new Label();
+            cmbClientes = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvDni).BeginInit();
             SuspendLayout();
@@ -153,11 +155,30 @@
             lblDni.TabIndex = 13;
             lblDni.Text = "DNI autorizados para usar la cuenta corriente";
             // 
+            // lblCliente
+            // 
+            lblCliente.AutoSize = true;
+            lblCliente.Location = new Point(50, 185);
+            lblCliente.Name = "lblCliente";
+            lblCliente.Size = new Size(44, 15);
+            lblCliente.TabIndex = 14;
+            lblCliente.Text = "Cliente";
+            // 
+            // cmbClientes
+            // 
+            cmbClientes.FormattingEnabled = true;
+            cmbClientes.Location = new Point(132, 182);
+            cmbClientes.Name = "cmbClientes";
+            cmbClientes.Size = new Size(200, 23);
+            cmbClientes.TabIndex = 15;
+            // 
             // FCuentaCorrienteABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 419);
+            Controls.Add(cmbClientes);
+            Controls.Add(lblCliente);
             Controls.Add(lblDni);
             Controls.Add(dgvDni);
             Controls.Add(dtpFechaVencimiento);
@@ -185,6 +206,8 @@
             Controls.SetChildIndex(dtpFechaVencimiento, 0);
             Controls.SetChildIndex(dgvDni, 0);
             Controls.SetChildIndex(lblDni, 0);
+            Controls.SetChildIndex(lblCliente, 0);
+            Controls.SetChildIndex(cmbClientes, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvDni).EndInit();
             ResumeLayout(false);
@@ -206,5 +229,7 @@
         private DataGridView dgvDni;
         private Label lblDni;
         private DataGridViewTextBoxColumn DNI;
+        private Label lblCliente;
+        private ComboBox cmbClientes;
     }
 }

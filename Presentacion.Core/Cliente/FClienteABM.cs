@@ -11,8 +11,6 @@ namespace Presentacion.Core.Cliente
 {
     public partial class FClienteABM : FBaseABM
     {
-        private readonly ICuentaCorrienteServicio _CuentaCorrienteServicio;
-
         public FClienteABM()
         {
             InitializeComponent();
@@ -28,7 +26,6 @@ namespace Presentacion.Core.Cliente
         {
             InitializeComponent();
             _clienteServicio = new ClienteServicio();
-            _CuentaCorrienteServicio = new CuentaCorrienteServicio();
 
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
             {
@@ -39,16 +36,6 @@ namespace Presentacion.Core.Cliente
             {
                 DesactivarControles(this);
             }
-
-            var cuentasCorrientes = _CuentaCorrienteServicio.ObtenerCuentaCorrientes("").ToList();
-
-            cmbCuentaCorriente.DisplayMember = "NombreCuentaCorriente"; // lo que se muestra
-            cmbCuentaCorriente.ValueMember = "CuentaCorrienteId";
-            cmbCuentaCorriente.DataSource = cuentasCorrientes;
-
-            cmbCuentaCorriente.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            cmbCuentaCorriente.AutoCompleteSource = AutoCompleteSource.ListItems;
-            cmbCuentaCorriente.DropDownStyle = ComboBoxStyle.DropDown;
 
             AgregarControlesObligatorios(txtApellido, "Apellido");
             AgregarControlesObligatorios(txtNombre, "Nombre");
@@ -90,7 +77,6 @@ namespace Presentacion.Core.Cliente
             dtpFNacimiento.Value = (DateTime)cliente.FechaNacimiento;
             txtTelefono.Text = cliente.Telefono;
             // Datos Cliente
-            cmbCuentaCorriente.SelectedValue = cliente.CuentaCorrienteId.HasValue ? cliente.CuentaCorrienteId.Value : -1;
         }
 
 
@@ -117,7 +103,7 @@ namespace Presentacion.Core.Cliente
                 Telefono2 = txtCelular.Text,
                 NumeroCliente = "0", //Asignar un valor adecuado si es necesario
                 Estado = 1, //Activo por defecto
-                CuentaCorrienteId = cmbCuentaCorriente.SelectedValue != null ? (long?)cmbCuentaCorriente.SelectedValue : null,
+                //CuentaCorrienteId = cmbCuentaCorriente.SelectedValue != null ? (long?)cmbCuentaCorriente.SelectedValue : null,
                 EstaEliminado = false,
             };
 

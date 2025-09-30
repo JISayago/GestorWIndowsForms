@@ -51,6 +51,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo,
                 FechaVencimiento = cuentacorrienteDto.FechaVencimiento,
                 EstaEliminado = false,
+                ClienteId = cuentacorrienteDto.ClienteId,
                 // Convertimos los DNIs a objetos de entidad
                 CuentaCorrienteAutorizado = cuentacorrienteDto.DniAutorizados
                     .Select(dni => new CuentaCorrienteAutorizado
