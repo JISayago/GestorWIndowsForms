@@ -49,6 +49,30 @@ namespace Presentacion.Core.Producto
             grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             grilla.Columns["Descripcion"].HeaderText = "Producto";
 
+            grilla.Columns["MarcaNombre"].Visible = true;
+            grilla.Columns["MarcaNombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            grilla.Columns["MarcaNombre"].HeaderText = "Marca";
+
+            grilla.Columns["RubroNombre"].Visible = true;   
+            grilla.Columns["RubroNombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            grilla.Columns["RubroNombre"].HeaderText = "Rubro";
+
+            grilla.Columns["PrecioCosto"].Visible = true;
+            grilla.Columns["PrecioCosto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            grilla.Columns["PrecioCosto"].HeaderText = "Precio Costo";
+
+            grilla.Columns["PrecioVenta"].Visible = true;
+            grilla.Columns["PrecioVenta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            grilla.Columns["PrecioVenta"].HeaderText = "Precio Venta";
+
+            grilla.Columns["Stock"].Visible = true;
+            grilla.Columns["Stock"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            grilla.Columns["Stock"].HeaderText = "Stock";
+
+            grilla.Columns["Estado"].Visible = true;
+            grilla.Columns["Estado"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            grilla.Columns["Estado"].HeaderText = "Estado";
+
         }
 
         public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
