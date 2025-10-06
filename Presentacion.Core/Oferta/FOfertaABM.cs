@@ -46,6 +46,7 @@ namespace Presentacion.Core.Oferta
         private decimal _cantidadProductos = 0.0m;
         private bool _precioMontoFijo = false;
         private bool _precioPorcentaje = false;
+        private string _codigoOferta = string.Empty;
 
 
         public FOfertaABM(TipoOferta tipoOferta)
@@ -253,6 +254,11 @@ namespace Presentacion.Core.Oferta
 
         private void btnCargarProducto_Click(object sender, EventArgs e)
         {
+            if(!_es2x1 && !_esCombinacionProductos)
+            {
+                 MessageBox.Show("Debe seleccionar una opción de oferta: 2x1 o combinación de productos.");
+                return;
+            }
             var fProductos = new FProductoConsulta(true);
 
             if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
@@ -335,8 +341,20 @@ namespace Presentacion.Core.Oferta
 
                     _descripcion = $"({_descripcion} {productoDto.Descripcion} codigo:{productoDto.Codigo} cantidad:{cantidad}) + ";
                     txtDescripcion.Text = _descripcion;
+                    if (_es2x1)
+                    {
+                        cbxDescuentoPesos.Checked = true; // por defecto
+                        txtPrecioDescuentoPesos.Text = productoDto.PrecioVenta.ToString("N2");
+                    _codigoOferta = _codigoOferta + $"{productoDto.Codigo}_{cantidad}_";
+                        txtCodigoOferta.Text = _codigoOferta;
+                    }
                     _cantidadProductos = _cantidadProductos + cantidad;
                     lblCantidadProductos.Text = $"Cantidad Productos: {_cantidadProductos}";
+                    if (_esCombinacionProductos)
+                    {
+                        _codigoOferta = _codigoOferta + $"{productoDto.Codigo}_{cantidad}_";
+                        txtCodigoOferta.Text = _codigoOferta;
+                    }
                 }
             }
         }
@@ -351,7 +369,9 @@ namespace Presentacion.Core.Oferta
              dtpFechaFin.Value = DateTime.Now.AddDays(1);
              _fechaInicio = dtpFechaInicio.Value;
              _fechaFin = dtpFechaFin.Value;
-             ResetearGrilla(dgvProductos);
+            _codigoOferta = $"Of-COMP_{DateTime.Now.ToString("yyyyMMddHHmmss")}_";
+            txtCodigoOferta.Text = _codigoOferta;
+            ResetearGrilla(dgvProductos);
         }
 
         private void cbxDescuentoPesos_CheckedChanged(object sender, EventArgs e)
