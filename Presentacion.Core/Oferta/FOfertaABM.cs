@@ -257,17 +257,15 @@ namespace Presentacion.Core.Oferta
 
             if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
             {
-
                 var idProducto = fProductos.productoSeleccionado.Value;
-
                 var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
-
                 if (producto == null) return;
 
                 var fCantidad = new FCantidadItem();
                 if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
                 {
                     var cantidad = fCantidad.cantidad;
+
                     var productoDto = new ProductoDTO
                     {
                         ProductoId = producto.ProductoId,
@@ -290,32 +288,59 @@ namespace Presentacion.Core.Oferta
                         CategoriaIds = producto.CategoriaIds,
                     };
 
-                    var parcial = productoDto;
+                    // VALIDACIÓN: si _es2x1 es true, no permitir agregar productos distintos
+                    if (_es2x1)
+                    {
+                        if (_productosParaOferta.Count > 0)
+                        {
+                            var primerId = _productosParaOferta[0].ProductoId;
+                            if (primerId != productoDto.ProductoId)
+                            {
+                                MessageBox.Show("La oferta 2x1 sólo puede contener unidades del mismo producto. No se puede agregar un producto distinto.",
+                                                "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                return; // salimos sin agregar
+                            }
+                        }
+                    }
 
-                    _productosParaOferta.Add(productoDto);  // Solo agregamos a la BindingList7
+                    // --- Opción recomendada: si ya existe el mismo producto, actualizar cantidad en la lista ---
+                    // Si usás una DTO que guarda Cantidad (por ejemplo ProductosEnOfertaDescuentosDTO),
+                    // sería mejor buscar si ya existe una entrada para ese ProductoId y sumar la cantidad.
+                    // Ejemplo comentado (descomentar/adaptar si tenés lista con Cantidad):
+                    /*
+                    var existente = _productosOfertaDTO.FirstOrDefault(p => p.ProductoOfertaId == productoDto.ProductoId);
+                    if (existente != null)
+                    {
+                        existente.Cantidad += cantidad;
+                        // actualizar descripción/labels como corresponda
+                    }
+                    else
+                    {
+                        var productoOfertaDto = new ProductosEnOfertaDescuentosDTO
+                        {
+                            ProductoOfertaId = producto.ProductoId,
+                            Descripcion = producto.Descripcion,
+                            Codigo = producto.Codigo,
+                            CodigoBarra = producto.CodigoBarra,
+                            Cantidad = cantidad,
+                            PrecioCosto = producto.PrecioCosto,
+                            PrecioVenta = producto.PrecioVenta,
+                        };
+                        _productosOfertaDTO.Add(productoOfertaDto);
+                    }
+                    */
+
+                    // Si no usás cantidades por elemento y querés simplemente agregar la entrada:
+                    _productosParaOferta.Add(productoDto);
+
                     _descripcion = $"({_descripcion} {productoDto.Descripcion} codigo:{productoDto.Codigo} cantidad:{cantidad}) + ";
                     txtDescripcion.Text = _descripcion;
                     _cantidadProductos = _cantidadProductos + cantidad;
                     lblCantidadProductos.Text = $"Cantidad Productos: {_cantidadProductos}";
-
-                  /*  var productoOfertaDto = new ProductosEnOfertaDescuentosDTO
-                    {
-                        ProductoOfertaId = producto.ProductoId,
-                        Descripcion = producto.Descripcion,
-                        Codigo = producto.Codigo,
-                        CodigoBarra = producto.CodigoBarra,
-                        Cantidad = cantidad,
-                        PrecioCosto = producto.PrecioCosto,
-                        PrecioVenta = producto.PrecioVenta,
-                    };
-                    _productosOfertaDTO.Add(productoOfertaDto);  // Solo agregamos a la BindingList7
-                    _descripcion = $"({_descripcion} {productoOfertaDto.Descripcion} codigo:{productoOfertaDto.Codigo} cantidad:{cantidad}) + ";
-                    txtDescripcion.Text = _descripcion;
-                    _cantidadProductos = _cantidadProductos + cantidad;
-                    lblCantidadProductos.Text = $"Cantidad Productos: {_cantidadProductos}";*/
                 }
             }
         }
+
 
         private void FOfertaABM_Load(object sender, EventArgs e)
         {

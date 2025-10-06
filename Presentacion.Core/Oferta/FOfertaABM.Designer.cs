@@ -69,7 +69,7 @@
             // cbxCombinacionProductos
             // 
             cbxCombinacionProductos.AutoSize = true;
-            cbxCombinacionProductos.Location = new Point(108, 53);
+            cbxCombinacionProductos.Location = new Point(141, 78);
             cbxCombinacionProductos.Name = "cbxCombinacionProductos";
             cbxCombinacionProductos.Size = new Size(308, 19);
             cbxCombinacionProductos.TabIndex = 3;
@@ -134,7 +134,7 @@
             // cbxEstaActiva
             // 
             cbxEstaActiva.AutoSize = true;
-            cbxEstaActiva.Location = new Point(602, 53);
+            cbxEstaActiva.Location = new Point(480, 56);
             cbxEstaActiva.Name = "cbxEstaActiva";
             cbxEstaActiva.Size = new Size(135, 19);
             cbxEstaActiva.TabIndex = 22;
@@ -167,7 +167,7 @@
             // cbx2x1
             // 
             cbx2x1.AutoSize = true;
-            cbx2x1.Location = new Point(108, 78);
+            cbx2x1.Location = new Point(141, 110);
             cbx2x1.Name = "cbx2x1";
             cbx2x1.Size = new Size(250, 19);
             cbx2x1.TabIndex = 33;
@@ -344,7 +344,7 @@
             // cbxLimiteCumplirStock
             // 
             cbxLimiteCumplirStock.AutoSize = true;
-            cbxLimiteCumplirStock.Location = new Point(602, 78);
+            cbxLimiteCumplirStock.Location = new Point(480, 81);
             cbxLimiteCumplirStock.Name = "cbxLimiteCumplirStock";
             cbxLimiteCumplirStock.Size = new Size(131, 19);
             cbxLimiteCumplirStock.TabIndex = 69;
@@ -355,7 +355,7 @@
             // txtLimiteStock
             // 
             txtLimiteStock.Enabled = false;
-            txtLimiteStock.Location = new Point(593, 129);
+            txtLimiteStock.Location = new Point(471, 132);
             txtLimiteStock.Name = "txtLimiteStock";
             txtLimiteStock.Size = new Size(137, 23);
             txtLimiteStock.TabIndex = 70;
@@ -363,7 +363,7 @@
             // lblLimiteStock
             // 
             lblLimiteStock.AutoSize = true;
-            lblLimiteStock.Location = new Point(593, 111);
+            lblLimiteStock.Location = new Point(471, 114);
             lblLimiteStock.Name = "lblLimiteStock";
             lblLimiteStock.Size = new Size(140, 15);
             lblLimiteStock.TabIndex = 71;
