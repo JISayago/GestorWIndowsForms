@@ -52,7 +52,6 @@
             txtPrecioDescuentoPesos = new TextBox();
             lblTotalPrecioReal = new Label();
             lblPerdida = new Label();
-            cbxEsUnSoloProducto = new CheckBox();
             btnCalcular = new Button();
             btnLimpiar = new Button();
             lblPrecioTotalDeLaOferta = new Label();
@@ -135,7 +134,7 @@
             // cbxEstaActiva
             // 
             cbxEstaActiva.AutoSize = true;
-            cbxEstaActiva.Location = new Point(447, 53);
+            cbxEstaActiva.Location = new Point(602, 53);
             cbxEstaActiva.Name = "cbxEstaActiva";
             cbxEstaActiva.Size = new Size(135, 19);
             cbxEstaActiva.TabIndex = 22;
@@ -289,17 +288,6 @@
             lblPerdida.TabIndex = 61;
             lblPerdida.Text = "Total Perdido";
             // 
-            // cbxEsUnSoloProducto
-            // 
-            cbxEsUnSoloProducto.AutoSize = true;
-            cbxEsUnSoloProducto.Location = new Point(447, 78);
-            cbxEsUnSoloProducto.Name = "cbxEsUnSoloProducto";
-            cbxEsUnSoloProducto.Size = new Size(131, 19);
-            cbxEsUnSoloProducto.TabIndex = 62;
-            cbxEsUnSoloProducto.Text = "Es un sólo Producto";
-            cbxEsUnSoloProducto.UseVisualStyleBackColor = true;
-            cbxEsUnSoloProducto.CheckedChanged += cbxEsUnSoloProducto_CheckedChanged;
-            // 
             // btnCalcular
             // 
             btnCalcular.Location = new Point(134, 679);
@@ -356,7 +344,7 @@
             // cbxLimiteCumplirStock
             // 
             cbxLimiteCumplirStock.AutoSize = true;
-            cbxLimiteCumplirStock.Location = new Point(108, 103);
+            cbxLimiteCumplirStock.Location = new Point(602, 78);
             cbxLimiteCumplirStock.Name = "cbxLimiteCumplirStock";
             cbxLimiteCumplirStock.Size = new Size(131, 19);
             cbxLimiteCumplirStock.TabIndex = 69;
@@ -367,7 +355,7 @@
             // txtLimiteStock
             // 
             txtLimiteStock.Enabled = false;
-            txtLimiteStock.Location = new Point(157, 151);
+            txtLimiteStock.Location = new Point(593, 129);
             txtLimiteStock.Name = "txtLimiteStock";
             txtLimiteStock.Size = new Size(137, 23);
             txtLimiteStock.TabIndex = 70;
@@ -375,7 +363,7 @@
             // lblLimiteStock
             // 
             lblLimiteStock.AutoSize = true;
-            lblLimiteStock.Location = new Point(157, 133);
+            lblLimiteStock.Location = new Point(593, 111);
             lblLimiteStock.Name = "lblLimiteStock";
             lblLimiteStock.Size = new Size(140, 15);
             lblLimiteStock.TabIndex = 71;
@@ -406,7 +394,6 @@
             Controls.Add(lblPrecioTotalDeLaOferta);
             Controls.Add(btnLimpiar);
             Controls.Add(btnCalcular);
-            Controls.Add(cbxEsUnSoloProducto);
             Controls.Add(lblPerdida);
             Controls.Add(lblTotalPrecioReal);
             Controls.Add(lblCodigo);
@@ -466,7 +453,6 @@
         private TextBox txtPrecioDescuentoPesos;
         private Label lblTotalPrecioReal;
         private Label lblPerdida;
-        private CheckBox cbxEsUnSoloProducto;
         private Button btnCalcular;
         private Button btnLimpiar;
         private Label lblPrecioTotalDeLaOferta;

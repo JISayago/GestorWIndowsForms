@@ -73,12 +73,10 @@ namespace Presentacion.Core.Oferta
             if (_esCombinacionProductos)
             {
                 cbx2x1.Enabled = false;
-                cbxEsUnSoloProducto.Enabled = false;
             }
             else
             {
                 cbx2x1.Enabled = true;
-                cbxEsUnSoloProducto.Enabled = true;
 
             }
         }
@@ -94,12 +92,10 @@ namespace Presentacion.Core.Oferta
             if (_es2x1)
             {
                 cbxCombinacionProductos.Enabled = false;
-                cbxEsUnSoloProducto.Enabled = false;
             }
             else
             {
                 cbxCombinacionProductos.Enabled = true;
-                cbxEsUnSoloProducto.Enabled = true;
 
             }
         }
@@ -333,22 +329,6 @@ namespace Presentacion.Core.Oferta
              ResetearGrilla(dgvProductos);
         }
 
-        private void cbxEsUnSoloProducto_CheckedChanged(object sender, EventArgs e)
-        {
-            _esUnSoloProducto = cbxEsUnSoloProducto.Checked;
-            if (_esUnSoloProducto)
-            {
-                cbxCombinacionProductos.Enabled = false;
-                cbx2x1.Enabled = false;
-            }
-            else
-            {
-                cbxCombinacionProductos.Enabled = true;
-                cbx2x1.Enabled = true;
-
-            }
-        }
-
         private void cbxDescuentoPesos_CheckedChanged(object sender, EventArgs e)
         {
             _precioMontoFijo = cbxDescuentoPesos.Checked;
@@ -422,7 +402,7 @@ namespace Presentacion.Core.Oferta
                     FechaFin = dtpFechaFin.Value,
                     CantidadProductosDentroOferta = _cantidadProductos, // si esto puede ser null, convertí igual
                     EstaActiva = cbxEstaActiva.Checked,
-                    EsUnSoloProducto = cbxEsUnSoloProducto.Checked,
+                    EsUnSoloProducto = false,
                     Detalle = txtDetalle.Text?.Trim(),
                     Codigo = txtCodigoOferta.Text?.Trim(),
                     esOfertaPorGrupo = false,
