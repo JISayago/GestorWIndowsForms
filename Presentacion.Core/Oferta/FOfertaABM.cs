@@ -362,16 +362,7 @@ namespace Presentacion.Core.Oferta
 
         private void FOfertaABM_Load(object sender, EventArgs e)
         {
-             dgvProductos.AllowUserToAddRows = false;
-             _productosParaOferta = new BindingList<ProductoDTO>();
-             dgvProductos.DataSource = _productosParaOferta;  // bind directo
-             dtpFechaInicio.Value = DateTime.Now;
-             dtpFechaFin.Value = DateTime.Now.AddDays(1);
-             _fechaInicio = dtpFechaInicio.Value;
-             _fechaFin = dtpFechaFin.Value;
-            _codigoOferta = $"Of-COMP_{DateTime.Now.ToString("yyyyMMddHHmmss")}_";
-            txtCodigoOferta.Text = _codigoOferta;
-            ResetearGrilla(dgvProductos);
+            LimpiarInicializarControles();
         }
 
         private void cbxDescuentoPesos_CheckedChanged(object sender, EventArgs e)
@@ -519,12 +510,42 @@ namespace Presentacion.Core.Oferta
         }
         private void btnLimpiar_Click(object sender, EventArgs e)
         {
-
+            LimpiarInicializarControles();
         }
 
         private void cbxLimiteCumplirStock_CheckedChanged(object sender, EventArgs e)
         {
             txtLimiteStock.Enabled = cbxLimiteCumplirStock.Checked;
+        }
+
+        private void LimpiarInicializarControles()
+        {
+            _precioOriginal = 0.0m;
+            _precioFinal = 0.0m;
+            _precioMontoFijo = false;
+            _precioPorcentaje = false;
+            txtCodigoOferta.Text = string.Empty;
+            dgvProductos.AllowUserToAddRows = false;
+            _productosParaOferta = new BindingList<ProductoDTO>();
+            dgvProductos.DataSource = _productosParaOferta;  // bind directo
+            dtpFechaInicio.Value = DateTime.Now;
+            dtpFechaFin.Value = DateTime.Now.AddDays(1);
+            _fechaInicio = dtpFechaInicio.Value;
+            _fechaFin = dtpFechaFin.Value;
+            txtCodigoOferta.Text = string.Empty;
+            txtDescripcion.Text = string.Empty;
+            txtPrecioDescuentoPesos.Text = string.Empty;
+            txtPrecioDescuentoPorcentaje.Text = string.Empty;
+            txtPrecioTotalOfertaAplicada.Text = string.Empty;
+            txtPrecioTotalPerdido.Text = string.Empty;
+            txtPrecioTotalRealProductos.Text = string.Empty;
+            cbxDescuentoPesos.Checked = false;
+            cbxDescuentoPorcentaje.Checked = false;
+            _codigoOferta = $"Of-COMP_{DateTime.Now.ToString("yyyyMMddHHmmss")}_";
+            txtCodigoOferta.Text = _codigoOferta;
+            cbx2x1.Checked = false;
+            cbxCombinacionProductos.Checked = false;
+            ResetearGrilla(dgvProductos);
         }
     }
 }
