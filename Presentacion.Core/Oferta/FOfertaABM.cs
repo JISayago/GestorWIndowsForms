@@ -55,17 +55,6 @@ namespace Presentacion.Core.Oferta
             _ofertaServicio = new OfertaServicio();
             _tipoOferta = tipoOferta;
 
-            CargarControlesSegunTipoOferta(_tipoOferta);
-        }
-
-        private void CargarControlesSegunTipoOferta(TipoOferta tipoOferta)
-        {
-            if (_tipoOferta == TipoOferta.Grupo)
-            {
-                var FOfertaGrupo = new FOfertaGrupoABM(TipoOferta.Grupo);
-                FOfertaGrupo.ShowDialog();
-                this.Close();
-            }
         }
 
         private void cbxCantidadProductos_CheckedChanged(object sender, EventArgs e)
