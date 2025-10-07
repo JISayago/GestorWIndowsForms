@@ -466,6 +466,9 @@ namespace Presentacion.Core.Oferta
                 }
 
                 MessageBox.Show(resultado.Mensaje ?? "Oferta creada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LimpiarInicializarControles();
+
+
 
             }
             catch (Exception ex)
