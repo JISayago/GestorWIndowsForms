@@ -57,6 +57,7 @@ namespace Presentacion.Core.Oferta
         private decimal cantidadTotalFueraOferta = 0.0m;
         private bool _esUnSoloProducto = false;
         private bool _hastaCumplirStock = false;
+        private string _codigoOferta = string.Empty;
 
         private BindingList<ProductoDTO> _productosParaOfertaDTO;
         private BindingList<ProductoDTO> _productosParaQuitarDeOfertaDTO;
@@ -141,6 +142,8 @@ namespace Presentacion.Core.Oferta
             _fechaFin = dtpFechaFin.Value;
             lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
             lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
+            _codigoOferta = $"Of-GRUPO_{DateTime.Now.ToString("yyyyMMddHHmmss")}_";
+            txtCodigoOferta.Text = _codigoOferta;
             ActualizarGrillas();
             ResetearGrillas(dgvProductos, dgvProductosQuitados);
 
@@ -192,6 +195,7 @@ namespace Presentacion.Core.Oferta
                         // Obtener el producto desde el servicio (ajusta el nombre del método si es distinto)
                         var productoDto = _productoServicio.ObtenerProductoPorId(idProductoSeleccionado);
 
+
                         if (productoDto == null)
                         {
                             MessageBox.Show("No se encontró el producto seleccionado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -220,11 +224,12 @@ namespace Presentacion.Core.Oferta
                         }
 
                         // Actualizamos contadores, etiquetas y descripción
+                        _codigoOferta = _codigoOferta + $"{productoDto.Codigo}_{productoDto.Descripcion}";
+                        txtCodigoOferta.Text = _codigoOferta;
                         cantidadTotalEnOferta = _productosParaOfertaDTO.Count();
                         cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO?.Count() ?? 0;
                         lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
                         lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
-
                         _descripcion = $"({_descripcion} M-{_marcaN} C-{_categoriaN}) + cant{cantidadTotalEnOferta}";
                         txtDescripcion.Text = _descripcion;
                     }
@@ -244,7 +249,8 @@ namespace Presentacion.Core.Oferta
             cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO.Count();
             lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
             lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
-
+            _codigoOferta = _codigoOferta + $"({_descripcion} M-{_marcaN}C-{_categoriaN})_{cantidadTotalEnOferta}_";
+            txtCodigoOferta.Text = _codigoOferta;
             _descripcion = $"({_descripcion} M-{_marcaN}C-{_categoriaN}) + cant{cantidadTotalEnOferta}";
             txtDescripcion.Text = _descripcion;
 
@@ -566,6 +572,16 @@ namespace Presentacion.Core.Oferta
             btnQuitarProducto.Enabled = !_esUnSoloProducto;
             btnDevolverAOferta.Enabled = !_esUnSoloProducto;
             dgvProductosQuitados.Enabled = !_esUnSoloProducto;
+            if (_esUnSoloProducto)
+            {
+                _codigoOferta = $"Of-PROD_{DateTime.Now.ToString("yyyyMMddHHmmss")}_";
+                txtCodigoOferta.Text = _codigoOferta;
+            }
+            else
+            {
+                _codigoOferta = $"Of-GRUPO_{DateTime.Now.ToString("yyyyMMddHHmmss")}_";
+                txtCodigoOferta.Text = _codigoOferta;
+            }
         }
 
         private void cbxLimiteCumplirStock_CheckedChanged(object sender, EventArgs e)
