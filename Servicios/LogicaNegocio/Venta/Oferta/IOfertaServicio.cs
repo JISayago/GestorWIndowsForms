@@ -13,5 +13,7 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         public EstadoOperacion Insertar(OfertaDTO dto);
         public List<OfertaDTO> ObtenerOfertas(string cadenaBuscar);
         public OfertaDTO ObtenerOfertaPorId(long idOFerta);
+
+        public bool ExisteOfertaPorCodigo(string codigo);
     }
 }

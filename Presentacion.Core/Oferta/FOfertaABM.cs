@@ -406,7 +406,12 @@ namespace Presentacion.Core.Oferta
                 MessageBox.Show("Debe ingresar un código para la oferta");
                 return;
             }
-
+            var codigo = txtCodigoOferta.Text.Trim();
+            if (_ofertaServicio.ExisteOfertaPorCodigo(codigo))
+            {
+                MessageBox.Show($"Ya existe una oferta con el código '{codigo}'. Por favor elija otro código.", "Código duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             if (!_ofertaActiva)
             {

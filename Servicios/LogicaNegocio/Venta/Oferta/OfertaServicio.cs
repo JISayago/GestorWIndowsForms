@@ -235,5 +235,17 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 }).FirstOrDefault();
             return oferta;
         }
+
+        public bool ExisteOfertaPorCodigo(string codigo)
+        {
+            if (string.IsNullOrWhiteSpace(codigo))
+                return false;
+
+            codigo = codigo.Trim().ToLowerInvariant();
+
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            return context.OfertasDescuentos
+                          .Any(o => o.Codigo != null && o.Codigo.ToLower() == codigo);
+        }
     }
 }
