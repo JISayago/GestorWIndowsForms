@@ -32,7 +32,8 @@ namespace Presentacion.Core.Oferta
         private bool _esCombinacionProductos = false;
         private bool _ofertaActiva = false;
         private bool _es2x1 = false;
-        private bool _esUnSoloProducto = false;
+        private bool _hastaCumplirLimiteDeStock = false;
+        private decimal _limiteDeStock = 0.0m;
         private DateTime _fechaInicio;
         private DateTime _fechaFin;
         private string _descripcion;
@@ -196,6 +197,11 @@ namespace Presentacion.Core.Oferta
             grilla.Columns["PrecioCosto"].DisplayIndex = 5;
             grilla.Columns["PrecioCosto"].HeaderText = "Precio Costo";
 
+            grilla.Columns["CantidadItemEnOferta"].Visible = true;
+            grilla.Columns["CantidadItemEnOferta"].Width = 100;
+            grilla.Columns["CantidadItemEnOferta"].DisplayIndex = 6;
+            grilla.Columns["CantidadItemEnOferta"].HeaderText = "Cantidad en oferta";
+
         }
         private void dgvProductos_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -281,6 +287,7 @@ namespace Presentacion.Core.Oferta
                         MarcaNombre = string.Empty,
                         RubroNombre = string.Empty,
                         CategoriaIds = producto.CategoriaIds,
+                        CantidadItemEnOferta = cantidad
                     };
 
                     // VALIDACIÓN: si _es2x1 es true, no permitir agregar productos distintos
@@ -298,32 +305,6 @@ namespace Presentacion.Core.Oferta
                         }
                     }
 
-                    // --- Opción recomendada: si ya existe el mismo producto, actualizar cantidad en la lista ---
-                    // Si usás una DTO que guarda Cantidad (por ejemplo ProductosEnOfertaDescuentosDTO),
-                    // sería mejor buscar si ya existe una entrada para ese ProductoId y sumar la cantidad.
-                    // Ejemplo comentado (descomentar/adaptar si tenés lista con Cantidad):
-                    /*
-                    var existente = _productosOfertaDTO.FirstOrDefault(p => p.ProductoOfertaId == productoDto.ProductoId);
-                    if (existente != null)
-                    {
-                        existente.Cantidad += cantidad;
-                        // actualizar descripción/labels como corresponda
-                    }
-                    else
-                    {
-                        var productoOfertaDto = new ProductosEnOfertaDescuentosDTO
-                        {
-                            ProductoOfertaId = producto.ProductoId,
-                            Descripcion = producto.Descripcion,
-                            Codigo = producto.Codigo,
-                            CodigoBarra = producto.CodigoBarra,
-                            Cantidad = cantidad,
-                            PrecioCosto = producto.PrecioCosto,
-                            PrecioVenta = producto.PrecioVenta,
-                        };
-                        _productosOfertaDTO.Add(productoOfertaDto);
-                    }
-                    */
 
                     // Si no usás cantidades por elemento y querés simplemente agregar la entrada:
                     _productosParaOferta.Add(productoDto);
@@ -420,24 +401,38 @@ namespace Presentacion.Core.Oferta
             {
                 btnCrear.Enabled = false;
 
+                if (_hastaCumplirLimiteDeStock)
+                {
+                    if (string.IsNullOrEmpty(txtLimiteStock.Text))
+                    {
+                       MessageBox.Show("Debe ingresar un límite de stock si seleccionó la opción de hasta cumplir límite de stock.");
+                        return;
+                    }
+                    if (!decimal.TryParse(txtLimiteStock.Text, out decimal limiteStock) || limiteStock <= 0)
+                    {
+                        MessageBox.Show("El límite de stock debe ser un número positivo válido.");
+                        return;
+                    }
+                    _limiteDeStock = limiteStock;
+                }
+
                 var ofertaDto = new OfertaDTO
                 {
-                    //OfertaDescuentoId = 0, // si corresponde dejar 0 para nuevo registro
                     Descripcion = txtDescripcion.Text?.Trim(),
                     PrecioFinal = _precioFinal,
-                    PrecioOriginal = 0.0m,
+                    PrecioOriginal = _productosParaOferta.Sum(x => x.PrecioVenta * (decimal)x.CantidadItemEnOferta),
                     DescuentoTotalFinal = _precioOriginal - _precioFinal,
-                    PorcentajeDescuento = 0.0m,//Convert.ToDecimal(txtPrecioDescuentoPorcentaje.Text),
+                    PorcentajeDescuento = string.IsNullOrWhiteSpace(txtPrecioDescuentoPorcentaje.Text) ? 0m : (decimal.TryParse(txtPrecioDescuentoPorcentaje.Text.Trim(), out var parsed) ? parsed : 0m),
                     FechaInicio = dtpFechaInicio.Value,
                     FechaFin = dtpFechaFin.Value,
                     CantidadProductosDentroOferta = _cantidadProductos, // si esto puede ser null, convertí igual
                     EstaActiva = cbxEstaActiva.Checked,
                     EsUnSoloProducto = false,
                     Detalle = txtDetalle.Text?.Trim(),
-                    Codigo = txtCodigoOferta.Text?.Trim(),
+                    Codigo = txtCodigoOferta.Text?.Trim(),//recortar porq el string q se arma es muy largo
                     esOfertaPorGrupo = false,
-                    TieneLimiteDeStock = cbxLimiteCumplirStock.Checked,
-                    CantidadLimiteDeStock = 0.0m, //cbxLimiteCumplirStock.Checked ? Convert.ToDecimal(txtLimiteStock.Text) : null,
+                    TieneLimiteDeStock = _hastaCumplirLimiteDeStock,
+                    CantidadLimiteDeStock = _limiteDeStock,
                     IdMarca = null,
                     IdRubro = null,
                     IdCategoria = null,
@@ -498,7 +493,7 @@ namespace Presentacion.Core.Oferta
             if (_precioMontoFijo)
             {
                 _precioFinal = decimal.TryParse((txtPrecioDescuentoPesos.Text), out decimal precioFinal) ? precioFinal : 0.0m;
-               // _precioOriginal = _productosOfertaDTO.Sum(x => x.Producto.PrecioVenta * x.Cantidad);
+                _precioOriginal = _productosParaOferta.Sum(x => x.PrecioVenta * (decimal)x.CantidadItemEnOferta);
                 txtPrecioTotalOfertaAplicada.Text = _precioFinal.ToString("N2");
                 txtPrecioTotalRealProductos.Text = _precioOriginal.ToString("N2");
                 txtPrecioTotalPerdido.Text = (_precioOriginal - _precioFinal).ToString("N2");
@@ -513,6 +508,7 @@ namespace Presentacion.Core.Oferta
         private void cbxLimiteCumplirStock_CheckedChanged(object sender, EventArgs e)
         {
             txtLimiteStock.Enabled = cbxLimiteCumplirStock.Checked;
+            _hastaCumplirLimiteDeStock = cbxLimiteCumplirStock.Checked;
         }
 
         private void LimpiarInicializarControles()

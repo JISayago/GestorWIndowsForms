@@ -149,8 +149,8 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
             {
                 OfertaId = ofertaId,
                 ProductoId = p.ProductoId,
-                Cantidad = 0.0m,
-                CantidadVendidaPorLimite = 0.0m,//agregart el limite segun corresponda
+                Cantidad = p.CantidadItemEnOferta.HasValue ? (decimal)p.CantidadItemEnOferta.Value : -1m,
+                CantidadVendidaPorLimite = p.CantidadItemEnOferta.HasValue ? (decimal)ofertaDto.CantidadLimiteDeStock : -1m ,//agregart el limite segun corresponda
                 PrecioOrginal = p.PrecioVenta,
                 PrecioConDescuento = p.PrecioVenta * (1 - (porcentaje / 100m))
             }).ToList();

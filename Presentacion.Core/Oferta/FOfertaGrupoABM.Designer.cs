@@ -185,6 +185,7 @@
             cbxDescuentoPorcentaje.TabIndex = 39;
             cbxDescuentoPorcentaje.Text = "Precio de la Oferta/Descuento (%)";
             cbxDescuentoPorcentaje.UseVisualStyleBackColor = true;
+            cbxDescuentoPorcentaje.CheckedChanged += cbxDescuentoPorcentaje_CheckedChanged;
             // 
             // cbxDescuentoPesos
             // 
@@ -195,6 +196,7 @@
             cbxDescuentoPesos.TabIndex = 38;
             cbxDescuentoPesos.Text = "Precio de la Oferta/Descuento ($)";
             cbxDescuentoPesos.UseVisualStyleBackColor = true;
+            cbxDescuentoPesos.CheckedChanged += cbxDescuentoPesos_CheckedChanged;
             // 
             // txtPrecioDescuentoPorcentaje
             // 

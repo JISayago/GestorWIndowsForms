@@ -16,6 +16,8 @@ namespace Servicios.LogicaNegocio.Producto.DTO
         public long IdMarca { get; set; }
         public long IdRubro { get; set; }
 
+        public decimal? CantidadItemEnOferta { get; set; } // Usado para ofertas
+
         public decimal Stock { get; set; }
         public decimal PrecioCosto { get; set; }
         public decimal PrecioVenta { get; set; }

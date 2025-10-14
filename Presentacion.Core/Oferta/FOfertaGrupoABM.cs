@@ -502,7 +502,7 @@ namespace Presentacion.Core.Oferta
                 btnCrear.Enabled = false;
                 var hora = DateTime.Now;
                 var desc = txtDescripcion.Text?.Trim();
-                var porcDesc = txtPrecioDescuentoPorcentaje.Text;
+                var porcDesc = string.IsNullOrEmpty(txtPrecioDescuentoPorcentaje.Text) ? "0" : txtPrecioDescuentoPorcentaje.Text;
                 var ofertaDto = new OfertaDTO
                 {
                     Descripcion = $"{desc}{hora.ToString()}",
@@ -512,7 +512,7 @@ namespace Presentacion.Core.Oferta
                     PorcentajeDescuento = Convert.ToDecimal(porcDesc),//Convert.ToDecimal(txtPrecioDescuentoPorcentaje.Text),
                     FechaInicio = dtpFechaInicio.Value,
                     FechaFin = dtpFechaFin.Value,
-                    CantidadProductosDentroOferta = Convert.ToDecimal(cantidadTotalEnOferta),//_cantidadProductos, // si esto puede ser null, convertí igual
+                    CantidadProductosDentroOferta = Convert.ToDecimal(cantidadTotalEnOferta),//_cantidadProductoWEs, // si esto puede ser null, convertí igual
                     EstaActiva = _ofertaActiva,//cbxEstaActiva.Checked,
                     EsUnSoloProducto = false,
                     Detalle = txtDetalle.Text?.Trim(),
@@ -614,6 +614,20 @@ namespace Presentacion.Core.Oferta
             cbxDescuentoPorcentaje.Checked = false;
 
             ActualizarGrillas();
+        }
+
+        private void cbxDescuentoPesos_CheckedChanged(object sender, EventArgs e)
+        {
+            txtPrecioDescuentoPorcentaje.Text = string.Empty;
+            cbxDescuentoPorcentaje.Checked = false;
+            txtPrecioDescuentoPorcentaje.Enabled = !cbxDescuentoPesos.Checked;
+        }
+
+        private void cbxDescuentoPorcentaje_CheckedChanged(object sender, EventArgs e)
+        {
+            txtPrecioDescuentoPesos.Text = string.Empty;
+            cbxDescuentoPesos.Checked = false;
+            txtPrecioDescuentoPesos.Enabled = !cbxDescuentoPorcentaje.Checked;
         }
     }
 }
