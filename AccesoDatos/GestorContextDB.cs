@@ -537,7 +537,7 @@ namespace AccesoDatos
                
                 entity.Property(o => o.Codigo)
                       .HasColumnName("codigo")
-                      .HasMaxLength(50)
+                      .HasMaxLength(150)
                       .IsRequired();
 
                 entity.Property(o => o.Detalle)
