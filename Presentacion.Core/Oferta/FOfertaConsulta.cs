@@ -23,17 +23,17 @@ namespace Presentacion.Core.Oferta
     {
         private readonly IOfertaServicio _ofertaServicio;
         public long? ofertaSeleccionada = null;
-        private bool vieneDeVenta = false;
+        private bool _vieneDeVenta = false;
+        private bool estaActiva = true;
         public FOfertaConsulta()
         {
             InitializeComponent();
             _ofertaServicio = new OfertaServicio();
         }
-        public FOfertaConsulta(bool cargaOfertaCompuesta)
+        public FOfertaConsulta(bool vieneDeOferta) : this()
         {
-            InitializeComponent();
-            _ofertaServicio = new OfertaServicio();
-            vieneDeVenta = cargaOfertaCompuesta;
+            _vieneDeVenta = vieneDeOferta;
+            MessageBox.Show("Seleccione la oferta que desea aplicar a la venta.");
         }
 
         public override void EjecutarBtnNuevo()
@@ -47,24 +47,32 @@ namespace Presentacion.Core.Oferta
             base.ResetearGrilla(grilla);
 
             // Oculto el ID interno
+            // Id oculto
             grilla.Columns["OfertaDescuentoId"].Visible = false;
             grilla.Columns["OfertaDescuentoId"].Name = "Id";
 
-            // Muestra principales
+            // Descripción: ocupa todo el espacio libre
             grilla.Columns["Descripcion"].Visible = true;
             grilla.Columns["Descripcion"].HeaderText = "Descripción";
             grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            grilla.Columns["Descripcion"].FillWeight = 60; // ocupa 60% del espacio flexible
 
-            grilla.Columns["EstaActiva"].Visible = true;
-            grilla.Columns["EstaActiva"].HeaderText = "Activa";
 
+            // Código y Grupo: anchos grandes fijos
+            grilla.Columns["Codigo"].Visible = true;
+            grilla.Columns["Codigo"].HeaderText = "Código";
+            grilla.Columns["Codigo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            grilla.Columns["Codigo"].FillWeight = 30; // ocupa 20%
+
+            grilla.Columns["GrupoNombre"].Visible = true;
+            grilla.Columns["GrupoNombre"].HeaderText = "Grupo";
+            grilla.Columns["GrupoNombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            grilla.Columns["GrupoNombre"].FillWeight = 30; // ocupa 20%
+            // Detalle
             grilla.Columns["Detalle"].Visible = true;
             grilla.Columns["Detalle"].HeaderText = "Detalle";
 
-            grilla.Columns["Codigo"].Visible = true;
-            grilla.Columns["Codigo"].HeaderText = "Código";
-
-
+            // Resto de columnas
             grilla.Columns["PrecioOriginal"].Visible = true;
             grilla.Columns["PrecioOriginal"].HeaderText = "Precio Original";
             grilla.Columns["PrecioOriginal"].DefaultCellStyle.Format = "C2";
@@ -92,32 +100,74 @@ namespace Presentacion.Core.Oferta
             grilla.Columns["CantidadProductosDentroOferta"].Visible = true;
             grilla.Columns["CantidadProductosDentroOferta"].HeaderText = "Cant. Productos";
 
-
-            grilla.Columns["EsUnSoloProducto"].Visible = true;
-            grilla.Columns["EsUnSoloProducto"].HeaderText = "1 Producto";
-
-            grilla.Columns["esOfertaPorGrupo"].Visible = true;
-            grilla.Columns["esOfertaPorGrupo"].HeaderText = "Por Grupo";
-
-            grilla.Columns["GrupoNombre"].Visible = true;
-            grilla.Columns["GrupoNombre"].HeaderText = "Grupo";
-
-
-            grilla.Columns["TieneLimiteDeStock"].Visible = true;
-            grilla.Columns["TieneLimiteDeStock"].HeaderText = "Stock Limitado";
-
             grilla.Columns["CantidadLimiteDeStock"].Visible = true;
             grilla.Columns["CantidadLimiteDeStock"].HeaderText = "Cant. Máx.";
 
+            // Columnas no necesarias a la vista
+            grilla.Columns["EstaActiva"].Visible = false;
+            grilla.Columns["EsUnSoloProducto"].Visible = false;
+            grilla.Columns["esOfertaPorGrupo"].Visible = false;
+            grilla.Columns["TieneLimiteDeStock"].Visible = false;
+
+            grilla.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+
+            ToolTip tip = new ToolTip
+            {
+                BackColor = Color.Yellow,
+                ForeColor = Color.Black
+            };
+
+            grilla.CellMouseEnter += (s, e) =>
+            {
+                if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+                {
+                    var cell = grilla[e.ColumnIndex, e.RowIndex];
+                    if (cell.Value != null)
+                    {
+                        string texto = cell.Value.ToString();
+                        var size = TextRenderer.MeasureText(texto, grilla.Font);
+                        if (size.Width > cell.Size.Width)
+                            tip.Show(texto, grilla, grilla.PointToClient(Cursor.Position).X + 10, grilla.PointToClient(Cursor.Position).Y + 10, 3000);
+                        else
+                            tip.Hide(grilla);
+                    }
+                }
+            };
+
         }
+
 
 
         public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
         {
             base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
 
-            grilla.DataSource = _ofertaServicio.ObtenerOfertas(cadenaBuscar);
-            toolStrip.Enabled = true;
+            if (_vieneDeVenta)
+            {
+                if (check.Checked)
+                {
+                    grilla.DataSource = _ofertaServicio.ObtenerOfertasInactivasCompuesta(cadenaBuscar);
+                    toolStrip.Enabled = false;
+                }
+                else
+                {
+                    grilla.DataSource = _ofertaServicio.ObtenerOfertasActivasCompuestas(cadenaBuscar);
+                    toolStrip.Enabled = true;
+                }
+            }
+            else
+            {
+            if (check.Checked)
+            {
+                grilla.DataSource = _ofertaServicio.ObtenerOfertasInactivas(cadenaBuscar);
+                toolStrip.Enabled = false;
+            }
+            else
+            {
+                grilla.DataSource = _ofertaServicio.ObtenerOfertasActivas(cadenaBuscar);
+                toolStrip.Enabled = true;
+            }
+            }
         }
 
         public void ControlCargaExistencaDatos()
@@ -147,5 +197,12 @@ namespace Presentacion.Core.Oferta
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
+
+        private void FOfertaConsulta_Load(object sender, EventArgs e)
+        {
+            this.cbxEstaEliminado.Text = "Mostrar ofertas inactivas";
+
+        }
+
     }
 }

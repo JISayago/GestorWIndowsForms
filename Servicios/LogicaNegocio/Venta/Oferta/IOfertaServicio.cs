@@ -1,4 +1,5 @@
 ﻿using Servicios.Helpers;
+using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,11 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
     public interface IOfertaServicio
     {
         public EstadoOperacion Insertar(OfertaDTO dto);
-        public List<OfertaDTO> ObtenerOfertas(string cadenaBuscar);
+        public List<OfertaDTO> ObtenerOfertasActivas(string cadenaBuscar);
+        public List<OfertaDTO> ObtenerOfertasActivasCompuestas(string cadenaBuscar);
+        public List<OfertaDTO> ObtenerOfertasInactivas(string cadenaBuscar);
+        public List<OfertaDTO> ObtenerOfertasInactivasCompuesta(string cadenaBuscar);
+        public List<InformacionExistenciaOfertaDescuentoProducto> ObtenerProductosEnOferta(List<ProductoDTO> productosDentroOferta);
         public OfertaDTO ObtenerOfertaPorId(long idOFerta);
 
         public bool ExisteOfertaPorCodigo(string codigo);

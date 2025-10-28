@@ -58,6 +58,7 @@ namespace Presentacion.Core.Oferta
         private bool _esUnSoloProducto = false;
         private bool _hastaCumplirStock = false;
         private string _codigoOferta = string.Empty;
+        private bool forzarInactivo = false;
 
         private BindingList<ProductoDTO> _productosParaOfertaDTO;
         private BindingList<ProductoDTO> _productosParaQuitarDeOfertaDTO;
@@ -500,26 +501,105 @@ namespace Presentacion.Core.Oferta
             try
             {
                 btnCrear.Enabled = false;
+
+                // --- 1) Antes de crear, comprobamos si alguno de los productos ya está en otra oferta
+                var productosParaOferta = _productosParaOfertaDTO.ToList(); // tu lista de DTOs
+                var matches = _ofertaServicio.ObtenerProductosEnOferta(productosParaOferta); // devuelve List<OfertaMatchInfo>
+
+                if (matches != null && matches.Count > 0)
+                {
+                    // Agrupamos por oferta para mostrar un mensaje claro
+                    var porOferta = matches
+                        .GroupBy(m => new { m.OfertaId, m.OfertaCodigo, m.OfertaActiva })
+                        .ToList();
+
+                    var lines = new List<string>();
+                    foreach (var g in porOferta)
+                    {
+                        var oferta = g.Key;
+                        var estado = oferta.OfertaActiva ? "ACTIVA" : "INACTIVA";
+                        var cantidadDistintos = g
+                            .Where(x => x.ProductoId != null)
+                            .Select(x => x.ProductoId)
+                            .Distinct()
+                            .Count();
+                        var cantidadTotalUnidades = g.Sum(x => x.cantidadProductoEnOferta);
+
+                        lines.Add($"Oferta {oferta.OfertaCodigo} [{estado}] -> Cantidad: {cantidadTotalUnidades} ");
+                    }
+
+                    var mensaje = "Se encontraron ofertas existentes para algunos productos:\n\n" +
+                                  string.Join(Environment.NewLine, lines);
+                    var hayActiva = porOferta.Any(p => p.Key.OfertaActiva);
+                    if (hayActiva)
+                    {
+                        mensaje += "\n\nAl menos una oferta está ACTIVA. Por lo que la oferta que esta creando estara INACTIVA, hasta que decida cual oferta queda activada.";
+                    }
+
+                    var dialogResult = MessageBox.Show(mensaje, "Conflicto con ofertas existentes", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
+                    if (dialogResult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    if (dialogResult == DialogResult.OK)
+                    {
+                        var ofertaIdsARelevantar = porOferta.Select(p => p.Key.OfertaId).Distinct().ToList();
+                        forzarInactivo = true;
+                    }
+                }
+
                 var hora = DateTime.Now;
                 var desc = txtDescripcion.Text?.Trim();
                 var porcDesc = string.IsNullOrEmpty(txtPrecioDescuentoPorcentaje.Text) ? "0" : txtPrecioDescuentoPorcentaje.Text;
+
+                var cantidadLimite = -1.0m;
+                var precioOriginalTotal = 0.0m; 
+                precioOriginalTotal = _productosParaOfertaDTO.Sum(p => p.PrecioVenta);
+                var descuentoTotal = 0.0m;
+                if (!string.IsNullOrEmpty(txtLimiteStock.Text))
+                {
+                    cantidadLimite = Convert.ToDecimal(txtLimiteStock.Text);
+                }
+                if (_productosParaOfertaDTO.Count() == 1)
+                {
+                   
+                    if (!string.IsNullOrEmpty(txtPrecioDescuentoPesos.Text))
+                    {
+                    descuentoTotal = _productosParaOfertaDTO[0].PrecioVenta - Convert.ToDecimal(txtPrecioDescuentoPesos.Text);
+                    }
+
+                    if (!string.IsNullOrEmpty(txtPrecioDescuentoPorcentaje.Text))
+                    {
+                        var porcentaje = Convert.ToDecimal(txtPrecioDescuentoPorcentaje.Text);
+                        if(porcentaje > 100 || porcentaje < 0)
+                        {
+                            MessageBox.Show("Por favor, ingrese un valor dentro de 1% a 100%");
+                            return;
+                        }
+                        var precioBase = _productosParaOfertaDTO[0].PrecioVenta;
+                        descuentoTotal = precioBase - (precioBase * (porcentaje / 100));
+                    }
+                }
+
                 var ofertaDto = new OfertaDTO
                 {
                     Descripcion = $"{desc}{hora.ToString()}",
                     PrecioFinal = _precioFinal,
-                    PrecioOriginal = -1m,
-                    DescuentoTotalFinal = 1, //_precioOriginal - _precioFinal,
-                    PorcentajeDescuento = Convert.ToDecimal(porcDesc),//Convert.ToDecimal(txtPrecioDescuentoPorcentaje.Text),
+                    PrecioOriginal = precioOriginalTotal,
+                    DescuentoTotalFinal = descuentoTotal, 
+                    PorcentajeDescuento = Convert.ToDecimal(porcDesc),
                     FechaInicio = dtpFechaInicio.Value,
                     FechaFin = dtpFechaFin.Value,
-                    CantidadProductosDentroOferta = Convert.ToDecimal(cantidadTotalEnOferta),//_cantidadProductoWEs, // si esto puede ser null, convertí igual
-                    EstaActiva = _ofertaActiva,//cbxEstaActiva.Checked,
+                    CantidadProductosDentroOferta = Convert.ToDecimal(cantidadTotalEnOferta),
+                    EstaActiva = forzarInactivo ? false : _ofertaActiva,
                     EsUnSoloProducto = false,
                     Detalle = txtDetalle.Text?.Trim(),
                     Codigo = txtCodigoOferta.Text?.Trim(),
                     esOfertaPorGrupo = true,
                     TieneLimiteDeStock = cbxLimiteCumplirStock.Checked,
-                    CantidadLimiteDeStock = 0.0m, //cbxLimiteCumplirStock.Checked ? Convert.ToDecimal(txtLimiteStock.Text) : null,
+                    CantidadLimiteDeStock = cantidadLimite, 
                     IdMarca = _marcaId,
                     IdRubro = _rubroId,
                     IdCategoria = _categoriaId,
@@ -542,7 +622,6 @@ namespace Presentacion.Core.Oferta
                 }
 
                 MessageBox.Show(resultado.Mensaje ?? "Oferta creada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
             }
             catch (Exception ex)
             {

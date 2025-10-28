@@ -46,7 +46,6 @@ namespace Presentacion.Core.Oferta
         private string _textoDescriptivo;
         private decimal _cantidadProductos = 0.0m;
         private bool _precioMontoFijo = false;
-        private bool _precioPorcentaje = false;
         private string _codigoOferta = string.Empty;
 
 
@@ -340,34 +339,11 @@ namespace Presentacion.Core.Oferta
             _precioMontoFijo = cbxDescuentoPesos.Checked;
             if (_precioMontoFijo)
             {
-                cbxDescuentoPorcentaje.Checked = false;
-                txtPrecioDescuentoPorcentaje.Enabled = false;
                 txtPrecioDescuentoPesos.Text = string.Empty;
                 txtPrecioTotalOfertaAplicada.Text = string.Empty;
-            }
-            else
-            {
-                cbxDescuentoPorcentaje.Checked = true;
-                txtPrecioDescuentoPorcentaje.Enabled = true;
             }
         }
 
-        private void cbxDescuentoPorcentaje_CheckedChanged(object sender, EventArgs e)
-        {
-            _precioPorcentaje = cbxDescuentoPorcentaje.Checked;
-            if (_precioPorcentaje)
-            {
-                cbxDescuentoPesos.Checked = false;
-                txtPrecioDescuentoPesos.Enabled = false;
-                txtPrecioDescuentoPesos.Text = string.Empty;
-                txtPrecioTotalOfertaAplicada.Text = string.Empty;
-            }
-            else
-            {
-                cbxDescuentoPesos.Checked = true;
-                txtPrecioDescuentoPesos.Enabled = true;
-            }
-        }
 
         private void btnCrear_Click_1(object sender, EventArgs e)
         {
@@ -422,7 +398,7 @@ namespace Presentacion.Core.Oferta
                     PrecioFinal = _precioFinal,
                     PrecioOriginal = _productosParaOferta.Sum(x => x.PrecioVenta * (decimal)x.CantidadItemEnOferta),
                     DescuentoTotalFinal = _precioOriginal - _precioFinal,
-                    PorcentajeDescuento = string.IsNullOrWhiteSpace(txtPrecioDescuentoPorcentaje.Text) ? 0m : (decimal.TryParse(txtPrecioDescuentoPorcentaje.Text.Trim(), out var parsed) ? parsed : 0m),
+                    PorcentajeDescuento = 0m,
                     FechaInicio = dtpFechaInicio.Value,
                     FechaFin = dtpFechaFin.Value,
                     CantidadProductosDentroOferta = _cantidadProductos, // si esto puede ser null, convertí igual
@@ -473,13 +449,13 @@ namespace Presentacion.Core.Oferta
 
         private void btnCalcular_Click(object sender, EventArgs e)
         {
-            if (!_precioMontoFijo && !_precioPorcentaje)
+            if (!_precioMontoFijo)
             {
                 MessageBox.Show("Debe ingresar un valor en el campo de descuento");
 
                 return;
             }
-            if ((_precioMontoFijo && txtPrecioDescuentoPesos.Text.IsNullOrEmpty()) || (_precioPorcentaje && txtPrecioDescuentoPorcentaje.Text.IsNullOrEmpty()))
+            if ((_precioMontoFijo && txtPrecioDescuentoPesos.Text.IsNullOrEmpty()))
             {
 
                 MessageBox.Show("Debe ingresar un valor en el campo de descuento");
@@ -516,7 +492,6 @@ namespace Presentacion.Core.Oferta
             _precioOriginal = 0.0m;
             _precioFinal = 0.0m;
             _precioMontoFijo = false;
-            _precioPorcentaje = false;
             txtCodigoOferta.Text = string.Empty;
             dgvProductos.AllowUserToAddRows = false;
             _productosParaOferta = new BindingList<ProductoDTO>();
@@ -528,12 +503,10 @@ namespace Presentacion.Core.Oferta
             txtCodigoOferta.Text = string.Empty;
             txtDescripcion.Text = string.Empty;
             txtPrecioDescuentoPesos.Text = string.Empty;
-            txtPrecioDescuentoPorcentaje.Text = string.Empty;
             txtPrecioTotalOfertaAplicada.Text = string.Empty;
             txtPrecioTotalPerdido.Text = string.Empty;
             txtPrecioTotalRealProductos.Text = string.Empty;
             cbxDescuentoPesos.Checked = false;
-            cbxDescuentoPorcentaje.Checked = false;
             _codigoOferta = $"Of-COMP_{DateTime.Now.ToString("yyyyMMddHHmmss")}_";
             txtCodigoOferta.Text = _codigoOferta;
             cbx2x1.Checked = false;
