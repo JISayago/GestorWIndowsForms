@@ -502,7 +502,6 @@ namespace Presentacion.Core.Oferta
             {
                 btnCrear.Enabled = false;
 
-                // --- 1) Antes de crear, comprobamos si alguno de los productos ya está en otra oferta
                 var productosParaOferta = _productosParaOfertaDTO.ToList(); // tu lista de DTOs
                 var matches = _ofertaServicio.ObtenerProductosEnOferta(productosParaOferta); // devuelve List<OfertaMatchInfo>
 

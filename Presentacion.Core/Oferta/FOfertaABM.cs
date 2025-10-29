@@ -391,14 +391,15 @@ namespace Presentacion.Core.Oferta
                     }
                     _limiteDeStock = limiteStock;
                 }
-
+                var descuentoTotalFinal = _precioOriginal - _precioFinal;
+                var precioOriginalFinal = _productosParaOferta.Sum(x => x.PrecioVenta * (decimal)x.CantidadItemEnOferta);
                 var ofertaDto = new OfertaDTO
                 {
                     Descripcion = txtDescripcion.Text?.Trim(),
                     PrecioFinal = _precioFinal,
-                    PrecioOriginal = _productosParaOferta.Sum(x => x.PrecioVenta * (decimal)x.CantidadItemEnOferta),
-                    DescuentoTotalFinal = _precioOriginal - _precioFinal,
-                    PorcentajeDescuento = 0m,
+                    PrecioOriginal = precioOriginalFinal,
+                    DescuentoTotalFinal = descuentoTotalFinal,
+                    PorcentajeDescuento = -1.0m,
                     FechaInicio = dtpFechaInicio.Value,
                     FechaFin = dtpFechaFin.Value,
                     CantidadProductosDentroOferta = _cantidadProductos, // si esto puede ser null, convertí igual
