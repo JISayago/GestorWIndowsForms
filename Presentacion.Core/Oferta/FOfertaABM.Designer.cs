@@ -48,11 +48,9 @@
             btnCancelar = new Button();
             btnCrear = new Button();
             cbxDescuentoPesos = new CheckBox();
-            txtPrecioDescuentoPorcentaje = new TextBox();
             txtPrecioDescuentoPesos = new TextBox();
             lblTotalPrecioReal = new Label();
             lblPerdida = new Label();
-            cbxEsUnSoloProducto = new CheckBox();
             btnCalcular = new Button();
             btnLimpiar = new Button();
             lblPrecioTotalDeLaOferta = new Label();
@@ -62,7 +60,6 @@
             cbxLimiteCumplirStock = new CheckBox();
             txtLimiteStock = new TextBox();
             lblLimiteStock = new Label();
-            cbxDescuentoPorcentaje = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
             SuspendLayout();
@@ -70,7 +67,7 @@
             // cbxCombinacionProductos
             // 
             cbxCombinacionProductos.AutoSize = true;
-            cbxCombinacionProductos.Location = new Point(108, 53);
+            cbxCombinacionProductos.Location = new Point(141, 78);
             cbxCombinacionProductos.Name = "cbxCombinacionProductos";
             cbxCombinacionProductos.Size = new Size(308, 19);
             cbxCombinacionProductos.TabIndex = 3;
@@ -135,7 +132,7 @@
             // cbxEstaActiva
             // 
             cbxEstaActiva.AutoSize = true;
-            cbxEstaActiva.Location = new Point(447, 53);
+            cbxEstaActiva.Location = new Point(480, 56);
             cbxEstaActiva.Name = "cbxEstaActiva";
             cbxEstaActiva.Size = new Size(135, 19);
             cbxEstaActiva.TabIndex = 22;
@@ -168,7 +165,7 @@
             // cbx2x1
             // 
             cbx2x1.AutoSize = true;
-            cbx2x1.Location = new Point(108, 78);
+            cbx2x1.Location = new Point(141, 110);
             cbx2x1.Name = "cbx2x1";
             cbx2x1.Size = new Size(250, 19);
             cbx2x1.TabIndex = 33;
@@ -249,7 +246,7 @@
             // cbxDescuentoPesos
             // 
             cbxDescuentoPesos.AutoSize = true;
-            cbxDescuentoPesos.Location = new Point(83, 619);
+            cbxDescuentoPesos.Location = new Point(287, 603);
             cbxDescuentoPesos.Name = "cbxDescuentoPesos";
             cbxDescuentoPesos.Size = new Size(201, 19);
             cbxDescuentoPesos.TabIndex = 50;
@@ -257,16 +254,9 @@
             cbxDescuentoPesos.UseVisualStyleBackColor = true;
             cbxDescuentoPesos.CheckedChanged += cbxDescuentoPesos_CheckedChanged;
             // 
-            // txtPrecioDescuentoPorcentaje
-            // 
-            txtPrecioDescuentoPorcentaje.Location = new Point(377, 640);
-            txtPrecioDescuentoPorcentaje.Name = "txtPrecioDescuentoPorcentaje";
-            txtPrecioDescuentoPorcentaje.Size = new Size(301, 23);
-            txtPrecioDescuentoPorcentaje.TabIndex = 49;
-            // 
             // txtPrecioDescuentoPesos
             // 
-            txtPrecioDescuentoPesos.Location = new Point(76, 640);
+            txtPrecioDescuentoPesos.Location = new Point(243, 628);
             txtPrecioDescuentoPesos.Name = "txtPrecioDescuentoPesos";
             txtPrecioDescuentoPesos.Size = new Size(285, 23);
             txtPrecioDescuentoPesos.TabIndex = 48;
@@ -288,17 +278,6 @@
             lblPerdida.Size = new Size(77, 15);
             lblPerdida.TabIndex = 61;
             lblPerdida.Text = "Total Perdido";
-            // 
-            // cbxEsUnSoloProducto
-            // 
-            cbxEsUnSoloProducto.AutoSize = true;
-            cbxEsUnSoloProducto.Location = new Point(447, 78);
-            cbxEsUnSoloProducto.Name = "cbxEsUnSoloProducto";
-            cbxEsUnSoloProducto.Size = new Size(131, 19);
-            cbxEsUnSoloProducto.TabIndex = 62;
-            cbxEsUnSoloProducto.Text = "Es un sólo Producto";
-            cbxEsUnSoloProducto.UseVisualStyleBackColor = true;
-            cbxEsUnSoloProducto.CheckedChanged += cbxEsUnSoloProducto_CheckedChanged;
             // 
             // btnCalcular
             // 
@@ -356,7 +335,7 @@
             // cbxLimiteCumplirStock
             // 
             cbxLimiteCumplirStock.AutoSize = true;
-            cbxLimiteCumplirStock.Location = new Point(108, 103);
+            cbxLimiteCumplirStock.Location = new Point(480, 81);
             cbxLimiteCumplirStock.Name = "cbxLimiteCumplirStock";
             cbxLimiteCumplirStock.Size = new Size(131, 19);
             cbxLimiteCumplirStock.TabIndex = 69;
@@ -367,7 +346,7 @@
             // txtLimiteStock
             // 
             txtLimiteStock.Enabled = false;
-            txtLimiteStock.Location = new Point(157, 151);
+            txtLimiteStock.Location = new Point(471, 132);
             txtLimiteStock.Name = "txtLimiteStock";
             txtLimiteStock.Size = new Size(137, 23);
             txtLimiteStock.TabIndex = 70;
@@ -375,22 +354,11 @@
             // lblLimiteStock
             // 
             lblLimiteStock.AutoSize = true;
-            lblLimiteStock.Location = new Point(157, 133);
+            lblLimiteStock.Location = new Point(471, 114);
             lblLimiteStock.Name = "lblLimiteStock";
             lblLimiteStock.Size = new Size(140, 15);
             lblLimiteStock.TabIndex = 71;
             lblLimiteStock.Text = "Limite de Stock en Oferta";
-            // 
-            // cbxDescuentoPorcentaje
-            // 
-            cbxDescuentoPorcentaje.AutoSize = true;
-            cbxDescuentoPorcentaje.Location = new Point(377, 621);
-            cbxDescuentoPorcentaje.Name = "cbxDescuentoPorcentaje";
-            cbxDescuentoPorcentaje.Size = new Size(201, 19);
-            cbxDescuentoPorcentaje.TabIndex = 51;
-            cbxDescuentoPorcentaje.Text = "Precio de la Oferta/Descuento ($)";
-            cbxDescuentoPorcentaje.UseVisualStyleBackColor = true;
-            cbxDescuentoPorcentaje.CheckedChanged += cbxDescuentoPorcentaje_CheckedChanged;
             // 
             // FOfertaABM
             // 
@@ -406,7 +374,6 @@
             Controls.Add(lblPrecioTotalDeLaOferta);
             Controls.Add(btnLimpiar);
             Controls.Add(btnCalcular);
-            Controls.Add(cbxEsUnSoloProducto);
             Controls.Add(lblPerdida);
             Controls.Add(lblTotalPrecioReal);
             Controls.Add(lblCodigo);
@@ -417,9 +384,7 @@
             Controls.Add(lbl);
             Controls.Add(btnCancelar);
             Controls.Add(btnCrear);
-            Controls.Add(cbxDescuentoPorcentaje);
             Controls.Add(cbxDescuentoPesos);
-            Controls.Add(txtPrecioDescuentoPorcentaje);
             Controls.Add(txtPrecioDescuentoPesos);
             Controls.Add(cbx2x1);
             Controls.Add(lblCantidadProductos);
@@ -462,11 +427,9 @@
         private Button btnCancelar;
         private Button btnCrear;
         private CheckBox cbxDescuentoPesos;
-        private TextBox txtPrecioDescuentoPorcentaje;
         private TextBox txtPrecioDescuentoPesos;
         private Label lblTotalPrecioReal;
         private Label lblPerdida;
-        private CheckBox cbxEsUnSoloProducto;
         private Button btnCalcular;
         private Button btnLimpiar;
         private Label lblPrecioTotalDeLaOferta;
@@ -476,6 +439,5 @@
         private CheckBox cbxLimiteCumplirStock;
         private TextBox txtLimiteStock;
         private Label lblLimiteStock;
-        private CheckBox cbxDescuentoPorcentaje;
     }
 }

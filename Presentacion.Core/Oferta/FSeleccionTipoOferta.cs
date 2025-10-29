@@ -31,9 +31,25 @@ namespace Presentacion.Core.Oferta
 
         public void AbrirFormularioOferta(TipoOferta tipoOferta)
         {
-            var fNuevaOferta = new FOfertaABM(tipoOferta);
-            fNuevaOferta.ShowDialog();
+            this.Hide();
+
+            if (tipoOferta == TipoOferta.Grupo)
+            {
+                using (var fGrupo = new FOfertaGrupoABM(TipoOferta.Grupo))
+                {
+                    fGrupo.ShowDialog();
+                }
+            }
+            else
+            {
+                using (var fNuevaOferta = new FOfertaABM(tipoOferta))
+                {
+                    fNuevaOferta.ShowDialog();
+                }
+            }
+
             this.Close();
         }
+
     }
 }

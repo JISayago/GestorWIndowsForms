@@ -15,48 +15,6 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
 {
     public class OfertaServicio : IOfertaServicio
     {
-        /*  public EstadoOperacion Insertar(OfertaDTO dto)
-          {
-              using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-              // Validar duplicados
-              if (context.OfertasDescuentos.Any(o => o.Descripcion == dto.Descripcion))
-              {
-                  return new EstadoOperacion
-                  {
-                      Exitoso = false,
-                      Mensaje = "Ya existe una oferta con la misma descripción."
-                  };
-              }
-
-              var entidad = new OfertaDescuento
-              {
-                  Descripcion = dto.Descripcion,
-                  PrecioFinal = dto.PrecioFinal,
-                  PrecioOriginal = dto.PrecioOriginal,
-                  DescuentoTotalFinal = dto.DescuentoTotalFinal,
-                  PorcentajeDescuento = dto.PorcentajeDescuento,
-                  FechaInicio = dto.FechaInicio,
-                  FechaFin = dto.FechaFin,
-                  CantidadProductosDentroOferta = dto.CantidadProductosDentroOferta,
-                  EstaActiva = dto.EstaActiva,
-                  EsUnSoloProducto = dto.EsUnSoloProducto,
-                  IdMarca = dto.IdMarca,
-                  IdRubro = dto.IdRubro,
-                  IdCategoria = dto.IdCategoria,
-                  GrupoNombre = dto.GrupoNombre,
-              };
-
-              context.OfertasDescuentos.Add(entidad);
-              context.SaveChanges();
-
-              return new EstadoOperacion
-              {
-                  Exitoso = true,
-                  Mensaje = "Oferta creada correctamente.",
-                  EntidadId = entidad.OfertaDescuentoId
-              };
-          }*/
         public EstadoOperacion Insertar(OfertaDTO dto)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -149,8 +107,8 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
             {
                 OfertaId = ofertaId,
                 ProductoId = p.ProductoId,
-                Cantidad = 0.0m,
-                CantidadVendidaPorLimite = 0.0m,//agregart el limite segun corresponda
+                Cantidad = p.CantidadItemEnOferta.HasValue ? (decimal)p.CantidadItemEnOferta.Value : -1m,
+                CantidadVendidaPorLimite = p.CantidadItemEnOferta.HasValue ? (decimal)ofertaDto.CantidadLimiteDeStock : -1m ,//agregart el limite segun corresponda
                 PrecioOrginal = p.PrecioVenta,
                 PrecioConDescuento = p.PrecioVenta * (1 - (porcentaje / 100m))
             }).ToList();
@@ -160,11 +118,11 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
 
             return new EstadoOperacion { Exitoso = true, Mensaje = "Productos en oferta creados correctamente." };
         }
-        public List<OfertaDTO> ObtenerOfertas(string cadenaBuscar)
+        public List<OfertaDTO> ObtenerOfertasActivas(string cadenaBuscar)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             var ofertas = context.OfertasDescuentos
-                .Where(o => string.IsNullOrEmpty(cadenaBuscar) || o.Descripcion.Contains(cadenaBuscar) || o.Codigo.Contains(cadenaBuscar))
+                .Where(o => (string.IsNullOrEmpty(cadenaBuscar) || o.Descripcion.Contains(cadenaBuscar) || o.Codigo.Contains(cadenaBuscar)) && o.EstaActiva == true)
                 .Include(o => o.Productos)
                 .ToList()
                 .Select(x => new OfertaDTO
@@ -235,5 +193,178 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 }).FirstOrDefault();
             return oferta;
         }
+
+        public bool ExisteOfertaPorCodigo(string codigo)
+        {
+            if (string.IsNullOrWhiteSpace(codigo))
+                return false;
+
+            codigo = codigo.Trim().ToLowerInvariant();
+
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            return context.OfertasDescuentos
+                          .Any(o => o.Codigo != null && o.Codigo.ToLower() == codigo);
+        }
+
+        public List<OfertaDTO> ObtenerOfertasInactivas(string cadenaBuscar)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var ofertas = context.OfertasDescuentos
+                .Where(o => (string.IsNullOrEmpty(cadenaBuscar) || o.Descripcion.Contains(cadenaBuscar) || o.Codigo.Contains(cadenaBuscar))
+                            && o.EstaActiva == false)
+                .Include(o => o.Productos)
+                .ToList()
+                .Select(x => new OfertaDTO
+                {
+                    OfertaDescuentoId = x.OfertaDescuentoId,
+                    Descripcion = x.Descripcion,
+                    PrecioFinal = x.PrecioFinal,
+                    PrecioOriginal = x.PrecioOriginal,
+                    DescuentoTotalFinal = x.DescuentoTotalFinal,
+                    PorcentajeDescuento = x.PorcentajeDescuento,
+                    FechaInicio = x.FechaInicio,
+                    FechaFin = x.FechaFin,
+                    CantidadProductosDentroOferta = x.CantidadProductosDentroOferta,
+                    EstaActiva = x.EstaActiva,
+                    EsUnSoloProducto = x.EsUnSoloProducto,
+                    Detalle = x.Detalle,
+                    Codigo = x.Codigo,
+                    esOfertaPorGrupo = x.esOfertaPorGrupo,
+                    TieneLimiteDeStock = x.TieneLimiteDeStock,
+                    CantidadLimiteDeStock = x.CantidadLimiteDeStock,
+                    IdMarca = x.IdMarca,
+                    IdRubro = x.IdRubro,
+                    IdCategoria = x.IdCategoria,
+                    GrupoNombre = x.GrupoNombre,
+                    Productos = x.Productos.Select(p => new ProductoDTO
+                    {
+                        ProductoId = p.ProductoId,
+                        PrecioVenta = p.PrecioOrginal
+                    }).ToList()
+                })
+            .ToList();
+
+            return ofertas;
+        }
+
+        public List<OfertaDTO> ObtenerOfertasActivasCompuestas(string cadenaBuscar)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var ofertas = context.OfertasDescuentos
+                .Where(o => (string.IsNullOrEmpty(cadenaBuscar) || o.Descripcion.Contains(cadenaBuscar) || o.Codigo.Contains(cadenaBuscar))
+                 && o.EstaActiva == true && !o.esOfertaPorGrupo)
+                .Include(o => o.Productos)
+                .ToList()
+                .Select(x => new OfertaDTO
+                {
+                    OfertaDescuentoId = x.OfertaDescuentoId,
+                    Descripcion = x.Descripcion,
+                    PrecioFinal = x.PrecioFinal,
+                    PrecioOriginal = x.PrecioOriginal,
+                    DescuentoTotalFinal = x.DescuentoTotalFinal,
+                    PorcentajeDescuento = x.PorcentajeDescuento,
+                    FechaInicio = x.FechaInicio,
+                    FechaFin = x.FechaFin,
+                    CantidadProductosDentroOferta = x.CantidadProductosDentroOferta,
+                    EstaActiva = x.EstaActiva,
+                    EsUnSoloProducto = x.EsUnSoloProducto,
+                    Detalle = x.Detalle,
+                    Codigo = x.Codigo,
+                    esOfertaPorGrupo = x.esOfertaPorGrupo,
+                    TieneLimiteDeStock = x.TieneLimiteDeStock,
+                    CantidadLimiteDeStock = x.CantidadLimiteDeStock,
+                    IdMarca = x.IdMarca,
+                    IdRubro = x.IdRubro,
+                    IdCategoria = x.IdCategoria,
+                    GrupoNombre = x.GrupoNombre,
+                    Productos = x.Productos.Select(p => new ProductoDTO
+                    {
+                        ProductoId = p.ProductoId,
+                        PrecioVenta = p.PrecioOrginal
+                    }).ToList()
+                })
+            .ToList();
+            return ofertas;
+        }
+
+        public List<OfertaDTO> ObtenerOfertasInactivasCompuesta(string cadenaBuscar)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var ofertas = context.OfertasDescuentos
+                .Where(o => (string.IsNullOrEmpty(cadenaBuscar) || o.Descripcion.Contains(cadenaBuscar) || o.Codigo.Contains(cadenaBuscar))
+                            && o.EstaActiva == false && !o.esOfertaPorGrupo)
+                .Include(o => o.Productos)
+                .ToList()
+                .Select(x => new OfertaDTO
+                {
+                    OfertaDescuentoId = x.OfertaDescuentoId,
+                    Descripcion = x.Descripcion,
+                    PrecioFinal = x.PrecioFinal,
+                    PrecioOriginal = x.PrecioOriginal,
+                    DescuentoTotalFinal = x.DescuentoTotalFinal,
+                    PorcentajeDescuento = x.PorcentajeDescuento,
+                    FechaInicio = x.FechaInicio,
+                    FechaFin = x.FechaFin,
+                    CantidadProductosDentroOferta = x.CantidadProductosDentroOferta,
+                    EstaActiva = x.EstaActiva,
+                    EsUnSoloProducto = x.EsUnSoloProducto,
+                    Detalle = x.Detalle,
+                    Codigo = x.Codigo,
+                    esOfertaPorGrupo = x.esOfertaPorGrupo,
+                    TieneLimiteDeStock = x.TieneLimiteDeStock,
+                    CantidadLimiteDeStock = x.CantidadLimiteDeStock,
+                    IdMarca = x.IdMarca,
+                    IdRubro = x.IdRubro,
+                    IdCategoria = x.IdCategoria,
+                    GrupoNombre = x.GrupoNombre,
+                    Productos = x.Productos.Select(p => new ProductoDTO
+                    {
+                        ProductoId = p.ProductoId,
+                        PrecioVenta = p.PrecioOrginal
+                    }).ToList()
+                })
+            .ToList();
+
+            return ofertas;
+        }
+
+
+        public List<InformacionExistenciaOfertaDescuentoProducto> ObtenerProductosEnOferta(List<ProductoDTO> productosDentroOferta)
+        {
+            if (productosDentroOferta == null || productosDentroOferta.Count == 0)
+                return new List<InformacionExistenciaOfertaDescuentoProducto>();
+
+            var productoIds = productosDentroOferta
+                .Where(p => p != null)
+                .Select(p => p.ProductoId)
+                .Distinct()
+                .ToList();
+
+            if (productoIds.Count == 0) return new List<InformacionExistenciaOfertaDescuentoProducto>();
+
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            //roto 
+            // Traemos coincidencias y los datos de la oferta (navegación)
+            var matches = context.ProductosEnOfertasDescuentos
+                .Where(pe => productoIds.Contains(pe.ProductoId))
+                .Include(pe => pe.Oferta) // si existe la navegación
+                .AsNoTracking()
+                .Select(pe => new InformacionExistenciaOfertaDescuentoProducto
+                {
+                    ProductoId = pe.ProductoId,
+                    OfertaId = pe.OfertaId, // o pe.OfertaId si se llama distinto
+                    OfertaCodigo = pe.Oferta != null ? pe.Oferta.Codigo : "",
+                    OfertaActiva = pe.Oferta != null && pe.Oferta.EstaActiva,
+                    cantidadProductoEnOferta = pe.Cantidad
+                })
+                // Evitamos duplicados exactos (si hay múltiples filas iguales)
+                .AsEnumerable()
+                .GroupBy(x => new { x.ProductoId, x.OfertaId })
+                .Select(g => g.First())
+                .ToList();
+
+            return matches;
+        }
+
     }
 }

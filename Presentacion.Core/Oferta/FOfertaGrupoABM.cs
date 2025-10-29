@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Presentacion.Core.Articulo.Marca;
 using Presentacion.Core.Categoria;
+using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Articulo.Categoria;
@@ -54,6 +55,10 @@ namespace Presentacion.Core.Oferta
         private string _descripcion = "Oferta Compuesta: filtrado";
         private decimal cantidadTotalEnOferta = 0.0m;
         private decimal cantidadTotalFueraOferta = 0.0m;
+        private bool _esUnSoloProducto = false;
+        private bool _hastaCumplirStock = false;
+        private string _codigoOferta = string.Empty;
+        private bool forzarInactivo = false;
 
         private BindingList<ProductoDTO> _productosParaOfertaDTO;
         private BindingList<ProductoDTO> _productosParaQuitarDeOfertaDTO;
@@ -138,6 +143,8 @@ namespace Presentacion.Core.Oferta
             _fechaFin = dtpFechaFin.Value;
             lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
             lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
+            _codigoOferta = $"Of-GRUPO_{DateTime.Now.ToString("yyyyMMddHHmmss")}_";
+            txtCodigoOferta.Text = _codigoOferta;
             ActualizarGrillas();
             ResetearGrillas(dgvProductos, dgvProductosQuitados);
 
@@ -176,21 +183,66 @@ namespace Presentacion.Core.Oferta
 
         private void btnCargarProductosAlcanzados_Click(object sender, EventArgs e)
         {
-            /*if (!_esCategoria || !_esRubro || !_esMarca) { 
-                MessageBox.Show(Text, "Debe seleccionar al menos un grupo", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            // Si estamos en modo "un solo producto" abrimos el formulario de consulta y cargamos ese producto
+            if (_esUnSoloProducto)
+            {
+                using var fProductos = new FProductoConsulta(true);
+                if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
+                {
+                    try
+                    {
+                        var idProductoSeleccionado = fProductos.productoSeleccionado.Value;
+
+                        // Obtener el producto desde el servicio (ajusta el nombre del método si es distinto)
+                        var productoDto = _productoServicio.ObtenerProductoPorId(idProductoSeleccionado);
+
+
+                        if (productoDto == null)
+                        {
+                            MessageBox.Show("No se encontró el producto seleccionado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        // Evitar duplicados (ajusta la propiedad Id si en tu DTO se llama distinto: ProductoId, IdProducto, etc.)
+                        var existe = _productosParaOfertaDTO.Any(p =>
+                        {
+                            var prop = p.GetType().GetProperty("ProductoId");
+                            if (prop != null) return Convert.ToInt64(prop.GetValue(p)) == Convert.ToInt64(productoDto.GetType().GetProperty("ProductoId").GetValue(productoDto));
+                            // Si no hay propiedad Id, intenta con ProductoId (opcional)
+                            prop = p.GetType().GetProperty("ProductoId");
+                            return prop != null && Convert.ToInt64(prop.GetValue(p)) == Convert.ToInt64(productoDto.GetType().GetProperty("ProductoId").GetValue(productoDto));
+                        });
+
+                        if (existe)
+                        {
+                            MessageBox.Show("El producto ya está en la lista para la oferta.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            _productosParaOfertaDTO.Add(productoDto);
+                            // Si quieres forzar refrescar el grid:
+                            dgvProductos.Refresh();
+                        }
+
+                        // Actualizamos contadores, etiquetas y descripción
+                        _codigoOferta = _codigoOferta + $"{productoDto.Codigo}_{productoDto.Descripcion}";
+                        txtCodigoOferta.Text = _codigoOferta;
+                        cantidadTotalEnOferta = _productosParaOfertaDTO.Count();
+                        cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO?.Count() ?? 0;
+                        lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
+                        lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
+                        _descripcion = $"({_descripcion} M-{_marcaN} C-{_categoriaN}) + cant{cantidadTotalEnOferta}";
+                        txtDescripcion.Text = _descripcion;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Ocurrió un error cargando el producto: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                // terminamos — en modo "un solo producto" no ejecutamos la carga masiva
                 return;
             }
-            if (string.IsNullOrEmpty(txtMarca.Text)|| string.IsNullOrEmpty(txtRubro.Text)|| string.IsNullOrEmpty(txtCategoria.Text))
-            {
-                MessageBox.Show(Text, "Debe cargar al menos un grupo", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }*/
-
-            MessageBox.Show($"marcaid: {_marcaId}");
-            MessageBox.Show($"rubroid: {_rubroId}");
-            MessageBox.Show($"categoriaid: {_categoriaId}");
             var productosOfertasDto = _productoServicio.ObtenerProductosPorMarcaRubroCategoriaParaOferta(_marcaId, _rubroId, _categoriaId);
-
-            MessageBox.Show($"productosOfertasDto: {productosOfertasDto.Count()}");
 
             _productosParaOfertaDTO = new BindingList<ProductoDTO>(productosOfertasDto.ToList());
             dgvProductos.DataSource = _productosParaOfertaDTO;
@@ -198,7 +250,8 @@ namespace Presentacion.Core.Oferta
             cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO.Count();
             lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
             lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
-
+            _codigoOferta = _codigoOferta + $"({_descripcion} M-{_marcaN}C-{_categoriaN})_{cantidadTotalEnOferta}_";
+            txtCodigoOferta.Text = _codigoOferta;
             _descripcion = $"({_descripcion} M-{_marcaN}C-{_categoriaN}) + cant{cantidadTotalEnOferta}";
             txtDescripcion.Text = _descripcion;
 
@@ -448,26 +501,104 @@ namespace Presentacion.Core.Oferta
             try
             {
                 btnCrear.Enabled = false;
+
+                var productosParaOferta = _productosParaOfertaDTO.ToList(); // tu lista de DTOs
+                var matches = _ofertaServicio.ObtenerProductosEnOferta(productosParaOferta); // devuelve List<OfertaMatchInfo>
+
+                if (matches != null && matches.Count > 0)
+                {
+                    // Agrupamos por oferta para mostrar un mensaje claro
+                    var porOferta = matches
+                        .GroupBy(m => new { m.OfertaId, m.OfertaCodigo, m.OfertaActiva })
+                        .ToList();
+
+                    var lines = new List<string>();
+                    foreach (var g in porOferta)
+                    {
+                        var oferta = g.Key;
+                        var estado = oferta.OfertaActiva ? "ACTIVA" : "INACTIVA";
+                        var cantidadDistintos = g
+                            .Where(x => x.ProductoId != null)
+                            .Select(x => x.ProductoId)
+                            .Distinct()
+                            .Count();
+                        var cantidadTotalUnidades = g.Sum(x => x.cantidadProductoEnOferta);
+
+                        lines.Add($"Oferta {oferta.OfertaCodigo} [{estado}] -> Cantidad: {cantidadTotalUnidades} ");
+                    }
+
+                    var mensaje = "Se encontraron ofertas existentes para algunos productos:\n\n" +
+                                  string.Join(Environment.NewLine, lines);
+                    var hayActiva = porOferta.Any(p => p.Key.OfertaActiva);
+                    if (hayActiva)
+                    {
+                        mensaje += "\n\nAl menos una oferta está ACTIVA. Por lo que la oferta que esta creando estara INACTIVA, hasta que decida cual oferta queda activada.";
+                    }
+
+                    var dialogResult = MessageBox.Show(mensaje, "Conflicto con ofertas existentes", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
+                    if (dialogResult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    if (dialogResult == DialogResult.OK)
+                    {
+                        var ofertaIdsARelevantar = porOferta.Select(p => p.Key.OfertaId).Distinct().ToList();
+                        forzarInactivo = true;
+                    }
+                }
+
                 var hora = DateTime.Now;
                 var desc = txtDescripcion.Text?.Trim();
-                var porcDesc = txtPrecioDescuentoPorcentaje.Text;
+                var porcDesc = string.IsNullOrEmpty(txtPrecioDescuentoPorcentaje.Text) ? "0" : txtPrecioDescuentoPorcentaje.Text;
+
+                var cantidadLimite = -1.0m;
+                var precioOriginalTotal = 0.0m; 
+                precioOriginalTotal = _productosParaOfertaDTO.Sum(p => p.PrecioVenta);
+                var descuentoTotal = 0.0m;
+                if (!string.IsNullOrEmpty(txtLimiteStock.Text))
+                {
+                    cantidadLimite = Convert.ToDecimal(txtLimiteStock.Text);
+                }
+                if (_productosParaOfertaDTO.Count() == 1)
+                {
+                   
+                    if (!string.IsNullOrEmpty(txtPrecioDescuentoPesos.Text))
+                    {
+                    descuentoTotal = _productosParaOfertaDTO[0].PrecioVenta - Convert.ToDecimal(txtPrecioDescuentoPesos.Text);
+                    }
+
+                    if (!string.IsNullOrEmpty(txtPrecioDescuentoPorcentaje.Text))
+                    {
+                        var porcentaje = Convert.ToDecimal(txtPrecioDescuentoPorcentaje.Text);
+                        if(porcentaje > 100 || porcentaje < 0)
+                        {
+                            MessageBox.Show("Por favor, ingrese un valor dentro de 1% a 100%");
+                            return;
+                        }
+                        var precioBase = _productosParaOfertaDTO[0].PrecioVenta;
+                        descuentoTotal = precioBase - (precioBase * (porcentaje / 100));
+                    }
+                }
+
                 var ofertaDto = new OfertaDTO
                 {
                     Descripcion = $"{desc}{hora.ToString()}",
                     PrecioFinal = _precioFinal,
-                    PrecioOriginal = -1m,
-                    DescuentoTotalFinal = 1, //_precioOriginal - _precioFinal,
-                    PorcentajeDescuento = Convert.ToDecimal(porcDesc),//Convert.ToDecimal(txtPrecioDescuentoPorcentaje.Text),
+                    PrecioOriginal = precioOriginalTotal,
+                    DescuentoTotalFinal = descuentoTotal, 
+                    PorcentajeDescuento = Convert.ToDecimal(porcDesc),
                     FechaInicio = dtpFechaInicio.Value,
                     FechaFin = dtpFechaFin.Value,
-                    CantidadProductosDentroOferta = Convert.ToDecimal(cantidadTotalEnOferta),//_cantidadProductos, // si esto puede ser null, convertí igual
-                    EstaActiva = _ofertaActiva,//cbxEstaActiva.Checked,
+                    CantidadProductosDentroOferta = Convert.ToDecimal(cantidadTotalEnOferta),
+                    EstaActiva = forzarInactivo ? false : _ofertaActiva,
                     EsUnSoloProducto = false,
                     Detalle = txtDetalle.Text?.Trim(),
                     Codigo = txtCodigoOferta.Text?.Trim(),
                     esOfertaPorGrupo = true,
                     TieneLimiteDeStock = cbxLimiteCumplirStock.Checked,
-                    CantidadLimiteDeStock = 0.0m, //cbxLimiteCumplirStock.Checked ? Convert.ToDecimal(txtLimiteStock.Text) : null,
+                    CantidadLimiteDeStock = cantidadLimite, 
                     IdMarca = _marcaId,
                     IdRubro = _rubroId,
                     IdCategoria = _categoriaId,
@@ -490,7 +621,6 @@ namespace Presentacion.Core.Oferta
                 }
 
                 MessageBox.Show(resultado.Mensaje ?? "Oferta creada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
             }
             catch (Exception ex)
             {
@@ -505,6 +635,77 @@ namespace Presentacion.Core.Oferta
         private void cbxEstaActiva_CheckedChanged(object sender, EventArgs e)
         {
             _ofertaActiva = cbxEstaActiva.Checked;
+        }
+
+        private void cbxEsUnProducto_CheckedChanged(object sender, EventArgs e)
+        {
+            _esUnSoloProducto = cbxEsUnProducto.Checked;
+            btnCargarProductosAlcanzados.Text = _esUnSoloProducto ? "Cargar Producto" : "Cargar Productos Alcanzados";
+            cbxCategoria.Checked = false;
+            cbxCategoria.Enabled = !_esUnSoloProducto;
+            cbxMarca.Checked = false;
+            cbxMarca.Enabled = !_esUnSoloProducto;
+            cbxRubro.Checked = false;
+            cbxRubro.Enabled = !_esUnSoloProducto;
+            btnQuitarProducto.Enabled = !_esUnSoloProducto;
+            btnDevolverAOferta.Enabled = !_esUnSoloProducto;
+            dgvProductosQuitados.Enabled = !_esUnSoloProducto;
+            if (_esUnSoloProducto)
+            {
+                _codigoOferta = $"Of-PROD_{DateTime.Now.ToString("yyyyMMddHHmmss")}_";
+                txtCodigoOferta.Text = _codigoOferta;
+            }
+            else
+            {
+                _codigoOferta = $"Of-GRUPO_{DateTime.Now.ToString("yyyyMMddHHmmss")}_";
+                txtCodigoOferta.Text = _codigoOferta;
+            }
+        }
+
+        private void cbxLimiteCumplirStock_CheckedChanged(object sender, EventArgs e)
+        {
+            _hastaCumplirStock = cbxLimiteCumplirStock.Checked;
+            txtLimiteStock.Enabled = _hastaCumplirStock;
+        }
+
+        private void btnLimpiar_Click(object sender, EventArgs e)
+        {
+            cbxCategoria.Checked = false;
+            cbxMarca.Checked = false;
+            cbxRubro.Checked = false;
+            cbxEsUnProducto.Checked = false;
+            _productosParaOfertaDTO = new BindingList<ProductoDTO>();
+            _productosParaQuitarDeOfertaDTO = new BindingList<ProductoDTO>();
+            cantidadTotalEnOferta = 0.0m;
+            cantidadTotalFueraOferta = 0.0m;
+            lblCantidadProductos.Text = "0";
+            lblCantidadProductosQuitados.Text = "0";
+            txtCodigoOferta.Text = string.Empty;
+            txtDescripcion.Text = string.Empty;
+            txtDetalle.Text = string.Empty;
+            txtPrecioDescuentoPesos.Text = string.Empty;
+            txtPrecioDescuentoPorcentaje.Text = string.Empty;
+            txtMarca.Text = string.Empty;
+            txtRubro.Text = string.Empty;
+            txtCategoria.Text = string.Empty;
+            cbxDescuentoPesos.Checked = false;
+            cbxDescuentoPorcentaje.Checked = false;
+
+            ActualizarGrillas();
+        }
+
+        private void cbxDescuentoPesos_CheckedChanged(object sender, EventArgs e)
+        {
+            txtPrecioDescuentoPorcentaje.Text = string.Empty;
+            cbxDescuentoPorcentaje.Checked = false;
+            txtPrecioDescuentoPorcentaje.Enabled = !cbxDescuentoPesos.Checked;
+        }
+
+        private void cbxDescuentoPorcentaje_CheckedChanged(object sender, EventArgs e)
+        {
+            txtPrecioDescuentoPesos.Text = string.Empty;
+            cbxDescuentoPesos.Checked = false;
+            txtPrecioDescuentoPesos.Enabled = !cbxDescuentoPorcentaje.Checked;
         }
     }
 }
