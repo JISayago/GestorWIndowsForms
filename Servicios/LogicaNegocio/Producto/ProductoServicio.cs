@@ -14,7 +14,7 @@ namespace Servicios.LogicaNegocio.Producto
 {
     public class ProductoServicio : IProductoServicio
     {
-        public ProductosEnOfertaDescuentosDTO? ControlarProductoEstaEnOfertaPorId(long productoId)
+        public ProductosEnOfertaDescuentosDTO?  ControlarProductoEstaEnOfertaPorId(long productoId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 

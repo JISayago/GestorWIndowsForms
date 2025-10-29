@@ -251,7 +251,8 @@ namespace Presentacion.Core.Venta
                     //var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
                     var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
                     if (ofertaDesc == null) return;
-
+                    var esOF = false;
+                    if (ofertaDesc.Oferta != null) { esOF = true; } else { esOF = false;}
                     var fCantidad = new FCantidadItem();
                     if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
                     {
@@ -265,7 +266,7 @@ namespace Presentacion.Core.Venta
                             Cantidad = cantidad,
                             Medida = ofertaDesc.Producto.Medida,
                             UnidadMedida = ofertaDesc.Producto.UnidadMedida,
-                            EsOferta = false
+                            EsOferta = esOF
                         };
 
                         itemsVenta.Add(itemVenta);  // Solo agregamos a la BindingList
