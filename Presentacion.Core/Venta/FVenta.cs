@@ -247,7 +247,7 @@ namespace Presentacion.Core.Venta
                 {
 
                     var idProducto = fProductos.productoSeleccionado.Value;
-                    var cantidad = fCantidad.cantidad;
+                    var cantidad = 0.0m;
 
                     //var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
                     var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
@@ -260,8 +260,8 @@ namespace Presentacion.Core.Venta
                     {
                         if(fCantidad.cantidad > ofertaDesc.Producto.Stock)
                         {
-                            MessageBox.Show("La cantidad solicitada supera el stock disponible. Por lo que se pondra la cantidad máxima disponible.");
                             cantidad = ofertaDesc.Producto.Stock;
+                            MessageBox.Show($"La cantidad solicitada supera el stock disponible. Por lo que se pondra la cantidad máxima disponible: {cantidad}.");
                         }
                         else
                         {
