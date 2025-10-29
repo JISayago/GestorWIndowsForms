@@ -247,6 +247,7 @@ namespace Presentacion.Core.Venta
                 {
 
                     var idProducto = fProductos.productoSeleccionado.Value;
+                    var cantidad = fCantidad.cantidad;
 
                     //var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
                     var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
@@ -254,9 +255,18 @@ namespace Presentacion.Core.Venta
                     var esOF = false;
                     if (ofertaDesc.Oferta != null) { esOF = true; } else { esOF = false;}
                     var fCantidad = new FCantidadItem();
+
                     if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
                     {
-                        var cantidad = fCantidad.cantidad;
+                        if(fCantidad.cantidad > ofertaDesc.Producto.Stock)
+                        {
+                            MessageBox.Show("La cantidad solicitada supera el stock disponible. Por lo que se pondra la cantidad máxima disponible.");
+                            cantidad = ofertaDesc.Producto.Stock;
+                        }
+                        else
+                        {
+                            cantidad = fCantidad.cantidad;
+                        }
                         var itemVenta = new ItemVentaDTO
                         {
                             ItemId = ofertaDesc.Producto.ProductoId,
