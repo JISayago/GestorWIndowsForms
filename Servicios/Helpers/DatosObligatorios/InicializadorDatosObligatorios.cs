@@ -11,6 +11,8 @@ namespace Servicios.Helpers.DatosObligatorios
     public class InicializadorDatosObligatorios
     {
         private GestorContextDB Context;
+        public List<string> mensajes = new List<string>();
+        public bool seCargo = false;
 
         public InicializadorDatosObligatorios()
         {
@@ -20,7 +22,13 @@ namespace Servicios.Helpers.DatosObligatorios
         {
             InicializarAdmin();
             IniciarTiposDePago();
-            ActivarDesactivarOfertas();
+            RetornarMensajeOfertasActivadasDesactivadasConflictos();
+            seCargo = true;
+        }
+        public List<string> RetornarMensajeOfertasActivadasDesactivadasConflictos()
+        {
+            mensajes = OfertasActivarDesactivar.Inicializar(Context);
+            return mensajes;
         }
         private void InicializarAdmin()
         {

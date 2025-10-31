@@ -9,6 +9,7 @@ namespace Presentacion.Constantes
 {
     public static class Imagenes
     {
+        public static Image GIFCarga = Properties.Resources.CargaGIF;
         public static Image ImgCerrar = Properties.Resources.ImagenCerrar;
         public static Image ImgPerfilUsuario = Properties.Resources.ImagenUsuario;
         public static Image ImgEliminar = Properties.Resources.ImagenEliminar;
