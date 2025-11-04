@@ -89,6 +89,18 @@ namespace Presentacion
                 Application.Run(pantallaCarga);
             }
 
+              var login = new LoginForm();
+            login.ShowDialog();
+
+           
+            // Continuar con login y arranque normal
+          
+
+            if (login._usuarioLogeado == null || string.IsNullOrEmpty(login._usuarioLogeado.Username))
+            {
+                MessageBox.Show("Error: usuario no válido.");
+                return;
+            }
             // Aquí ya terminó la inicialización (o hubo un error)
             if (mensajesOfertas != null && mensajesOfertas.Count > 0)
             {
@@ -101,15 +113,6 @@ namespace Presentacion
                 );
             }
 
-            // Continuar con login y arranque normal
-            var login = new LoginForm();
-            login.ShowDialog();
-
-            if (login._usuarioLogeado == null || string.IsNullOrEmpty(login._usuarioLogeado.Username))
-            {
-                MessageBox.Show("Error: usuario no válido.");
-                return;
-            }
 
             Application.ThreadException += (s, e) =>
             {
