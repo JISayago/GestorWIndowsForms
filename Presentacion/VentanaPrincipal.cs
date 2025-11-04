@@ -118,5 +118,11 @@ namespace Presentacion
             var FCliente = new FClienteConsulta();
             FCliente.Show();
         }
+
+        private void activarDesactivarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var FActDesac = new FOfertaConsulta(true,"a");
+            FActDesac.Show();
+        }
     }
 }

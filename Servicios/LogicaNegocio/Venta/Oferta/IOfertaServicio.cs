@@ -18,6 +18,9 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         public List<OfertaDTO> ObtenerOfertasInactivasCompuesta(string cadenaBuscar);
         public List<InformacionExistenciaOfertaDescuentoProducto> ObtenerProductosEnOferta(List<ProductoDTO> productosDentroOferta);
         public OfertaDTO ObtenerOfertaPorId(long idOFerta);
+        public List<OfertaDTO> ObtenerOfertasActivasInactivas(string cadenaBuscar);
+
+        public OfertaDTO? ActivarDesactivar(long ofertaId);
 
         public bool ExisteOfertaPorCodigo(string codigo);
     }

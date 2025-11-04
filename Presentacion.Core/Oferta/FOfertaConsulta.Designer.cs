@@ -29,13 +29,16 @@
         private void InitializeComponent()
         {
             btnSeleccionarParaVenta = new Button();
+            btnActivarDesactivarOferta = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
+            panel1.Controls.Add(btnActivarDesactivarOferta);
             panel1.Controls.Add(btnSeleccionarParaVenta);
             panel1.Controls.SetChildIndex(btnSeleccionarParaVenta, 0);
+            panel1.Controls.SetChildIndex(btnActivarDesactivarOferta, 0);
             // 
             // btnSeleccionarParaVenta
             // 
@@ -47,11 +50,23 @@
             btnSeleccionarParaVenta.UseVisualStyleBackColor = true;
             btnSeleccionarParaVenta.Click += btnSeleccionarParaVenta_Click;
             // 
+            // btnActivarDesactivarOferta
+            // 
+            btnActivarDesactivarOferta.Enabled = false;
+            btnActivarDesactivarOferta.Location = new Point(3, 332);
+            btnActivarDesactivarOferta.Name = "btnActivarDesactivarOferta";
+            btnActivarDesactivarOferta.Size = new Size(75, 85);
+            btnActivarDesactivarOferta.TabIndex = 2;
+            btnActivarDesactivarOferta.Text = "Activar/Desactivar";
+            btnActivarDesactivarOferta.UseVisualStyleBackColor = true;
+            btnActivarDesactivarOferta.Visible = false;
+            btnActivarDesactivarOferta.Click += btnActivarDesactivarOferta_Click;
+            // 
             // FOfertaConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 561);
+            ClientSize = new Size(1052, 561);
             Name = "FOfertaConsulta";
             Text = "FOfertaConsulta";
             Load += FOfertaConsulta_Load;
@@ -64,5 +79,6 @@
         #endregion
 
         private Button btnSeleccionarParaVenta;
+        private Button btnActivarDesactivarOferta;
     }
 }

@@ -53,6 +53,7 @@
             btnMovimientos = new Button();
             dataGridView1 = new DataGridView();
             panel1 = new Panel();
+            activarDesactivarToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
@@ -84,7 +85,7 @@
             // 
             empleadoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { rolesToolStripMenuItem });
             empleadoToolStripMenuItem.Name = "empleadoToolStripMenuItem";
-            empleadoToolStripMenuItem.Size = new Size(180, 22);
+            empleadoToolStripMenuItem.Size = new Size(164, 22);
             empleadoToolStripMenuItem.Text = "Empleado";
             empleadoToolStripMenuItem.Click += empleadoToolStripMenuItem_Click;
             // 
@@ -98,28 +99,28 @@
             // tipoPagoToolStripMenuItem
             // 
             tipoPagoToolStripMenuItem.Name = "tipoPagoToolStripMenuItem";
-            tipoPagoToolStripMenuItem.Size = new Size(180, 22);
+            tipoPagoToolStripMenuItem.Size = new Size(164, 22);
             tipoPagoToolStripMenuItem.Text = "Tipo Pago";
             tipoPagoToolStripMenuItem.Click += tipoPagoToolStripMenuItem_Click;
             // 
             // gastosToolStripMenuItem
             // 
             gastosToolStripMenuItem.Name = "gastosToolStripMenuItem";
-            gastosToolStripMenuItem.Size = new Size(180, 22);
+            gastosToolStripMenuItem.Size = new Size(164, 22);
             gastosToolStripMenuItem.Text = "Gastos";
             // 
             // cuentaCorrienteToolStripMenuItem
             // 
             cuentaCorrienteToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { clienteToolStripMenuItem });
             cuentaCorrienteToolStripMenuItem.Name = "cuentaCorrienteToolStripMenuItem";
-            cuentaCorrienteToolStripMenuItem.Size = new Size(180, 22);
+            cuentaCorrienteToolStripMenuItem.Size = new Size(164, 22);
             cuentaCorrienteToolStripMenuItem.Text = "Cuenta Corriente";
             cuentaCorrienteToolStripMenuItem.Click += cuentaCorrienteToolStripMenuItem_Click_1;
             // 
             // clienteToolStripMenuItem
             // 
             clienteToolStripMenuItem.Name = "clienteToolStripMenuItem";
-            clienteToolStripMenuItem.Size = new Size(180, 22);
+            clienteToolStripMenuItem.Size = new Size(111, 22);
             clienteToolStripMenuItem.Text = "Cliente";
             clienteToolStripMenuItem.Click += clienteToolStripMenuItem_Click_1;
             // 
@@ -166,7 +167,7 @@
             // 
             // cONFIGToolStripMenuItem
             // 
-            cONFIGToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { ofertasToolStripMenuItem });
+            cONFIGToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { ofertasToolStripMenuItem, activarDesactivarToolStripMenuItem });
             cONFIGToolStripMenuItem.Name = "cONFIGToolStripMenuItem";
             cONFIGToolStripMenuItem.Size = new Size(72, 20);
             cONFIGToolStripMenuItem.Text = "CONFIG??";
@@ -174,7 +175,7 @@
             // ofertasToolStripMenuItem
             // 
             ofertasToolStripMenuItem.Name = "ofertasToolStripMenuItem";
-            ofertasToolStripMenuItem.Size = new Size(112, 22);
+            ofertasToolStripMenuItem.Size = new Size(180, 22);
             ofertasToolStripMenuItem.Text = "Ofertas";
             ofertasToolStripMenuItem.Click += ofertasToolStripMenuItem_Click;
             // 
@@ -253,6 +254,13 @@
             panel1.Size = new Size(750, 40);
             panel1.TabIndex = 18;
             // 
+            // activarDesactivarToolStripMenuItem
+            // 
+            activarDesactivarToolStripMenuItem.Name = "activarDesactivarToolStripMenuItem";
+            activarDesactivarToolStripMenuItem.Size = new Size(180, 22);
+            activarDesactivarToolStripMenuItem.Text = "Activar Desactivar";
+            activarDesactivarToolStripMenuItem.Click += activarDesactivarToolStripMenuItem_Click;
+            // 
             // VentanaPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -302,5 +310,6 @@
         private ToolStripMenuItem ofertasToolStripMenuItem;
         private ToolStripMenuItem cuentaCorrienteToolStripMenuItem;
         private ToolStripMenuItem clienteToolStripMenuItem;
+        private ToolStripMenuItem activarDesactivarToolStripMenuItem;
     }
 }
