@@ -63,6 +63,16 @@ namespace Presentacion.Constantes.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CargaGIF {
+            get {
+                object obj = ResourceManager.GetObject("CargaGIF", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ImagenActualizar {
             get {
                 object obj = ResourceManager.GetObject("ImagenActualizar", resourceCulture);

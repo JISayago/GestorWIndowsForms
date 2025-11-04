@@ -247,15 +247,26 @@ namespace Presentacion.Core.Venta
                 {
 
                     var idProducto = fProductos.productoSeleccionado.Value;
+                    var cantidad = 0.0m;
 
                     //var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
                     var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
                     if (ofertaDesc == null) return;
-
+                    var esOF = false;
+                    if (ofertaDesc.Oferta != null) { esOF = true; } else { esOF = false;}
                     var fCantidad = new FCantidadItem();
+
                     if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
                     {
-                        var cantidad = fCantidad.cantidad;
+                        if(fCantidad.cantidad > ofertaDesc.Producto.Stock)
+                        {
+                            cantidad = ofertaDesc.Producto.Stock;
+                            MessageBox.Show($"La cantidad solicitada supera el stock disponible. Por lo que se pondra la cantidad máxima disponible: {cantidad}.");
+                        }
+                        else
+                        {
+                            cantidad = fCantidad.cantidad;
+                        }
                         var itemVenta = new ItemVentaDTO
                         {
                             ItemId = ofertaDesc.Producto.ProductoId,
@@ -265,7 +276,7 @@ namespace Presentacion.Core.Venta
                             Cantidad = cantidad,
                             Medida = ofertaDesc.Producto.Medida,
                             UnidadMedida = ofertaDesc.Producto.UnidadMedida,
-                            EsOferta = false
+                            EsOferta = esOF
                         };
 
                         itemsVenta.Add(itemVenta);  // Solo agregamos a la BindingList
