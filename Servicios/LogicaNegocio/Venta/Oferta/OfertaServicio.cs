@@ -366,5 +366,137 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
             return matches;
         }
 
+        public List<OfertaDTO> ObtenerOfertasActivasInactivas(string cadenaBuscar)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var query = context.OfertasDescuentos
+                .Where(o => string.IsNullOrEmpty(cadenaBuscar)
+                            || o.Descripcion.Contains(cadenaBuscar)
+                            || o.Codigo.Contains(cadenaBuscar))
+                .Include(o => o.Productos)
+                .Select(x => new OfertaDTO
+                {
+                    OfertaDescuentoId = x.OfertaDescuentoId,
+                    Descripcion = x.Descripcion,
+                    PrecioFinal = x.PrecioFinal,
+                    PrecioOriginal = x.PrecioOriginal,
+                    DescuentoTotalFinal = x.DescuentoTotalFinal,
+                    PorcentajeDescuento = x.PorcentajeDescuento,
+                    FechaInicio = x.FechaInicio,
+                    FechaFin = x.FechaFin,
+                    CantidadProductosDentroOferta = x.CantidadProductosDentroOferta,
+                    EstaActiva = x.EstaActiva,
+                    EsUnSoloProducto = x.EsUnSoloProducto,
+                    Detalle = x.Detalle,
+                    Codigo = x.Codigo,
+                    esOfertaPorGrupo = x.esOfertaPorGrupo,
+                    TieneLimiteDeStock = x.TieneLimiteDeStock,
+                    CantidadLimiteDeStock = x.CantidadLimiteDeStock,
+                    IdMarca = x.IdMarca,
+                    IdRubro = x.IdRubro,
+                    IdCategoria = x.IdCategoria,
+                    GrupoNombre = x.GrupoNombre,
+                    Productos = x.Productos.Select(p => new ProductoDTO
+                    {
+                        ProductoId = p.ProductoId,
+                        PrecioVenta = p.PrecioOrginal
+                    }).ToList()
+                });
+
+            var ofertas = query.ToList();
+
+            var ahora = DateTime.Now;
+
+            ofertas = ofertas
+                .OrderBy(o => Math.Abs(((o.FechaFin ?? DateTime.MaxValue) - ahora).TotalSeconds))
+                .ToList();
+
+            return ofertas;
+        }
+        public OfertaDTO? ActivarDesactivar(long ofertaId)
+        {
+            try
+            {
+                using var context = new GestorContextDBFactory().CreateDbContext(null);
+                using var transaction = context.Database.BeginTransaction();
+
+                var oferta = context.OfertasDescuentos
+                    .Include(o => o.Productos)
+                    .FirstOrDefault(o => o.OfertaDescuentoId == ofertaId);
+
+                if (oferta == null)
+                    return null;
+
+                // Si está activa, simplemente se desactiva
+                if (oferta.EstaActiva)
+                {
+                    oferta.EstaActiva = false;
+                    context.SaveChanges();
+                    transaction.Commit();
+                }
+                else
+                {
+                    // Si se va a activar, buscar y desactivar otras ofertas que comparten productos
+                    var productoIds = oferta.Productos.Select(p => p.ProductoId).ToList();
+
+                    var ofertasEnConflicto = context.OfertasDescuentos
+                        .Include(o => o.Productos)
+                        .Where(o => o.EstaActiva && o.OfertaDescuentoId != ofertaId)
+                        .Where(o => o.Productos.Any(p => productoIds.Contains(p.ProductoId)))
+                        .ToList();
+
+                    foreach (var conflictiva in ofertasEnConflicto)
+                        conflictiva.EstaActiva = false;
+
+                    // Activar la actual
+                    oferta.EstaActiva = true;
+
+                    context.SaveChanges();
+                    transaction.Commit();
+                }
+
+                // Asegurarnos de tener el estado final cargado
+                context.Entry(oferta).Collection(o => o.Productos).Load();
+                context.Entry(oferta).Reload();
+
+                // Mapear a DTO y devolver
+                var dto = new OfertaDTO
+                {
+                    OfertaDescuentoId = oferta.OfertaDescuentoId,
+                    Descripcion = oferta.Descripcion,
+                    PrecioFinal = oferta.PrecioFinal,
+                    PrecioOriginal = oferta.PrecioOriginal,
+                    DescuentoTotalFinal = oferta.DescuentoTotalFinal,
+                    PorcentajeDescuento = oferta.PorcentajeDescuento,
+                    FechaInicio = oferta.FechaInicio,
+                    FechaFin = oferta.FechaFin,
+                    CantidadProductosDentroOferta = oferta.CantidadProductosDentroOferta,
+                    EstaActiva = oferta.EstaActiva,
+                    EsUnSoloProducto = oferta.EsUnSoloProducto,
+                    Detalle = oferta.Detalle,
+                    Codigo = oferta.Codigo,
+                    esOfertaPorGrupo = oferta.esOfertaPorGrupo,
+                    TieneLimiteDeStock = oferta.TieneLimiteDeStock,
+                    CantidadLimiteDeStock = oferta.CantidadLimiteDeStock,
+                    IdMarca = oferta.IdMarca,
+                    IdRubro = oferta.IdRubro,
+                    IdCategoria = oferta.IdCategoria,
+                    GrupoNombre = oferta.GrupoNombre,
+                    Productos = oferta.Productos?.Select(p => new ProductoDTO
+                    {
+                        ProductoId = p.ProductoId,
+                        PrecioVenta = p.PrecioOrginal
+                    }).ToList() ?? new List<ProductoDTO>()
+                };
+
+                return dto;
+            }
+            catch (Exception)
+            {
+                // opcional: loguear exception
+                return null;
+            }
+        }
     }
 }
