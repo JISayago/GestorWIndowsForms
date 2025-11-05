@@ -11,16 +11,20 @@ namespace AccesoDatos.Entidades
     {
         [Key]
         public long VentaId { get; set; }
-
         public long IdEmpleado { get; set; }
-        public Empleado Empleado { get; set; }
 
+        public Empleado Empleado { get; set; }
+        public long IdVendedor { get; set; }
+        public Empleado Vendedor { get; set; }
         public string NumeroVenta { get; set; }
         public DateTime FechaVenta { get; set; }
-
         public decimal Total { get; set; }
+        public decimal TotalSinDescuento { get; set; }
+        public decimal Descuento { get; set; }
         public int Estado { get; set; }
         public string Detalle { get; set; }
+        public decimal MontoAdeudado { get; set; }
+        public decimal MontoPagado { get; set; }
 
         public ICollection<DetallesVenta> DetallesVentas { get; set; }
 

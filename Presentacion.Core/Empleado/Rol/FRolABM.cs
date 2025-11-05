@@ -101,8 +101,8 @@ namespace Presentacion.Core.Empleado.Rol
 
             // Datos Personales
             txtNombre.Text = rol.Nombre;
-            txtCodigoRol.Text = Convert.ToString(rol.CodigoRol);
-            txtDescripcionRol.Text = Convert.ToString(rol.DetalleRol);
+            txtCodigoRol.Text = rol.CodigoRol;
+            txtDescripcionRol.Text =rol.DetalleRol;
             
         }
 

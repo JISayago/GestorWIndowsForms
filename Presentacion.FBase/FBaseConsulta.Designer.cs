@@ -70,7 +70,7 @@
             BarraLateralBotones.LayoutStyle = ToolStripLayoutStyle.VerticalStackWithOverflow;
             BarraLateralBotones.Location = new Point(0, 0);
             BarraLateralBotones.Name = "BarraLateralBotones";
-            BarraLateralBotones.Size = new Size(64, 276);
+            BarraLateralBotones.Size = new Size(64, 257);
             BarraLateralBotones.Stretch = true;
             BarraLateralBotones.TabIndex = 0;
             BarraLateralBotones.Text = "toolStrip1";
@@ -250,7 +250,7 @@
         private ToolStripButton btnSalir;
         protected DataGridView dgvGrilla;
         protected CheckBox cbxEstaEliminado;
-        protected Panel panel1;
         protected ToolStrip BarraLateralBotones;
+        public Panel panel1;
     }
 }

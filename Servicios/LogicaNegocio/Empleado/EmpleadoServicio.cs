@@ -9,11 +9,14 @@ using System.Threading.Tasks;
 using AccesoDatos.Entidades;
 using Servicios.Helpers;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Servicios.LogicaNegocio.Empleado
 {
     public class EmpleadoServicio : IEmpleadoServicio
     {
+        
+
         public EstadoOperacion Eliminar(long empleadoId)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -66,9 +69,9 @@ namespace Servicios.LogicaNegocio.Empleado
                 PersonaId = persona.PersonaId,
                 Legajo = empleadoDto.Legajo,
                 FechaIngreso = empleadoDto.FechaIngreso,
-                Estado = 1,
-                Username = "Usuario",
-                Pass = "usuario2", // Reemplazá esto con un hash si lo vas a encriptar
+                Estado = 0,
+                Username = null,
+                Pass = null,
                 UsuarioEstaHabilitado = false
             };
 
@@ -127,9 +130,6 @@ namespace Servicios.LogicaNegocio.Empleado
             empleadoEditar.Legajo = empleadoDto.Legajo;
             empleadoEditar.FechaIngreso = empleadoDto.FechaIngreso;
             empleadoEditar.FechaEgreso = empleadoDto.FechaEgreso;
-            empleadoEditar.Estado = empleadoDto.Estado;
-            empleadoEditar.Username = "";//deberia ser Null
-            empleadoEditar.Pass = "";//deberia ser Null
             empleadoEditar.UsuarioEstaHabilitado = empleadoDto.UsuarioEstaHabilitado;
 
 
@@ -181,37 +181,41 @@ namespace Servicios.LogicaNegocio.Empleado
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var empleados = context.Empleados
-                .AsNoTracking()
-                .Include(e => e.Persona)
-                  .Where(e => e.Persona != null && !e.Persona.EstaEliminado && (e.Persona.Nombre.Contains(cadenabuscar)
-                                || e.Persona.Apellido.Contains(cadenabuscar)
-                                || e.Persona.Dni == (cadenabuscar)
-                                || e.Persona.Email == (cadenabuscar)))
-                .Select(e => new EmpleadoDTO
-                {
-                    PersonaId = e.PersonaId,
-                    Nombre = e.Persona.Nombre,
-                    Apellido = e.Persona.Apellido,
-                    Dni = e.Persona.Dni,
-                    Cuil = e.Persona.Cuil,
-                    Telefono = e.Persona.Telefono,
-                    Telefono2 = e.Persona.Telefono2,
-                    Email = e.Persona.Email,
-                    Direccion = e.Persona.Direccion,
-                    FechaNacimiento = e.Persona.FechaNacimiento,
-                    EstaEliminado = e.Persona.EstaEliminado,
-                    Legajo = e.Legajo,
-                    FechaIngreso = e.FechaIngreso,
-                    FechaEgreso = e.FechaEgreso,
-                    Estado = e.Estado,
-                    Username = e.Username,
-                    Pass = e.Pass,
-                    UsuarioEstaHabilitado = e.UsuarioEstaHabilitado
-                })
-                .ToList();
-
-            return empleados;
-        }
+            .AsNoTracking()
+            .Include(e => e.Persona)
+            .Where(e => e.Persona != null && !e.Persona.EstaEliminado &&
+                (e.Persona.Nombre.Contains(cadenabuscar)
+                || e.Persona.Apellido.Contains(cadenabuscar)
+                || e.Persona.Dni == cadenabuscar
+                || e.Persona.Email == cadenabuscar))
+            .ToList()
+            .Select(e => new EmpleadoDTO
+            {
+                PersonaId = e.PersonaId,
+                Nombre = e.Persona.Nombre,
+                Apellido = e.Persona.Apellido,
+                Dni = e.Persona.Dni,
+                Cuil = e.Persona.Cuil,
+                Telefono = e.Persona.Telefono,
+                Telefono2 = e.Persona.Telefono2,
+                Email = e.Persona.Email,
+                Direccion = e.Persona.Direccion,
+                FechaNacimiento = e.Persona.FechaNacimiento,
+                EstaEliminado = e.Persona.EstaEliminado,
+                Legajo = e.Legajo,
+                FechaIngreso = e.FechaIngreso,
+                FechaEgreso = e.FechaEgreso,
+                Estado = e.Estado,
+                EstadoDescripcion = Enum.GetName(typeof(EstadoEmpleado), e.Estado) ?? "Desconocido",
+                Username = e.Username,
+                Pass = e.Pass,
+                UsuarioEstaHabilitado = e.UsuarioEstaHabilitado
+            })
+            .ToList();
+           
+           
+                   return empleados;
+               }
 
         public IEnumerable<EmpleadoDTO> ObtenerEmpleadosEliminados(string cadenabuscar)
         {
@@ -224,6 +228,7 @@ namespace Servicios.LogicaNegocio.Empleado
                                 || e.Persona.Apellido.Contains(cadenabuscar)
                                 || e.Persona.Dni == (cadenabuscar)
                                 || e.Persona.Email == (cadenabuscar)))
+                .ToList()
                 .Select(e => new EmpleadoDTO
                 {
                     PersonaId = e.PersonaId,
@@ -241,13 +246,14 @@ namespace Servicios.LogicaNegocio.Empleado
                     FechaIngreso = e.FechaIngreso,
                     FechaEgreso = e.FechaEgreso,
                     Estado = e.Estado,
+                    EstadoDescripcion = Enum.GetName(typeof(EstadoEmpleado), e.Estado) ?? "Desconocido",
                     Username = e.Username,
                     Pass = e.Pass,
                     UsuarioEstaHabilitado = e.UsuarioEstaHabilitado
                 })
                 .ToList();
-
-            return empleados;
-        }
+                
+                       return empleados;
+                }
     }
 }

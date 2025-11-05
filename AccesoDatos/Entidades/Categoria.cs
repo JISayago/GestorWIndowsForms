@@ -12,9 +12,7 @@ namespace AccesoDatos.Entidades
         [Key]
         public long CategoriaId { get; set; }
         public string Nombre { get; set; }
-
         public bool EstaEliminado {get; set; }
-
-        public ICollection<Producto> Productos { get; set; }
+        public ICollection<CategoriaProducto> CategoriasProductos { get; set; }
     }
 }

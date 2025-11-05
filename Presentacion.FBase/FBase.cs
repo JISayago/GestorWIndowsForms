@@ -1,10 +1,11 @@
 ﻿using Presentacion.FormulariosBase.DTO;
+using System.Text.Json.Nodes;
 
 namespace Presentacion.FBase
 {
     public partial class FBase : Form
     {
-
+        //   private string ColorFondo = "#d4a925";Pensado para config
         private readonly List<ControlDTO> _listaControlesObligatorios;
         public FBase()
         {
@@ -12,12 +13,13 @@ namespace Presentacion.FBase
                 _listaControlesObligatorios = new List<ControlDTO>();
             this.components = new System.ComponentModel.Container();
             this.error = new System.Windows.Forms.ErrorProvider(this.components);
+       //     this.BackColor = System.Drawing.ColorTranslator.FromHtml(ColorFondo); Pensado para config
+           
 
- 
+
         }
         private void FBase_Load(object sender, EventArgs e)
         {
-        
         }
         public virtual void DesactivarControles(object obj)
         {

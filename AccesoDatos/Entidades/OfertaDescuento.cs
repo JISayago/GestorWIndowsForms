@@ -1,0 +1,39 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AccesoDatos.Entidades
+{
+    public class OfertaDescuento
+    {
+        [Key]
+        public long OfertaDescuentoId { get; set; }
+        public string Descripcion { get; set; }
+        public decimal PrecioFinal{ get; set; }
+        public decimal PrecioOriginal { get; set; }
+        public decimal? DescuentoTotalFinal { get; set; }
+        public decimal? PorcentajeDescuento { get; set; }
+        public DateTime FechaInicio { get; set; }
+        public DateTime? FechaFin { get; set; }
+        public decimal? CantidadProductosDentroOferta { get; set; }
+        public bool EstaActiva { get; set; } 
+        public bool EsUnSoloProducto { get; set; }
+        public string Detalle { get; set; }
+        public string Codigo { get; set; }
+        public bool esOfertaPorGrupo { get; set; }
+        public bool TieneLimiteDeStock { get; set; }
+        public decimal? CantidadLimiteDeStock { get; set; }
+        public long? IdMarca { get; set; }
+        public long? IdRubro { get; set; }
+        public long? IdCategoria { get; set; }
+        public string? GrupoNombre { get; set; }
+
+        public Marca? Marca { get; set; }
+        public Rubro? Rubro { get; set; }
+        public Categoria? Categoria { get; set; }
+        public ICollection<ProductosEnOfertaDescuentos> Productos { get; set; } = new List<ProductosEnOfertaDescuentos>();
+    }
+}

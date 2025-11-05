@@ -14,7 +14,8 @@ namespace AccesoDatos.Entidades
         public string Nombre { get; set; }
         public string Detalle { get; set; }
         public string Codigo { get; set; }
-
+        public int NumeroReferencia { get; set; }
+        public bool MetodoPagoHabilitado { get; set; }
         public bool EstaEliminado { get; set; }
 
         // Si lo usás en Ventas más adelante:

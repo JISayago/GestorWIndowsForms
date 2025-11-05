@@ -11,12 +11,17 @@ namespace AccesoDatos.Entidades
     {
         [Key]
         public long ProductoId { get; set; }
-        public long? IdCategoria { get; set; }
-        public long? IdMarca { get; set; }
-
-        public int Stock { get; set; }
+        public long IdMarca { get; set; }
+        public Marca Marca { get; set; }
+        public long IdRubro { get; set; }
+        public Rubro Rubro { get; set; }
+        public string Codigo { get; set; }
+        public string CodigoBarra { get; set; }
+        public decimal Stock { get; set; }
+        public bool EsFraccionable { get; set; }
         public decimal PrecioCosto { get; set; }
         public decimal PrecioVenta { get; set; }
+        public bool IvaIncluidoPrecioFinal { get; set; }
         public string Descripcion { get; set; }
         public bool EstaEliminado { get; set; }
         public int Estado { get; set; }
@@ -24,9 +29,7 @@ namespace AccesoDatos.Entidades
         public string UnidadMedida { get; set; }
 
         // Navegación
-        public Categoria Categoria { get; set; }
-        public Marca Marca { get; set; }
-
+        public ICollection<CategoriaProducto> CategoriasProductos { get; set; }
         public ICollection<DetallesVenta> DetallesVentas { get; set; }
     }
 }

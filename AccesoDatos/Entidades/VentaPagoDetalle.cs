@@ -17,7 +17,6 @@ namespace AccesoDatos.Entidades
 
         public long IdTipoPago { get; set; }
         public TipoPago TipoPago { get; set; }
-
         public decimal Monto { get; set; }
 
     }

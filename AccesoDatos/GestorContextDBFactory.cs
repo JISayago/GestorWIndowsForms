@@ -15,10 +15,10 @@ namespace AccesoDatos
         {
             public GestorContextDB CreateDbContext(string[] args)
             {
-                var optionsBuilder = new DbContextOptionsBuilder<GestorContextDB>();
+            var optionsBuilder = new DbContextOptionsBuilder<GestorContextDB>();
                 optionsBuilder.UseSqlServer(Conexion.ObtenerCadenaConexion());
 
-                return new GestorContextDB(optionsBuilder.Options);
+            return new GestorContextDB(optionsBuilder.Options);
             }
 
     }
