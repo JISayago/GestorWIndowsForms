@@ -1,5 +1,7 @@
-﻿using Presentacion.Core.Venta.TipoPago;
+﻿using AccesoDatos.Entidades;
+using Presentacion.Core.Venta.TipoPago;
 using Servicios.Helpers;
+using Servicios.LogicaNegocio.Cliente.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,12 +21,14 @@ namespace Presentacion.Core.Venta
         public decimal MontoPendiente;
         public List<FormaPago> pagos = new List<FormaPago>();
         public DatosVenta _datosVenta = new DatosVenta();
+        public long? idCliente;
 
-        public FConfirmacionVenta(DatosVenta dv)
+        public FConfirmacionVenta(DatosVenta dv, long? clienteCargado = null)
         {
             InitializeComponent();
             TotalVenta = dv.Total;
             _datosVenta = dv;
+            idCliente = clienteCargado;
 
         }
 
@@ -186,7 +190,7 @@ namespace Presentacion.Core.Venta
         private TipoDePago AsignarTipoPagoAPago(int numeroPago)
         {
             // pasamos el indice actual (numeroPago - 1) para que el dialogo excluya esa posición del conteo
-            using var fFormaPagoSeleccionada = new FTipoPagoSeleccionEnVenta(_datosVenta.IncluirCtaCte, pagos, numeroPago - 1);
+            using var fFormaPagoSeleccionada = new FTipoPagoSeleccionEnVenta(_datosVenta.IncluirCtaCte, pagos, numeroPago - 1, idCliente);
 
             if (fFormaPagoSeleccionada.ShowDialog() == DialogResult.OK)
             {

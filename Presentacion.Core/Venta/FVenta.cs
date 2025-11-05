@@ -1,10 +1,14 @@
 ﻿using AccesoDatos.Entidades;
 using Microsoft.IdentityModel.Tokens;
 using Presentacion.AccesoAlSistema;
+using Presentacion.Core.Cliente;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Oferta;
 using Presentacion.Core.Producto;
 using Servicios.Helpers;
+using Servicios.LogicaNegocio.Cliente;
+using Servicios.LogicaNegocio.Cliente.DTO;
+using Servicios.LogicaNegocio.CuentaCorriente;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Venta;
@@ -39,6 +43,8 @@ namespace Presentacion.Core.Venta
         private List<FormaPago> tipoDePagosVenta;
         private bool _actualizandoGrilla = false;
         private bool cargarOferta = false;
+        private long idCliente;
+
 
         public FVenta(long usuarioLogeadoID)
         {
@@ -167,6 +173,25 @@ namespace Presentacion.Core.Venta
                     Items = itemsVenta.ToList(),
                     TiposDePagoSeleccionado = tipoDePagosVenta,
                 };
+
+                //aca generar los cambios de la ctacte como su saldo despues de la compra
+                //if tipo pago ctacte en _venta {impactar ctacte saldo (usar del service registrar compra)
+                //tipoDePagosVenta.tipoPago == ctacte
+                _venta.TiposDePagoSeleccionado.ForEach(tp =>
+                {
+                    if (tp.TipoDePago == TipoDePago.CtaCte)
+                    {
+                        var ctaCteServicio = new CuentaCorrienteServicio();
+                        var ctacte = ctaCteServicio.ObtenerCuentaCorrientePorClienteId(idCliente);
+
+                        if (ctacte != null)
+                        {
+                            ctaCteServicio.RegistrarCompra(ctacte.CuentaCorrienteId , tp.Monto);
+                        }
+                    }
+                });
+
+
                 _ventaServicio.NuevaVenta(_venta);
                 MessageBox.Show("Venta confirmada exitosamente.");
                 this.Close();
@@ -177,7 +202,7 @@ namespace Presentacion.Core.Venta
                 Total = _totalVenta,
                 IncluirCtaCte = _incluirCtaCte
             };
-            var fConfirmarVenta = new FConfirmacionVenta(datosVenta);
+            var fConfirmarVenta = new FConfirmacionVenta(datosVenta, idCliente);
             if (fConfirmarVenta.ShowDialog() == DialogResult.OK)
             {
                 //tipoDePagosVenta
@@ -200,7 +225,7 @@ namespace Presentacion.Core.Venta
 
                 txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoTP();
 
-                if (tipoPagosSeleccionados.Count > 0)
+                if (tipoPagosSeleccionados.Count > 0 )
                 {
                     var fConfirmarDetalle = new FDetalleVenta();
                     if (fConfirmarDetalle.ShowDialog() == DialogResult.OK)
@@ -302,7 +327,7 @@ namespace Presentacion.Core.Venta
                     CalcularTotal();
 
                 }
-               
+
             }
         }
         private void CalcularTotal()
@@ -496,6 +521,16 @@ namespace Presentacion.Core.Venta
             cargarOferta = cbxEnOferta.Checked;
             btnCargarProducto.Text = cargarOferta ? "Cargar Oferta" : "Cargar Producto";
         }
-    }
 
+        private void btnCargarCliente_Click(object sender, EventArgs e)
+        {
+            var cliente = new FClienteConsulta(true);
+            if (cliente.ShowDialog() == DialogResult.OK && cliente.clienteSeleccionado.HasValue)
+            {
+                idCliente = cliente.clienteSeleccionado.Value;
+                var _clienteCargado = new ClienteServicio().ObtenerClientePorId(idCliente);
+                txtCliente.Text = $"{_clienteCargado.Nombre} {_clienteCargado.Apellido}";
+            }
+        }
+    }
 }

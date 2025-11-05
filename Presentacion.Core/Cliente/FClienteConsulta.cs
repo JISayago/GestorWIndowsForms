@@ -2,6 +2,7 @@
 using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Cliente;
+using Servicios.LogicaNegocio.Producto;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,6 +19,8 @@ namespace Presentacion.Core.Cliente
     {
 
         private readonly IClienteServicio _clienteServicio;
+        private bool vieneDeCargaCliente = false;
+        public long? clienteSeleccionado = null;
 
         public FClienteConsulta() : this(new ClienteServicio())
         {
@@ -26,6 +29,11 @@ namespace Presentacion.Core.Cliente
         public FClienteConsulta(IClienteServicio clienteServicio)
         {
             _clienteServicio = clienteServicio;
+        }
+        public FClienteConsulta(bool _vieneDeCargaCliente) : this(new ClienteServicio())
+        {
+            vieneDeCargaCliente = _vieneDeCargaCliente;
+            InitializeComponent();
         }
 
         public override void EjecutarBtnNuevo()
@@ -107,6 +115,51 @@ namespace Presentacion.Core.Cliente
         public override void EjecutarMostrarEliminados()
         {
             base.EjecutarMostrarEliminados();
+        }
+
+        public void ControlCargaExistencaDatos()
+        {
+            if (dgvGrilla.RowCount > 0)
+            {
+                if (!entidadID.HasValue)
+                {
+                    MessageBox.Show("Por favor seleccione un registro.");
+                    puedeEjecutarComando = false;
+                    return;
+                }
+                else
+                {
+                    puedeEjecutarComando = true;
+                }
+            }
+            else
+            {
+                MessageBox.Show("No hay Datos Cargados.");
+            }
+        }
+
+        private void FClienteConsulta_Load(object sender, EventArgs e)
+        {
+            if (vieneDeCargaCliente)
+            {
+                btnSeleccionarCliente.Visible = true;
+                btnSeleccionarCliente.Enabled = true;
+            }
+            else
+            {
+                btnSeleccionarCliente.Visible = false;
+                btnSeleccionarCliente.Enabled = false;
+            }
+        }
+
+        private void btnSeleccionarCliente_Click(object sender, EventArgs e)
+        {
+            ControlCargaExistencaDatos();
+            if (!puedeEjecutarComando) return;
+
+            clienteSeleccionado = (long)entidadID;
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
     }
 }

@@ -154,6 +154,7 @@
             btnCargarCliente.TabIndex = 9;
             btnCargarCliente.Text = "Cargar Cliente";
             btnCargarCliente.UseVisualStyleBackColor = true;
+            btnCargarCliente.Click += btnCargarCliente_Click;
             // 
             // cbxConsumidorFinal
             // 

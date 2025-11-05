@@ -1,4 +1,8 @@
-﻿using System;
+﻿using AccesoDatos.Entidades;
+using Presentacion.Core.CuentaCorriente;
+using Servicios.Helpers;
+using Servicios.LogicaNegocio.Cliente.DTO;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Servicios.Helpers;
 
 namespace Presentacion.Core.Venta.TipoPago
 {
@@ -17,16 +20,18 @@ namespace Presentacion.Core.Venta.TipoPago
         public bool _incluirCtaCte { get; private set; }
         public List<FormaPago> _pagos { get; private set; }
         private int _indexActual; // índice que estamos editando (puede ser -1 si es nuevo)
+        private long idCliente;
 
         // array de límites: si ya lo tenés en otro lado, usá ese. Aquí lo dejo como ejemplo.
         private readonly int[] listPagosCantidades = new int[8] { 1, 2, 1, 1, 1, 1, 1, 1 };
 
-        public FTipoPagoSeleccionEnVenta(bool incluirCtaCte, List<FormaPago> pagos, int indexActual)
+        public FTipoPagoSeleccionEnVenta(bool incluirCtaCte, List<FormaPago> pagos, int indexActual, long? clienteCargado)
         {
             InitializeComponent();
             _incluirCtaCte = incluirCtaCte;
             _pagos = pagos;
             _indexActual = indexActual;
+            idCliente = (long)clienteCargado;
         }
 
         private void btnEfectivo_Click(object sender, EventArgs e)
@@ -41,6 +46,23 @@ namespace Presentacion.Core.Venta.TipoPago
 
         private void btnCtaCte_Click(object sender, EventArgs e)
         {
+            //seleecionar ctacte deberia mostrar una ventan para verificar
+            //verificar dni ? descontar de ctacte al generar la venta
+            //crear ventana para verificar dni, que aparezca 
+
+            var montoCtaCte = _pagos
+            .Where(p => p != null && p.TipoDePago == null && p.Monto > 0)
+            .Select(p => p.Monto)
+            .FirstOrDefault();
+
+            using (var fVerificarCtaCte = new FCuentaCorrienteValidacion(idCliente, montoCtaCte))
+            {
+                var result = fVerificarCtaCte.ShowDialog();
+                if (result != DialogResult.OK)
+                {
+                    return; // el usuario canceló o no se verificó
+                }
+            }
             SeleccionTipoPago(TipoDePago.CtaCte);
         }
 
