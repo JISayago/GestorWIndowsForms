@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -11,9 +12,13 @@ namespace AccesoDatos.Entidades
     {
         [Key]
         public long MovimientoId { get; set; }
+        public string NumeroMovimiento { get; set; } = string.Empty;
         public long? IdVenta { get; set; }     // Nullable si no siempre hay venta asociada
+        // long? IdGasto { get; set; }     // Nullable si no siempre hay gasto asociado
         public int TipoMovimiento { get; set; }
-
+        //public int Movimiento { get; set; }
+        public decimal Monto { get; set; }
+        public DateTime FechaMovimiento { get; set; }
         public bool EstaEliminado { get; set; }
 
         // Navegación
