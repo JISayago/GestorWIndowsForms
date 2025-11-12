@@ -10,6 +10,7 @@ using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.Cliente.DTO;
 using Servicios.LogicaNegocio.CuentaCorriente;
 using Servicios.LogicaNegocio.Empleado;
+using Servicios.LogicaNegocio.Movimiento;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Venta;
 using Servicios.LogicaNegocio.Venta.DTO;
@@ -23,6 +24,8 @@ namespace Presentacion.Core.Venta
         private readonly IVentaServicio _ventaServicio;
         private readonly IEmpleadoServicio _empleadoServicio;
         private readonly IOfertaServicio _ofertaServicio;
+        private readonly IMovimientoServicio _movimientoServicio;
+
         private long idVendedor = 0;
         private VentaDTO _venta;
         private bool finalizarVenta = false;
@@ -51,6 +54,7 @@ namespace Presentacion.Core.Venta
             InitializeComponent();
             _ventaServicio = new VentaServicio();
 
+            _movimientoServicio = new MovimientoServicio();
 
             _empleadoServicio = new EmpleadoServicio();
             _cuerpoDetalleVenta = new CuerpoDetalleVenta
@@ -190,9 +194,12 @@ namespace Presentacion.Core.Venta
                         }
                     }
                 });
+                //Deberia juntar movimiento ctacte con movimiento venta en uno solo.
 
 
                 _ventaServicio.NuevaVenta(_venta);
+                //_movimientoServicio.CrearMovimientoVenta(_venta);
+
                 MessageBox.Show("Venta confirmada exitosamente.");
                 this.Close();
                 return;

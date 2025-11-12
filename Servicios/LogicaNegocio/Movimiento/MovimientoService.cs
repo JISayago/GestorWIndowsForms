@@ -1,16 +1,17 @@
-﻿using System;
+﻿using AccesoDatos;
+using Servicios.LogicaNegocio.Movimiento.DTO;
+using Servicios.LogicaNegocio.Producto.Rubro.DTO;
+using Servicios.LogicaNegocio.Venta.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AccesoDatos;
-using Servicios.LogicaNegocio.Movimiento.DTO;
-using Servicios.LogicaNegocio.Venta.DTO;
 
 
 namespace Servicios.LogicaNegocio.Movimiento
 {
-    public class MovimientoService
+    public class MovimientoServicio : IMovimientoServicio
     {
         /*
          * 
@@ -33,7 +34,14 @@ namespace Servicios.LogicaNegocio.Movimiento
             };
 
             context.Movimientos.Add(movimiento);
-            context.SaveChanges();
+            try 
+            {
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public MovimientoDTO ObtenerMovimientoPorId(long movimientoId)
@@ -52,7 +60,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                 EstaEliminado = movimiento.EstaEliminado
             };
         }
-
+        /*
         public IEnumerable<MovimientoDTO> ObtenerMovimientos()
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -68,6 +76,43 @@ namespace Servicios.LogicaNegocio.Movimiento
                 FechaMovimiento = m.FechaMovimiento,
                 EstaEliminado = m.EstaEliminado
             });
+        }*/
+        public IEnumerable<MovimientoDTO> ObtenerMovimiento(string cadenaBuscar)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            return context.Movimientos
+                .Where(x => !x.EstaEliminado && x.NumeroMovimiento.Contains(cadenaBuscar))
+                .Select(x => new MovimientoDTO
+                {
+                    MovimientoId = x.MovimientoId,
+                    FechaMovimiento = x.FechaMovimiento,
+                    TipoMovimiento = x.TipoMovimiento,
+                    Monto = x.Monto,
+                    NumeroMovimiento = x.NumeroMovimiento,
+                    IdVenta = x.IdVenta,
+                    EstaEliminado = x.EstaEliminado
+                })
+                .ToList();
+        }
+
+        public IEnumerable<MovimientoDTO> ObtenerMovimientoEliminado(string cadenaBuscar)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            return context.Movimientos
+                .Where(x => x.EstaEliminado && x.NumeroMovimiento.Contains(cadenaBuscar))
+                .Select(x => new MovimientoDTO
+                {
+                    MovimientoId = x.MovimientoId,
+                    FechaMovimiento = x.FechaMovimiento,
+                    TipoMovimiento = x.TipoMovimiento,
+                    Monto = x.Monto,
+                    NumeroMovimiento = x.NumeroMovimiento,
+                    IdVenta = x.IdVenta,
+                    EstaEliminado = x.EstaEliminado
+                })
+                .ToList();
         }
     }
 }

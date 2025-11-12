@@ -11,6 +11,7 @@ namespace Servicios.LogicaNegocio.Movimiento
     {
         void CrearMovimientoVenta(Venta.DTO.VentaDTO ventaDto);
         MovimientoDTO ObtenerMovimientoPorId(long movimientoId);
-        IEnumerable<MovimientoDTO> ObtenerMovimientos();
+        IEnumerable<MovimientoDTO> ObtenerMovimiento(string cadenabuscar);
+        IEnumerable<MovimientoDTO> ObtenerMovimientoEliminado(string cadenabuscar);
     }
 }

@@ -6,6 +6,7 @@ using Presentacion.Core.Cliente;
 using Presentacion.Core.CuentaCorriente;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
+using Presentacion.Core.Movimiento;
 using Presentacion.Core.Oferta;
 using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
@@ -121,8 +122,14 @@ namespace Presentacion
 
         private void activarDesactivarToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var FActDesac = new FOfertaConsulta(true,"a");
+            var FActDesac = new FOfertaConsulta(true, "a");
             FActDesac.Show();
+        }
+
+        private void movimientoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var FMovimiento = new FMovimientoConsulta();
+            FMovimiento.Show();
         }
     }
 }
