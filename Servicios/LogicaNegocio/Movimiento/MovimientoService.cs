@@ -21,7 +21,6 @@ namespace Servicios.LogicaNegocio.Movimiento
 
         public void CrearMovimientoVenta(VentaDTO ventaDto) 
         {
-            // Lógica para crear un movimiento basado en la venta proporcionada
             var context = new GestorContextDBFactory().CreateDbContext(null);
             var movimiento = new AccesoDatos.Entidades.Movimiento
             {
@@ -39,10 +38,9 @@ namespace Servicios.LogicaNegocio.Movimiento
 
         public MovimientoDTO ObtenerMovimientoPorId(long movimientoId)
         {
-            // Lógica para obtener un movimiento por su ID
             var context = new GestorContextDBFactory().CreateDbContext(null);
             var movimiento = context.Movimientos.FirstOrDefault(m => m.MovimientoId == movimientoId && !m.EstaEliminado);
-            // Retornar o procesar el movimiento según sea necesario
+
             return new MovimientoDTO
             {
                 MovimientoId = movimiento.MovimientoId,
@@ -57,10 +55,9 @@ namespace Servicios.LogicaNegocio.Movimiento
 
         public IEnumerable<MovimientoDTO> ObtenerMovimientos()
         {
-            // Lógica para obtener todos los movimientos
             var context = new GestorContextDBFactory().CreateDbContext(null);
             var movimientos = context.Movimientos.Where(m => !m.EstaEliminado).ToList();
-            // Retornar o procesar la lista de movimientos según sea necesario
+
             return movimientos.Select(m => new MovimientoDTO
             {
                 MovimientoId = m.MovimientoId,
