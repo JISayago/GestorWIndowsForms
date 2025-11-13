@@ -14,6 +14,33 @@ namespace Servicios.LogicaNegocio.Venta
 {
     public class VentaServicio : IVentaServicio
     {
+        public VentaDTO ObtenerVentaPorId(long ventaId)
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var venta = context.Ventas
+                .FirstOrDefault(v => v.VentaId == ventaId);
+
+            if (venta == null)
+                throw new Exception("No se encontró la marca.");
+
+            return new VentaDTO
+            {
+                VentaId = venta.VentaId,
+                NumeroVenta = venta.NumeroVenta,
+                IdEmpleado = venta.IdEmpleado,
+                IdVendedor = venta.IdVendedor,
+                FechaVenta = venta.FechaVenta,
+                Total = venta.Total,
+                TotalSinDescuento = venta.TotalSinDescuento,
+                Descuento = venta.Descuento,
+                Estado = venta.Estado,
+                Detalle = venta.Detalle,
+                MontoAdeudado = venta.MontoAdeudado,
+                MontoPagado = venta.MontoPagado
+            };
+        }
+
         public string GenerateNextNumeroVenta()
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
