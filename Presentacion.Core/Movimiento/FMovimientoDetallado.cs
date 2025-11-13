@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AccesoDatos.Entidades;
+using Servicios.LogicaNegocio.Movimiento;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,9 +14,24 @@ namespace Presentacion.Core.Movimiento
 {
     public partial class FMovimientoDetallado : Form
     {
-        public FMovimientoDetallado()
+        public long entidadID;
+        public FMovimientoDetallado(long? entidadId)
         {
+            entidadID = (long)entidadId;
+
+            var movService = new MovimientoServicio();
+            var movimiento = movService.ObtenerMovimientoPorId(entidadID);
+
             InitializeComponent();
+
+            lblMontoMovimiento.Text = movimiento.Monto.ToString();
+            lblNumeroMovimiento.Text = movimiento.NumeroMovimiento;
+            lblTipoMovimiento.Text = movimiento.TipoMovimiento == 1 ? "Ingreso" : "Egreso";
+            lblFechaMovimiento.Text = movimiento.FechaMovimiento.ToString();
+
+            
         }
+
+
     }
 }

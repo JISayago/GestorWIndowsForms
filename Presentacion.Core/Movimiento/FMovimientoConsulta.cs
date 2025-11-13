@@ -16,8 +16,9 @@ namespace Presentacion.Core.Movimiento
     public partial class FMovimientoConsulta : FBaseConsulta
     {
         private readonly IMovimientoServicio _movimientoServicio;
+        //protected long? entidadID;
 
-        public FMovimientoConsulta() :this(new MovimientoServicio())
+        public FMovimientoConsulta() : this(new MovimientoServicio())
         {
             InitializeComponent();
         }
@@ -35,6 +36,9 @@ namespace Presentacion.Core.Movimiento
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
+
+            grilla.Columns["MovimientoId"].Visible = false;
+            grilla.Columns["MovimientoId"].Name = "Id";
 
             grilla.Columns["NumeroMovimiento"].Visible = true;
             grilla.Columns["NumeroMovimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -61,6 +65,12 @@ namespace Presentacion.Core.Movimiento
                 grilla.DataSource = _movimientoServicio.ObtenerMovimiento(cadenaBuscar);
                 toolStrip.Enabled = false;
             }
+        }
+
+        private void lblAbrir_Click(object sender, EventArgs e)
+        {
+            var FMovimientoDetalle = new FMovimientoDetallado(entidadID);
+            FMovimientoDetalle.ShowDialog();
         }
     }
 }

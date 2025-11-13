@@ -28,7 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
+            lblAbrir = new Button();
+            panel1.SuspendLayout();
             SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(lblAbrir);
+            panel1.Controls.SetChildIndex(lblAbrir, 0);
+            // 
+            // lblAbrir
+            // 
+            lblAbrir.Location = new Point(3, 241);
+            lblAbrir.Name = "lblAbrir";
+            lblAbrir.Size = new Size(75, 42);
+            lblAbrir.TabIndex = 1;
+            lblAbrir.Text = "Abrir";
+            lblAbrir.UseVisualStyleBackColor = true;
+            lblAbrir.Click += lblAbrir_Click;
             // 
             // FMovimientoConsulta
             // 
@@ -38,10 +55,14 @@
             Name = "FMovimientoConsulta";
             Text = "FMovimientoConsulta";
             Load += FMovimientoConsulta_Load;
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
+
+        private Button lblAbrir;
     }
 }
