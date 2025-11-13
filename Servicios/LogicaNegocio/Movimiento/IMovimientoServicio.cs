@@ -1,4 +1,5 @@
-﻿using Servicios.LogicaNegocio.Movimiento.DTO;
+﻿using AccesoDatos;
+using Servicios.LogicaNegocio.Movimiento.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Servicios.LogicaNegocio.Movimiento
 {
     public interface IMovimientoServicio
     {
-        void CrearMovimientoVenta(Venta.DTO.VentaDTO ventaDto);
+        void CrearMovimientoVenta(Venta.DTO.VentaDTO ventaDto, GestorContextDB context);
         MovimientoDTO ObtenerMovimientoPorId(long movimientoId);
         IEnumerable<MovimientoDTO> ObtenerMovimiento(string cadenabuscar);
         IEnumerable<MovimientoDTO> ObtenerMovimientoEliminado(string cadenabuscar);

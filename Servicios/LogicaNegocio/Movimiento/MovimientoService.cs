@@ -1,4 +1,6 @@
 ﻿using AccesoDatos;
+using Servicios.Helpers;
+using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using Servicios.LogicaNegocio.Movimiento.DTO;
 using Servicios.LogicaNegocio.Producto.Rubro.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
@@ -20,10 +22,54 @@ namespace Servicios.LogicaNegocio.Movimiento
          * obtenerMovimientos
         */
 
-        public void CrearMovimientoVenta(VentaDTO ventaDto) 
+        /* Lo del context lo meto xq en la venta, 
+         * si quiero cargar el movimiento instantameneamente 
+         * despues de crear la venta sin tener que hacer otra 
+         * llamada a la base de datos
+        */
+
+        public void CrearMovimientoVenta(VentaDTO ventaDto, GestorContextDB context = null)
         {
-            var context = new GestorContextDBFactory().CreateDbContext(null);
-            var movimiento = new AccesoDatos.Entidades.Movimiento
+            bool crearContextoLocal = (context == null);
+
+            if (crearContextoLocal)
+                context = new GestorContextDBFactory().CreateDbContext(null);
+
+            try
+            {
+                var movimiento = new AccesoDatos.Entidades.Movimiento
+                {
+                    NumeroMovimiento = $"MOV{ventaDto.NumeroVenta}VENTA",
+                    IdVenta = ventaDto.VentaId,
+                    TipoMovimiento = 1, // 1 = Ingreso, por ejemplo
+                    Monto = ventaDto.Total,
+                    FechaMovimiento = DateTime.Now,
+                    EstaEliminado = false
+                };
+
+                context.Movimientos.Add(movimiento);
+
+                // Si el contexto es local, guardamos los cambios directamente
+                if (crearContextoLocal)
+                    context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al crear movimiento: {ex.Message}");
+                throw; // Re-lanzamos para que el servicio que lo llame lo maneje
+            }
+            finally
+            {
+                if (crearContextoLocal)
+                    context.Dispose();
+            }
+        }
+        /*
+        public void CrearMovimientoVenta(VentaDTO ventaDto)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var nuevoMovimiento = new AccesoDatos.Entidades.Movimiento
             {
                 NumeroMovimiento = "MOV" + ventaDto.NumeroVenta + "VENTA", // Ejemplo de generación de número de movimiento
                 IdVenta = ventaDto.VentaId,
@@ -33,16 +79,9 @@ namespace Servicios.LogicaNegocio.Movimiento
                 EstaEliminado = false
             };
 
-            context.Movimientos.Add(movimiento);
-            try 
-            {
-                context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
+            context.Movimientos.Add(nuevoMovimiento);
+            context.SaveChanges(); // Guarda en la DB
+        }*/
 
         public MovimientoDTO ObtenerMovimientoPorId(long movimientoId)
         {

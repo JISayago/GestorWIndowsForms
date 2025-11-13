@@ -94,15 +94,15 @@ namespace Servicios.LogicaNegocio.Venta
 
                 context.Ventas.Add(venta);
                 context.SaveChanges();
-                
+
                 var movimientoServicio = new Movimiento.MovimientoServicio();
                 movimientoServicio.CrearMovimientoVenta(new VentaDTO
                 {
-                    VentaId = venta.VentaId,
                     NumeroVenta = venta.NumeroVenta,
-                    FechaVenta = venta.FechaVenta,
+                    VentaId = venta.VentaId,
                     Total = venta.Total
-                });
+                },context);
+
 
                 // si se trata de oferta hay que hacer una iteracion de cada item de esa oferta para independizar los id de los productos afectados con la nueva propiedad de es oferta para identificarlos
                 if (ventaDto.Items != null && ventaDto.Items.Any())
