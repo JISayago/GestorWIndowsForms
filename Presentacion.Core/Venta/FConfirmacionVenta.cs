@@ -231,7 +231,7 @@ namespace Presentacion.Core.Venta
             }
         }
        */
-        private TipoDePago AsignarTipoPagoAPago(int numeroPago)
+       /* private TipoDePago AsignarTipoPagoAPago(int numeroPago)
         {
             // Este helper ya EXISTÍA, pero ojo: devuelve Efectivo si el diálogo se cierra sin OK.
             // Preferimos usar el flujo inline cuando necesitemos detectar cancelación.
@@ -243,7 +243,7 @@ namespace Presentacion.Core.Venta
             }
 
             return TipoDePago.Efectivo;
-        }
+        }*/
 
        /* private void CargarFormaDePago(Label label, int numeroPago, Button btn)
         {
