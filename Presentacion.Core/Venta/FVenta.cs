@@ -43,7 +43,7 @@ namespace Presentacion.Core.Venta
         private List<FormaPago> tipoDePagosVenta;
         private bool _actualizandoGrilla = false;
         private bool cargarOferta = false;
-        private long idCliente;
+        private long idCliente = -1;
 
 
         public FVenta(long usuarioLogeadoID)
@@ -100,6 +100,11 @@ namespace Presentacion.Core.Venta
             itemsVenta = new BindingList<ItemVentaDTO>();
             dgvProductos.DataSource = itemsVenta;  // bind directo
             ResetearGrilla(dgvProductos);
+            if(idCliente < 0)
+            {
+                cbxIncluirCtaCte.Checked = false;
+                cbxIncluirCtaCte.Enabled = false;
+            }
         }
         private void MyTimer_Tick(object sender, EventArgs e)
         {
@@ -114,6 +119,11 @@ namespace Presentacion.Core.Venta
             txtVendedorAsignado.Text = esUsuarioLogeado
                 ? $"{_usuarioLogeado.Username} ({_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido})"
                 : "";
+            if (esConsumidorFinal)
+            {
+                cbxIncluirCtaCte.Checked = false;
+                cbxIncluirCtaCte.Enabled = false;
+            }
         }
 
 
@@ -610,6 +620,8 @@ namespace Presentacion.Core.Venta
                 idCliente = cliente.clienteSeleccionado.Value;
                 var _clienteCargado = new ClienteServicio().ObtenerClientePorId(idCliente);
                 txtCliente.Text = $"{_clienteCargado.Nombre} {_clienteCargado.Apellido}";
+                cbxIncluirCtaCte.Enabled = true;
+                cbxIncluirCtaCte.Checked = true;
             }
         }
     }
