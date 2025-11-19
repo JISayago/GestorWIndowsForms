@@ -88,8 +88,8 @@ namespace Servicios.LogicaNegocio.Venta
                     Descuento = ventaDto.Descuento,
                     Estado = ventaDto.Estado,
                     Detalle = ventaDto.Detalle,
-                    MontoAdeudado = ventaDto.MontoAdeudado,
-                    MontoPagado = ventaDto.MontoPagado
+                    MontoAdeudado =0.0m,
+                    MontoPagado = ventaDto.Total // replantear el ofertadto
                 };
 
                 context.Ventas.Add(venta);
