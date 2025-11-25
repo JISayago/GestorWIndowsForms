@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="PDFsharp-MigraDoc-GDI" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AccesoDatos\AccesoDatos.csproj" />
-    <ProjectReference Include="..\Servicios.Infraestructura\Servicios.Infraestructura.csproj" />
   </ItemGroup>
 
 </Project>
