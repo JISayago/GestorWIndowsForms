@@ -73,7 +73,7 @@
             nudCantidadPagos.Name = "nudCantidadPagos";
             nudCantidadPagos.Size = new Size(38, 23);
             nudCantidadPagos.TabIndex = 35;
-            nudCantidadPagos.ValueChanged += nudCantidadPagos_ValueChanged;
+            //nudCantidadPagos.ValueChanged += nudCantidadPagos_ValueChanged;
             // 
             // btnTipoPago1
             // 
@@ -83,7 +83,7 @@
             btnTipoPago1.TabIndex = 33;
             btnTipoPago1.Text = "Selección Forma de Pago";
             btnTipoPago1.UseVisualStyleBackColor = true;
-            btnTipoPago1.Click += btnTipoPago1_Click;
+            //btnTipoPago1.Click += btnTipoPago1_Click;
             // 
             // btnConfirmarPago
             // 
@@ -93,7 +93,7 @@
             btnConfirmarPago.TabIndex = 37;
             btnConfirmarPago.Text = "Confirmar";
             btnConfirmarPago.UseVisualStyleBackColor = true;
-            btnConfirmarPago.Click += btnConfirmarPago_Click;
+            //btnConfirmarPago.Click += btnConfirmarPago_Click;
             // 
             // btnCancelar
             // 
@@ -103,7 +103,7 @@
             btnCancelar.TabIndex = 38;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
-            btnCancelar.Click += btnCancelar_Click;
+            //btnCancelar.Click += btnCancelar_Click;
             // 
             // lblPago1
             // 
@@ -179,7 +179,7 @@
             btnTipoPago2.TabIndex = 47;
             btnTipoPago2.Text = "Selección Forma de Pago";
             btnTipoPago2.UseVisualStyleBackColor = true;
-            btnTipoPago2.Click += btnTipoPago2_Click;
+            //btnTipoPago2.Click += btnTipoPago2_Click;
             // 
             // btnTipoPago3
             // 
@@ -189,7 +189,7 @@
             btnTipoPago3.TabIndex = 48;
             btnTipoPago3.Text = "Selección Forma de Pago";
             btnTipoPago3.UseVisualStyleBackColor = true;
-            btnTipoPago3.Click += btnTipoPago3_Click;
+            //btnTipoPago3.Click += btnTipoPago3_Click;
             // 
             // lblPagoSeleccionado
             // 
@@ -271,7 +271,7 @@
             cbxConfirmPago1.Size = new Size(15, 14);
             cbxConfirmPago1.TabIndex = 61;
             cbxConfirmPago1.UseVisualStyleBackColor = true;
-            cbxConfirmPago1.CheckedChanged += cbxConfirmPago1_CheckedChanged;
+            //cbxConfirmPago1.CheckedChanged += cbxConfirmPago1_CheckedChanged;
             // 
             // cbxConfirmPago2
             // 
@@ -281,7 +281,7 @@
             cbxConfirmPago2.Size = new Size(15, 14);
             cbxConfirmPago2.TabIndex = 62;
             cbxConfirmPago2.UseVisualStyleBackColor = true;
-            cbxConfirmPago2.CheckedChanged += cbxConfirmPago2_CheckedChanged;
+            //cbxConfirmPago2.CheckedChanged += cbxConfirmPago2_CheckedChanged;
             // 
             // cbxConfirmPago3
             // 
@@ -291,7 +291,7 @@
             cbxConfirmPago3.Size = new Size(15, 14);
             cbxConfirmPago3.TabIndex = 63;
             cbxConfirmPago3.UseVisualStyleBackColor = true;
-            cbxConfirmPago3.CheckedChanged += cbxConfirmPago3_CheckedChanged;
+            //cbxConfirmPago3.CheckedChanged += cbxConfirmPago3_CheckedChanged;
             // 
             // FConfirmacionVenta
             // 

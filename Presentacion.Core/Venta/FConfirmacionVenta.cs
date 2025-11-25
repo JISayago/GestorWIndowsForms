@@ -23,16 +23,20 @@ namespace Presentacion.Core.Venta
         public DatosVenta _datosVenta = new DatosVenta();
         public long? idCliente;
 
+        // NUEVO: flag que el caller debe setear antes de ShowDialog().
+        // true = permitir la UI de múltiples pagos (comportamiento actual)
+        // false = modo "1 pago" -> abrir selector de forma de pago y retornar.
+        public bool PermitirMultiplesPagos { get; set; } = true;
+
         public FConfirmacionVenta(DatosVenta dv, long? clienteCargado = null)
         {
             InitializeComponent();
             TotalVenta = dv.Total;
             _datosVenta = dv;
             idCliente = clienteCargado;
-
         }
 
-        private void btnConfirmarPago_Click(object sender, EventArgs e)
+        /*private void btnConfirmarPago_Click(object sender, EventArgs e)
         {
             pagos = pagos.Where(p => p.TipoDePago != null).ToList();
             this.DialogResult = DialogResult.OK;
@@ -40,58 +44,98 @@ namespace Presentacion.Core.Venta
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
-        }
-
+        }*/
 
         private void FConfirmacionVenta_Load(object sender, EventArgs e)
         {
+            // Inicializo pagos por defecto (3 slots, como antes)
             pagos = new List<FormaPago>
-    {
-        new FormaPago { Numero = 1, Monto = 0, TipoDePago = null },
-        new FormaPago { Numero = 2, Monto = 0, TipoDePago = null },
-        new FormaPago { Numero = 3, Monto = 0, TipoDePago = null }
-    };
+        {
+            new FormaPago { Numero = 1, Monto = 0, TipoDePago = null },
+            new FormaPago { Numero = 2, Monto = 0, TipoDePago = null },
+            new FormaPago { Numero = 3, Monto = 0, TipoDePago = null }
+        };
 
-            nudCantidadPagos.Minimum = 1;
-            nudCantidadPagos.Maximum = 3;
-            nudCantidadPagos.ReadOnly = true;
-            nudCantidadPagos.Controls[0].Enabled = false; // Oculta botones +/- si usás WinForms
+            // Configuración UI original
+            //nudCantidadPagos.Minimum = 1;
+            //nudCantidadPagos.Maximum = 3;
+            //nudCantidadPagos.ReadOnly = true;
+            //if (nudCantidadPagos.Controls.Count > 0)
+            //    nudCantidadPagos.Controls[0].Enabled = false; // Oculta botones +/- si usás WinForms
 
-            lblTotal.Text = TotalVenta.ToString("C2");
+//            lblTotal.Text = TotalVenta.ToString("C2");
 
             // Deshabilitar pagos 2 y 3 y sus checkboxes al iniciar
-            txtPago2.Enabled = false;
-            txtPago3.Enabled = false;
+  //          txtPago2.Enabled = false;
+    //        txtPago3.Enabled = false;
 
-            cbxConfirmPago1.Checked = false;
-            cbxConfirmPago2.Checked = false;
-            cbxConfirmPago3.Checked = false;
+      //      cbxConfirmPago1.Checked = false;
+        //    cbxConfirmPago2.Checked = false;
+          //  cbxConfirmPago3.Checked = false;
 
-            cbxConfirmPago2.Enabled = false;
-            cbxConfirmPago3.Enabled = false;
+            //cbxConfirmPago2.Enabled = false;
+           // cbxConfirmPago3.Enabled = false;
 
-            ActualizarMultiplesPagos();
-        }
-
-
-        private void nudCantidadPagos_ValueChanged(object sender, EventArgs e)
-        {
-                decimal.TryParse(txtPago1.Text, out var pago1);
-
-                if (pago1 == TotalVenta)
+            // Si el caller indicó que NO se permiten múltiples pagos,
+            // hacemos el flujo directo: pedir tipo de pago para 1 pago, asignar y cerrar OK.
+            if (!PermitirMultiplesPagos)
+            {
+                // Abrimos el selector de forma de pago para el pago 1.
+                using var fFormaPagoSeleccionada = new FTipoPagoSeleccionEnVenta(_datosVenta.IncluirCtaCte, pagos, 0, idCliente);
+                if (fFormaPagoSeleccionada.ShowDialog() != DialogResult.OK)
                 {
-                    MessageBox.Show("El primer pago ya cubre el total. Modifique el monto para poder agregar más pagos.",
-                                    "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                    nudCantidadPagos.Value = 1;
+                    // El usuario canceló la selección => salimos cancelando el form.
+                    this.DialogResult = DialogResult.Cancel;
+                    this.Close();
                     return;
                 }
 
-                ActualizarMultiplesPagos();
+                // Si llegó OK, asignamos la forma y monto por el total de la venta
+                var tipoSeleccionado = fFormaPagoSeleccionada.tipoPagoSeleccionado;
+                pagos[0].TipoDePago = tipoSeleccionado;
+                pagos[0].Monto = TotalVenta;
+
+                // Actualizamos labels y estado mínimo para que el caller reciba todo en el mismo formato
+                lblFormaPago1.Text = tipoSeleccionado.ToString();
+                txtPago1.Text = pagos[0].Monto.ToString("N2");
+                cbxConfirmPago1.Checked = true;
+
+                // No hay pendientes
+                MontoPendiente = 0m;
+                lblMontoPendiente.Text = MontoPendiente.ToString("C2");
+
+                // Dejamos la lista de pagos con un único pago relevante
+                pagos = new List<FormaPago> { pagos[0] };
+
+                // Devolvemos OK inmediatamente (el caller procesará los pagos como antes)
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+                return;
+            }
+
+            // Si permite múltiples pagos, ir con la lógica clásica
+            //ActualizarMultiplesPagos();
         }
-        private void ActualizarMultiplesPagos()
-           
+
+        /*private void nudCantidadPagos_ValueChanged(object sender, EventArgs e)
+        {
+            decimal.TryParse(txtPago1.Text, out var pago1);
+
+            if (pago1 == TotalVenta)
+            {
+                MessageBox.Show("El primer pago ya cubre el total. Modifique el monto para poder agregar más pagos.",
+                                "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                nudCantidadPagos.Value = 1;
+                return;
+            }
+
+           // ActualizarMultiplesPagos();
+        }
+        */
+        /*private void ActualizarMultiplesPagos()
         {
             decimal.TryParse(txtPago1.Text, out decimal pago1);
             decimal.TryParse(txtPago2.Text, out decimal pago2);
@@ -174,7 +218,8 @@ namespace Presentacion.Core.Venta
             MontoPendiente = TotalVenta - (pagos.Sum(p => p.Monto));
             lblMontoPendiente.Text = MontoPendiente.ToString("C2");
         }
-        private void btnTipoPago1_Click(object sender, EventArgs e)
+        */
+       /* private void btnTipoPago1_Click(object sender, EventArgs e)
         {
             if (cbxConfirmPago1.Checked)
             {
@@ -184,12 +229,12 @@ namespace Presentacion.Core.Venta
             {
                 MessageBox.Show("Debe confirmar el Monto a pagar antes de seleccionar la forma de pago.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-
         }
-
-        private TipoDePago AsignarTipoPagoAPago(int numeroPago)
+       */
+       /* private TipoDePago AsignarTipoPagoAPago(int numeroPago)
         {
-            // pasamos el indice actual (numeroPago - 1) para que el dialogo excluya esa posición del conteo
+            // Este helper ya EXISTÍA, pero ojo: devuelve Efectivo si el diálogo se cierra sin OK.
+            // Preferimos usar el flujo inline cuando necesitemos detectar cancelación.
             using var fFormaPagoSeleccionada = new FTipoPagoSeleccionEnVenta(_datosVenta.IncluirCtaCte, pagos, numeroPago - 1, idCliente);
 
             if (fFormaPagoSeleccionada.ShowDialog() == DialogResult.OK)
@@ -198,45 +243,42 @@ namespace Presentacion.Core.Venta
             }
 
             return TipoDePago.Efectivo;
-        }
+        }*/
 
-        private void CargarFormaDePago(Label label, int numeroPago, Button btn)
+       /* private void CargarFormaDePago(Label label, int numeroPago, Button btn)
         {
-            var tipoSeleccionado = AsignarTipoPagoAPago(numeroPago); // ahora le paso numeroPago
+            var tipoSeleccionado = AsignarTipoPagoAPago(numeroPago);
             pagos[numeroPago - 1].TipoDePago = tipoSeleccionado;
 
             label.Text = tipoSeleccionado.ToString();
             btn.Text = "Cambiar Forma de Pago";
         }
-
-        private void btnTipoPago2_Click(object sender, EventArgs e)
+       */
+       /* private void btnTipoPago2_Click(object sender, EventArgs e)
         {
             if (cbxConfirmPago2.Checked)
             {
-            CargarFormaDePago(lblFormaPago2, 2, btnTipoPago2);
+                CargarFormaDePago(lblFormaPago2, 2, btnTipoPago2);
             }
             else
             {
                 MessageBox.Show("Debe confirmar el Monto a pagar antes de seleccionar la forma de pago.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-        }
-        private void btnTipoPago3_Click(object sender, EventArgs e)
-        {
+        }*/
 
+       /* private void btnTipoPago3_Click(object sender, EventArgs e)
+        {
             if (cbxConfirmPago3.Checked)
             {
-            CargarFormaDePago(lblFormaPago3, 3, btnTipoPago3);
+                CargarFormaDePago(lblFormaPago3, 3, btnTipoPago3);
             }
             else
             {
                 MessageBox.Show("Debe confirmar el Monto a pagar antes de seleccionar la forma de pago.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-        }
+        }*/
 
-     
-
-
-        private void cbxConfirmPago1_CheckedChanged(object sender, EventArgs e)
+     /*   private void cbxConfirmPago1_CheckedChanged(object sender, EventArgs e)
         {
             if (cbxConfirmPago1.Checked)
             {
@@ -304,9 +346,9 @@ namespace Presentacion.Core.Venta
             }
 
             ActualizarMultiplesPagos();
-        }
+        }*/
 
-        private void cbxConfirmPago2_CheckedChanged(object sender, EventArgs e)
+       /* private void cbxConfirmPago2_CheckedChanged(object sender, EventArgs e)
         {
             if (cbxConfirmPago2.Checked)
             {
@@ -374,8 +416,8 @@ namespace Presentacion.Core.Venta
 
             ActualizarMultiplesPagos();
         }
-
-        private void cbxConfirmPago3_CheckedChanged(object sender, EventArgs e)
+       */
+       /* private void cbxConfirmPago3_CheckedChanged(object sender, EventArgs e)
         {
             if (cbxConfirmPago3.Checked)
             {
@@ -417,7 +459,7 @@ namespace Presentacion.Core.Venta
             }
 
             ActualizarMultiplesPagos();
-        }
+        }*/
     }
 }
 //me faltaria incorporar un auto calcular si le erre a algo
