@@ -13,14 +13,15 @@ namespace Servicios.Infraestructura
     {
         public string GenerarComprobante(Venta venta)
         {
-            // Carpeta dentro del proyecto
-            var carpeta = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ComprobantesPdf");
+            // Carpeta en el escritorio
+            var escritorio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var carpeta = Path.Combine(escritorio, "ComprobantesPdf");
 
-            // Si no existe, la creo
+            // Crear la carpeta si no existe
             if (!Directory.Exists(carpeta))
                 Directory.CreateDirectory(carpeta);
 
-            // Ruta completa del archivo
+            // Archivo final
             var ruta = Path.Combine(carpeta, $"Factura_{venta.NumeroVenta}.pdf");
 
             // Generación PDF
