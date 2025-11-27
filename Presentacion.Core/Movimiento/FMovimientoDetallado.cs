@@ -4,6 +4,7 @@ using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Movimiento;
 using Servicios.LogicaNegocio.Movimiento.DTO;
 using Servicios.LogicaNegocio.Venta;
+using Servicios.LogicaNegocio.Venta.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,35 +21,67 @@ namespace Presentacion.Core.Movimiento
     {
         public long entidadID;
         public long? venta;
-        public MovimientoDTO movimiento;
 
         public FMovimientoDetallado(long? entidadId)
         {
             entidadID = (long)entidadId;
 
             var movimientoService = new MovimientoServicio();
-            var ventaService = new VentaServicio();
-            var empleadoService = new EmpleadoServicio();
-
-            movimiento = movimientoService.ObtenerMovimientoPorId(entidadID);
-            var venta = movimiento.IdVenta.HasValue ? ventaService.ObtenerVentaPorId(movimiento.IdVenta.Value) : null;
-            var empleado = venta != null ? empleadoService.ObtenerEmpleadoPorId(venta.IdEmpleado) : null;
-
+            
             InitializeComponent();
 
-            lblMontoMovimiento.Text = movimiento.Monto.ToString() + "$";
-            lblNumeroMovimiento.Text = movimiento.NumeroMovimiento;
-            lblTipoMovimiento.Text = movimiento.TipoMovimiento == 1 ? "Ingreso" : "Egreso";
-            lblFechaMovimiento.Text = movimiento.FechaMovimiento.ToString();
+            var info = movimientoService.CargarDatosMovimiento(entidadID);
 
-            lblNombreEmpleado.Text = empleado.Nombre;
-            txtDetalle.Text = venta.Detalle;
+            lblMontoMovimiento.Text = info.movimiento.Monto.ToString() + "$";
+            lblNumeroMovimiento.Text = info.movimiento.NumeroMovimiento;
+            lblTipoMovimiento.Text = info.movimiento.TipoMovimiento == 1 ? "Ingreso" : "Egreso";
+            lblFechaMovimiento.Text = info.movimiento.FechaMovimiento.ToString();
 
+            txtDetalle.Text = info.venta.Detalle;
 
-        }
+            lblNombreEmpleado.Text = info.empleado.Nombre;
 
-        private void tabPageVenta1_Click(object sender, EventArgs e)
-        {
+            dgvProductos.ReadOnly = true;
+            dgvProductos.AutoGenerateColumns = false;
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn()
+            {
+                DataPropertyName = "codigo",
+                HeaderText = "Codigo",
+            });
+
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn()
+            {
+                DataPropertyName = "descripcion",
+                HeaderText = "Nombre del producto",
+            });
+
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn()
+            {
+                DataPropertyName = "PrecioCosto",
+                HeaderText = "Precio C",
+            });
+
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn()
+            {
+                DataPropertyName = "PrecioVenta",
+                HeaderText = "Precio V",
+            });
+
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn()
+            {
+                DataPropertyName = "MarcaNombre",
+                HeaderText = "Marca",
+            });
+
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn()
+            {
+                DataPropertyName = "RubroNombre",
+                HeaderText = "Rubro",
+            });
+
+            dgvProductos.DataSource = info.productos;
+
+            //AGREGAR CANTIDAD DE PRODUCTOS VENDIDOS EN LA GRILLA
         }
     }
 }

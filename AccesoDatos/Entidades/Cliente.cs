@@ -13,7 +13,7 @@ namespace AccesoDatos.Entidades
         [Key]
         public long PersonaId { get; set; }  // Mismo ID que la persona
         public long? CuentaCorrienteId { get; set; } // HACER NULLEABLE EN DB TAMB
-        public string NumeroCliente { get; set; } //Borrar luego
+        public string NumeroCliente { get; set; } //Usarlo para mostrarlo al cliente en casos como movimientos, para no mostrar datos sensible
         public DateTime FechaAlta { get; set; }
         public DateTime? FechaBaja { get; set; } // Puede ser null si sigue siendo cliente
         public int Estado { get; set; }

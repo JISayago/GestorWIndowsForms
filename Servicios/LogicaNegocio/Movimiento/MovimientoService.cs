@@ -1,8 +1,15 @@
 ﻿using AccesoDatos;
+using AccesoDatos.Entidades;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
+using Servicios.LogicaNegocio.Cliente.DTO;
+using Servicios.LogicaNegocio.Empleado;
+using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Movimiento.DTO;
+using Servicios.LogicaNegocio.Producto;
+using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Producto.Rubro.DTO;
+using Servicios.LogicaNegocio.Venta;
 using Servicios.LogicaNegocio.Venta.DTO;
 using System;
 using System.Collections.Generic;
@@ -22,12 +29,11 @@ namespace Servicios.LogicaNegocio.Movimiento
          * obtenerMovimientos
         */
 
-        /* Lo del context lo meto xq en la venta, 
-         * si quiero cargar el movimiento instantameneamente 
-         * despues de crear la venta sin tener que hacer otra 
-         * llamada a la base de datos
-        */
-
+        /*
+         * CREAR FUNCION PARA BUSCAR LOS NOMBRES DE LOS PRODUCTOS EN EL MOVIMIENTO DETALLADO,
+         * USANOD LOS ID DE LOS PRODUCTOS QUE TENGO EN DETALLEvENTA BUSCAR LOS NOMBRE USANDO SERIVCE DE PRODDUCTO Y CREAR UNA LISTA DE PRODUCTOS CON NOMBRE
+         * 
+         */
         public void CrearMovimientoVenta(VentaDTO ventaDto, GestorContextDB context = null)
         {
             bool crearContextoLocal = (context == null);
@@ -152,6 +158,32 @@ namespace Servicios.LogicaNegocio.Movimiento
                     EstaEliminado = x.EstaEliminado
                 })
                 .ToList();
+        }
+
+        public (EmpleadoDTO empleado, VentaDTO venta, MovimientoDTO movimiento, List<ProductoDTO> productos) CargarDatosMovimiento(long entidadId)
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var movimientoService = new MovimientoServicio();
+            var ventaService = new VentaServicio();
+            var empleadoService = new EmpleadoServicio();
+            var productoServicio = new ProductoServicio();
+
+
+            var movimiento = movimientoService.ObtenerMovimientoPorId(entidadId);
+
+            var venta = movimiento != null ? 
+                ventaService.ObtenerVentaDetalle(movimiento.IdVenta.Value) : null;
+
+            var empleado = venta != null ? 
+                empleadoService.ObtenerEmpleadoPorId(venta.IdEmpleado) : null;
+
+            var productos = (venta != null && venta.Items != null)
+                ? venta.Items.Select(item => productoServicio.ObtenerProductoPorId(item.ItemId)).ToList()
+                : new List<ProductoDTO>();
+
+            return (empleado: empleado, venta: venta, movimiento: movimiento, productos: productos);
+
         }
     }
 }

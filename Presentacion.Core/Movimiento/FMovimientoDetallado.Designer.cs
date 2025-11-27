@@ -33,14 +33,17 @@
             label1 = new Label();
             label2 = new Label();
             tabPageVenta2 = new TabPage();
+            dgvProductos = new DataGridView();
             tabPageVenta1 = new TabPage();
-            lblMontoMovimiento = new Label();
-            lblTipoMovimiento = new Label();
-            lblNombreEmpleado = new Label();
-            label3 = new Label();
-            label4 = new Label();
-            tabVenta = new TabControl();
             txtDetalle = new TextBox();
+            label4 = new Label();
+            label3 = new Label();
+            lblNombreEmpleado = new Label();
+            lblTipoMovimiento = new Label();
+            lblMontoMovimiento = new Label();
+            tabVenta = new TabControl();
+            tabPageVenta2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
             tabPageVenta1.SuspendLayout();
             tabVenta.SuspendLayout();
             SuspendLayout();
@@ -48,7 +51,7 @@
             // lblNumeroMovimiento
             // 
             lblNumeroMovimiento.AutoSize = true;
-            lblNumeroMovimiento.Location = new Point(12, 51);
+            lblNumeroMovimiento.Location = new Point(12, 41);
             lblNumeroMovimiento.Name = "lblNumeroMovimiento";
             lblNumeroMovimiento.Size = new Size(116, 15);
             lblNumeroMovimiento.TabIndex = 0;
@@ -57,7 +60,7 @@
             // lblFechaMovimiento
             // 
             lblFechaMovimiento.AutoSize = true;
-            lblFechaMovimiento.Location = new Point(280, 51);
+            lblFechaMovimiento.Location = new Point(280, 41);
             lblFechaMovimiento.Name = "lblFechaMovimiento";
             lblFechaMovimiento.Size = new Size(140, 15);
             lblFechaMovimiento.TabIndex = 1;
@@ -66,7 +69,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(280, 27);
+            label1.Location = new Point(280, 17);
             label1.Name = "label1";
             label1.Size = new Size(41, 15);
             label1.TabIndex = 4;
@@ -75,7 +78,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(12, 27);
+            label2.Location = new Point(12, 17);
             label2.Name = "label2";
             label2.Size = new Size(122, 15);
             label2.TabIndex = 5;
@@ -83,13 +86,22 @@
             // 
             // tabPageVenta2
             // 
+            tabPageVenta2.Controls.Add(dgvProductos);
             tabPageVenta2.Location = new Point(4, 24);
             tabPageVenta2.Name = "tabPageVenta2";
             tabPageVenta2.Padding = new Padding(3);
-            tabPageVenta2.Size = new Size(540, 342);
+            tabPageVenta2.Size = new Size(455, 262);
             tabPageVenta2.TabIndex = 1;
             tabPageVenta2.Text = "Productos Detalle";
             tabPageVenta2.UseVisualStyleBackColor = true;
+            // 
+            // dgvProductos
+            // 
+            dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvProductos.Location = new Point(0, 0);
+            dgvProductos.Name = "dgvProductos";
+            dgvProductos.Size = new Size(455, 262);
+            dgvProductos.TabIndex = 0;
             // 
             // tabPageVenta1
             // 
@@ -102,79 +114,81 @@
             tabPageVenta1.Location = new Point(4, 24);
             tabPageVenta1.Name = "tabPageVenta1";
             tabPageVenta1.Padding = new Padding(3);
-            tabPageVenta1.Size = new Size(540, 342);
+            tabPageVenta1.Size = new Size(455, 262);
             tabPageVenta1.TabIndex = 0;
             tabPageVenta1.Text = "Venta Detalle";
             tabPageVenta1.UseVisualStyleBackColor = true;
             // 
-            // lblMontoMovimiento
+            // txtDetalle
             // 
-            lblMontoMovimiento.AutoSize = true;
-            lblMontoMovimiento.Location = new Point(347, 40);
-            lblMontoMovimiento.Name = "lblMontoMovimiento";
-            lblMontoMovimiento.Size = new Size(43, 15);
-            lblMontoMovimiento.TabIndex = 2;
-            lblMontoMovimiento.Text = "Monto";
+            txtDetalle.BackColor = SystemColors.Window;
+            txtDetalle.BorderStyle = BorderStyle.None;
+            txtDetalle.Location = new Point(6, 90);
+            txtDetalle.Multiline = true;
+            txtDetalle.Name = "txtDetalle";
+            txtDetalle.ReadOnly = true;
+            txtDetalle.Size = new Size(446, 169);
+            txtDetalle.TabIndex = 4;
             // 
-            // lblTipoMovimiento
+            // label4
             // 
-            lblTipoMovimiento.AutoSize = true;
-            lblTipoMovimiento.Location = new Point(347, 25);
-            lblTipoMovimiento.Name = "lblTipoMovimiento";
-            lblTipoMovimiento.Size = new Size(102, 15);
-            lblTipoMovimiento.TabIndex = 3;
-            lblTipoMovimiento.Text = "Tipo Movimiento:";
-            // 
-            // lblNombreEmpleado
-            // 
-            lblNombreEmpleado.AutoSize = true;
-            lblNombreEmpleado.Location = new Point(6, 40);
-            lblNombreEmpleado.Name = "lblNombreEmpleado";
-            lblNombreEmpleado.Size = new Size(117, 15);
-            lblNombreEmpleado.TabIndex = 0;
-            lblNombreEmpleado.Text = "lblNombreEmpleado";
+            label4.AutoSize = true;
+            label4.Location = new Point(36, 53);
+            label4.Name = "label4";
+            label4.Size = new Size(0, 15);
+            label4.TabIndex = 2;
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(6, 25);
+            label3.Location = new Point(6, 9);
             label3.Name = "label3";
             label3.Size = new Size(63, 15);
             label3.TabIndex = 1;
             label3.Text = "Empleado:";
             // 
-            // label4
+            // lblNombreEmpleado
             // 
-            label4.AutoSize = true;
-            label4.Location = new Point(376, 34);
-            label4.Name = "label4";
-            label4.Size = new Size(0, 15);
-            label4.TabIndex = 2;
+            lblNombreEmpleado.AutoSize = true;
+            lblNombreEmpleado.Location = new Point(6, 24);
+            lblNombreEmpleado.Name = "lblNombreEmpleado";
+            lblNombreEmpleado.Size = new Size(117, 15);
+            lblNombreEmpleado.TabIndex = 0;
+            lblNombreEmpleado.Text = "lblNombreEmpleado";
+            // 
+            // lblTipoMovimiento
+            // 
+            lblTipoMovimiento.AutoSize = true;
+            lblTipoMovimiento.Location = new Point(7, 44);
+            lblTipoMovimiento.Name = "lblTipoMovimiento";
+            lblTipoMovimiento.Size = new Size(102, 15);
+            lblTipoMovimiento.TabIndex = 3;
+            lblTipoMovimiento.Text = "Tipo Movimiento:";
+            // 
+            // lblMontoMovimiento
+            // 
+            lblMontoMovimiento.AutoSize = true;
+            lblMontoMovimiento.Location = new Point(7, 59);
+            lblMontoMovimiento.Name = "lblMontoMovimiento";
+            lblMontoMovimiento.Size = new Size(43, 15);
+            lblMontoMovimiento.TabIndex = 2;
+            lblMontoMovimiento.Text = "Monto";
             // 
             // tabVenta
             // 
             tabVenta.Controls.Add(tabPageVenta1);
             tabVenta.Controls.Add(tabPageVenta2);
-            tabVenta.Location = new Point(12, 85);
+            tabVenta.Location = new Point(12, 69);
             tabVenta.Name = "tabVenta";
             tabVenta.SelectedIndex = 0;
-            tabVenta.Size = new Size(548, 370);
+            tabVenta.Size = new Size(463, 290);
             tabVenta.TabIndex = 6;
-            // 
-            // txtDetalle
-            // 
-            txtDetalle.BorderStyle = BorderStyle.None;
-            txtDetalle.Location = new Point(6, 117);
-            txtDetalle.Name = "txtDetalle";
-            txtDetalle.ReadOnly = true;
-            txtDetalle.Size = new Size(451, 16);
-            txtDetalle.TabIndex = 4;
             // 
             // FMovimientoDetallado
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(572, 467);
+            ClientSize = new Size(478, 360);
             Controls.Add(tabVenta);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -182,6 +196,8 @@
             Controls.Add(lblNumeroMovimiento);
             Name = "FMovimientoDetallado";
             Text = "FMovimientoDetallado";
+            tabPageVenta2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvProductos).EndInit();
             tabPageVenta1.ResumeLayout(false);
             tabPageVenta1.PerformLayout();
             tabVenta.ResumeLayout(false);
@@ -204,5 +220,6 @@
         private Label lblTipoMovimiento;
         private Label lblMontoMovimiento;
         private TabControl tabVenta;
+        private DataGridView dgvProductos;
     }
 }

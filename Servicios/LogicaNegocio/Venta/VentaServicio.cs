@@ -1,5 +1,6 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
+using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
@@ -14,33 +15,6 @@ namespace Servicios.LogicaNegocio.Venta
 {
     public class VentaServicio : IVentaServicio
     {
-        public VentaDTO ObtenerVentaPorId(long ventaId)
-        {
-            var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var venta = context.Ventas
-                .FirstOrDefault(v => v.VentaId == ventaId);
-
-            if (venta == null)
-                throw new Exception("No se encontró la marca.");
-
-            return new VentaDTO
-            {
-                VentaId = venta.VentaId,
-                NumeroVenta = venta.NumeroVenta,
-                IdEmpleado = venta.IdEmpleado,
-                IdVendedor = venta.IdVendedor,
-                FechaVenta = venta.FechaVenta,
-                Total = venta.Total,
-                TotalSinDescuento = venta.TotalSinDescuento,
-                Descuento = venta.Descuento,
-                Estado = venta.Estado,
-                Detalle = venta.Detalle,
-                MontoAdeudado = venta.MontoAdeudado,
-                MontoPagado = venta.MontoPagado
-            };
-        }
-
         public string GenerateNextNumeroVenta()
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -170,5 +144,108 @@ namespace Servicios.LogicaNegocio.Venta
                 return new EstadoOperacion { Exitoso = false, Mensaje = "Error al crear la venta: " + ex.Message };
             }
         }
+
+        public VentaDTO ObtenerVentaPorId(long ventaId)
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var venta = context.Ventas
+                .FirstOrDefault(v => v.VentaId == ventaId);
+
+            if (venta == null)
+                throw new Exception("No se encontró la marca.");
+
+            return new VentaDTO
+            {
+                VentaId = venta.VentaId,
+                NumeroVenta = venta.NumeroVenta,
+                IdEmpleado = venta.IdEmpleado,
+                IdVendedor = venta.IdVendedor,
+                FechaVenta = venta.FechaVenta,
+                Total = venta.Total,
+                TotalSinDescuento = venta.TotalSinDescuento,
+                Descuento = venta.Descuento,
+                Estado = venta.Estado,
+                Detalle = venta.Detalle,
+                MontoAdeudado = venta.MontoAdeudado,
+                MontoPagado = venta.MontoPagado
+            };
+        }
+
+        public VentaDTO ObtenerVentaDetalle(long ventaId)
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var venta = context.Ventas
+                .Include(v => v.DetallesVentas)
+                .Include(v => v.VentaPagoDetalles)
+                .Where(v => v.VentaId == ventaId)
+                .FirstOrDefault(v => v.VentaId == ventaId);
+
+            //revisar que trae DetallesVentas
+            //venta.DetallesVentas.ToList();
+
+            VentaDTO ventaConDetalles = new VentaDTO
+            {
+                VentaId = venta.VentaId,
+                NumeroVenta = venta.NumeroVenta,
+                IdEmpleado = venta.IdEmpleado,
+                IdVendedor = venta.IdVendedor,
+                FechaVenta = venta.FechaVenta,
+                Total = venta.Total,
+                TotalSinDescuento = venta.TotalSinDescuento,
+                Descuento = venta.Descuento,
+                Estado = venta.Estado,
+                Detalle = venta.Detalle,
+                MontoAdeudado = venta.MontoAdeudado,
+                MontoPagado = venta.MontoPagado,
+                TiposDePagoSeleccionado = venta.VentaPagoDetalles.Select(vp => new FormaPago
+                {
+                    TipoDePago = (TipoDePago?)vp.IdTipoPago,
+                    Monto = vp.Monto
+                }).ToList(),
+                Items = venta.DetallesVentas.Select(d => new Servicios.LogicaNegocio.Venta.DTO.ItemVentaDTO
+                {
+                    ItemId = d.IdProducto,
+                    Cantidad = d.Cantidad,
+                    PrecioVenta = d.Subtotal / d.Cantidad
+                    //nombreProducto = //llamado a la db para traer los nombres con el idProducto
+                }).ToList()
+            };
+
+            return ventaConDetalles;
+
+        }
+
+
+
+        //ahi tengo la venta con su detalle, despues tengo que buscar usando el 
+        //service de producto los datos de cada item para completar el ItemVentaDTO y mostarlo en movimineto detallado?????
+        /*
+         *  ItemVentaDTO
+            public long ItemId { get; set; }
+            public decimal Cantidad { get; set; }
+            public decimal PrecioVenta { get; set; }
+            public decimal PrecioOferta { get; set; }
+            public string Descripcion { get; set; }
+            public string Medida { get; set; }
+            public string UnidadMedida { get; set; }
+            public bool EsOferta { get; set; }
+
+            public class DetallesVenta
+            {
+                [Key]
+                public long DetalleVentaId { get; set; }
+
+                public long IdVenta { get; set; }
+                public long IdProducto { get; set; }
+                public decimal Cantidad { get; set; }
+                public decimal Subtotal { get; set; }
+
+                // Relaciones
+                public Venta Venta { get; set; }
+                public Producto Producto { get; set; }
+            }
+         */
     }
 }
