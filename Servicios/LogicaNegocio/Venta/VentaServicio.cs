@@ -184,9 +184,7 @@ namespace Servicios.LogicaNegocio.Venta
                 TotalSinDescuento = venta.TotalSinDescuento,
                 Descuento = venta.Descuento,
                 Estado = venta.Estado,
-                Detalle = venta.Detalle,
-                MontoAdeudado = venta.MontoAdeudado,
-                MontoPagado = venta.MontoPagado
+                Detalle = venta.Detalle
             };
         }
 
@@ -215,8 +213,6 @@ namespace Servicios.LogicaNegocio.Venta
                 Descuento = venta.Descuento,
                 Estado = venta.Estado,
                 Detalle = venta.Detalle,
-                MontoAdeudado = venta.MontoAdeudado,
-                MontoPagado = venta.MontoPagado,
                 TiposDePagoSeleccionado = venta.VentaPagoDetalles.Select(vp => new FormaPago
                 {
                     TipoDePago = (TipoDePago?)vp.IdTipoPago,
