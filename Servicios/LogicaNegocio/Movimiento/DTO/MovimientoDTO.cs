@@ -1,16 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AccesoDatos.Entidades
+namespace Servicios.LogicaNegocio.Movimiento.DTO
 {
-    public class Movimiento
+    public class MovimientoDTO
     {
-        [Key]
         public long MovimientoId { get; set; }
         public string NumeroMovimiento { get; set; } = string.Empty;
         public long? IdVenta { get; set; }     // Nullable si no siempre hay venta asociada
@@ -20,8 +17,5 @@ namespace AccesoDatos.Entidades
         public decimal Monto { get; set; }
         public DateTime FechaMovimiento { get; set; }
         public bool EstaEliminado { get; set; }
-
-        // Navegación
-        public Venta Venta { get; set; }
     }
 }

@@ -395,7 +395,34 @@ namespace AccesoDatos
 
                 entity.HasKey(e => e.MovimientoId);
 
-                entity.Property(e => e.TipoMovimiento).IsRequired();
+                entity.Property(e => e.MovimientoId)
+                        .HasColumnName("id_Movimiento");
+
+                entity.Property(e => e.NumeroMovimiento)
+                        .HasColumnName("numero_movimiento")
+                        .HasMaxLength(100)
+                        .IsRequired();
+
+                entity.Property(e => e.IdVenta)
+                        .HasColumnName("id_Venta");
+
+                entity.Property(e => e.TipoMovimiento)
+                        .HasColumnName("tipo_movimiento")
+                        .IsRequired();
+
+                entity.Property(e => e.Monto)
+                        .HasColumnName("monto")
+                        .HasColumnType("decimal(18,2)")
+                        .IsRequired();
+
+                entity.Property(e => e.FechaMovimiento)
+                        .HasColumnName("fecha_movimiento")
+                        .HasColumnType("date")
+                        .IsRequired();
+
+                entity.Property(e => e.EstaEliminado)
+                        .HasColumnName("esta_eliminado")
+                        .IsRequired();
 
                 // Relación con Venta (si tenés definida la entidad Venta)
                 entity.HasOne(e => e.Venta)
