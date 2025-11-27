@@ -395,6 +395,9 @@ namespace AccesoDatos
 
                 entity.HasKey(e => e.MovimientoId);
 
+                entity.Property(e => e.MovimientoId)
+                        .HasColumnName("id_Movimiento");
+
                 entity.Property(e => e.NumeroMovimiento)
                         .HasColumnName("numero_movimiento")
                         .HasMaxLength(100)
