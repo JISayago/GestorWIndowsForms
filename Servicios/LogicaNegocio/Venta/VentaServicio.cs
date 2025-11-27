@@ -2,9 +2,11 @@
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
+using Servicios.Infraestructura;
 using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.TipoPago;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,21 @@ namespace Servicios.LogicaNegocio.Venta
 {
     public class VentaServicio : IVentaServicio
     {
+        private readonly IPdfGenerator _pdf;
+
+        public VentaServicio() : this(new PdfGenerator())
+        {
+        }
+        public VentaServicio(IPdfGenerator pdf)
+        {
+            _pdf = pdf;
+        }
+
+        public string GenerarPdfDeVenta(/*long ventaId*/ AccesoDatos.Entidades.Venta venta)
+        {
+           // var venta = _repositorioVentas.Obtener(ventaId);
+            return _pdf.GenerarComprobante(venta);
+        }
         public string GenerateNextNumeroVenta()
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -89,8 +106,8 @@ namespace Servicios.LogicaNegocio.Venta
                     Descuento = ventaDto.Descuento,
                     Estado = ventaDto.Estado,
                     Detalle = ventaDto.Detalle,
-                    MontoAdeudado = ventaDto.MontoAdeudado,
-                    MontoPagado = ventaDto.MontoPagado
+                    MontoAdeudado =0.0m,
+                    MontoPagado = ventaDto.Total // replantear el ofertadto
                 };
 
                 context.Ventas.Add(venta);
@@ -135,6 +152,7 @@ namespace Servicios.LogicaNegocio.Venta
 
                 context.SaveChanges();
                 transaction.Commit();
+                GenerarPdfDeVenta(venta);
 
                 return new EstadoOperacion { Exitoso = true, Mensaje = "Venta creada correctamente." };
             }

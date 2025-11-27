@@ -22,8 +22,6 @@ namespace Servicios.LogicaNegocio.Venta.DTO
         public decimal Descuento { get; set; }
         public int Estado { get; set; }
         public string Detalle { get; set; }
-        public decimal MontoAdeudado { get; set; }
-        public decimal MontoPagado { get; set; }
         public List<ItemVentaDTO> Items { get; set; }
         public List<FormaPago> TiposDePagoSeleccionado { get; set; }
     }
