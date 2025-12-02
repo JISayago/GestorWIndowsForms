@@ -21,6 +21,8 @@ namespace AccesoDatos.Entidades
         public DateTime FechaMovimiento { get; set; }
         public bool EstaEliminado { get; set; }
 
+        //public long CajaId { get; set; }  // Si se necesita relacionar con Caja, lo hacemos?
+
         // Navegación
         public Venta Venta { get; set; }
     }

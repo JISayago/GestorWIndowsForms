@@ -162,13 +162,10 @@ namespace Servicios.LogicaNegocio.Movimiento
 
         public (EmpleadoDTO empleado, VentaDTO venta, MovimientoDTO movimiento, List<ProductoDTO> productos) CargarDatosMovimiento(long entidadId)
         {
-            var context = new GestorContextDBFactory().CreateDbContext(null);
-
             var movimientoService = new MovimientoServicio();
             var ventaService = new VentaServicio();
             var empleadoService = new EmpleadoServicio();
             var productoServicio = new ProductoServicio();
-
 
             var movimiento = movimientoService.ObtenerMovimientoPorId(entidadId);
 
@@ -182,8 +179,12 @@ namespace Servicios.LogicaNegocio.Movimiento
                 ? venta.Items.Select(item => productoServicio.ObtenerProductoPorId(item.ItemId)).ToList()
                 : new List<ProductoDTO>();
 
+            //arreglar funcion asi no hace mill llamadas a db
+            //crear una funcion en producto servicio que reciba una lista de ids y devuelva los productos
+
             return (empleado: empleado, venta: venta, movimiento: movimiento, productos: productos);
 
+            //crear movimientoDto para no mandadr tantos dtos al pedo
         }
     }
 }
