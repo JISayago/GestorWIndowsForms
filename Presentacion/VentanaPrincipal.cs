@@ -19,6 +19,8 @@ namespace Presentacion
     public partial class VentanaPrincipal : FBase.FBase
     {
         private readonly UsuarioLogeado _usuarioLogeado;
+        private DateTime _fechaActual = DateTime.Now;
+        private DateTime _horaActual = DateTime.Now;
 
         public VentanaPrincipal() : this(new UsuarioLogeado())
         {
@@ -130,6 +132,19 @@ namespace Presentacion
         {
             var FMovimiento = new FMovimientoConsulta();
             FMovimiento.Show();
+        }
+
+        private void VentanaPrincipal_Load(object sender, EventArgs e)
+        {
+            System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
+            MyTimer.Interval = 1000;
+            MyTimer.Tick += new EventHandler(MyTimer_Tick);
+            MyTimer.Start();
+        }
+        private void MyTimer_Tick(object sender, EventArgs e)
+        {
+            lblFechaValor.Text = DateTime.Now.ToString("dd/MM/yyyy");
+            lblHoraValor.Text = DateTime.Now.ToString("HH:mm:ss");
         }
     }
 }

@@ -55,6 +55,10 @@
             btnMovimientos = new Button();
             dataGridView1 = new DataGridView();
             panel1 = new Panel();
+            lblFecha = new Label();
+            lblHora = new Label();
+            lblFechaValor = new Label();
+            lblHoraValor = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
@@ -66,7 +70,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, aDMINISTRACIONToolStripMenuItem, aRTICULOToolStripMenuItem, vENTASToolStripMenuItem, cONFIGToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(784, 24);
+            menuStrip1.Size = new Size(1045, 24);
             menuStrip1.TabIndex = 1;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -86,7 +90,7 @@
             // 
             empleadoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { rolesToolStripMenuItem });
             empleadoToolStripMenuItem.Name = "empleadoToolStripMenuItem";
-            empleadoToolStripMenuItem.Size = new Size(180, 22);
+            empleadoToolStripMenuItem.Size = new Size(164, 22);
             empleadoToolStripMenuItem.Text = "Empleado";
             empleadoToolStripMenuItem.Click += empleadoToolStripMenuItem_Click;
             // 
@@ -100,21 +104,21 @@
             // tipoPagoToolStripMenuItem
             // 
             tipoPagoToolStripMenuItem.Name = "tipoPagoToolStripMenuItem";
-            tipoPagoToolStripMenuItem.Size = new Size(180, 22);
+            tipoPagoToolStripMenuItem.Size = new Size(164, 22);
             tipoPagoToolStripMenuItem.Text = "Tipo Pago";
             tipoPagoToolStripMenuItem.Click += tipoPagoToolStripMenuItem_Click;
             // 
             // gastosToolStripMenuItem
             // 
             gastosToolStripMenuItem.Name = "gastosToolStripMenuItem";
-            gastosToolStripMenuItem.Size = new Size(180, 22);
+            gastosToolStripMenuItem.Size = new Size(164, 22);
             gastosToolStripMenuItem.Text = "Gastos";
             // 
             // cuentaCorrienteToolStripMenuItem
             // 
             cuentaCorrienteToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { clienteToolStripMenuItem });
             cuentaCorrienteToolStripMenuItem.Name = "cuentaCorrienteToolStripMenuItem";
-            cuentaCorrienteToolStripMenuItem.Size = new Size(180, 22);
+            cuentaCorrienteToolStripMenuItem.Size = new Size(164, 22);
             cuentaCorrienteToolStripMenuItem.Text = "Cuenta Corriente";
             cuentaCorrienteToolStripMenuItem.Click += cuentaCorrienteToolStripMenuItem_Click_1;
             // 
@@ -128,7 +132,7 @@
             // movimientoToolStripMenuItem
             // 
             movimientoToolStripMenuItem.Name = "movimientoToolStripMenuItem";
-            movimientoToolStripMenuItem.Size = new Size(180, 22);
+            movimientoToolStripMenuItem.Size = new Size(164, 22);
             movimientoToolStripMenuItem.Text = "Movimiento";
             movimientoToolStripMenuItem.Click += movimientoToolStripMenuItem_Click;
             // 
@@ -198,7 +202,7 @@
             // 
             lblUsuarioLogueado.AutoSize = true;
             lblUsuarioLogueado.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblUsuarioLogueado.Location = new Point(12, 537);
+            lblUsuarioLogueado.Location = new Point(125, 37);
             lblUsuarioLogueado.Name = "lblUsuarioLogueado";
             lblUsuarioLogueado.Size = new Size(144, 21);
             lblUsuarioLogueado.TabIndex = 2;
@@ -208,16 +212,16 @@
             // 
             lblNombreUsuario.AutoSize = true;
             lblNombreUsuario.Font = new Font("Segoe UI", 11.25F);
-            lblNombreUsuario.Location = new Point(156, 537);
+            lblNombreUsuario.Location = new Point(269, 38);
             lblNombreUsuario.Name = "lblNombreUsuario";
             lblNombreUsuario.Size = new Size(0, 20);
             lblNombreUsuario.TabIndex = 3;
             // 
             // btnVenta
             // 
-            btnVenta.Location = new Point(596, 0);
+            btnVenta.Location = new Point(660, 0);
             btnVenta.Name = "btnVenta";
-            btnVenta.Size = new Size(154, 40);
+            btnVenta.Size = new Size(154, 63);
             btnVenta.TabIndex = 12;
             btnVenta.Text = "VENTA";
             btnVenta.UseVisualStyleBackColor = true;
@@ -225,18 +229,18 @@
             // 
             // btnCaja
             // 
-            btnCaja.Location = new Point(160, 0);
+            btnCaja.Location = new Point(234, 0);
             btnCaja.Name = "btnCaja";
-            btnCaja.Size = new Size(154, 40);
+            btnCaja.Size = new Size(154, 63);
             btnCaja.TabIndex = 13;
             btnCaja.Text = "CAJA";
             btnCaja.UseVisualStyleBackColor = true;
             // 
             // btnStock
             // 
-            btnStock.Location = new Point(436, 0);
+            btnStock.Location = new Point(455, 0);
             btnStock.Name = "btnStock";
-            btnStock.Size = new Size(154, 40);
+            btnStock.Size = new Size(154, 63);
             btnStock.TabIndex = 15;
             btnStock.Text = "STOCK";
             btnStock.UseVisualStyleBackColor = true;
@@ -245,7 +249,7 @@
             // 
             btnMovimientos.Location = new Point(0, 0);
             btnMovimientos.Name = "btnMovimientos";
-            btnMovimientos.Size = new Size(154, 40);
+            btnMovimientos.Size = new Size(154, 63);
             btnMovimientos.TabIndex = 16;
             btnMovimientos.Text = "MOVIMIENTOS";
             btnMovimientos.UseVisualStyleBackColor = true;
@@ -253,36 +257,83 @@
             // dataGridView1
             // 
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(15, 37);
+            dataGridView1.Location = new Point(125, 85);
             dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new Size(754, 345);
+            dataGridView1.Size = new Size(814, 494);
             dataGridView1.TabIndex = 17;
             // 
             // panel1
             // 
             panel1.Controls.Add(btnMovimientos);
             panel1.Controls.Add(btnCaja);
-            panel1.Controls.Add(btnVenta);
             panel1.Controls.Add(btnStock);
-            panel1.Location = new Point(15, 494);
+            panel1.Controls.Add(btnVenta);
+            panel1.Location = new Point(125, 585);
             panel1.Name = "panel1";
-            panel1.Size = new Size(750, 40);
+            panel1.Size = new Size(814, 63);
             panel1.TabIndex = 18;
+            // 
+            // lblFecha
+            // 
+            lblFecha.AutoSize = true;
+            lblFecha.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblFecha.Location = new Point(587, 36);
+            lblFecha.Name = "lblFecha";
+            lblFecha.Size = new Size(57, 21);
+            lblFecha.TabIndex = 19;
+            lblFecha.Text = "Fecha :";
+            // 
+            // lblHora
+            // 
+            lblHora.AutoSize = true;
+            lblHora.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblHora.Location = new Point(795, 36);
+            lblHora.Name = "lblHora";
+            lblHora.Size = new Size(51, 21);
+            lblHora.TabIndex = 20;
+            lblHora.Text = "Hora :";
+            // 
+            // lblFechaValor
+            // 
+            lblFechaValor.AutoSize = true;
+            lblFechaValor.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblFechaValor.Location = new Point(640, 34);
+            lblFechaValor.Name = "lblFechaValor";
+            lblFechaValor.Size = new Size(94, 25);
+            lblFechaValor.TabIndex = 21;
+            lblFechaValor.Text = "00/00/00";
+            // 
+            // lblHoraValor
+            // 
+            lblHoraValor.AutoSize = true;
+            lblHoraValor.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblHoraValor.Location = new Point(841, 33);
+            lblHoraValor.Name = "lblHoraValor";
+            lblHoraValor.Size = new Size(88, 25);
+            lblHoraValor.TabIndex = 22;
+            lblHoraValor.Text = "00:00:00";
             // 
             // VentanaPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(784, 561);
+            ClientSize = new Size(1045, 693);
+            Controls.Add(lblHoraValor);
+            Controls.Add(lblFechaValor);
+            Controls.Add(lblHora);
+            Controls.Add(lblFecha);
             Controls.Add(panel1);
             Controls.Add(dataGridView1);
             Controls.Add(lblNombreUsuario);
             Controls.Add(lblUsuarioLogueado);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
-            MinimumSize = new Size(800, 600);
+            MaximumSize = new Size(1061, 732);
+            MinimumSize = new Size(1061, 732);
             Name = "VentanaPrincipal";
-            Text = "Form1";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Inicio";
+            Load += VentanaPrincipal_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
@@ -320,5 +371,9 @@
         private ToolStripMenuItem clienteToolStripMenuItem;
         private ToolStripMenuItem activarDesactivarToolStripMenuItem;
         private ToolStripMenuItem movimientoToolStripMenuItem;
+        private Label lblFecha;
+        private Label lblHora;
+        private Label lblFechaValor;
+        private Label lblHoraValor;
     }
 }
