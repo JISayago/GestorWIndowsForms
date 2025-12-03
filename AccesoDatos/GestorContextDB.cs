@@ -425,6 +425,10 @@ namespace AccesoDatos
                         .HasColumnName("esta_eliminado")
                         .IsRequired();
 
+                entity.Property(e => e.IdCaja)
+                    .HasColumnName("id_Caja")
+                    .IsRequired();
+
                 // Relación con Venta (si tenés definida la entidad Venta)
                 entity.HasOne(e => e.Venta)
                       .WithMany() // o .WithMany(v => v.Movimientos) si agregás la colección en Venta
