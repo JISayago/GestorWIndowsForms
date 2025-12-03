@@ -434,6 +434,12 @@ namespace AccesoDatos
                       .WithMany() // o .WithMany(v => v.Movimientos) si agregás la colección en Venta
                       .HasForeignKey(e => e.IdVenta)
                       .OnDelete(DeleteBehavior.Restrict);
+
+                //Relación con Caja
+                entity.HasOne(e => e.Caja)
+                      .WithMany(c => c.Movimientos)
+                      .HasForeignKey(e => e.IdCaja)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
 
             // CATEGORIA
@@ -861,6 +867,12 @@ namespace AccesoDatos
                 entity.Property(c => c.EstaCerrada)
                         .HasColumnName("esta_cerrada")
                         .IsRequired();
+
+                //Relacion con Movimiento
+                entity.HasMany(c => c.Movimientos)
+                      .WithOne(m => m.Caja)
+                      .HasForeignKey(m => m.IdCaja)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }
