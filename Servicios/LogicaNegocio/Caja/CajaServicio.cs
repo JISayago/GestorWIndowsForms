@@ -139,6 +139,9 @@ namespace Servicios.LogicaNegocio.Caja
             ActualizarSaldoCaja(); //Lo dejo aca? asi cada vez que cambiamos el saldo se actuliza 
             //ActualizarBalanceCaja(); // si quiero actualizar el balance final tambien
 
+            //ACA DEBERIA CAGAR EL MOVIMIENTO EN LA CAJA? O ESO LO HACE EL SERVICIO DE MOVIMIENTOS?
+            //
+
             context.SaveChanges();
         }
 

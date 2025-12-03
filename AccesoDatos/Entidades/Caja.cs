@@ -25,7 +25,7 @@ namespace AccesoDatos.Entidades
         public long EmpleadoApertura { get; set; }
         public long? EmpleadoCierre { get; set; }
 
-        public bool EstaCerrada { get; set; }
+        public bool EstaCerrada { get; set; } //default false
 
         public ICollection<Movimiento> Movimientos { get; set; } //collection o list
     }
