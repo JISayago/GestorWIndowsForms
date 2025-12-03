@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Servicios.LogicaNegocio.Caja.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,30 +25,137 @@ namespace Servicios.LogicaNegocio.Caja
          */
 
 
-        public void AbrirCerrarCaja(decimal montoInicial, bool abrir)
+        public void AbrirCaja(decimal montoInicial, long empleadoId)
         {
-            // Lógica para abrir la caja con el monto inicial
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
 
+            if (context.Cajas.Any(c => !c.EstaCerrada))
+            {
+                throw new InvalidOperationException("Ya hay una caja abierta. No se puede abrir otra caja hasta que la actual sea cerrada.");
+            }
+
+            var caja = new AccesoDatos.Entidades.Caja();
+
+            caja.SaldoInicial = montoInicial;
+            caja.SaldoActual = montoInicial;
+            caja.FechaInicio = DateTime.Now;
+            caja.EmpleadoApertura = empleadoId; //recibir el empleado que abre la caja? manejar x memoria?
+            caja.EstaCerrada = false;
+
+            context.Cajas.Add(caja);
+            context.SaveChanges();
         }
 
-        public void ObtenerEstadoCaja()
+        public void CerrarCaja()
         {
-            // Lógica para obtener el estado actual de la caja
-            //devolver si esta abierta o cerrada
-            return (true, 0m); // Ejemplo de retorno
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+
+            //revisar ese llamado a db
+            var caja = context.Cajas
+                .Where(c => !c.EstaCerrada)
+                .OrderByDescending(c => c.FechaInicio)
+                .FirstOrDefault();
+
+            if (caja != null)
+            {
+                caja.FechaFin = DateTime.Now;
+                caja.EstaCerrada = true;
+                caja.EmpleadoCierre = 0; //asignar el empleado que cierra la caja
+                // Asignar otros valores finales como TotalIngresos, TotalEgresos, BalanceFinal si es necesario
+                context.SaveChanges();
+            }
         }
 
-        public void ObtenerSaldoCaja()
+        public CajaDTO ObtenerCaja(long cajaId)
         {
-            // Lógica para obtener el saldo actual de la caja
-            //devolver el saldo 
-            return 0m; // Ejemplo de retorno
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+            
+            return context.Cajas
+                .Where(c => c.CajaId == cajaId)
+                .Select(c => new CajaDTO
+                {
+                    CajaId = c.CajaId,
+                    SaldoInicial = c.SaldoInicial,
+                    SaldoActual = c.SaldoActual,
+                    FechaInicio = c.FechaInicio,
+                    FechaFin = c.FechaFin,
+                    TotalIngresos = c.TotalIngresos,
+                    TotalEgresos = c.TotalEgresos,
+                    BalanceFinal = c.BalanceFinal,
+                    EmpleadoApertura = c.EmpleadoApertura,
+                    EmpleadoCierre = c.EmpleadoCierre,
+                    EstaCerrada = c.EstaCerrada,
+                    MovimientoIds = c.Movimientos.Select(m => m.MovimientoId).ToList()
+                })
+                .FirstOrDefault();
+        }
+
+        public bool ObtenerEstadoCaja()
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+
+            return context.Cajas
+                .any(c => !c.EstaCerrada);
+        }
+
+        public decimal ObtenerSaldoCaja()
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+
+            return context.Cajas
+                .Where(c => !c.EstaCerrada)
+                .Select(c => c.SaldoActual);
         }
 
         public void RegistrarTransaccion(decimal monto, string tipo)
         {
-            // Lógica para registrar una transacción en la caja
-            //Modificar la caja
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+
+            var caja = context.Cajas
+                .Where(c => !c.EstaCerrada)
+                .OrderByDescending(c => c.FechaInicio)
+                .FirstOrDefault();
+
+            if (caja == null)
+            {
+                throw new InvalidOperationException("No hay una caja abierta para registrar la transacción.");
+            }
+
+            if (tipo == "ingreso")
+            {
+                caja.SaldoActual += monto;
+                caja.TotalIngresos += monto;
+            }
+            else if (tipo == "egreso")
+            {
+                caja.SaldoActual -= monto;
+                caja.TotalEgresos += monto;
+            }
+            else
+            {
+                throw new ArgumentException("Tipo de transacción inválido. Debe ser 'ingreso' o 'egreso'.");
+            }
+
+            ActualizarSaldoCaja(); //Lo dejo aca? asi cada vez que cambiamos el saldo se actuliza 
+            //ActualizarBalanceCaja(); // si quiero actualizar el balance final tambien
+
+            context.SaveChanges();
+        }
+
+        public void ActualizarSaldoCaja()
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+
+            var caja = context.Cajas
+                .Where(c => !c.EstaCerrada)
+                .OrderByDescending(c => c.FechaInicio)
+                .FirstOrDefault();
+
+            if (caja != null)
+            {
+                caja.SaldoActual = caja.SaldoInicial + caja.TotalIngresos - caja.TotalEgresos;
+                context.SaveChanges();
+            }
         }
 
     }

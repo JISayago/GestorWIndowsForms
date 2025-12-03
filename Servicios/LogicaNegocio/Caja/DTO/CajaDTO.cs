@@ -18,13 +18,13 @@ namespace Servicios.LogicaNegocio.Caja.DTO
 
         public decimal TotalIngresos { get; set; }
         public decimal TotalEgresos { get; set; }
-        public decimal BalanceFinal { get; set; }
+        public decimal BalanceFinal { get; set; } //dejo el balance? ya tengo saldoActual, balancefinal podria ser el calculo entre ingresos y egresos, sin contal saldo inicial, nose si tiene mucho sentido
 
         public long EmpleadoApertura { get; set; }
         public long? EmpleadoCierre { get; set; }
 
         public bool EstaCerrada { get; set; }
 
-        public ICollection<long> MovimientoIds { get; set; } // Hace falta tener disponibles los movimientos en el dto?
+        public ICollection<long> MovimientoIds { get; set; } // Hace falta tener disponibles los movimientos en el dto?// si quiero mostrar los moviminetos segundo la caja 
     }
 }
