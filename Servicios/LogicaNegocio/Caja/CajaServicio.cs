@@ -25,11 +25,11 @@ namespace Servicios.LogicaNegocio.Caja
          */
 
 
-        /*public void AbrirCaja(decimal montoInicial, long empleadoId)
+        public void AbrirCaja(decimal montoInicial, long empleadoId)
         {
             var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
 
-            if (context.Cajas.any(c => !c.EstaCerrada))
+            if (context.Cajas.Any(c => !c.EstaCerrada))
             {
                 throw new InvalidOperationException("Ya hay una caja abierta. No se puede abrir otra caja hasta que la actual sea cerrada.");
             }
@@ -44,7 +44,7 @@ namespace Servicios.LogicaNegocio.Caja
 
             context.Cajas.Add(caja);
             context.SaveChanges();
-        }*/
+        }
 
         public void CerrarCaja()
         {
@@ -69,8 +69,8 @@ namespace Servicios.LogicaNegocio.Caja
         public CajaDTO ObtenerCaja(long cajaId)
         {
             var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
-            
-            return context.Cajas
+
+            var caja = context.Cajas
                 .Where(c => c.CajaId == cajaId)
                 .Select(c => new CajaDTO
                 {
@@ -88,24 +88,35 @@ namespace Servicios.LogicaNegocio.Caja
                     MovimientoIds = c.Movimientos.Select(m => m.MovimientoId).ToList()
                 })
                 .FirstOrDefault();
+
+            if (caja == null)
+            {
+                throw new InvalidOperationException("No se encontró la caja con el ID proporcionado.");
+            }
+
+
+            return caja;
         }
 
-        /*public bool ObtenerEstadoCaja()
+        public bool ObtenerEstadoCaja()
         {
             var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
 
             return context.Cajas
-                .any(c => !c.EstaCerrada);
+                .Any(c => !c.EstaCerrada);
         }
 
         public decimal ObtenerSaldoCaja()
         {
             var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
 
-            return context.Cajas
+            var saldo = context.Cajas
                 .Where(c => !c.EstaCerrada)
-                .Select(c => c.SaldoActual);
-        }*/
+                .Select(c => c.SaldoActual)
+                .FirstOrDefault();
+
+            return saldo;
+        }
 
         public void RegistrarTransaccion(decimal monto, string tipo)
         {
