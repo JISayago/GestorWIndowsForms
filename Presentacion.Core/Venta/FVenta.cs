@@ -104,7 +104,7 @@ namespace Presentacion.Core.Venta
             itemsVenta = new BindingList<ItemVentaDTO>();
             dgvProductos.DataSource = itemsVenta;  // bind directo
             ResetearGrilla(dgvProductos);
-            if(idCliente < 0)
+            if (idCliente < 0)
             {
                 cbxIncluirCtaCte.Checked = false;
                 cbxIncluirCtaCte.Enabled = false;
@@ -298,6 +298,7 @@ namespace Presentacion.Core.Venta
                     MessageBox.Show("Debe seleccionar al menos un tipo de pago.");
                     return;
                 }
+                MessageBox.Show("Evaluar descuento por efectivo en 1 pago.");
 
                 _cuerpoDetalleVenta.tiposDePago = tipoPagosSeleccionados;
                 tipoDePagosVenta = tipoPagosSeleccionados;
@@ -364,12 +365,12 @@ namespace Presentacion.Core.Venta
                     var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
                     if (ofertaDesc == null) return;
                     var esOF = false;
-                    if (ofertaDesc.Oferta != null) { esOF = true; } else { esOF = false;}
+                    if (ofertaDesc.Oferta != null) { esOF = true; } else { esOF = false; }
                     var fCantidad = new FCantidadItem();
 
                     if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
                     {
-                        if(fCantidad.cantidad > ofertaDesc.Producto.Stock)
+                        if (fCantidad.cantidad > ofertaDesc.Producto.Stock)
                         {
                             cantidad = ofertaDesc.Producto.Stock;
                             MessageBox.Show($"La cantidad solicitada supera el stock disponible. Por lo que se pondra la cantidad máxima disponible: {cantidad}.");
@@ -514,57 +515,6 @@ namespace Presentacion.Core.Venta
 
         }
 
-        private void cbxAplicarDescuento_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cbxAplicarDescuento.Checked)
-            {
-                if (string.IsNullOrWhiteSpace(txtDescuento.Text))
-                {
-                    MessageBox.Show("Ingrese un porcentaje de descuento.");
-                    cbxAplicarDescuento.Checked = false;
-                    return;
-                }
-
-                if (decimal.TryParse(txtDescuento.Text, out decimal porcentaje))
-                {
-                    if (porcentaje < 1 || porcentaje > 100)
-                    {
-                        MessageBox.Show("El descuento debe estar entre 1% y 100%.");
-                        cbxAplicarDescuento.Checked = false;
-                        return;
-                    }
-
-                    _porcentajeDescuento = porcentaje / 100;
-
-                    CalcularTotal();
-                }
-                else
-                {
-                    MessageBox.Show("Ingrese un número válido.");
-                    cbxAplicarDescuento.Checked = false;
-                }
-            }
-            else
-            {
-                // Si se desactiva el descuento, volver a los valores originales
-                txtDescuento.Text = string.Empty;
-                CalcularTotal();
-
-            }
-        }
-
-
-        private void txtDescuento_TextChanged(object sender, EventArgs e)
-        {
-            if (!txtDescuento.Text.IsNullOrEmpty())
-            {
-                cbxAplicarDescuento.Enabled = true;
-            }
-            else
-            {
-                cbxAplicarDescuento.Enabled = false;
-            }
-        }
 
         private void dgvProductos_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -631,5 +581,6 @@ namespace Presentacion.Core.Venta
                 cbxIncluirCtaCte.Checked = true;
             }
         }
+
     }
 }

@@ -12,7 +12,6 @@ namespace AccesoDatos.Entidades
         [Key]
         public long VentaId { get; set; }
         public long IdEmpleado { get; set; }
-
         public Empleado Empleado { get; set; }
         public long IdVendedor { get; set; }
         public Empleado Vendedor { get; set; }

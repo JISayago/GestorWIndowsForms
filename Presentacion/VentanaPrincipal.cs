@@ -1,5 +1,5 @@
-using AccesoDatos.Entidades;
 using Presentacion.AccesoAlSistema;
+using Presentacion.Core.Administracion;
 using Presentacion.Core.Articulo.Marca;
 using Presentacion.Core.Categoria;
 using Presentacion.Core.Cliente;
@@ -12,7 +12,6 @@ using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
 using Presentacion.Core.Venta;
-using ServicioAccesoSistema.AccesoSistema;
 
 namespace Presentacion
 {
@@ -145,6 +144,12 @@ namespace Presentacion
         {
             lblFechaValor.Text = DateTime.Now.ToString("dd/MM/yyyy");
             lblHoraValor.Text = DateTime.Now.ToString("HH:mm:ss");
+        }
+
+        private void btnPanelAdmin_Click(object sender, EventArgs e)
+        {
+            var administracion = new FAdministracion();
+            administracion.Show();
         }
     }
 }
