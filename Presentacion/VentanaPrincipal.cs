@@ -30,6 +30,8 @@ namespace Presentacion
             _usuarioLogeado = usuarioLogeado;
             InitializeComponent();
 
+            this.Bounds = Screen.PrimaryScreen.WorkingArea;
+
             // Correcting the issue with Font.Size property  
             var font = new Font(lblNombreUsuario.Font.FontFamily, 12F, FontStyle.Bold);
             lblNombreUsuario.Font = font;

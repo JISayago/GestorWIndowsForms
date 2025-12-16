@@ -316,9 +316,11 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(1045, 693);
             Controls.Add(tableLayoutPanel2);
             Controls.Add(panel1);
+            MaximizeBox = true;
             MinimizeBox = true;
             MinimumSize = new Size(1061, 732);
             Name = "VentanaPrincipal";
