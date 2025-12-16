@@ -31,10 +31,10 @@
             dgvGrilla = new DataGridView();
             PnlBotones = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
-            btnContraVenta = new Button();
             btnPanelAdmin = new Button();
             btnVenta = new Button();
             btnCaja = new Button();
+            btnContraVenta = new Button();
             pnlInfoInicial = new Panel();
             label2 = new Label();
             pnlTextos = new Panel();
@@ -67,7 +67,7 @@
             // 
             dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvGrilla.Location = new Point(614, -3);
+            dgvGrilla.Location = new Point(658, -3);
             dgvGrilla.Name = "dgvGrilla";
             dgvGrilla.Size = new Size(380, 455);
             dgvGrilla.TabIndex = 17;
@@ -78,7 +78,7 @@
             PnlBotones.Controls.Add(tableLayoutPanel1);
             PnlBotones.Location = new Point(0, 495);
             PnlBotones.Name = "PnlBotones";
-            PnlBotones.Size = new Size(1000, 82);
+            PnlBotones.Size = new Size(1044, 82);
             PnlBotones.TabIndex = 18;
             // 
             // tableLayoutPanel1
@@ -88,29 +88,17 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.Controls.Add(btnContraVenta, 2, 0);
             tableLayoutPanel1.Controls.Add(btnPanelAdmin, 0, 0);
             tableLayoutPanel1.Controls.Add(btnVenta, 3, 0);
             tableLayoutPanel1.Controls.Add(btnCaja, 1, 0);
+            tableLayoutPanel1.Controls.Add(btnContraVenta, 2, 0);
             tableLayoutPanel1.Dock = DockStyle.Top;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(1000, 94);
+            tableLayoutPanel1.Size = new Size(1044, 94);
             tableLayoutPanel1.TabIndex = 6;
-            // 
-            // btnContraVenta
-            // 
-            btnContraVenta.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            btnContraVenta.Location = new Point(503, 15);
-            btnContraVenta.MaximumSize = new Size(236, 63);
-            btnContraVenta.MinimumSize = new Size(236, 63);
-            btnContraVenta.Name = "btnContraVenta";
-            btnContraVenta.Size = new Size(236, 63);
-            btnContraVenta.TabIndex = 16;
-            btnContraVenta.Text = "DEVOLUCIÓN / CONTRAASIENTO";
-            btnContraVenta.UseVisualStyleBackColor = true;
             // 
             // btnPanelAdmin
             // 
@@ -128,7 +116,7 @@
             // btnVenta
             // 
             btnVenta.Anchor = AnchorStyles.Right;
-            btnVenta.Location = new Point(761, 15);
+            btnVenta.Location = new Point(805, 15);
             btnVenta.MaximumSize = new Size(236, 63);
             btnVenta.MinimumSize = new Size(236, 63);
             btnVenta.Name = "btnVenta";
@@ -141,7 +129,7 @@
             // btnCaja
             // 
             btnCaja.Anchor = AnchorStyles.Right;
-            btnCaja.Location = new Point(261, 15);
+            btnCaja.Location = new Point(283, 15);
             btnCaja.MaximumSize = new Size(236, 63);
             btnCaja.MinimumSize = new Size(236, 63);
             btnCaja.Name = "btnCaja";
@@ -149,6 +137,18 @@
             btnCaja.TabIndex = 13;
             btnCaja.Text = "CAJA";
             btnCaja.UseVisualStyleBackColor = true;
+            // 
+            // btnContraVenta
+            // 
+            btnContraVenta.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            btnContraVenta.Location = new Point(525, 15);
+            btnContraVenta.MaximumSize = new Size(236, 63);
+            btnContraVenta.MinimumSize = new Size(236, 63);
+            btnContraVenta.Name = "btnContraVenta";
+            btnContraVenta.Size = new Size(236, 63);
+            btnContraVenta.TabIndex = 16;
+            btnContraVenta.Text = "DEVOLUCIÓN / CONTRAASIENTO";
+            btnContraVenta.UseVisualStyleBackColor = true;
             // 
             // pnlInfoInicial
             // 
@@ -159,7 +159,7 @@
             pnlInfoInicial.Controls.Add(dgvGrilla);
             pnlInfoInicial.Location = new Point(3, 3);
             pnlInfoInicial.Name = "pnlInfoInicial";
-            pnlInfoInicial.Size = new Size(997, 455);
+            pnlInfoInicial.Size = new Size(1041, 455);
             pnlInfoInicial.TabIndex = 23;
             // 
             // label2
@@ -180,7 +180,7 @@
             pnlTextos.Controls.Add(label1);
             pnlTextos.Location = new Point(3, 3);
             pnlTextos.Name = "pnlTextos";
-            pnlTextos.Size = new Size(605, 449);
+            pnlTextos.Size = new Size(649, 449);
             pnlTextos.TabIndex = 18;
             // 
             // label1
@@ -200,7 +200,7 @@
             panel1.Controls.Add(pnlInfoInicial);
             panel1.Location = new Point(30, 62);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1003, 580);
+            panel1.Size = new Size(1047, 580);
             panel1.TabIndex = 24;
             // 
             // lblNombreUsuario
@@ -245,7 +245,7 @@
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new Size(1003, 44);
+            tableLayoutPanel2.Size = new Size(1047, 44);
             tableLayoutPanel2.TabIndex = 1;
             // 
             // flowLayoutPanel2
@@ -254,7 +254,7 @@
             flowLayoutPanel2.Controls.Add(lblFechaValor);
             flowLayoutPanel2.Controls.Add(lblFecha);
             flowLayoutPanel2.FlowDirection = FlowDirection.RightToLeft;
-            flowLayoutPanel2.Location = new Point(337, 3);
+            flowLayoutPanel2.Location = new Point(367, 3);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
             flowLayoutPanel2.Size = new Size(328, 38);
             flowLayoutPanel2.TabIndex = 28;
@@ -285,7 +285,7 @@
             flowLayoutPanel3.Controls.Add(lblHora);
             flowLayoutPanel3.Controls.Add(lblHoraValor);
             error.SetIconAlignment(flowLayoutPanel3, ErrorIconAlignment.MiddleLeft);
-            flowLayoutPanel3.Location = new Point(671, 3);
+            flowLayoutPanel3.Location = new Point(715, 3);
             flowLayoutPanel3.Name = "flowLayoutPanel3";
             flowLayoutPanel3.Size = new Size(329, 38);
             flowLayoutPanel3.TabIndex = 29;
@@ -317,7 +317,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ClientSize = new Size(1045, 693);
+            ClientSize = new Size(1089, 693);
             Controls.Add(tableLayoutPanel2);
             Controls.Add(panel1);
             MaximizeBox = true;
