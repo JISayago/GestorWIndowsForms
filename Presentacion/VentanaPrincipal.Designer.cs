@@ -136,6 +136,7 @@
             btnVenta.TabIndex = 12;
             btnVenta.Text = "VENTA";
             btnVenta.UseVisualStyleBackColor = true;
+            btnVenta.Click += btnVenta_Click;
             // 
             // btnCaja
             // 

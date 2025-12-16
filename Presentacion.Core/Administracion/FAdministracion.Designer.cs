@@ -36,6 +36,7 @@
             rUBROSToolStripMenuItem = new ToolStripMenuItem();
             eMPLEADOSToolStripMenuItem = new ToolStripMenuItem();
             lISTADOEMPLEADOSToolStripMenuItem = new ToolStripMenuItem();
+            rOLESToolStripMenuItem = new ToolStripMenuItem();
             cLIENTESToolStripMenuItem = new ToolStripMenuItem();
             lISTADOCLIENTESToolStripMenuItem = new ToolStripMenuItem();
             cUENTASCORRIENTESToolStripMenuItem = new ToolStripMenuItem();
@@ -47,8 +48,9 @@
             tableLayoutPanel1 = new TableLayoutPanel();
             btnVenta = new Button();
             btnMovimientos = new Button();
-            btnComprobantes = new Button();
             btnVolver = new Button();
+            btnComprobantes = new Button();
+            nUEVAOFERTAToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
@@ -72,30 +74,34 @@
             // sTOCKToolStripMenuItem
             // 
             sTOCKToolStripMenuItem.Name = "sTOCKToolStripMenuItem";
-            sTOCKToolStripMenuItem.Size = new Size(180, 22);
+            sTOCKToolStripMenuItem.Size = new Size(143, 22);
             sTOCKToolStripMenuItem.Text = "STOCK";
+            sTOCKToolStripMenuItem.Click += sTOCKToolStripMenuItem_Click;
             // 
             // mARCASToolStripMenuItem
             // 
             mARCASToolStripMenuItem.Name = "mARCASToolStripMenuItem";
-            mARCASToolStripMenuItem.Size = new Size(180, 22);
+            mARCASToolStripMenuItem.Size = new Size(143, 22);
             mARCASToolStripMenuItem.Text = "MARCAS";
+            mARCASToolStripMenuItem.Click += mARCASToolStripMenuItem_Click;
             // 
             // cATEGORIASToolStripMenuItem
             // 
             cATEGORIASToolStripMenuItem.Name = "cATEGORIASToolStripMenuItem";
-            cATEGORIASToolStripMenuItem.Size = new Size(180, 22);
+            cATEGORIASToolStripMenuItem.Size = new Size(143, 22);
             cATEGORIASToolStripMenuItem.Text = "CATEGORIAS";
+            cATEGORIASToolStripMenuItem.Click += cATEGORIASToolStripMenuItem_Click;
             // 
             // rUBROSToolStripMenuItem
             // 
             rUBROSToolStripMenuItem.Name = "rUBROSToolStripMenuItem";
-            rUBROSToolStripMenuItem.Size = new Size(180, 22);
+            rUBROSToolStripMenuItem.Size = new Size(143, 22);
             rUBROSToolStripMenuItem.Text = "RUBROS";
+            rUBROSToolStripMenuItem.Click += rUBROSToolStripMenuItem_Click;
             // 
             // eMPLEADOSToolStripMenuItem
             // 
-            eMPLEADOSToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOEMPLEADOSToolStripMenuItem });
+            eMPLEADOSToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOEMPLEADOSToolStripMenuItem, rOLESToolStripMenuItem });
             eMPLEADOSToolStripMenuItem.Name = "eMPLEADOSToolStripMenuItem";
             eMPLEADOSToolStripMenuItem.Size = new Size(86, 20);
             eMPLEADOSToolStripMenuItem.Text = "EMPLEADOS";
@@ -105,6 +111,14 @@
             lISTADOEMPLEADOSToolStripMenuItem.Name = "lISTADOEMPLEADOSToolStripMenuItem";
             lISTADOEMPLEADOSToolStripMenuItem.Size = new Size(190, 22);
             lISTADOEMPLEADOSToolStripMenuItem.Text = "LISTADO EMPLEADOS";
+            lISTADOEMPLEADOSToolStripMenuItem.Click += lISTADOEMPLEADOSToolStripMenuItem_Click;
+            // 
+            // rOLESToolStripMenuItem
+            // 
+            rOLESToolStripMenuItem.Name = "rOLESToolStripMenuItem";
+            rOLESToolStripMenuItem.Size = new Size(190, 22);
+            rOLESToolStripMenuItem.Text = "ROLES";
+            rOLESToolStripMenuItem.Click += rOLESToolStripMenuItem_Click;
             // 
             // cLIENTESToolStripMenuItem
             // 
@@ -118,16 +132,18 @@
             lISTADOCLIENTESToolStripMenuItem.Name = "lISTADOCLIENTESToolStripMenuItem";
             lISTADOCLIENTESToolStripMenuItem.Size = new Size(196, 22);
             lISTADOCLIENTESToolStripMenuItem.Text = "LISTADO CLIENTES";
+            lISTADOCLIENTESToolStripMenuItem.Click += lISTADOCLIENTESToolStripMenuItem_Click;
             // 
             // cUENTASCORRIENTESToolStripMenuItem
             // 
             cUENTASCORRIENTESToolStripMenuItem.Name = "cUENTASCORRIENTESToolStripMenuItem";
             cUENTASCORRIENTESToolStripMenuItem.Size = new Size(196, 22);
             cUENTASCORRIENTESToolStripMenuItem.Text = "CUENTAS CORRIENTES";
+            cUENTASCORRIENTESToolStripMenuItem.Click += cUENTASCORRIENTESToolStripMenuItem_Click;
             // 
             // oFERTASToolStripMenuItem
             // 
-            oFERTASToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOOFERTASToolStripMenuItem, aCTIVARDESACTIVARToolStripMenuItem });
+            oFERTASToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOOFERTASToolStripMenuItem, aCTIVARDESACTIVARToolStripMenuItem, nUEVAOFERTAToolStripMenuItem });
             oFERTASToolStripMenuItem.Name = "oFERTASToolStripMenuItem";
             oFERTASToolStripMenuItem.Size = new Size(66, 20);
             oFERTASToolStripMenuItem.Text = "OFERTAS";
@@ -137,12 +153,14 @@
             lISTADOOFERTASToolStripMenuItem.Name = "lISTADOOFERTASToolStripMenuItem";
             lISTADOOFERTASToolStripMenuItem.Size = new Size(199, 22);
             lISTADOOFERTASToolStripMenuItem.Text = "LISTADO OFERTAS";
+            lISTADOOFERTASToolStripMenuItem.Click += lISTADOOFERTASToolStripMenuItem_Click;
             // 
             // aCTIVARDESACTIVARToolStripMenuItem
             // 
             aCTIVARDESACTIVARToolStripMenuItem.Name = "aCTIVARDESACTIVARToolStripMenuItem";
             aCTIVARDESACTIVARToolStripMenuItem.Size = new Size(199, 22);
             aCTIVARDESACTIVARToolStripMenuItem.Text = "ACTIVAR / DESACTIVAR";
+            aCTIVARDESACTIVARToolStripMenuItem.Click += aCTIVARDESACTIVARToolStripMenuItem_Click;
             // 
             // cONFIGURACIONToolStripMenuItem
             // 
@@ -156,6 +174,7 @@
             tIPOPAGOToolStripMenuItem.Name = "tIPOPAGOToolStripMenuItem";
             tIPOPAGOToolStripMenuItem.Size = new Size(144, 22);
             tIPOPAGOToolStripMenuItem.Text = "TIPO PAGO??";
+            tIPOPAGOToolStripMenuItem.Click += tIPOPAGOToolStripMenuItem_Click;
             // 
             // tableLayoutPanel1
             // 
@@ -199,18 +218,7 @@
             btnMovimientos.TabIndex = 16;
             btnMovimientos.Text = "MOVIMIENTOS";
             btnMovimientos.UseVisualStyleBackColor = true;
-            // 
-            // btnComprobantes
-            // 
-            btnComprobantes.Anchor = AnchorStyles.Left;
-            btnComprobantes.Location = new Point(774, 15);
-            btnComprobantes.MaximumSize = new Size(236, 63);
-            btnComprobantes.MinimumSize = new Size(236, 63);
-            btnComprobantes.Name = "btnComprobantes";
-            btnComprobantes.Size = new Size(236, 63);
-            btnComprobantes.TabIndex = 15;
-            btnComprobantes.Text = "COMPROBANTES";
-            btnComprobantes.UseVisualStyleBackColor = true;
+            btnMovimientos.Click += btnMovimientos_Click;
             // 
             // btnVolver
             // 
@@ -224,6 +232,25 @@
             btnVolver.Text = "VOLVER AL INICIO";
             btnVolver.UseVisualStyleBackColor = true;
             btnVolver.Click += btnVolver_Click;
+            // 
+            // btnComprobantes
+            // 
+            btnComprobantes.Anchor = AnchorStyles.Left;
+            btnComprobantes.Location = new Point(774, 15);
+            btnComprobantes.MaximumSize = new Size(236, 63);
+            btnComprobantes.MinimumSize = new Size(236, 63);
+            btnComprobantes.Name = "btnComprobantes";
+            btnComprobantes.Size = new Size(236, 63);
+            btnComprobantes.TabIndex = 15;
+            btnComprobantes.Text = "COMPROBANTES";
+            btnComprobantes.UseVisualStyleBackColor = true;
+            // 
+            // nUEVAOFERTAToolStripMenuItem
+            // 
+            nUEVAOFERTAToolStripMenuItem.Name = "nUEVAOFERTAToolStripMenuItem";
+            nUEVAOFERTAToolStripMenuItem.Size = new Size(199, 22);
+            nUEVAOFERTAToolStripMenuItem.Text = "NUEVA OFERTA";
+            nUEVAOFERTAToolStripMenuItem.Click += nUEVAOFERTAToolStripMenuItem_Click;
             // 
             // FAdministracion
             // 
@@ -267,5 +294,7 @@
         private Button btnMovimientos;
         private Button btnComprobantes;
         private Button btnVolver;
+        private ToolStripMenuItem rOLESToolStripMenuItem;
+        private ToolStripMenuItem nUEVAOFERTAToolStripMenuItem;
     }
 }

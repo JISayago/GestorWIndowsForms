@@ -37,102 +37,6 @@ namespace Presentacion
             lblNombreUsuario.Text = _usuarioLogeado.Username.ToUpper();
         }
 
-        private void categoriaToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-            var fCategoria = new FCategoriaConsulta();
-
-            fCategoria.Show();
-        }
-
-        private void empleadoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var fEmpleado = new FEmpleadoConsulta();
-            fEmpleado.Show();
-
-        }
-
-        private void rolesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var FRoles = new FRolConsulta();
-            FRoles.Show();
-        }
-
-        private void marcaToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var fmarca = new FMarcaConsulta();
-
-            fmarca.Show();
-        }
-
-        private void articuloToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            var fProducto = new FProductoConsulta();
-
-            fProducto.Show();
-        }
-        private void tipoPagoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var fTipoPago = new FTipoPagoConsulta();
-            fTipoPago.Show();
-        }
-
-        private void rubroToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var fRubro = new FRubroConsulta();
-            fRubro.Show();
-        }
-
-        private void btnVenta_Click(object sender, EventArgs e)
-        {
-            var FVenta = new FVenta(_usuarioLogeado.PersonaId);
-            FVenta.Show();
-        }
-
-        private void cuentaCorrienteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var FCuentaCorriente = new FCuentaCorrienteConsulta();
-            FCuentaCorriente.Show();
-        }
-
-        private void clienteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var FCliente = new FClienteConsulta();
-            FCliente.Show();
-        }
-
-        private void ofertasToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            /*var FOferta = new FOfertaConsulta();
-            FOferta.Show();*/
-            var FOferta = new FSeleccionTipoOferta();
-            FOferta.Show();
-        }
-
-        private void cuentaCorrienteToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {
-            var FCuentaCorriente = new FCuentaCorrienteConsulta();
-            FCuentaCorriente.Show();
-        }
-
-        private void clienteToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {
-            var FCliente = new FClienteConsulta();
-            FCliente.Show();
-        }
-
-        private void activarDesactivarToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var FActDesac = new FOfertaConsulta(true, "a");
-            FActDesac.Show();
-        }
-
-        private void movimientoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var FMovimiento = new FMovimientoConsulta();
-            FMovimiento.Show();
-        }
-
         private void VentanaPrincipal_Load(object sender, EventArgs e)
         {
             System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
@@ -151,5 +55,13 @@ namespace Presentacion
             var administracion = new FAdministracion();
             administracion.Show();
         }
+
+        private void btnVenta_Click(object sender, EventArgs e)
+        {
+             var FVenta = new FVenta(_usuarioLogeado.PersonaId);
+            FVenta.Show();
+        }
+
+
     }
 }
