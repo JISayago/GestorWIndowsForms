@@ -15,14 +15,14 @@ using System.Threading.Tasks;
 
 namespace Servicios.LogicaNegocio.Venta
 {
-    public class VentaServicio : IVentaServicio
+    public class CajaServicio : IVentaServicio
     {
         private readonly IPdfGenerator _pdf;
 
-        public VentaServicio() : this(new PdfGenerator())
+        public CajaServicio() : this(new PdfGenerator())
         {
         }
-        public VentaServicio(IPdfGenerator pdf)
+        public CajaServicio(IPdfGenerator pdf)
         {
             _pdf = pdf;
         }

@@ -117,7 +117,7 @@ namespace Servicios.LogicaNegocio.Movimiento
         public (EmpleadoDTO empleado, VentaDTO venta, MovimientoDTO movimiento, List<ProductoDTO> productos) CargarDatosMovimiento(long entidadId)
         {
             var movimientoService = new MovimientoServicio();
-            var ventaService = new VentaServicio();
+            var ventaService = new CajaServicio();
             var empleadoService = new EmpleadoServicio();
             var productoServicio = new ProductoServicio();
 

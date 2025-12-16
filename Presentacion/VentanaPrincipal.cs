@@ -1,6 +1,7 @@
 using AccesoDatos.Entidades;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Articulo.Marca;
+using Presentacion.Core.Caja;
 using Presentacion.Core.Categoria;
 using Presentacion.Core.Cliente;
 using Presentacion.Core.CuentaCorriente;
@@ -130,6 +131,12 @@ namespace Presentacion
         {
             var FMovimiento = new FMovimientoConsulta();
             FMovimiento.Show();
+        }
+
+        private void btnCaja_Click(object sender, EventArgs e)
+        {
+            var FCaja = new FCaja();
+            FCaja.Show();
         }
     }
 }

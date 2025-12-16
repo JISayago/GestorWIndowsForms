@@ -86,7 +86,7 @@
             // 
             empleadoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { rolesToolStripMenuItem });
             empleadoToolStripMenuItem.Name = "empleadoToolStripMenuItem";
-            empleadoToolStripMenuItem.Size = new Size(180, 22);
+            empleadoToolStripMenuItem.Size = new Size(164, 22);
             empleadoToolStripMenuItem.Text = "Empleado";
             empleadoToolStripMenuItem.Click += empleadoToolStripMenuItem_Click;
             // 
@@ -100,21 +100,21 @@
             // tipoPagoToolStripMenuItem
             // 
             tipoPagoToolStripMenuItem.Name = "tipoPagoToolStripMenuItem";
-            tipoPagoToolStripMenuItem.Size = new Size(180, 22);
+            tipoPagoToolStripMenuItem.Size = new Size(164, 22);
             tipoPagoToolStripMenuItem.Text = "Tipo Pago";
             tipoPagoToolStripMenuItem.Click += tipoPagoToolStripMenuItem_Click;
             // 
             // gastosToolStripMenuItem
             // 
             gastosToolStripMenuItem.Name = "gastosToolStripMenuItem";
-            gastosToolStripMenuItem.Size = new Size(180, 22);
+            gastosToolStripMenuItem.Size = new Size(164, 22);
             gastosToolStripMenuItem.Text = "Gastos";
             // 
             // cuentaCorrienteToolStripMenuItem
             // 
             cuentaCorrienteToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { clienteToolStripMenuItem });
             cuentaCorrienteToolStripMenuItem.Name = "cuentaCorrienteToolStripMenuItem";
-            cuentaCorrienteToolStripMenuItem.Size = new Size(180, 22);
+            cuentaCorrienteToolStripMenuItem.Size = new Size(164, 22);
             cuentaCorrienteToolStripMenuItem.Text = "Cuenta Corriente";
             cuentaCorrienteToolStripMenuItem.Click += cuentaCorrienteToolStripMenuItem_Click_1;
             // 
@@ -128,7 +128,7 @@
             // movimientoToolStripMenuItem
             // 
             movimientoToolStripMenuItem.Name = "movimientoToolStripMenuItem";
-            movimientoToolStripMenuItem.Size = new Size(180, 22);
+            movimientoToolStripMenuItem.Size = new Size(164, 22);
             movimientoToolStripMenuItem.Text = "Movimiento";
             movimientoToolStripMenuItem.Click += movimientoToolStripMenuItem_Click;
             // 
@@ -231,6 +231,7 @@
             btnCaja.TabIndex = 13;
             btnCaja.Text = "CAJA";
             btnCaja.UseVisualStyleBackColor = true;
+            btnCaja.Click += btnCaja_Click;
             // 
             // btnStock
             // 

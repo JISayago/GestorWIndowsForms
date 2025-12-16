@@ -52,7 +52,7 @@ namespace Presentacion.Core.Venta
         public FVenta(long usuarioLogeadoID)
         {
             InitializeComponent();
-            _ventaServicio = new VentaServicio();
+            _ventaServicio = new CajaServicio();
 
             _movimientoServicio = new MovimientoServicio();
 
