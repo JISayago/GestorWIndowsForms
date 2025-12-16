@@ -94,7 +94,7 @@ namespace Servicios.LogicaNegocio.Venta
                         };
                     }
                 }
-
+                
                 var venta = new AccesoDatos.Entidades.Venta
                 {
                     NumeroVenta = numeroFinal,

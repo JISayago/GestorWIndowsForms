@@ -104,11 +104,13 @@
             Controls.Add(txtUsuario);
             Controls.Add(btnCancelar);
             Controls.Add(btnIngresar);
+            MaximizeBox = false;
             MaximumSize = new Size(438, 250);
+            MinimizeBox = false;
             MinimumSize = new Size(438, 250);
             Name = "LoginForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "LoginForm";
+            Text = "Ingreso al Sistema";
             ResumeLayout(false);
             PerformLayout();
         }

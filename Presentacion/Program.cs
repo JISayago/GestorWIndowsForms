@@ -44,7 +44,7 @@ namespace Presentacion
 
             // Crear la pantalla de carga (no se muestra aún). El evento Shown arrancará la inicialización.
             var mensajeCarga = "Preparando todo lo necesario...";
-            var minSeconds = 3; // <- cambiá a 10 si querés 10 segundos
+            var minSeconds = 2; // <- cambiá a 10 si querés 10 segundos
 
             using (var pantallaCarga = new PantallaCargaEspera(Imagenes.GIFCarga, mensajeCarga))
             {
@@ -89,7 +89,7 @@ namespace Presentacion
                 Application.Run(pantallaCarga);
             }
 
-              var login = new LoginForm();
+            var login = new LoginForm();
             login.ShowDialog();
 
            
