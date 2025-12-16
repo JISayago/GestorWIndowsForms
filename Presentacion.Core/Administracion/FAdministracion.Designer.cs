@@ -51,8 +51,20 @@
             btnMovimientos = new Button();
             btnVolver = new Button();
             btnComprobantes = new Button();
+            pnlInfoInicial = new Panel();
+            dgvGrilla = new DataGridView();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            lblDatosBalances = new Label();
+            lblExtra = new Label();
+            tableLayoutPanel3 = new TableLayoutPanel();
+            lblextra3 = new Label();
+            lblExtra2 = new Label();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
+            pnlInfoInicial.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
+            tableLayoutPanel2.SuspendLayout();
+            tableLayoutPanel3.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -254,11 +266,105 @@
             btnComprobantes.UseVisualStyleBackColor = true;
             btnComprobantes.Click += btnComprobantes_Click;
             // 
+            // pnlInfoInicial
+            // 
+            pnlInfoInicial.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnlInfoInicial.BackColor = SystemColors.ActiveCaption;
+            pnlInfoInicial.Controls.Add(tableLayoutPanel3);
+            pnlInfoInicial.Controls.Add(tableLayoutPanel2);
+            pnlInfoInicial.Controls.Add(dgvGrilla);
+            pnlInfoInicial.Location = new Point(12, 124);
+            pnlInfoInicial.Name = "pnlInfoInicial";
+            pnlInfoInicial.Size = new Size(998, 461);
+            pnlInfoInicial.TabIndex = 24;
+            // 
+            // dgvGrilla
+            // 
+            dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvGrilla.Location = new Point(1412, -3);
+            dgvGrilla.Name = "dgvGrilla";
+            dgvGrilla.Size = new Size(380, 816);
+            dgvGrilla.TabIndex = 17;
+            // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.BackColor = SystemColors.AppWorkspace;
+            tableLayoutPanel2.ColumnCount = 2;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 49.7946625F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.2053375F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 324F));
+            tableLayoutPanel2.Controls.Add(lblExtra, 1, 0);
+            tableLayoutPanel2.Controls.Add(lblDatosBalances, 0, 0);
+            tableLayoutPanel2.Location = new Point(0, 0);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 157F));
+            tableLayoutPanel2.Size = new Size(995, 198);
+            tableLayoutPanel2.TabIndex = 18;
+            // 
+            // lblDatosBalances
+            // 
+            lblDatosBalances.AutoSize = true;
+            lblDatosBalances.Location = new Point(3, 0);
+            lblDatosBalances.Name = "lblDatosBalances";
+            lblDatosBalances.Size = new Size(81, 15);
+            lblDatosBalances.TabIndex = 0;
+            lblDatosBalances.Text = "Datos Balance";
+            // 
+            // lblExtra
+            // 
+            lblExtra.AutoSize = true;
+            lblExtra.Location = new Point(498, 0);
+            lblExtra.Name = "lblExtra";
+            lblExtra.Size = new Size(112, 15);
+            lblExtra.TabIndex = 1;
+            lblExtra.Text = "Grafico con balance";
+            // 
+            // tableLayoutPanel3
+            // 
+            tableLayoutPanel3.BackColor = SystemColors.Highlight;
+            tableLayoutPanel3.ColumnCount = 2;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 49.7946625F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.2053375F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 324F));
+            tableLayoutPanel3.Controls.Add(lblextra3, 1, 0);
+            tableLayoutPanel3.Controls.Add(lblExtra2, 0, 0);
+            tableLayoutPanel3.Location = new Point(6, 216);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 1;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 157F));
+            tableLayoutPanel3.Size = new Size(989, 242);
+            tableLayoutPanel3.TabIndex = 19;
+            // 
+            // lblextra3
+            // 
+            lblextra3.AutoSize = true;
+            lblextra3.Location = new Point(495, 0);
+            lblextra3.Name = "lblextra3";
+            lblextra3.Size = new Size(121, 15);
+            lblextra3.TabIndex = 1;
+            lblextra3.Text = "Otros Datosu graficos";
+            // 
+            // lblExtra2
+            // 
+            lblExtra2.AutoSize = true;
+            lblExtra2.Location = new Point(3, 0);
+            lblExtra2.Name = "lblExtra2";
+            lblExtra2.Size = new Size(69, 15);
+            lblExtra2.TabIndex = 0;
+            lblExtra2.Text = "Otros Datos";
+            // 
             // FAdministracion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1031, 450);
+            ClientSize = new Size(1031, 597);
+            Controls.Add(pnlInfoInicial);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(menuStrip1);
             MaximizeBox = false;
@@ -269,6 +375,12 @@
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
+            pnlInfoInicial.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
+            tableLayoutPanel2.ResumeLayout(false);
+            tableLayoutPanel2.PerformLayout();
+            tableLayoutPanel3.ResumeLayout(false);
+            tableLayoutPanel3.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -298,5 +410,13 @@
         private Button btnVolver;
         private ToolStripMenuItem rOLESToolStripMenuItem;
         private ToolStripMenuItem nUEVAOFERTAToolStripMenuItem;
+        private Panel pnlInfoInicial;
+        private DataGridView dgvGrilla;
+        private TableLayoutPanel tableLayoutPanel3;
+        private Label lblextra3;
+        private Label lblExtra2;
+        private TableLayoutPanel tableLayoutPanel2;
+        private Label lblExtra;
+        private Label lblDatosBalances;
     }
 }
