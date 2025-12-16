@@ -28,24 +28,28 @@
         /// </summary>
         private void InitializeComponent()
         {
-            lblUsuarioLogueado = new Label();
-            lblNombreUsuario = new Label();
             dgvGrilla = new DataGridView();
             PnlBotones = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
-            btnVenta = new Button();
-            btnMovimientos = new Button();
+            btnContraVenta = new Button();
             btnPanelAdmin = new Button();
+            btnVenta = new Button();
             btnCaja = new Button();
-            lblFecha = new Label();
-            lblHora = new Label();
-            lblFechaValor = new Label();
-            lblHoraValor = new Label();
             pnlInfoInicial = new Panel();
             label2 = new Label();
             pnlTextos = new Panel();
             label1 = new Label();
             panel1 = new Panel();
+            lblNombreUsuario = new Label();
+            lblUsuario = new Label();
+            flowLayoutPanel1 = new FlowLayoutPanel();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            flowLayoutPanel2 = new FlowLayoutPanel();
+            lblFechaValor = new Label();
+            lblFecha = new Label();
+            flowLayoutPanel3 = new FlowLayoutPanel();
+            lblHora = new Label();
+            lblHoraValor = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
             PnlBotones.SuspendLayout();
@@ -53,26 +57,11 @@
             pnlInfoInicial.SuspendLayout();
             pnlTextos.SuspendLayout();
             panel1.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
+            flowLayoutPanel2.SuspendLayout();
+            flowLayoutPanel3.SuspendLayout();
             SuspendLayout();
-            // 
-            // lblUsuarioLogueado
-            // 
-            lblUsuarioLogueado.AutoSize = true;
-            lblUsuarioLogueado.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblUsuarioLogueado.Location = new Point(125, 37);
-            lblUsuarioLogueado.Name = "lblUsuarioLogueado";
-            lblUsuarioLogueado.Size = new Size(144, 21);
-            lblUsuarioLogueado.TabIndex = 2;
-            lblUsuarioLogueado.Text = "Usuario Logueado :";
-            // 
-            // lblNombreUsuario
-            // 
-            lblNombreUsuario.AutoSize = true;
-            lblNombreUsuario.Font = new Font("Segoe UI", 11.25F);
-            lblNombreUsuario.Location = new Point(269, 38);
-            lblNombreUsuario.Name = "lblNombreUsuario";
-            lblNombreUsuario.Size = new Size(0, 20);
-            lblNombreUsuario.TabIndex = 3;
             // 
             // dgvGrilla
             // 
@@ -99,10 +88,10 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.Controls.Add(btnVenta, 1, 0);
-            tableLayoutPanel1.Controls.Add(btnMovimientos, 2, 0);
+            tableLayoutPanel1.Controls.Add(btnContraVenta, 2, 0);
             tableLayoutPanel1.Controls.Add(btnPanelAdmin, 0, 0);
-            tableLayoutPanel1.Controls.Add(btnCaja, 3, 0);
+            tableLayoutPanel1.Controls.Add(btnVenta, 3, 0);
+            tableLayoutPanel1.Controls.Add(btnCaja, 1, 0);
             tableLayoutPanel1.Dock = DockStyle.Top;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -111,29 +100,17 @@
             tableLayoutPanel1.Size = new Size(1000, 94);
             tableLayoutPanel1.TabIndex = 6;
             // 
-            // btnVenta
+            // btnContraVenta
             // 
-            btnVenta.Anchor = AnchorStyles.Left;
-            btnVenta.Location = new Point(253, 15);
-            btnVenta.MaximumSize = new Size(236, 63);
-            btnVenta.MinimumSize = new Size(236, 63);
-            btnVenta.Name = "btnVenta";
-            btnVenta.Size = new Size(236, 63);
-            btnVenta.TabIndex = 12;
-            btnVenta.Text = "VENTA";
-            btnVenta.UseVisualStyleBackColor = true;
-            // 
-            // btnMovimientos
-            // 
-            btnMovimientos.Anchor = AnchorStyles.Right;
-            btnMovimientos.Location = new Point(511, 15);
-            btnMovimientos.MaximumSize = new Size(236, 63);
-            btnMovimientos.MinimumSize = new Size(236, 63);
-            btnMovimientos.Name = "btnMovimientos";
-            btnMovimientos.Size = new Size(236, 63);
-            btnMovimientos.TabIndex = 16;
-            btnMovimientos.Text = "MOVIMIENTOS";
-            btnMovimientos.UseVisualStyleBackColor = true;
+            btnContraVenta.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            btnContraVenta.Location = new Point(503, 15);
+            btnContraVenta.MaximumSize = new Size(236, 63);
+            btnContraVenta.MinimumSize = new Size(236, 63);
+            btnContraVenta.Name = "btnContraVenta";
+            btnContraVenta.Size = new Size(236, 63);
+            btnContraVenta.TabIndex = 16;
+            btnContraVenta.Text = "DEVOLUCIÓN / CONTRAASIENTO";
+            btnContraVenta.UseVisualStyleBackColor = true;
             // 
             // btnPanelAdmin
             // 
@@ -148,10 +125,22 @@
             btnPanelAdmin.UseVisualStyleBackColor = true;
             btnPanelAdmin.Click += btnPanelAdmin_Click;
             // 
+            // btnVenta
+            // 
+            btnVenta.Anchor = AnchorStyles.Right;
+            btnVenta.Location = new Point(761, 15);
+            btnVenta.MaximumSize = new Size(236, 63);
+            btnVenta.MinimumSize = new Size(236, 63);
+            btnVenta.Name = "btnVenta";
+            btnVenta.Size = new Size(236, 63);
+            btnVenta.TabIndex = 12;
+            btnVenta.Text = "VENTA";
+            btnVenta.UseVisualStyleBackColor = true;
+            // 
             // btnCaja
             // 
             btnCaja.Anchor = AnchorStyles.Right;
-            btnCaja.Location = new Point(761, 15);
+            btnCaja.Location = new Point(261, 15);
             btnCaja.MaximumSize = new Size(236, 63);
             btnCaja.MinimumSize = new Size(236, 63);
             btnCaja.Name = "btnCaja";
@@ -159,46 +148,6 @@
             btnCaja.TabIndex = 13;
             btnCaja.Text = "CAJA";
             btnCaja.UseVisualStyleBackColor = true;
-            // 
-            // lblFecha
-            // 
-            lblFecha.AutoSize = true;
-            lblFecha.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblFecha.Location = new Point(587, 36);
-            lblFecha.Name = "lblFecha";
-            lblFecha.Size = new Size(57, 21);
-            lblFecha.TabIndex = 19;
-            lblFecha.Text = "Fecha :";
-            // 
-            // lblHora
-            // 
-            lblHora.AutoSize = true;
-            lblHora.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblHora.Location = new Point(795, 36);
-            lblHora.Name = "lblHora";
-            lblHora.Size = new Size(51, 21);
-            lblHora.TabIndex = 20;
-            lblHora.Text = "Hora :";
-            // 
-            // lblFechaValor
-            // 
-            lblFechaValor.AutoSize = true;
-            lblFechaValor.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblFechaValor.Location = new Point(640, 34);
-            lblFechaValor.Name = "lblFechaValor";
-            lblFechaValor.Size = new Size(94, 25);
-            lblFechaValor.TabIndex = 21;
-            lblFechaValor.Text = "00/00/00";
-            // 
-            // lblHoraValor
-            // 
-            lblHoraValor.AutoSize = true;
-            lblHoraValor.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblHoraValor.Location = new Point(841, 33);
-            lblHoraValor.Name = "lblHoraValor";
-            lblHoraValor.Size = new Size(88, 25);
-            lblHoraValor.TabIndex = 22;
-            lblHoraValor.Text = "00:00:00";
             // 
             // pnlInfoInicial
             // 
@@ -253,18 +202,122 @@
             panel1.Size = new Size(1003, 580);
             panel1.TabIndex = 24;
             // 
+            // lblNombreUsuario
+            // 
+            lblNombreUsuario.AutoSize = true;
+            lblNombreUsuario.Location = new Point(134, 0);
+            lblNombreUsuario.Name = "lblNombreUsuario";
+            lblNombreUsuario.Size = new Size(38, 15);
+            lblNombreUsuario.TabIndex = 25;
+            lblNombreUsuario.Text = "label3";
+            // 
+            // lblUsuario
+            // 
+            lblUsuario.AutoSize = true;
+            lblUsuario.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblUsuario.Location = new Point(3, 0);
+            lblUsuario.Name = "lblUsuario";
+            lblUsuario.Size = new Size(125, 20);
+            lblUsuario.TabIndex = 26;
+            lblUsuario.Text = "Usuario Logeado:";
+            // 
+            // flowLayoutPanel1
+            // 
+            flowLayoutPanel1.Controls.Add(lblUsuario);
+            flowLayoutPanel1.Controls.Add(lblNombreUsuario);
+            flowLayoutPanel1.Location = new Point(3, 3);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(328, 38);
+            flowLayoutPanel1.TabIndex = 27;
+            // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel2.ColumnCount = 3;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel2.Controls.Add(flowLayoutPanel1, 0, 0);
+            tableLayoutPanel2.Controls.Add(flowLayoutPanel2, 1, 0);
+            tableLayoutPanel2.Controls.Add(flowLayoutPanel3, 2, 0);
+            tableLayoutPanel2.Location = new Point(33, 12);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel2.Size = new Size(1003, 44);
+            tableLayoutPanel2.TabIndex = 1;
+            // 
+            // flowLayoutPanel2
+            // 
+            flowLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            flowLayoutPanel2.Controls.Add(lblFechaValor);
+            flowLayoutPanel2.Controls.Add(lblFecha);
+            flowLayoutPanel2.FlowDirection = FlowDirection.RightToLeft;
+            flowLayoutPanel2.Location = new Point(337, 3);
+            flowLayoutPanel2.Name = "flowLayoutPanel2";
+            flowLayoutPanel2.Size = new Size(328, 38);
+            flowLayoutPanel2.TabIndex = 28;
+            // 
+            // lblFechaValor
+            // 
+            lblFechaValor.AutoSize = true;
+            lblFechaValor.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblFechaValor.Location = new Point(198, 0);
+            lblFechaValor.Name = "lblFechaValor";
+            lblFechaValor.Size = new Size(127, 30);
+            lblFechaValor.TabIndex = 25;
+            lblFechaValor.Text = "00/00/0000";
+            // 
+            // lblFecha
+            // 
+            lblFecha.AutoSize = true;
+            lblFecha.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblFecha.Location = new Point(120, 0);
+            lblFecha.Name = "lblFecha";
+            lblFecha.Size = new Size(72, 30);
+            lblFecha.TabIndex = 26;
+            lblFecha.Text = "Fecha:";
+            // 
+            // flowLayoutPanel3
+            // 
+            flowLayoutPanel3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            flowLayoutPanel3.Controls.Add(lblHora);
+            flowLayoutPanel3.Controls.Add(lblHoraValor);
+            error.SetIconAlignment(flowLayoutPanel3, ErrorIconAlignment.MiddleLeft);
+            flowLayoutPanel3.Location = new Point(671, 3);
+            flowLayoutPanel3.Name = "flowLayoutPanel3";
+            flowLayoutPanel3.Size = new Size(329, 38);
+            flowLayoutPanel3.TabIndex = 29;
+            // 
+            // lblHora
+            // 
+            lblHora.AutoSize = true;
+            lblHora.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblHora.ImageAlign = ContentAlignment.MiddleLeft;
+            lblHora.Location = new Point(3, 0);
+            lblHora.Name = "lblHora";
+            lblHora.Size = new Size(63, 30);
+            lblHora.TabIndex = 27;
+            lblHora.Text = "Hora:";
+            // 
+            // lblHoraValor
+            // 
+            lblHoraValor.AutoSize = true;
+            lblHoraValor.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblHoraValor.ImageAlign = ContentAlignment.MiddleLeft;
+            lblHoraValor.Location = new Point(72, 0);
+            lblHoraValor.Name = "lblHoraValor";
+            lblHoraValor.Size = new Size(97, 30);
+            lblHoraValor.TabIndex = 25;
+            lblHoraValor.Text = "00:00:00";
+            // 
             // VentanaPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1045, 693);
+            Controls.Add(tableLayoutPanel2);
             Controls.Add(panel1);
-            Controls.Add(lblHoraValor);
-            Controls.Add(lblFechaValor);
-            Controls.Add(lblHora);
-            Controls.Add(lblFecha);
-            Controls.Add(lblNombreUsuario);
-            Controls.Add(lblUsuarioLogueado);
             MinimizeBox = true;
             MinimumSize = new Size(1061, 732);
             Name = "VentanaPrincipal";
@@ -281,28 +334,38 @@
             pnlTextos.ResumeLayout(false);
             pnlTextos.PerformLayout();
             panel1.ResumeLayout(false);
+            flowLayoutPanel1.ResumeLayout(false);
+            flowLayoutPanel1.PerformLayout();
+            tableLayoutPanel2.ResumeLayout(false);
+            flowLayoutPanel2.ResumeLayout(false);
+            flowLayoutPanel2.PerformLayout();
+            flowLayoutPanel3.ResumeLayout(false);
+            flowLayoutPanel3.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-        private Label lblUsuarioLogueado;
-        private Label lblNombreUsuario;
         private DataGridView dgvGrilla;
         private Panel PnlBotones;
-        private Label lblFecha;
-        private Label lblHora;
-        private Label lblFechaValor;
-        private Label lblHoraValor;
         private Panel pnlInfoInicial;
         private Panel pnlTextos;
         private Panel panel1;
         private TableLayoutPanel tableLayoutPanel1;
         private Button btnVenta;
-        private Button btnMovimientos;
+        private Button btnContraVenta;
         private Button btnPanelAdmin;
         private Button btnCaja;
         private Label label2;
         private Label label1;
+        private Label lblNombreUsuario;
+        private Label lblUsuario;
+        private FlowLayoutPanel flowLayoutPanel1;
+        private TableLayoutPanel tableLayoutPanel2;
+        private FlowLayoutPanel flowLayoutPanel2;
+        private Label lblFecha;
+        private Label lblFechaValor;
+        private FlowLayoutPanel flowLayoutPanel3;
+        private Label lblHoraValor;
+        private Label lblHora;
     }
 }

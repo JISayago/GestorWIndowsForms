@@ -44,7 +44,13 @@
             aCTIVARDESACTIVARToolStripMenuItem = new ToolStripMenuItem();
             cONFIGURACIONToolStripMenuItem = new ToolStripMenuItem();
             tIPOPAGOToolStripMenuItem = new ToolStripMenuItem();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            btnVenta = new Button();
+            btnMovimientos = new Button();
+            btnComprobantes = new Button();
+            btnVolver = new Button();
             menuStrip1.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -52,7 +58,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { pRODUCTOToolStripMenuItem, eMPLEADOSToolStripMenuItem, cLIENTESToolStripMenuItem, oFERTASToolStripMenuItem, cONFIGURACIONToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(800, 24);
+            menuStrip1.Size = new Size(1031, 24);
             menuStrip1.TabIndex = 2;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -66,25 +72,25 @@
             // sTOCKToolStripMenuItem
             // 
             sTOCKToolStripMenuItem.Name = "sTOCKToolStripMenuItem";
-            sTOCKToolStripMenuItem.Size = new Size(143, 22);
+            sTOCKToolStripMenuItem.Size = new Size(180, 22);
             sTOCKToolStripMenuItem.Text = "STOCK";
             // 
             // mARCASToolStripMenuItem
             // 
             mARCASToolStripMenuItem.Name = "mARCASToolStripMenuItem";
-            mARCASToolStripMenuItem.Size = new Size(143, 22);
+            mARCASToolStripMenuItem.Size = new Size(180, 22);
             mARCASToolStripMenuItem.Text = "MARCAS";
             // 
             // cATEGORIASToolStripMenuItem
             // 
             cATEGORIASToolStripMenuItem.Name = "cATEGORIASToolStripMenuItem";
-            cATEGORIASToolStripMenuItem.Size = new Size(143, 22);
+            cATEGORIASToolStripMenuItem.Size = new Size(180, 22);
             cATEGORIASToolStripMenuItem.Text = "CATEGORIAS";
             // 
             // rUBROSToolStripMenuItem
             // 
             rUBROSToolStripMenuItem.Name = "rUBROSToolStripMenuItem";
-            rUBROSToolStripMenuItem.Size = new Size(143, 22);
+            rUBROSToolStripMenuItem.Size = new Size(180, 22);
             rUBROSToolStripMenuItem.Text = "RUBROS";
             // 
             // eMPLEADOSToolStripMenuItem
@@ -151,11 +157,80 @@
             tIPOPAGOToolStripMenuItem.Size = new Size(144, 22);
             tIPOPAGOToolStripMenuItem.Text = "TIPO PAGO??";
             // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 4;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.Controls.Add(btnVenta, 1, 0);
+            tableLayoutPanel1.Controls.Add(btnMovimientos, 2, 0);
+            tableLayoutPanel1.Controls.Add(btnVolver, 0, 0);
+            tableLayoutPanel1.Controls.Add(btnComprobantes, 3, 0);
+            tableLayoutPanel1.Dock = DockStyle.Top;
+            tableLayoutPanel1.Location = new Point(0, 24);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Size = new Size(1031, 94);
+            tableLayoutPanel1.TabIndex = 7;
+            // 
+            // btnVenta
+            // 
+            btnVenta.Anchor = AnchorStyles.Left;
+            btnVenta.Location = new Point(260, 15);
+            btnVenta.MaximumSize = new Size(236, 63);
+            btnVenta.MinimumSize = new Size(236, 63);
+            btnVenta.Name = "btnVenta";
+            btnVenta.Size = new Size(236, 63);
+            btnVenta.TabIndex = 12;
+            btnVenta.Text = "VENTA";
+            btnVenta.UseVisualStyleBackColor = true;
+            // 
+            // btnMovimientos
+            // 
+            btnMovimientos.Anchor = AnchorStyles.Right;
+            btnMovimientos.Location = new Point(532, 15);
+            btnMovimientos.MaximumSize = new Size(236, 63);
+            btnMovimientos.MinimumSize = new Size(236, 63);
+            btnMovimientos.Name = "btnMovimientos";
+            btnMovimientos.Size = new Size(236, 63);
+            btnMovimientos.TabIndex = 16;
+            btnMovimientos.Text = "MOVIMIENTOS";
+            btnMovimientos.UseVisualStyleBackColor = true;
+            // 
+            // btnComprobantes
+            // 
+            btnComprobantes.Anchor = AnchorStyles.Left;
+            btnComprobantes.Location = new Point(774, 15);
+            btnComprobantes.MaximumSize = new Size(236, 63);
+            btnComprobantes.MinimumSize = new Size(236, 63);
+            btnComprobantes.Name = "btnComprobantes";
+            btnComprobantes.Size = new Size(236, 63);
+            btnComprobantes.TabIndex = 15;
+            btnComprobantes.Text = "COMPROBANTES";
+            btnComprobantes.UseVisualStyleBackColor = true;
+            // 
+            // btnVolver
+            // 
+            btnVolver.Anchor = AnchorStyles.Right;
+            btnVolver.Location = new Point(18, 15);
+            btnVolver.MaximumSize = new Size(236, 63);
+            btnVolver.MinimumSize = new Size(236, 63);
+            btnVolver.Name = "btnVolver";
+            btnVolver.Size = new Size(236, 63);
+            btnVolver.TabIndex = 13;
+            btnVolver.Text = "VOLVER AL INICIO";
+            btnVolver.UseVisualStyleBackColor = true;
+            btnVolver.Click += btnVolver_Click;
+            // 
             // FAdministracion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1031, 450);
+            Controls.Add(tableLayoutPanel1);
             Controls.Add(menuStrip1);
             MaximizeBox = false;
             Name = "FAdministracion";
@@ -164,6 +239,7 @@
             WindowState = FormWindowState.Maximized;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -186,5 +262,10 @@
         private ToolStripMenuItem aCTIVARDESACTIVARToolStripMenuItem;
         private ToolStripMenuItem cONFIGURACIONToolStripMenuItem;
         private ToolStripMenuItem tIPOPAGOToolStripMenuItem;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Button btnVenta;
+        private Button btnMovimientos;
+        private Button btnComprobantes;
+        private Button btnVolver;
     }
 }

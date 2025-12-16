@@ -16,5 +16,10 @@ namespace Presentacion.Core.Administracion
         {
             InitializeComponent();
         }
+
+        private void btnVolver_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
