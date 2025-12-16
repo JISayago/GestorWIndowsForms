@@ -39,7 +39,7 @@ namespace Presentacion.Core.Venta
         private Label lblRestante;
         private Button btnAceptar;
         private Button btnCancelar;
-        private Panel panelBottom;
+        private System.Windows.Forms.Panel panelBottom;
 
         public FPagoMultiple()
         {
@@ -77,7 +77,7 @@ namespace Presentacion.Core.Venta
             this.Controls.Add(flowPanel);
 
             // Panel inferior para totales y botones
-            panelBottom = new Panel
+            panelBottom = new System.Windows.Forms.Panel
             {
                 Dock = DockStyle.Bottom,
                 Height = 64,
@@ -208,7 +208,7 @@ namespace Presentacion.Core.Venta
                 int idx = i; // <<--- captura local obligatoria
 
                 // Panel fila
-                var panelRow = new Panel
+                var panelRow = new System.Windows.Forms.Panel
                 {
                     Width = this.ClientSize.Width - 24,
                     Height = 36,

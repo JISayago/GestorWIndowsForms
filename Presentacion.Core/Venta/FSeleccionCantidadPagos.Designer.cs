@@ -69,7 +69,7 @@
             // 
             // btnContinuar
             // 
-            btnContinuar.Location = new Point(162, 87);
+            btnContinuar.Location = new Point(70, 87);
             btnContinuar.Name = "btnContinuar";
             btnContinuar.Size = new Size(75, 23);
             btnContinuar.TabIndex = 3;
@@ -79,7 +79,7 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(58, 87);
+            btnCancelar.Location = new Point(161, 87);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(75, 23);
             btnCancelar.TabIndex = 4;

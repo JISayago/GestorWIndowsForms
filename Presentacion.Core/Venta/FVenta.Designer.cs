@@ -55,13 +55,13 @@
             btnConfirmarYFPago = new Button();
             btnCancelar = new Button();
             txtSubtotal = new TextBox();
-            txtDescuento = new TextBox();
+            txtDescuentoEfectivo = new TextBox();
             txtTotal = new TextBox();
             lblDetallesDeVenta = new Label();
             txtAreaDetallesVenta = new TextBox();
             cbxIncluirCtaCte = new CheckBox();
             lblPorcentajeDescuento = new Label();
-            cbxAplicarDescuento = new CheckBox();
+            cbxDescEfectivo = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
             SuspendLayout();
@@ -323,13 +323,13 @@
             txtSubtotal.Size = new Size(93, 23);
             txtSubtotal.TabIndex = 33;
             // 
-            // txtDescuento
+            // txtDescuentoEfectivo
             // 
-            txtDescuento.Location = new Point(993, 466);
-            txtDescuento.Name = "txtDescuento";
-            txtDescuento.Size = new Size(93, 23);
-            txtDescuento.TabIndex = 34;
-            txtDescuento.TextChanged += txtDescuento_TextChanged;
+            txtDescuentoEfectivo.Enabled = false;
+            txtDescuentoEfectivo.Location = new Point(993, 466);
+            txtDescuentoEfectivo.Name = "txtDescuentoEfectivo";
+            txtDescuentoEfectivo.Size = new Size(93, 23);
+            txtDescuentoEfectivo.TabIndex = 34;
             // 
             // txtTotal
             // 
@@ -379,30 +379,28 @@
             lblPorcentajeDescuento.TabIndex = 40;
             lblPorcentajeDescuento.Text = "%";
             // 
-            // cbxAplicarDescuento
+            // cbxDescEfectivo
             // 
-            cbxAplicarDescuento.AutoSize = true;
-            cbxAplicarDescuento.Enabled = false;
-            cbxAplicarDescuento.Location = new Point(763, 469);
-            cbxAplicarDescuento.Name = "cbxAplicarDescuento";
-            cbxAplicarDescuento.Size = new Size(122, 19);
-            cbxAplicarDescuento.TabIndex = 41;
-            cbxAplicarDescuento.Text = "Aplicar Descuento";
-            cbxAplicarDescuento.UseVisualStyleBackColor = true;
-            cbxAplicarDescuento.CheckedChanged += cbxAplicarDescuento_CheckedChanged;
+            cbxDescEfectivo.AutoSize = true;
+            cbxDescEfectivo.Location = new Point(763, 476);
+            cbxDescEfectivo.Name = "cbxDescEfectivo";
+            cbxDescEfectivo.Size = new Size(148, 19);
+            cbxDescEfectivo.TabIndex = 41;
+            cbxDescEfectivo.Text = "Descuento por Efectivo";
+            cbxDescEfectivo.UseVisualStyleBackColor = true;
             // 
             // FVenta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1108, 630);
-            Controls.Add(cbxAplicarDescuento);
+            Controls.Add(cbxDescEfectivo);
             Controls.Add(lblPorcentajeDescuento);
             Controls.Add(cbxIncluirCtaCte);
             Controls.Add(txtAreaDetallesVenta);
             Controls.Add(lblDetallesDeVenta);
             Controls.Add(txtTotal);
-            Controls.Add(txtDescuento);
+            Controls.Add(txtDescuentoEfectivo);
             Controls.Add(txtSubtotal);
             Controls.Add(btnCancelar);
             Controls.Add(btnConfirmarYFPago);
@@ -468,12 +466,12 @@
         private Button btnConfirmarYFPago;
         private Button btnCancelar;
         private TextBox txtSubtotal;
-        private TextBox txtDescuento;
+        private TextBox txtDescuentoEfectivo;
         private TextBox txtTotal;
         private Label lblDetallesDeVenta;
         private TextBox txtAreaDetallesVenta;
         private CheckBox cbxIncluirCtaCte;
         private Label lblPorcentajeDescuento;
-        private CheckBox cbxAplicarDescuento;
+        private CheckBox cbxDescEfectivo;
     }
 }
