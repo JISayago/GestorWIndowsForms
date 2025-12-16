@@ -43,14 +43,14 @@
             oFERTASToolStripMenuItem = new ToolStripMenuItem();
             lISTADOOFERTASToolStripMenuItem = new ToolStripMenuItem();
             aCTIVARDESACTIVARToolStripMenuItem = new ToolStripMenuItem();
+            nUEVAOFERTAToolStripMenuItem = new ToolStripMenuItem();
             cONFIGURACIONToolStripMenuItem = new ToolStripMenuItem();
             tIPOPAGOToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanel1 = new TableLayoutPanel();
-            btnVenta = new Button();
+            btnGasto = new Button();
             btnMovimientos = new Button();
             btnVolver = new Button();
             btnComprobantes = new Button();
-            nUEVAOFERTAToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
@@ -162,6 +162,13 @@
             aCTIVARDESACTIVARToolStripMenuItem.Text = "ACTIVAR / DESACTIVAR";
             aCTIVARDESACTIVARToolStripMenuItem.Click += aCTIVARDESACTIVARToolStripMenuItem_Click;
             // 
+            // nUEVAOFERTAToolStripMenuItem
+            // 
+            nUEVAOFERTAToolStripMenuItem.Name = "nUEVAOFERTAToolStripMenuItem";
+            nUEVAOFERTAToolStripMenuItem.Size = new Size(199, 22);
+            nUEVAOFERTAToolStripMenuItem.Text = "NUEVA OFERTA";
+            nUEVAOFERTAToolStripMenuItem.Click += nUEVAOFERTAToolStripMenuItem_Click;
+            // 
             // cONFIGURACIONToolStripMenuItem
             // 
             cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tIPOPAGOToolStripMenuItem });
@@ -183,7 +190,7 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.Controls.Add(btnVenta, 1, 0);
+            tableLayoutPanel1.Controls.Add(btnGasto, 1, 0);
             tableLayoutPanel1.Controls.Add(btnMovimientos, 2, 0);
             tableLayoutPanel1.Controls.Add(btnVolver, 0, 0);
             tableLayoutPanel1.Controls.Add(btnComprobantes, 3, 0);
@@ -195,17 +202,18 @@
             tableLayoutPanel1.Size = new Size(1031, 94);
             tableLayoutPanel1.TabIndex = 7;
             // 
-            // btnVenta
+            // btnGasto
             // 
-            btnVenta.Anchor = AnchorStyles.Left;
-            btnVenta.Location = new Point(260, 15);
-            btnVenta.MaximumSize = new Size(236, 63);
-            btnVenta.MinimumSize = new Size(236, 63);
-            btnVenta.Name = "btnVenta";
-            btnVenta.Size = new Size(236, 63);
-            btnVenta.TabIndex = 12;
-            btnVenta.Text = "VENTA";
-            btnVenta.UseVisualStyleBackColor = true;
+            btnGasto.Anchor = AnchorStyles.Left;
+            btnGasto.Location = new Point(260, 15);
+            btnGasto.MaximumSize = new Size(236, 63);
+            btnGasto.MinimumSize = new Size(236, 63);
+            btnGasto.Name = "btnGasto";
+            btnGasto.Size = new Size(236, 63);
+            btnGasto.TabIndex = 12;
+            btnGasto.Text = "GASTO";
+            btnGasto.UseVisualStyleBackColor = true;
+            btnGasto.Click += btnGasto_Click;
             // 
             // btnMovimientos
             // 
@@ -244,13 +252,7 @@
             btnComprobantes.TabIndex = 15;
             btnComprobantes.Text = "COMPROBANTES";
             btnComprobantes.UseVisualStyleBackColor = true;
-            // 
-            // nUEVAOFERTAToolStripMenuItem
-            // 
-            nUEVAOFERTAToolStripMenuItem.Name = "nUEVAOFERTAToolStripMenuItem";
-            nUEVAOFERTAToolStripMenuItem.Size = new Size(199, 22);
-            nUEVAOFERTAToolStripMenuItem.Text = "NUEVA OFERTA";
-            nUEVAOFERTAToolStripMenuItem.Click += nUEVAOFERTAToolStripMenuItem_Click;
+            btnComprobantes.Click += btnComprobantes_Click;
             // 
             // FAdministracion
             // 
@@ -290,7 +292,7 @@
         private ToolStripMenuItem cONFIGURACIONToolStripMenuItem;
         private ToolStripMenuItem tIPOPAGOToolStripMenuItem;
         private TableLayoutPanel tableLayoutPanel1;
-        private Button btnVenta;
+        private Button btnGasto;
         private Button btnMovimientos;
         private Button btnComprobantes;
         private Button btnVolver;

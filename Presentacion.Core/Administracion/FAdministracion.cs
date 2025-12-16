@@ -84,8 +84,8 @@ namespace Presentacion.Core.Administracion
             //ver porque creo q falta una pantalla intermedia entre creacion y listado
 
             var FOferta = new FOfertaConsulta();
-         FOferta.Show();
-          
+            FOferta.Show();
+
         }
 
         private void aCTIVARDESACTIVARToolStripMenuItem_Click(object sender, EventArgs e)
@@ -116,6 +116,17 @@ namespace Presentacion.Core.Administracion
         {
             var FOferta = new FSeleccionTipoOferta();
             FOferta.Show();
+        }
+
+        private void btnGasto_Click(object sender, EventArgs e)
+        {
+            //CONSULTA GASTO
+
+        }
+
+        private void btnComprobantes_Click(object sender, EventArgs e)
+        {
+            // PODER ABRIR UNA CARPETA TAL VEZ CON COMPROBANTES GUARDADOS
         }
     }
 }
