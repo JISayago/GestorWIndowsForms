@@ -34,8 +34,7 @@
             lblUsuario = new Label();
             lblLocalAsignado = new Label();
             lblLocal = new Label();
-            button1 = new Button();
-            button2 = new Button();
+            btnLimpiar = new Button();
             txtCliente = new TextBox();
             btnCargarCliente = new Button();
             cbxConsumidorFinal = new CheckBox();
@@ -120,23 +119,15 @@
             lblLocal.TabIndex = 4;
             lblLocal.Text = "Local:";
             // 
-            // button1
+            // btnLimpiar
             // 
-            button1.Location = new Point(32, 581);
-            button1.Name = "button1";
-            button1.Size = new Size(161, 42);
-            button1.TabIndex = 6;
-            button1.Text = "Ultimas Ventas";
-            button1.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            button2.Location = new Point(210, 581);
-            button2.Name = "button2";
-            button2.Size = new Size(161, 42);
-            button2.TabIndex = 7;
-            button2.Text = "Cancelación / Devolución";
-            button2.UseVisualStyleBackColor = true;
+            btnLimpiar.Location = new Point(32, 576);
+            btnLimpiar.Name = "btnLimpiar";
+            btnLimpiar.Size = new Size(161, 42);
+            btnLimpiar.TabIndex = 7;
+            btnLimpiar.Text = "Limpiar";
+            btnLimpiar.UseVisualStyleBackColor = true;
+            btnLimpiar.Click += btnLimpiar_Click;
             // 
             // txtCliente
             // 
@@ -420,8 +411,7 @@
             Controls.Add(cbxConsumidorFinal);
             Controls.Add(btnCargarCliente);
             Controls.Add(txtCliente);
-            Controls.Add(button2);
-            Controls.Add(button1);
+            Controls.Add(btnLimpiar);
             Controls.Add(lblLocalAsignado);
             Controls.Add(lblLocal);
             Controls.Add(lblUsuarioLogeadoName);
@@ -446,7 +436,7 @@
         private Label lblLocalAsignado;
         private Label lblLocal;
         private Button button1;
-        private Button button2;
+        private Button btnLimpiar;
         private TextBox txtCliente;
         private Button btnCargarCliente;
         private CheckBox cbxConsumidorFinal;

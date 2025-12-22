@@ -72,43 +72,7 @@ namespace Presentacion.Core.Venta
 
         private void FVenta_Load(object sender, EventArgs e)
         {
-            _ventaServicio.GenerateNextNumeroVenta();
-            lblNro.Text = _ventaServicio.GenerateNextNumeroVenta().ToString();
-            System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
-            MyTimer.Interval = 1000;
-            MyTimer.Tick += new EventHandler(MyTimer_Tick);
-            MyTimer.Start();
-
-            var usuarioLogeado = _empleadoServicio.ObtenerEmpleadoPorId(_usuarioLogeadoID);
-            _usuarioLogeado = new UsuarioLogeado
-            {
-                PersonaId = usuarioLogeado.PersonaId,
-                Username = usuarioLogeado.Username,
-                Nombre = usuarioLogeado.Nombre,
-                Apellido = usuarioLogeado.Apellido,
-            };
-            lblUsuarioLogeadoName.Text = _usuarioLogeado.Username;
-            cbxConsumidorFinal.Checked = true;
-            esConsumidorFinal = true;
-            cbxUsuarioLogeado.Checked = true;
-            esUsuarioLogeado = true;
-            idVendedor = _usuarioLogeadoID; // Asignamos el ID del usuario logueado como vendedor por defecto
-            btnCargarVendedor.Enabled = false;
-            btnCargarCliente.Enabled = false;
-            cbxIncluirCtaCte.Checked = true;
-            dgvProductos.AllowUserToAddRows = false;
-            CalcularTotal();
-            txtSubtotal.Text = _subTotalVenta.ToString("C2");
-            txtTotal.Text = _totalVenta.ToString("C2");
-            ActualizarCamposInicio();
-            itemsVenta = new BindingList<ItemVentaDTO>();
-            dgvProductos.DataSource = itemsVenta;  // bind directo
-            ResetearGrilla(dgvProductos);
-            if (idCliente < 0)
-            {
-                cbxIncluirCtaCte.Checked = false;
-                cbxIncluirCtaCte.Enabled = false;
-            }
+            InicializarYLimpiarCampos();
         }
         private void MyTimer_Tick(object sender, EventArgs e)
         {
@@ -582,5 +546,50 @@ namespace Presentacion.Core.Venta
             }
         }
 
+        private void btnLimpiar_Click(object sender, EventArgs e)
+        {
+            InicializarYLimpiarCampos();
+        }
+
+        private void InicializarYLimpiarCampos()
+        {
+            itemsVenta = new BindingList<ItemVentaDTO>();
+            dgvProductos.DataSource = itemsVenta;  // bind directo
+            ResetearGrilla(dgvProductos);
+            ActualizarCamposInicio();
+            CalcularTotal();
+            _ventaServicio.GenerateNextNumeroVenta();
+            lblNro.Text = _ventaServicio.GenerateNextNumeroVenta().ToString();
+            System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
+            MyTimer.Interval = 1000;
+            MyTimer.Tick += new EventHandler(MyTimer_Tick);
+            MyTimer.Start();
+
+            var usuarioLogeado = _empleadoServicio.ObtenerEmpleadoPorId(_usuarioLogeadoID);
+            _usuarioLogeado = new UsuarioLogeado
+            {
+                PersonaId = usuarioLogeado.PersonaId,
+                Username = usuarioLogeado.Username,
+                Nombre = usuarioLogeado.Nombre,
+                Apellido = usuarioLogeado.Apellido,
+            };
+            lblUsuarioLogeadoName.Text = _usuarioLogeado.Username;
+            cbxConsumidorFinal.Checked = true;
+            esConsumidorFinal = true;
+            cbxUsuarioLogeado.Checked = true;
+            esUsuarioLogeado = true;
+            idVendedor = _usuarioLogeadoID; // Asignamos el ID del usuario logueado como vendedor por defecto
+            btnCargarVendedor.Enabled = false;
+            btnCargarCliente.Enabled = false;
+            cbxIncluirCtaCte.Checked = true;
+            dgvProductos.AllowUserToAddRows = false;
+            txtSubtotal.Text = _subTotalVenta.ToString("C2");
+            txtTotal.Text = _totalVenta.ToString("C2");
+            if (idCliente < 0)
+            {
+                cbxIncluirCtaCte.Checked = false;
+                cbxIncluirCtaCte.Enabled = false;
+            }
+        }
     }
 }
