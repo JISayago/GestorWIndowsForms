@@ -358,6 +358,11 @@ namespace Presentacion.Core.Venta
                         itemsVenta.Add(itemVenta);  // Solo agregamos a la BindingList
                         txtProductoCargado.Text = $"{itemVenta.Descripcion}";
                         // No necesitas reasignar DataSource ni resetear grilla acá
+                        if (cbxDescEfectivo.Checked)
+                        {
+                            ValidarCantidadySiEsOferta();
+                            AplicarDescuentoEfectivo();
+                        }
                         CalcularTotal();
                     }
                 }
@@ -386,8 +391,8 @@ namespace Presentacion.Core.Venta
                     itemsVenta.Add(OfertaVenta);  // Solo agregamos a la BindingList
                     txtProductoCargado.Text = $"{OfertaVenta.Descripcion}";
                     // No necesitas reasignar DataSource ni resetear grilla acá
+                    ValidarCantidadySiEsOferta();
                     CalcularTotal();
-
                 }
 
             }
@@ -583,6 +588,7 @@ namespace Presentacion.Core.Venta
             btnCargarCliente.Enabled = false;
             cbxIncluirCtaCte.Checked = true;
             dgvProductos.AllowUserToAddRows = false;
+            cbxDescEfectivo.Checked = false;
             txtSubtotal.Text = _subTotalVenta.ToString("C2");
             txtTotal.Text = _totalVenta.ToString("C2");
             if (idCliente < 0)
@@ -590,6 +596,59 @@ namespace Presentacion.Core.Venta
                 cbxIncluirCtaCte.Checked = false;
                 cbxIncluirCtaCte.Enabled = false;
             }
+        }
+
+        private bool _suspendCbxDesc = false;
+
+        private void cbxDescEfectivo_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suspendCbxDesc) return;
+
+            ValidarCantidadySiEsOferta();
+            
+
+            txtDescuentoEfectivo.Enabled = cbxDescEfectivo.Checked;
+        }
+        private void ValidarCantidadySiEsOferta()
+        {
+            if (itemsVenta.Count < 1)
+            {
+                _suspendCbxDesc = true;
+                cbxDescEfectivo.Checked = false;               // no volverá a ejecutar la lógica porque la bandera lo evita
+                _suspendCbxDesc = false;
+                MessageBox.Show("Debe cargar al menos un producto para aplicar un descuento.");
+                return;
+            }
+
+            if (itemsVenta.Any(iv => iv.EsOferta))
+            {
+                _suspendCbxDesc = true;
+                cbxDescEfectivo.Checked = false;
+                txtDescuentoEfectivo.Text = string.Empty;
+                txtDescuentoEfectivo.Enabled = false;
+                _suspendCbxDesc = false;
+                MessageBox.Show("No se puede aplicar descuento por efectivo cuando hay ofertas en la venta.");
+                return;
+            }
+        }
+
+        private void txtDescuentoEfectivo_TextChanged(object sender, EventArgs e)
+        {
+            AplicarDescuentoEfectivo();
+        }
+        private void AplicarDescuentoEfectivo()
+        {
+            if (!decimal.TryParse(txtDescuentoEfectivo.Text, out decimal porcentajeDesc))
+                return;
+
+            if (porcentajeDesc <= 0 || porcentajeDesc > 100)
+                return;
+
+            decimal totalVenta = itemsVenta.Sum(i => i.PrecioVenta * i.Cantidad); // o la propiedad que uses
+            decimal descuento = totalVenta * (porcentajeDesc / 100m);
+            decimal totalConDescuento = totalVenta - descuento;
+
+            txtTotal.Text = totalConDescuento.ToString("N2");
         }
     }
 }

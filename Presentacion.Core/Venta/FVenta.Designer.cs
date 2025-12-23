@@ -321,6 +321,7 @@
             txtDescuentoEfectivo.Name = "txtDescuentoEfectivo";
             txtDescuentoEfectivo.Size = new Size(93, 23);
             txtDescuentoEfectivo.TabIndex = 34;
+            txtDescuentoEfectivo.TextChanged += txtDescuentoEfectivo_TextChanged;
             // 
             // txtTotal
             // 
@@ -379,6 +380,7 @@
             cbxDescEfectivo.TabIndex = 41;
             cbxDescEfectivo.Text = "Descuento por Efectivo";
             cbxDescEfectivo.UseVisualStyleBackColor = true;
+            cbxDescEfectivo.CheckedChanged += cbxDescEfectivo_CheckedChanged;
             // 
             // FVenta
             // 
