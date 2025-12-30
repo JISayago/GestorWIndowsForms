@@ -21,9 +21,5 @@ namespace Presentacion.Core.Caja
 
 
         }
-
-        private void btnAbrirCaja_Click(object sender, EventArgs e)
-        {
-        }
     }
 }

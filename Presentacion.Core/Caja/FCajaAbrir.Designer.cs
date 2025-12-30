@@ -31,8 +31,8 @@
             txtMontoApertura = new TextBox();
             lblMontoApertura = new Label();
             btnAbrirCaja = new Button();
-            lblUsuario = new Label();
             lblUsuarioLogeado = new Label();
+            lblUsuario = new Label();
             SuspendLayout();
             // 
             // txtMontoApertura
@@ -61,15 +61,6 @@
             btnAbrirCaja.UseVisualStyleBackColor = true;
             btnAbrirCaja.Click += btnAbrirCaja_Click;
             // 
-            // lblUsuario
-            // 
-            lblUsuario.AutoSize = true;
-            lblUsuario.Location = new Point(8, 27);
-            lblUsuario.Name = "lblUsuario";
-            lblUsuario.Size = new Size(96, 15);
-            lblUsuario.TabIndex = 3;
-            lblUsuario.Text = "Usuario Logeado";
-            // 
             // lblUsuarioLogeado
             // 
             lblUsuarioLogeado.AutoSize = true;
@@ -78,6 +69,15 @@
             lblUsuarioLogeado.Size = new Size(38, 15);
             lblUsuarioLogeado.TabIndex = 4;
             lblUsuarioLogeado.Text = "label2";
+            // 
+            // lblUsuario
+            // 
+            lblUsuario.AutoSize = true;
+            lblUsuario.Location = new Point(8, 27);
+            lblUsuario.Name = "lblUsuario";
+            lblUsuario.Size = new Size(96, 15);
+            lblUsuario.TabIndex = 3;
+            lblUsuario.Text = "Usuario Logeado";
             // 
             // FCajaAbrir
             // 
@@ -90,6 +90,7 @@
             Controls.Add(lblMontoApertura);
             Controls.Add(txtMontoApertura);
             Name = "FCajaAbrir";
+            StartPosition = FormStartPosition.CenterParent;
             Text = "FCajaAbrir";
             ResumeLayout(false);
             PerformLayout();
@@ -100,7 +101,7 @@
         private TextBox txtMontoApertura;
         private Label lblMontoApertura;
         private Button btnAbrirCaja;
-        private Label lblUsuario;
         private Label lblUsuarioLogeado;
+        private Label lblUsuario;
     }
 }

@@ -137,6 +137,7 @@
             btnCaja.TabIndex = 13;
             btnCaja.Text = "CAJA";
             btnCaja.UseVisualStyleBackColor = true;
+            btnCaja.Click += btnCaja_Click;
             // 
             // btnContraVenta
             // 

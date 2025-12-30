@@ -61,10 +61,14 @@ namespace Presentacion
 
         private void btnVenta_Click(object sender, EventArgs e)
         {
-             var FVenta = new FVenta(_usuarioLogeado.PersonaId);
+            var FVenta = new FVenta(_usuarioLogeado.PersonaId);
             FVenta.Show();
         }
 
-
+        private void btnCaja_Click(object sender, EventArgs e)
+        {
+            var fCaja = new FCaja();
+            fCaja.Show();
+        }
     }
 }

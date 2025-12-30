@@ -32,11 +32,12 @@
             btnConsultarCajas = new Button();
             btnCerrarCaja = new Button();
             btnAbrirCaja = new Button();
+            lblEstadoCaja = new Label();
             SuspendLayout();
             // 
             // btnConsultarMovimientos
             // 
-            btnConsultarMovimientos.Location = new Point(67, 218);
+            btnConsultarMovimientos.Location = new Point(33, 133);
             btnConsultarMovimientos.Name = "btnConsultarMovimientos";
             btnConsultarMovimientos.Size = new Size(193, 24);
             btnConsultarMovimientos.TabIndex = 7;
@@ -45,7 +46,7 @@
             // 
             // btnConsultarCajas
             // 
-            btnConsultarCajas.Location = new Point(67, 188);
+            btnConsultarCajas.Location = new Point(33, 103);
             btnConsultarCajas.Name = "btnConsultarCajas";
             btnConsultarCajas.Size = new Size(193, 24);
             btnConsultarCajas.TabIndex = 6;
@@ -54,16 +55,17 @@
             // 
             // btnCerrarCaja
             // 
-            btnCerrarCaja.Location = new Point(165, 159);
+            btnCerrarCaja.Location = new Point(131, 74);
             btnCerrarCaja.Name = "btnCerrarCaja";
             btnCerrarCaja.Size = new Size(95, 23);
             btnCerrarCaja.TabIndex = 5;
             btnCerrarCaja.Text = "Cerrar Caja";
             btnCerrarCaja.UseVisualStyleBackColor = true;
+            btnCerrarCaja.Click += btnCerrarCaja_Click;
             // 
             // btnAbrirCaja
             // 
-            btnAbrirCaja.Location = new Point(67, 159);
+            btnAbrirCaja.Location = new Point(33, 74);
             btnAbrirCaja.Name = "btnAbrirCaja";
             btnAbrirCaja.Size = new Size(95, 23);
             btnAbrirCaja.TabIndex = 4;
@@ -71,18 +73,31 @@
             btnAbrirCaja.UseVisualStyleBackColor = true;
             btnAbrirCaja.Click += btnAbrirCaja_Click;
             // 
+            // lblEstadoCaja
+            // 
+            lblEstadoCaja.AutoSize = true;
+            lblEstadoCaja.Location = new Point(92, 37);
+            lblEstadoCaja.Name = "lblEstadoCaja";
+            lblEstadoCaja.Size = new Size(65, 15);
+            lblEstadoCaja.TabIndex = 8;
+            lblEstadoCaja.Text = "estadoCaja";
+            // 
             // FCaja
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(341, 282);
+            ClientSize = new Size(263, 187);
+            Controls.Add(lblEstadoCaja);
             Controls.Add(btnConsultarMovimientos);
             Controls.Add(btnConsultarCajas);
             Controls.Add(btnCerrarCaja);
             Controls.Add(btnAbrirCaja);
             Name = "FCaja";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FCaja";
+            Load += FCaja_Load;
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -91,5 +106,6 @@
         private Button btnConsultarCajas;
         private Button btnCerrarCaja;
         private Button btnAbrirCaja;
+        private Label lblEstadoCaja;
     }
 }

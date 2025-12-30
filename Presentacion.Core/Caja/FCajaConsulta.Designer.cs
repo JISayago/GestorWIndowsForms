@@ -28,68 +28,89 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnAbrirCaja = new Button();
-            btnCerrarCaja = new Button();
-            btnConsultarCajas = new Button();
-            btnConsultarMovimientos = new Button();
+            dataGridView1 = new DataGridView();
+            dtpAbierta = new DateTimePicker();
+            dtpCerrada = new DateTimePicker();
+            label1 = new Label();
+            label2 = new Label();
+            btnBuscar = new Button();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
-            // btnAbrirCaja
+            // dataGridView1
             // 
-            btnAbrirCaja.Location = new Point(47, 144);
-            btnAbrirCaja.Name = "btnAbrirCaja";
-            btnAbrirCaja.Size = new Size(95, 23);
-            btnAbrirCaja.TabIndex = 0;
-            btnAbrirCaja.Text = "Abrir Caja";
-            btnAbrirCaja.UseVisualStyleBackColor = true;
-            btnAbrirCaja.Click += btnAbrirCaja_Click;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Location = new Point(12, 99);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.Size = new Size(602, 254);
+            dataGridView1.TabIndex = 0;
             // 
-            // btnCerrarCaja
+            // dtpAbierta
             // 
-            btnCerrarCaja.Location = new Point(145, 144);
-            btnCerrarCaja.Name = "btnCerrarCaja";
-            btnCerrarCaja.Size = new Size(95, 23);
-            btnCerrarCaja.TabIndex = 1;
-            btnCerrarCaja.Text = "Cerrar Caja";
-            btnCerrarCaja.UseVisualStyleBackColor = true;
+            dtpAbierta.Location = new Point(75, 15);
+            dtpAbierta.Name = "dtpAbierta";
+            dtpAbierta.Size = new Size(200, 23);
+            dtpAbierta.TabIndex = 1;
             // 
-            // btnConsultarCajas
+            // dtpCerrada
             // 
-            btnConsultarCajas.Location = new Point(47, 173);
-            btnConsultarCajas.Name = "btnConsultarCajas";
-            btnConsultarCajas.Size = new Size(193, 24);
-            btnConsultarCajas.TabIndex = 2;
-            btnConsultarCajas.Text = "Consulta Cajas";
-            btnConsultarCajas.UseVisualStyleBackColor = true;
+            dtpCerrada.Location = new Point(75, 53);
+            dtpCerrada.Name = "dtpCerrada";
+            dtpCerrada.Size = new Size(200, 23);
+            dtpCerrada.TabIndex = 2;
             // 
-            // btnConsultarMovimientos
+            // label1
             // 
-            btnConsultarMovimientos.Location = new Point(47, 203);
-            btnConsultarMovimientos.Name = "btnConsultarMovimientos";
-            btnConsultarMovimientos.Size = new Size(193, 24);
-            btnConsultarMovimientos.TabIndex = 3;
-            btnConsultarMovimientos.Text = "Consultar Movimientos";
-            btnConsultarMovimientos.UseVisualStyleBackColor = true;
+            label1.AutoSize = true;
+            label1.Location = new Point(12, 21);
+            label1.Name = "label1";
+            label1.Size = new Size(57, 15);
+            label1.TabIndex = 3;
+            label1.Text = "Abierta el";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(9, 59);
+            label2.Name = "label2";
+            label2.Size = new Size(60, 15);
+            label2.TabIndex = 4;
+            label2.Text = "Cerrada el";
+            // 
+            // btnBuscar
+            // 
+            btnBuscar.Location = new Point(281, 35);
+            btnBuscar.Name = "btnBuscar";
+            btnBuscar.Size = new Size(75, 23);
+            btnBuscar.TabIndex = 5;
+            btnBuscar.Text = "Buscar";
+            btnBuscar.UseVisualStyleBackColor = true;
             // 
             // FCajaConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(295, 269);
-            Controls.Add(btnConsultarMovimientos);
-            Controls.Add(btnConsultarCajas);
-            Controls.Add(btnCerrarCaja);
-            Controls.Add(btnAbrirCaja);
+            ClientSize = new Size(627, 365);
+            Controls.Add(btnBuscar);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(dtpCerrada);
+            Controls.Add(dtpAbierta);
+            Controls.Add(dataGridView1);
             Name = "FCajaConsulta";
             Text = "FCajaConsulta";
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
-        private Button btnAbrirCaja;
-        private Button btnCerrarCaja;
-        private Button btnConsultarCajas;
-        private Button btnConsultarMovimientos;
+        private DataGridView dataGridView1;
+        private DateTimePicker dtpAbierta;
+        private DateTimePicker dtpCerrada;
+        private Label label1;
+        private Label label2;
+        private Button btnBuscar;
     }
 }

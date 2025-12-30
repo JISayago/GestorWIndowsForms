@@ -6,6 +6,7 @@ using Presentacion.Core.Categoria;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
 using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers;
 using Servicios.Helpers.DatosObligatorios;
@@ -23,6 +24,7 @@ namespace Presentacion
         [STAThread]
         static void Main()
         {
+            Presentacion.FBase.Helpers.DatosSistema.UsuarioId = 0;
             bool estadoIniciado = false;
             ApplicationConfiguration.Initialize();
 
@@ -127,6 +129,9 @@ namespace Presentacion
 
             if (login.PuedeAccederAlSistema)
             {
+                DatosSistema.UsuarioId = login._usuarioLogeado.PersonaId;
+                DatosSistema.NombreUsuario = login._usuarioLogeado.Nombre + " " + login._usuarioLogeado.Apellido;
+
                 Application.Run(new VentanaPrincipal(login._usuarioLogeado));
             }
             else
