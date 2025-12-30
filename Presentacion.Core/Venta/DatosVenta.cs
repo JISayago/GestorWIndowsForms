@@ -10,5 +10,7 @@ namespace Presentacion.Core.Venta
     {
         public decimal Total { get; set; }
         public bool IncluirCtaCte { get; set; }
+
+        public bool DescuentoEfectivo { get; set; }
     }
 }

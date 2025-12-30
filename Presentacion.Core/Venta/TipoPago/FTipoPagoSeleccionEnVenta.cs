@@ -18,6 +18,7 @@ namespace Presentacion.Core.Venta.TipoPago
     {
         public TipoDePago tipoPagoSeleccionado { get; private set; }
         public bool _incluirCtaCte { get; private set; }
+        public bool _descuentoEfectivo { get; private set; }
         public List<FormaPago> _pagos { get; private set; }
         private int _indexActual; // índice que estamos editando (puede ser -1 si es nuevo)
         private long idCliente;
@@ -25,10 +26,11 @@ namespace Presentacion.Core.Venta.TipoPago
         // array de límites: si ya lo tenés en otro lado, usá ese. Aquí lo dejo como ejemplo.
         private readonly int[] listPagosCantidades = new int[8] { 1, 2, 1, 1, 1, 1, 1, 1 };
 
-        public FTipoPagoSeleccionEnVenta(bool incluirCtaCte, List<FormaPago> pagos, int indexActual, long? clienteCargado)
+        public FTipoPagoSeleccionEnVenta(DatosVenta dv, List<FormaPago> pagos, int indexActual, long? clienteCargado)
         {
             InitializeComponent();
-            _incluirCtaCte = incluirCtaCte;
+            _incluirCtaCte = dv.IncluirCtaCte;
+            _descuentoEfectivo = dv.DescuentoEfectivo;
             _pagos = pagos;
             _indexActual = indexActual;
             idCliente = (long)clienteCargado;
@@ -127,6 +129,21 @@ namespace Presentacion.Core.Venta.TipoPago
             {
                 btnCtaCte.Visible = false;
                 btnCtaCte.Enabled = false;
+            }
+            if (_descuentoEfectivo)
+            {
+                btnCheque.Visible = false;
+                btnCheque.Enabled = false;
+                btnCredito.Enabled = false;
+                btnCredito.Visible = false;
+                btnCtaCte.Visible = false;
+                btnCtaCte.Enabled = false;
+                btnDébito.Enabled = false;
+                btnDébito.Visible = false;
+                btnQR.Enabled = false;
+                btnQR.Visible = false;
+                btnTransferencia.Enabled = false;
+                btnTransferencia.Visible = false;
             }
         }
 

@@ -24,6 +24,7 @@ namespace Presentacion.Core.Venta
         // Para reutilizar el selector de forma de pago si lo necesitás (como en tu proyecto)
         private readonly bool _incluirCtaCte;
         private readonly long? _idCliente;
+        private DatosVenta _dv;
 
         // Contenedores dinámicos de controles por índice (0..CantidadPagos-1)
         private readonly List<TextBox> _txtMontos = new List<TextBox>();
@@ -47,11 +48,12 @@ namespace Presentacion.Core.Venta
         }
 
         // Constructor recomendado: pasá cantidad y total
-        public FPagoMultiple(int cantidadPagos, decimal totalVenta, bool incluirCtaCte = false, long? idCliente = null) : this()
+        public FPagoMultiple(int cantidadPagos, decimal totalVenta, DatosVenta dv, long? idCliente = null) : this()
         {
             CantidadPagos = Math.Max(1, cantidadPagos);
             TotalVenta = totalVenta;
-            _incluirCtaCte = incluirCtaCte;
+            _dv = dv;
+            _incluirCtaCte = dv.IncluirCtaCte;
             _idCliente = idCliente;
         }
 
@@ -366,7 +368,7 @@ namespace Presentacion.Core.Venta
                 tmpPagos.Add(fp);
             }
             // Abrir selector (reutiliza tu dialog existente). Ajustá el constructor si lo tenés distinto.
-            using var fTipo = new FTipoPagoSeleccionEnVenta(_incluirCtaCte, tmpPagos, index, _idCliente);
+            using var fTipo = new FTipoPagoSeleccionEnVenta(_dv, tmpPagos, index, _idCliente);
             if (fTipo.ShowDialog() == DialogResult.OK)
             {
                 var tipo = fTipo.tipoPagoSeleccionado;

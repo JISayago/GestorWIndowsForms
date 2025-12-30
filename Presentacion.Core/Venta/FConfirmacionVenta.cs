@@ -83,7 +83,7 @@ namespace Presentacion.Core.Venta
             if (!PermitirMultiplesPagos)
             {
                 // Abrimos el selector de forma de pago para el pago 1.
-                using var fFormaPagoSeleccionada = new FTipoPagoSeleccionEnVenta(_datosVenta.IncluirCtaCte, pagos, 0, idCliente);
+                using var fFormaPagoSeleccionada = new FTipoPagoSeleccionEnVenta(_datosVenta, pagos, 0, idCliente);
                 if (fFormaPagoSeleccionada.ShowDialog() != DialogResult.OK)
                 {
                     // El usuario canceló la selección => salimos cancelando el form.

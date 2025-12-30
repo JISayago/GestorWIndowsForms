@@ -178,6 +178,13 @@ namespace Presentacion.Core.Venta
                 return;
             }
 
+            DatosVenta datosVenta = new DatosVenta
+            {
+                Total = _totalVenta,
+                IncluirCtaCte = _incluirCtaCte,
+                DescuentoEfectivo = cbxDescEfectivo.Checked
+            };
+
             // Primer paso: elegir 1 pago / múltiples
             var fSeleccionCantidad = new FSeleccionCantidadPagos();
             if (fSeleccionCantidad.ShowDialog() != DialogResult.OK)
@@ -186,16 +193,10 @@ namespace Presentacion.Core.Venta
             bool esMultiples = fSeleccionCantidad.multiplePagos;
             int cantidadPagos = fSeleccionCantidad.CantidadPagos; // en 1-pago será 1
 
-            DatosVenta datosVenta = new DatosVenta
-            {
-                Total = _totalVenta,
-                IncluirCtaCte = _incluirCtaCte
-            };
-
             // --- caso: múltiples pagos -> abrir FPagoMultiple para ingresar montos y formas ---
             if (esMultiples)
             {
-                using var fPagoMultiple = new FPagoMultiple(cantidadPagos, _totalVenta, _incluirCtaCte, idCliente);
+                using var fPagoMultiple = new FPagoMultiple(cantidadPagos, _totalVenta, datosVenta, idCliente);
                 var drMulti = fPagoMultiple.ShowDialog();
                 if (drMulti != DialogResult.OK)
                 {
@@ -578,6 +579,7 @@ namespace Presentacion.Core.Venta
                 Nombre = usuarioLogeado.Nombre,
                 Apellido = usuarioLogeado.Apellido,
             };
+            txtDescuentoEfectivo.Text = string.Empty;
             lblUsuarioLogeadoName.Text = _usuarioLogeado.Username;
             cbxConsumidorFinal.Checked = true;
             esConsumidorFinal = true;
@@ -605,7 +607,6 @@ namespace Presentacion.Core.Venta
             if (_suspendCbxDesc) return;
 
             ValidarCantidadySiEsOferta();
-            
 
             txtDescuentoEfectivo.Enabled = cbxDescEfectivo.Checked;
         }
@@ -649,6 +650,9 @@ namespace Presentacion.Core.Venta
             decimal totalConDescuento = totalVenta - descuento;
 
             txtTotal.Text = totalConDescuento.ToString("N2");
+            _totalVenta = totalConDescuento;
+
         }
+
     }
 }
