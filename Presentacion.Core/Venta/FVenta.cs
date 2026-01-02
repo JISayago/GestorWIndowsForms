@@ -68,6 +68,8 @@ namespace Presentacion.Core.Venta
 
             // Inicializamos itemsVenta como BindingList
             itemsVenta = new BindingList<ItemVentaDTO>();
+
+           
         }
 
         private void FVenta_Load(object sender, EventArgs e)
@@ -84,13 +86,20 @@ namespace Presentacion.Core.Venta
         {
             //Tiene que ser la carga del cliente cuando exista de momento se va a crear automticamente. Por defecto es el consumidor final
             txtCliente.Text = esConsumidorFinal ? "Consumidor Final" : "";
-            txtVendedorAsignado.Text = esUsuarioLogeado
+            lblVendedorAsignado.Text = esUsuarioLogeado
                 ? $"{_usuarioLogeado.Username} ({_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido})"
                 : "";
             if (esConsumidorFinal)
             {
                 cbxIncluirCtaCte.Checked = false;
                 cbxIncluirCtaCte.Enabled = false;
+            }
+            var font = new Font(lblUsuarioLogeadoName.Font.FontFamily, 12F, FontStyle.Bold);
+            lblUsuarioLogeadoName.Font = font;
+            lblUsuarioLogeadoName.ForeColor = Color.DarkGreen;
+            if(_usuarioLogeado != null)
+            {
+            lblUsuarioLogeadoName.Text = _usuarioLogeado.Username.ToUpper();
             }
         }
 
@@ -109,7 +118,7 @@ namespace Presentacion.Core.Venta
             btnCargarCliente.Enabled = !esConsumidorFinal;
         }
 
-        private void btnCargarVendedor_Click(object sender, EventArgs e)
+       /* private void btnCargarVendedor_Click(object sender, EventArgs e)
         {
             if (!cbxUsuarioLogeado.Checked)
             {
@@ -127,7 +136,7 @@ namespace Presentacion.Core.Venta
 
                 }
             }
-        }
+        }*/
         private void btnConfirmarYFPago_Click(object sender, EventArgs e)
         {
             if (_totalVenta == 0)
@@ -357,7 +366,7 @@ namespace Presentacion.Core.Venta
                         };
 
                         itemsVenta.Add(itemVenta);  // Solo agregamos a la BindingList
-                        txtProductoCargado.Text = $"{itemVenta.Descripcion}";
+                        //txtProductoCargado.Text = $"{itemVenta.Descripcion}";
                         // No necesitas reasignar DataSource ni resetear grilla acá
                         if (cbxDescEfectivo.Checked)
                         {
@@ -390,7 +399,7 @@ namespace Presentacion.Core.Venta
                     };
 
                     itemsVenta.Add(OfertaVenta);  // Solo agregamos a la BindingList
-                    txtProductoCargado.Text = $"{OfertaVenta.Descripcion}";
+                    //txtProductoCargado.Text = $"{OfertaVenta.Descripcion}";
                     // No necesitas reasignar DataSource ni resetear grilla acá
                     ValidarCantidadySiEsOferta();
                     CalcularTotal();
@@ -533,11 +542,11 @@ namespace Presentacion.Core.Venta
             // tu lógica...
         }
 
-        private void cbxEnOferta_CheckedChanged(object sender, EventArgs e)
+        /*private void cbxEnOferta_CheckedChanged(object sender, EventArgs e)
         {
             cargarOferta = cbxEnOferta.Checked;
             btnCargarProducto.Text = cargarOferta ? "Cargar Oferta" : "Cargar Producto";
-        }
+        }*/
 
         private void btnCargarCliente_Click(object sender, EventArgs e)
         {
@@ -583,7 +592,7 @@ namespace Presentacion.Core.Venta
             lblUsuarioLogeadoName.Text = _usuarioLogeado.Username;
             cbxConsumidorFinal.Checked = true;
             esConsumidorFinal = true;
-            cbxUsuarioLogeado.Checked = true;
+           // cbxUsuarioLogeado.Checked = true;
             esUsuarioLogeado = true;
             idVendedor = _usuarioLogeadoID; // Asignamos el ID del usuario logueado como vendedor por defecto
             btnCargarVendedor.Enabled = false;
