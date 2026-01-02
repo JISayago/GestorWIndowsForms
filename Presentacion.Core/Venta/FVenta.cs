@@ -253,7 +253,6 @@ namespace Presentacion.Core.Venta
                     MessageBox.Show("Debe seleccionar al menos un tipo de pago.");
                     return;
                 }
-                MessageBox.Show("Evaluar descuento por efectivo en 1 pago.");
 
                 _cuerpoDetalleVenta.tiposDePago = tipoPagosSeleccionados;
                 tipoDePagosVenta = tipoPagosSeleccionados;

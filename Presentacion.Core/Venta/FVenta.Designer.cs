@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             lblFechaHoy = new Label();
             lblUsuarioLogeadoName = new Label();
             lblUsuario = new Label();
@@ -60,6 +60,7 @@
             tableLayoutPanel4 = new TableLayoutPanel();
             flowLayoutPanel4 = new FlowLayoutPanel();
             flowLayoutPanel3 = new FlowLayoutPanel();
+            lblDiaAbrev = new Label();
             tableLayoutPanel2 = new TableLayoutPanel();
             tableLayoutPanel3 = new TableLayoutPanel();
             flowLayoutPanel2 = new FlowLayoutPanel();
@@ -85,6 +86,7 @@
             flowLayoutPanel12 = new FlowLayoutPanel();
             flowLayoutPanel7 = new FlowLayoutPanel();
             flowLayoutPanel6 = new FlowLayoutPanel();
+            flowLayoutPanel14 = new FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
             tableLayoutPanel5.SuspendLayout();
@@ -112,13 +114,14 @@
             flowLayoutPanel12.SuspendLayout();
             flowLayoutPanel7.SuspendLayout();
             flowLayoutPanel6.SuspendLayout();
+            flowLayoutPanel14.SuspendLayout();
             SuspendLayout();
             // 
             // lblFechaHoy
             // 
             lblFechaHoy.AutoSize = true;
             lblFechaHoy.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblFechaHoy.Location = new Point(65, 0);
+            lblFechaHoy.Location = new Point(3, 0);
             lblFechaHoy.Name = "lblFechaHoy";
             lblFechaHoy.Size = new Size(103, 30);
             lblFechaHoy.TabIndex = 1;
@@ -203,24 +206,24 @@
             dgvProductos.AllowUserToAddRows = false;
             dgvProductos.AllowUserToDeleteRows = false;
             dgvProductos.AllowUserToResizeRows = false;
-            dataGridViewCellStyle4.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dgvProductos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dgvProductos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dgvProductos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = SystemColors.Control;
-            dataGridViewCellStyle5.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
-            dgvProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Control;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductos.EditMode = DataGridViewEditMode.EditProgrammatically;
             dgvProductos.Location = new Point(3, 67);
             dgvProductos.MultiSelect = false;
             dgvProductos.Name = "dgvProductos";
-            dataGridViewCellStyle6.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dgvProductos.RowsDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dgvProductos.RowsDefaultCellStyle = dataGridViewCellStyle3;
             dgvProductos.Size = new Size(1089, 334);
             dgvProductos.TabIndex = 15;
             dgvProductos.CellClick += dgvProductos_CellClick;
@@ -421,36 +424,48 @@
             // tableLayoutPanel4
             // 
             tableLayoutPanel4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel4.ColumnCount = 2;
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel4.ColumnCount = 3;
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 24.2253513F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 38.30986F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 37.46479F));
+            tableLayoutPanel4.Controls.Add(flowLayoutPanel14, 2, 0);
             tableLayoutPanel4.Controls.Add(flowLayoutPanel4, 1, 0);
             tableLayoutPanel4.Controls.Add(flowLayoutPanel3, 0, 0);
             tableLayoutPanel4.Location = new Point(368, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 1;
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(355, 51);
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel4.Size = new Size(355, 53);
             tableLayoutPanel4.TabIndex = 45;
             // 
             // flowLayoutPanel4
             // 
             flowLayoutPanel4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            flowLayoutPanel4.Controls.Add(lblHoraMinutos);
-            flowLayoutPanel4.Location = new Point(180, 3);
+            flowLayoutPanel4.Controls.Add(lblFechaHoy);
+            flowLayoutPanel4.Location = new Point(89, 3);
             flowLayoutPanel4.Name = "flowLayoutPanel4";
-            flowLayoutPanel4.Size = new Size(172, 36);
+            flowLayoutPanel4.Size = new Size(130, 36);
             flowLayoutPanel4.TabIndex = 44;
             // 
             // flowLayoutPanel3
             // 
             flowLayoutPanel3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            flowLayoutPanel3.Controls.Add(lblFechaHoy);
+            flowLayoutPanel3.Controls.Add(lblDiaAbrev);
             flowLayoutPanel3.FlowDirection = FlowDirection.RightToLeft;
             flowLayoutPanel3.Location = new Point(3, 3);
             flowLayoutPanel3.Name = "flowLayoutPanel3";
-            flowLayoutPanel3.Size = new Size(171, 36);
+            flowLayoutPanel3.Size = new Size(80, 36);
             flowLayoutPanel3.TabIndex = 43;
+            // 
+            // lblDiaAbrev
+            // 
+            lblDiaAbrev.AutoSize = true;
+            lblDiaAbrev.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblDiaAbrev.Location = new Point(26, 0);
+            lblDiaAbrev.Name = "lblDiaAbrev";
+            lblDiaAbrev.Size = new Size(51, 30);
+            lblDiaAbrev.TabIndex = 2;
+            lblDiaAbrev.Text = "Dia.";
             // 
             // tableLayoutPanel2
             // 
@@ -774,6 +789,15 @@
             flowLayoutPanel6.Size = new Size(434, 102);
             flowLayoutPanel6.TabIndex = 47;
             // 
+            // flowLayoutPanel14
+            // 
+            flowLayoutPanel14.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            flowLayoutPanel14.Controls.Add(lblHoraMinutos);
+            flowLayoutPanel14.Location = new Point(225, 3);
+            flowLayoutPanel14.Name = "flowLayoutPanel14";
+            flowLayoutPanel14.Size = new Size(127, 36);
+            flowLayoutPanel14.TabIndex = 45;
+            // 
             // FVenta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -827,6 +851,8 @@
             flowLayoutPanel7.PerformLayout();
             flowLayoutPanel6.ResumeLayout(false);
             flowLayoutPanel6.PerformLayout();
+            flowLayoutPanel14.ResumeLayout(false);
+            flowLayoutPanel14.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -886,5 +912,7 @@
         private Label lblDetallesDeVenta;
         private TextBox txtAreaDetallesVenta;
         private TableLayoutPanel tableLayoutPanel12;
+        private Label lblDiaAbrev;
+        private FlowLayoutPanel flowLayoutPanel14;
     }
 }
