@@ -69,7 +69,7 @@ namespace Presentacion.Core.Venta
             // Inicializamos itemsVenta como BindingList
             itemsVenta = new BindingList<ItemVentaDTO>();
 
-           
+
         }
 
         private void FVenta_Load(object sender, EventArgs e)
@@ -97,9 +97,9 @@ namespace Presentacion.Core.Venta
             var font = new Font(lblUsuarioLogeadoName.Font.FontFamily, 12F, FontStyle.Bold);
             lblUsuarioLogeadoName.Font = font;
             lblUsuarioLogeadoName.ForeColor = Color.DarkGreen;
-            if(_usuarioLogeado != null)
+            if (_usuarioLogeado != null)
             {
-            lblUsuarioLogeadoName.Text = _usuarioLogeado.Username.ToUpper();
+                lblUsuarioLogeadoName.Text = _usuarioLogeado.Username.ToUpper();
             }
         }
 
@@ -108,7 +108,7 @@ namespace Presentacion.Core.Venta
         {
             esUsuarioLogeado = !esUsuarioLogeado;
             ActualizarCamposInicio();
-            btnCargarVendedor.Enabled = !esUsuarioLogeado;
+            btnCambiarVendedor.Enabled = !esUsuarioLogeado;
         }
 
         private void cbxConsumidorFinal_CheckedChanged(object sender, EventArgs e)
@@ -118,25 +118,6 @@ namespace Presentacion.Core.Venta
             btnCargarCliente.Enabled = !esConsumidorFinal;
         }
 
-       /* private void btnCargarVendedor_Click(object sender, EventArgs e)
-        {
-            if (!cbxUsuarioLogeado.Checked)
-            {
-                btnCargarVendedor.Enabled = true;
-                var fEmpleado = new FEmpleadoConsulta(true);
-
-                if (fEmpleado.ShowDialog() == DialogResult.OK && fEmpleado.empleadoSeleccionado.HasValue)
-                {
-                    var idEmpleado = fEmpleado.empleadoSeleccionado.Value;
-
-                    var vendedor = new EmpleadoServicio().ObtenerEmpleadoPorId(idEmpleado);
-                    idVendedor = vendedor.PersonaId;
-
-                    txtVendedorAsignado.Text = $"{vendedor.Username} ({vendedor.Nombre} {vendedor.Apellido})";
-
-                }
-            }
-        }*/
         private void btnConfirmarYFPago_Click(object sender, EventArgs e)
         {
             if (_totalVenta == 0)
@@ -238,7 +219,7 @@ namespace Presentacion.Core.Venta
                     {
                         if (fConfirmarDetalle.confirmarDetalle)
                         {
-                            btnConfirmarYFPago.Text = "Confirmar Venta";
+                            btnConfirmarYFPago.Text = "Finalizar";
                             finalizarVenta = true;
                         }
 
@@ -294,7 +275,7 @@ namespace Presentacion.Core.Venta
                     {
                         if (fConfirmarDetalle.confirmarDetalle)
                         {
-                            btnConfirmarYFPago.Text = "Confirmar Venta";
+                            btnConfirmarYFPago.Text = "Finalizar";
                             finalizarVenta = true;
                         }
 
@@ -325,8 +306,6 @@ namespace Presentacion.Core.Venta
 
         private void btnCargarProducto_Click(object sender, EventArgs e)
         {
-            if (!cargarOferta)
-            {
                 var fProductos = new FProductoConsulta(true);
 
                 if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
@@ -375,36 +354,6 @@ namespace Presentacion.Core.Venta
                         }
                         CalcularTotal();
                     }
-                }
-            }
-            else
-            {
-                var Fofertas = new FOfertaConsulta(true);
-
-                if (Fofertas.ShowDialog() == DialogResult.OK && Fofertas.ofertaSeleccionada.HasValue)
-                {
-                    var idOferta = Fofertas.ofertaSeleccionada.Value;
-
-                    var Oferta = _ofertaServicio.ObtenerOfertaPorId(idOferta);
-                    var OfertaVenta = new ItemVentaDTO
-                    {
-                        ItemId = Oferta.OfertaDescuentoId,
-                        Descripcion = Oferta.Descripcion,
-                        PrecioVenta = Oferta.PrecioOriginal,
-                        PrecioOferta = Oferta.PrecioFinal,
-                        Cantidad = (decimal)Oferta.CantidadProductosDentroOferta,
-                        Medida = string.Empty,
-                        UnidadMedida = string.Empty,
-                        EsOferta = true
-                    };
-
-                    itemsVenta.Add(OfertaVenta);  // Solo agregamos a la BindingList
-                    //txtProductoCargado.Text = $"{OfertaVenta.Descripcion}";
-                    // No necesitas reasignar DataSource ni resetear grilla acá
-                    ValidarCantidadySiEsOferta();
-                    CalcularTotal();
-                }
-
             }
         }
         private void CalcularTotal()
@@ -592,10 +541,8 @@ namespace Presentacion.Core.Venta
             lblUsuarioLogeadoName.Text = _usuarioLogeado.Username;
             cbxConsumidorFinal.Checked = true;
             esConsumidorFinal = true;
-           // cbxUsuarioLogeado.Checked = true;
             esUsuarioLogeado = true;
             idVendedor = _usuarioLogeadoID; // Asignamos el ID del usuario logueado como vendedor por defecto
-            btnCargarVendedor.Enabled = false;
             btnCargarCliente.Enabled = false;
             cbxIncluirCtaCte.Checked = true;
             dgvProductos.AllowUserToAddRows = false;
@@ -663,5 +610,49 @@ namespace Presentacion.Core.Venta
 
         }
 
+        private void btnCambiarVendedor_Click(object sender, EventArgs e)
+        {
+            var fEmpleado = new FEmpleadoConsulta(true);
+
+            if (fEmpleado.ShowDialog() == DialogResult.OK && fEmpleado.empleadoSeleccionado.HasValue)
+            {
+                var idEmpleado = fEmpleado.empleadoSeleccionado.Value;
+
+                var vendedor = new EmpleadoServicio().ObtenerEmpleadoPorId(idEmpleado);
+                idVendedor = vendedor.PersonaId;
+
+                lblVendedorAsignado.Text = $"{vendedor.Username} ({vendedor.Nombre} {vendedor.Apellido})";
+
+            }
+        }
+
+        private void btnCargarOferta_Click(object sender, EventArgs e)
+        {
+            var Fofertas = new FOfertaConsulta(true);
+
+            if (Fofertas.ShowDialog() == DialogResult.OK && Fofertas.ofertaSeleccionada.HasValue)
+            {
+                var idOferta = Fofertas.ofertaSeleccionada.Value;
+
+                var Oferta = _ofertaServicio.ObtenerOfertaPorId(idOferta);
+                var OfertaVenta = new ItemVentaDTO
+                {
+                    ItemId = Oferta.OfertaDescuentoId,
+                    Descripcion = Oferta.Descripcion,
+                    PrecioVenta = Oferta.PrecioOriginal,
+                    PrecioOferta = Oferta.PrecioFinal,
+                    Cantidad = (decimal)Oferta.CantidadProductosDentroOferta,
+                    Medida = string.Empty,
+                    UnidadMedida = string.Empty,
+                    EsOferta = true
+                };
+
+                itemsVenta.Add(OfertaVenta);  // Solo agregamos a la BindingList
+                                              //txtProductoCargado.Text = $"{OfertaVenta.Descripcion}";
+                                              // No necesitas reasignar DataSource ni resetear grilla acá
+                ValidarCantidadySiEsOferta();
+                CalcularTotal();
+            }
+        }
     }
 }

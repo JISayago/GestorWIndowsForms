@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             lblFechaHoy = new Label();
             lblUsuarioLogeadoName = new Label();
             lblUsuario = new Label();
@@ -43,7 +45,7 @@
             lblSubtotal = new Label();
             lblNroVenta = new Label();
             lblNro = new Label();
-            btnCargarVendedor = new Button();
+            btnCambiarVendedor = new Button();
             btnConfirmarYFPago = new Button();
             btnCancelar = new Button();
             txtSubtotal = new TextBox();
@@ -128,7 +130,7 @@
             lblUsuarioLogeadoName.AutoSize = true;
             lblUsuarioLogeadoName.Location = new Point(3, 21);
             lblUsuarioLogeadoName.Name = "lblUsuarioLogeadoName";
-            lblUsuarioLogeadoName.Size = new Size(93, 15);
+            lblUsuarioLogeadoName.Size = new Size(86, 30);
             lblUsuarioLogeadoName.TabIndex = 3;
             lblUsuarioLogeadoName.Text = "UsuarioLogeado";
             // 
@@ -144,9 +146,8 @@
             // 
             // btnLimpiar
             // 
-            btnLimpiar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             btnLimpiar.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnLimpiar.Location = new Point(3, 18);
+            btnLimpiar.Location = new Point(3, 3);
             btnLimpiar.Name = "btnLimpiar";
             btnLimpiar.Size = new Size(161, 46);
             btnLimpiar.TabIndex = 7;
@@ -202,14 +203,24 @@
             dgvProductos.AllowUserToAddRows = false;
             dgvProductos.AllowUserToDeleteRows = false;
             dgvProductos.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dgvProductos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dgvProductos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             dgvProductos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = SystemColors.Control;
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
+            dgvProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductos.EditMode = DataGridViewEditMode.EditProgrammatically;
             dgvProductos.Location = new Point(3, 67);
             dgvProductos.MultiSelect = false;
             dgvProductos.Name = "dgvProductos";
+            dataGridViewCellStyle6.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dgvProductos.RowsDefaultCellStyle = dataGridViewCellStyle6;
             dgvProductos.Size = new Size(1089, 334);
             dgvProductos.TabIndex = 15;
             dgvProductos.CellClick += dgvProductos_CellClick;
@@ -230,7 +241,7 @@
             // 
             lblTotal.AutoSize = true;
             lblTotal.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotal.Location = new Point(113, 0);
+            lblTotal.Location = new Point(79, 0);
             lblTotal.Name = "lblTotal";
             lblTotal.Size = new Size(60, 25);
             lblTotal.TabIndex = 18;
@@ -240,7 +251,7 @@
             // 
             lblSubtotal.AutoSize = true;
             lblSubtotal.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblSubtotal.Location = new Point(73, 0);
+            lblSubtotal.Location = new Point(36, 0);
             lblSubtotal.Name = "lblSubtotal";
             lblSubtotal.Size = new Size(103, 25);
             lblSubtotal.TabIndex = 19;
@@ -266,16 +277,17 @@
             lblNro.TabIndex = 27;
             lblNro.Text = "000000000000000";
             // 
-            // btnCargarVendedor
+            // btnCambiarVendedor
             // 
-            btnCargarVendedor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            btnCargarVendedor.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnCargarVendedor.Location = new Point(141, 3);
-            btnCargarVendedor.Name = "btnCargarVendedor";
-            btnCargarVendedor.Size = new Size(75, 39);
-            btnCargarVendedor.TabIndex = 29;
-            btnCargarVendedor.Text = "Cargar Vendedor";
-            btnCargarVendedor.UseVisualStyleBackColor = true;
+            btnCambiarVendedor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnCambiarVendedor.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnCambiarVendedor.Location = new Point(161, 3);
+            btnCambiarVendedor.Name = "btnCambiarVendedor";
+            btnCambiarVendedor.Size = new Size(87, 39);
+            btnCambiarVendedor.TabIndex = 29;
+            btnCambiarVendedor.Text = "Cambiar Vendedor";
+            btnCambiarVendedor.UseVisualStyleBackColor = true;
+            btnCambiarVendedor.Click += btnCambiarVendedor_Click;
             // 
             // btnConfirmarYFPago
             // 
@@ -304,29 +316,29 @@
             // txtSubtotal
             // 
             txtSubtotal.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            txtSubtotal.Location = new Point(182, 3);
+            txtSubtotal.Location = new Point(145, 3);
             txtSubtotal.Name = "txtSubtotal";
             txtSubtotal.ReadOnly = true;
-            txtSubtotal.Size = new Size(124, 33);
+            txtSubtotal.Size = new Size(161, 33);
             txtSubtotal.TabIndex = 33;
             // 
             // txtDescuentoEfectivo
             // 
             txtDescuentoEfectivo.Enabled = false;
             txtDescuentoEfectivo.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            txtDescuentoEfectivo.Location = new Point(179, 3);
+            txtDescuentoEfectivo.Location = new Point(145, 3);
             txtDescuentoEfectivo.Name = "txtDescuentoEfectivo";
-            txtDescuentoEfectivo.Size = new Size(127, 33);
+            txtDescuentoEfectivo.Size = new Size(161, 33);
             txtDescuentoEfectivo.TabIndex = 34;
             txtDescuentoEfectivo.TextChanged += txtDescuentoEfectivo_TextChanged;
             // 
             // txtTotal
             // 
             txtTotal.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            txtTotal.Location = new Point(179, 3);
+            txtTotal.Location = new Point(145, 3);
             txtTotal.Name = "txtTotal";
             txtTotal.ReadOnly = true;
-            txtTotal.Size = new Size(127, 33);
+            txtTotal.Size = new Size(161, 33);
             txtTotal.TabIndex = 35;
             // 
             // cbxIncluirCtaCte
@@ -345,7 +357,7 @@
             // 
             lblPorcentajeDescuento.AutoSize = true;
             lblPorcentajeDescuento.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblPorcentajeDescuento.Location = new Point(145, 0);
+            lblPorcentajeDescuento.Location = new Point(111, 0);
             lblPorcentajeDescuento.Name = "lblPorcentajeDescuento";
             lblPorcentajeDescuento.Size = new Size(28, 25);
             lblPorcentajeDescuento.TabIndex = 40;
@@ -445,8 +457,8 @@
             tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel2.BackColor = SystemColors.Info;
             tableLayoutPanel2.ColumnCount = 2;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 37.49142F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 62.5085754F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 28.5686283F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 71.43137F));
             tableLayoutPanel2.Controls.Add(tableLayoutPanel3, 1, 0);
             tableLayoutPanel2.Controls.Add(flowLayoutPanel1, 0, 0);
             tableLayoutPanel2.Location = new Point(3, 3);
@@ -463,12 +475,12 @@
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 63.0374374F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 36.9625664F));
             tableLayoutPanel3.Controls.Add(flowLayoutPanel2, 0, 0);
-            tableLayoutPanel3.Controls.Add(btnCargarVendedor, 1, 0);
-            tableLayoutPanel3.Location = new Point(137, 3);
+            tableLayoutPanel3.Controls.Add(btnCambiarVendedor, 1, 0);
+            tableLayoutPanel3.Location = new Point(105, 3);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.Size = new Size(219, 45);
+            tableLayoutPanel3.Size = new Size(251, 45);
             tableLayoutPanel3.TabIndex = 45;
             // 
             // flowLayoutPanel2
@@ -478,7 +490,7 @@
             flowLayoutPanel2.Controls.Add(lblVendedorAsignado);
             flowLayoutPanel2.Location = new Point(3, 3);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(132, 39);
+            flowLayoutPanel2.Size = new Size(152, 39);
             flowLayoutPanel2.TabIndex = 44;
             // 
             // lblVendedor
@@ -504,11 +516,12 @@
             // 
             // flowLayoutPanel1
             // 
+            flowLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             flowLayoutPanel1.Controls.Add(lblUsuario);
             flowLayoutPanel1.Controls.Add(lblUsuarioLogeadoName);
             flowLayoutPanel1.Location = new Point(3, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(128, 45);
+            flowLayoutPanel1.Size = new Size(96, 45);
             flowLayoutPanel1.TabIndex = 43;
             // 
             // btnCargarOferta
@@ -520,6 +533,7 @@
             btnCargarOferta.TabIndex = 42;
             btnCargarOferta.Text = "Cargar Oferta";
             btnCargarOferta.UseVisualStyleBackColor = true;
+            btnCargarOferta.Click += btnCargarOferta_Click;
             // 
             // tableLayoutPanel6
             // 
@@ -595,9 +609,9 @@
             flowLayoutPanel10.Controls.Add(btnCancelar);
             flowLayoutPanel10.Controls.Add(btnConfirmarYFPago);
             flowLayoutPanel10.FlowDirection = FlowDirection.RightToLeft;
-            flowLayoutPanel10.Location = new Point(660, 15);
+            flowLayoutPanel10.Location = new Point(660, 3);
             flowLayoutPanel10.Name = "flowLayoutPanel10";
-            flowLayoutPanel10.Size = new Size(432, 49);
+            flowLayoutPanel10.Size = new Size(432, 61);
             flowLayoutPanel10.TabIndex = 47;
             // 
             // flowLayoutPanel9
@@ -832,7 +846,7 @@
         private Label lblSubtotal;
         private Label lblNroVenta;
         private Label lblNro;
-        private Button btnCargarVendedor;
+        private Button btnCambiarVendedor;
         private Button btnConfirmarYFPago;
         private Button btnCancelar;
         private TextBox txtSubtotal;
