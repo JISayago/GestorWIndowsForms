@@ -16,6 +16,7 @@ using Servicios.LogicaNegocio.Venta;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace Presentacion.Core.Venta
 {
@@ -78,8 +79,13 @@ namespace Presentacion.Core.Venta
         }
         private void MyTimer_Tick(object sender, EventArgs e)
         {
-            lblFechaHoy.Text = DateTime.Now.ToString("dd/MM/yyyy");
-            lblHoraMinutos.Text = DateTime.Now.ToString("HH:mm:ss");
+            var ahora = DateTime.Now;
+            var cultura = new CultureInfo("es-ES");
+
+            lblFechaHoy.Text = ahora.ToString("dd/MM/yyyy");
+            lblHoraMinutos.Text = ahora.ToString("HH:mm:ss");
+            lblDiaAbrev.Text =  cultura.TextInfo.ToTitleCase(ahora.ToString("ddd", cultura)) + ".";
+
         }
 
         private void ActualizarCamposInicio()
@@ -87,19 +93,22 @@ namespace Presentacion.Core.Venta
             //Tiene que ser la carga del cliente cuando exista de momento se va a crear automticamente. Por defecto es el consumidor final
             txtCliente.Text = esConsumidorFinal ? "Consumidor Final" : "";
             lblVendedorAsignado.Text = esUsuarioLogeado
-                ? $"{_usuarioLogeado.Username} ({_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido})"
+                ? $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}"
                 : "";
             if (esConsumidorFinal)
             {
                 cbxIncluirCtaCte.Checked = false;
                 cbxIncluirCtaCte.Enabled = false;
             }
-            var font = new Font(lblUsuarioLogeadoName.Font.FontFamily, 12F, FontStyle.Bold);
+            var font = new Font(lblUsuarioLogeadoName.Font.FontFamily, 16F, FontStyle.Bold);
             lblUsuarioLogeadoName.Font = font;
             lblUsuarioLogeadoName.ForeColor = Color.DarkGreen;
+            lblVendedorAsignado.Font = font;
+            lblVendedorAsignado.ForeColor = Color.OrangeRed;
             if (_usuarioLogeado != null)
             {
                 lblUsuarioLogeadoName.Text = _usuarioLogeado.Username.ToUpper();
+                lblVendedorAsignado.Text = _usuarioLogeado.Username.ToUpper();
             }
         }
 
@@ -620,7 +629,7 @@ namespace Presentacion.Core.Venta
                 var vendedor = new EmpleadoServicio().ObtenerEmpleadoPorId(idEmpleado);
                 idVendedor = vendedor.PersonaId;
 
-                lblVendedorAsignado.Text = $"{vendedor.Username} ({vendedor.Nombre} {vendedor.Apellido})";
+                lblVendedorAsignado.Text = $"{vendedor.Nombre} {vendedor.Apellido}";
 
             }
         }
