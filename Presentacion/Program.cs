@@ -6,6 +6,7 @@ using Presentacion.Core.Categoria;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
 using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers;
 using Servicios.Helpers.DatosObligatorios;
@@ -127,6 +128,11 @@ namespace Presentacion
 
             if (login.PuedeAccederAlSistema)
             {
+                DatosSistema.UsuarioId = login._usuarioLogeado.PersonaId;
+                DatosSistema.NombreUsuario = login._usuarioLogeado.Nombre + " " + login._usuarioLogeado.Apellido;
+
+                //inicializar datosSistemas, cuando tenga el contructor
+
                 Application.Run(new VentanaPrincipal(login._usuarioLogeado));
             }
             else

@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20251203184858_AddCaja")]
+    partial class AddCaja
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -366,6 +369,9 @@ namespace AccesoDatos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("MovimientoId"));
 
+                    b.Property<long?>("CajaId")
+                        .HasColumnType("bigint");
+
                     b.Property<bool>("EstaEliminado")
                         .HasColumnType("bit")
                         .HasColumnName("esta_eliminado");
@@ -373,10 +379,6 @@ namespace AccesoDatos.Migrations
                     b.Property<DateTime>("FechaMovimiento")
                         .HasColumnType("date")
                         .HasColumnName("fecha_movimiento");
-
-                    b.Property<long>("IdCaja")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_Caja");
 
                     b.Property<long?>("IdVenta")
                         .HasColumnType("bigint")
@@ -398,7 +400,7 @@ namespace AccesoDatos.Migrations
 
                     b.HasKey("MovimientoId");
 
-                    b.HasIndex("IdCaja");
+                    b.HasIndex("CajaId");
 
                     b.HasIndex("IdVenta");
 
@@ -1027,18 +1029,14 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.Movimiento", b =>
                 {
-                    b.HasOne("AccesoDatos.Entidades.Caja", "Caja")
+                    b.HasOne("AccesoDatos.Entidades.Caja", null)
                         .WithMany("Movimientos")
-                        .HasForeignKey("IdCaja")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("CajaId");
 
                     b.HasOne("AccesoDatos.Entidades.Venta", "Venta")
                         .WithMany()
                         .HasForeignKey("IdVenta")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Caja");
 
                     b.Navigation("Venta");
                 });

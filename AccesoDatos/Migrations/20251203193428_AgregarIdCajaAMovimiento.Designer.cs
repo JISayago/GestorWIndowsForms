@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20251203193428_AgregarIdCajaAMovimiento")]
+    partial class AgregarIdCajaAMovimiento
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -366,6 +369,9 @@ namespace AccesoDatos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("MovimientoId"));
 
+                    b.Property<long>("CajaId")
+                        .HasColumnType("bigint");
+
                     b.Property<bool>("EstaEliminado")
                         .HasColumnType("bit")
                         .HasColumnName("esta_eliminado");
@@ -398,7 +404,7 @@ namespace AccesoDatos.Migrations
 
                     b.HasKey("MovimientoId");
 
-                    b.HasIndex("IdCaja");
+                    b.HasIndex("CajaId");
 
                     b.HasIndex("IdVenta");
 
@@ -1029,8 +1035,8 @@ namespace AccesoDatos.Migrations
                 {
                     b.HasOne("AccesoDatos.Entidades.Caja", "Caja")
                         .WithMany("Movimientos")
-                        .HasForeignKey("IdCaja")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("CajaId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("AccesoDatos.Entidades.Venta", "Venta")

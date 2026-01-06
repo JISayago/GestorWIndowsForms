@@ -1,6 +1,7 @@
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Administracion;
 using Presentacion.Core.Articulo.Marca;
+using Presentacion.Core.Caja;
 using Presentacion.Core.Categoria;
 using Presentacion.Core.Cliente;
 using Presentacion.Core.CuentaCorriente;
@@ -64,6 +65,11 @@ namespace Presentacion
             FVenta.Show();
         }
 
+        private void btnCaja_Click(object sender, EventArgs e)
+        {
+            var fCaja = new FCaja();
+            fCaja.Show();
+        }
         private void btnContraVenta_Click(object sender, EventArgs e)
         {
             var NroCompr = new FNroComprobanteParaCancelacion(_usuarioLogeado.PersonaId);
