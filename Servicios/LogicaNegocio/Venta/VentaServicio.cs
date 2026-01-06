@@ -130,9 +130,6 @@ namespace Servicios.LogicaNegocio.Venta
                 //deberia usar el mismo context que movimiento para que sea parte de la misma transaccion
                 caja.RegistrarTransaccion(venta.Total, TipoMovimiento.Ingreso.ToString());
 
-                              
-                }, context);
-
 
                 // si se trata de oferta hay que hacer una iteracion de cada item de esa oferta para independizar los id de los productos afectados con la nueva propiedad de es oferta para identificarlos
                 if (ventaDto.Items != null && ventaDto.Items.Any())
