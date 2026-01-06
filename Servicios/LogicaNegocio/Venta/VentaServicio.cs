@@ -251,48 +251,51 @@ namespace Servicios.LogicaNegocio.Venta
             return ids;
         }
 
-        public EstadoOperacion CancelacionVentaPorId(long ventaId)
+    public EstadoOperacion CancelacionVentaPorId(long ventaId)
+{
+    using var context = new GestorContextDBFactory().CreateDbContext(null);
+    using var transaction = context.Database.BeginTransaction();
+
+    try
+    {
+        // 1️⃣ Obtener la venta original
+        var ventaOriginal = context.Ventas
+            .Include(v => v.DetallesVentas)
+            .Include(v => v.VentaPagoDetalles)
+            .FirstOrDefault(v => v.VentaId == ventaId);
+
+        if (ventaOriginal == null)
         {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-            using var transaction = context.Database.BeginTransaction();
-
-            try
+            return new EstadoOperacion
             {
-                // 1️⃣ Obtener venta original con todo lo necesario
-                var ventaOriginal = context.Ventas
-                    .Include(v => v.DetallesVentas)
-                    .Include(v => v.VentaPagoDetalles)
-                    .FirstOrDefault(v => v.VentaId == ventaId);
+                Exitoso = false,
+                Mensaje = "La venta no existe."
+            };
+        }
 
-                if (ventaOriginal == null)
-                {
-                    return new EstadoOperacion
-                    {
-                        Exitoso = false,
-                        Mensaje = "La venta no existe."
-                    };
-                }
+        // 2️⃣ Validar que no esté ya cancelada
+        if (ventaOriginal.Estado == 10)
+        {
+            return new EstadoOperacion
+            {
+                Exitoso = false,
+                Mensaje = "La venta ya se encuentra cancelada."
+            };
+        }
 
-                // 2️⃣ Validar que no esté ya cancelada
-                if (ventaOriginal.Estado == 10)
-                {
-                    return new EstadoOperacion
-                    {
-                        Exitoso = false,
-                        Mensaje = "La venta ya se encuentra cancelada."
-                    };
-                }
+        // 3️⃣ Cambiar estado de la venta original a cancelada
+        ventaOriginal.Estado = 10;
+        context.SaveChanges();
 
-                // 3️⃣ Cambiar estado de la venta original
-                ventaOriginal.Estado = 10;
-                context.SaveChanges();
+                /*
+                // ================================
+                // LÓGICA DE VENTA DE CANCELACIÓN
+                // (Temporalmente deshabilitada)
+                // ================================
 
-                //var ventanro = Convert.ToInt64(ventaOriginal.NumeroVenta) + 900000000;
-                // 4️⃣ Armar la venta negativa (reversión)
                 var ventaCancelacionDto = new VentaDTO
                 {
-
-                    NumeroVenta = "009000000000009", // se genera nuevo
+                    NumeroVenta = null, // Se generará automáticamente
                     IdEmpleado = ventaOriginal.IdEmpleado,
                     IdVendedor = ventaOriginal.IdVendedor,
                     FechaVenta = DateTime.Now,
@@ -308,7 +311,7 @@ namespace Servicios.LogicaNegocio.Venta
                     {
                         ItemId = d.IdProducto,
                         Cantidad = d.Cantidad * -1,
-                        PrecioVenta = (d.Subtotal / d.Cantidad)
+                        PrecioVenta = d.Subtotal / d.Cantidad
                     }).ToList(),
 
                     TiposDePagoSeleccionado = ventaOriginal.VentaPagoDetalles.Select(p => new FormaPago
@@ -318,7 +321,6 @@ namespace Servicios.LogicaNegocio.Venta
                     }).ToList()
                 };
 
-                // 5️⃣ Crear la venta negativa reutilizando lógica existente
                 var resultadoNuevaVenta = NuevaVenta(ventaCancelacionDto);
 
                 if (!resultadoNuevaVenta.Exitoso)
@@ -326,25 +328,27 @@ namespace Servicios.LogicaNegocio.Venta
                     transaction.Rollback();
                     return resultadoNuevaVenta;
                 }
+                */
+        transaction.Commit();
 
-                transaction.Commit();
+        return new EstadoOperacion
+        {
+            Exitoso = true,
+            Mensaje = "Venta cancelada correctamente."
+        };
+    }
+    catch (Exception ex)
+    {
+        try { transaction.Rollback(); } catch { }
 
-                return new EstadoOperacion
-                {
-                    Exitoso = true,
-                    Mensaje = "Venta cancelada correctamente."
-                };
-            }
-            catch (Exception ex)
-            {
-                try { transaction.Rollback(); } catch { }
-                return new EstadoOperacion
-                {
-                    Exitoso = false,
-                    Mensaje = "Error al cancelar la venta: " + ex.Message
-                };
-            }
-        }
+        return new EstadoOperacion
+        {
+            Exitoso = false,
+            Mensaje = "Error al cancelar la venta: " + ex.Message
+        };
+    }
+}
+
     }
 }
 

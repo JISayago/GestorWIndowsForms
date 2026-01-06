@@ -644,8 +644,9 @@ namespace Presentacion.Core.Venta
             ResetearGrilla(dgvProductos);
             ActualizarCamposInicio(VENTAID);
             CalcularTotal();
-            _ventaServicio.GenerateNextNumeroVenta();
-            lblNro.Text = _ventaServicio.GenerateNextNumeroVenta().ToString();
+                //_ventaServicio.GenerateNextNumeroVenta();
+                //lblNro.Text = _ventaServicio.GenerateNextNumeroVenta().ToString();
+                lblNro.Text = "a ver";
             System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
             MyTimer.Interval = 1000;
             MyTimer.Tick += new EventHandler(MyTimer_Tick);
