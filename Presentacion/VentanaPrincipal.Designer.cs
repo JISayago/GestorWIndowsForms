@@ -149,6 +149,7 @@
             btnContraVenta.TabIndex = 16;
             btnContraVenta.Text = "DEVOLUCIÓN / CONTRAASIENTO";
             btnContraVenta.UseVisualStyleBackColor = true;
+            btnContraVenta.Click += btnContraVenta_Click;
             // 
             // pnlInfoInicial
             // 

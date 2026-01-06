@@ -129,7 +129,7 @@
             lblUsuarioLogeadoName.AutoSize = true;
             lblUsuarioLogeadoName.Location = new Point(3, 60);
             lblUsuarioLogeadoName.Name = "lblUsuarioLogeadoName";
-            lblUsuarioLogeadoName.Size = new Size(86, 30);
+            lblUsuarioLogeadoName.Size = new Size(79, 30);
             lblUsuarioLogeadoName.TabIndex = 3;
             lblUsuarioLogeadoName.Text = "UsuarioLogeado";
             // 
@@ -139,7 +139,7 @@
             lblUsuario.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblUsuario.Location = new Point(3, 0);
             lblUsuario.Name = "lblUsuario";
-            lblUsuario.Size = new Size(88, 60);
+            lblUsuario.Size = new Size(75, 60);
             lblUsuario.TabIndex = 2;
             lblUsuario.Text = "Usuario:";
             // 
@@ -426,35 +426,35 @@
             tableLayoutPanel4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel4.BackColor = SystemColors.Control;
             tableLayoutPanel4.ColumnCount = 3;
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 24.2253513F));
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 38.30986F));
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 37.46479F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 23.0769234F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45.3846169F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 31.5384617F));
             tableLayoutPanel4.Controls.Add(flowLayoutPanel14, 2, 0);
             tableLayoutPanel4.Controls.Add(flowLayoutPanel4, 1, 0);
             tableLayoutPanel4.Controls.Add(flowLayoutPanel3, 0, 0);
-            tableLayoutPanel4.Location = new Point(368, 3);
+            tableLayoutPanel4.Location = new Point(333, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 1;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel4.Size = new Size(355, 52);
+            tableLayoutPanel4.Size = new Size(390, 52);
             tableLayoutPanel4.TabIndex = 45;
             // 
             // flowLayoutPanel14
             // 
             flowLayoutPanel14.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             flowLayoutPanel14.Controls.Add(lblHoraMinutos);
-            flowLayoutPanel14.Location = new Point(225, 3);
+            flowLayoutPanel14.Location = new Point(270, 3);
             flowLayoutPanel14.Name = "flowLayoutPanel14";
-            flowLayoutPanel14.Size = new Size(127, 36);
+            flowLayoutPanel14.Size = new Size(117, 36);
             flowLayoutPanel14.TabIndex = 45;
             // 
             // flowLayoutPanel4
             // 
             flowLayoutPanel4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             flowLayoutPanel4.Controls.Add(lblFechaHoy);
-            flowLayoutPanel4.Location = new Point(89, 3);
+            flowLayoutPanel4.Location = new Point(93, 3);
             flowLayoutPanel4.Name = "flowLayoutPanel4";
-            flowLayoutPanel4.Size = new Size(130, 36);
+            flowLayoutPanel4.Size = new Size(171, 36);
             flowLayoutPanel4.TabIndex = 44;
             // 
             // flowLayoutPanel3
@@ -464,7 +464,7 @@
             flowLayoutPanel3.FlowDirection = FlowDirection.RightToLeft;
             flowLayoutPanel3.Location = new Point(3, 3);
             flowLayoutPanel3.Name = "flowLayoutPanel3";
-            flowLayoutPanel3.Size = new Size(80, 36);
+            flowLayoutPanel3.Size = new Size(84, 36);
             flowLayoutPanel3.TabIndex = 43;
             // 
             // lblDiaAbrev
@@ -472,7 +472,7 @@
             lblDiaAbrev.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblDiaAbrev.AutoSize = true;
             lblDiaAbrev.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblDiaAbrev.Location = new Point(26, 0);
+            lblDiaAbrev.Location = new Point(30, 0);
             lblDiaAbrev.Name = "lblDiaAbrev";
             lblDiaAbrev.Size = new Size(51, 30);
             lblDiaAbrev.TabIndex = 2;
@@ -491,7 +491,7 @@
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new Size(359, 51);
+            tableLayoutPanel2.Size = new Size(324, 51);
             tableLayoutPanel2.TabIndex = 45;
             // 
             // tableLayoutPanel3
@@ -500,11 +500,11 @@
             tableLayoutPanel3.ColumnCount = 1;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 63.0374374F));
             tableLayoutPanel3.Controls.Add(flowLayoutPanel2, 0, 0);
-            tableLayoutPanel3.Location = new Point(105, 3);
+            tableLayoutPanel3.Location = new Point(95, 3);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.Size = new Size(251, 45);
+            tableLayoutPanel3.Size = new Size(226, 45);
             tableLayoutPanel3.TabIndex = 45;
             // 
             // flowLayoutPanel2
@@ -514,7 +514,7 @@
             flowLayoutPanel2.Controls.Add(lblVendedorAsignado);
             flowLayoutPanel2.Location = new Point(3, 3);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(245, 39);
+            flowLayoutPanel2.Size = new Size(220, 39);
             flowLayoutPanel2.TabIndex = 44;
             // 
             // lblVendedor
@@ -545,7 +545,7 @@
             flowLayoutPanel1.Controls.Add(lblUsuarioLogeadoName);
             flowLayoutPanel1.Location = new Point(3, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(96, 45);
+            flowLayoutPanel1.Size = new Size(86, 45);
             flowLayoutPanel1.TabIndex = 43;
             // 
             // btnCargarOferta

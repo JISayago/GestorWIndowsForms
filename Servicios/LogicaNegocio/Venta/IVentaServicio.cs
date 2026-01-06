@@ -13,5 +13,8 @@ namespace Servicios.LogicaNegocio.Venta
     {
         public string GenerateNextNumeroVenta();
         EstadoOperacion NuevaVenta (VentaDTO ventaDto);
+        List<long> ObtenerComprobantesParaCancelacionPorNroComprobante(string nroComprobante);
+        EstadoOperacion CancelacionVentaPorId(long ventaId);
+        VentaDTO ObtenerVentaDetalle(long Ventaid);
     }
 }

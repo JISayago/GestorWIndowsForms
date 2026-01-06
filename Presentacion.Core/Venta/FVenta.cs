@@ -1,4 +1,5 @@
 ﻿using AccesoDatos.Entidades;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Cliente;
@@ -27,6 +28,9 @@ namespace Presentacion.Core.Venta
         private readonly IOfertaServicio _ofertaServicio;
         private readonly IMovimientoServicio _movimientoServicio;
 
+
+        private long? VENTAID = null;
+        private VentaDTO VENTAELIMINAR;
         private long idVendedor = 0;
         private VentaDTO _venta;
         private bool finalizarVenta = false;
@@ -50,32 +54,73 @@ namespace Presentacion.Core.Venta
         private long idCliente = -1;
 
 
-        public FVenta(long usuarioLogeadoID)
-        {
+        public FVenta(long UsuarioLogeadoId,long? VentaId = null)
+        { 
             InitializeComponent();
             _ventaServicio = new VentaServicio();
-
             _movimientoServicio = new MovimientoServicio();
-
+            _usuarioLogeadoID = UsuarioLogeadoId;
             _empleadoServicio = new EmpleadoServicio();
+            _ofertaServicio = new OfertaServicio();
+
+            VENTAID = VentaId;
+
+            if (VentaId != null)
+            {
+                var ventaCargada = _ventaServicio.ObtenerVentaDetalle((long)VENTAID);
+
+                if (ventaCargada == null)
+                {
+                    MessageBox.Show("No se pudo cargar la venta.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                VENTAELIMINAR = new VentaDTO
+                {
+                    VentaId = ventaCargada.VentaId,
+                    NumeroVenta = ventaCargada.NumeroVenta,
+                    IdEmpleado = ventaCargada.IdEmpleado,
+                    IdVendedor = ventaCargada.IdVendedor,
+                    FechaVenta = ventaCargada.FechaVenta,
+                    Total = ventaCargada.Total,
+                    TotalSinDescuento = ventaCargada.TotalSinDescuento,
+                    Descuento = ventaCargada.Descuento,
+                    Estado = 0, // q pingo hacemo aca
+                    Detalle = ventaCargada.Detalle,
+                    TiposDePagoSeleccionado = ventaCargada.TiposDePagoSeleccionado
+                        .Select(p => new FormaPago
+                        {
+                            TipoDePago = p.TipoDePago,
+                            Monto = p.Monto
+                        }).ToList(),
+                    Items = ventaCargada.Items
+                        .Select(i => new ItemVentaDTO
+                        {
+                            ItemId = i.ItemId,
+                            Cantidad = i.Cantidad,
+                            PrecioVenta = i.PrecioVenta,
+                            Descripcion = i.Descripcion
+                        }).ToList()
+                };
+                itemsVenta = new BindingList<ItemVentaDTO>(ventaCargada.Items);
+
+            }
+            else
+            {
+
             _cuerpoDetalleVenta = new CuerpoDetalleVenta
             {
                 tiposDePago = new List<FormaPago>(),
                 pagoParcial = false,
                 saldoPendiente = 0.00m,
             };
-            _ofertaServicio = new OfertaServicio();
-            _usuarioLogeadoID = usuarioLogeadoID;
-
-            // Inicializamos itemsVenta como BindingList
             itemsVenta = new BindingList<ItemVentaDTO>();
-
-
+            }
         }
 
         private void FVenta_Load(object sender, EventArgs e)
         {
-            InicializarYLimpiarCampos();
+            InicializarYLimpiarCampos(VENTAID);
         }
         private void MyTimer_Tick(object sender, EventArgs e)
         {
@@ -88,8 +133,11 @@ namespace Presentacion.Core.Venta
 
         }
 
-        private void ActualizarCamposInicio()
+        private void ActualizarCamposInicio(long? ventaId)
         {
+            if(ventaId != null)
+            {
+
             //Tiene que ser la carga del cliente cuando exista de momento se va a crear automticamente. Por defecto es el consumidor final
             txtCliente.Text = esConsumidorFinal ? "Consumidor Final" : "";
             lblVendedorAsignado.Text = esUsuarioLogeado
@@ -110,20 +158,21 @@ namespace Presentacion.Core.Venta
                 lblUsuarioLogeadoName.Text = _usuarioLogeado.Username.ToUpper();
                 lblVendedorAsignado.Text = _usuarioLogeado.Username.ToUpper();
             }
+            }
         }
 
 
         private void cbxUsuarioLogeado_CheckedChanged(object sender, EventArgs e)
         {
             esUsuarioLogeado = !esUsuarioLogeado;
-            ActualizarCamposInicio();
+            ActualizarCamposInicio(VENTAID);
             btnCambiarVendedor.Enabled = !esUsuarioLogeado;
         }
 
         private void cbxConsumidorFinal_CheckedChanged(object sender, EventArgs e)
         {
             esConsumidorFinal = !esConsumidorFinal;
-            ActualizarCamposInicio();
+            ActualizarCamposInicio(VENTAID);
             btnCargarCliente.Enabled = !esConsumidorFinal;
         }
 
@@ -309,7 +358,7 @@ namespace Presentacion.Core.Venta
         private void cbxIncluirCtaCte_CheckedChanged(object sender, EventArgs e)
         {
             _incluirCtaCte = cbxIncluirCtaCte.Checked;
-            ActualizarCamposInicio();
+            ActualizarCamposInicio(VENTAID);
         }
 
         private void btnCargarProducto_Click(object sender, EventArgs e)
@@ -520,15 +569,80 @@ namespace Presentacion.Core.Venta
 
         private void btnLimpiar_Click(object sender, EventArgs e)
         {
-            InicializarYLimpiarCampos();
+            if (VENTAID != null)
+            {
+                MessageBox.Show("entro a la id cancelar");
+                var result = MessageBox.Show(
+                    "¿Está seguro que desea cancelar esta venta?\n\nEsta acción no se puede deshacer.",
+                    "Confirmar cancelación",
+                    MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Warning
+                );
+
+                if (result == DialogResult.OK)
+                {
+                    MessageBox.Show("entro al metodo de cancelacion");
+                    CancelarVenta(VENTAID);
+                }
+            }
+            else
+            {
+            InicializarYLimpiarCampos(VENTAID);
+
+            }
+
         }
 
-        private void InicializarYLimpiarCampos()
+        private void CancelarVenta(long? VenId)
         {
+            MessageBox.Show("entro al metodo de cancelacion del servico");
+            var respuesta = _ventaServicio.CancelacionVentaPorId((long)VenId);
+            MessageBox.Show(respuesta.Mensaje);
+        }
+
+        private void InicializarYLimpiarCampos(long? ventaId)
+        {
+
+            if(ventaId != null)
+            {
+                itemsVenta = new BindingList<ItemVentaDTO>(VENTAELIMINAR.Items);
+                dgvProductos.DataSource = itemsVenta;  
+                ResetearGrilla(dgvProductos);
+                ActualizarCamposInicio(VENTAID);
+                txtTotal.Text = VENTAELIMINAR.Total.ToString("C2");
+                txtSubtotal.Text = VENTAELIMINAR.TotalSinDescuento.ToString("C2");
+                txtDescuentoEfectivo.Text = VENTAELIMINAR.TotalSinDescuento.ToString("C2");
+                lblNro.Text = VENTAELIMINAR.NumeroVenta;
+                txtAreaDetallesVenta.Text = VENTAELIMINAR.Detalle;
+                var usuarioLogeado = _empleadoServicio.ObtenerEmpleadoPorId(VENTAELIMINAR.IdEmpleado);
+                _usuarioLogeado = new UsuarioLogeado
+                {
+                    PersonaId = usuarioLogeado.PersonaId,
+                    Username = usuarioLogeado.Username,
+                    Nombre = usuarioLogeado.Nombre,
+                    Apellido = usuarioLogeado.Apellido,
+                };
+                lblUsuarioLogeadoName.Text = _usuarioLogeado.Username;
+                //cbxConsumidorFinal.Checked = true;
+                //esConsumidorFinal = true;
+                //esUsuarioLogeado = true;
+                idVendedor = VENTAELIMINAR.IdVendedor; // Asignamos el ID del usuario logueado como vendedor por defecto
+                btnCargarCliente.Enabled = false;
+                //cbxIncluirCtaCte.Checked = true;
+                dgvProductos.AllowUserToAddRows = false;
+                //cbxDescEfectivo.Checked = false;
+                    cbxIncluirCtaCte.Checked = false;
+                    cbxIncluirCtaCte.Enabled = false;
+                lblFechaHoy.Text = VENTAELIMINAR.FechaVenta.ToString("dd/MM/yyyy");
+                lblDiaAbrev.Text = (VENTAELIMINAR.FechaVenta.ToString("ddd")).ToUpper() + ".";
+                btnLimpiar.Text = "Eliminar";
+            }
+            else
+            {
             itemsVenta = new BindingList<ItemVentaDTO>();
             dgvProductos.DataSource = itemsVenta;  // bind directo
             ResetearGrilla(dgvProductos);
-            ActualizarCamposInicio();
+            ActualizarCamposInicio(VENTAID);
             CalcularTotal();
             _ventaServicio.GenerateNextNumeroVenta();
             lblNro.Text = _ventaServicio.GenerateNextNumeroVenta().ToString();
@@ -561,6 +675,7 @@ namespace Presentacion.Core.Venta
             {
                 cbxIncluirCtaCte.Checked = false;
                 cbxIncluirCtaCte.Enabled = false;
+            }
             }
         }
 
