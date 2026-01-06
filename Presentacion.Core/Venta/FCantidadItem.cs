@@ -17,6 +17,7 @@ namespace Presentacion.Core.Venta
         public FCantidadItem()
         {
             InitializeComponent();
+            txtCantidad.Text = "1";
         }
 
         private void btnAceptar_Click(object sender, EventArgs e)

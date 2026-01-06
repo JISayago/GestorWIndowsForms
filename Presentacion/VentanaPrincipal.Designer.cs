@@ -67,7 +67,7 @@
             // 
             dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvGrilla.Location = new Point(658, -3);
+            dgvGrilla.Location = new Point(679, -3);
             dgvGrilla.Name = "dgvGrilla";
             dgvGrilla.Size = new Size(380, 455);
             dgvGrilla.TabIndex = 17;
@@ -149,6 +149,7 @@
             btnContraVenta.TabIndex = 16;
             btnContraVenta.Text = "DEVOLUCIÓN / CONTRAASIENTO";
             btnContraVenta.UseVisualStyleBackColor = true;
+            btnContraVenta.Click += btnContraVenta_Click;
             // 
             // pnlInfoInicial
             // 
@@ -157,9 +158,9 @@
             pnlInfoInicial.Controls.Add(label2);
             pnlInfoInicial.Controls.Add(pnlTextos);
             pnlInfoInicial.Controls.Add(dgvGrilla);
-            pnlInfoInicial.Location = new Point(3, 3);
+            pnlInfoInicial.Location = new Point(-18, 3);
             pnlInfoInicial.Name = "pnlInfoInicial";
-            pnlInfoInicial.Size = new Size(1041, 455);
+            pnlInfoInicial.Size = new Size(1062, 455);
             pnlInfoInicial.TabIndex = 23;
             // 
             // label2
@@ -180,7 +181,7 @@
             pnlTextos.Controls.Add(label1);
             pnlTextos.Location = new Point(3, 3);
             pnlTextos.Name = "pnlTextos";
-            pnlTextos.Size = new Size(649, 449);
+            pnlTextos.Size = new Size(670, 449);
             pnlTextos.TabIndex = 18;
             // 
             // label1
