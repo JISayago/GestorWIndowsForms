@@ -22,8 +22,10 @@ namespace Servicios.LogicaNegocio.Movimiento
 {
     public class MovimientoServicio : IMovimientoServicio
     {
-        public void CrearMovimientoVenta(VentaDTO ventaDto, GestorContextDB context = null)
+        public void CrearMovimientoVenta(VentaDTO ventaDto, long cajaId, GestorContextDB context = null)
         {
+            //el return del id lo puse para caja pero al fnal no se usa, podria no devolver nada
+
             bool crearContextoLocal = (context == null);
 
             if (crearContextoLocal)
@@ -38,7 +40,8 @@ namespace Servicios.LogicaNegocio.Movimiento
                     TipoMovimiento = 1, // 1 = Ingreso, por ejemplo
                     Monto = ventaDto.Total,
                     FechaMovimiento = DateTime.Now,
-                    EstaEliminado = false
+                    EstaEliminado = false,
+                    IdCaja = cajaId
                 };
 
                 context.Movimientos.Add(movimiento);

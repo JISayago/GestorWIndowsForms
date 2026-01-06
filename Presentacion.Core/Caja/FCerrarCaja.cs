@@ -30,7 +30,7 @@ namespace Presentacion.Core.Caja
 
             if (estadoCaja)
             {
-                cajaServicio.CerrarCaja();
+                cajaServicio.CerrarCaja(DatosSistema.UsuarioId);
 
                 MessageBox.Show("Caja Cerrada");
 

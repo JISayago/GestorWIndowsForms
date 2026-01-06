@@ -113,13 +113,24 @@ namespace Servicios.LogicaNegocio.Venta
                 context.Ventas.Add(venta);
                 context.SaveChanges();
 
+                var caja = new Caja.CajaServicio();
+                var cajaID = caja.ObtenerIdCajaAbierta(); //esto se podria sacar y usar los datosDeSistema para tener el id de caja abierta
+
+                //Crear movimiento asociado a la venta
                 var movimientoServicio = new Movimiento.MovimientoServicio();
                 movimientoServicio.CrearMovimientoVenta(new VentaDTO
                 {
                     NumeroVenta = venta.NumeroVenta,
                     VentaId = venta.VentaId,
                     Total = venta.Total
-                },context);
+
+                }, cajaID, context);
+
+                //Registrar la transaccion en caja 
+                //deberia usar el mismo context que movimiento para que sea parte de la misma transaccion
+                caja.RegistrarTransaccion(venta.Total, TipoMovimiento.Ingreso.ToString());
+
+                              
 
 
                 // si se trata de oferta hay que hacer una iteracion de cada item de esa oferta para independizar los id de los productos afectados con la nueva propiedad de es oferta para identificarlos

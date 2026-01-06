@@ -1,4 +1,6 @@
-﻿using Servicios.LogicaNegocio.Caja.DTO;
+﻿using AccesoDatos;
+using AccesoDatos.Entidades;
+using Servicios.LogicaNegocio.Caja.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,14 +41,14 @@ namespace Servicios.LogicaNegocio.Caja
             caja.SaldoInicial = montoInicial;
             caja.SaldoActual = montoInicial;
             caja.FechaInicio = DateTime.Now;
-            caja.EmpleadoApertura = empleadoId; //recibir el empleado que abre la caja? manejar x memoria?
+            caja.EmpleadoApertura = empleadoId;
             caja.EstaCerrada = false;
 
             context.Cajas.Add(caja);
             context.SaveChanges();
         }
 
-        public void CerrarCaja()
+        public void CerrarCaja(long empleadoId)
         {
             var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
 
@@ -60,7 +62,7 @@ namespace Servicios.LogicaNegocio.Caja
             {
                 caja.FechaFin = DateTime.Now;
                 caja.EstaCerrada = true;
-                caja.EmpleadoCierre = 0; //asignar el empleado que cierra la caja
+                caja.EmpleadoCierre = empleadoId; //asignar el empleado que cierra la caja
                 // Asignar otros valores finales como TotalIngresos, TotalEgresos, BalanceFinal si es necesario
                 context.SaveChanges();
             }
@@ -98,6 +100,20 @@ namespace Servicios.LogicaNegocio.Caja
             return caja;
         }
 
+        public long ObtenerIdCajaAbierta()
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+            var caja = context.Cajas
+                .Where(c => !c.EstaCerrada)
+                .OrderByDescending(c => c.FechaInicio)
+                .FirstOrDefault();
+            if (caja == null)
+            {
+                throw new InvalidOperationException("No hay una caja abierta actualmente.");
+            }
+            return caja.CajaId;
+        }
+
         public bool ObtenerEstadoCaja()
         {
             var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
@@ -132,45 +148,34 @@ namespace Servicios.LogicaNegocio.Caja
                 throw new InvalidOperationException("No hay una caja abierta para registrar la transacción.");
             }
 
-            if (tipo == "ingreso")
-            {
-                caja.SaldoActual += monto;
-                caja.TotalIngresos += monto;
-            }
-            else if (tipo == "egreso")
-            {
-                caja.SaldoActual -= monto;
-                caja.TotalEgresos += monto;
-            }
-            else
-            {
-                throw new ArgumentException("Tipo de transacción inválido. Debe ser 'ingreso' o 'egreso'.");
-            }
-
-            ActualizarSaldoCaja(); //Lo dejo aca? asi cada vez que cambiamos el saldo se actuliza 
-            //ActualizarBalanceCaja(); // si quiero actualizar el balance final tambien
+            ActualizarSaldoCaja(caja ,tipo, monto); //Lo dejo aca? asi cada vez que cambiamos el saldo se actuliza 
 
             //ACA DEBERIA CAGAR EL MOVIMIENTO EN LA CAJA? O ESO LO HACE EL SERVICIO DE MOVIMIENTOS?
-            //
+            //Al movimineto le cargo la CajaId cuando creo el movimiento en el servicio de movimientos
 
             context.SaveChanges();
         }
 
-        public void ActualizarSaldoCaja()
+        public void ActualizarSaldoCaja(AccesoDatos.Entidades.Caja caja, string tipo, decimal monto)
         {
-            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
-
-            var caja = context.Cajas
-                .Where(c => !c.EstaCerrada)
-                .OrderByDescending(c => c.FechaInicio)
-                .FirstOrDefault();
-
-            if (caja != null)
+            //TipoDeTransaccion podria es un enum en vez de string, fixear
+            if (tipo == "Ingreso")
             {
-                caja.SaldoActual = caja.SaldoInicial + caja.TotalIngresos - caja.TotalEgresos;
-                context.SaveChanges();
+                //caja.SaldoActual += monto;
+                caja.TotalIngresos += monto;
             }
-        }
+            else if (tipo == "Egreso")
+            {
+                //caja.SaldoActual -= monto;
+                caja.TotalEgresos += monto;
+            }
+            else
+            {
+                throw new ArgumentException("Tipo de transacción inválido. Debe ser 'Ingreso' o 'Egreso'.");
+            }
 
+            caja.SaldoActual = caja.SaldoInicial + (caja.TotalIngresos - caja.TotalEgresos);
+            //context.SaveChanges();
+        }
     }
 }

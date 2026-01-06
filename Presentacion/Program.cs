@@ -24,7 +24,6 @@ namespace Presentacion
         [STAThread]
         static void Main()
         {
-            Presentacion.FBase.Helpers.DatosSistema.UsuarioId = 0;
             bool estadoIniciado = false;
             ApplicationConfiguration.Initialize();
 
@@ -131,6 +130,8 @@ namespace Presentacion
             {
                 DatosSistema.UsuarioId = login._usuarioLogeado.PersonaId;
                 DatosSistema.NombreUsuario = login._usuarioLogeado.Nombre + " " + login._usuarioLogeado.Apellido;
+
+                //inicializar datosSistemas, cuando tenga el contructor
 
                 Application.Run(new VentanaPrincipal(login._usuarioLogeado));
             }

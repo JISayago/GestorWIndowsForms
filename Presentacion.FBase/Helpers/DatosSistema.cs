@@ -13,6 +13,7 @@ namespace Presentacion.FBase.Helpers
         public static long CajaId = 0;
         public static bool EstaCajaAbierta;
 
-        //asigarnar el usuario logeado a estas variables al iniciar sesion  
+        //Agregar un constructor para inicializar las variables, como cajaId y estaCajaAbierta, asi limpio un poco el program
+        //Usar el cajaId al cargar el movimiento
     }
 }
