@@ -15,21 +15,21 @@ using System.Threading.Tasks;
 
 namespace Servicios.LogicaNegocio.Venta
 {
-    public class CajaServicio : IVentaServicio
+    public class VentaServicio : IVentaServicio
     {
         private readonly IPdfGenerator _pdf;
 
-        public CajaServicio() : this(new PdfGenerator())
+        public VentaServicio() : this(new PdfGenerator())
         {
         }
-        public CajaServicio(IPdfGenerator pdf)
+        public VentaServicio(IPdfGenerator pdf)
         {
             _pdf = pdf;
         }
 
         public string GenerarPdfDeVenta(/*long ventaId*/ AccesoDatos.Entidades.Venta venta)
         {
-           // var venta = _repositorioVentas.Obtener(ventaId);
+            // var venta = _repositorioVentas.Obtener(ventaId);
             return _pdf.GenerarComprobante(venta);
         }
         public string GenerateNextNumeroVenta()
@@ -38,7 +38,7 @@ namespace Servicios.LogicaNegocio.Venta
             var valores = context.Ventas
                 .Where(v => v.NumeroVenta != null)
                 .Select(v => v.NumeroVenta)
-                .AsEnumerable()  
+                .AsEnumerable()
                 .Select(s =>
                 {
                     var digits = new string(s.Where(char.IsDigit).ToArray());
@@ -50,7 +50,7 @@ namespace Servicios.LogicaNegocio.Venta
             var max = valores.DefaultIfEmpty(0L).Max();
             var siguiente = max + 1;
 
-            
+
             return siguiente.ToString().PadLeft(15, '0');
         }
 
@@ -63,7 +63,7 @@ namespace Servicios.LogicaNegocio.Venta
             if (string.IsNullOrEmpty(digits))
                 return null;
 
-        
+
             if (digits.Length > 15)
                 digits = digits.Substring(digits.Length - 15);
 
@@ -76,7 +76,7 @@ namespace Servicios.LogicaNegocio.Venta
             using var transaction = context.Database.BeginTransaction();
             try
             {
-               
+
                 string numeroFinal = NormalizeNumeroVenta(ventaDto.NumeroVenta);
                 if (numeroFinal == null)
                 {
@@ -84,7 +84,7 @@ namespace Servicios.LogicaNegocio.Venta
                 }
                 else
                 {
-                   
+
                     if (context.Ventas.Any(v => v.NumeroVenta == numeroFinal))
                     {
                         return new EstadoOperacion
@@ -94,7 +94,7 @@ namespace Servicios.LogicaNegocio.Venta
                         };
                     }
                 }
-                
+
                 var venta = new AccesoDatos.Entidades.Venta
                 {
                     NumeroVenta = numeroFinal,
@@ -106,7 +106,7 @@ namespace Servicios.LogicaNegocio.Venta
                     Descuento = ventaDto.Descuento,
                     Estado = ventaDto.Estado,
                     Detalle = ventaDto.Detalle,
-                    MontoAdeudado =0.0m,
+                    MontoAdeudado = 0.0m,
                     MontoPagado = ventaDto.Total // replantear el ofertadto
                 };
 
@@ -131,6 +131,7 @@ namespace Servicios.LogicaNegocio.Venta
                 caja.RegistrarTransaccion(venta.Total, TipoMovimiento.Ingreso.ToString());
 
                               
+                }, context);
 
 
                 // si se trata de oferta hay que hacer una iteracion de cada item de esa oferta para independizar los id de los productos afectados con la nueva propiedad de es oferta para identificarlos
@@ -153,7 +154,7 @@ namespace Servicios.LogicaNegocio.Venta
                     var pagos = ventaDto.TiposDePagoSeleccionado.Select(p => new AccesoDatos.Entidades.VentaPagoDetalle
                     {
                         IdVenta = venta.VentaId,
-                        IdTipoPago = p.TipoDePago.HasValue? servicioTP.ObtenerTipoPagoPorNumero(Convert.ToInt32(p.TipoDePago.Value)).TipoPagoId
+                        IdTipoPago = p.TipoDePago.HasValue ? servicioTP.ObtenerTipoPagoPorNumero(Convert.ToInt32(p.TipoDePago.Value)).TipoPagoId
                             : 0,
                         Monto = p.Monto
                     }).ToList();
@@ -204,8 +205,9 @@ namespace Servicios.LogicaNegocio.Venta
             var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var venta = context.Ventas
-                .Include(v => v.DetallesVentas)
                 .Include(v => v.VentaPagoDetalles)
+                .Include(v => v.DetallesVentas)
+                    .ThenInclude(dv => dv.Producto)
                 .Where(v => v.VentaId == ventaId)
                 .FirstOrDefault(v => v.VentaId == ventaId);
 
@@ -232,9 +234,10 @@ namespace Servicios.LogicaNegocio.Venta
                 Items = venta.DetallesVentas.Select(d => new Servicios.LogicaNegocio.Venta.DTO.ItemVentaDTO
                 {
                     ItemId = d.IdProducto,
+                    Descripcion = d.Producto.Descripcion,
                     Cantidad = d.Cantidad,
                     PrecioVenta = d.Subtotal / d.Cantidad
-                    //nombreProducto = //llamado a la db para traer los nombres con el idProducto
+                    
                 }).ToList()
             };
 
@@ -242,35 +245,151 @@ namespace Servicios.LogicaNegocio.Venta
 
         }
 
+        public List<long> ObtenerComprobantesParaCancelacionPorNroComprobante(string nroComprobante)
+        {
+            if (string.IsNullOrWhiteSpace(nroComprobante))
+                return new List<long>();
+
+            var numeroBuscado = nroComprobante.Trim();
+
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var ids = context.Ventas
+                .Where(v => v.NumeroVenta != null &&
+                            v.NumeroVenta.Trim() == numeroBuscado)
+                .Select(v => v.VentaId)
+                .ToList();
+
+            return ids;
+        }
+
+    public EstadoOperacion CancelacionVentaPorId(long ventaId)
+{
+    using var context = new GestorContextDBFactory().CreateDbContext(null);
+    using var transaction = context.Database.BeginTransaction();
+
+    try
+    {
+        // 1️⃣ Obtener la venta original
+        var ventaOriginal = context.Ventas
+            .Include(v => v.DetallesVentas)
+            .Include(v => v.VentaPagoDetalles)
+            .FirstOrDefault(v => v.VentaId == ventaId);
+
+        if (ventaOriginal == null)
+        {
+            return new EstadoOperacion
+            {
+                Exitoso = false,
+                Mensaje = "La venta no existe."
+            };
+        }
+
+        // 2️⃣ Validar que no esté ya cancelada
+        if (ventaOriginal.Estado == 10)
+        {
+            return new EstadoOperacion
+            {
+                Exitoso = false,
+                Mensaje = "La venta ya se encuentra cancelada."
+            };
+        }
+
+        // 3️⃣ Cambiar estado de la venta original a cancelada
+        ventaOriginal.Estado = 10;
+        context.SaveChanges();
+
+                /*
+                // ================================
+                // LÓGICA DE VENTA DE CANCELACIÓN
+                // (Temporalmente deshabilitada)
+                // ================================
+
+                var ventaCancelacionDto = new VentaDTO
+                {
+                    NumeroVenta = null, // Se generará automáticamente
+                    IdEmpleado = ventaOriginal.IdEmpleado,
+                    IdVendedor = ventaOriginal.IdVendedor,
+                    FechaVenta = DateTime.Now,
+
+                    Total = ventaOriginal.Total * -1,
+                    TotalSinDescuento = ventaOriginal.TotalSinDescuento * -1,
+                    Descuento = ventaOriginal.Descuento * -1,
+
+                    Estado = 10,
+                    Detalle = $"Cancelación de venta N° {ventaOriginal.NumeroVenta}",
+
+                    Items = ventaOriginal.DetallesVentas.Select(d => new ItemVentaDTO
+                    {
+                        ItemId = d.IdProducto,
+                        Cantidad = d.Cantidad * -1,
+                        PrecioVenta = d.Subtotal / d.Cantidad
+                    }).ToList(),
+
+                    TiposDePagoSeleccionado = ventaOriginal.VentaPagoDetalles.Select(p => new FormaPago
+                    {
+                        TipoDePago = (TipoDePago?)p.IdTipoPago,
+                        Monto = p.Monto * -1
+                    }).ToList()
+                };
+
+                var resultadoNuevaVenta = NuevaVenta(ventaCancelacionDto);
+
+                if (!resultadoNuevaVenta.Exitoso)
+                {
+                    transaction.Rollback();
+                    return resultadoNuevaVenta;
+                }
+                */
+        transaction.Commit();
+
+        return new EstadoOperacion
+        {
+            Exitoso = true,
+            Mensaje = "Venta cancelada correctamente."
+        };
+    }
+    catch (Exception ex)
+    {
+        try { transaction.Rollback(); } catch { }
+
+        return new EstadoOperacion
+        {
+            Exitoso = false,
+            Mensaje = "Error al cancelar la venta: " + ex.Message
+        };
+    }
+}
+
+    }
+}
 
 
         //ahi tengo la venta con su detalle, despues tengo que buscar usando el 
         //service de producto los datos de cada item para completar el ItemVentaDTO y mostarlo en movimineto detallado?????
-        /*
-         *  ItemVentaDTO
-            public long ItemId { get; set; }
-            public decimal Cantidad { get; set; }
-            public decimal PrecioVenta { get; set; }
-            public decimal PrecioOferta { get; set; }
-            public string Descripcion { get; set; }
-            public string Medida { get; set; }
-            public string UnidadMedida { get; set; }
-            public bool EsOferta { get; set; }
+/*
+ *  ItemVentaDTO
+    public long ItemId { get; set; }
+    public decimal Cantidad { get; set; }
+    public decimal PrecioVenta { get; set; }
+    public decimal PrecioOferta { get; set; }
+    public string Descripcion { get; set; }
+    public string Medida { get; set; }
+    public string UnidadMedida { get; set; }
+    public bool EsOferta { get; set; }
 
-            public class DetallesVenta
-            {
-                [Key]
-                public long DetalleVentaId { get; set; }
+    public class DetallesVenta
+    {
+        [Key]
+        public long DetalleVentaId { get; set; }
 
-                public long IdVenta { get; set; }
-                public long IdProducto { get; set; }
-                public decimal Cantidad { get; set; }
-                public decimal Subtotal { get; set; }
+        public long IdVenta { get; set; }
+        public long IdProducto { get; set; }
+        public decimal Cantidad { get; set; }
+        public decimal Subtotal { get; set; }
 
-                // Relaciones
-                public Venta Venta { get; set; }
-                public Producto Producto { get; set; }
-            }
-         */
+        // Relaciones
+        public Venta Venta { get; set; }
+        public Producto Producto { get; set; }
     }
-}
+ */

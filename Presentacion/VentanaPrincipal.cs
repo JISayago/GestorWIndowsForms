@@ -70,5 +70,10 @@ namespace Presentacion
             var fCaja = new FCaja();
             fCaja.Show();
         }
+        private void btnContraVenta_Click(object sender, EventArgs e)
+        {
+            var NroCompr = new FNroComprobanteParaCancelacion(_usuarioLogeado.PersonaId);
+            NroCompr.Show();
+        }
     }
 }
