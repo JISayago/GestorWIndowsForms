@@ -148,14 +148,8 @@ namespace Presentacion.Core.Venta
                 cbxIncluirCtaCte.Checked = false;
                 cbxIncluirCtaCte.Enabled = false;
             }
-            var font = new Font(lblUsuarioLogeadoName.Font.FontFamily, 16F, FontStyle.Bold);
-            lblUsuarioLogeadoName.Font = font;
-            lblUsuarioLogeadoName.ForeColor = Color.DarkGreen;
-            lblVendedorAsignado.Font = font;
-            lblVendedorAsignado.ForeColor = Color.OrangeRed;
             if (_usuarioLogeado != null)
             {
-                lblUsuarioLogeadoName.Text = _usuarioLogeado.Username.ToUpper();
                 lblVendedorAsignado.Text = _usuarioLogeado.Username.ToUpper();
             }
             }
@@ -622,7 +616,6 @@ namespace Presentacion.Core.Venta
                     Nombre = usuarioLogeado.Nombre,
                     Apellido = usuarioLogeado.Apellido,
                 };
-                lblUsuarioLogeadoName.Text = _usuarioLogeado.Username;
                 //cbxConsumidorFinal.Checked = true;
                 //esConsumidorFinal = true;
                 //esUsuarioLogeado = true;
@@ -661,7 +654,6 @@ namespace Presentacion.Core.Venta
                 Apellido = usuarioLogeado.Apellido,
             };
             txtDescuentoEfectivo.Text = string.Empty;
-            lblUsuarioLogeadoName.Text = _usuarioLogeado.Username;
             cbxConsumidorFinal.Checked = true;
             esConsumidorFinal = true;
             esUsuarioLogeado = true;
