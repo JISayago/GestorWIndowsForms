@@ -9,6 +9,7 @@ using Servicios.LogicaNegocio.Venta.TipoPago;
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,27 +33,6 @@ namespace Servicios.LogicaNegocio.Venta
             // var venta = _repositorioVentas.Obtener(ventaId);
             return _pdf.GenerarComprobante(venta);
         }
-        public string GenerateNextNumeroVenta()
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-            var valores = context.Ventas
-                .Where(v => v.NumeroVenta != null)
-                .Select(v => v.NumeroVenta)
-                .AsEnumerable()
-                .Select(s =>
-                {
-                    var digits = new string(s.Where(char.IsDigit).ToArray());
-                    if (long.TryParse(digits, out var n))
-                        return n;
-                    return 0L;
-                });
-
-            var max = valores.DefaultIfEmpty(0L).Max();
-            var siguiente = max + 1;
-
-
-            return siguiente.ToString().PadLeft(15, '0');
-        }
 
         private string NormalizeNumeroVenta(string raw)
         {
@@ -63,115 +43,144 @@ namespace Servicios.LogicaNegocio.Venta
             if (string.IsNullOrEmpty(digits))
                 return null;
 
-
             if (digits.Length > 15)
                 digits = digits.Substring(digits.Length - 15);
 
             return digits.PadLeft(15, '0');
         }
 
+        public string GenerateNextNumeroVenta(GestorContextDB context)
+        {
+            // Asumimos que los NumeroVenta en BD están normalizados (15 dígitos).
+            // Pedimos el max directamente a la DB.
+            var maxStr = context.Ventas
+                                .Where(v => v.NumeroVenta != null)
+                                .Max(v => (string)v.NumeroVenta);
+
+            long max = 0;
+            if (!string.IsNullOrEmpty(maxStr))
+            {
+                // maxStr debería ser algo como "000000000000012"
+                var digits = new string(maxStr.Where(char.IsDigit).ToArray());
+                if (long.TryParse(digits, out var n))
+                    max = n;
+            }
+
+            return (max + 1).ToString().PadLeft(15, '0');
+        }
+
+
+        public AccesoDatos.Entidades.Venta CrearVentaInterna(
+    GestorContextDB context,
+    VentaDTO ventaDto
+)
+        {
+            // 1. Número definitivo
+            string numeroFinal = GenerateNextNumeroVenta(context);
+
+            var venta = new AccesoDatos.Entidades.Venta
+            {
+                NumeroVenta = numeroFinal,
+                IdEmpleado = ventaDto.IdEmpleado,
+                IdVendedor = ventaDto.IdVendedor,
+                FechaVenta = ventaDto.FechaVenta,
+                Total = ventaDto.Total,
+                TotalSinDescuento = ventaDto.TotalSinDescuento,
+                Descuento = ventaDto.Descuento,
+                Estado = ventaDto.Estado,
+                Detalle = ventaDto.Detalle,
+                MontoAdeudado = 0,
+                MontoPagado = ventaDto.Total
+            };
+
+            context.Ventas.Add(venta);
+            context.SaveChanges(); // necesito VentaId
+
+            // 2. Caja abierta
+            var cajaServicio = new Caja.CajaServicio();
+            var cajaId = cajaServicio.ObtenerIdCajaAbierta(context);
+
+            // 3. Movimiento (usa MISMO context)
+            var movimientoServicio = new Movimiento.MovimientoServicio();
+            movimientoServicio.CrearMovimientoVenta(
+                new VentaDTO
+                {
+                    VentaId = venta.VentaId,
+                    NumeroVenta = venta.NumeroVenta,
+                    Total = venta.Total
+                },
+                cajaId,
+                context
+            );
+           
+            // 4. Actualizar saldo caja (MISMO context)
+            cajaServicio.RegistrarTransaccion(
+                context,
+                venta.Total,
+                venta.Total >= 0
+                    ? TipoMovimiento.Ingreso.ToString()
+                    : TipoMovimiento.Egreso.ToString()
+            );
+
+            // 5. Detalles
+            if (ventaDto.Items != null && ventaDto.Items.Any())
+            {
+                var detalles = ventaDto.Items.Select(i => new AccesoDatos.Entidades.DetallesVenta
+                {
+                    IdVenta = venta.VentaId,
+                    IdProducto = i.ItemId,
+                    Cantidad = i.Cantidad,
+                    Subtotal = i.PrecioVenta * i.Cantidad
+                }).ToList();
+                context.DetallesVentas.AddRange(detalles);
+            }
+
+            // 6. Pagos
+            if (ventaDto.TiposDePagoSeleccionado != null && ventaDto.TiposDePagoSeleccionado.Any())
+            {
+                var servicioTP = new TipoPagoServicio();
+                var pagos = ventaDto.TiposDePagoSeleccionado.Select(p => new AccesoDatos.Entidades.VentaPagoDetalle
+                {
+                    IdVenta = venta.VentaId,
+                    IdTipoPago = p.TipoDePago.HasValue ? servicioTP.ObtenerTipoPagoPorNumero(Convert.ToInt32(p.TipoDePago.Value)).TipoPagoId
+                        : 0,
+                    Monto = p.Monto
+                }).ToList();
+
+                context.VentaPagosDetalles.AddRange(pagos);
+            }
+
+            // 7. Guardar TODO junto
+            context.SaveChanges();
+
+            return venta;
+        }
         public EstadoOperacion NuevaVenta(VentaDTO ventaDto)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             using var transaction = context.Database.BeginTransaction();
+
             try
             {
+                CrearVentaInterna(context, ventaDto);
 
-                string numeroFinal = NormalizeNumeroVenta(ventaDto.NumeroVenta);
-                if (numeroFinal == null)
-                {
-                    numeroFinal = GenerateNextNumeroVenta();
-                }
-                else
-                {
-
-                    if (context.Ventas.Any(v => v.NumeroVenta == numeroFinal))
-                    {
-                        return new EstadoOperacion
-                        {
-                            Exitoso = false,
-                            Mensaje = "Ya existe una venta con el mismo Número."
-                        };
-                    }
-                }
-
-                var venta = new AccesoDatos.Entidades.Venta
-                {
-                    NumeroVenta = numeroFinal,
-                    IdEmpleado = ventaDto.IdEmpleado,
-                    IdVendedor = ventaDto.IdVendedor,
-                    FechaVenta = ventaDto.FechaVenta,
-                    Total = ventaDto.Total,
-                    TotalSinDescuento = ventaDto.TotalSinDescuento,
-                    Descuento = ventaDto.Descuento,
-                    Estado = ventaDto.Estado,
-                    Detalle = ventaDto.Detalle,
-                    MontoAdeudado = 0.0m,
-                    MontoPagado = ventaDto.Total // replantear el ofertadto
-                };
-
-                context.Ventas.Add(venta);
-                context.SaveChanges();
-
-                var caja = new Caja.CajaServicio();
-                var cajaID = caja.ObtenerIdCajaAbierta(); //esto se podria sacar y usar los datosDeSistema para tener el id de caja abierta
-
-                //Crear movimiento asociado a la venta
-                var movimientoServicio = new Movimiento.MovimientoServicio();
-                movimientoServicio.CrearMovimientoVenta(new VentaDTO
-                {
-                    NumeroVenta = venta.NumeroVenta,
-                    VentaId = venta.VentaId,
-                    Total = venta.Total
-
-                }, cajaID, context);
-
-                //Registrar la transaccion en caja 
-                //deberia usar el mismo context que movimiento para que sea parte de la misma transaccion
-                caja.RegistrarTransaccion(venta.Total, TipoMovimiento.Ingreso.ToString());
-
-
-                // si se trata de oferta hay que hacer una iteracion de cada item de esa oferta para independizar los id de los productos afectados con la nueva propiedad de es oferta para identificarlos
-                if (ventaDto.Items != null && ventaDto.Items.Any())
-                {
-                    var detallesV = ventaDto.Items.Select(d => new AccesoDatos.Entidades.DetallesVenta
-                    {
-                        IdVenta = venta.VentaId,
-                        IdProducto = d.ItemId,
-                        Cantidad = d.Cantidad,
-                        Subtotal = d.PrecioVenta * d.Cantidad,
-                    }).ToList();
-
-                    context.DetallesVentas.AddRange(detallesV);
-                }
-
-                if (ventaDto.TiposDePagoSeleccionado != null && ventaDto.TiposDePagoSeleccionado.Any())
-                {
-                    var servicioTP = new TipoPagoServicio();
-                    var pagos = ventaDto.TiposDePagoSeleccionado.Select(p => new AccesoDatos.Entidades.VentaPagoDetalle
-                    {
-                        IdVenta = venta.VentaId,
-                        IdTipoPago = p.TipoDePago.HasValue ? servicioTP.ObtenerTipoPagoPorNumero(Convert.ToInt32(p.TipoDePago.Value)).TipoPagoId
-                            : 0,
-                        Monto = p.Monto
-                    }).ToList();
-
-                    context.VentaPagosDetalles.AddRange(pagos);
-                }
-
-                context.SaveChanges();
                 transaction.Commit();
-                GenerarPdfDeVenta(venta);
-
-                return new EstadoOperacion { Exitoso = true, Mensaje = "Venta creada correctamente." };
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "Venta registrada correctamente."
+                };
             }
             catch (Exception ex)
             {
-                try { transaction.Rollback(); } catch { /* log */ }
-                return new EstadoOperacion { Exitoso = false, Mensaje = "Error al crear la venta: " + ex.Message };
+                transaction.Rollback();
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = ex.Message
+                };
             }
         }
-
         public VentaDTO ObtenerVentaPorId(long ventaId)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -259,104 +268,76 @@ namespace Servicios.LogicaNegocio.Venta
 
             return ids;
         }
-
-    public EstadoOperacion CancelacionVentaPorId(long ventaId)
-{
-    using var context = new GestorContextDBFactory().CreateDbContext(null);
-    using var transaction = context.Database.BeginTransaction();
-
-    try
-    {
-        // 1️⃣ Obtener la venta original
-        var ventaOriginal = context.Ventas
-            .Include(v => v.DetallesVentas)
-            .Include(v => v.VentaPagoDetalles)
-            .FirstOrDefault(v => v.VentaId == ventaId);
-
-        if (ventaOriginal == null)
+        public EstadoOperacion CancelacionVentaPorId(long ventaId)
         {
-            return new EstadoOperacion
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            using var transaction = context.Database.BeginTransaction();
+
+            try
             {
-                Exitoso = false,
-                Mensaje = "La venta no existe."
-            };
-        }
+                var ventaOriginal = context.Ventas
+                    .Include(v => v.DetallesVentas)
+                    .Include(v => v.VentaPagoDetalles)
+                    .FirstOrDefault(v => v.VentaId == ventaId);
 
-        // 2️⃣ Validar que no esté ya cancelada
-        if (ventaOriginal.Estado == 10)
-        {
-            return new EstadoOperacion
-            {
-                Exitoso = false,
-                Mensaje = "La venta ya se encuentra cancelada."
-            };
-        }
+                if (ventaOriginal == null)
+                    return new EstadoOperacion { Exitoso = false, Mensaje = "La venta no existe." };
 
-        // 3️⃣ Cambiar estado de la venta original a cancelada
-        ventaOriginal.Estado = 10;
-        context.SaveChanges();
+                if (ventaOriginal.Estado == 10)
+                    return new EstadoOperacion { Exitoso = false, Mensaje = "La venta ya está cancelada." };
 
-                /*
-                // ================================
-                // LÓGICA DE VENTA DE CANCELACIÓN
-                // (Temporalmente deshabilitada)
-                // ================================
+                ventaOriginal.Estado = 10;
 
                 var ventaCancelacionDto = new VentaDTO
                 {
-                    NumeroVenta = null, // Se generará automáticamente
                     IdEmpleado = ventaOriginal.IdEmpleado,
                     IdVendedor = ventaOriginal.IdVendedor,
                     FechaVenta = DateTime.Now,
 
-                    Total = ventaOriginal.Total * -1,
-                    TotalSinDescuento = ventaOriginal.TotalSinDescuento * -1,
-                    Descuento = ventaOriginal.Descuento * -1,
+                    Total = -ventaOriginal.Total,
+                    TotalSinDescuento = -ventaOriginal.TotalSinDescuento,
+                    Descuento = -ventaOriginal.Descuento,
 
-                    Estado = 10,
+                    Estado = 99,
                     Detalle = $"Cancelación de venta N° {ventaOriginal.NumeroVenta}",
 
                     Items = ventaOriginal.DetallesVentas.Select(d => new ItemVentaDTO
                     {
                         ItemId = d.IdProducto,
-                        Cantidad = d.Cantidad * -1,
+                        Cantidad = -d.Cantidad,
                         PrecioVenta = d.Subtotal / d.Cantidad
                     }).ToList(),
 
                     TiposDePagoSeleccionado = ventaOriginal.VentaPagoDetalles.Select(p => new FormaPago
                     {
-                        TipoDePago = (TipoDePago?)p.IdTipoPago,
-                        Monto = p.Monto * -1
+                        TipoDePago = (TipoDePago)p.IdTipoPago,
+                        Monto = -p.Monto
                     }).ToList()
                 };
 
-                var resultadoNuevaVenta = NuevaVenta(ventaCancelacionDto);
+                CrearVentaInterna(context, ventaCancelacionDto);
 
-                if (!resultadoNuevaVenta.Exitoso)
+                context.SaveChanges();
+                transaction.Commit();
+
+                return new EstadoOperacion
                 {
-                    transaction.Rollback();
-                    return resultadoNuevaVenta;
-                }
-                */
-        transaction.Commit();
+                    Exitoso = true,
+                    Mensaje = "Venta cancelada y contraventa generada correctamente."
+                };
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Error al cancelar la venta: " + ex.Message
+                };
+            }
+        }
 
-        return new EstadoOperacion
-        {
-            Exitoso = true,
-            Mensaje = "Venta cancelada correctamente."
-        };
-    }
-    catch (Exception ex)
-    {
-        try { transaction.Rollback(); } catch { }
 
-        return new EstadoOperacion
-        {
-            Exitoso = false,
-            Mensaje = "Error al cancelar la venta: " + ex.Message
-        };
-    }
-}
 
     }
 }

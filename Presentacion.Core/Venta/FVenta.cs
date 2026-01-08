@@ -659,7 +659,7 @@ namespace Presentacion.Core.Venta
             CalcularTotal();
                 //_ventaServicio.GenerateNextNumeroVenta();
                 //lblNro.Text = _ventaServicio.GenerateNextNumeroVenta().ToString();
-                lblNro.Text = "a ver";
+                lblNro.Text = "(Pendiente)";
             System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
             MyTimer.Interval = 1000;
             MyTimer.Tick += new EventHandler(MyTimer_Tick);
