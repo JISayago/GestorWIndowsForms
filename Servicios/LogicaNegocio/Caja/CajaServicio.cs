@@ -100,9 +100,13 @@ namespace Servicios.LogicaNegocio.Caja
             return caja;
         }
 
-        public long ObtenerIdCajaAbierta()
+        public long ObtenerIdCajaAbierta( GestorContextDB context = null)
         {
-            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+            if (context == null)
+            {
+                context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+            }
+
             var caja = context.Cajas
                 .Where(c => !c.EstaCerrada)
                 .OrderByDescending(c => c.FechaInicio)
@@ -134,26 +138,18 @@ namespace Servicios.LogicaNegocio.Caja
             return saldo;
         }
 
-        public void RegistrarTransaccion(decimal monto, string tipo)
+        public void RegistrarTransaccion(GestorContextDB context, decimal monto, string tipo)
         {
-            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
-
             var caja = context.Cajas
                 .Where(c => !c.EstaCerrada)
                 .OrderByDescending(c => c.FechaInicio)
                 .FirstOrDefault();
 
             if (caja == null)
-            {
-                throw new InvalidOperationException("No hay una caja abierta para registrar la transacción.");
-            }
+                throw new InvalidOperationException("No hay una caja abierta.");
 
-            ActualizarSaldoCaja(caja ,tipo, monto); //Lo dejo aca? asi cada vez que cambiamos el saldo se actuliza 
+            ActualizarSaldoCaja(caja, tipo, monto);
 
-            //ACA DEBERIA CAGAR EL MOVIMIENTO EN LA CAJA? O ESO LO HACE EL SERVICIO DE MOVIMIENTOS?
-            //Al movimineto le cargo la CajaId cuando creo el movimiento en el servicio de movimientos
-
-            context.SaveChanges();
         }
 
         public void ActualizarSaldoCaja(AccesoDatos.Entidades.Caja caja, string tipo, decimal monto)
@@ -176,6 +172,29 @@ namespace Servicios.LogicaNegocio.Caja
 
             caja.SaldoActual = caja.SaldoInicial + (caja.TotalIngresos - caja.TotalEgresos);
             //context.SaveChanges();
+        }
+        public List<CajaDTO> ObetenerTodasLasCajas()
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+            
+            var cajas = context.Cajas
+                .Select(c => new CajaDTO
+                {
+                    CajaId = c.CajaId,
+                    SaldoInicial = c.SaldoInicial,
+                    SaldoActual = c.SaldoActual,
+                    FechaInicio = c.FechaInicio,
+                    FechaFin = c.FechaFin,
+                    TotalIngresos = c.TotalIngresos,
+                    TotalEgresos = c.TotalEgresos,
+                    BalanceFinal = c.BalanceFinal,
+                    EmpleadoApertura = c.EmpleadoApertura,
+                    EmpleadoCierre = c.EmpleadoCierre,
+                    EstaCerrada = c.EstaCerrada,
+                    MovimientoIds = c.Movimientos.Select(m => m.MovimientoId).ToList()
+                }).ToList();
+
+            return cajas;
         }
     }
 }

@@ -37,7 +37,7 @@
             // 
             // txtMontoApertura
             // 
-            txtMontoApertura.Location = new Point(123, 68);
+            txtMontoApertura.Location = new Point(124, 56);
             txtMontoApertura.Name = "txtMontoApertura";
             txtMontoApertura.Size = new Size(100, 23);
             txtMontoApertura.TabIndex = 0;
@@ -45,7 +45,7 @@
             // lblMontoApertura
             // 
             lblMontoApertura.AutoSize = true;
-            lblMontoApertura.Location = new Point(12, 71);
+            lblMontoApertura.Location = new Point(13, 59);
             lblMontoApertura.Name = "lblMontoApertura";
             lblMontoApertura.Size = new Size(92, 15);
             lblMontoApertura.TabIndex = 1;
@@ -53,9 +53,9 @@
             // 
             // btnAbrirCaja
             // 
-            btnAbrirCaja.Location = new Point(71, 128);
+            btnAbrirCaja.Location = new Point(61, 103);
             btnAbrirCaja.Name = "btnAbrirCaja";
-            btnAbrirCaja.Size = new Size(90, 23);
+            btnAbrirCaja.Size = new Size(95, 23);
             btnAbrirCaja.TabIndex = 2;
             btnAbrirCaja.Text = "ABRIR CAJA";
             btnAbrirCaja.UseVisualStyleBackColor = true;
@@ -64,7 +64,7 @@
             // lblUsuarioLogeado
             // 
             lblUsuarioLogeado.AutoSize = true;
-            lblUsuarioLogeado.Location = new Point(123, 27);
+            lblUsuarioLogeado.Location = new Point(12, 33);
             lblUsuarioLogeado.Name = "lblUsuarioLogeado";
             lblUsuarioLogeado.Size = new Size(38, 15);
             lblUsuarioLogeado.TabIndex = 4;
@@ -73,7 +73,7 @@
             // lblUsuario
             // 
             lblUsuario.AutoSize = true;
-            lblUsuario.Location = new Point(8, 27);
+            lblUsuario.Location = new Point(12, 9);
             lblUsuario.Name = "lblUsuario";
             lblUsuario.Size = new Size(96, 15);
             lblUsuario.TabIndex = 3;
@@ -83,7 +83,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(245, 172);
+            ClientSize = new Size(245, 138);
             Controls.Add(lblUsuarioLogeado);
             Controls.Add(lblUsuario);
             Controls.Add(btnAbrirCaja);

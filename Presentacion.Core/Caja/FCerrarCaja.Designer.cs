@@ -36,7 +36,7 @@
             // lblUsuarioLogeado
             // 
             lblUsuarioLogeado.AutoSize = true;
-            lblUsuarioLogeado.Location = new Point(127, 26);
+            lblUsuarioLogeado.Location = new Point(12, 38);
             lblUsuarioLogeado.Name = "lblUsuarioLogeado";
             lblUsuarioLogeado.Size = new Size(38, 15);
             lblUsuarioLogeado.TabIndex = 6;
@@ -45,7 +45,7 @@
             // lblUsuario
             // 
             lblUsuario.AutoSize = true;
-            lblUsuario.Location = new Point(12, 26);
+            lblUsuario.Location = new Point(12, 14);
             lblUsuario.Name = "lblUsuario";
             lblUsuario.Size = new Size(96, 15);
             lblUsuario.TabIndex = 5;
@@ -53,7 +53,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(70, 118);
+            button1.Location = new Point(68, 103);
             button1.Name = "button1";
             button1.Size = new Size(95, 23);
             button1.TabIndex = 7;
@@ -65,7 +65,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(245, 172);
+            ClientSize = new Size(245, 138);
             Controls.Add(button1);
             Controls.Add(lblUsuarioLogeado);
             Controls.Add(lblUsuario);

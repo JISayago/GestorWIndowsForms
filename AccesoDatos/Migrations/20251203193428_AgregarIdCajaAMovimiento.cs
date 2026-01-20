@@ -10,11 +10,11 @@ namespace AccesoDatos.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
+            /*migrationBuilder.DropForeignKey(
                 name: "FK_Movimientos_Cajas_CajaId",
-                table: "Movimientos");
+                table: "Movimientos");*/
 
-            migrationBuilder.AlterColumn<long>(
+           /* migrationBuilder.AlterColumn<long>(
                 name: "CajaId",
                 table: "Movimientos",
                 type: "bigint",
@@ -22,7 +22,7 @@ namespace AccesoDatos.Migrations
                 defaultValue: 0L,
                 oldClrType: typeof(long),
                 oldType: "bigint",
-                oldNullable: true);
+                oldNullable: true);*/
 
             migrationBuilder.AddColumn<long>(
                 name: "id_Caja",
@@ -31,27 +31,27 @@ namespace AccesoDatos.Migrations
                 nullable: false,
                 defaultValue: 0L);
 
-            migrationBuilder.AddForeignKey(
+            /*migrationBuilder.AddForeignKey(
                 name: "FK_Movimientos_Cajas_CajaId",
                 table: "Movimientos",
                 column: "CajaId",
                 principalTable: "Cajas",
                 principalColumn: "CajaId",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade);*/
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
+            /*migrationBuilder.DropForeignKey(
                 name: "FK_Movimientos_Cajas_CajaId",
-                table: "Movimientos");
+                table: "Movimientos");*/
 
             migrationBuilder.DropColumn(
                 name: "id_Caja",
                 table: "Movimientos");
 
-            migrationBuilder.AlterColumn<long>(
+            /*migrationBuilder.AlterColumn<long>(
                 name: "CajaId",
                 table: "Movimientos",
                 type: "bigint",
@@ -64,7 +64,7 @@ namespace AccesoDatos.Migrations
                 table: "Movimientos",
                 column: "CajaId",
                 principalTable: "Cajas",
-                principalColumn: "CajaId");
+                principalColumn: "CajaId");*/
         }
     }
 }

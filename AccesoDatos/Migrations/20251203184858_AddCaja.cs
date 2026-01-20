@@ -11,12 +11,12 @@ namespace AccesoDatos.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<long>(
+            /*migrationBuilder.AddColumn<long>(
                 name: "CajaId",
                 table: "Movimientos",
                 type: "bigint",
                 nullable: true);
-
+            */
             migrationBuilder.CreateTable(
                 name: "Cajas",
                 columns: table => new
@@ -39,36 +39,38 @@ namespace AccesoDatos.Migrations
                     table.PrimaryKey("PK_Cajas", x => x.CajaId);
                 });
 
-            migrationBuilder.CreateIndex(
+            /*migrationBuilder.CreateIndex(
                 name: "IX_Movimientos_CajaId",
                 table: "Movimientos",
-                column: "CajaId");
+                column: "id_Caja");
+
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Movimientos_Cajas_CajaId",
+                name: "FK_Movimientos_Cajas_id_Caja",
                 table: "Movimientos",
-                column: "CajaId",
+                column: "id_Caja",
                 principalTable: "Cajas",
-                principalColumn: "CajaId");
+                principalColumn: "CajaId",
+                onDelete: ReferentialAction.Restrict);*/
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
+           /* migrationBuilder.DropForeignKey(
                 name: "FK_Movimientos_Cajas_CajaId",
                 table: "Movimientos");
-
+           */
             migrationBuilder.DropTable(
                 name: "Cajas");
-
+/*
             migrationBuilder.DropIndex(
                 name: "IX_Movimientos_CajaId",
                 table: "Movimientos");
 
             migrationBuilder.DropColumn(
                 name: "CajaId",
-                table: "Movimientos");
+                table: "Movimientos");*/
         }
     }
 }

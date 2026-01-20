@@ -22,8 +22,9 @@ namespace Presentacion.Core.Caja
         public FCajaAbrir()
         {
             cajaServicio = new CajaServicio();
-
             InitializeComponent();
+
+            lblUsuarioLogeado.Text = DatosSistema.NombreUsuario;
         }
 
         private void btnAbrirCaja_Click(object sender, EventArgs e)

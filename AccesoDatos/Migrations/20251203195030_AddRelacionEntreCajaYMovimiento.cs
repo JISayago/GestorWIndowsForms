@@ -20,8 +20,8 @@ namespace AccesoDatos.Migrations
 
             migrationBuilder.DropColumn(
                 name: "CajaId",
-                table: "Movimientos");
-            */
+                table: "Movimientos");*/
+            
             migrationBuilder.CreateIndex(
                 name: "IX_Movimientos_id_Caja",
                 table: "Movimientos",
@@ -47,7 +47,7 @@ namespace AccesoDatos.Migrations
                 name: "IX_Movimientos_id_Caja",
                 table: "Movimientos");
 
-            migrationBuilder.AddColumn<long>(
+            /*migrationBuilder.AddColumn<long>(
                 name: "CajaId",
                 table: "Movimientos",
                 type: "bigint",
@@ -65,7 +65,7 @@ namespace AccesoDatos.Migrations
                 column: "CajaId",
                 principalTable: "Cajas",
                 principalColumn: "CajaId",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade);*/
         }
     }
 }

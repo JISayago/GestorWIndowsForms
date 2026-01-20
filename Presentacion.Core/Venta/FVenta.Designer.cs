@@ -32,8 +32,6 @@
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             lblFechaHoy = new Label();
-            lblUsuarioLogeadoName = new Label();
-            lblUsuario = new Label();
             btnLimpiar = new Button();
             txtCliente = new TextBox();
             btnCargarCliente = new Button();
@@ -67,7 +65,6 @@
             flowLayoutPanel2 = new FlowLayoutPanel();
             lblVendedor = new Label();
             lblVendedorAsignado = new Label();
-            flowLayoutPanel1 = new FlowLayoutPanel();
             btnCargarOferta = new Button();
             tableLayoutPanel6 = new TableLayoutPanel();
             flowLayoutPanel15 = new FlowLayoutPanel();
@@ -96,7 +93,6 @@
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
-            flowLayoutPanel1.SuspendLayout();
             tableLayoutPanel6.SuspendLayout();
             flowLayoutPanel15.SuspendLayout();
             tableLayoutPanel7.SuspendLayout();
@@ -122,26 +118,6 @@
             lblFechaHoy.Size = new Size(103, 30);
             lblFechaHoy.TabIndex = 1;
             lblFechaHoy.Text = "00/00/00";
-            // 
-            // lblUsuarioLogeadoName
-            // 
-            lblUsuarioLogeadoName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            lblUsuarioLogeadoName.AutoSize = true;
-            lblUsuarioLogeadoName.Location = new Point(3, 60);
-            lblUsuarioLogeadoName.Name = "lblUsuarioLogeadoName";
-            lblUsuarioLogeadoName.Size = new Size(79, 30);
-            lblUsuarioLogeadoName.TabIndex = 3;
-            lblUsuarioLogeadoName.Text = "UsuarioLogeado";
-            // 
-            // lblUsuario
-            // 
-            lblUsuario.AutoSize = true;
-            lblUsuario.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblUsuario.Location = new Point(3, 0);
-            lblUsuario.Name = "lblUsuario";
-            lblUsuario.Size = new Size(75, 60);
-            lblUsuario.TabIndex = 2;
-            lblUsuario.Text = "Usuario:";
             // 
             // btnLimpiar
             // 
@@ -482,11 +458,10 @@
             // 
             tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel2.BackColor = SystemColors.Control;
-            tableLayoutPanel2.ColumnCount = 2;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 28.5686283F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 71.43137F));
-            tableLayoutPanel2.Controls.Add(tableLayoutPanel3, 1, 0);
-            tableLayoutPanel2.Controls.Add(flowLayoutPanel1, 0, 0);
+            tableLayoutPanel2.ColumnCount = 1;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel3, 0, 0);
             tableLayoutPanel2.Location = new Point(3, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
@@ -500,11 +475,11 @@
             tableLayoutPanel3.ColumnCount = 1;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 63.0374374F));
             tableLayoutPanel3.Controls.Add(flowLayoutPanel2, 0, 0);
-            tableLayoutPanel3.Location = new Point(95, 3);
+            tableLayoutPanel3.Location = new Point(3, 3);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.Size = new Size(226, 45);
+            tableLayoutPanel3.Size = new Size(318, 45);
             tableLayoutPanel3.TabIndex = 45;
             // 
             // flowLayoutPanel2
@@ -514,7 +489,7 @@
             flowLayoutPanel2.Controls.Add(lblVendedorAsignado);
             flowLayoutPanel2.Location = new Point(3, 3);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(220, 39);
+            flowLayoutPanel2.Size = new Size(312, 39);
             flowLayoutPanel2.TabIndex = 44;
             // 
             // lblVendedor
@@ -531,22 +506,12 @@
             // lblVendedorAsignado
             // 
             lblVendedorAsignado.AutoSize = true;
-            lblVendedorAsignado.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblVendedorAsignado.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblVendedorAsignado.Location = new Point(3, 30);
             lblVendedorAsignado.Name = "lblVendedorAsignado";
-            lblVendedorAsignado.Size = new Size(100, 25);
+            lblVendedorAsignado.Size = new Size(108, 30);
             lblVendedorAsignado.TabIndex = 3;
             lblVendedorAsignado.Text = "Vendedor";
-            // 
-            // flowLayoutPanel1
-            // 
-            flowLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            flowLayoutPanel1.Controls.Add(lblUsuario);
-            flowLayoutPanel1.Controls.Add(lblUsuarioLogeadoName);
-            flowLayoutPanel1.Location = new Point(3, 3);
-            flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(86, 45);
-            flowLayoutPanel1.TabIndex = 43;
             // 
             // btnCargarOferta
             // 
@@ -803,8 +768,6 @@
             tableLayoutPanel3.ResumeLayout(false);
             flowLayoutPanel2.ResumeLayout(false);
             flowLayoutPanel2.PerformLayout();
-            flowLayoutPanel1.ResumeLayout(false);
-            flowLayoutPanel1.PerformLayout();
             tableLayoutPanel6.ResumeLayout(false);
             flowLayoutPanel15.ResumeLayout(false);
             tableLayoutPanel7.ResumeLayout(false);
@@ -830,8 +793,6 @@
 
         #endregion
         private Label lblFechaHoy;
-        private Label lblUsuarioLogeadoName;
-        private Label lblUsuario;
         private Button button1;
         private Button btnLimpiar;
         private TextBox txtCliente;
@@ -854,7 +815,6 @@
         private Label lblPorcentajeDescuento;
         private CheckBox cbxDescEfectivo;
         private TableLayoutPanel tableLayoutPanel1;
-        private FlowLayoutPanel flowLayoutPanel1;
         private TableLayoutPanel tableLayoutPanel2;
         private FlowLayoutPanel flowLayoutPanel2;
         private Label lblVendedor;

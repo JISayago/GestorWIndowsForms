@@ -135,30 +135,28 @@ namespace Presentacion.Core.Venta
 
         private void ActualizarCamposInicio(long? ventaId)
         {
-            if(ventaId != null)
+            if (ventaId != null)
             {
-
-            //Tiene que ser la carga del cliente cuando exista de momento se va a crear automticamente. Por defecto es el consumidor final
-            txtCliente.Text = esConsumidorFinal ? "Consumidor Final" : "";
-            lblVendedorAsignado.Text = esUsuarioLogeado
-                ? $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}"
-                : "";
+               var vendedor = _empleadoServicio.ObtenerEmpleadoPorId(VENTAELIMINAR.IdVendedor);
+                txtCliente.Text = "Consumidor Final"; // agregar el idcliente en venta
+                lblVendedorAsignado.Text = $"{vendedor.Nombre} {vendedor.Apellido}";
+            }
+            else
+            {
+                txtCliente.Text = esConsumidorFinal ? "Consumidor Final" : "";
+                lblVendedorAsignado.Text = esUsuarioLogeado
+                    ? $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}"
+                    : "";
+            }
             if (esConsumidorFinal)
             {
                 cbxIncluirCtaCte.Checked = false;
                 cbxIncluirCtaCte.Enabled = false;
             }
-            var font = new Font(lblUsuarioLogeadoName.Font.FontFamily, 16F, FontStyle.Bold);
-            lblUsuarioLogeadoName.Font = font;
-            lblUsuarioLogeadoName.ForeColor = Color.DarkGreen;
-            lblVendedorAsignado.Font = font;
-            lblVendedorAsignado.ForeColor = Color.OrangeRed;
             if (_usuarioLogeado != null)
             {
-                lblUsuarioLogeadoName.Text = _usuarioLogeado.Username.ToUpper();
-                lblVendedorAsignado.Text = _usuarioLogeado.Username.ToUpper();
-            }
-            }
+                lblVendedorAsignado.Text = $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}";
+            }            
         }
 
 
@@ -571,7 +569,6 @@ namespace Presentacion.Core.Venta
         {
             if (VENTAID != null)
             {
-                MessageBox.Show("entro a la id cancelar");
                 var result = MessageBox.Show(
                     "¿Está seguro que desea cancelar esta venta?\n\nEsta acción no se puede deshacer.",
                     "Confirmar cancelación",
@@ -581,7 +578,6 @@ namespace Presentacion.Core.Venta
 
                 if (result == DialogResult.OK)
                 {
-                    MessageBox.Show("entro al metodo de cancelacion");
                     CancelarVenta(VENTAID);
                 }
             }
@@ -595,7 +591,6 @@ namespace Presentacion.Core.Venta
 
         private void CancelarVenta(long? VenId)
         {
-            MessageBox.Show("entro al metodo de cancelacion del servico");
             var respuesta = _ventaServicio.CancelacionVentaPorId((long)VenId);
             MessageBox.Show(respuesta.Mensaje);
         }
@@ -622,7 +617,6 @@ namespace Presentacion.Core.Venta
                     Nombre = usuarioLogeado.Nombre,
                     Apellido = usuarioLogeado.Apellido,
                 };
-                lblUsuarioLogeadoName.Text = _usuarioLogeado.Username;
                 //cbxConsumidorFinal.Checked = true;
                 //esConsumidorFinal = true;
                 //esUsuarioLogeado = true;
@@ -635,7 +629,26 @@ namespace Presentacion.Core.Venta
                     cbxIncluirCtaCte.Enabled = false;
                 lblFechaHoy.Text = VENTAELIMINAR.FechaVenta.ToString("dd/MM/yyyy");
                 lblDiaAbrev.Text = (VENTAELIMINAR.FechaVenta.ToString("ddd")).ToUpper() + ".";
-                btnLimpiar.Text = "Eliminar";
+                btnLimpiar.Text = "Contrasiento/Cancelación";
+                dgvProductos.Enabled = false;
+                btnConfirmarYFPago.Enabled = false;
+                btnConfirmarYFPago.Visible = false;
+                txtAreaDetallesVenta.Enabled = false;
+                txtSubtotal.Enabled = false;
+                txtTotal.Enabled = false;
+                cbxConsumidorFinal.Enabled = false;
+                cbxConsumidorFinal.Visible = false;
+                cbxDescEfectivo.Enabled = false;
+                cbxDescEfectivo.Visible = false;
+                btnCargarCliente.Enabled = false;
+                btnCargarCliente.Visible = false;
+                btnCargarOferta.Enabled = false;
+                btnCargarOferta.Visible = false;
+                btnCargarProducto.Enabled = false;
+                btnCargarProducto.Visible = false;
+                btnCambiarVendedor.Enabled = false;
+                btnCambiarVendedor.Visible = false;
+
             }
             else
             {
@@ -646,7 +659,7 @@ namespace Presentacion.Core.Venta
             CalcularTotal();
                 //_ventaServicio.GenerateNextNumeroVenta();
                 //lblNro.Text = _ventaServicio.GenerateNextNumeroVenta().ToString();
-                lblNro.Text = "a ver";
+                lblNro.Text = "(Pendiente)";
             System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
             MyTimer.Interval = 1000;
             MyTimer.Tick += new EventHandler(MyTimer_Tick);
@@ -661,7 +674,6 @@ namespace Presentacion.Core.Venta
                 Apellido = usuarioLogeado.Apellido,
             };
             txtDescuentoEfectivo.Text = string.Empty;
-            lblUsuarioLogeadoName.Text = _usuarioLogeado.Username;
             cbxConsumidorFinal.Checked = true;
             esConsumidorFinal = true;
             esUsuarioLogeado = true;
