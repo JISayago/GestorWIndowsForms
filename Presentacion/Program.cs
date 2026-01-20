@@ -128,8 +128,7 @@ namespace Presentacion
 
             if (login.PuedeAccederAlSistema)
             {
-                DatosSistema.UsuarioId = login._usuarioLogeado.PersonaId;
-                DatosSistema.NombreUsuario = login._usuarioLogeado.Nombre + " " + login._usuarioLogeado.Apellido;
+                new DatosSistema(login._usuarioLogeado.PersonaId, login._usuarioLogeado.Nombre, login._usuarioLogeado.Apellido);
 
                 //inicializar datosSistemas, cuando tenga el contructor
 

@@ -26,7 +26,7 @@ namespace Presentacion.Core.Caja
 
         private void btnAbrirCaja_Click(object sender, EventArgs e)
         {
-            var FCajaAbrir = new FCajaAbrir();            
+            var FCajaAbrir = new FCajaAbrir();
 
             var result = FCajaAbrir.ShowDialog();
             if (result == DialogResult.OK)
@@ -51,6 +51,12 @@ namespace Presentacion.Core.Caja
             var estadoCaja = cajaServicio.ObtenerEstadoCaja();
 
             lblEstadoCaja.Text = estadoCaja ? "CAJA ABIERTA" : "CAJA CERRADA";
+        }
+
+        private void btnConsultarCajas_Click(object sender, EventArgs e)
+        {
+            var formConsultaCajas = new FCajaConsulta();
+            formConsultaCajas.ShowDialog();
         }
     }
 }

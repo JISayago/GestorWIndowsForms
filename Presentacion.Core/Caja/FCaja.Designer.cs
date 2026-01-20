@@ -52,6 +52,7 @@
             btnConsultarCajas.TabIndex = 6;
             btnConsultarCajas.Text = "Consulta Cajas";
             btnConsultarCajas.UseVisualStyleBackColor = true;
+            btnConsultarCajas.Click += btnConsultarCajas_Click;
             // 
             // btnCerrarCaja
             // 
