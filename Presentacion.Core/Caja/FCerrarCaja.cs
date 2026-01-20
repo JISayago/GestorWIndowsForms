@@ -19,9 +19,9 @@ namespace Presentacion.Core.Caja
         public FCerrarCaja()
         {
             cajaServicio = new CajaServicio();
-
-
             InitializeComponent();
+
+            lblUsuarioLogeado.Text = DatosSistema.NombreUsuario;
         }
 
         private void button1_Click(object sender, EventArgs e)

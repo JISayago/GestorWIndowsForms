@@ -35,15 +35,16 @@
             label2 = new Label();
             btnFiltrar = new Button();
             btnClear = new Button();
+            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvCajas).BeginInit();
             SuspendLayout();
             // 
             // dgvCajas
             // 
             dgvCajas.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvCajas.Location = new Point(12, 99);
+            dgvCajas.Location = new Point(12, 83);
             dgvCajas.Name = "dgvCajas";
-            dgvCajas.Size = new Size(602, 254);
+            dgvCajas.Size = new Size(731, 270);
             dgvCajas.TabIndex = 0;
             // 
             // dtpAbierta
@@ -55,7 +56,7 @@
             // 
             // dtpCerrada
             // 
-            dtpCerrada.Location = new Point(414, 15);
+            dtpCerrada.Location = new Point(75, 54);
             dtpCerrada.Name = "dtpCerrada";
             dtpCerrada.Size = new Size(200, 23);
             dtpCerrada.TabIndex = 2;
@@ -72,7 +73,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(348, 21);
+            label2.Location = new Point(12, 58);
             label2.Name = "label2";
             label2.Size = new Size(60, 15);
             label2.TabIndex = 4;
@@ -80,7 +81,7 @@
             // 
             // btnFiltrar
             // 
-            btnFiltrar.Location = new Point(12, 61);
+            btnFiltrar.Location = new Point(291, 54);
             btnFiltrar.Name = "btnFiltrar";
             btnFiltrar.Size = new Size(75, 23);
             btnFiltrar.TabIndex = 5;
@@ -90,19 +91,30 @@
             // 
             // btnClear
             // 
-            btnClear.Location = new Point(93, 61);
+            btnClear.Location = new Point(372, 54);
             btnClear.Name = "btnClear";
             btnClear.Size = new Size(75, 23);
             btnClear.TabIndex = 6;
-            btnClear.Text = "Clear";
+            btnClear.Text = "Todas";
             btnClear.UseVisualStyleBackColor = true;
             btnClear.Click += btnClear_Click;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(453, 54);
+            button1.Name = "button1";
+            button1.Size = new Size(75, 23);
+            button1.TabIndex = 7;
+            button1.Text = "Ultimas 7";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // FCajaConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(627, 365);
+            ClientSize = new Size(755, 365);
+            Controls.Add(button1);
             Controls.Add(btnClear);
             Controls.Add(dtpAbierta);
             Controls.Add(btnFiltrar);
@@ -126,5 +138,6 @@
         private Label label2;
         private Button btnFiltrar;
         private Button btnClear;
+        private Button button1;
     }
 }

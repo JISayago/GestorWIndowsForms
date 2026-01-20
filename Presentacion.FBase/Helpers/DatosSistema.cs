@@ -20,6 +20,7 @@ namespace Presentacion.FBase.Helpers
 
         public DatosSistema()
         {
+            // Inicializar CajaId y EstaCajaAbierta
             var cajaServicio = new CajaServicio();
             var estadoCaja = cajaServicio.ObtenerEstadoCaja();
             var cajaId = cajaServicio.ObtenerIdCajaAbierta();
@@ -33,10 +34,7 @@ namespace Presentacion.FBase.Helpers
             string nombreUsuario = nombre + " " + apellido;
 
             UsuarioId = usuarioId;
-            NombreUsuario = nombreUsuario;
-
-            // Inicializar CajaId y EstaCajaAbierta
-            
+            NombreUsuario = nombreUsuario;            
         }
     }
 }
