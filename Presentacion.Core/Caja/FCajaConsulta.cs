@@ -26,7 +26,11 @@ namespace Presentacion.Core.Caja
             //grilla.AutoGenerateColumns = false; si pongo esto despues no puedo setear las columnas, tengo que no mostrar las que no quiero uno por uno? 
             //deberia agregar las columnas en el dvg y desp unir con cada valor del dto
 
+
             //ajustar la fecha default de los dateTimePicker, cual poner de deault nuse
+
+            //Traer las cajas directamente ordena desde el service ObetenerTodasLasCajas() agregar el orderBy
+
             var cajarOrdenadas = _cajas.OrderByDescending(x => x.FechaInicio).ToList();
 
             dgvCajas.DataSource = cajarOrdenadas;
@@ -65,7 +69,7 @@ namespace Presentacion.Core.Caja
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var cajasFiltrada = _cajas.OrderByDescending(x => x.FechaInicio).Take(7).ToList();
+            var cajasFiltrada = _cajas.OrderByDescending(x => x.FechaInicio).Take(10).ToList();
 
             dgvCajas.DataSource = null;
             dgvCajas.DataSource = cajasFiltrada;

@@ -52,19 +52,19 @@
             btnVolver = new Button();
             btnComprobantes = new Button();
             pnlInfoInicial = new Panel();
-            dgvGrilla = new DataGridView();
-            tableLayoutPanel2 = new TableLayoutPanel();
-            lblDatosBalances = new Label();
-            lblExtra = new Label();
             tableLayoutPanel3 = new TableLayoutPanel();
             lblextra3 = new Label();
             lblExtra2 = new Label();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            lblExtra = new Label();
+            lblDatosBalances = new Label();
+            dgvGrilla = new DataGridView();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             pnlInfoInicial.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
-            tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
             SuspendLayout();
             // 
             // menuStrip1
@@ -278,51 +278,6 @@
             pnlInfoInicial.Size = new Size(998, 461);
             pnlInfoInicial.TabIndex = 24;
             // 
-            // dgvGrilla
-            // 
-            dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvGrilla.Location = new Point(1412, -3);
-            dgvGrilla.Name = "dgvGrilla";
-            dgvGrilla.Size = new Size(380, 816);
-            dgvGrilla.TabIndex = 17;
-            // 
-            // tableLayoutPanel2
-            // 
-            tableLayoutPanel2.BackColor = SystemColors.AppWorkspace;
-            tableLayoutPanel2.ColumnCount = 2;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 49.7946625F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.2053375F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 324F));
-            tableLayoutPanel2.Controls.Add(lblExtra, 1, 0);
-            tableLayoutPanel2.Controls.Add(lblDatosBalances, 0, 0);
-            tableLayoutPanel2.Location = new Point(0, 0);
-            tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 1;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 157F));
-            tableLayoutPanel2.Size = new Size(995, 198);
-            tableLayoutPanel2.TabIndex = 18;
-            // 
-            // lblDatosBalances
-            // 
-            lblDatosBalances.AutoSize = true;
-            lblDatosBalances.Location = new Point(3, 0);
-            lblDatosBalances.Name = "lblDatosBalances";
-            lblDatosBalances.Size = new Size(81, 15);
-            lblDatosBalances.TabIndex = 0;
-            lblDatosBalances.Text = "Datos Balance";
-            // 
-            // lblExtra
-            // 
-            lblExtra.AutoSize = true;
-            lblExtra.Location = new Point(498, 0);
-            lblExtra.Name = "lblExtra";
-            lblExtra.Size = new Size(112, 15);
-            lblExtra.TabIndex = 1;
-            lblExtra.Text = "Grafico con balance";
-            // 
             // tableLayoutPanel3
             // 
             tableLayoutPanel3.BackColor = SystemColors.Highlight;
@@ -359,6 +314,51 @@
             lblExtra2.TabIndex = 0;
             lblExtra2.Text = "Otros Datos";
             // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.BackColor = SystemColors.AppWorkspace;
+            tableLayoutPanel2.ColumnCount = 2;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 49.7946625F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.2053375F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 324F));
+            tableLayoutPanel2.Controls.Add(lblExtra, 1, 0);
+            tableLayoutPanel2.Controls.Add(lblDatosBalances, 0, 0);
+            tableLayoutPanel2.Location = new Point(0, 0);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 157F));
+            tableLayoutPanel2.Size = new Size(995, 210);
+            tableLayoutPanel2.TabIndex = 18;
+            // 
+            // lblExtra
+            // 
+            lblExtra.AutoSize = true;
+            lblExtra.Location = new Point(498, 0);
+            lblExtra.Name = "lblExtra";
+            lblExtra.Size = new Size(112, 15);
+            lblExtra.TabIndex = 1;
+            lblExtra.Text = "Grafico con balance";
+            // 
+            // lblDatosBalances
+            // 
+            lblDatosBalances.AutoSize = true;
+            lblDatosBalances.Location = new Point(3, 0);
+            lblDatosBalances.Name = "lblDatosBalances";
+            lblDatosBalances.Size = new Size(81, 15);
+            lblDatosBalances.TabIndex = 0;
+            lblDatosBalances.Text = "Datos Balance";
+            // 
+            // dgvGrilla
+            // 
+            dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvGrilla.Location = new Point(1412, -3);
+            dgvGrilla.Name = "dgvGrilla";
+            dgvGrilla.Size = new Size(380, 816);
+            dgvGrilla.TabIndex = 17;
+            // 
             // FAdministracion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -376,11 +376,11 @@
             menuStrip1.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
             pnlInfoInicial.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
-            tableLayoutPanel2.ResumeLayout(false);
-            tableLayoutPanel2.PerformLayout();
             tableLayoutPanel3.ResumeLayout(false);
             tableLayoutPanel3.PerformLayout();
+            tableLayoutPanel2.ResumeLayout(false);
+            tableLayoutPanel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
