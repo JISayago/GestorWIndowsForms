@@ -22,20 +22,10 @@ namespace Servicios.LogicaNegocio.Movimiento
 {
     public class MovimientoServicio : IMovimientoServicio
     {
-        /*
-         * 
-         * crearMovimiento(Venta venta)
-         * obtenerMovimientoPorId
-         * obtenerMovimientos
-        */
-
-        /*
-         * CREAR FUNCION PARA BUSCAR LOS NOMBRES DE LOS PRODUCTOS EN EL MOVIMIENTO DETALLADO,
-         * USANOD LOS ID DE LOS PRODUCTOS QUE TENGO EN DETALLEvENTA BUSCAR LOS NOMBRE USANDO SERIVCE DE PRODDUCTO Y CREAR UNA LISTA DE PRODUCTOS CON NOMBRE
-         * 
-         */
-        public void CrearMovimientoVenta(VentaDTO ventaDto, GestorContextDB context = null)
+        public void CrearMovimientoVenta(VentaDTO ventaDto, long cajaId, GestorContextDB context = null)
         {
+            //el return del id lo puse para caja pero al fnal no se usa, podria no devolver nada
+
             bool crearContextoLocal = (context == null);
 
             if (crearContextoLocal)
@@ -50,7 +40,8 @@ namespace Servicios.LogicaNegocio.Movimiento
                     TipoMovimiento = 1, // 1 = Ingreso, por ejemplo
                     Monto = ventaDto.Total,
                     FechaMovimiento = DateTime.Now,
-                    EstaEliminado = false
+                    EstaEliminado = false,
+                    IdCaja = cajaId
                 };
 
                 context.Movimientos.Add(movimiento);
@@ -70,24 +61,6 @@ namespace Servicios.LogicaNegocio.Movimiento
                     context.Dispose();
             }
         }
-        /*
-        public void CrearMovimientoVenta(VentaDTO ventaDto)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var nuevoMovimiento = new AccesoDatos.Entidades.Movimiento
-            {
-                NumeroMovimiento = "MOV" + ventaDto.NumeroVenta + "VENTA", // Ejemplo de generación de número de movimiento
-                IdVenta = ventaDto.VentaId,
-                TipoMovimiento = 1, // Ingreso
-                Monto = ventaDto.Total,
-                FechaMovimiento = DateTime.Now,
-                EstaEliminado = false
-            };
-
-            context.Movimientos.Add(nuevoMovimiento);
-            context.SaveChanges(); // Guarda en la DB
-        }*/
 
         public MovimientoDTO ObtenerMovimientoPorId(long movimientoId)
         {
@@ -105,23 +78,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                 EstaEliminado = movimiento.EstaEliminado
             };
         }
-        /*
-        public IEnumerable<MovimientoDTO> ObtenerMovimientos()
-        {
-            var context = new GestorContextDBFactory().CreateDbContext(null);
-            var movimientos = context.Movimientos.Where(m => !m.EstaEliminado).ToList();
 
-            return movimientos.Select(m => new MovimientoDTO
-            {
-                MovimientoId = m.MovimientoId,
-                NumeroMovimiento = m.NumeroMovimiento,
-                IdVenta = m.IdVenta,
-                TipoMovimiento = m.TipoMovimiento,
-                Monto = m.Monto,
-                FechaMovimiento = m.FechaMovimiento,
-                EstaEliminado = m.EstaEliminado
-            });
-        }*/
         public IEnumerable<MovimientoDTO> ObtenerMovimiento(string cadenaBuscar)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -162,13 +119,10 @@ namespace Servicios.LogicaNegocio.Movimiento
 
         public (EmpleadoDTO empleado, VentaDTO venta, MovimientoDTO movimiento, List<ProductoDTO> productos) CargarDatosMovimiento(long entidadId)
         {
-            var context = new GestorContextDBFactory().CreateDbContext(null);
-
             var movimientoService = new MovimientoServicio();
             var ventaService = new VentaServicio();
             var empleadoService = new EmpleadoServicio();
             var productoServicio = new ProductoServicio();
-
 
             var movimiento = movimientoService.ObtenerMovimientoPorId(entidadId);
 
@@ -182,8 +136,11 @@ namespace Servicios.LogicaNegocio.Movimiento
                 ? venta.Items.Select(item => productoServicio.ObtenerProductoPorId(item.ItemId)).ToList()
                 : new List<ProductoDTO>();
 
+            //arreglar funcion asi no hace mill llamadas a db por cada producto
+
             return (empleado: empleado, venta: venta, movimiento: movimiento, productos: productos);
 
+            //crear movimientoDto para no mandadr tantos dtos al pedo
         }
     }
 }

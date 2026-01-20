@@ -22,6 +22,60 @@ namespace AccesoDatos.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AccesoDatos.Entidades.Caja", b =>
+                {
+                    b.Property<long>("CajaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("CajaId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("CajaId"));
+
+                    b.Property<decimal>("BalanceFinal")
+                        .HasColumnType("decimal")
+                        .HasColumnName("balance_final");
+
+                    b.Property<long>("EmpleadoApertura")
+                        .HasColumnType("bigint")
+                        .HasColumnName("empleado_apertura");
+
+                    b.Property<long?>("EmpleadoCierre")
+                        .HasColumnType("bigint")
+                        .HasColumnName("empleado_cierre");
+
+                    b.Property<bool>("EstaCerrada")
+                        .HasColumnType("bit")
+                        .HasColumnName("esta_cerrada");
+
+                    b.Property<DateTime?>("FechaFin")
+                        .HasColumnType("datetime")
+                        .HasColumnName("fecha_cierre");
+
+                    b.Property<DateTime>("FechaInicio")
+                        .HasColumnType("datetime")
+                        .HasColumnName("fecha_apertura");
+
+                    b.Property<decimal>("SaldoActual")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("saldo_actual");
+
+                    b.Property<decimal>("SaldoInicial")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("saldo_inicial");
+
+                    b.Property<decimal>("TotalEgresos")
+                        .HasColumnType("decimal")
+                        .HasColumnName("total_egresos");
+
+                    b.Property<decimal>("TotalIngresos")
+                        .HasColumnType("decimal")
+                        .HasColumnName("total_ingresos");
+
+                    b.HasKey("CajaId");
+
+                    b.ToTable("Cajas", (string)null);
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.Categoria", b =>
                 {
                     b.Property<long>("CategoriaId")
@@ -320,6 +374,10 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("date")
                         .HasColumnName("fecha_movimiento");
 
+                    b.Property<long>("IdCaja")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_Caja");
+
                     b.Property<long?>("IdVenta")
                         .HasColumnType("bigint")
                         .HasColumnName("id_Venta");
@@ -339,6 +397,8 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("tipo_movimiento");
 
                     b.HasKey("MovimientoId");
+
+                    b.HasIndex("IdCaja");
 
                     b.HasIndex("IdVenta");
 
@@ -967,10 +1027,18 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.Movimiento", b =>
                 {
+                    b.HasOne("AccesoDatos.Entidades.Caja", "Caja")
+                        .WithMany("Movimientos")
+                        .HasForeignKey("IdCaja")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("AccesoDatos.Entidades.Venta", "Venta")
                         .WithMany()
                         .HasForeignKey("IdVenta")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Caja");
 
                     b.Navigation("Venta");
                 });
@@ -1084,6 +1152,11 @@ namespace AccesoDatos.Migrations
                     b.Navigation("TipoPago");
 
                     b.Navigation("Venta");
+                });
+
+            modelBuilder.Entity("AccesoDatos.Entidades.Caja", b =>
+                {
+                    b.Navigation("Movimientos");
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.Categoria", b =>

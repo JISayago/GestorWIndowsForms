@@ -6,6 +6,7 @@ using Presentacion.Core.Categoria;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
 using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers;
 using Servicios.Helpers.DatosObligatorios;
@@ -44,7 +45,7 @@ namespace Presentacion
 
             // Crear la pantalla de carga (no se muestra aún). El evento Shown arrancará la inicialización.
             var mensajeCarga = "Preparando todo lo necesario...";
-            var minSeconds = 3; // <- cambiá a 10 si querés 10 segundos
+            var minSeconds = 2; // <- cambiá a 10 si querés 10 segundos
 
             using (var pantallaCarga = new PantallaCargaEspera(Imagenes.GIFCarga, mensajeCarga))
             {
@@ -89,7 +90,7 @@ namespace Presentacion
                 Application.Run(pantallaCarga);
             }
 
-              var login = new LoginForm();
+            var login = new LoginForm();
             login.ShowDialog();
 
            
@@ -127,6 +128,10 @@ namespace Presentacion
 
             if (login.PuedeAccederAlSistema)
             {
+                new DatosSistema(login._usuarioLogeado.PersonaId, login._usuarioLogeado.Nombre, login._usuarioLogeado.Apellido);
+
+                //inicializar datosSistemas, cuando tenga el contructor
+
                 Application.Run(new VentanaPrincipal(login._usuarioLogeado));
             }
             else

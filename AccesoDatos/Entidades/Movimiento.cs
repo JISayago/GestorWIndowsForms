@@ -13,6 +13,7 @@ namespace AccesoDatos.Entidades
         [Key]
         public long MovimientoId { get; set; }
         public string NumeroMovimiento { get; set; } = string.Empty;
+        public long IdCaja { get; set; }
         public long? IdVenta { get; set; }     // Nullable si no siempre hay venta asociada
         // long? IdGasto { get; set; }     // Nullable si no siempre hay gasto asociado
         public int TipoMovimiento { get; set; }
@@ -21,7 +22,10 @@ namespace AccesoDatos.Entidades
         public DateTime FechaMovimiento { get; set; }
         public bool EstaEliminado { get; set; }
 
+
         // Navegación
         public Venta Venta { get; set; }
+        public Caja Caja { get; set; } //estoy obligado a tener la referencia a caja? no puedo solo tener el id?
+
     }
 }

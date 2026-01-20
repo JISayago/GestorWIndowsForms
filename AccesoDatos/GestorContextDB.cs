@@ -32,6 +32,7 @@ namespace AccesoDatos
         public DbSet<CuentaCorriente> CuentaCorriente { get; set; }
         public DbSet<MovimientoCuentaCorriente> MovimientoCuentaCorriente { get; set; }
         public DbSet<CuentaCorrienteAutorizado> CuentaCorrienteAutorizados { get; set; }
+        public DbSet<Caja> Cajas { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -389,47 +390,7 @@ namespace AccesoDatos
             });
 
             // MOVIMIENTO
-            modelBuilder.Entity<Movimiento>(entity =>
-            {
-                entity.ToTable("Movimientos");
-
-                entity.HasKey(e => e.MovimientoId);
-
-                entity.Property(e => e.MovimientoId)
-                        .HasColumnName("id_Movimiento");
-
-                entity.Property(e => e.NumeroMovimiento)
-                        .HasColumnName("numero_movimiento")
-                        .HasMaxLength(100)
-                        .IsRequired();
-
-                entity.Property(e => e.IdVenta)
-                        .HasColumnName("id_Venta");
-
-                entity.Property(e => e.TipoMovimiento)
-                        .HasColumnName("tipo_movimiento")
-                        .IsRequired();
-
-                entity.Property(e => e.Monto)
-                        .HasColumnName("monto")
-                        .HasColumnType("decimal(18,2)")
-                        .IsRequired();
-
-                entity.Property(e => e.FechaMovimiento)
-                        .HasColumnName("fecha_movimiento")
-                        .HasColumnType("date")
-                        .IsRequired();
-
-                entity.Property(e => e.EstaEliminado)
-                        .HasColumnName("esta_eliminado")
-                        .IsRequired();
-
-                // Relación con Venta (si tenés definida la entidad Venta)
-                entity.HasOne(e => e.Venta)
-                      .WithMany() // o .WithMany(v => v.Movimientos) si agregás la colección en Venta
-                      .HasForeignKey(e => e.IdVenta)
-                      .OnDelete(DeleteBehavior.Restrict);
-            });
+        
 
             // CATEGORIA
             modelBuilder.Entity<Categoria>(entity =>
@@ -813,6 +774,107 @@ namespace AccesoDatos
                 entity.Property(cca => cca.Dni)
                       .HasColumnName("dni")
                       .IsRequired();
+            });
+
+            // CAJA
+            modelBuilder.Entity<Caja>(entity =>
+            {
+                entity.ToTable("Cajas");
+                entity.HasKey(c => c.CajaId);
+                entity.Property(c => c.CajaId)
+                      .HasColumnName("CajaId")
+                      .ValueGeneratedOnAdd();
+                entity.Property(c => c.SaldoInicial)
+                      .HasColumnName("saldo_inicial")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+                entity.Property(c => c.SaldoActual)
+                      .HasColumnName("saldo_actual")
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+                entity.Property(c => c.FechaInicio)
+                        .HasColumnName("fecha_apertura")
+                        .HasColumnType("datetime")
+                        .IsRequired();
+                entity.Property(c => c.FechaFin)
+                        .HasColumnName("fecha_cierre")
+                        .HasColumnType("datetime");
+                entity.Property(c => c.TotalIngresos)
+                        .HasColumnName("total_ingresos")
+                        .HasColumnType("decimal");
+                entity.Property(c => c.TotalEgresos)
+                        .HasColumnName("total_egresos")
+                        .HasColumnType("decimal");
+                entity.Property(c => c.BalanceFinal)
+                        .HasColumnName("balance_final")
+                        .HasColumnType("decimal");
+                entity.Property(c => c.EmpleadoApertura)
+                        .HasColumnName("empleado_apertura")
+                        .HasColumnType("bigint").IsRequired();
+                entity.Property(c => c.EmpleadoCierre)
+                        .HasColumnName("empleado_cierre")
+                        .HasColumnType("bigint");
+                entity.Property(c => c.EstaCerrada)
+                        .HasColumnName("esta_cerrada")
+                        .IsRequired();
+
+                //Relacion con Movimiento
+                entity.HasMany(c => c.Movimientos)
+                      .WithOne(m => m.Caja)
+                      .HasForeignKey(m => m.IdCaja)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Movimiento>(entity =>
+            {
+                entity.ToTable("Movimientos");
+
+                entity.HasKey(e => e.MovimientoId);
+
+                entity.Property(e => e.MovimientoId)
+                        .HasColumnName("id_Movimiento");
+
+                entity.Property(e => e.NumeroMovimiento)
+                        .HasColumnName("numero_movimiento")
+                        .HasMaxLength(100)
+                        .IsRequired();
+
+                entity.Property(e => e.IdVenta)
+                        .HasColumnName("id_Venta");
+
+                entity.Property(e => e.TipoMovimiento)
+                        .HasColumnName("tipo_movimiento")
+                        .IsRequired();
+
+                entity.Property(e => e.Monto)
+                        .HasColumnName("monto")
+                        .HasColumnType("decimal(18,2)")
+                        .IsRequired();
+
+                entity.Property(e => e.FechaMovimiento)
+                        .HasColumnName("fecha_movimiento")
+                        .HasColumnType("date")
+                        .IsRequired();
+
+                entity.Property(e => e.EstaEliminado)
+                        .HasColumnName("esta_eliminado")
+                        .IsRequired();
+
+                entity.Property(e => e.IdCaja)
+                    .HasColumnName("id_Caja")
+                    .IsRequired();
+
+                // Relación con Venta (si tenés definida la entidad Venta)
+                entity.HasOne(e => e.Venta)
+                      .WithMany() // o .WithMany(v => v.Movimientos) si agregás la colección en Venta
+                      .HasForeignKey(e => e.IdVenta)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                //Relación con Caja
+                entity.HasOne(e => e.Caja)
+                      .WithMany(c => c.Movimientos)
+                      .HasForeignKey(e => e.IdCaja)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

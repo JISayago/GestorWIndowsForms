@@ -87,7 +87,6 @@ namespace AccesoDatos.Migrations
             ");
 
             // 6) Agregar/asegurar columnas nuevas en Productos con backfill y NOT NULL cuando corresponde
-            // 6) Agregar/asegurar columnas nuevas en Productos con backfill y NOT NULL cuando corresponde
 
             // stock
             migrationBuilder.Sql(@"

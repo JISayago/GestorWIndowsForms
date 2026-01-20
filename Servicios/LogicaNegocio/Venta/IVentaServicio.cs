@@ -1,4 +1,5 @@
-﻿using Servicios.Helpers;
+﻿using AccesoDatos;
+using Servicios.Helpers;
 using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
 using System;
@@ -11,7 +12,10 @@ namespace Servicios.LogicaNegocio.Venta
 {
     public interface IVentaServicio
     {
-        public string GenerateNextNumeroVenta();
+        public string GenerateNextNumeroVenta(GestorContextDB context);
         EstadoOperacion NuevaVenta (VentaDTO ventaDto);
+        List<long> ObtenerComprobantesParaCancelacionPorNroComprobante(string nroComprobante);
+        EstadoOperacion CancelacionVentaPorId(long ventaId);
+        VentaDTO ObtenerVentaDetalle(long Ventaid);
     }
 }
