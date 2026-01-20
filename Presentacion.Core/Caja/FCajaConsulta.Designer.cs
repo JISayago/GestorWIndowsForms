@@ -41,9 +41,12 @@
             // 
             // dgvCajas
             // 
+            dgvCajas.AllowUserToAddRows = false;
+            dgvCajas.AllowUserToDeleteRows = false;
             dgvCajas.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvCajas.Location = new Point(12, 83);
             dgvCajas.Name = "dgvCajas";
+            dgvCajas.ReadOnly = true;
             dgvCajas.Size = new Size(731, 270);
             dgvCajas.TabIndex = 0;
             // 
