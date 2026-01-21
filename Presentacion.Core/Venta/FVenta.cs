@@ -27,6 +27,7 @@ namespace Presentacion.Core.Venta
         private readonly IEmpleadoServicio _empleadoServicio;
         private readonly IOfertaServicio _ofertaServicio;
         private readonly IMovimientoServicio _movimientoServicio;
+        private readonly IClienteServicio _clienteServicio;
 
 
         private long? VENTAID = null;
@@ -37,6 +38,7 @@ namespace Presentacion.Core.Venta
         private CuerpoDetalleVenta _cuerpoDetalleVenta;
         private readonly long _usuarioLogeadoID;
         private UsuarioLogeado _usuarioLogeado;
+        private ClienteDTO _clienteVenta;
         private bool esUsuarioLogeado;
         private bool esConsumidorFinal;
         private System.Windows.Forms.Timer timer;
@@ -54,14 +56,15 @@ namespace Presentacion.Core.Venta
         private long idCliente = -1;
 
 
-        public FVenta(long UsuarioLogeadoId,long? VentaId = null)
-        { 
+        public FVenta(long UsuarioLogeadoId, long? VentaId = null)
+        {
             InitializeComponent();
             _ventaServicio = new VentaServicio();
             _movimientoServicio = new MovimientoServicio();
             _usuarioLogeadoID = UsuarioLogeadoId;
             _empleadoServicio = new EmpleadoServicio();
             _ofertaServicio = new OfertaServicio();
+            _clienteServicio = new ClienteServicio();
 
             VENTAID = VentaId;
 
@@ -81,6 +84,7 @@ namespace Presentacion.Core.Venta
                     NumeroVenta = ventaCargada.NumeroVenta,
                     IdEmpleado = ventaCargada.IdEmpleado,
                     IdVendedor = ventaCargada.IdVendedor,
+                    IdCliente = ventaCargada.IdCliente,
                     FechaVenta = ventaCargada.FechaVenta,
                     Total = ventaCargada.Total,
                     TotalSinDescuento = ventaCargada.TotalSinDescuento,
@@ -138,12 +142,12 @@ namespace Presentacion.Core.Venta
             if (ventaId != null)
             {
                var vendedor = _empleadoServicio.ObtenerEmpleadoPorId(VENTAELIMINAR.IdVendedor);
-                txtCliente.Text = "Consumidor Final"; // agregar el idcliente en venta
+                txtCliente.Text = _clienteVenta != null ? $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}" : "Consumidor Final";
                 lblVendedorAsignado.Text = $"{vendedor.Nombre} {vendedor.Apellido}";
             }
             else
             {
-                txtCliente.Text = esConsumidorFinal ? "Consumidor Final" : "";
+                txtCliente.Text = esConsumidorFinal ? "Consumidor Final" : _clienteVenta != null ? $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}" : "Consumidor Final";
                 lblVendedorAsignado.Text = esUsuarioLogeado
                     ? $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}"
                     : "";
@@ -191,6 +195,7 @@ namespace Presentacion.Core.Venta
                     NumeroVenta = lblNro.Text,
                     IdEmpleado = _usuarioLogeadoID,
                     IdVendedor = idVendedor,
+                    IdCliente = esConsumidorFinal ? null : (long?)idCliente,
                     FechaVenta = DateTime.Now,
                     Total = _totalVenta,
                     TotalSinDescuento = _totalVenta, // actualizar cuando maneje descuentos
@@ -559,7 +564,10 @@ namespace Presentacion.Core.Venta
             {
                 idCliente = cliente.clienteSeleccionado.Value;
                 var _clienteCargado = new ClienteServicio().ObtenerClientePorId(idCliente);
-                txtCliente.Text = $"{_clienteCargado.Nombre} {_clienteCargado.Apellido}";
+                _clienteVenta = new ClienteDTO { 
+                Nombre = _clienteCargado.Nombre,
+                Apellido = _clienteCargado.Apellido
+                };
                 cbxIncluirCtaCte.Enabled = true;
                 cbxIncluirCtaCte.Checked = true;
             }
@@ -601,15 +609,31 @@ namespace Presentacion.Core.Venta
             if(ventaId != null)
             {
                 itemsVenta = new BindingList<ItemVentaDTO>(VENTAELIMINAR.Items);
-                dgvProductos.DataSource = itemsVenta;  
-                ResetearGrilla(dgvProductos);
-                ActualizarCamposInicio(VENTAID);
-                txtTotal.Text = VENTAELIMINAR.Total.ToString("C2");
-                txtSubtotal.Text = VENTAELIMINAR.TotalSinDescuento.ToString("C2");
-                txtDescuentoEfectivo.Text = VENTAELIMINAR.TotalSinDescuento.ToString("C2");
-                lblNro.Text = VENTAELIMINAR.NumeroVenta;
-                txtAreaDetallesVenta.Text = VENTAELIMINAR.Detalle;
+                dgvProductos.DataSource = itemsVenta;
                 var usuarioLogeado = _empleadoServicio.ObtenerEmpleadoPorId(VENTAELIMINAR.IdEmpleado);
+                if (VENTAELIMINAR.IdCliente != null)
+                {
+                    var cid = (long)VENTAELIMINAR.IdCliente;
+                    var clienteVenta = _clienteServicio.ObtenerClientePorId(cid);
+                    if (clienteVenta != null)
+                    {
+                        _clienteVenta = new ClienteDTO
+                        {
+                            Nombre = clienteVenta.Nombre,
+                            Apellido = clienteVenta.Apellido
+                        };
+                    }
+                    else
+                    {
+                        _clienteVenta = new ClienteDTO
+                        {
+                            Nombre = "Consumidor",
+                            Apellido = "Final"
+                        };
+                    }
+
+
+                }
                 _usuarioLogeado = new UsuarioLogeado
                 {
                     PersonaId = usuarioLogeado.PersonaId,
@@ -621,7 +645,13 @@ namespace Presentacion.Core.Venta
                 //esConsumidorFinal = true;
                 //esUsuarioLogeado = true;
                 idVendedor = VENTAELIMINAR.IdVendedor; // Asignamos el ID del usuario logueado como vendedor por defecto
-                btnCargarCliente.Enabled = false;
+                ResetearGrilla(dgvProductos);
+                ActualizarCamposInicio(VENTAID);
+                txtTotal.Text = VENTAELIMINAR.Total.ToString("C2");
+                txtSubtotal.Text = VENTAELIMINAR.TotalSinDescuento.ToString("C2");
+                txtDescuentoEfectivo.Text = VENTAELIMINAR.TotalSinDescuento.ToString("C2");
+                lblNro.Text = VENTAELIMINAR.NumeroVenta;
+                txtAreaDetallesVenta.Text = VENTAELIMINAR.Detalle;
                 //cbxIncluirCtaCte.Checked = true;
                 dgvProductos.AllowUserToAddRows = false;
                 //cbxDescEfectivo.Checked = false;
@@ -631,6 +661,11 @@ namespace Presentacion.Core.Venta
                 lblDiaAbrev.Text = (VENTAELIMINAR.FechaVenta.ToString("ddd")).ToUpper() + ".";
                 lblHoraMinutos.Text = VENTAELIMINAR.FechaVenta.ToString("HH:mm:ss");
                 btnLimpiar.Text = "Contrasiento/Cancelación";
+                if (VENTAELIMINAR.IdCliente != null)
+                {
+                    txtCliente.Text = $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}";
+
+                }
                 dgvProductos.Enabled = false;
                 btnConfirmarYFPago.Enabled = false;
                 btnConfirmarYFPago.Visible = false;
@@ -642,7 +677,8 @@ namespace Presentacion.Core.Venta
                 cbxDescEfectivo.Enabled = false;
                 cbxDescEfectivo.Visible = false;
                 btnCargarCliente.Enabled = false;
-                btnCargarCliente.Visible = false;
+                btnCargarCliente.Text = "Cliente";
+                //btnCargarCliente.Visible = false;
                 btnCargarOferta.Enabled = false;
                 btnCargarOferta.Visible = false;
                 btnCargarProducto.Enabled = false;

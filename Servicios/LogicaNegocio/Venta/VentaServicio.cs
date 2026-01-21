@@ -83,6 +83,7 @@ namespace Servicios.LogicaNegocio.Venta
                 NumeroVenta = numeroFinal,
                 IdEmpleado = ventaDto.IdEmpleado,
                 IdVendedor = ventaDto.IdVendedor,
+                IdCliente = ventaDto.IdCliente,
                 FechaVenta = ventaDto.FechaVenta,
                 Total = ventaDto.Total,
                 TotalSinDescuento = ventaDto.TotalSinDescuento,
@@ -197,6 +198,7 @@ namespace Servicios.LogicaNegocio.Venta
                 NumeroVenta = venta.NumeroVenta,
                 IdEmpleado = venta.IdEmpleado,
                 IdVendedor = venta.IdVendedor,
+                IdCliente = venta.IdCliente,
                 FechaVenta = venta.FechaVenta,
                 Total = venta.Total,
                 TotalSinDescuento = venta.TotalSinDescuento,
@@ -226,6 +228,7 @@ namespace Servicios.LogicaNegocio.Venta
                 NumeroVenta = venta.NumeroVenta,
                 IdEmpleado = venta.IdEmpleado,
                 IdVendedor = venta.IdVendedor,
+                IdCliente = venta.IdCliente,
                 FechaVenta = venta.FechaVenta,
                 Total = venta.Total,
                 TotalSinDescuento = venta.TotalSinDescuento,
@@ -292,6 +295,7 @@ namespace Servicios.LogicaNegocio.Venta
                 {
                     IdEmpleado = ventaOriginal.IdEmpleado,
                     IdVendedor = ventaOriginal.IdVendedor,
+                    IdCliente = ventaOriginal.IdCliente,
                     FechaVenta = DateTime.Now,
 
                     Total = -ventaOriginal.Total,
