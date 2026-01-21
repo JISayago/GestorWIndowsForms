@@ -629,6 +629,7 @@ namespace Presentacion.Core.Venta
                     cbxIncluirCtaCte.Enabled = false;
                 lblFechaHoy.Text = VENTAELIMINAR.FechaVenta.ToString("dd/MM/yyyy");
                 lblDiaAbrev.Text = (VENTAELIMINAR.FechaVenta.ToString("ddd")).ToUpper() + ".";
+                lblHoraMinutos.Text = VENTAELIMINAR.FechaVenta.ToString("HH:mm:ss");
                 btnLimpiar.Text = "Contrasiento/Cancelación";
                 dgvProductos.Enabled = false;
                 btnConfirmarYFPago.Enabled = false;
