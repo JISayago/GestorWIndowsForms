@@ -232,13 +232,18 @@ namespace AccesoDatos
                     .HasColumnName("id_Vendedor")
                     .IsRequired();
 
+                entity.Property(e => e.IdCliente)
+                    .HasColumnName("id_cliente")
+                    .IsRequired(false);
+
+
                 entity.Property(e => e.NumeroVenta)
                     .HasColumnName("numero_venta")
                     .HasMaxLength(200);
 
                 entity.Property(e => e.FechaVenta)
                     .HasColumnName("fecha_venta")
-                    .HasColumnType("date")
+                    .HasColumnType("datetime2")
                     .IsRequired();
 
                 entity.Property(e => e.Total)
@@ -283,6 +288,10 @@ namespace AccesoDatos
                 entity.HasOne(e => e.Vendedor)
                     .WithMany() // o .WithMany(emp => emp.VentasComoVendedor) si definís la colección
                     .HasForeignKey(e => e.IdVendedor)
+                    .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.Cliente)
+                    .WithMany()
+                    .HasForeignKey(e => e.IdCliente)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasMany(e => e.DetallesVentas)
