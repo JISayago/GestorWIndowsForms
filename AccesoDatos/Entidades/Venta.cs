@@ -15,6 +15,9 @@ namespace AccesoDatos.Entidades
         public Empleado Empleado { get; set; }
         public long IdVendedor { get; set; }
         public Empleado Vendedor { get; set; }
+
+        public long? IdCliente { get; set; }
+        public Cliente? Cliente { get; set; }    
         public string NumeroVenta { get; set; }
         public DateTime FechaVenta { get; set; }
         public decimal Total { get; set; }
