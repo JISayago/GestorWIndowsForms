@@ -254,18 +254,32 @@ namespace Servicios.LogicaNegocio.Venta
 
         }
 
+        public static class NumeroVentaHelper
+        {
+            public static string Normalizar(string input, int largo = 15)
+            {
+                if (string.IsNullOrWhiteSpace(input))
+                    return null;
+
+                var digits = new string(input.Where(char.IsDigit).ToArray());
+
+                if (!long.TryParse(digits, out var numero))
+                    return null;
+
+                return numero.ToString().PadLeft(largo, '0');
+            }
+        }
         public List<long> ObtenerComprobantesParaCancelacionPorNroComprobante(string nroComprobante)
         {
-            if (string.IsNullOrWhiteSpace(nroComprobante))
-                return new List<long>();
+            var numeroNormalizado = NumeroVentaHelper.Normalizar(nroComprobante);
 
-            var numeroBuscado = nroComprobante.Trim();
+            if (numeroNormalizado == null)
+                return new List<long>();
 
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var ids = context.Ventas
-                .Where(v => v.NumeroVenta != null &&
-                            v.NumeroVenta.Trim() == numeroBuscado)
+                .Where(v => v.NumeroVenta == numeroNormalizado)
                 .Select(v => v.VentaId)
                 .ToList();
 
