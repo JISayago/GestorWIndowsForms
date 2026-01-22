@@ -58,8 +58,8 @@ namespace Servicios.LogicaNegocio.Cliente
             var cliente = new AccesoDatos.Entidades.Cliente
             {
                 PersonaId = persona.PersonaId,
-                NumeroCliente = clienteDto.NumeroCliente,
                 FechaAlta = clienteDto.FechaAlta,
+                NumeroCliente = string.IsNullOrEmpty(clienteDto.NumeroCliente) ? $"{DateTime.Now:ddMMyyyyHHmmssfff}{persona.PersonaId}" : "0",
                 //CuentaCorriente = clienteDto != null ? context.CuentaCorriente.Find(clienteDto.CuentaCorrienteId) : null,
                 Estado = 0
             };

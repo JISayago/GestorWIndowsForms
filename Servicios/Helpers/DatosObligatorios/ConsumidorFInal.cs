@@ -17,6 +17,7 @@ namespace Servicios.Helpers.DatosObligatorios
         {
             if (context.Cliente.Any(e => e.NumeroCliente == "00000000"))
                 return;
+           
 
             var nuevoCliente = new ClienteDTO
             {

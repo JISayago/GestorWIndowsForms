@@ -101,7 +101,7 @@ namespace Presentacion.Core.Cliente
                 Email = txtEmail.Text,
                 FechaNacimiento = dtpFNacimiento.Value,
                 Telefono2 = txtCelular.Text,
-                NumeroCliente = "0", //Asignar un valor adecuado si es necesario
+                NumeroCliente = string.Empty, //Asignar un valor adecuado si es necesario
                 Estado = 1, //Activo por defecto
                 //CuentaCorrienteId = cmbCuentaCorriente.SelectedValue != null ? (long?)cmbCuentaCorriente.SelectedValue : null,
                 EstaEliminado = false,
