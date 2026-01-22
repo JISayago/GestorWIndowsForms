@@ -660,7 +660,7 @@ namespace Presentacion.Core.Venta
                 lblFechaHoy.Text = VENTAELIMINAR.FechaVenta.ToString("dd/MM/yyyy");
                 lblDiaAbrev.Text = (VENTAELIMINAR.FechaVenta.ToString("ddd")).ToUpper() + ".";
                 lblHoraMinutos.Text = VENTAELIMINAR.FechaVenta.ToString("HH:mm:ss");
-                btnLimpiar.Text = "Contrasiento/Cancelación";
+                btnLimpiar.Text = "Contrasiento";
                 if (VENTAELIMINAR.IdCliente != null)
                 {
                     txtCliente.Text = $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}";
