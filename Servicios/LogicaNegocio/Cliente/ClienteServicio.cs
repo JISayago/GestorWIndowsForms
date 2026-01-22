@@ -160,6 +160,34 @@ namespace Servicios.LogicaNegocio.Cliente
                  .FirstOrDefault();
             return cliente;
         }
+        public ClienteDTO ObtenerClientePorNumero(string numero)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var cliente = context.Cliente
+                 .AsNoTracking()
+                 .Include(c => c.Persona)
+                 .Where(c => c.Persona != null && c.NumeroCliente == numero)
+                 .Select(c => new ClienteDTO
+                 {
+                     PersonaId = c.PersonaId,
+                     Nombre = c.Persona.Nombre,
+                     Apellido = c.Persona.Apellido,
+                     Dni = c.Persona.Dni,
+                     Cuil = c.Persona.Cuil,
+                     Telefono = c.Persona.Telefono,
+                     Telefono2 = c.Persona.Telefono2,
+                     Email = c.Persona.Email,
+                     Direccion = c.Persona.Direccion,
+                     FechaNacimiento = c.Persona.FechaNacimiento,
+                     EstaEliminado = c.Persona.EstaEliminado,
+                     NumeroCliente = c.NumeroCliente,
+                     FechaAlta = c.FechaAlta,
+                     FechaBaja = c.FechaBaja,
+                     Estado = c.Estado
+                 })
+                 .FirstOrDefault();
+            return cliente;
+        }
 
         public IEnumerable<ClienteDTO> ObtenerClientes(string cadenabuscar)
         {

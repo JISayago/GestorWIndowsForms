@@ -147,7 +147,7 @@ namespace Presentacion.Core.Venta
             }
             else
             {
-                txtCliente.Text = esConsumidorFinal ? "Consumidor Final" : _clienteVenta != null ? $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}" : "Consumidor Final";
+                txtCliente.Text = $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}";
                 lblVendedorAsignado.Text = esUsuarioLogeado
                     ? $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}"
                     : "";
@@ -615,23 +615,11 @@ namespace Presentacion.Core.Venta
                 {
                     var cid = (long)VENTAELIMINAR.IdCliente;
                     var clienteVenta = _clienteServicio.ObtenerClientePorId(cid);
-                    if (clienteVenta != null)
+                    _clienteVenta = new ClienteDTO
                     {
-                        _clienteVenta = new ClienteDTO
-                        {
-                            Nombre = clienteVenta.Nombre,
-                            Apellido = clienteVenta.Apellido
-                        };
-                    }
-                    else
-                    {
-                        _clienteVenta = new ClienteDTO
-                        {
-                            Nombre = "Consumidor",
-                            Apellido = "Final"
-                        };
-                    }
-
+                       Nombre = clienteVenta.Nombre,
+                       Apellido = clienteVenta.Apellido
+                    };
 
                 }
                 _usuarioLogeado = new UsuarioLogeado
@@ -689,6 +677,12 @@ namespace Presentacion.Core.Venta
             }
             else
             {
+                var clienteDefault = _clienteServicio.ObtenerClientePorNumero("0");
+                _clienteVenta = new ClienteDTO
+                {
+                    Nombre = clienteDefault.Nombre,
+                    Apellido = clienteDefault.Apellido
+                };
             itemsVenta = new BindingList<ItemVentaDTO>();
             dgvProductos.DataSource = itemsVenta;  // bind directo
             ResetearGrilla(dgvProductos);
@@ -701,8 +695,7 @@ namespace Presentacion.Core.Venta
             MyTimer.Interval = 1000;
             MyTimer.Tick += new EventHandler(MyTimer_Tick);
             MyTimer.Start();
-
-            var usuarioLogeado = _empleadoServicio.ObtenerEmpleadoPorId(_usuarioLogeadoID);
+                var usuarioLogeado = _empleadoServicio.ObtenerEmpleadoPorId(_usuarioLogeadoID);
             _usuarioLogeado = new UsuarioLogeado
             {
                 PersonaId = usuarioLogeado.PersonaId,
