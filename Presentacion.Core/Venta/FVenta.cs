@@ -195,7 +195,7 @@ namespace Presentacion.Core.Venta
                     NumeroVenta = lblNro.Text,
                     IdEmpleado = _usuarioLogeadoID,
                     IdVendedor = idVendedor,
-                    IdCliente = esConsumidorFinal ? null : (long?)idCliente,
+                    IdCliente = (long?)idCliente,
                     FechaVenta = DateTime.Now,
                     Total = _totalVenta,
                     TotalSinDescuento = _totalVenta, // actualizar cuando maneje descuentos
