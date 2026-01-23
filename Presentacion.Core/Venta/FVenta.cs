@@ -272,31 +272,7 @@ namespace Presentacion.Core.Venta
                 _cuerpoDetalleVenta.pagoParcial = _cuerpoDetalleVenta.saldoPendiente > 0m;
                 txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoTP();
 
-                // Seguir con detalle final (igual que antes)
-                if (tipoDePagosVenta.Count > 0)
-                {
-                    var fConfirmarDetalle = new FDetalleVenta();
-                    if (fConfirmarDetalle.ShowDialog() == DialogResult.OK)
-                    {
-                        if (fConfirmarDetalle.confirmarDetalle)
-                        {
-                            btnConfirmarYFPago.Text = "Finalizar";
-                            finalizarVenta = true;
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(fConfirmarDetalle.descripcionDetalle))
-                        {
-                            descripcionVenta = fConfirmarDetalle.descripcionDetalle.Trim();
-                        }
-                        else
-                        {
-                            descripcionVenta = "Sin detalles adicionales.";
-                        }
-
-                        txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta);
-                    }
-                }
-
+                GenerarDetalleVenta(tipoDePagosVenta);
                 return;
             }
             // 1 pago
@@ -327,29 +303,33 @@ namespace Presentacion.Core.Venta
 
                 txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoTP();
 
-                // seguir con el detalle final (igual que antes)
-                if (tipoPagosSeleccionados.Count > 0)
+                GenerarDetalleVenta(tipoPagosSeleccionados);
+            }
+        }
+
+        private void GenerarDetalleVenta(List<FormaPago> tipoPagosSeleccionados)
+        {
+            if (tipoPagosSeleccionados.Count > 0)
+            {
+                var fConfirmarDetalle = new FDetalleVenta();
+                if (fConfirmarDetalle.ShowDialog() == DialogResult.OK)
                 {
-                    var fConfirmarDetalle = new FDetalleVenta();
-                    if (fConfirmarDetalle.ShowDialog() == DialogResult.OK)
+                    if (fConfirmarDetalle.confirmarDetalle)
                     {
-                        if (fConfirmarDetalle.confirmarDetalle)
-                        {
-                            btnConfirmarYFPago.Text = "Finalizar";
-                            finalizarVenta = true;
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(fConfirmarDetalle.descripcionDetalle))
-                        {
-                            descripcionVenta = fConfirmarDetalle.descripcionDetalle.Trim();
-                        }
-                        else
-                        {
-                            descripcionVenta = "Sin detalles adicionales.";
-                        }
-
-                        txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta);
+                        btnConfirmarYFPago.Text = "Finalizar";
+                        finalizarVenta = true;
                     }
+
+                    if (!string.IsNullOrWhiteSpace(fConfirmarDetalle.descripcionDetalle))
+                    {
+                        descripcionVenta = fConfirmarDetalle.descripcionDetalle.Trim();
+                    }
+                    else
+                    {
+                        descripcionVenta = "Sin detalles adicionales.";
+                    }
+
+                    txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta);
                 }
             }
         }
