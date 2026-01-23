@@ -37,7 +37,7 @@ namespace Presentacion.Core.Venta
             {
                 MessageBox.Show("No se encontraron comprobantes para el número ingresado.");
             }
-            var fGrillaDeComprobantes = new FGrillaDeComprobantes(_usuarioLogeadoID,_comprobantesIDs);
+            var fGrillaDeComprobantes = new FGrillaDeComprobantes(_usuarioLogeadoID,_comprobantesIDs,txtNroComprobante.Text);
             fGrillaDeComprobantes.ShowDialog();
             this.Close();
         }

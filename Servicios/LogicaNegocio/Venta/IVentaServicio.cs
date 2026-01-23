@@ -15,6 +15,7 @@ namespace Servicios.LogicaNegocio.Venta
         public string GenerateNextNumeroVenta(GestorContextDB context);
         EstadoOperacion NuevaVenta (VentaDTO ventaDto);
         List<long> ObtenerComprobantesParaCancelacionPorNroComprobante(string nroComprobante);
+        public List<VentaDTO> ComprobantesConMismoNumero(string nroComprobante);
         EstadoOperacion CancelacionVentaPorId(long ventaId);
         VentaDTO ObtenerVentaDetalle(long Ventaid);
     }

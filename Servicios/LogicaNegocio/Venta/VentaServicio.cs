@@ -285,6 +285,32 @@ namespace Servicios.LogicaNegocio.Venta
 
             return ids;
         }
+
+    public List<VentaDTO> ComprobantesConMismoNumero(string nroComprobante)
+        {
+            var numeroNormalizado = NumeroVentaHelper.Normalizar(nroComprobante);
+            if (numeroNormalizado == null)
+                return new List<VentaDTO>();
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var ventas = context.Ventas
+                .Where(v => v.NumeroVenta == numeroNormalizado)
+                .Select(v => new VentaDTO
+                {
+                    VentaId = v.VentaId,
+                    NumeroVenta = v.NumeroVenta,
+                    IdEmpleado = v.IdEmpleado,
+                    IdVendedor = v.IdVendedor,
+                    IdCliente = v.IdCliente,
+                    FechaVenta = v.FechaVenta,
+                    Total = v.Total,
+                    TotalSinDescuento = v.TotalSinDescuento,
+                    Descuento = v.Descuento,
+                    Estado = v.Estado,
+                    Detalle = v.Detalle
+                })
+                .ToList();
+            return ventas;
+        }
         public EstadoOperacion CancelacionVentaPorId(long ventaId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
