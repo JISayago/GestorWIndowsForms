@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using Servicios.Infraestructura;
 using Servicios.LogicaNegocio.Empleado.DTO;
+using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.TipoPago;
 
@@ -19,9 +20,11 @@ namespace Servicios.LogicaNegocio.Venta
     public class VentaServicio : IVentaServicio
     {
         private readonly IPdfGenerator _pdf;
+        private readonly IProductoServicio _productoServicio;
 
         public VentaServicio() : this(new PdfGenerator())
         {
+            _productoServicio = new ProductoServicio();
         }
         public VentaServicio(IPdfGenerator pdf)
         {
@@ -94,6 +97,8 @@ namespace Servicios.LogicaNegocio.Venta
                 MontoPagado = ventaDto.Total
             };
 
+            var x = venta;
+            
             context.Ventas.Add(venta);
             context.SaveChanges(); // necesito VentaId
 
@@ -126,6 +131,7 @@ namespace Servicios.LogicaNegocio.Venta
             // 5. Detalles
             if (ventaDto.Items != null && ventaDto.Items.Any())
             {
+                _productoServicio.DescontarStockProductos(ventaDto.Items, context);
                 var detalles = ventaDto.Items.Select(i => new AccesoDatos.Entidades.DetallesVenta
                 {
                     IdVenta = venta.VentaId,
@@ -164,6 +170,7 @@ namespace Servicios.LogicaNegocio.Venta
             try
             {
                 CrearVentaInterna(context, ventaDto);
+                
 
                 transaction.Commit();
                 return new EstadoOperacion

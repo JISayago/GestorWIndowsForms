@@ -53,7 +53,7 @@ namespace Presentacion.Core.Venta
         private List<FormaPago> tipoDePagosVenta;
         private bool _actualizandoGrilla = false;
         private bool cargarOferta = false;
-        private long idCliente = -1;
+        private long idCliente;
 
 
         public FVenta(long UsuarioLogeadoId, long? VentaId = null)
@@ -195,7 +195,7 @@ namespace Presentacion.Core.Venta
                     NumeroVenta = lblNro.Text,
                     IdEmpleado = _usuarioLogeadoID,
                     IdVendedor = idVendedor,
-                    IdCliente = (long?)idCliente,
+                    IdCliente = VENTAID != null ? (long?)idCliente : _clienteVenta.PersonaId,
                     FechaVenta = DateTime.Now,
                     Total = _totalVenta,
                     TotalSinDescuento = _totalVenta, // actualizar cuando maneje descuentos
@@ -221,10 +221,11 @@ namespace Presentacion.Core.Venta
                 });
                 //Deberia juntar movimiento ctacte con movimiento venta en uno solo.
 
-                _ventaServicio.NuevaVenta(_venta);
+              var m =   _ventaServicio.NuevaVenta(_venta);
+                MessageBox.Show($"{m.Mensaje}");
                 //_movimientoServicio.CrearMovimientoVenta(_venta);
 
-                MessageBox.Show("Venta confirmada exitosamente.");
+                //MessageBox.Show("Venta confirmada exitosamente.");
                 this.Close();
                 return;
             }
@@ -660,6 +661,7 @@ namespace Presentacion.Core.Venta
                 var clienteDefault = _clienteServicio.ObtenerClientePorNumero("0");
                 _clienteVenta = new ClienteDTO
                 {
+                    PersonaId = clienteDefault.PersonaId,
                     Nombre = clienteDefault.Nombre,
                     Apellido = clienteDefault.Apellido
                 };

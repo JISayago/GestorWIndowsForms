@@ -3,6 +3,7 @@ using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
 using System.Collections.Generic;
@@ -107,8 +108,69 @@ namespace Servicios.LogicaNegocio.Producto
         }
 
 
+        public void DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context)
+        {
+            if (items == null || !items.Any())
+                return;
 
+            foreach (var item in items)
+            {
+                if (item.EsOferta)
+                {
+                   // DescontarStockOferta(item, context);
+                }
+                else
+                {
+                    DescontarStockProducto(item, context);
+                }
+            }
+        }
 
+        private void DescontarStockProducto(ItemVentaDTO item, GestorContextDB context)
+        {
+            var producto = context.Productos
+                .FirstOrDefault(p => p.ProductoId == item.ItemId);
+
+            if (producto == null)
+                throw new Exception($"Producto no encontrado. {item.Descripcion}");
+
+            if (producto.Stock < item.Cantidad)
+                throw new Exception(
+                    $"Stock insuficiente para {producto.Descripcion}. Stock actual: {producto.Stock}"
+                );
+
+            producto.Stock -= item.Cantidad;
+
+            context.Productos.Update(producto); 
+        }
+
+        /* private void DescontarStockOferta(ItemVentaDTO item, GestorContextDB context)
+         {
+             var oferta = context.OfertasDescuentos
+                 .Include(o => o.Descripcion)
+                 .FirstOrDefault(o => o.OfertaDescuentoId == item.ItemId);
+
+             if (oferta == null)
+                 throw new Exception($"Oferta no encontrada. ID {item.ItemId}");
+
+             foreach (var detalle in oferta.Descripcion)
+             {
+                 var producto = context.Productos
+                     .FirstOrDefault(p => p.ProductoId == detalle.);
+
+                 if (producto == null)
+                     throw new Exception($"Producto {detalle.ProductoId} de la oferta no existe");
+
+                 var cantidadADescontar = detalle.Cantidad * item.Cantidad;
+
+                 if (producto.Stock < cantidadADescontar)
+                     throw new Exception(
+                         $"Stock insuficiente para {producto.Descripcion} (oferta)"
+                     );
+
+                 producto.Stock -= cantidadADescontar;
+             }
+         }*/
 
         public EstadoOperacion Eliminar(long productoId)
         {
