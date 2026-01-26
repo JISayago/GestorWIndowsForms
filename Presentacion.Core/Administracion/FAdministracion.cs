@@ -13,6 +13,7 @@ using Presentacion.Core.TipoPago;
 using ScottPlot;
 using Servicios.LogicaNegocio.Caja;
 using Servicios.LogicaNegocio.Caja.DTO;
+using Servicios.LogicaNegocio.Venta;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,6 +30,7 @@ namespace Presentacion.Core.Administracion
     public partial class FAdministracion : Form
     {
         private readonly CajaServicio _cajaSerivicio;
+        private readonly VentaServicio _ventaServicio;
         List<CajaDTO> todasLasCajas;
 
         public FAdministracion()
@@ -36,6 +38,7 @@ namespace Presentacion.Core.Administracion
             InitializeComponent();
 
             _cajaSerivicio = new CajaServicio();
+            _ventaServicio = new VentaServicio();
         }
 
         private void btnVolver_Click(object sender, EventArgs e)
@@ -171,6 +174,9 @@ namespace Presentacion.Core.Administracion
             //Todas la cajas abiertas y cerradas
             var todasLasCajas = _cajaSerivicio.ObetenerTodasLasCajas();
 
+            //Ventas
+            var ventas = _ventaServicio.ObtenerTodasLasVentas();
+
 
             ////////////////////
 
@@ -187,8 +193,8 @@ namespace Presentacion.Core.Administracion
 
 
 
-                        ////Primer grafico////
-            
+            ////Primer grafico////
+
             //Ganacias por cajas (ultimas 30 cajas) 
             //No me gusta mucho las fechas en el eje x, mejor numeros de caja?, por casos de que abran varias cajas al dia
 
@@ -248,17 +254,17 @@ namespace Presentacion.Core.Administracion
                 .ToArray();
 
 
-            formsPlot3.Plot.Clear();
+            formsPlot2.Plot.Clear();
 
-            formsPlot3.Plot.Title("Cajas agrupadas por dias");
-            formsPlot3.Plot.XLabel("Fecha de las Cajas");
-            formsPlot3.Plot.YLabel("Total Ingresos");
+            formsPlot2.Plot.Title("Cajas agrupadas por dias");
+            formsPlot2.Plot.XLabel("Fecha de las Cajas");
+            formsPlot2.Plot.YLabel("Total Ingresos");
 
-            formsPlot3.Plot.Add.Scatter(numerosDias, ingresosPorDia);
+            formsPlot2.Plot.Add.Scatter(numerosDias, ingresosPorDia);
 
-            formsPlot3.Plot.Axes.Bottom.SetTicks(numerosDias, dias); //Etiquetas eje x
+            formsPlot2.Plot.Axes.Bottom.SetTicks(numerosDias, dias); //Etiquetas eje x
 
-            formsPlot3.Refresh();
+            formsPlot2.Refresh();
 
 
 
@@ -294,34 +300,76 @@ namespace Presentacion.Core.Administracion
                 .ToArray();
 
 
-            formsPlot2.Plot.Clear();
+            formsPlot3.Plot.Clear();
 
-            formsPlot2.Plot.Add.Scatter(xs, ganaciasPorMes);
+            formsPlot3.Plot.Title("Ganacias por mes");
+            formsPlot3.Plot.XLabel("Meses");
+            formsPlot3.Plot.YLabel("Total Ingresos");
+
+            formsPlot3.Plot.Add.Scatter(xs, ganaciasPorMes);
 
             //Meses como labels del eje X
-            formsPlot2.Plot.Axes.Bottom.SetTicks(xs, meses);
+            formsPlot3.Plot.Axes.Bottom.SetTicks(xs, meses);
 
             //Rotar etiquetas
-            formsPlot2.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
-
-            formsPlot2.Plot.Title("Ganacias por mes");
+            formsPlot3.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
             
-            formsPlot2.Refresh();
+            formsPlot3.Refresh();
 
 
 
-            ////Tercer grafico////
+                        ////Tercer grafico////
 
             //Ventas por dia en el ultimo mes
             //Agarrar las ventas de los ultimos 31 dias, juntar por dia y contar la cantidad de ventas por dia
 
+            var fechaHaceUnMes = DateTime.Now.Date.AddDays(-100);
 
+            var ventasUltimoMes = ventas
+                .Where(v => v.FechaVenta.Date >= fechaHaceUnMes)
+                .ToList();
+
+            var ventasPorDia = ventasUltimoMes.Select( i => i.FechaVenta.Date)
+                .GroupBy(fecha => fecha)
+                .Select(g => new
+                {
+                    Fecha = g.Key,
+                    CantidadVentas = g.Count()
+                })
+                .OrderBy(x => x.Fecha)
+                .ToList();
+
+            string[] diaDeLasVentas = ventasPorDia
+                .Select(x => x.Fecha.ToString("dd/MM"))
+                .ToArray();
+
+            double[] cantidadesVentasPorDia = ventasPorDia.Select(x => (double)x.CantidadVentas).ToArray();
+
+            double[] posiciones = Enumerable.Range(0, diaDeLasVentas.Length) //para meses pero deberia mostar por dia las ventas
+                                .Select(i => (double)i)
+                                .ToArray();
+
+            formsPlot4.Plot.Clear();
+
+            formsPlot4.Plot.Title("Ventas por dia (Ultimo Mes)");
+            formsPlot4.Plot.XLabel("Dias");
+            formsPlot4.Plot.YLabel("Total Ventas");
+
+            formsPlot4.Plot.Add.Bars(cantidadesVentasPorDia);
+
+            formsPlot4.Plot.Axes.Bottom.SetTicks(posiciones, diaDeLasVentas);
+
+            formsPlot4.Refresh();
 
 
             ////Cuarto grafico////
+
             //Ingresos, egresos
             //La idea que sea los dos graficos en un mismo formplot, barras lado a lado puede ser una 
             //o directamente con scatter
+
+
+
         }
     }
 }
