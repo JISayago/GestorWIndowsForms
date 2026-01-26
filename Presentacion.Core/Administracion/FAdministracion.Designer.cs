@@ -52,6 +52,8 @@
             btnVolver = new Button();
             btnComprobantes = new Button();
             pnlInfoInicial = new Panel();
+            formsPlot2 = new ScottPlot.WinForms.FormsPlot();
+            formsPlot1 = new ScottPlot.WinForms.FormsPlot();
             tableLayoutPanel3 = new TableLayoutPanel();
             lblextra3 = new Label();
             lblExtra2 = new Label();
@@ -59,6 +61,7 @@
             lblExtra = new Label();
             lblDatosBalances = new Label();
             dgvGrilla = new DataGridView();
+            formsPlot3 = new ScottPlot.WinForms.FormsPlot();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             pnlInfoInicial.SuspendLayout();
@@ -72,7 +75,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { pRODUCTOToolStripMenuItem, eMPLEADOSToolStripMenuItem, cLIENTESToolStripMenuItem, oFERTASToolStripMenuItem, cONFIGURACIONToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1031, 24);
+            menuStrip1.Size = new Size(1469, 24);
             menuStrip1.TabIndex = 2;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -211,13 +214,13 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(1031, 94);
+            tableLayoutPanel1.Size = new Size(1469, 94);
             tableLayoutPanel1.TabIndex = 7;
             // 
             // btnGasto
             // 
             btnGasto.Anchor = AnchorStyles.Left;
-            btnGasto.Location = new Point(260, 15);
+            btnGasto.Location = new Point(370, 15);
             btnGasto.MaximumSize = new Size(236, 63);
             btnGasto.MinimumSize = new Size(236, 63);
             btnGasto.Name = "btnGasto";
@@ -230,7 +233,7 @@
             // btnMovimientos
             // 
             btnMovimientos.Anchor = AnchorStyles.Right;
-            btnMovimientos.Location = new Point(532, 15);
+            btnMovimientos.Location = new Point(862, 15);
             btnMovimientos.MaximumSize = new Size(236, 63);
             btnMovimientos.MinimumSize = new Size(236, 63);
             btnMovimientos.Name = "btnMovimientos";
@@ -243,7 +246,7 @@
             // btnVolver
             // 
             btnVolver.Anchor = AnchorStyles.Right;
-            btnVolver.Location = new Point(18, 15);
+            btnVolver.Location = new Point(128, 15);
             btnVolver.MaximumSize = new Size(236, 63);
             btnVolver.MinimumSize = new Size(236, 63);
             btnVolver.Name = "btnVolver";
@@ -256,7 +259,7 @@
             // btnComprobantes
             // 
             btnComprobantes.Anchor = AnchorStyles.Left;
-            btnComprobantes.Location = new Point(774, 15);
+            btnComprobantes.Location = new Point(1104, 15);
             btnComprobantes.MaximumSize = new Size(236, 63);
             btnComprobantes.MinimumSize = new Size(236, 63);
             btnComprobantes.Name = "btnComprobantes";
@@ -270,13 +273,33 @@
             // 
             pnlInfoInicial.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             pnlInfoInicial.BackColor = SystemColors.ActiveCaption;
+            pnlInfoInicial.Controls.Add(formsPlot3);
+            pnlInfoInicial.Controls.Add(formsPlot2);
+            pnlInfoInicial.Controls.Add(formsPlot1);
             pnlInfoInicial.Controls.Add(tableLayoutPanel3);
             pnlInfoInicial.Controls.Add(tableLayoutPanel2);
             pnlInfoInicial.Controls.Add(dgvGrilla);
             pnlInfoInicial.Location = new Point(12, 124);
             pnlInfoInicial.Name = "pnlInfoInicial";
-            pnlInfoInicial.Size = new Size(998, 461);
+            pnlInfoInicial.Size = new Size(1436, 461);
             pnlInfoInicial.TabIndex = 24;
+            // 
+            // formsPlot2
+            // 
+            formsPlot2.DisplayScale = 1F;
+            formsPlot2.Location = new Point(0, 0);
+            formsPlot2.Name = "formsPlot2";
+            formsPlot2.Size = new Size(674, 210);
+            formsPlot2.TabIndex = 21;
+            // 
+            // formsPlot1
+            // 
+            formsPlot1.DisplayScale = 1F;
+            formsPlot1.Location = new Point(762, 0);
+            formsPlot1.Name = "formsPlot1";
+            formsPlot1.Size = new Size(674, 195);
+            formsPlot1.TabIndex = 20;
+            formsPlot1.Load += formsPlot1_Load;
             // 
             // tableLayoutPanel3
             // 
@@ -323,13 +346,13 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 324F));
             tableLayoutPanel2.Controls.Add(lblExtra, 1, 0);
             tableLayoutPanel2.Controls.Add(lblDatosBalances, 0, 0);
-            tableLayoutPanel2.Location = new Point(0, 0);
+            tableLayoutPanel2.Location = new Point(0, 180);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 157F));
-            tableLayoutPanel2.Size = new Size(995, 210);
+            tableLayoutPanel2.Size = new Size(995, 30);
             tableLayoutPanel2.TabIndex = 18;
             // 
             // lblExtra
@@ -354,16 +377,24 @@
             // 
             dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvGrilla.Location = new Point(1412, -3);
+            dgvGrilla.Location = new Point(1850, -3);
             dgvGrilla.Name = "dgvGrilla";
             dgvGrilla.Size = new Size(380, 816);
             dgvGrilla.TabIndex = 17;
+            // 
+            // formsPlot3
+            // 
+            formsPlot3.DisplayScale = 1F;
+            formsPlot3.Location = new Point(1001, 201);
+            formsPlot3.Name = "formsPlot3";
+            formsPlot3.Size = new Size(432, 260);
+            formsPlot3.TabIndex = 22;
             // 
             // FAdministracion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1031, 597);
+            ClientSize = new Size(1469, 597);
             Controls.Add(pnlInfoInicial);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(menuStrip1);
@@ -372,6 +403,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Panel Administración";
             WindowState = FormWindowState.Maximized;
+            Load += FAdministracion_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
@@ -418,5 +450,8 @@
         private TableLayoutPanel tableLayoutPanel2;
         private Label lblExtra;
         private Label lblDatosBalances;
+        private ScottPlot.WinForms.FormsPlot formsPlot2;
+        private ScottPlot.WinForms.FormsPlot formsPlot1;
+        private ScottPlot.WinForms.FormsPlot formsPlot3;
     }
 }
