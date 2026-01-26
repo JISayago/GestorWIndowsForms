@@ -357,7 +357,11 @@ namespace Presentacion.Core.Venta
 
                     //var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
                     var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
-                    if (ofertaDesc == null) return;
+                if (ofertaDesc == null)
+                {
+                    MessageBox.Show("El producto seleccionado no está disponible.");
+                    return;
+                }
                     var esOF = false;
                     if (ofertaDesc.Oferta != null) { esOF = true; } else { esOF = false; }
                     var fCantidad = new FCantidadItem();

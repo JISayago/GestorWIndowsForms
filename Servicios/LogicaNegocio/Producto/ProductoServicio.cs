@@ -24,7 +24,7 @@ namespace Servicios.LogicaNegocio.Producto
                 .AsNoTracking()
                 .Include(x => x.Producto)
                 .Include(x => x.Oferta)
-                .FirstOrDefault(x => x.ProductoId == productoId && x.Oferta.EstaActiva);
+                .FirstOrDefault(x => x.ProductoId == productoId && !x.Producto.EstaEliminado && x.Oferta.EstaActiva);
 
             // Si no hay relación, traigo el producto directamente (con sus navegaciones necesarias)
             var producto = prodOfer?.Producto
@@ -33,7 +33,7 @@ namespace Servicios.LogicaNegocio.Producto
                                 .Include(x => x.Rubro)
                                 .Include(x => x.CategoriasProductos)
                                 .AsNoTracking()
-                                .FirstOrDefault(p => p.ProductoId == productoId);
+                                .FirstOrDefault(p => p.ProductoId == productoId && !p.EstaEliminado);
 
             if (producto == null)
                 return null; // No existe el producto
@@ -411,7 +411,7 @@ namespace Servicios.LogicaNegocio.Producto
                 IdMarca = e.IdMarca,
                 IdRubro = e.IdRubro,
                 MarcaNombre = e.Marca.Nombre,
-                RubroNombre = e.Rubro.Nombre,
+                RubroNombre = "",//e.Rubro.Nombre,
                 Stock = Convert.ToDecimal(e.Stock),
                 PrecioCosto = e.PrecioCosto,
                 PrecioVenta = e.PrecioVenta,
