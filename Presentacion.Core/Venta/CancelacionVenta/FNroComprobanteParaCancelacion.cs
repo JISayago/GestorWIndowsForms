@@ -33,13 +33,18 @@ namespace Presentacion.Core.Venta
             }
             //buscar el/los comprobantes
             _comprobantesIDs = _ventaServicio.ObtenerComprobantesParaCancelacionPorNroComprobante(txtNroComprobante.Text.Trim());
-            if(_comprobantesIDs.Count < 1)
+            var x = _comprobantesIDs.Count;
+            if (_comprobantesIDs.Count < 1)
             {
                 MessageBox.Show("No se encontraron comprobantes para el número ingresado.");
             }
-            var fGrillaDeComprobantes = new FGrillaDeComprobantes(_usuarioLogeadoID,_comprobantesIDs,txtNroComprobante.Text);
+            else
+            {
+                var fGrillaDeComprobantes = new FGrillaDeComprobantes(_usuarioLogeadoID, _comprobantesIDs, txtNroComprobante.Text);
             fGrillaDeComprobantes.ShowDialog();
             this.Close();
+
+            }
         }
     }
 }

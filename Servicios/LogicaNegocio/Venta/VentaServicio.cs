@@ -293,10 +293,10 @@ namespace Servicios.LogicaNegocio.Venta
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var ids = context.Ventas
-                .Where(v => v.NumeroVenta == numeroNormalizado)
-                .Select(v => v.VentaId)
+                .Where(v => v.NumeroVenta == numeroNormalizado && v.Estado != 99)
+                .Select(v => v.VentaId )
                 .ToList();
-
+            var x = ids;
             return ids;
         }
 
