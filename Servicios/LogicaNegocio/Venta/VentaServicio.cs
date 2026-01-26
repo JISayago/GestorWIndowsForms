@@ -131,7 +131,14 @@ namespace Servicios.LogicaNegocio.Venta
             // 5. Detalles
             if (ventaDto.Items != null && ventaDto.Items.Any())
             {
+                if (ventaDto.Total < 0)
+                {
+                _productoServicio.RestaurarStockProductos(ventaDto.Items, context);
+                }
+                else
+                {
                 _productoServicio.DescontarStockProductos(ventaDto.Items, context);
+                                    }
                 var detalles = ventaDto.Items.Select(i => new AccesoDatos.Entidades.DetallesVenta
                 {
                     IdVenta = venta.VentaId,

@@ -221,7 +221,7 @@ namespace Presentacion.Core.Venta
                 });
                 //Deberia juntar movimiento ctacte con movimiento venta en uno solo.
 
-              var m =   _ventaServicio.NuevaVenta(_venta);
+                var m =   _ventaServicio.NuevaVenta(_venta);
                 MessageBox.Show($"{m.Mensaje}");
                 //_movimientoServicio.CrearMovimientoVenta(_venta);
 
@@ -782,24 +782,33 @@ namespace Presentacion.Core.Venta
             {
                 var idOferta = Fofertas.ofertaSeleccionada.Value;
 
-                var Oferta = _ofertaServicio.ObtenerOfertaPorId(idOferta);
-                var OfertaVenta = new ItemVentaDTO
+                var Oferta = _ofertaServicio.ObtenerOfertaActivaPorId(idOferta);
+                if (Oferta == null)
                 {
-                    ItemId = Oferta.OfertaDescuentoId,
-                    Descripcion = Oferta.Descripcion,
-                    PrecioVenta = Oferta.PrecioOriginal,
-                    PrecioOferta = Oferta.PrecioFinal,
-                    Cantidad = (decimal)Oferta.CantidadProductosDentroOferta,
-                    Medida = string.Empty,
-                    UnidadMedida = string.Empty,
-                    EsOferta = true
-                };
+                    MessageBox.Show("La oferta seleccionada esta Inactiva. Si se trata de un error comunicarse con un Administrador para activarla.");
+
+                }
+                else
+                {
+
+                    var OfertaVenta = new ItemVentaDTO
+                    {
+                        ItemId = Oferta.OfertaDescuentoId,
+                        Descripcion = Oferta.Descripcion,
+                        PrecioVenta = Oferta.PrecioOriginal,
+                        PrecioOferta = Oferta.PrecioFinal,
+                        Cantidad = (decimal)Oferta.CantidadProductosDentroOferta,
+                        Medida = string.Empty,
+                        UnidadMedida = string.Empty,
+                        EsOferta = true
+                    };
 
                 itemsVenta.Add(OfertaVenta);  // Solo agregamos a la BindingList
                                               //txtProductoCargado.Text = $"{OfertaVenta.Descripcion}";
                                               // No necesitas reasignar DataSource ni resetear grilla acá
                 ValidarCantidadySiEsOferta();
                 CalcularTotal();
+                }
             }
         }
     }

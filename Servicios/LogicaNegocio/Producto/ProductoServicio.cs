@@ -125,7 +125,7 @@ namespace Servicios.LogicaNegocio.Producto
                 }
             }
         }
-
+     
         private void DescontarStockProducto(ItemVentaDTO item, GestorContextDB context)
         {
             var producto = context.Productos
@@ -142,6 +142,35 @@ namespace Servicios.LogicaNegocio.Producto
             producto.Stock -= item.Cantidad;
 
             context.Productos.Update(producto); 
+        }
+        public void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context)
+        {
+            if (items == null || !items.Any())
+                return;
+
+            foreach (var item in items)
+            {
+                if (item.EsOferta)
+                {
+                    // RestaurarStockOferta(item, context);
+                }
+                else
+                {
+                    RestaurarStockProducto(item, context);
+                }
+            }
+        }
+        private void RestaurarStockProducto(ItemVentaDTO item, GestorContextDB context)
+        {
+            var producto = context.Productos
+                .FirstOrDefault(p => p.ProductoId == item.ItemId);
+
+            if (producto == null)
+                throw new Exception($"Producto no encontrado. {item.Descripcion}");
+
+            producto.Stock += item.Cantidad;
+
+            context.Productos.Update(producto);
         }
 
         /* private void DescontarStockOferta(ItemVentaDTO item, GestorContextDB context)
@@ -456,5 +485,6 @@ namespace Servicios.LogicaNegocio.Producto
             return productos;
         }
 
+        
     }
 }
