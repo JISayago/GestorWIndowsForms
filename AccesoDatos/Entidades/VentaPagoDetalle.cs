@@ -12,8 +12,8 @@ namespace AccesoDatos.Entidades
         [Key]
         public long VentaPagoDetalleId { get; set; }
 
-        public long IdVenta { get; set; }
-        public Venta Venta { get; set; }
+        public long? IdVenta { get; set; }
+        public Venta? Venta { get; set; }
 
         public long? IdGasto { get; set; }
         public Gasto? Gasto { get; set; }
