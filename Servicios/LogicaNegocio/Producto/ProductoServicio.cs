@@ -24,7 +24,7 @@ namespace Servicios.LogicaNegocio.Producto
                 .AsNoTracking()
                 .Include(x => x.Producto)
                 .Include(x => x.Oferta)
-                .FirstOrDefault(x => x.ProductoId == productoId);
+                .FirstOrDefault(x => x.ProductoId == productoId && x.Oferta.EstaActiva);
 
             // Si no hay relación, traigo el producto directamente (con sus navegaciones necesarias)
             var producto = prodOfer?.Producto
