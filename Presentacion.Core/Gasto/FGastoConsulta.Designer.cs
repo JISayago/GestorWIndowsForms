@@ -28,12 +28,40 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "FGastoConsulta";
+            btnAnularGasto = new Button();
+            panel1.SuspendLayout();
+            SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(btnAnularGasto);
+            panel1.Controls.SetChildIndex(btnAnularGasto, 0);
+            // 
+            // btnAnularGasto
+            // 
+            btnAnularGasto.Location = new Point(0, 234);
+            btnAnularGasto.Name = "btnAnularGasto";
+            btnAnularGasto.Size = new Size(75, 73);
+            btnAnularGasto.TabIndex = 1;
+            btnAnularGasto.Text = "Anular Gasto";
+            btnAnularGasto.UseVisualStyleBackColor = true;
+            btnAnularGasto.Click += btnAnularGasto_Click;
+            // 
+            // FGastoConsulta
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 561);
+            Name = "FGastoConsulta";
+            Text = "FGastoConsulta";
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Button btnAnularGasto;
     }
 }

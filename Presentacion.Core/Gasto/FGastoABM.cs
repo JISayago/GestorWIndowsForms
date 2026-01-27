@@ -17,10 +17,12 @@ namespace Presentacion.Core.Gasto
     {
         private readonly IGastoServicio _gastoServicio;
         private bool _esPagoPendiente;
-        public FGastoABM()
+        private readonly long _logeadoId;
+        public FGastoABM(long logeadoId)
         {
             InitializeComponent();
             _gastoServicio = new GastoServicio();
+            _logeadoId = logeadoId;
         }
 
         private void btnRegistrarGasto_Click(object sender, EventArgs e)
@@ -40,9 +42,10 @@ namespace Presentacion.Core.Gasto
         {
             var gasto = new GastoDTO
             {
+                IdEmpleado = _logeadoId,
                 CategoriaGasto = 1,
                 Detalle = txtDetalle.Text,
-                MontoPagado = decimal.Parse(txtMontoPago.Text),
+                MontoTotal = decimal.Parse(txtMontoPago.Text),
                 FechaGasto = dtpDiaGasto.Value,
                 
             };

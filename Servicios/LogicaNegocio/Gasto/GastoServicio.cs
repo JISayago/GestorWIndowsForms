@@ -87,22 +87,29 @@ namespace Servicios.LogicaNegocio.Gasto
                     Mensaje = "Ya existe un gasto con el mismo número."
                 };
             }
+            // 4. Crear entidad Gasto y generacion de numeracion
+            var fechaGasto = gastoDto.FechaGasto.Date;
 
-            // 4. Crear entidad Gasto
+            var cantidadDelDia = context.Gastos
+                .Count(g => g.FechaGasto.Date == fechaGasto);
+
+            var numeroGasto = $"GAS-{fechaGasto:yyyyMMdd}-{(cantidadDelDia + 1):D3}";
+
             var gasto = new AccesoDatos.Entidades.Gasto
             {
-                NumeroGasto = gastoDto.NumeroGasto,
+                NumeroGasto = numeroGasto,
                 IdEmpleado = gastoDto.IdEmpleado,
                 CategoriaGasto = gastoDto.CategoriaGasto,
-                FechaGasto = gastoDto.FechaGasto,
+                FechaGasto = fechaGasto,
                 FechaRegistro = DateTime.Now,
                 MontoTotal = gastoDto.MontoTotal,
                 MontoPagado = gastoDto.MontoPagado > 0
-                                ? gastoDto.MontoPagado
-                                : gastoDto.MontoTotal,
+                     ? gastoDto.MontoPagado
+                     : gastoDto.MontoTotal,
                 EstadoGasto = gastoDto.EstadoGasto,
                 Detalle = gastoDto.Detalle
             };
+
 
             // 5. Reglas simples de consistencia
             if (gasto.MontoPagado > gasto.MontoTotal)
