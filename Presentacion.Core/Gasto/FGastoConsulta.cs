@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Presentacion.FBase;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Presentacion.Core.Gasto
 {
-    public partial class FGastoConsulta : Form
+    public partial class FGastoConsulta : FBaseConsulta
     {
         public FGastoConsulta()
         {
