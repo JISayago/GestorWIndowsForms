@@ -498,5 +498,44 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 return null;
             }
         }
+
+        public OfertaDTO ObtenerOfertaActivaPorId(long idOFerta)
+        {
+            {
+                using var context = new GestorContextDBFactory().CreateDbContext(null);
+                var oferta = context.OfertasDescuentos
+                    .Include(o => o.Productos)
+                    .Where(o => o.OfertaDescuentoId == idOFerta && o.EstaActiva)
+                    .Select(x => new OfertaDTO
+                    {
+                        OfertaDescuentoId = x.OfertaDescuentoId,
+                        Descripcion = x.Descripcion,
+                        PrecioFinal = x.PrecioFinal,
+                        PrecioOriginal = x.PrecioOriginal,
+                        DescuentoTotalFinal = x.DescuentoTotalFinal,
+                        PorcentajeDescuento = x.PorcentajeDescuento,
+                        FechaInicio = x.FechaInicio,
+                        FechaFin = x.FechaFin,
+                        CantidadProductosDentroOferta = x.CantidadProductosDentroOferta,
+                        EstaActiva = x.EstaActiva,
+                        EsUnSoloProducto = x.EsUnSoloProducto,
+                        Detalle = x.Detalle,
+                        Codigo = x.Codigo,
+                        esOfertaPorGrupo = x.esOfertaPorGrupo,
+                        TieneLimiteDeStock = x.TieneLimiteDeStock,
+                        CantidadLimiteDeStock = x.CantidadLimiteDeStock,
+                        IdMarca = x.IdMarca,
+                        IdRubro = x.IdRubro,
+                        IdCategoria = x.IdCategoria,
+                        GrupoNombre = x.GrupoNombre,
+                        Productos = x.Productos.Select(p => new ProductoDTO
+                        {
+                            ProductoId = p.ProductoId,
+                            PrecioVenta = p.PrecioOrginal
+                        }).ToList()
+                    }).FirstOrDefault();
+                return oferta;
+            }
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace Servicios.LogicaNegocio.Cliente
         IEnumerable<ClienteDTO> ObtenerClientes(string cadenabuscar);
         IEnumerable<ClienteDTO> ObtenerClientesEliminados(string cadenabuscar);
         ClienteDTO ObtenerClientePorId(long personaId);
+        ClienteDTO ObtenerClientePorNumero(string numero);
         EstadoOperacion Insertar(ClienteDTO clienteDto);
         EstadoOperacion Modificar(ClienteDTO clienteDto, long? clienteId);
         EstadoOperacion Eliminar(long clienteId);
