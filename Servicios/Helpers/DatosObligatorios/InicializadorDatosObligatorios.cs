@@ -21,6 +21,7 @@ namespace Servicios.Helpers.DatosObligatorios
         public void InicializadorDatos()
         {
             InicializarAdmin();
+            InicializarConsumidorFinal();
             IniciarTiposDePago();
             RetornarMensajeOfertasActivadasDesactivadasConflictos();
             seCargo = true;
@@ -38,6 +39,11 @@ namespace Servicios.Helpers.DatosObligatorios
         private void IniciarTiposDePago()
         {
             TipoDePagoInicial.Inicializar(Context);
+        }
+
+        private void InicializarConsumidorFinal()
+        {
+            ConsumidorFInal.Inicializar(Context);
         }
         private void ActivarDesactivarOfertas()
         {

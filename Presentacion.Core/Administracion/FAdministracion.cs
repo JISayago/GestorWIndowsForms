@@ -29,6 +29,8 @@ namespace Presentacion.Core.Administracion
 {
     public partial class FAdministracion : Form
     {
+        private readonly long _logeadoId;
+        public FAdministracion(long logeadoId)
         private readonly CajaServicio _cajaSerivicio;
         private readonly VentaServicio _ventaServicio;
         List<CajaDTO> todasLasCajas;
@@ -36,6 +38,7 @@ namespace Presentacion.Core.Administracion
         public FAdministracion()
         {
             InitializeComponent();
+            _logeadoId = logeadoId;
 
             _cajaSerivicio = new CajaServicio();
             _ventaServicio = new VentaServicio();
@@ -133,7 +136,8 @@ namespace Presentacion.Core.Administracion
 
         private void btnGasto_Click(object sender, EventArgs e)
         {
-            //CONSULTA GASTO
+            var FGasto = new Gasto.FGastoConsulta(_logeadoId);
+            FGasto.Show();
 
         }
 

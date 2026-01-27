@@ -1,5 +1,7 @@
-﻿using Servicios.Helpers;
+﻿using AccesoDatos;
+using Servicios.Helpers;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
 using System.Collections.Generic;
@@ -21,5 +23,7 @@ namespace Servicios.LogicaNegocio.Producto
         EstadoOperacion Eliminar(long productoId);
 
         IEnumerable<ProductoDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(long? MarcaId = null, long? RubroId = null, long? CategoriaId = null);
+        void DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context);
+        void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context);
     }
 }

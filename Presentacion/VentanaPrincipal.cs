@@ -55,7 +55,7 @@ namespace Presentacion
 
         private void btnPanelAdmin_Click(object sender, EventArgs e)
         {
-            var administracion = new FAdministracion();
+            var administracion = new FAdministracion(_usuarioLogeado.PersonaId);
             administracion.Show();
         }
 

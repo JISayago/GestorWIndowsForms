@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using Servicios.Infraestructura;
 using Servicios.LogicaNegocio.Empleado.DTO;
+using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.TipoPago;
 
@@ -19,9 +20,11 @@ namespace Servicios.LogicaNegocio.Venta
     public class VentaServicio : IVentaServicio
     {
         private readonly IPdfGenerator _pdf;
+        private readonly IProductoServicio _productoServicio;
 
         public VentaServicio() : this(new PdfGenerator())
         {
+            _productoServicio = new ProductoServicio();
         }
         public VentaServicio(IPdfGenerator pdf)
         {
@@ -83,6 +86,7 @@ namespace Servicios.LogicaNegocio.Venta
                 NumeroVenta = numeroFinal,
                 IdEmpleado = ventaDto.IdEmpleado,
                 IdVendedor = ventaDto.IdVendedor,
+                IdCliente = ventaDto.IdCliente,
                 FechaVenta = ventaDto.FechaVenta,
                 Total = ventaDto.Total,
                 TotalSinDescuento = ventaDto.TotalSinDescuento,
@@ -93,6 +97,8 @@ namespace Servicios.LogicaNegocio.Venta
                 MontoPagado = ventaDto.Total
             };
 
+            var x = venta;
+            
             context.Ventas.Add(venta);
             context.SaveChanges(); // necesito VentaId
 
@@ -128,6 +134,14 @@ namespace Servicios.LogicaNegocio.Venta
             // 5. Detalles
             if (ventaDto.Items != null && ventaDto.Items.Any())
             {
+                if (ventaDto.Total < 0)
+                {
+                _productoServicio.RestaurarStockProductos(ventaDto.Items, context);
+                }
+                else
+                {
+                _productoServicio.DescontarStockProductos(ventaDto.Items, context);
+                                    }
                 var detalles = ventaDto.Items.Select(i => new AccesoDatos.Entidades.DetallesVenta
                 {
                     IdVenta = venta.VentaId,
@@ -166,6 +180,7 @@ namespace Servicios.LogicaNegocio.Venta
             try
             {
                 CrearVentaInterna(context, ventaDto);
+                
 
                 transaction.Commit();
                 return new EstadoOperacion
@@ -200,6 +215,7 @@ namespace Servicios.LogicaNegocio.Venta
                 NumeroVenta = venta.NumeroVenta,
                 IdEmpleado = venta.IdEmpleado,
                 IdVendedor = venta.IdVendedor,
+                IdCliente = venta.IdCliente,
                 FechaVenta = venta.FechaVenta,
                 Total = venta.Total,
                 TotalSinDescuento = venta.TotalSinDescuento,
@@ -229,6 +245,7 @@ namespace Servicios.LogicaNegocio.Venta
                 NumeroVenta = venta.NumeroVenta,
                 IdEmpleado = venta.IdEmpleado,
                 IdVendedor = venta.IdVendedor,
+                IdCliente = venta.IdCliente,
                 FechaVenta = venta.FechaVenta,
                 Total = venta.Total,
                 TotalSinDescuento = venta.TotalSinDescuento,
@@ -254,22 +271,62 @@ namespace Servicios.LogicaNegocio.Venta
 
         }
 
+        public static class NumeroVentaHelper
+        {
+            public static string Normalizar(string input, int largo = 15)
+            {
+                if (string.IsNullOrWhiteSpace(input))
+                    return null;
+
+                var digits = new string(input.Where(char.IsDigit).ToArray());
+
+                if (!long.TryParse(digits, out var numero))
+                    return null;
+
+                return numero.ToString().PadLeft(largo, '0');
+            }
+        }
         public List<long> ObtenerComprobantesParaCancelacionPorNroComprobante(string nroComprobante)
         {
-            if (string.IsNullOrWhiteSpace(nroComprobante))
-                return new List<long>();
+            var numeroNormalizado = NumeroVentaHelper.Normalizar(nroComprobante);
 
-            var numeroBuscado = nroComprobante.Trim();
+            if (numeroNormalizado == null)
+                return new List<long>();
 
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var ids = context.Ventas
-                .Where(v => v.NumeroVenta != null &&
-                            v.NumeroVenta.Trim() == numeroBuscado)
-                .Select(v => v.VentaId)
+                .Where(v => v.NumeroVenta == numeroNormalizado && v.Estado != 99)
+                .Select(v => v.VentaId )
                 .ToList();
-
+            var x = ids;
             return ids;
+        }
+
+    public List<VentaDTO> ComprobantesConMismoNumero(string nroComprobante)
+        {
+            var numeroNormalizado = NumeroVentaHelper.Normalizar(nroComprobante);
+            if (numeroNormalizado == null)
+                return new List<VentaDTO>();
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            var ventas = context.Ventas
+                .Where(v => v.NumeroVenta == numeroNormalizado)
+                .Select(v => new VentaDTO
+                {
+                    VentaId = v.VentaId,
+                    NumeroVenta = v.NumeroVenta,
+                    IdEmpleado = v.IdEmpleado,
+                    IdVendedor = v.IdVendedor,
+                    IdCliente = v.IdCliente,
+                    FechaVenta = v.FechaVenta,
+                    Total = v.Total,
+                    TotalSinDescuento = v.TotalSinDescuento,
+                    Descuento = v.Descuento,
+                    Estado = v.Estado,
+                    Detalle = v.Detalle
+                })
+                .ToList();
+            return ventas;
         }
         public EstadoOperacion CancelacionVentaPorId(long ventaId)
         {
@@ -295,6 +352,7 @@ namespace Servicios.LogicaNegocio.Venta
                 {
                     IdEmpleado = ventaOriginal.IdEmpleado,
                     IdVendedor = ventaOriginal.IdVendedor,
+                    IdCliente = ventaOriginal.IdCliente,
                     FechaVenta = DateTime.Now,
 
                     Total = -ventaOriginal.Total,
