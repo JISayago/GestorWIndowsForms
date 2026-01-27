@@ -27,6 +27,12 @@ namespace Presentacion.FBase.Helpers
 
             EstaCajaAbierta = estadoCaja;
             CajaId = cajaId;
+
+            //Fixear si no hay caja abierta , que cajaId quede en 0 o null, tener en cuenta que va a tirar error la venta al crear el movimiento usando cajaID
+            //por eso deje un 0 en vez de null para poder ir avanzando
+
+            //En el form de venta tengo que validar si hay caja abierta o no antes de crear la venta
+
         }
 
         public DatosSistema(long usuarioId, string nombre, string apellido) : this()

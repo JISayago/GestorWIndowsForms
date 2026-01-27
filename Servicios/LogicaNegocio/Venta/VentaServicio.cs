@@ -100,6 +100,9 @@ namespace Servicios.LogicaNegocio.Venta
             var cajaServicio = new Caja.CajaServicio();
             var cajaId = cajaServicio.ObtenerIdCajaAbierta(context);
 
+
+            //cajaId = cajaId ?? throw new Exception("No hay una caja abierta. No se puede registrar la venta.");
+
             // 3. Movimiento (usa MISMO context)
             var movimientoServicio = new Movimiento.MovimientoServicio();
             movimientoServicio.CrearMovimientoVenta(
@@ -337,8 +340,26 @@ namespace Servicios.LogicaNegocio.Venta
             }
         }
 
+        public List<VentaDTO> ObtenerTodasLasVentas() //no me gusta mucho traer TODAS las ventas, deberia meter un parametro para limitar por fecha o cantidad //take look paginacion
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
 
-
+            return context.Ventas
+                .Select(venta => new VentaDTO
+                {
+                    VentaId = venta.VentaId,
+                    NumeroVenta = venta.NumeroVenta,
+                    IdEmpleado = venta.IdEmpleado,
+                    IdVendedor = venta.IdVendedor,
+                    FechaVenta = venta.FechaVenta,
+                    Total = venta.Total,
+                    TotalSinDescuento = venta.TotalSinDescuento,
+                    Descuento = venta.Descuento,
+                    Estado = venta.Estado,
+                    Detalle = venta.Detalle
+                })
+                .ToList();
+        }
     }
 }
 

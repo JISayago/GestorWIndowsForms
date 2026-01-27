@@ -171,6 +171,11 @@ namespace Presentacion.Core.Administracion
 
             string[] diasDelMes = fechas.Select(d => d.ToString("MMM dd")).ToArray();
 
+            //LO DE ARRIBA SE BORRA, SOLO ES PARA PROBAR SCOTT PLOT
+
+
+
+
             //Todas la cajas abiertas y cerradas
             var todasLasCajas = _cajaSerivicio.ObetenerTodasLasCajas();
 
@@ -193,7 +198,7 @@ namespace Presentacion.Core.Administracion
 
 
 
-            ////Primer grafico////
+                        ////Primer grafico////
 
             //Ganacias por cajas (ultimas 30 cajas) 
             //No me gusta mucho las fechas en el eje x, mejor numeros de caja?, por casos de que abran varias cajas al dia
@@ -201,7 +206,7 @@ namespace Presentacion.Core.Administracion
             var ultimasCajas = todasLasCajas
                 .TakeLast(30)
                 .OrderBy(c => c.FechaInicio)
-                .ToList();
+                .ToList();                  //funciona en service para traer las ultimas X cajas
 
             //Deberiamos mostrar el balance final? y no solo el ingreso?
             double[] gananciasPorCaja = ultimasCajas
@@ -209,7 +214,7 @@ namespace Presentacion.Core.Administracion
                 .ToArray();
 
             string[] fechasDeCadaCaja = ultimasCajas
-            .Select(c => $"{c.FechaInicio:dd/MM} - {c.FechaFin?.ToString("dd/MM") ?? "Abierta"}")
+            .Select(c => $"A: {c.FechaInicio:dd/MM}\nC: {c.FechaFin?.ToString("dd/MM") ?? "Abierta"}")
             .ToArray();
 
             double[] numerosCajas = Enumerable
@@ -232,7 +237,7 @@ namespace Presentacion.Core.Administracion
 
                         ////Primer grafico v2////
 
-            //Ganacias por cajas 
+            //Ganacias por cajas agrupadas por dias (ultimas 30 dias) 
             //Agrupar las cajas por dia y sumar los ingresos de cada dia
             //Creo que este deberia remplazar al primero, preg a moncho
 
@@ -269,8 +274,6 @@ namespace Presentacion.Core.Administracion
 
 
                         ////Segundo grafico/////
-
-            //Ganacias por mes, faltan los datos de ganancias pero la estructura es esta
 
             string[] meses =
             {
@@ -323,7 +326,7 @@ namespace Presentacion.Core.Administracion
             //Ventas por dia en el ultimo mes
             //Agarrar las ventas de los ultimos 31 dias, juntar por dia y contar la cantidad de ventas por dia
 
-            var fechaHaceUnMes = DateTime.Now.Date.AddDays(-100);
+            var fechaHaceUnMes = DateTime.Now.Date.AddDays(-30);
 
             var ventasUltimoMes = ventas
                 .Where(v => v.FechaVenta.Date >= fechaHaceUnMes)

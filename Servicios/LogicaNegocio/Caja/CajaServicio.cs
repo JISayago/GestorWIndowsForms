@@ -113,7 +113,7 @@ namespace Servicios.LogicaNegocio.Caja
                 .FirstOrDefault();
             if (caja == null)
             {
-                throw new InvalidOperationException("No hay una caja abierta actualmente.");
+                return 0;
             }
             return caja.CajaId;
         }
