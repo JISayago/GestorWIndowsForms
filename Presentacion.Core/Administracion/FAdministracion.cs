@@ -23,9 +23,11 @@ namespace Presentacion.Core.Administracion
 {
     public partial class FAdministracion : Form
     {
-        public FAdministracion()
+        private readonly long _logeadoId;
+        public FAdministracion(long logeadoId)
         {
             InitializeComponent();
+            _logeadoId = logeadoId;
         }
 
         private void btnVolver_Click(object sender, EventArgs e)
@@ -120,7 +122,8 @@ namespace Presentacion.Core.Administracion
 
         private void btnGasto_Click(object sender, EventArgs e)
         {
-            //CONSULTA GASTO
+            var FGasto = new Gasto.FGastoConsulta(_logeadoId);
+            FGasto.Show();
 
         }
 

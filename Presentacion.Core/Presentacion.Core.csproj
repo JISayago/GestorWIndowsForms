@@ -9,11 +9,8 @@
 
   <ItemGroup>
     <Compile Remove="Marca\**" />
-    <Compile Remove="NewFolder\**" />
     <EmbeddedResource Remove="Marca\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
     <None Remove="Marca\**" />
-    <None Remove="NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
