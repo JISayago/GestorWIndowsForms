@@ -4,6 +4,7 @@ using Presentacion.Core.Cliente;
 using Presentacion.Core.CuentaCorriente;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Empleado.Rol;
+using Presentacion.Core.Herramientas;
 using Presentacion.Core.Movimiento;
 using Presentacion.Core.Oferta;
 using Presentacion.Core.Producto;
@@ -127,9 +128,35 @@ namespace Presentacion.Core.Administracion
 
         }
 
+
         private void btnComprobantes_Click(object sender, EventArgs e)
         {
-            // PODER ABRIR UNA CARPETA TAL VEZ CON COMPROBANTES GUARDADOS
+            var escritorio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var carpeta = Path.Combine(escritorio, "ComprobantesPdf");
+
+            if (!Directory.Exists(carpeta))
+            {
+                MessageBox.Show(
+                    "La carpeta de comprobantes todavía no existe.",
+                    "Comprobantes",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+                return;
+            }
+
+            using var dialog = new OpenFileDialog
+            {
+                InitialDirectory = carpeta,
+                Filter = "Archivos PDF (*.pdf)|*.pdf",
+                Title = "Seleccionar comprobante"
+            };
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                using var visor = new FVisorPDF(dialog.FileName);
+                visor.ShowDialog();
+            }
         }
     }
 }
