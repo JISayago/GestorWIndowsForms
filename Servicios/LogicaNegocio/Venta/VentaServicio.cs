@@ -166,6 +166,20 @@ namespace Servicios.LogicaNegocio.Venta
 
             // 7. Guardar TODO junto
             context.SaveChanges();
+            // 8. Recargar la venta COMPLETA con relaciones
+            var ventaCompleta = context.Ventas
+                .Include(v => v.DetallesVentas)
+                    .ThenInclude(d => d.Producto)
+                .Include(v => v.VentaPagoDetalles)
+                    .ThenInclude(p => p.TipoPago)
+                .Include(v => v.Cliente.Persona)
+                .Include(v => v.Empleado.Persona)
+                .Include(v => v.Vendedor.Persona)
+                .First(v => v.VentaId == venta.VentaId);
+
+            // 9. Generar PDF
+            GenerarPdfDeVenta(ventaCompleta);
+
 
             return venta;
         }
