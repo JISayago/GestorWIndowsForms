@@ -1,6 +1,8 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using MigraDoc.DocumentObjectModel.Internals;
 using Servicios.Helpers;
 using Servicios.Infraestructura;
 using Servicios.LogicaNegocio.Empleado.DTO;
@@ -417,6 +419,28 @@ namespace Servicios.LogicaNegocio.Venta
                     Detalle = venta.Detalle
                 })
                 .ToList();
+        }
+
+        public List<VentaDTO> ObtenerVentasPorMesYAño(int mesDeLasVentas, int añoDeLasVentas)
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var ventas = context.Ventas.Select(venta => new VentaDTO
+                {
+                    VentaId = venta.VentaId,
+                    NumeroVenta = venta.NumeroVenta,
+                    IdEmpleado = venta.IdEmpleado,
+                    IdVendedor = venta.IdVendedor,
+                    FechaVenta = venta.FechaVenta,
+                    Total = venta.Total,
+                    TotalSinDescuento = venta.TotalSinDescuento,
+                    Descuento = venta.Descuento,
+                    Estado = venta.Estado,
+                    Detalle = venta.Detalle
+                }).Where(venta => venta.FechaVenta.Month == mesDeLasVentas && venta.FechaVenta.Year == añoDeLasVentas)
+                .ToList();
+
+            return ventas;        
         }
     }
 }

@@ -30,12 +30,11 @@ namespace Presentacion.Core.Administracion
     public partial class FAdministracion : Form
     {
         private readonly long _logeadoId;
-        public FAdministracion(long logeadoId)
         private readonly CajaServicio _cajaSerivicio;
         private readonly VentaServicio _ventaServicio;
         List<CajaDTO> todasLasCajas;
 
-        public FAdministracion()
+        public FAdministracion(long logeadoId)
         {
             InitializeComponent();
             _logeadoId = logeadoId;
@@ -153,23 +152,6 @@ namespace Presentacion.Core.Administracion
 
         private void FAdministracion_Load(object sender, EventArgs e)
         {
-            //Generar X cantidad de numeros random
-            int cuantosRandom = 15;
-            Random random = new Random();
-
-            double[] numerosR = Enumerable
-                .Range(0, cuantosRandom)
-                .Select(i => random.NextDouble()) // 0.0 a 1.0
-                .ToArray();
-
-            //Generar X numeros consecutivos
-            int cuantosConsecutivos = 14;
-
-            double[] numerosConsecutivos = Enumerable
-                .Range(0, cuantosConsecutivos)
-                .Select(i => (double)i)
-                .ToArray();
-
             //Generar X fechas consecutivas
             DateTime[] fechas = Generate.ConsecutiveDays(start: DateTime.Now.Date.AddDays(-14), count: 14);
 
@@ -178,51 +160,35 @@ namespace Presentacion.Core.Administracion
             //LO DE ARRIBA SE BORRA, SOLO ES PARA PROBAR SCOTT PLOT
 
 
-
-
             //Todas la cajas abiertas y cerradas
             var todasLasCajas = _cajaSerivicio.ObetenerTodasLasCajas();
 
             //Ventas
             var ventas = _ventaServicio.ObtenerTodasLasVentas();
 
-
             ////////////////////
-
-            //Agarrar las cajas abiertas y cerradas en los ultimos 30 dias (seria mas facil las 30 ultimas cajas x las fecha pueden ser direntes entre caja (duracion))
-            //Tomar para el eje Y las ganancias diarias (o balance final) de cada caja
-            //El eje x serian las cajas en orden cronologico (1,2,3,4...) o por fecha (dia mes)
-
-            // Si quiero por fecha, deberia agrupar las cajas por fecha y sumar los balances finales de las cajas abiertas y cerradas en ese dia
-
-            //creo que caja no esta calculando el balance final 
-
-            //Obtener las ultimas 30 cajas abiertas o cerradas ordenadas por fecha de inicio
-
 
 
 
                         ////Primer grafico////
-
-            //Ganacias por cajas (ultimas 30 cajas) 
-            //No me gusta mucho las fechas en el eje x, mejor numeros de caja?, por casos de que abran varias cajas al dia
-
-            var ultimasCajas = todasLasCajas
-                .TakeLast(30)
-                .OrderBy(c => c.FechaInicio)
-                .ToList();                  //funciona en service para traer las ultimas X cajas
+                        ///Ganacias por cajas (ultimas 31 cajas actual) 
 
             //Deberiamos mostrar el balance final? y no solo el ingreso?
-            double[] gananciasPorCaja = ultimasCajas
+
+            var ultimas31Cajas = _cajaSerivicio.ObtenerUltimasXCajas(31);
+
+            //LO SIGUIENTE SERIA PODER MODIFICAR LA CANTIDAD DE CAJAS A MOSTRAR
+
+            double[] gananciasPorCaja = ultimas31Cajas
                 .Select(c => (double)c.TotalIngresos)
                 .ToArray();
 
-            string[] fechasDeCadaCaja = ultimasCajas
+            string[] fechasDeCadaCaja = ultimas31Cajas
             .Select(c => $"A: {c.FechaInicio:dd/MM}\nC: {c.FechaFin?.ToString("dd/MM") ?? "Abierta"}")
             .ToArray();
 
             double[] numerosCajas = Enumerable
-                .Range(1, ultimasCajas.Count)
+                .Range(1, ultimas31Cajas.Count)
                 .Select(i => (double)i)
                 .ToArray();
 
@@ -240,15 +206,17 @@ namespace Presentacion.Core.Administracion
 
 
                         ////Primer grafico v2////
+                        ///Ganacias por cajas agrupadas por X cantidad de dias (ultimos 31 dias actual) 
 
-            //Ganacias por cajas agrupadas por dias (ultimas 30 dias) 
-            //Agrupar las cajas por dia y sumar los ingresos de cada dia
-            //Creo que este deberia remplazar al primero, preg a moncho
+            //Agrupar las cajas por dia de apertura y sumar los ingresos de cada dia
 
-            var cajasPorDia = ultimasCajas
+            // LO SIGUIENTE SERIA PODER MODIFICAR LA CANTIDAD DE DIAS A MOSTRAR O PODER CAMBIAR EL MES 
+
+            var cajasUltimos31Dias = _cajaSerivicio.ObtenerCajasUltimosXDias(31);
+
+            var cajasPorDia = cajasUltimos31Dias
             .GroupBy(c => c.FechaInicio.Date)
             .OrderBy(g => g.Key)
-            .Take(30)
             .ToList();
 
             double[] ingresosPorDia = cajasPorDia //Eje Y el total de ingresos (deberia ser balance final, pero no entraria la caja sin cerrar creo)
@@ -265,7 +233,7 @@ namespace Presentacion.Core.Administracion
 
             formsPlot2.Plot.Clear();
 
-            formsPlot2.Plot.Title("Cajas agrupadas por dias");
+            formsPlot2.Plot.Title("Cajas ultimos 31 dias agrupadas por fecha");
             formsPlot2.Plot.XLabel("Fecha de las Cajas");
             formsPlot2.Plot.YLabel("Total Ingresos");
 
@@ -278,6 +246,18 @@ namespace Presentacion.Core.Administracion
 
 
                         ////Segundo grafico/////
+                        ///Ganancias por mes de X año
+
+            ///LO SIGUIENTE FILTRAR POR AÑO TAMBIEN
+
+            var cajasAñoX = _cajaSerivicio.ObtenerLasCajasDeXAño(2026); //Filtro de año
+
+            var fechasYGanaciasAgrupadasPorMeses = cajasAñoX.GroupBy(c => new { c.FechaInicio.Year, c.FechaInicio.Month })
+            .Select(g => new
+            {
+                Fecha = new DateTime(g.Key.Year, g.Key.Month, 1),
+                Balance = g.Sum(c => c.TotalIngresos)//deberia ser balance final?
+            }).ToList();
 
             string[] meses =
             {
@@ -287,23 +267,17 @@ namespace Presentacion.Core.Administracion
             };
 
             // X = índices (0..11)
-            double[] xs = Enumerable.Range(0, meses.Length)
-                                    .Select(i => (double)i)
-                                    .ToArray();
+            double[] xs = fechasYGanaciasAgrupadasPorMeses
+                .Select(x => x.Fecha.Month - 1)
+                .Select(m => (double)m)
+                .ToArray();
 
-            var fechasGananciasPorMes = todasLasCajas.GroupBy(c => new { c.FechaInicio.Year, c.FechaInicio.Month })
-            .Select(g => new
-            {
-                Fecha = new DateTime(g.Key.Year, g.Key.Month, 1),
-                Balance = g.Sum(c => c.TotalIngresos)//deberia ser balance final?
-            })
-            .OrderByDescending(x => x.Fecha)
-            .Take(12)
-            .OrderBy(x => x.Fecha)
-            .ToList();
-
-            double[] ganaciasPorMes = fechasGananciasPorMes
+            double[] ganaciasPorMesEjeY = fechasYGanaciasAgrupadasPorMeses
                 .Select(x => (double)x.Balance)
+                .ToArray();
+
+            string[] mesesPresentesEjeX = fechasYGanaciasAgrupadasPorMeses
+                .Select(x => meses[x.Fecha.Month - 1])
                 .ToArray();
 
 
@@ -313,10 +287,10 @@ namespace Presentacion.Core.Administracion
             formsPlot3.Plot.XLabel("Meses");
             formsPlot3.Plot.YLabel("Total Ingresos");
 
-            formsPlot3.Plot.Add.Scatter(xs, ganaciasPorMes);
+            formsPlot3.Plot.Add.Bars(xs, ganaciasPorMesEjeY);
 
             //Meses como labels del eje X
-            formsPlot3.Plot.Axes.Bottom.SetTicks(xs, meses);
+            formsPlot3.Plot.Axes.Bottom.SetTicks(xs, mesesPresentesEjeX);
 
             //Rotar etiquetas
             formsPlot3.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
@@ -326,15 +300,11 @@ namespace Presentacion.Core.Administracion
 
 
                         ////Tercer grafico////
+                        ///Ventas por dias en un mes y año especificos
 
-            //Ventas por dia en el ultimo mes
-            //Agarrar las ventas de los ultimos 31 dias, juntar por dia y contar la cantidad de ventas por dia
+            //LO SIGUIENTE SERIA PODER FILTRAR EL MES Y EL AÑO DIRECTAMENTE CON LA FUNCION ObtenerVentasPorMesYAño
 
-            var fechaHaceUnMes = DateTime.Now.Date.AddDays(-30);
-
-            var ventasUltimoMes = ventas
-                .Where(v => v.FechaVenta.Date >= fechaHaceUnMes)
-                .ToList();
+            var ventasUltimoMes = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year);
 
             var ventasPorDia = ventasUltimoMes.Select( i => i.FechaVenta.Date)
                 .GroupBy(fecha => fecha)
@@ -374,9 +344,6 @@ namespace Presentacion.Core.Administracion
             //Ingresos, egresos
             //La idea que sea los dos graficos en un mismo formplot, barras lado a lado puede ser una 
             //o directamente con scatter
-
-
-
         }
     }
 }

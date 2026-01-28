@@ -100,7 +100,7 @@ namespace Servicios.LogicaNegocio.Caja
             return caja;
         }
 
-        public long ObtenerIdCajaAbierta( GestorContextDB context = null)
+        public long ObtenerIdCajaAbierta(GestorContextDB context = null)
         {
             if (context == null)
             {
@@ -173,10 +173,10 @@ namespace Servicios.LogicaNegocio.Caja
             caja.SaldoActual = caja.SaldoInicial + (caja.TotalIngresos - caja.TotalEgresos);
             //context.SaveChanges();
         }
-        public List<CajaDTO> ObetenerTodasLasCajas()
+        public List<CajaDTO> ObetenerTodasLasCajas() //se usa para Caja Consulta, podria paginarse si hay muchas cajas.
         {
             var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
-            
+
             var cajas = context.Cajas
                 .Select(c => new CajaDTO
                 {
@@ -193,6 +193,91 @@ namespace Servicios.LogicaNegocio.Caja
                     EstaCerrada = c.EstaCerrada,
                     MovimientoIds = c.Movimientos.Select(m => m.MovimientoId).ToList()
                 }).ToList();
+
+            return cajas;
+        }
+
+        public List<CajaDTO> ObtenerUltimasXCajas(int cantidadDeCajas)
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+
+            var cajas = context.Cajas
+                .OrderByDescending(c => c.FechaInicio)
+                .Take(cantidadDeCajas)
+                .Select(c => new CajaDTO
+                {
+                    CajaId = c.CajaId,
+                    SaldoInicial = c.SaldoInicial,
+                    SaldoActual = c.SaldoActual,
+                    FechaInicio = c.FechaInicio,
+                    FechaFin = c.FechaFin,
+                    TotalIngresos = c.TotalIngresos,
+                    TotalEgresos = c.TotalEgresos,
+                    BalanceFinal = c.BalanceFinal,
+                    EmpleadoApertura = c.EmpleadoApertura,
+                    EmpleadoCierre = c.EmpleadoCierre,
+                    EstaCerrada = c.EstaCerrada,
+                    MovimientoIds = c.Movimientos
+                        .Select(m => m.MovimientoId)
+                        .ToList()
+                })
+                .OrderBy(c => c.FechaInicio)
+                .ToList();
+
+
+            return cajas;
+        }
+
+        public List<CajaDTO> ObtenerCajasUltimosXDias(int cantidadDeDias)
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+
+            var cajas = context.Cajas.Where(c => c.FechaInicio >= DateTime.Now.AddDays(-cantidadDeDias))
+                .Select(c => new CajaDTO
+                {
+                    CajaId = c.CajaId,
+                    SaldoInicial = c.SaldoInicial,
+                    SaldoActual = c.SaldoActual,
+                    FechaInicio = c.FechaInicio,
+                    FechaFin = c.FechaFin,
+                    TotalIngresos = c.TotalIngresos,
+                    TotalEgresos = c.TotalEgresos,
+                    BalanceFinal = c.BalanceFinal,
+                    EmpleadoApertura = c.EmpleadoApertura,
+                    EmpleadoCierre = c.EmpleadoCierre,
+                    EstaCerrada = c.EstaCerrada,
+                    MovimientoIds = c.Movimientos
+                        .Select(m => m.MovimientoId)
+                        .ToList()
+                })
+                .OrderBy(c => c.FechaInicio)
+                .ToList();
+
+            return cajas;
+        }
+
+        public List<CajaDTO> ObtenerLasCajasDeXAño(int AñoDeLasCajas)
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+
+            var cajas = context.Cajas.Select(c => new CajaDTO
+            {
+                CajaId = c.CajaId,
+                SaldoInicial = c.SaldoInicial,
+                SaldoActual = c.SaldoActual,
+                FechaInicio = c.FechaInicio,
+                FechaFin = c.FechaFin,
+                TotalIngresos = c.TotalIngresos,
+                TotalEgresos = c.TotalEgresos,
+                BalanceFinal = c.BalanceFinal,
+                EmpleadoApertura = c.EmpleadoApertura,
+                EmpleadoCierre = c.EmpleadoCierre,
+                EstaCerrada = c.EstaCerrada,
+                MovimientoIds = c.Movimientos
+                        .Select(m => m.MovimientoId)
+                        .ToList()
+            }).Where(c => c.FechaInicio.Year == AñoDeLasCajas)
+              .ToList();
 
             return cajas;
         }
