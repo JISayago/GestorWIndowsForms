@@ -77,13 +77,26 @@ namespace Servicios.LogicaNegocio.Venta
     GestorContextDB context,
     VentaDTO ventaDto
 )
-        {
-            // 1. Número definitivo
-            string numeroFinal = GenerateNextNumeroVenta(context);
+        { 
+       var fecha = DateTime.Today;
+
+        var prefijo = ventaDto.Total < 0 ? "CAN" : "VEN";
+
+        var cantidadHoy = context.Ventas.Count(v =>
+            v.NumeroVenta.StartsWith($"{prefijo}-{fecha:yyyyMMdd}")
+        );
+
+        ventaDto.NumeroVenta = GeneradorNumeroComprobante.Generar(
+            prefijo,
+            fecha,
+            cantidadHoy
+        );
+
+                // 1. Número definitivo
 
             var venta = new AccesoDatos.Entidades.Venta
             {
-                NumeroVenta = numeroFinal,
+                NumeroVenta = ventaDto.NumeroVenta,
                 IdEmpleado = ventaDto.IdEmpleado,
                 IdVendedor = ventaDto.IdVendedor,
                 IdCliente = ventaDto.IdCliente,
@@ -400,32 +413,3 @@ namespace Servicios.LogicaNegocio.Venta
     }
 }
 
-
-        //ahi tengo la venta con su detalle, despues tengo que buscar usando el 
-        //service de producto los datos de cada item para completar el ItemVentaDTO y mostarlo en movimineto detallado?????
-/*
- *  ItemVentaDTO
-    public long ItemId { get; set; }
-    public decimal Cantidad { get; set; }
-    public decimal PrecioVenta { get; set; }
-    public decimal PrecioOferta { get; set; }
-    public string Descripcion { get; set; }
-    public string Medida { get; set; }
-    public string UnidadMedida { get; set; }
-    public bool EsOferta { get; set; }
-
-    public class DetallesVenta
-    {
-        [Key]
-        public long DetalleVentaId { get; set; }
-
-        public long IdVenta { get; set; }
-        public long IdProducto { get; set; }
-        public decimal Cantidad { get; set; }
-        public decimal Subtotal { get; set; }
-
-        // Relaciones
-        public Venta Venta { get; set; }
-        public Producto Producto { get; set; }
-    }
- */

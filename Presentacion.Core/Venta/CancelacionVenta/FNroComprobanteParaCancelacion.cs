@@ -41,10 +41,15 @@ namespace Presentacion.Core.Venta
             else
             {
                 var fGrillaDeComprobantes = new FGrillaDeComprobantes(_usuarioLogeadoID, _comprobantesIDs, txtNroComprobante.Text);
-            fGrillaDeComprobantes.ShowDialog();
-            this.Close();
+                fGrillaDeComprobantes.ShowDialog();
+                this.Close();
 
             }
+        }
+
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

@@ -93,11 +93,11 @@ namespace Servicios.LogicaNegocio.Gasto
             var cantidadDelDia = context.Gastos
                 .Count(g => g.FechaGasto.Date == fechaGasto);
 
-            var numeroGasto = $"GAS-{fechaGasto:yyyyMMdd}-{(cantidadDelDia + 1):D3}";
+            gastoDto.NumeroGasto = GeneradorNumeroComprobante.Generar("GAS",fechaGasto,cantidadDelDia );
 
             var gasto = new AccesoDatos.Entidades.Gasto
             {
-                NumeroGasto = numeroGasto,
+                NumeroGasto = gastoDto.NumeroGasto,
                 IdEmpleado = gastoDto.IdEmpleado,
                 CategoriaGasto = gastoDto.CategoriaGasto,
                 FechaGasto = fechaGasto,
