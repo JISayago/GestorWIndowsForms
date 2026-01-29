@@ -100,7 +100,7 @@ namespace Servicios.LogicaNegocio.Caja
             return caja;
         }
 
-        public long ObtenerIdCajaAbierta(GestorContextDB context = null)
+        public long? ObtenerIdCajaAbierta(GestorContextDB context = null)
         {
             if (context == null)
             {
@@ -113,7 +113,7 @@ namespace Servicios.LogicaNegocio.Caja
                 .FirstOrDefault();
             if (caja == null)
             {
-                return 0;
+                return null;
             }
             return caja.CajaId;
         }

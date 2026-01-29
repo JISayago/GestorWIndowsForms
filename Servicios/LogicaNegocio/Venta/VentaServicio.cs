@@ -75,104 +75,105 @@ namespace Servicios.LogicaNegocio.Venta
         }
 
 
-        public AccesoDatos.Entidades.Venta CrearVentaInterna(
-    GestorContextDB context,
-    VentaDTO ventaDto
-)
+        public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto)
         {
-            // 1. Número definitivo
-            string numeroFinal = GenerateNextNumeroVenta(context);
-
-            var venta = new AccesoDatos.Entidades.Venta
-            {
-                NumeroVenta = numeroFinal,
-                IdEmpleado = ventaDto.IdEmpleado,
-                IdVendedor = ventaDto.IdVendedor,
-                IdCliente = ventaDto.IdCliente,
-                FechaVenta = ventaDto.FechaVenta,
-                Total = ventaDto.Total,
-                TotalSinDescuento = ventaDto.TotalSinDescuento,
-                Descuento = ventaDto.Descuento,
-                Estado = ventaDto.Estado,
-                Detalle = ventaDto.Detalle,
-                MontoAdeudado = 0,
-                MontoPagado = ventaDto.Total
-            };
-
-            var x = venta;
-            
-            context.Ventas.Add(venta);
-            context.SaveChanges(); // necesito VentaId
-
-            // 2. Caja abierta
+            // 2. Caja abierta //Verificar que haya caja abierta
             var cajaServicio = new Caja.CajaServicio();
             var cajaId = cajaServicio.ObtenerIdCajaAbierta(context);
 
-
-            //cajaId = cajaId ?? throw new Exception("No hay una caja abierta. No se puede registrar la venta.");
-
-            // 3. Movimiento (usa MISMO context)
-            var movimientoServicio = new Movimiento.MovimientoServicio();
-            movimientoServicio.CrearMovimientoVenta(
-                new VentaDTO
-                {
-                    VentaId = venta.VentaId,
-                    NumeroVenta = venta.NumeroVenta,
-                    Total = venta.Total
-                },
-                cajaId,
-                context
-            );
-           
-            // 4. Actualizar saldo caja (MISMO context)
-            cajaServicio.RegistrarTransaccion(
-                context,
-                venta.Total,
-                venta.Total >= 0
-                    ? TipoMovimiento.Ingreso.ToString()
-                    : TipoMovimiento.Egreso.ToString()
-            );
-
-            // 5. Detalles
-            if (ventaDto.Items != null && ventaDto.Items.Any())
+            if (cajaId.HasValue)
             {
-                if (ventaDto.Total < 0)
+                // 1. Número definitivo
+                string numeroFinal = GenerateNextNumeroVenta(context);
+
+                var venta = new AccesoDatos.Entidades.Venta
                 {
-                _productoServicio.RestaurarStockProductos(ventaDto.Items, context);
+                    NumeroVenta = numeroFinal,
+                    IdEmpleado = ventaDto.IdEmpleado,
+                    IdVendedor = ventaDto.IdVendedor,
+                    IdCliente = ventaDto.IdCliente,
+                    FechaVenta = ventaDto.FechaVenta,
+                    Total = ventaDto.Total,
+                    TotalSinDescuento = ventaDto.TotalSinDescuento,
+                    Descuento = ventaDto.Descuento,
+                    Estado = ventaDto.Estado,
+                    Detalle = ventaDto.Detalle,
+                    MontoAdeudado = 0,
+                    MontoPagado = ventaDto.Total
+                };
+
+                var x = venta;
+
+                context.Ventas.Add(venta);
+                context.SaveChanges(); // necesito VentaId
+
+                // 3. Movimiento (usa MISMO context)
+                var movimientoServicio = new Movimiento.MovimientoServicio();
+                movimientoServicio.CrearMovimientoVenta(
+                    new VentaDTO
+                    {
+                        VentaId = venta.VentaId,
+                        NumeroVenta = venta.NumeroVenta,
+                        Total = venta.Total
+                    },
+                    cajaId.Value,
+                    context
+                );
+
+                // 4. Actualizar saldo caja (MISMO context)
+                cajaServicio.RegistrarTransaccion(
+                    context,
+                    venta.Total,
+                    venta.Total >= 0
+                        ? TipoMovimiento.Ingreso.ToString()
+                        : TipoMovimiento.Egreso.ToString()
+                );
+
+                // 5. Detalles
+                if (ventaDto.Items != null && ventaDto.Items.Any())
+                {
+                    if (ventaDto.Total < 0)
+                    {
+                        _productoServicio.RestaurarStockProductos(ventaDto.Items, context);
+                    }
+                    else
+                    {
+                        _productoServicio.DescontarStockProductos(ventaDto.Items, context);
+                    }
+                    var detalles = ventaDto.Items.Select(i => new AccesoDatos.Entidades.DetallesVenta
+                    {
+                        IdVenta = venta.VentaId,
+                        IdProducto = i.ItemId,
+                        Cantidad = i.Cantidad,
+                        Subtotal = i.PrecioVenta * i.Cantidad
+                    }).ToList();
+                    context.DetallesVentas.AddRange(detalles);
                 }
-                else
-                {
-                _productoServicio.DescontarStockProductos(ventaDto.Items, context);
-                                    }
-                var detalles = ventaDto.Items.Select(i => new AccesoDatos.Entidades.DetallesVenta
-                {
-                    IdVenta = venta.VentaId,
-                    IdProducto = i.ItemId,
-                    Cantidad = i.Cantidad,
-                    Subtotal = i.PrecioVenta * i.Cantidad
-                }).ToList();
-                context.DetallesVentas.AddRange(detalles);
-            }
 
-            // 6. Pagos
-            if (ventaDto.TiposDePagoSeleccionado != null && ventaDto.TiposDePagoSeleccionado.Any())
+                // 6. Pagos
+                if (ventaDto.TiposDePagoSeleccionado != null && ventaDto.TiposDePagoSeleccionado.Any())
+                {
+                    var servicioTP = new TipoPagoServicio();
+                    var pagos = ventaDto.TiposDePagoSeleccionado.Select(p => new AccesoDatos.Entidades.VentaPagoDetalle
+                    {
+                        IdVenta = venta.VentaId,
+                        IdTipoPago = p.TipoDePago.HasValue ? servicioTP.ObtenerTipoPagoPorNumero(Convert.ToInt32(p.TipoDePago.Value)).TipoPagoId
+                            : 0,
+                        Monto = p.Monto
+                    }).ToList();
+
+                    context.VentaPagosDetalles.AddRange(pagos);
+                }
+
+                // 7. Guardar TODO junto
+                context.SaveChanges();
+
+                return venta;
+            }
+            else
             {
-                var servicioTP = new TipoPagoServicio();
-                var pagos = ventaDto.TiposDePagoSeleccionado.Select(p => new AccesoDatos.Entidades.VentaPagoDetalle
-                {
-                    IdVenta = venta.VentaId,
-                    IdTipoPago = p.TipoDePago.HasValue ? servicioTP.ObtenerTipoPagoPorNumero(Convert.ToInt32(p.TipoDePago.Value)).TipoPagoId
-                        : 0,
-                    Monto = p.Monto
-                }).ToList();
-
-                context.VentaPagosDetalles.AddRange(pagos);
+                throw new Exception("No hay una caja abierta. No se puede registrar la venta.");
             }
-
-            // 7. Guardar TODO junto
-            context.SaveChanges();
-
-            return venta;
         }
         public EstadoOperacion NuevaVenta(VentaDTO ventaDto)
         {

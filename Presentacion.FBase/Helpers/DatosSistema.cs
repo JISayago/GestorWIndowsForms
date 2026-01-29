@@ -12,7 +12,7 @@ namespace Presentacion.FBase.Helpers
     {
         public static long UsuarioId = 0;
         public static string NombreUsuario = "";
-        public static long CajaId = 0;
+        public static long? CajaId;
         public static bool EstaCajaAbierta;
 
         //DONE Agregar un constructor para inicializar las variables, como cajaId y estaCajaAbierta, asi limpio un poco el program
@@ -26,7 +26,11 @@ namespace Presentacion.FBase.Helpers
             var cajaId = cajaServicio.ObtenerIdCajaAbierta();
 
             EstaCajaAbierta = estadoCaja;
-            CajaId = cajaId;
+            
+            if(cajaId.HasValue)
+                CajaId = cajaId.Value;
+            else
+                CajaId = null;
 
             //Fixear si no hay caja abierta , que cajaId quede en 0 o null, tener en cuenta que va a tirar error la venta al crear el movimiento usando cajaID
             //por eso deje un 0 en vez de null para poder ir avanzando

@@ -152,24 +152,6 @@ namespace Presentacion.Core.Administracion
 
         private void FAdministracion_Load(object sender, EventArgs e)
         {
-            //Generar X fechas consecutivas
-            DateTime[] fechas = Generate.ConsecutiveDays(start: DateTime.Now.Date.AddDays(-14), count: 14);
-
-            string[] diasDelMes = fechas.Select(d => d.ToString("MMM dd")).ToArray();
-
-            //LO DE ARRIBA SE BORRA, SOLO ES PARA PROBAR SCOTT PLOT
-
-
-            //Todas la cajas abiertas y cerradas
-            var todasLasCajas = _cajaSerivicio.ObetenerTodasLasCajas();
-
-            //Ventas
-            var ventas = _ventaServicio.ObtenerTodasLasVentas();
-
-            ////////////////////
-
-
-
                         ////Primer grafico////
                         ///Ganacias por cajas (ultimas 31 cajas actual) 
 
@@ -344,6 +326,7 @@ namespace Presentacion.Core.Administracion
             //Ingresos, egresos
             //La idea que sea los dos graficos en un mismo formplot, barras lado a lado puede ser una 
             //o directamente con scatter
+            //capaz es al pedo mostrar ingresos si ya lo estmaos mostrando como en 2 graficos pero en diferentes contextos
         }
     }
 }
