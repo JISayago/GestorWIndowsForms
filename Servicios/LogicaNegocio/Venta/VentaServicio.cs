@@ -332,7 +332,7 @@ namespace Servicios.LogicaNegocio.Venta
                     Items = ventaOriginal.DetallesVentas.Select(d => new ItemVentaDTO
                     {
                         ItemId = d.IdProducto,
-                        Cantidad = -d.Cantidad,
+                        Cantidad = d.Cantidad,
                         PrecioVenta = d.Subtotal / d.Cantidad
                     }).ToList(),
 
