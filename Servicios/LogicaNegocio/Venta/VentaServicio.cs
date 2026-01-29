@@ -37,42 +37,6 @@ namespace Servicios.LogicaNegocio.Venta
             return _pdf.GenerarComprobante(venta);
         }
 
-        private string NormalizeNumeroVenta(string raw)
-        {
-            if (string.IsNullOrWhiteSpace(raw))
-                return null;
-
-            var digits = new string(raw.Where(char.IsDigit).ToArray());
-            if (string.IsNullOrEmpty(digits))
-                return null;
-
-            if (digits.Length > 15)
-                digits = digits.Substring(digits.Length - 15);
-
-            return digits.PadLeft(15, '0');
-        }
-
-        public string GenerateNextNumeroVenta(GestorContextDB context)
-        {
-            // Asumimos que los NumeroVenta en BD están normalizados (15 dígitos).
-            // Pedimos el max directamente a la DB.
-            var maxStr = context.Ventas
-                                .Where(v => v.NumeroVenta != null)
-                                .Max(v => (string)v.NumeroVenta);
-
-            long max = 0;
-            if (!string.IsNullOrEmpty(maxStr))
-            {
-                // maxStr debería ser algo como "000000000000012"
-                var digits = new string(maxStr.Where(char.IsDigit).ToArray());
-                if (long.TryParse(digits, out var n))
-                    max = n;
-            }
-
-            return (max + 1).ToString().PadLeft(15, '0');
-        }
-
-
         public AccesoDatos.Entidades.Venta CrearVentaInterna(
     GestorContextDB context,
     VentaDTO ventaDto
@@ -281,62 +245,55 @@ namespace Servicios.LogicaNegocio.Venta
 
         }
 
-        public static class NumeroVentaHelper
+        public List<long> ObtenerVentasParaCancelacion(
+        DateTime fecha,
+        string filtroNumero = null
+    )
         {
-            public static string Normalizar(string input, int largo = 15)
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var query = context.Ventas
+                .Where(v =>
+                    v.Estado != 99 &&
+                    v.Total > 0 &&
+                    v.FechaVenta.Date == fecha.Date &&
+                    v.NumeroVenta.StartsWith($"VEN-{fecha:yyyyMMdd}")
+                );
+
+            if (!string.IsNullOrEmpty(filtroNumero))
             {
-                if (string.IsNullOrWhiteSpace(input))
-                    return null;
-
-                var digits = new string(input.Where(char.IsDigit).ToArray());
-
-                if (!long.TryParse(digits, out var numero))
-                    return null;
-
-                return numero.ToString().PadLeft(largo, '0');
+                query = query.Where(v =>
+                    v.NumeroVenta.Contains(filtroNumero)
+                );
             }
-        }
-        public List<long> ObtenerComprobantesParaCancelacionPorNroComprobante(string nroComprobante)
-        {
-            var numeroNormalizado = NumeroVentaHelper.Normalizar(nroComprobante);
 
-            if (numeroNormalizado == null)
-                return new List<long>();
-
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var ids = context.Ventas
-                .Where(v => v.NumeroVenta == numeroNormalizado && v.Estado != 99)
-                .Select(v => v.VentaId )
+            return query
+                .OrderBy(v => v.NumeroVenta)
+                .Select(v => v.VentaId)
                 .ToList();
-            var x = ids;
-            return ids;
         }
 
-    public List<VentaDTO> ComprobantesConMismoNumero(string nroComprobante)
+        public List<VentaDTO> ObtenerVentasPorIds(List<long> ventaIds)
         {
-            var numeroNormalizado = NumeroVentaHelper.Normalizar(nroComprobante);
-            if (numeroNormalizado == null)
-                return new List<VentaDTO>();
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-            var ventas = context.Ventas
-                .Where(v => v.NumeroVenta == numeroNormalizado)
+
+            return context.Ventas
+                .Where(v => ventaIds.Contains(v.VentaId))
+                .OrderBy(v => v.FechaVenta)
+                .ThenBy(v => v.NumeroVenta)
                 .Select(v => new VentaDTO
                 {
                     VentaId = v.VentaId,
                     NumeroVenta = v.NumeroVenta,
+                    FechaVenta = v.FechaVenta,
+                    Total = v.Total,
+                    Estado = v.Estado,
                     IdEmpleado = v.IdEmpleado,
                     IdVendedor = v.IdVendedor,
                     IdCliente = v.IdCliente,
-                    FechaVenta = v.FechaVenta,
-                    Total = v.Total,
-                    TotalSinDescuento = v.TotalSinDescuento,
-                    Descuento = v.Descuento,
-                    Estado = v.Estado,
                     Detalle = v.Detalle
                 })
                 .ToList();
-            return ventas;
         }
         public EstadoOperacion CancelacionVentaPorId(long ventaId)
         {
