@@ -200,6 +200,8 @@
             dgvProductos.Size = new Size(1089, 318);
             dgvProductos.TabIndex = 15;
             dgvProductos.CellClick += dgvProductos_CellClick;
+            dgvProductos.CellContentClick += dgvProductos_CellContentClick;
+            dgvProductos.CellFormatting += dgvProductos_CellFormatting;
             dgvProductos.RowEnter += dgvProductos_RowEnter;
             dgvProductos.SelectionChanged += dgvProductos_SelectionChanged;
             // 

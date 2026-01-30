@@ -16,6 +16,8 @@ namespace Servicios.LogicaNegocio.Venta.DTO
         public string Medida { get; set; }
         public string UnidadMedida { get; set; }
         public bool EsOferta { get; set; }
+        public string EstadoOferta =>
+      EsOferta ? "Oferta activa" : "Sin oferta";
 
     }
 }
