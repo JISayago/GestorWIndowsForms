@@ -43,6 +43,9 @@ namespace Presentacion.Core.Caja
             {
                 cajaServicio.AbrirCaja(montoApertura, DatosSistema.UsuarioId);
 
+                DatosSistema.EstaCajaAbierta = true;
+                DatosSistema.CajaId = cajaServicio.ObtenerIdCajaAbierta().Value;
+
                 MessageBox.Show("Caja Abierta");
                 
                 DatosSistema.EstaCajaAbierta = true;

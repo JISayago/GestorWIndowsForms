@@ -32,6 +32,9 @@ namespace Presentacion.Core.Caja
             {
                 cajaServicio.CerrarCaja(DatosSistema.UsuarioId);
 
+                DatosSistema.EstaCajaAbierta = false;
+                DatosSistema.CajaId = null;
+
                 MessageBox.Show("Caja Cerrada");
 
                 DatosSistema.EstaCajaAbierta = false;

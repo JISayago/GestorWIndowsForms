@@ -25,6 +25,14 @@ namespace Servicios.LogicaNegocio.Caja.DTO
 
         public bool EstaCerrada { get; set; }
 
+        public string detalleEstadoCaja 
+        { 
+            get
+            {
+                return EstaCerrada ? "Cerrada" : "Abierta"; // Usar en caja consulta para mostrar el estado de la caja y ocultar el bool de estaCerrada
+            }
+        }   
+
         public ICollection<long> MovimientoIds { get; set; } // Hace falta tener disponibles los movimientos en el dto?// si quiero mostrar los moviminetos segundo la caja 
     }
 }

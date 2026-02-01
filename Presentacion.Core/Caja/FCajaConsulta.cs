@@ -16,7 +16,7 @@ namespace Presentacion.Core.Caja
 {
     public partial class FCajaConsulta : Form
     {
-        List<CajaDTO> _cajas = new CajaServicio().ObetenerTodasLasCajas();
+        List<CajaDTO> _cajas = new CajaServicio().ObetenerTodasLasCajas(); //paginacion 
         
 
         public FCajaConsulta()
