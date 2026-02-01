@@ -29,17 +29,20 @@
         private void InitializeComponent()
         {
             btnSeleccionarProducto = new Button();
+            btnGestionStock = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
+            panel1.Controls.Add(btnGestionStock);
             panel1.Controls.Add(btnSeleccionarProducto);
             panel1.Controls.SetChildIndex(btnSeleccionarProducto, 0);
+            panel1.Controls.SetChildIndex(btnGestionStock, 0);
             // 
             // btnSeleccionarProducto
             // 
-            btnSeleccionarProducto.Location = new Point(8, 272);
+            btnSeleccionarProducto.Location = new Point(3, 238);
             btnSeleccionarProducto.Name = "btnSeleccionarProducto";
             btnSeleccionarProducto.Size = new Size(75, 44);
             btnSeleccionarProducto.TabIndex = 1;
@@ -47,11 +50,21 @@
             btnSeleccionarProducto.UseVisualStyleBackColor = true;
             btnSeleccionarProducto.Click += btnSeleccionarProducto_Click;
             // 
+            // btnGestionStock
+            // 
+            btnGestionStock.Location = new Point(2, 311);
+            btnGestionStock.Name = "btnGestionStock";
+            btnGestionStock.Size = new Size(75, 72);
+            btnGestionStock.TabIndex = 2;
+            btnGestionStock.Text = "Gestión Stock";
+            btnGestionStock.UseVisualStyleBackColor = true;
+            btnGestionStock.Click += btnGestionStock_Click;
+            // 
             // FProductoConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 561);
+            ClientSize = new Size(1083, 561);
             Name = "FProductoConsulta";
             Text = "FProductoConsulta";
             Load += FProductoConsulta_Load;
@@ -64,5 +77,6 @@
         #endregion
 
         private Button btnSeleccionarProducto;
+        private Button btnGestionStock;
     }
 }

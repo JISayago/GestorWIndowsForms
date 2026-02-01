@@ -3,6 +3,7 @@ using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace Servicios.LogicaNegocio.Producto
                 .AsNoTracking()
                 .Include(x => x.Producto)
                 .Include(x => x.Oferta)
-                .FirstOrDefault(x => x.ProductoId == productoId);
+                .FirstOrDefault(x => x.ProductoId == productoId && !x.Producto.EstaEliminado && x.Oferta.EstaActiva);
 
             // Si no hay relación, traigo el producto directamente (con sus navegaciones necesarias)
             var producto = prodOfer?.Producto
@@ -32,7 +33,7 @@ namespace Servicios.LogicaNegocio.Producto
                                 .Include(x => x.Rubro)
                                 .Include(x => x.CategoriasProductos)
                                 .AsNoTracking()
-                                .FirstOrDefault(p => p.ProductoId == productoId);
+                                .FirstOrDefault(p => p.ProductoId == productoId && !p.EstaEliminado);
 
             if (producto == null)
                 return null; // No existe el producto
@@ -107,8 +108,98 @@ namespace Servicios.LogicaNegocio.Producto
         }
 
 
+        public void DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context)
+        {
+            if (items == null || !items.Any())
+                return;
 
+            foreach (var item in items)
+            {
+                if (item.EsOferta)
+                {
+                   // DescontarStockOferta(item, context);
+                }
+                else
+                {
+                    DescontarStockProducto(item, context);
+                }
+            }
+        }
+     
+        private void DescontarStockProducto(ItemVentaDTO item, GestorContextDB context)
+        {
+            var producto = context.Productos
+                .FirstOrDefault(p => p.ProductoId == item.ItemId);
 
+            if (producto == null)
+                throw new Exception($"Producto no encontrado. {item.Descripcion}");
+
+            if (producto.Stock < item.Cantidad)
+                throw new Exception(
+                    $"Stock insuficiente para {producto.Descripcion}. Stock actual: {producto.Stock}"
+                );
+
+            producto.Stock -= item.Cantidad;
+
+            context.Productos.Update(producto); 
+        }
+        public void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context)
+        {
+            if (items == null || !items.Any())
+                return;
+
+            foreach (var item in items)
+            {
+                if (item.EsOferta)
+                {
+                    // RestaurarStockOferta(item, context);
+                }
+                else
+                {
+                    RestaurarStockProducto(item, context);
+                }
+            }
+        }
+        private void RestaurarStockProducto(ItemVentaDTO item, GestorContextDB context)
+        {
+            var producto = context.Productos
+                .FirstOrDefault(p => p.ProductoId == item.ItemId);
+
+            if (producto == null)
+                throw new Exception($"Producto no encontrado. {item.Descripcion}");
+
+            producto.Stock += item.Cantidad;
+
+            context.Productos.Update(producto);
+        }
+
+        /* private void DescontarStockOferta(ItemVentaDTO item, GestorContextDB context)
+         {
+             var oferta = context.OfertasDescuentos
+                 .Include(o => o.Descripcion)
+                 .FirstOrDefault(o => o.OfertaDescuentoId == item.ItemId);
+
+             if (oferta == null)
+                 throw new Exception($"Oferta no encontrada. ID {item.ItemId}");
+
+             foreach (var detalle in oferta.Descripcion)
+             {
+                 var producto = context.Productos
+                     .FirstOrDefault(p => p.ProductoId == detalle.);
+
+                 if (producto == null)
+                     throw new Exception($"Producto {detalle.ProductoId} de la oferta no existe");
+
+                 var cantidadADescontar = detalle.Cantidad * item.Cantidad;
+
+                 if (producto.Stock < cantidadADescontar)
+                     throw new Exception(
+                         $"Stock insuficiente para {producto.Descripcion} (oferta)"
+                     );
+
+                 producto.Stock -= cantidadADescontar;
+             }
+         }*/
 
         public EstadoOperacion Eliminar(long productoId)
         {
@@ -320,7 +411,7 @@ namespace Servicios.LogicaNegocio.Producto
                 IdMarca = e.IdMarca,
                 IdRubro = e.IdRubro,
                 MarcaNombre = e.Marca.Nombre,
-                RubroNombre = e.Rubro.Nombre,
+                RubroNombre = "",//e.Rubro.Nombre,
                 Stock = Convert.ToDecimal(e.Stock),
                 PrecioCosto = e.PrecioCosto,
                 PrecioVenta = e.PrecioVenta,
@@ -393,6 +484,87 @@ namespace Servicios.LogicaNegocio.Producto
 
             return productos;
         }
+
+        public EstadoOperacion AgregarQuitarStock(MovilizacionStockDTO mStockDTO)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            // Validaciones básicas
+            if (mStockDTO == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Datos de movimiento inválidos."
+                };
+            }
+
+            if (mStockDTO.Monto <= 0)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "El monto debe ser mayor a cero."
+                };
+            }
+
+            if (mStockDTO.TipoMovimientoStock != 1 && mStockDTO.TipoMovimientoStock != 2)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Tipo de movimiento inválido."
+                };
+            }
+
+            var producto = context.Productos
+                .FirstOrDefault(p => p.ProductoId == mStockDTO.ProductoId && !p.EstaEliminado);
+
+            if (producto == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Producto no encontrado."
+                };
+            }
+
+            var stockAnterior = producto.Stock;
+
+            // Movimiento
+            if (mStockDTO.TipoMovimientoStock == 1) // Agregar
+            {
+                producto.Stock += mStockDTO.Monto;
+            }
+            else // Quitar
+            {
+                if (producto.Stock < mStockDTO.Monto)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "Stock insuficiente para realizar el movimiento."
+                    };
+                }
+
+                producto.Stock -= mStockDTO.Monto;
+            }
+
+            context.SaveChanges();
+
+            // registrar movimiento
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = mStockDTO.TipoMovimientoStock == 1
+                    ? "Stock agregado correctamente."
+                    : "Stock descontado correctamente.",
+                EntidadId = producto.ProductoId
+            };
+        }
+
+
 
     }
 }

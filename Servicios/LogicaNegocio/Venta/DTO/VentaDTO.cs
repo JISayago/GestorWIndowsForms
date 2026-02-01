@@ -15,6 +15,8 @@ namespace Servicios.LogicaNegocio.Venta.DTO
         public long VentaId { get; set; }
         public long IdEmpleado { get; set; }
         public long IdVendedor { get; set; }
+
+        public long? IdCliente { get; set; }
         public string NumeroVenta { get; set; }
         public DateTime FechaVenta { get; set; }
         public decimal Total { get; set; }

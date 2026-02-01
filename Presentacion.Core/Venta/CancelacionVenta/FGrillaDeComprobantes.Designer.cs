@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             lblTitulo = new Label();
-            dataGridView1 = new DataGridView();
+            dgvComprobantes = new DataGridView();
             btnCancelar = new Button();
             btnCargar = new Button();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvComprobantes).BeginInit();
             SuspendLayout();
             // 
             // lblTitulo
@@ -46,13 +46,13 @@
             lblTitulo.Text = "Se encontraron múltiples ventas con el mismo número de comprobante.\r\n Por favor elija la que desea cancelar.";
             lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // dataGridView1
+            // dgvComprobantes
             // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(94, 99);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new Size(618, 205);
-            dataGridView1.TabIndex = 1;
+            dgvComprobantes.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvComprobantes.Location = new Point(94, 99);
+            dgvComprobantes.Name = "dgvComprobantes";
+            dgvComprobantes.Size = new Size(618, 205);
+            dgvComprobantes.TabIndex = 1;
             // 
             // btnCancelar
             // 
@@ -80,12 +80,12 @@
             ClientSize = new Size(800, 382);
             Controls.Add(btnCargar);
             Controls.Add(btnCancelar);
-            Controls.Add(dataGridView1);
+            Controls.Add(dgvComprobantes);
             Controls.Add(lblTitulo);
             Name = "FGrillaDeComprobantes";
             Text = "FGrillaDeComprobantes";
             Load += FGrillaDeComprobantes_Load;
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvComprobantes).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -93,7 +93,7 @@
         #endregion
 
         private Label lblTitulo;
-        private DataGridView dataGridView1;
+        private DataGridView dgvComprobantes;
         private Button btnCancelar;
         private Button btnCargar;
     }

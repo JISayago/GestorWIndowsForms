@@ -12,9 +12,9 @@ namespace Servicios.LogicaNegocio.Venta
 {
     public interface IVentaServicio
     {
-        public string GenerateNextNumeroVenta(GestorContextDB context);
         EstadoOperacion NuevaVenta (VentaDTO ventaDto);
-        List<long> ObtenerComprobantesParaCancelacionPorNroComprobante(string nroComprobante);
+        List<long> ObtenerVentasParaCancelacion(DateTime fecha, string filtroNumero = null);
+        public List<VentaDTO> ObtenerVentasPorIds(List<long> ventaIds);
         EstadoOperacion CancelacionVentaPorId(long ventaId);
         VentaDTO ObtenerVentaDetalle(long Ventaid);
     }

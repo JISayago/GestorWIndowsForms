@@ -17,6 +17,7 @@ namespace Presentacion.Core.Venta
         private IVentaServicio _ventaServicio;
         private long _usuarioLogeadoID;
         private List<long> _comprobantesIDs;
+        private bool _filtrarPorNroComprobante = false;
         public FNroComprobanteParaCancelacion(long logeadoID)
         {
             InitializeComponent();
@@ -26,20 +27,42 @@ namespace Presentacion.Core.Venta
 
         private void btnBuscar_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Buscando comprobantes...");
-            if (string.IsNullOrEmpty(txtNroComprobante.Text))
+            var fecha = dtpFecha.Value.Date;
+            var filtroNumero = txtNroComprobante.Text?.Trim();
+
+            var comprobantes = _ventaServicio
+                .ObtenerVentasParaCancelacion(fecha, filtroNumero);
+
+            if (!comprobantes.Any())
             {
-                MessageBox.Show("Ingrese un número de comprobante.");
+                MessageBox.Show("No se encontraron ventas para la fecha seleccionada.");
+                return;
             }
-            //buscar el/los comprobantes
-            _comprobantesIDs = _ventaServicio.ObtenerComprobantesParaCancelacionPorNroComprobante(txtNroComprobante.Text.Trim());
-            if(_comprobantesIDs.Count < 1)
-            {
-                MessageBox.Show("No se encontraron comprobantes para el número ingresado.");
-            }
-            var fGrillaDeComprobantes = new FGrillaDeComprobantes(_usuarioLogeadoID,_comprobantesIDs);
-            fGrillaDeComprobantes.ShowDialog();
+
+            var fGrilla = new FGrillaDeComprobantes(
+                _usuarioLogeadoID,
+                comprobantes,
+                filtroNumero
+            );
+
+            fGrilla.ShowDialog();
+            Close();
+        }
+
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
             this.Close();
+        }
+
+        private void cbxSeleccionNroComprobante_CheckedChanged(object sender, EventArgs e)
+        {
+            txtNroComprobante.Enabled = cbxSeleccionNroComprobante.Checked;
+        }
+
+        private void FNroComprobanteParaCancelacion_Load(object sender, EventArgs e)
+        {
+            cbxSeleccionNroComprobante.Checked = false;
+            txtNroComprobante.Enabled = false;
         }
     }
 }

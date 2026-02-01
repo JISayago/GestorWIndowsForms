@@ -336,6 +336,68 @@ namespace AccesoDatos.Migrations
                     b.ToTable("Empleados_Roles", (string)null);
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.Gasto", b =>
+                {
+                    b.Property<long>("GastoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_Gasto");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("GastoId"));
+
+                    b.Property<int>("CategoriaGasto")
+                        .HasColumnType("int")
+                        .HasColumnName("categoria_gasto");
+
+                    b.Property<string>("Detalle")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("detalle");
+
+                    b.Property<int>("EstadoGasto")
+                        .HasColumnType("int")
+                        .HasColumnName("estado_gasto");
+
+                    b.Property<DateTime>("FechaGasto")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("fecha_gasto");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("fecha_registro");
+
+                    b.Property<long>("IdEmpleado")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_Empleado");
+
+                    b.Property<decimal>("MontoPagado")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("monto_pagado");
+
+                    b.Property<decimal>("MontoTotal")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("monto_total");
+
+                    b.Property<string>("NumeroGasto")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("numero_gasto");
+
+                    b.HasKey("GastoId");
+
+                    b.HasIndex("CategoriaGasto");
+
+                    b.HasIndex("EstadoGasto");
+
+                    b.HasIndex("FechaGasto");
+
+                    b.HasIndex("IdEmpleado");
+
+                    b.ToTable("Gastos", (string)null);
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.Marca", b =>
                 {
                     b.Property<long>("MarcaId")
@@ -854,8 +916,12 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("estado");
 
                     b.Property<DateTime>("FechaVenta")
-                        .HasColumnType("date")
+                        .HasColumnType("datetime2")
                         .HasColumnName("fecha_venta");
+
+                    b.Property<long?>("IdCliente")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_cliente");
 
                     b.Property<long>("IdEmpleado")
                         .HasColumnType("bigint")
@@ -889,6 +955,8 @@ namespace AccesoDatos.Migrations
 
                     b.HasKey("VentaId");
 
+                    b.HasIndex("IdCliente");
+
                     b.HasIndex("IdEmpleado");
 
                     b.HasIndex("IdVendedor");
@@ -905,11 +973,15 @@ namespace AccesoDatos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("VentaPagoDetalleId"));
 
+                    b.Property<long?>("IdGasto")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_Gasto");
+
                     b.Property<long>("IdTipoPago")
                         .HasColumnType("bigint")
                         .HasColumnName("id_TipoPago");
 
-                    b.Property<long>("IdVenta")
+                    b.Property<long?>("IdVenta")
                         .HasColumnType("bigint")
                         .HasColumnName("id_Venta");
 
@@ -918,6 +990,8 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("monto");
 
                     b.HasKey("VentaPagoDetalleId");
+
+                    b.HasIndex("IdGasto");
 
                     b.HasIndex("IdTipoPago");
 
@@ -1025,6 +1099,17 @@ namespace AccesoDatos.Migrations
                     b.Navigation("Rol");
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.Gasto", b =>
+                {
+                    b.HasOne("AccesoDatos.Entidades.Empleado", "Empleado")
+                        .WithMany()
+                        .HasForeignKey("IdEmpleado")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Empleado");
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.Movimiento", b =>
                 {
                     b.HasOne("AccesoDatos.Entidades.Caja", "Caja")
@@ -1118,6 +1203,11 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.Venta", b =>
                 {
+                    b.HasOne("AccesoDatos.Entidades.Cliente", "Cliente")
+                        .WithMany()
+                        .HasForeignKey("IdCliente")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("AccesoDatos.Entidades.Empleado", "Empleado")
                         .WithMany("Ventas")
                         .HasForeignKey("IdEmpleado")
@@ -1130,6 +1220,8 @@ namespace AccesoDatos.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("Cliente");
+
                     b.Navigation("Empleado");
 
                     b.Navigation("Vendedor");
@@ -1137,6 +1229,11 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.VentaPagoDetalle", b =>
                 {
+                    b.HasOne("AccesoDatos.Entidades.Gasto", "Gasto")
+                        .WithMany("VentaPagoDetalles")
+                        .HasForeignKey("IdGasto")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("AccesoDatos.Entidades.TipoPago", "TipoPago")
                         .WithMany()
                         .HasForeignKey("IdTipoPago")
@@ -1146,8 +1243,9 @@ namespace AccesoDatos.Migrations
                     b.HasOne("AccesoDatos.Entidades.Venta", "Venta")
                         .WithMany("VentaPagoDetalles")
                         .HasForeignKey("IdVenta")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Gasto");
 
                     b.Navigation("TipoPago");
 
@@ -1182,6 +1280,11 @@ namespace AccesoDatos.Migrations
                     b.Navigation("EmpleadoRoles");
 
                     b.Navigation("Ventas");
+                });
+
+            modelBuilder.Entity("AccesoDatos.Entidades.Gasto", b =>
+                {
+                    b.Navigation("VentaPagoDetalles");
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.Marca", b =>

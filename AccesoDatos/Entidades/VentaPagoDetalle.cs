@@ -12,9 +12,11 @@ namespace AccesoDatos.Entidades
         [Key]
         public long VentaPagoDetalleId { get; set; }
 
-        public long IdVenta { get; set; }
-        public Venta Venta { get; set; }
+        public long? IdVenta { get; set; }
+        public Venta? Venta { get; set; }
 
+        public long? IdGasto { get; set; }
+        public Gasto? Gasto { get; set; }
         public long IdTipoPago { get; set; }
         public TipoPago TipoPago { get; set; }
         public decimal Monto { get; set; }

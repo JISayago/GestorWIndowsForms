@@ -9,11 +9,16 @@
 
   <ItemGroup>
     <Compile Remove="Marca\**" />
-    <Compile Remove="NewFolder\**" />
     <EmbeddedResource Remove="Marca\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
     <None Remove="Marca\**" />
-    <None Remove="NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ScottPlot.WinForms" Version="5.1.57" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PdfiumViewer" Version="2.13.0" />
   </ItemGroup>
 
   <ItemGroup>
