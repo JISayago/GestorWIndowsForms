@@ -405,6 +405,7 @@ namespace Presentacion.Core.Venta
         }
         private void CalcularTotal()
         {
+            //replantar oferta en gral
             if (dgvProductos.RowCount > 0)
             {
                 decimal total = 0m;
@@ -528,6 +529,14 @@ namespace Presentacion.Core.Venta
                 Name = "PrecioOferta",
                 HeaderText = "Precio Oferta",
                 DataPropertyName = "PrecioOferta",
+                Width = 150,
+                DefaultCellStyle = { Format = "C2" }
+            });
+            grilla.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Subtotal",
+                HeaderText = "Subtotal",
+                DataPropertyName = "Subtotal",
                 Width = 150,
                 DefaultCellStyle = { Format = "C2" }
             });
@@ -939,6 +948,7 @@ namespace Presentacion.Core.Venta
             {
                 itemsVenta.Remove(item);   // lista bindada
                 dgvProductos.Refresh();
+                CalcularTotal();
             }
         }
         private void EditarCantidad(ItemVentaDTO item)
@@ -953,6 +963,7 @@ namespace Presentacion.Core.Venta
             {
                 item.Cantidad = nuevaCantidad;
                 dgvProductos.Refresh();
+                CalcularTotal();
             }
         }
     }
