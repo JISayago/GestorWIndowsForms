@@ -485,6 +485,86 @@ namespace Servicios.LogicaNegocio.Producto
             return productos;
         }
 
-        
+        public EstadoOperacion AgregarQuitarStock(MovilizacionStockDTO mStockDTO)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            // Validaciones básicas
+            if (mStockDTO == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Datos de movimiento inválidos."
+                };
+            }
+
+            if (mStockDTO.Monto <= 0)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "El monto debe ser mayor a cero."
+                };
+            }
+
+            if (mStockDTO.TipoMovimientoStock != 1 && mStockDTO.TipoMovimientoStock != 2)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Tipo de movimiento inválido."
+                };
+            }
+
+            var producto = context.Productos
+                .FirstOrDefault(p => p.ProductoId == mStockDTO.ProductoId && !p.EstaEliminado);
+
+            if (producto == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Producto no encontrado."
+                };
+            }
+
+            var stockAnterior = producto.Stock;
+
+            // Movimiento
+            if (mStockDTO.TipoMovimientoStock == 1) // Agregar
+            {
+                producto.Stock += mStockDTO.Monto;
+            }
+            else // Quitar
+            {
+                if (producto.Stock < mStockDTO.Monto)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "Stock insuficiente para realizar el movimiento."
+                    };
+                }
+
+                producto.Stock -= mStockDTO.Monto;
+            }
+
+            context.SaveChanges();
+
+            // registrar movimiento
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = mStockDTO.TipoMovimientoStock == 1
+                    ? "Stock agregado correctamente."
+                    : "Stock descontado correctamente.",
+                EntidadId = producto.ProductoId
+            };
+        }
+
+
+
     }
 }
