@@ -312,7 +312,7 @@ namespace Presentacion.Core.Venta
             }
             else
             {
-                throw new Exception("No hay una caja abierta. No se puede registrar la venta.");
+                MessageBox.Show("No hay una caja abierta. No se puede registrar la venta.");
             }
 
             
