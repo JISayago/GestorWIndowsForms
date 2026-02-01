@@ -18,6 +18,7 @@ namespace Servicios.LogicaNegocio.Producto
         ProductoDTO ObtenerProductoPorId(long productoId);
         ProductosEnOfertaDescuentosDTO ControlarProductoEstaEnOfertaPorId(long productoId);
 
+        EstadoOperacion AgregarQuitarStock(MovilizacionStockDTO mStockDTO);
         EstadoOperacion Insertar(ProductoDTO productoDto);
         EstadoOperacion Modificar(ProductoDTO productoDto, long? productoId);
         EstadoOperacion Eliminar(long productoId);

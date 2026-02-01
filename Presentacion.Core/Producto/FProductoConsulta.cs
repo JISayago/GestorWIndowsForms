@@ -34,7 +34,7 @@ namespace Presentacion.Core.Producto
         {
             vieneDeCargaProducto = _vieneDeCargaProducto;
             InitializeComponent();
-          
+
 
         }
 
@@ -53,7 +53,7 @@ namespace Presentacion.Core.Producto
             grilla.Columns["MarcaNombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             grilla.Columns["MarcaNombre"].HeaderText = "Marca";
 
-            grilla.Columns["RubroNombre"].Visible = true;   
+            grilla.Columns["RubroNombre"].Visible = true;
             grilla.Columns["RubroNombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             grilla.Columns["RubroNombre"].HeaderText = "Rubro";
 
@@ -171,6 +171,16 @@ namespace Presentacion.Core.Producto
                 btnSeleccionarProducto.Visible = false;
                 btnSeleccionarProducto.Enabled = false;
             }
+        }
+
+        private void btnGestionStock_Click(object sender, EventArgs e)
+        {
+            ControlCargaExistencaDatos();
+            if (!puedeEjecutarComando) return;
+            var formularioGestionStock = new FGestionStock(entidadID.Value);
+            formularioGestionStock.ShowDialog();
+
+
         }
     }
 }
