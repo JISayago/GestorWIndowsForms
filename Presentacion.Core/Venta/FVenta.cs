@@ -112,20 +112,22 @@ namespace Presentacion.Core.Venta
             else
             {
 
-            _cuerpoDetalleVenta = new CuerpoDetalleVenta
-            {
-                tiposDePago = new List<FormaPago>(),
-                pagoParcial = false,
-                saldoPendiente = 0.00m,
-            };
-            itemsVenta = new BindingList<ItemVentaDTO>();
+                _cuerpoDetalleVenta = new CuerpoDetalleVenta
+                {
+                    tiposDePago = new List<FormaPago>(),
+                    pagoParcial = false,
+                    saldoPendiente = 0.00m,
+                };
+                itemsVenta = new BindingList<ItemVentaDTO>();
             }
         }
 
         private void FVenta_Load(object sender, EventArgs e)
         {
             InicializarYLimpiarCampos(VENTAID);
+            dgvProductos.CellFormatting += dgvProductos_CellFormatting;
         }
+
         private void MyTimer_Tick(object sender, EventArgs e)
         {
             var ahora = DateTime.Now;
@@ -133,7 +135,7 @@ namespace Presentacion.Core.Venta
 
             lblFechaHoy.Text = ahora.ToString("dd/MM/yyyy");
             lblHoraMinutos.Text = ahora.ToString("HH:mm:ss");
-            lblDiaAbrev.Text =  cultura.TextInfo.ToTitleCase(ahora.ToString("ddd", cultura)) + ".";
+            lblDiaAbrev.Text = cultura.TextInfo.ToTitleCase(ahora.ToString("ddd", cultura)) + ".";
 
         }
 
@@ -141,7 +143,7 @@ namespace Presentacion.Core.Venta
         {
             if (ventaId != null)
             {
-               var vendedor = _empleadoServicio.ObtenerEmpleadoPorId(VENTAELIMINAR.IdVendedor);
+                var vendedor = _empleadoServicio.ObtenerEmpleadoPorId(VENTAELIMINAR.IdVendedor);
                 txtCliente.Text = _clienteVenta != null ? $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}" : "Consumidor Final";
                 lblVendedorAsignado.Text = $"{vendedor.Nombre} {vendedor.Apellido}";
             }
@@ -160,7 +162,7 @@ namespace Presentacion.Core.Venta
             if (_usuarioLogeado != null)
             {
                 lblVendedorAsignado.Text = $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}";
-            }            
+            }
         }
 
 
@@ -221,7 +223,7 @@ namespace Presentacion.Core.Venta
                 });
                 //Deberia juntar movimiento ctacte con movimiento venta en uno solo.
 
-                var m =   _ventaServicio.NuevaVenta(_venta);
+                var m = _ventaServicio.NuevaVenta(_venta);
                 MessageBox.Show($"{m.Mensaje}");
                 //_movimientoServicio.CrearMovimientoVenta(_venta);
 
@@ -347,62 +349,63 @@ namespace Presentacion.Core.Venta
 
         private void btnCargarProducto_Click(object sender, EventArgs e)
         {
-                var fProductos = new FProductoConsulta(true);
+            var fProductos = new FProductoConsulta(true);
 
-                if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
-                {
+            if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
+            {
 
-                    var idProducto = fProductos.productoSeleccionado.Value;
-                    var cantidad = 0.0m;
+                var idProducto = fProductos.productoSeleccionado.Value;
+                var cantidad = 0.0m;
 
-                    //var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
-                    var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
+                //var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
+                var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
                 if (ofertaDesc == null)
                 {
                     MessageBox.Show("El producto seleccionado no está disponible.");
                     return;
                 }
-                    var esOF = false;
-                    if (ofertaDesc.Oferta != null) { esOF = true; } else { esOF = false; }
-                    var fCantidad = new FCantidadItem();
+                var esOF = false;
+                if (ofertaDesc.Oferta != null) { esOF = true; } else { esOF = false; }
+                var fCantidad = new FCantidadItem();
 
-                    if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
+                if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
+                {
+                    if (fCantidad.cantidad > ofertaDesc.Producto.Stock)
                     {
-                        if (fCantidad.cantidad > ofertaDesc.Producto.Stock)
-                        {
-                            cantidad = ofertaDesc.Producto.Stock;
-                            MessageBox.Show($"La cantidad solicitada supera el stock disponible. Por lo que se pondra la cantidad máxima disponible: {cantidad}.");
-                        }
-                        else
-                        {
-                            cantidad = fCantidad.cantidad;
-                        }
-                        var itemVenta = new ItemVentaDTO
-                        {
-                            ItemId = ofertaDesc.Producto.ProductoId,
-                            Descripcion = ofertaDesc.Producto.Descripcion,
-                            PrecioVenta = ofertaDesc.Producto.PrecioVenta,
-                            PrecioOferta = ofertaDesc.PrecioEnOferta,
-                            Cantidad = cantidad,
-                            Medida = ofertaDesc.Producto.Medida,
-                            UnidadMedida = ofertaDesc.Producto.UnidadMedida,
-                            EsOferta = esOF
-                        };
-
-                        itemsVenta.Add(itemVenta);  // Solo agregamos a la BindingList
-                        //txtProductoCargado.Text = $"{itemVenta.Descripcion}";
-                        // No necesitas reasignar DataSource ni resetear grilla acá
-                        if (cbxDescEfectivo.Checked)
-                        {
-                            ValidarCantidadySiEsOferta();
-                            AplicarDescuentoEfectivo();
-                        }
-                        CalcularTotal();
+                        cantidad = ofertaDesc.Producto.Stock;
+                        MessageBox.Show($"La cantidad solicitada supera el stock disponible. Por lo que se pondra la cantidad máxima disponible: {cantidad}.");
                     }
+                    else
+                    {
+                        cantidad = fCantidad.cantidad;
+                    }
+                    var itemVenta = new ItemVentaDTO
+                    {
+                        ItemId = ofertaDesc.Producto.ProductoId,
+                        Descripcion = ofertaDesc.Producto.Descripcion,
+                        PrecioVenta = ofertaDesc.Producto.PrecioVenta,
+                        PrecioOferta = ofertaDesc.PrecioEnOferta,
+                        Cantidad = cantidad,
+                        Medida = ofertaDesc.Producto.Medida,
+                        UnidadMedida = ofertaDesc.Producto.UnidadMedida,
+                        EsOferta = esOF
+                    };
+
+                    itemsVenta.Add(itemVenta);  // Solo agregamos a la BindingList
+                                                //txtProductoCargado.Text = $"{itemVenta.Descripcion}";
+                                                // No necesitas reasignar DataSource ni resetear grilla acá
+                    if (cbxDescEfectivo.Checked)
+                    {
+                        ValidarCantidadySiEsOferta();
+                        AplicarDescuentoEfectivo();
+                    }
+                    CalcularTotal();
+                }
             }
         }
         private void CalcularTotal()
         {
+            //replantar oferta en gral
             if (dgvProductos.RowCount > 0)
             {
                 decimal total = 0m;
@@ -454,38 +457,109 @@ namespace Presentacion.Core.Venta
 
         private void ResetearGrilla(DataGridView grilla)
         {
-            for (int i = 0; i < grilla.ColumnCount; i++)
+            grilla.Columns.Clear();
+            grilla.AutoGenerateColumns = false;
+
+            // 🔒 ID interno (oculto)
+            grilla.Columns.Add(new DataGridViewTextBoxColumn
             {
-                grilla.Columns[i].Visible = false;
-            }
-            grilla.Columns["ItemId"].Visible = false;
-            grilla.Columns["ItemId"].DisplayIndex = 0;
+                Name = "ItemId",
+                DataPropertyName = "ItemId",
+                Visible = false
+            });
 
-            grilla.Columns["Descripcion"].Visible = true;
-            grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            grilla.Columns["Descripcion"].DisplayIndex = 1;
+            // 📦 Producto
+            grilla.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Descripcion",
+                HeaderText = "Producto",
+                DataPropertyName = "Descripcion",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+            });
 
-            grilla.Columns["Medida"].Visible = true;
-            grilla.Columns["Medida"].Width = 100;
-            grilla.Columns["Medida"].DisplayIndex = 2;
+            // 🔖 Estado oferta (string en el DTO)
+            grilla.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "EstadoOferta",
+                HeaderText = "Oferta",
+                DataPropertyName = "EstadoOferta",
+                Width = 180
+            });
 
-            grilla.Columns["UnidadMedida"].Visible = true;
-            grilla.Columns["UnidadMedida"].Width = 100;
-            grilla.Columns["UnidadMedida"].DisplayIndex = 3;
+            // 📏 Medida
+            grilla.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Medida",
+                HeaderText = "Medida",
+                DataPropertyName = "Medida",
+                Width = 100
+            });
 
-            grilla.Columns["Cantidad"].Visible = true;
-            grilla.Columns["Cantidad"].Width = 100;
-            grilla.Columns["Cantidad"].DisplayIndex = 4;
+            // 📐 Unidad de medida
+            grilla.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "UnidadMedida",
+                HeaderText = "Unidad",
+                DataPropertyName = "UnidadMedida",
+                Width = 120
+            });
 
-            grilla.Columns["PrecioVenta"].Visible = true;
-            grilla.Columns["PrecioVenta"].Width = 100;
-            grilla.Columns["PrecioVenta"].DisplayIndex = 5;
+            // 🔢 Cantidad
+            grilla.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Cantidad",
+                HeaderText = "Cantidad",
+                DataPropertyName = "Cantidad",
+                Width = 120
+            });
 
-            grilla.Columns["PrecioOferta"].Visible = true;
-            grilla.Columns["PrecioOferta"].Width = 100;
-            grilla.Columns["PrecioOferta"].DisplayIndex = 5;
+            // 💲 Precio normal
+            grilla.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "PrecioVenta",
+                HeaderText = "Precio",
+                DataPropertyName = "PrecioVenta",
+                Width = 150,
+                DefaultCellStyle = { Format = "C2" }
+            });
 
+            // 🔥 Precio oferta
+            grilla.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "PrecioOferta",
+                HeaderText = "Precio Oferta",
+                DataPropertyName = "PrecioOferta",
+                Width = 150,
+                DefaultCellStyle = { Format = "C2" }
+            });
+            grilla.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Subtotal",
+                HeaderText = "Subtotal",
+                DataPropertyName = "Subtotal",
+                Width = 150,
+                DefaultCellStyle = { Format = "C2" }
+            });
 
+            // ✏️ Botón editar
+            grilla.Columns.Add(new DataGridViewButtonColumn
+            {
+                Name = "BtnEditar",
+                HeaderText = "Editar",
+                Text = "✏ Editar",
+                UseColumnTextForButtonValue = true,
+                Width = 130
+            });
+
+            // 🗑 Botón eliminar
+            grilla.Columns.Add(new DataGridViewButtonColumn
+            {
+                Name = "BtnEliminar",
+                HeaderText = "Eliminar",
+                Text = "🗑 Eliminar",
+                UseColumnTextForButtonValue = true,
+                Width = 130
+            });
         }
 
 
@@ -549,9 +623,10 @@ namespace Presentacion.Core.Venta
             {
                 idCliente = cliente.clienteSeleccionado.Value;
                 var _clienteCargado = new ClienteServicio().ObtenerClientePorId(idCliente);
-                _clienteVenta = new ClienteDTO { 
-                Nombre = _clienteCargado.Nombre,
-                Apellido = _clienteCargado.Apellido
+                _clienteVenta = new ClienteDTO
+                {
+                    Nombre = _clienteCargado.Nombre,
+                    Apellido = _clienteCargado.Apellido
                 };
                 cbxIncluirCtaCte.Enabled = true;
                 cbxIncluirCtaCte.Checked = true;
@@ -576,7 +651,7 @@ namespace Presentacion.Core.Venta
             }
             else
             {
-            InicializarYLimpiarCampos(VENTAID);
+                InicializarYLimpiarCampos(VENTAID);
 
             }
 
@@ -591,7 +666,7 @@ namespace Presentacion.Core.Venta
         private void InicializarYLimpiarCampos(long? ventaId)
         {
 
-            if(ventaId != null)
+            if (ventaId != null)
             {
                 itemsVenta = new BindingList<ItemVentaDTO>(VENTAELIMINAR.Items);
                 dgvProductos.DataSource = itemsVenta;
@@ -602,8 +677,8 @@ namespace Presentacion.Core.Venta
                     var clienteVenta = _clienteServicio.ObtenerClientePorId(cid);
                     _clienteVenta = new ClienteDTO
                     {
-                       Nombre = clienteVenta.Nombre,
-                       Apellido = clienteVenta.Apellido
+                        Nombre = clienteVenta.Nombre,
+                        Apellido = clienteVenta.Apellido
                     };
 
                 }
@@ -628,8 +703,8 @@ namespace Presentacion.Core.Venta
                 //cbxIncluirCtaCte.Checked = true;
                 dgvProductos.AllowUserToAddRows = false;
                 //cbxDescEfectivo.Checked = false;
-                    cbxIncluirCtaCte.Checked = false;
-                    cbxIncluirCtaCte.Enabled = false;
+                cbxIncluirCtaCte.Checked = false;
+                cbxIncluirCtaCte.Enabled = false;
                 lblFechaHoy.Text = VENTAELIMINAR.FechaVenta.ToString("dd/MM/yyyy");
                 lblDiaAbrev.Text = (VENTAELIMINAR.FechaVenta.ToString("ddd")).ToUpper() + ".";
                 lblHoraMinutos.Text = VENTAELIMINAR.FechaVenta.ToString("HH:mm:ss");
@@ -669,42 +744,42 @@ namespace Presentacion.Core.Venta
                     Nombre = clienteDefault.Nombre,
                     Apellido = clienteDefault.Apellido
                 };
-            itemsVenta = new BindingList<ItemVentaDTO>();
-            dgvProductos.DataSource = itemsVenta;  // bind directo
-            ResetearGrilla(dgvProductos);
-            ActualizarCamposInicio(VENTAID);
-            CalcularTotal();
+                itemsVenta = new BindingList<ItemVentaDTO>();
+                dgvProductos.DataSource = itemsVenta;  // bind directo
+                ResetearGrilla(dgvProductos);
+                ActualizarCamposInicio(VENTAID);
+                CalcularTotal();
                 //_ventaServicio.GenerateNextNumeroVenta();
                 //lblNro.Text = _ventaServicio.GenerateNextNumeroVenta().ToString();
                 lblNro.Text = "(Pendiente)";
-            System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
-            MyTimer.Interval = 1000;
-            MyTimer.Tick += new EventHandler(MyTimer_Tick);
-            MyTimer.Start();
+                System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
+                MyTimer.Interval = 1000;
+                MyTimer.Tick += new EventHandler(MyTimer_Tick);
+                MyTimer.Start();
                 var usuarioLogeado = _empleadoServicio.ObtenerEmpleadoPorId(_usuarioLogeadoID);
-            _usuarioLogeado = new UsuarioLogeado
-            {
-                PersonaId = usuarioLogeado.PersonaId,
-                Username = usuarioLogeado.Username,
-                Nombre = usuarioLogeado.Nombre,
-                Apellido = usuarioLogeado.Apellido,
-            };
-            txtDescuentoEfectivo.Text = string.Empty;
-            cbxConsumidorFinal.Checked = true;
-            esConsumidorFinal = true;
-            esUsuarioLogeado = true;
-            idVendedor = _usuarioLogeadoID; // Asignamos el ID del usuario logueado como vendedor por defecto
-            btnCargarCliente.Enabled = false;
-            cbxIncluirCtaCte.Checked = true;
-            dgvProductos.AllowUserToAddRows = false;
-            cbxDescEfectivo.Checked = false;
-            txtSubtotal.Text = _subTotalVenta.ToString("C2");
-            txtTotal.Text = _totalVenta.ToString("C2");
-            if (idCliente < 0)
-            {
-                cbxIncluirCtaCte.Checked = false;
-                cbxIncluirCtaCte.Enabled = false;
-            }
+                _usuarioLogeado = new UsuarioLogeado
+                {
+                    PersonaId = usuarioLogeado.PersonaId,
+                    Username = usuarioLogeado.Username,
+                    Nombre = usuarioLogeado.Nombre,
+                    Apellido = usuarioLogeado.Apellido,
+                };
+                txtDescuentoEfectivo.Text = string.Empty;
+                cbxConsumidorFinal.Checked = true;
+                esConsumidorFinal = true;
+                esUsuarioLogeado = true;
+                idVendedor = _usuarioLogeadoID; // Asignamos el ID del usuario logueado como vendedor por defecto
+                btnCargarCliente.Enabled = false;
+                cbxIncluirCtaCte.Checked = true;
+                dgvProductos.AllowUserToAddRows = false;
+                cbxDescEfectivo.Checked = false;
+                txtSubtotal.Text = _subTotalVenta.ToString("C2");
+                txtTotal.Text = _totalVenta.ToString("C2");
+                if (idCliente < 0)
+                {
+                    cbxIncluirCtaCte.Checked = false;
+                    cbxIncluirCtaCte.Enabled = false;
+                }
             }
         }
 
@@ -807,12 +882,88 @@ namespace Presentacion.Core.Venta
                         EsOferta = true
                     };
 
-                itemsVenta.Add(OfertaVenta);  // Solo agregamos a la BindingList
-                                              //txtProductoCargado.Text = $"{OfertaVenta.Descripcion}";
-                                              // No necesitas reasignar DataSource ni resetear grilla acá
-                ValidarCantidadySiEsOferta();
-                CalcularTotal();
+                    itemsVenta.Add(OfertaVenta);  // Solo agregamos a la BindingList
+                                                  //txtProductoCargado.Text = $"{OfertaVenta.Descripcion}";
+                                                  // No necesitas reasignar DataSource ni resetear grilla acá
+                    ValidarCantidadySiEsOferta();
+                    CalcularTotal();
                 }
+            }
+        }
+
+        private void dgvProductos_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            var grilla = (DataGridView)sender;
+
+            if (grilla.Columns[e.ColumnIndex].Name == "EsOferta" && e.Value != null)
+            {
+                bool esOferta;
+
+                if (e.Value is bool b)
+                {
+                    esOferta = b;
+                }
+                else if (e.Value is string s)
+                {
+                    esOferta = s.Equals("true", StringComparison.OrdinalIgnoreCase);
+                }
+                else
+                {
+                    return;
+                }
+
+                e.Value = esOferta ? "En Oferta Activa" : "Sin Oferta";
+                e.FormattingApplied = true;
+            }
+
+        }
+
+        private void dgvProductos_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            var grilla = (DataGridView)sender;
+            var item = (ItemVentaDTO)grilla.Rows[e.RowIndex].DataBoundItem;
+
+            if (grilla.Columns[e.ColumnIndex].Name == "BtnEliminar")
+            {
+                EliminarItem(item);
+            }
+            else if (grilla.Columns[e.ColumnIndex].Name == "BtnEditar")
+            {
+                EditarCantidad(item);
+            }
+        }
+        private void EliminarItem(ItemVentaDTO item)
+        {
+            var confirm = MessageBox.Show(
+                $"¿Eliminar {item.Descripcion}?",
+                "Confirmar",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (confirm == DialogResult.Yes)
+            {
+                itemsVenta.Remove(item);   // lista bindada
+                dgvProductos.Refresh();
+                CalcularTotal();
+            }
+        }
+        private void EditarCantidad(ItemVentaDTO item)
+        {
+            var input = Microsoft.VisualBasic.Interaction.InputBox(
+                "Ingrese nueva cantidad:",
+                "Modificar cantidad",
+                item.Cantidad.ToString()
+            );
+
+            if (int.TryParse(input, out int nuevaCantidad) && nuevaCantidad > 0)
+            {
+                item.Cantidad = nuevaCantidad;
+                dgvProductos.Refresh();
+                CalcularTotal();
             }
         }
     }

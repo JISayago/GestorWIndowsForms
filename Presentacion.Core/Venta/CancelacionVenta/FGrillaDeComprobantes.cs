@@ -41,29 +41,36 @@ namespace Presentacion.Core.Venta.CancelacionVenta
         }
         private void FGrillaDeComprobantes_Load(object sender, EventArgs e)
         {
+            // Optimización UX: si hay 1 sola, abrir directo
             if (_comprobantesIDs.Count == 1)
             {
-                var comprobanteVentaId = _comprobantesIDs[0];
+                var ventaId = _comprobantesIDs[0];
 
-                var fVenta = new FVenta(_usuarioLogeadoID, comprobanteVentaId);
+                var fVenta = new FVenta(_usuarioLogeadoID, ventaId);
                 fVenta.Show();
                 Close();
+                return;
             }
-            else
+
+            // Caso normal: grilla
+            var ventas = _ventaServicio
+                .ObtenerVentasPorIds(_comprobantesIDs);
+
+            if (!ventas.Any())
             {
-               ventasConMismoNumero = _ventaServicio.ComprobantesConMismoNumero(_nroComprobante);
-
-                if (!ventasConMismoNumero.Any())
-                {
-                    MessageBox.Show("No se encontraron comprobantes.", "Atención",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    Close();
-                    return;
-                }
-
-                dgvComprobantes.AutoGenerateColumns = true;
-                dgvComprobantes.DataSource = ventasConMismoNumero;
+                MessageBox.Show(
+                    "No se encontraron comprobantes.",
+                    "Atención",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                Close();
+                return;
             }
+
+            dgvComprobantes.AutoGenerateColumns = true;
+            dgvComprobantes.DataSource = ventas;
         }
+
     }
 }
