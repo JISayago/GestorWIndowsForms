@@ -146,7 +146,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             var cuentacorrienteBusqueda = context.CuentaCorriente
                 .Include(x => x.CuentaCorrienteAutorizado)
-                .Include(x => x.MovimientosCuentaCorriente)
+                .Include(x => x.Movimientos)
                 .FirstOrDefault(x => x.CuentaCorrienteId == cuentacorrienteId);
 
             if (cuentacorrienteBusqueda == null)
@@ -276,14 +276,14 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             cuenta.Saldo -= monto;
 
             // Registrar movimiento
-            cuenta.MovimientosCuentaCorriente ??= new List<AccesoDatos.Entidades.MovimientoCuentaCorriente>();
-            cuenta.MovimientosCuentaCorriente.Add(new AccesoDatos.Entidades.MovimientoCuentaCorriente
-            {
+            cuenta.Movimientos ??= new List<AccesoDatos.Entidades.Movimiento>();
+            cuenta.Movimientos.Add(new AccesoDatos.Entidades.Movimiento
+            {/*
                 Fecha = DateTime.Now,
                 Monto = -monto,
                 Descripcion = descripcion,
                 TipoMovimientoCCorriente = 2,
-                CuentaCorrienteId = cuenta.CuentaCorrienteId
+                CuentaCorrienteId = cuenta.CuentaCorrienteId*/
             });
 
             context.SaveChanges();
@@ -301,14 +301,14 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             cuenta.Saldo += monto;
 
             // Registrar movimiento
-            cuenta.MovimientosCuentaCorriente ??= new List<AccesoDatos.Entidades.MovimientoCuentaCorriente>();
-            cuenta.MovimientosCuentaCorriente.Add(new AccesoDatos.Entidades.MovimientoCuentaCorriente
-            {
+            cuenta.Movimientos ??= new List<AccesoDatos.Entidades.Movimiento>();
+            cuenta.Movimientos.Add(new AccesoDatos.Entidades.Movimiento
+            {/*
                 Fecha = DateTime.Now,
                 Monto = monto,
                 Descripcion = descripcion,
                 TipoMovimientoCCorriente = 1,
-                CuentaCorrienteId = cuenta.CuentaCorrienteId
+                CuentaCorrienteId = cuenta.CuentaCorrienteId*/
             });
 
             context.SaveChanges();
@@ -338,7 +338,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             var cuentacorrienteBusqueda = context.CuentaCorriente
                 .Include(x => x.CuentaCorrienteAutorizado)
-                .Include(x => x.MovimientosCuentaCorriente)
+                .Include(x => x.Movimientos)
                 .FirstOrDefault(x => x.ClienteId == clienteId && !x.EstaEliminado);
             if (cuentacorrienteBusqueda == null)
                 throw new Exception("No se encontró la cuentacorriente.");

@@ -21,11 +21,13 @@ namespace AccesoDatos.Entidades
         public decimal Monto { get; set; }
         public DateTime FechaMovimiento { get; set; }
         public bool EstaEliminado { get; set; }
+        public long IdCuentaCorriente { get; set; } // para vincular movimientos relacionados (ej: venta y su pago)
 
 
         // Navegación
         public Venta Venta { get; set; }
         public Caja Caja { get; set; } //estoy obligado a tener la referencia a caja? no puedo solo tener el id?
+        public CuentaCorriente CuentaCorriente { get; set; }
 
     }
 }

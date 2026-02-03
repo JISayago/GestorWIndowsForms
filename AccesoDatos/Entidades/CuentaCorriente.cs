@@ -21,7 +21,7 @@ namespace AccesoDatos.Entidades
         public int EstadoCuentaCorriente { get; set; } = 0; // 
 
         public Cliente Cliente { get; set; } 
-        public ICollection<MovimientoCuentaCorriente> MovimientosCuentaCorriente { get; set; }
+        public ICollection<Movimiento> Movimientos { get; set; }
         public ICollection<CuentaCorrienteAutorizado> CuentaCorrienteAutorizado { get; set; } // Dni autorizados a usar la cuenta corriente
     }
 }
