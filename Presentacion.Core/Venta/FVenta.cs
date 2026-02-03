@@ -220,7 +220,7 @@ namespace Presentacion.Core.Venta
 
                             if (ctacte != null)
                             {
-                                ctaCteServicio.RegistrarCompra(ctacte.CuentaCorrienteId, tp.Monto);
+                                ctaCteServicio.RegistrarCompra(ctacte.CuentaCorrienteId, tp.Monto, DatosSistema.CajaId.Value);
                             }
                         }
                     });

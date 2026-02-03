@@ -260,7 +260,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         }*/
 
         //Restar saldo de la cuenta corriente
-        public EstadoOperacion RegistrarCompra(long cuentaId, decimal monto, string descripcion = "Compra")
+        public EstadoOperacion RegistrarCompra(long cuentaId, decimal monto, long cajaId,string descripcion = "Compra")
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId);
@@ -278,12 +278,14 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             // Registrar movimiento
             cuenta.Movimientos ??= new List<AccesoDatos.Entidades.Movimiento>();
             cuenta.Movimientos.Add(new AccesoDatos.Entidades.Movimiento
-            {/*
-                Fecha = DateTime.Now,
-                Monto = -monto,
-                Descripcion = descripcion,
-                TipoMovimientoCCorriente = 2,
-                CuentaCorrienteId = cuenta.CuentaCorrienteId*/
+            {
+                IdCaja = cajaId,
+                NumeroMovimiento = cuenta.CuentaCorrienteId + "CtaCte", // Ejemplo de número de movimiento, generar bien en secuencia teniendo en cuenta otros registros de movimiento
+                TipoMovimiento = 2, // 2 para compra
+                Monto = monto,
+                FechaMovimiento = DateTime.Now,
+                IdCuentaCorriente = cuenta.CuentaCorrienteId
+                //agregar idventa si es necesario, nose si deberia estar en venta y pago o solo en venta
             });
 
             context.SaveChanges();
@@ -291,7 +293,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             return new EstadoOperacion { Exitoso = true, Mensaje = "Compra registrada correctamente" };
         }
 
-        //Sumar saldo a la cuenta corriente
+        //Sumar saldo a la cuenta corriente, paga deuda de una ctacte, NO ESTA SIENDO INPLEMENTADO
         public EstadoOperacion RegistrarPago(long cuentaId, decimal monto, string descripcion = "Pago")
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
