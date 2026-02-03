@@ -2,7 +2,7 @@
 
 namespace AccesoDatos.Entidades
 {
-    public class MovimientoCuentaCorriente
+    public class MovimientosMovimientoCuentaCorriente
     {
         [Key]
         public long MovimientoCuentaCorrienteId { get; set; }
