@@ -209,7 +209,6 @@ namespace Presentacion.Core.Venta
                         Items = itemsVenta.ToList(),
                         TiposDePagoSeleccionado = tipoDePagosVenta,
                     };
-
                     // Impactar cuenta corriente si corresponde
                     _venta.TiposDePagoSeleccionado.ForEach(tp =>
                     {
@@ -220,10 +219,11 @@ namespace Presentacion.Core.Venta
 
                             if (ctacte != null)
                             {
-                                ctaCteServicio.RegistrarCompra(ctacte.CuentaCorrienteId, tp.Monto);
+                                ctaCteServicio.RegistrarCompra(ctacte.CuentaCorrienteId, tp.Monto, DatosSistema.CajaId.Value);
                             }
                         }
                     });
+
                     //Deberia juntar movimiento ctacte con movimiento venta en uno solo.
 
                     var m = _ventaServicio.NuevaVenta(_venta);
@@ -636,6 +636,7 @@ namespace Presentacion.Core.Venta
                 var _clienteCargado = new ClienteServicio().ObtenerClientePorId(idCliente);
                 _clienteVenta = new ClienteDTO
                 {
+                    PersonaId = _clienteCargado.PersonaId,
                     Nombre = _clienteCargado.Nombre,
                     Apellido = _clienteCargado.Apellido
                 };
