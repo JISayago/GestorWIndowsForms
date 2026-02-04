@@ -62,6 +62,45 @@ namespace Servicios.LogicaNegocio.Movimiento
             }
         }
 
+        public void CrearMovimientoCtaCte(decimal total, long cajaId, long cuentaCorrienteId, GestorContextDB context = null)
+        {
+            //el return del id lo puse para caja pero al fnal no se usa, podria no devolver nada
+
+            bool crearContextoLocal = (context == null);
+
+            if (crearContextoLocal)
+                context = new GestorContextDBFactory().CreateDbContext(null);
+
+            try
+            {
+                var movimiento = new AccesoDatos.Entidades.Movimiento
+                {
+                    NumeroMovimiento = $"MOV{total}CTECTA",
+                    TipoMovimiento = 2, // 2 = Egreso, 
+                    Monto = total,
+                    FechaMovimiento = DateTime.Now,
+                    EstaEliminado = false,
+                    IdCaja = cajaId,
+                    IdCuentaCorriente = cuentaCorrienteId
+                };
+
+                context.Movimientos.Add(movimiento);
+
+                // Si el contexto es local, guardamos los cambios directamente
+                if (crearContextoLocal)
+                    context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al crear movimiento: {ex.Message}");
+                throw; // Re-lanzamos para que el servicio que lo llame lo maneje
+            }
+            finally
+            {
+                if (crearContextoLocal)
+                    context.Dispose();
+            }
+        }
         public MovimientoDTO ObtenerMovimientoPorId(long movimientoId)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);

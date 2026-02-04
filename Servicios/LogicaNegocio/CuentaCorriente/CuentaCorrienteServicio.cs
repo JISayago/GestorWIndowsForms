@@ -3,6 +3,7 @@ using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
+using Servicios.LogicaNegocio.Movimiento;
 using Servicios.LogicaNegocio.Producto.DTO;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -10,6 +11,12 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 {
     public class CuentaCorrienteServicio : ICuentaCorrienteServicio
     {
+        private readonly IMovimientoServicio _movimientoServicio;
+        public CuentaCorrienteServicio()
+        {
+            _movimientoServicio = new MovimientoServicio();
+        }
+
         public EstadoOperacion Eliminar(long cuentacorrienteId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -260,7 +267,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         }*/
 
         //Restar saldo de la cuenta corriente
-        public EstadoOperacion RegistrarCompra(long cuentaId, decimal monto, long cajaId,string descripcion = "Compra")
+        public EstadoOperacion RegistrarCompra(long cuentaId, decimal monto, long cajaId, string descripcion = "Compra")
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId);
@@ -275,7 +282,13 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             cuenta.Saldo -= monto;
 
-            // Registrar movimiento
+            long ctacteId = cuenta.CuentaCorrienteId;
+
+            _movimientoServicio.CrearMovimientoCtaCte(monto, cajaId, ctacteId, context);
+
+            // Registrar movimiento, USAR MOVIMINETO SERVICE
+
+            /*
             cuenta.Movimientos ??= new List<AccesoDatos.Entidades.Movimiento>();
             cuenta.Movimientos.Add(new AccesoDatos.Entidades.Movimiento
             {
@@ -286,7 +299,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 FechaMovimiento = DateTime.Now,
                 IdCuentaCorriente = cuenta.CuentaCorrienteId
                 //agregar idventa si es necesario, nose si deberia estar en venta y pago o solo en venta
-            });
+            });*/
+
 
             context.SaveChanges();
 
@@ -312,6 +326,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 TipoMovimientoCCorriente = 1,
                 CuentaCorrienteId = cuenta.CuentaCorrienteId*/
             });
+
+            
 
             context.SaveChanges();
 

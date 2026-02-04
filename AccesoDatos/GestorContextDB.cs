@@ -827,7 +827,8 @@ namespace AccesoDatos
                         .IsRequired();
 
                 entity.Property(e => e.IdVenta)
-                        .HasColumnName("id_Venta");
+                        .HasColumnName("id_Venta")
+                        .IsRequired(false);
 
                 entity.Property(e => e.TipoMovimiento)
                         .HasColumnName("tipo_movimiento")
@@ -852,7 +853,8 @@ namespace AccesoDatos
                     .IsRequired();
 
                 entity.Property(e => e.IdCuentaCorriente)
-                    .HasColumnName("id_CuentaCorriente");
+                    .HasColumnName("id_CuentaCorriente")
+                    .IsRequired(false);
 
                 // Relación con Venta (si tenés definida la entidad Venta)
                 entity.HasOne(e => e.Venta)

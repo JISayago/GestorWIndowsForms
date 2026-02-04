@@ -4,6 +4,7 @@ using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.CuentaCorriente;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
+using Servicios.LogicaNegocio.Movimiento;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

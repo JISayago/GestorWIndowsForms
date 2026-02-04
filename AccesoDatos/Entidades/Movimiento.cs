@@ -21,7 +21,7 @@ namespace AccesoDatos.Entidades
         public decimal Monto { get; set; }
         public DateTime FechaMovimiento { get; set; }
         public bool EstaEliminado { get; set; }
-        public long IdCuentaCorriente { get; set; } // para vincular movimientos relacionados (ej: venta y su pago)
+        public long? IdCuentaCorriente { get; set; } // para vincular movimientos relacionados (ej: venta y su pago)
 
 
         // Navegación
