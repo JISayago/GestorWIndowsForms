@@ -2,13 +2,7 @@
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Presentacion.Core.Articulo.Marca
@@ -28,20 +22,51 @@ namespace Presentacion.Core.Articulo.Marca
             _marcaServicio = marcaServicio;
         }
 
+        // 🔥 BOTONES EXTRA DINAMICOS
+        protected override void ConfigurarAccionesPersonalizadas()
+        {
+            // Botón de prueba: cambiar color
+            AgregarAccion(
+                "Color Test",
+                SystemIcons.Information.ToBitmap(),   // icono simple
+                CambiarColorFormulario,
+                false // no requiere selección
+            );
+
+            // ejemplo si mañana querés uno que requiera fila seleccionada
+            AgregarAccion(
+                "Test con fila",
+                SystemIcons.Warning.ToBitmap(),
+                (id) =>
+                {
+                    MessageBox.Show($"ID seleccionado: {id}");
+                },
+                true
+            );
+        }
+
+        private void CambiarColorFormulario(long? id)
+        {
+            // solo para test visual
+            if (BackColor == Color.FromArgb(45, 45, 48))
+                BackColor = Color.WhiteSmoke;
+            else
+                BackColor = Color.FromArgb(45, 45, 48);
+        }
+
+        #region GRILLA
+
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
 
-
             grilla.Columns["Nombre"].Visible = true;
             grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             grilla.Columns["Nombre"].HeaderText = "Marca";
-
         }
 
         public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
         {
-
             base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
 
             if (check.Checked)
@@ -56,48 +81,59 @@ namespace Presentacion.Core.Articulo.Marca
             }
         }
 
+        #endregion
+
+        #region BOTONES BASE
+
         public override void EjecutarBtnEliminar()
         {
             base.EjecutarBtnEliminar();
-            if (puedeEjecutarComando)
-            {
-                var FormularioABMMarca = new FMarcaABM(TipoOperacion.Eliminar, entidadID);
-                FormularioABMMarca.ShowDialog();
-                ActualizarSegunOperacion(FormularioABMMarca.RealizoAlgunaOperacion);
-            }
-        }
+            if (!puedeEjecutarComando) return;
 
-        private void ActualizarSegunOperacion(bool realizoOperacion)
-        {
-            if (realizoOperacion)
-            {
-                ActualizarDatos(dgvGrilla, string.Empty, cbxEstaEliminado, BarraLateralBotones);
-            }
+            var f = new FMarcaABM(TipoOperacion.Eliminar, entidadID);
+            f.ShowDialog();
+
+            ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
         }
 
         public override void EjecutarBtnModificar()
         {
             base.EjecutarBtnModificar();
-            if (puedeEjecutarComando)
-            {
-                var FormularioABMMarca = new FMarcaABM(TipoOperacion.Modificar, entidadID);
-                FormularioABMMarca.ShowDialog();
-                ActualizarSegunOperacion(FormularioABMMarca.RealizoAlgunaOperacion);
-            }
+            if (!puedeEjecutarComando) return;
+
+            var f = new FMarcaABM(TipoOperacion.Modificar, entidadID);
+            f.ShowDialog();
+
+            ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
         }
 
         public override void EjecutarBtnNuevo()
         {
-            var FormularioABMMarca = new FMarcaABM(TipoOperacion.Nuevo);
-            FormularioABMMarca.ShowDialog();
-            ActualizarSegunOperacion(FormularioABMMarca.RealizoAlgunaOperacion);
+            var f = new FMarcaABM(TipoOperacion.Nuevo);
+            f.ShowDialog();
+
+            ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
         }
+
+        private void ActualizarSegunOperacion(bool realizoOperacion)
+        {
+            if (realizoOperacion)
+                btnActualizar_Click_Base(); // mejor que performclick
+        }
+
+        #endregion
+
+        #region SELECCIONAR
 
         private void btnSeleccionarMarca_Click(object sender, EventArgs e)
         {
-            marcaSeleccionada = (long)entidadID;
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-    }
+            if (!entidadID.HasValue) return;
+
+            marcaSeleccionada = entidadID;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        #endregion
     }
 }
