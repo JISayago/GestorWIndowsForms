@@ -22,23 +22,40 @@ namespace Presentacion.Core.Articulo.Marca
             _marcaServicio = marcaServicio;
         }
 
-        // 🔥 BOTONES EXTRA DINAMICOS
+        #region INIT
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            ConfigurarFormulario();
+        }
+
+        private void ConfigurarFormulario()
+        {
+            Text = "Consulta de Marcas";
+        }
+
+        #endregion
+
+        #region 🔥 ACCIONES PERSONALIZADAS DINAMICAS
+
         protected override void ConfigurarAccionesPersonalizadas()
         {
-            // Botón de prueba: cambiar color
+            // test visual simple
             AgregarAccion(
                 "Color Test",
-                SystemIcons.Information.ToBitmap(),   // icono simple
+                SystemIcons.Information.ToBitmap(),
                 CambiarColorFormulario,
-                false // no requiere selección
+                false
             );
 
-            // ejemplo si mañana querés uno que requiera fila seleccionada
+            // test con fila seleccionada
             AgregarAccion(
                 "Test con fila",
                 SystemIcons.Warning.ToBitmap(),
                 (id) =>
                 {
+                    if (!id.HasValue) return;
                     MessageBox.Show($"ID seleccionado: {id}");
                 },
                 true
@@ -47,43 +64,47 @@ namespace Presentacion.Core.Articulo.Marca
 
         private void CambiarColorFormulario(long? id)
         {
-            // solo para test visual
             if (BackColor == Color.FromArgb(45, 45, 48))
                 BackColor = Color.WhiteSmoke;
             else
                 BackColor = Color.FromArgb(45, 45, 48);
         }
 
-        #region GRILLA
+        #endregion
+
+        #region 🧱 GRILLA
 
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
 
-            grilla.Columns["Nombre"].Visible = true;
-            grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            grilla.Columns["Nombre"].HeaderText = "Marca";
-        }
-
-        public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
-        {
-            base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
-
-            if (check.Checked)
+            if (grilla.Columns.Contains("Nombre"))
             {
-                grilla.DataSource = _marcaServicio.ObtenerMarcaEliminada(cadenaBuscar);
-                toolStrip.Enabled = false;
-            }
-            else
-            {
-                grilla.DataSource = _marcaServicio.ObtenerMarca(cadenaBuscar);
-                toolStrip.Enabled = true;
+                grilla.Columns["Nombre"].Visible = true;
+                grilla.Columns["Nombre"].HeaderText = "Marca";
+                grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             }
         }
+
+        //public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
+        //{
+        //    base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
+
+        //    if (check.Checked)
+        //    {
+        //        grilla.DataSource = _marcaServicio.ObtenerMarcaEliminada(cadenaBuscar);
+        //        toolStrip.Enabled = false;
+        //    }
+        //    else
+        //    {
+        //        grilla.DataSource = _marcaServicio.ObtenerMarca(cadenaBuscar);
+        //        toolStrip.Enabled = true;
+        //    }
+        //}
 
         #endregion
 
-        #region BOTONES BASE
+        #region 🧰 BOTONES BASE
 
         public override void EjecutarBtnEliminar()
         {
@@ -117,13 +138,13 @@ namespace Presentacion.Core.Articulo.Marca
 
         private void ActualizarSegunOperacion(bool realizoOperacion)
         {
-            if (realizoOperacion)
-                btnActualizar_Click_Base(); // mejor que performclick
+            //if (realizoOperacion)
+            //    btnActualizar_Click_Base();
         }
 
         #endregion
 
-        #region SELECCIONAR
+        #region 🎯 SELECCIONAR
 
         private void btnSeleccionarMarca_Click(object sender, EventArgs e)
         {

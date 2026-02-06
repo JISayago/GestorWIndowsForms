@@ -1,4 +1,4 @@
-﻿using Presentacion.FBase.DTO;
+﻿using Presentacion.FBase.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,7 +11,7 @@ namespace Presentacion.FBase
         protected long? entidadID;
         protected bool puedeEjecutarComando;
 
-        // 🔵 lista de acciones dinámicas
+        // 🔵 lista acciones dinámicas barra lateral
         public List<AccionGrid> AccionesPersonalizadas = new List<AccionGrid>();
 
         public FBaseConsulta()
@@ -42,8 +42,10 @@ namespace Presentacion.FBase
             EjecutarBtnEliminarLoad();
             ResetearGrilla(dgvGrilla);
 
-            ConfigurarAccionesPersonalizadas();   // 🔥 nuevas acciones
+            ConfigurarAccionesPersonalizadas();
             CrearBotonesPersonalizados();
+
+            RefrescarGrilla();
         }
 
         #endregion
@@ -81,12 +83,7 @@ namespace Presentacion.FBase
 
         private void btnActualizar_Click(object sender, EventArgs e)
         {
-            btnActualizar_Click_Base();
-        }
-
-        public virtual void btnActualizar_Click_Base()
-        {
-            ActualizarDatos(dgvGrilla, txtBuscar.Text, cbxEstaEliminado, BarraLateralBotones);
+            RefrescarGrilla();
         }
 
         private void btnSalir_Click(object sender, EventArgs e)
@@ -96,30 +93,44 @@ namespace Presentacion.FBase
 
         #endregion
 
-        #region BUSQUEDA / FILTROS
+        #region BUSQUEDA / FILTROS UI
 
         public virtual void btnBuscar_Click_1(object sender, EventArgs e)
         {
-            ActualizarDatos(dgvGrilla, txtBuscar.Text, cbxEstaEliminado, BarraLateralBotones);
+            RefrescarGrilla();
         }
 
         private void cbxEstaEliminado_CheckedChanged(object sender, EventArgs e)
         {
-            EjecutarMostrarEliminados();
-        }
-
-        public virtual void EjecutarMostrarEliminados()
-        {
-            ActualizarDatos(dgvGrilla, txtBuscar.Text, cbxEstaEliminado, BarraLateralBotones);
+            RefrescarGrilla();
         }
 
         #endregion
 
-        #region METODOS BASE
+        #region FILTROS DINAMICOS
 
-        public virtual void ActualizarDatos(DataGridView dgv, string textoBuscar, CheckBox check, ToolStrip barra)
+        protected virtual FiltroConsulta ObtenerFiltros()
         {
-            if (check.Checked)
+            return new FiltroConsulta
+            {
+                TextoBuscar = txtBuscar.Text,
+                VerEliminados = cbxEstaEliminado.Checked
+            };
+        }
+
+        protected void RefrescarGrilla()
+        {
+            var filtros = ObtenerFiltros();
+            ActualizarDatos(dgvGrilla, filtros);
+        }
+
+        #endregion
+
+        #region METODOS BASE DATOS
+
+        public virtual void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        {
+            if (filtros.VerEliminados)
             {
                 btnEliminar.Enabled = false;
                 btnNuevo.Enabled = false;
@@ -131,6 +142,8 @@ namespace Presentacion.FBase
                 btnNuevo.Enabled = true;
                 btnModificar.Enabled = true;
             }
+
+            EvaluarAccionesPorEstado(filtros);
         }
 
         public virtual void ResetearGrilla(DataGridView grilla)
@@ -141,7 +154,7 @@ namespace Presentacion.FBase
 
         public virtual void EjecutarBtnEliminarLoad()
         {
-            ActualizarDatos(dgvGrilla, string.Empty, cbxEstaEliminado, BarraLateralBotones);
+            RefrescarGrilla();
         }
 
         #endregion
@@ -195,7 +208,7 @@ namespace Presentacion.FBase
 
         #endregion
 
-        #region DOBLE CLICK
+        #region DOBLE CLICK FILA
 
         private void DgvGrilla_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -206,9 +219,8 @@ namespace Presentacion.FBase
 
         #endregion
 
-        #region 🔥 ACCIONES DINAMICAS
+        #region ACCIONES DINAMICAS TOOLBAR
 
-        // 👉 override en cada consulta
         protected virtual void ConfigurarAccionesPersonalizadas() { }
 
         private void CrearBotonesPersonalizados()
@@ -219,7 +231,9 @@ namespace Presentacion.FBase
                 {
                     Text = accion.Nombre,
                     Image = accion.Icono,
-                    DisplayStyle = ToolStripItemDisplayStyle.ImageAndText
+                    DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
+                    Enabled = true,
+                    Tag = accion
                 };
 
                 btn.Click += (s, e) =>
@@ -238,20 +252,35 @@ namespace Presentacion.FBase
             }
         }
 
-        protected void AgregarAccion(string nombre, Image icono, Action<long?> ejecutar, bool requiereSeleccion = true)
+        protected void AgregarAccion(string nombre, Image icono, Action<long?> ejecutar, bool requiereSeleccion = true, bool soloSiNoEliminado = false)
         {
             AccionesPersonalizadas.Add(new AccionGrid
             {
                 Nombre = nombre,
                 Icono = icono,
                 Ejecutar = ejecutar,
-                RequiereSeleccion = requiereSeleccion
+                RequiereSeleccion = requiereSeleccion,
+                SoloSiNoEliminado = soloSiNoEliminado
             });
+        }
+
+        private void EvaluarAccionesPorEstado(FiltroConsulta filtros)
+        {
+            foreach (ToolStripItem item in BarraLateralBotones.Items)
+            {
+                if (item is ToolStripButton btn && btn.Tag is AccionGrid accion)
+                {
+                    if (accion.SoloSiNoEliminado)
+                        btn.Enabled = !filtros.VerEliminados;
+                    else
+                        btn.Enabled = true;
+                }
+            }
         }
 
         #endregion
 
-        #region 🔵 BOTONES POR FILA (OPCIONAL PRO)
+        #region BOTONES POR FILA GRID (OPCIONAL)
 
         protected void AgregarBotonGrilla(string nombreColumna, string texto)
         {
@@ -275,7 +304,6 @@ namespace Presentacion.FBase
 
         protected virtual void EjecutarAccionGrilla(string nombreColumna)
         {
-            // override en formularios hijos
         }
 
         #endregion

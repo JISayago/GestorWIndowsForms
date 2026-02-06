@@ -45,7 +45,7 @@
             btnAnularGasto.TabIndex = 1;
             btnAnularGasto.Text = "Anular Gasto";
             btnAnularGasto.UseVisualStyleBackColor = true;
-            btnAnularGasto.Click += btnAnularGasto_Click;
+            //btnAnularGasto.Click += btnAnularGasto_Click;
             // 
             // FGastoConsulta
             // 

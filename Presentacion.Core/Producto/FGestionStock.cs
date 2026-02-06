@@ -19,6 +19,7 @@ namespace Presentacion.Core.Producto
         private readonly long _productoID;
         private int tipoMovimientoStock = 0;
         private decimal monto = 0;
+        public bool RealizoOperacion { get; private set; } = false;
 
         public FGestionStock(long productoID)
         {
@@ -88,6 +89,7 @@ namespace Presentacion.Core.Producto
             if (respuesta.Exitoso)
             {
                 MessageBox.Show($"{respuesta.Mensaje}", "Operación Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                RealizoOperacion = true;
                 this.Close();
             }
             else

@@ -58,7 +58,7 @@
             btnGestionStock.TabIndex = 2;
             btnGestionStock.Text = "Gestión Stock";
             btnGestionStock.UseVisualStyleBackColor = true;
-            btnGestionStock.Click += btnGestionStock_Click;
+            //btnGestionStock.Click += btnGestionStock_Click;
             // 
             // FProductoConsulta
             // 

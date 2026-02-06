@@ -1,23 +1,14 @@
-﻿using Presentacion.Core.Cliente;
-using Presentacion.FBase;
+﻿using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Cliente;
-using Servicios.LogicaNegocio.Producto;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Presentacion.Core.Cliente
 {
     public partial class FClienteConsulta : FBaseConsulta
     {
-
         private readonly IClienteServicio _clienteServicio;
         private bool vieneDeCargaCliente = false;
         public long? clienteSeleccionado = null;
@@ -26,27 +17,30 @@ namespace Presentacion.Core.Cliente
         {
             InitializeComponent();
         }
+
         public FClienteConsulta(IClienteServicio clienteServicio)
         {
             _clienteServicio = clienteServicio;
+            InitializeComponent();
         }
+
         public FClienteConsulta(bool _vieneDeCargaCliente) : this(new ClienteServicio())
         {
             vieneDeCargaCliente = _vieneDeCargaCliente;
             InitializeComponent();
         }
 
-        public override void EjecutarBtnNuevo()
-        {
-            var FormularioClienteABM = new FClienteABM(TipoOperacion.Nuevo);
-            FormularioClienteABM.ShowDialog();
-        }
+        #region 🔷 GRILLA
 
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
-            grilla.Columns["PersonaId"].Visible = false;
-            grilla.Columns["PersonaId"].Name = "Id";
+
+            if (grilla.Columns.Contains("PersonaId"))
+            {
+                grilla.Columns["PersonaId"].Visible = false;
+                grilla.Columns["PersonaId"].Name = "Id";
+            }
 
             grilla.Columns["Nombre"].Visible = true;
             grilla.Columns["Nombre"].Width = 100;
@@ -68,75 +62,94 @@ namespace Presentacion.Core.Cliente
             grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
         }
 
-        public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
+        #endregion
+
+        #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
+
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
-            base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
+            base.ActualizarDatos(dgv, filtros);
 
-            if (check.Checked)
+            if (filtros.VerEliminados)
             {
-                grilla.DataSource = _clienteServicio.ObtenerClientesEliminados(cadenaBuscar);
-                toolStrip.Enabled = false;
-
+                dgv.DataSource = _clienteServicio.ObtenerClientesEliminados(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = false;
             }
             else
             {
-                grilla.DataSource = _clienteServicio.ObtenerClientes(cadenaBuscar);
-                toolStrip.Enabled = true;
+                dgv.DataSource = _clienteServicio.ObtenerClientes(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = true;
             }
+        }
+
+        #endregion
+
+        #region 🔷 BOTONES BASE
+
+        public override void EjecutarBtnNuevo()
+        {
+            var f = new FClienteABM(TipoOperacion.Nuevo);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
 
         public override void EjecutarBtnModificar()
         {
             base.EjecutarBtnModificar();
-            if (puedeEjecutarComando)
-            {
-                var FormularioABMCliente = new FClienteABM(TipoOperacion.Modificar, entidadID);
-                FormularioABMCliente.ShowDialog();
-                ActualizarSegunOperacion(FormularioABMCliente.RealizoAlgunaOperacion);
-            }
+            if (!puedeEjecutarComando) return;
+
+            var f = new FClienteABM(TipoOperacion.Modificar, entidadID);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
+
         public override void EjecutarBtnEliminar()
         {
             base.EjecutarBtnEliminar();
-            if (puedeEjecutarComando)
-            {
-                var FormularioABMCliente = new FClienteABM(TipoOperacion.Eliminar, entidadID);
-                FormularioABMCliente.ShowDialog();
-                ActualizarSegunOperacion(FormularioABMCliente.RealizoAlgunaOperacion);
-            }
+            if (!puedeEjecutarComando) return;
+
+            var f = new FClienteABM(TipoOperacion.Eliminar, entidadID);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
-        private void ActualizarSegunOperacion(bool realizoOperacion)
+
+        private void Recargar()
         {
-            if (realizoOperacion)
-            {
-                ActualizarDatos(dgvGrilla, string.Empty, cbxEstaEliminado, BarraLateralBotones);
-            }
+           // btnActualizar_Click_Base();
         }
-        public override void EjecutarMostrarEliminados()
-        {
-            base.EjecutarMostrarEliminados();
-        }
+
+        #endregion
+
+        #region 🔷 CONTROL SELECCION
 
         public void ControlCargaExistencaDatos()
         {
-            if (dgvGrilla.RowCount > 0)
+            if (dgvGrilla.RowCount == 0)
             {
-                if (!entidadID.HasValue)
-                {
-                    MessageBox.Show("Por favor seleccione un registro.");
-                    puedeEjecutarComando = false;
-                    return;
-                }
-                else
-                {
-                    puedeEjecutarComando = true;
-                }
+                MessageBox.Show("No hay datos cargados.");
+                puedeEjecutarComando = false;
+                return;
             }
-            else
+
+            if (!entidadID.HasValue)
             {
-                MessageBox.Show("No hay Datos Cargados.");
+                MessageBox.Show("Seleccione un registro.");
+                puedeEjecutarComando = false;
+                return;
             }
+
+            puedeEjecutarComando = true;
         }
+
+        #endregion
+
+        #region 🔷 LOAD
 
         private void FClienteConsulta_Load(object sender, EventArgs e)
         {
@@ -152,14 +165,20 @@ namespace Presentacion.Core.Cliente
             }
         }
 
+        #endregion
+
+        #region 🔷 SELECCIONAR CLIENTE (modo picker)
+
         private void btnSeleccionarCliente_Click(object sender, EventArgs e)
         {
             ControlCargaExistencaDatos();
             if (!puedeEjecutarComando) return;
 
-            clienteSeleccionado = (long)entidadID;
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            clienteSeleccionado = entidadID;
+            DialogResult = DialogResult.OK;
+            Close();
         }
+
+        #endregion
     }
 }

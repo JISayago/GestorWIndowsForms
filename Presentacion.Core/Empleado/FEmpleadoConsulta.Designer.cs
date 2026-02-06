@@ -51,7 +51,7 @@
             btnAsignacionRoles.TabIndex = 1;
             btnAsignacionRoles.Text = "Asignación Roles";
             btnAsignacionRoles.UseVisualStyleBackColor = true;
-            btnAsignacionRoles.Click += btnAsignacionRoles_Click;
+            //btnAsignacionRoles.Click += btnAsignacionRoles_Click;
             // 
             // btnCrearUsuario
             // 
@@ -61,7 +61,7 @@
             btnCrearUsuario.TabIndex = 2;
             btnCrearUsuario.Text = "Crear Usuario";
             btnCrearUsuario.UseVisualStyleBackColor = true;
-            btnCrearUsuario.Click += btnCrearUsuario_Click;
+            //btnCrearUsuario.Click += btnCrearUsuario_Click;
             // 
             // btnSeleccionarVendedor
             // 
