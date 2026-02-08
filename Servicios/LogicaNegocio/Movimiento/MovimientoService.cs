@@ -41,7 +41,8 @@ namespace Servicios.LogicaNegocio.Movimiento
                     Monto = ventaDto.Total,
                     FechaMovimiento = DateTime.Now,
                     EstaEliminado = false,
-                    IdCaja = cajaId
+                    IdCaja = cajaId,
+                    TipoMovimientoDetalle = (int)detalleTipo
                 };
 
                 context.Movimientos.Add(movimiento);
@@ -81,7 +82,8 @@ namespace Servicios.LogicaNegocio.Movimiento
                     FechaMovimiento = DateTime.Now,
                     EstaEliminado = false,
                     IdCaja = cajaId,
-                    IdCuentaCorriente = cuentaCorrienteId
+                    IdCuentaCorriente = cuentaCorrienteId,
+                    TipoMovimientoDetalle = (int)detalleTipo
                 };
 
                 context.Movimientos.Add(movimiento);
