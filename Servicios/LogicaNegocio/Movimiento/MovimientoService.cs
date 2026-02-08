@@ -22,10 +22,10 @@ namespace Servicios.LogicaNegocio.Movimiento
 {
     public class MovimientoServicio : IMovimientoServicio
     {
-        public void CrearMovimientoVenta(VentaDTO ventaDto, long cajaId, GestorContextDB context = null)
+        public void CrearMovimientoVenta(VentaDTO ventaDto, long cajaId, TipoMovimientoDetalle detalleTipo, GestorContextDB context = null)
         {
             //el return del id lo puse para caja pero al fnal no se usa, podria no devolver nada
-
+            
             bool crearContextoLocal = (context == null);
 
             if (crearContextoLocal)
@@ -62,7 +62,7 @@ namespace Servicios.LogicaNegocio.Movimiento
             }
         }
 
-        public void CrearMovimientoCtaCte(decimal total, long cajaId, long cuentaCorrienteId, GestorContextDB context = null)
+        public void CrearMovimientoCtaCte(decimal total, long cajaId, long cuentaCorrienteId, TipoMovimientoDetalle detalleTipo, GestorContextDB context = null)
         {
             //el return del id lo puse para caja pero al fnal no se usa, podria no devolver nada
 

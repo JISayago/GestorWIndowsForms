@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Servicios.Helpers
 {
-    public enum TipoMovimientoDetallado
+    public enum TipoMovimientoDetalle
     {
         Cancelacion = 1,
         CuentaCorriente = 2,
