@@ -179,8 +179,8 @@ namespace Presentacion.Core.Administracion
 
         private void FAdministracion_Load(object sender, EventArgs e)
         {
-                        ////Primer grafico////
-                        ///Ganacias por cajas (ultimas 31 cajas actual) 
+            ////Primer grafico////
+            ///Ganacias por cajas (ultimas 31 cajas actual) 
 
             //Deberiamos mostrar el balance final? y no solo el ingreso?
 
@@ -214,8 +214,8 @@ namespace Presentacion.Core.Administracion
 
 
 
-                        ////Primer grafico v2////
-                        ///Ganacias por cajas agrupadas por X cantidad de dias (ultimos 31 dias actual) 
+            ////Primer grafico v2////
+            ///Ganacias por cajas agrupadas por X cantidad de dias (ultimos 31 dias actual) 
 
             //Agrupar las cajas por dia de apertura y sumar los ingresos de cada dia
 
@@ -254,8 +254,8 @@ namespace Presentacion.Core.Administracion
 
 
 
-                        ////Segundo grafico/////
-                        ///Ganancias por mes de X año
+            ////Segundo grafico/////
+            ///Ganancias por mes de X año
 
             ///LO SIGUIENTE FILTRAR POR AÑO TAMBIEN
 
@@ -303,19 +303,19 @@ namespace Presentacion.Core.Administracion
 
             //Rotar etiquetas
             formsPlot3.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
-            
+
             formsPlot3.Refresh();
 
 
 
-                        ////Tercer grafico////
-                        ///Ventas por dias en un mes y año especificos
+            ////Tercer grafico////
+            ///Ventas por dias en un mes y año especificos
 
             //LO SIGUIENTE SERIA PODER FILTRAR EL MES Y EL AÑO DIRECTAMENTE CON LA FUNCION ObtenerVentasPorMesYAño
 
             var ventasUltimoMes = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year);
 
-            var ventasPorDia = ventasUltimoMes.Select( i => i.FechaVenta.Date)
+            var ventasPorDia = ventasUltimoMes.Select(i => i.FechaVenta.Date)
                 .GroupBy(fecha => fecha)
                 .Select(g => new
                 {
@@ -337,7 +337,7 @@ namespace Presentacion.Core.Administracion
 
             formsPlot4.Plot.Clear();
 
-            formsPlot4.Plot.Title("Ventas por dia (Ultimo Mes)");
+            formsPlot4.Plot.Title("Ventas por Dia en el ultimo Mes");
             formsPlot4.Plot.XLabel("Dias");
             formsPlot4.Plot.YLabel("Total Ventas");
 
@@ -354,6 +354,11 @@ namespace Presentacion.Core.Administracion
             //La idea que sea los dos graficos en un mismo formplot, barras lado a lado puede ser una 
             //o directamente con scatter
             //capaz es al pedo mostrar ingresos si ya lo estmaos mostrando como en 2 graficos pero en diferentes contextos
+        }
+
+        private void pnlInfoInicial_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
