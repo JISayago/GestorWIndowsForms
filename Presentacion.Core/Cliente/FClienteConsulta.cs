@@ -153,32 +153,35 @@ namespace Presentacion.Core.Cliente
 
         private void FClienteConsulta_Load(object sender, EventArgs e)
         {
-            if (vieneDeCargaCliente)
-            {
-                btnSeleccionarCliente.Visible = true;
-                btnSeleccionarCliente.Enabled = true;
-            }
-            else
-            {
-                btnSeleccionarCliente.Visible = false;
-                btnSeleccionarCliente.Enabled = false;
-            }
         }
 
         #endregion
 
-        #region 🔷 SELECCIONAR CLIENTE (modo picker)
 
-        private void btnSeleccionarCliente_Click(object sender, EventArgs e)
+        protected override void ConfigurarAccionesPersonalizadas()
+        {
+            // BOTON Seleccionar
+            if (vieneDeCargaCliente)
+            {
+                AgregarAccion(
+                    "Seleccionar Cliente",
+                    Constantes.Imagenes.ImgPerfilUsuario,
+                    SeleccionarCliente,
+                    true
+                );
+            }
+
+        }
+
+        private void SeleccionarCliente(long? id)
         {
             ControlCargaExistencaDatos();
             if (!puedeEjecutarComando) return;
 
-            clienteSeleccionado = entidadID;
+            clienteSeleccionado = id;
             DialogResult = DialogResult.OK;
             Close();
         }
 
-        #endregion
     }
 }

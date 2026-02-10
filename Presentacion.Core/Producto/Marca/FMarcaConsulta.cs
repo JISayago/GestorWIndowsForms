@@ -1,4 +1,5 @@
 ﻿using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using System;
@@ -11,10 +12,12 @@ namespace Presentacion.Core.Articulo.Marca
     {
         private readonly IMarcaServicio _marcaServicio;
         public long? marcaSeleccionada = null;
+        private bool vieneDeCargaMarca = true;
 
-        public FMarcaConsulta() : this(new MarcaServicio())
+        public FMarcaConsulta(bool vieneDeCargaMarca = true) : this(new MarcaServicio())
         {
             InitializeComponent();
+            this.vieneDeCargaMarca = vieneDeCargaMarca;
         }
 
         public FMarcaConsulta(IMarcaServicio marcaServicio)
@@ -41,33 +44,26 @@ namespace Presentacion.Core.Articulo.Marca
 
         protected override void ConfigurarAccionesPersonalizadas()
         {
-            // test visual simple
+            if (vieneDeCargaMarca)
+            {
+
+            // Seleccion ID marca
             AgregarAccion(
-                "Color Test",
+                "Seleccionar Marca",
                 SystemIcons.Information.ToBitmap(),
-                CambiarColorFormulario,
+                SeleccionMarca,
                 false
             );
-
-            // test con fila seleccionada
-            AgregarAccion(
-                "Test con fila",
-                SystemIcons.Warning.ToBitmap(),
-                (id) =>
-                {
-                    if (!id.HasValue) return;
-                    MessageBox.Show($"ID seleccionado: {id}");
-                },
-                true
-            );
+            }
         }
 
-        private void CambiarColorFormulario(long? id)
+        private void SeleccionMarca(long? id)
         {
-            if (BackColor == Color.FromArgb(45, 45, 48))
-                BackColor = Color.WhiteSmoke;
-            else
-                BackColor = Color.FromArgb(45, 45, 48);
+            if (!id.HasValue) return;
+
+            marcaSeleccionada = entidadID;
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         #endregion
@@ -86,21 +82,21 @@ namespace Presentacion.Core.Articulo.Marca
             }
         }
 
-        //public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
-        //{
-        //    base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        {
+            base.ActualizarDatos(dgv, filtros);
 
-        //    if (check.Checked)
-        //    {
-        //        grilla.DataSource = _marcaServicio.ObtenerMarcaEliminada(cadenaBuscar);
-        //        toolStrip.Enabled = false;
-        //    }
-        //    else
-        //    {
-        //        grilla.DataSource = _marcaServicio.ObtenerMarca(cadenaBuscar);
-        //        toolStrip.Enabled = true;
-        //    }
-        //}
+            if (filtros.VerEliminados)
+            {
+                dgv.DataSource = _marcaServicio.ObtenerMarcaEliminada(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = false;
+            }
+            else
+            {
+                dgv.DataSource = _marcaServicio.ObtenerMarca(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = true;
+            }
+        }
 
         #endregion
 
@@ -146,14 +142,6 @@ namespace Presentacion.Core.Articulo.Marca
 
         #region 🎯 SELECCIONAR
 
-        private void btnSeleccionarMarca_Click(object sender, EventArgs e)
-        {
-            if (!entidadID.HasValue) return;
-
-            marcaSeleccionada = entidadID;
-            DialogResult = DialogResult.OK;
-            Close();
-        }
 
         #endregion
     }

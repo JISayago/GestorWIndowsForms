@@ -28,7 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            panel1 = new Panel();
+            txtBuscar = new TextBox();
+            btnBuscar = new Button();
+            label1 = new Label();
+            panel2 = new Panel();
+            dgvGrilla = new DataGridView();
             BarraLateralBotones = new ToolStrip();
             btnNuevo = new ToolStripButton();
             btnEliminar = new ToolStripButton();
@@ -39,28 +43,58 @@
             btnImprimir = new ToolStripButton();
             toolStripSeparator3 = new ToolStripSeparator();
             btnSalir = new ToolStripButton();
-            dgvGrilla = new DataGridView();
-            panel2 = new Panel();
-            label1 = new Label();
-            btnBuscar = new Button();
-            txtBuscar = new TextBox();
             cbxEstaEliminado = new CheckBox();
-            panel1.SuspendLayout();
-            BarraLateralBotones.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
+            panel1 = new Panel();
             panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
+            BarraLateralBotones.SuspendLayout();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
-            // panel1
+            // txtBuscar
             // 
-            panel1.Controls.Add(cbxEstaEliminado);
-            panel1.Controls.Add(BarraLateralBotones);
-            panel1.Controls.Add(dgvGrilla);
-            panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(784, 561);
-            panel1.TabIndex = 0;
+            txtBuscar.Location = new Point(106, 3);
+            txtBuscar.Name = "txtBuscar";
+            txtBuscar.Size = new Size(254, 23);
+            txtBuscar.TabIndex = 0;
+            // 
+            // btnBuscar
+            // 
+            btnBuscar.Location = new Point(366, 4);
+            btnBuscar.Name = "btnBuscar";
+            btnBuscar.Size = new Size(75, 23);
+            btnBuscar.TabIndex = 1;
+            btnBuscar.Text = "buscar";
+            btnBuscar.UseVisualStyleBackColor = true;
+            btnBuscar.Click += btnBuscar_Click_1;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(41, 6);
+            label1.Name = "label1";
+            label1.Size = new Size(59, 15);
+            label1.TabIndex = 2;
+            label1.Text = "Busqueda";
+            // 
+            // panel2
+            // 
+            panel2.Controls.Add(label1);
+            panel2.Controls.Add(btnBuscar);
+            panel2.Controls.Add(txtBuscar);
+            panel2.Location = new Point(329, 12);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(447, 32);
+            panel2.TabIndex = 1;
+            // 
+            // dgvGrilla
+            // 
+            dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvGrilla.Location = new Point(10, 112);
+            dgvGrilla.Name = "dgvGrilla";
+            dgvGrilla.Size = new Size(760, 337);
+            dgvGrilla.TabIndex = 2;
             // 
             // BarraLateralBotones
             // 
@@ -140,51 +174,6 @@
             btnSalir.TextImageRelation = TextImageRelation.TextAboveImage;
             btnSalir.Click += btnSalir_Click;
             // 
-            // dgvGrilla
-            // 
-            dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvGrilla.Location = new Point(10, 112);
-            dgvGrilla.Name = "dgvGrilla";
-            dgvGrilla.Size = new Size(760, 337);
-            dgvGrilla.TabIndex = 2;
-            // 
-            // panel2
-            // 
-            panel2.Controls.Add(label1);
-            panel2.Controls.Add(btnBuscar);
-            panel2.Controls.Add(txtBuscar);
-            panel2.Location = new Point(329, 12);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(447, 32);
-            panel2.TabIndex = 1;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(41, 6);
-            label1.Name = "label1";
-            label1.Size = new Size(59, 15);
-            label1.TabIndex = 2;
-            label1.Text = "Busqueda";
-            // 
-            // btnBuscar
-            // 
-            btnBuscar.Location = new Point(366, 4);
-            btnBuscar.Name = "btnBuscar";
-            btnBuscar.Size = new Size(75, 23);
-            btnBuscar.TabIndex = 1;
-            btnBuscar.Text = "buscar";
-            btnBuscar.UseVisualStyleBackColor = true;
-            btnBuscar.Click += btnBuscar_Click_1;
-            // 
-            // txtBuscar
-            // 
-            txtBuscar.Location = new Point(106, 3);
-            txtBuscar.Name = "txtBuscar";
-            txtBuscar.Size = new Size(254, 23);
-            txtBuscar.TabIndex = 0;
-            // 
             // cbxEstaEliminado
             // 
             cbxEstaEliminado.AutoSize = true;
@@ -195,6 +184,17 @@
             cbxEstaEliminado.Text = "Mostrar sólo elementos eliminados";
             cbxEstaEliminado.UseVisualStyleBackColor = true;
             cbxEstaEliminado.CheckedChanged += cbxEstaEliminado_CheckedChanged;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(cbxEstaEliminado);
+            panel1.Controls.Add(BarraLateralBotones);
+            panel1.Controls.Add(dgvGrilla);
+            panel1.Dock = DockStyle.Fill;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(784, 561);
+            panel1.TabIndex = 0;
             // 
             // FBaseConsulta
             // 
@@ -210,21 +210,24 @@
             Text = "FBaseConsulta";
             WindowState = FormWindowState.Maximized;
             Load += FBaseConsulta_Load;
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
-            BarraLateralBotones.ResumeLayout(false);
-            BarraLateralBotones.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
+            BarraLateralBotones.ResumeLayout(false);
+            BarraLateralBotones.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
-        private Panel panel2;
+
         private TextBox txtBuscar;
-        private Label label1;
         private Button btnBuscar;
+        private Label label1;
+        private Panel panel2;
+        protected DataGridView dgvGrilla;
+        protected ToolStrip BarraLateralBotones;
         protected ToolStripButton btnNuevo;
         protected ToolStripButton btnEliminar;
         protected ToolStripButton btnModificar;
@@ -234,9 +237,7 @@
         protected ToolStripButton btnImprimir;
         protected ToolStripSeparator toolStripSeparator3;
         protected ToolStripButton btnSalir;
-        protected DataGridView dgvGrilla;
         protected CheckBox cbxEstaEliminado;
-        protected ToolStrip BarraLateralBotones;
         public Panel panel1;
     }
 }

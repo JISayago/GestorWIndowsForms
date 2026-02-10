@@ -58,21 +58,21 @@ namespace Presentacion.Core.Administracion
 
         private void mARCASToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var fmarca = new FMarcaConsulta();
+            var fmarca = new FMarcaConsulta(false);
 
             fmarca.Show();
         }
 
         private void cATEGORIASToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var fCategoria = new FCategoriaConsulta();
+            var fCategoria = new FCategoriaConsulta(false);
 
             fCategoria.Show();
         }
 
         private void rUBROSToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var fRubro = new FRubroConsulta();
+            var fRubro = new FRubroConsulta(false);
             fRubro.Show();
         }
 

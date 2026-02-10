@@ -1,4 +1,6 @@
-﻿using Presentacion.FBase;
+﻿using MigraDoc.DocumentObjectModel.Internals;
+using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Servicios.LogicaNegocio.Venta.Oferta;
 using System;
 using System.Drawing;
@@ -30,12 +32,6 @@ namespace Presentacion.Core.Oferta
         {
             activarDesactivar = ActivarDesactivar;
 
-            if (activarDesactivar)
-            {
-                btnSeleccionarParaVenta.Enabled = false;
-                btnActivarDesactivarOferta.Visible = true;
-                btnActivarDesactivarOferta.Enabled = true;
-            }
         }
 
         #region 🔥 ACCIONES DINAMICAS (si querés migrar botones al lateral base)
@@ -45,30 +41,45 @@ namespace Presentacion.Core.Oferta
             if (activarDesactivar)
             {
                 AgregarAccion(
-                    "Activar / Desactivar",
-                    SystemIcons.Shield.ToBitmap(),
-                    (id) =>
-                    {
-                        if (!id.HasValue)
-                        {
-                            MessageBox.Show("Seleccione una oferta.");
-                            return;
-                        }
-
-                        var ofertaAD = _ofertaServicio.ActivarDesactivar(id.Value);
-
-                        if (ofertaAD.OfertaDescuentoId != null)
-                            MessageBox.Show($"La oferta {ofertaAD.Codigo} cambió su estado.");
-                        else
-                            MessageBox.Show("No se pudo cambiar el estado.");
-
-                        ActualizarGrillaBase();
-                    },
-                    true
-                );
+                   "Activar/Desactivar Oferta",
+                   Constantes.Imagenes.ImgPerfilUsuario,
+                   ActivarDesactivar,
+                   true
+               );
+            }
+            if (_vieneDeVenta)
+            {
+                               AgregarAccion(
+                   "Seleccionar para venta",
+                   Constantes.Imagenes.ImgPerfilUsuario,
+                   SeleccionarParaVenta,
+                   true
+               );
             }
         }
+        private void ActivarDesactivar(long? id)
+        {
+            if (!id.HasValue)
+            {
+                MessageBox.Show("Seleccione una oferta.");
+                return;
+            }
 
+            var ofertaAD = _ofertaServicio.ActivarDesactivar(id.Value);
+
+            if (ofertaAD.OfertaDescuentoId != null)
+                MessageBox.Show($"La oferta {ofertaAD.Codigo} cambió su estado.");
+            else
+                MessageBox.Show("No se pudo cambiar el estado.");
+        }
+        private void SeleccionarParaVenta(long? id)
+        {
+            if (!id.HasValue) return;
+
+            ofertaSeleccionada = id;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
         #endregion
 
         #region BOTONES BASE
@@ -202,63 +213,25 @@ namespace Presentacion.Core.Oferta
             grilla.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
         }
 
-        //public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
-        //{
-        //    base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
-
-        //    if (_vieneDeVenta)
-        //    {
-        //        if (check.Checked)
-        //        {
-        //            grilla.DataSource = _ofertaServicio.ObtenerOfertasInactivasCompuesta(cadenaBuscar);
-        //            toolStrip.Enabled = false;
-        //        }
-        //        else
-        //        {
-        //            grilla.DataSource = _ofertaServicio.ObtenerOfertasActivasCompuestas(cadenaBuscar);
-        //            toolStrip.Enabled = true;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        grilla.DataSource = _ofertaServicio.ObtenerOfertasActivasInactivas(cadenaBuscar);
-        //        toolStrip.Enabled = false;
-        //    }
-        //}
-
-        #endregion
-
-        #region SELECCIONAR PARA VENTA
-
-        private void btnSeleccionarParaVenta_Click(object sender, EventArgs e)
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
-            if (!entidadID.HasValue) return;
+            base.ActualizarDatos(dgv, filtros);
 
-            ofertaSeleccionada = entidadID;
-            DialogResult = DialogResult.OK;
-            Close();
-        }
-
-        #endregion
-
-        #region ACTIVAR / DESACTIVAR
-
-        private void btnActivarDesactivarOferta_Click(object sender, EventArgs e)
-        {
-            if (!entidadID.HasValue)
+            if (_vieneDeVenta)
             {
-                MessageBox.Show("Seleccione una oferta.");
-                return;
+                if (filtros.VerEliminados)
+                {
+                    dgv.DataSource = _ofertaServicio.ObtenerOfertasInactivasCompuesta(filtros.TextoBuscar);
+                }
+                else
+                {
+                    dgv.DataSource = _ofertaServicio.ObtenerOfertasActivasCompuestas(filtros.TextoBuscar);
+                }
             }
-
-            var ofertaAD = _ofertaServicio.ActivarDesactivar(entidadID.Value);
-
-            ActualizarGrillaBase();
-
-            if (ofertaAD.OfertaDescuentoId != null)
-                MessageBox.Show($"La oferta {ofertaAD.Codigo} cambió su estado.");
             else
-                MessageBox.Show("No se pudo cambiar el estado.");
+            {
+                dgv.DataSource = _ofertaServicio.ObtenerOfertasActivasInactivas(filtros.TextoBuscar);
+            }
         }
 
         #endregion
@@ -268,9 +241,5 @@ namespace Presentacion.Core.Oferta
             cbxEstaEliminado.Text = "Mostrar ofertas inactivas";
         }
 
-        private void ActualizarGrillaBase()
-        {
-            //ActualizarDatos(dgvGrilla, txtBuscar?.Text ?? "", cbxEstaEliminado, BarraLateralBotones);
-        }
     }
 }

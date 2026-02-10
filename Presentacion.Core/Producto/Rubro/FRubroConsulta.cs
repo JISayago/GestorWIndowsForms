@@ -1,4 +1,5 @@
 ﻿using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Producto.Rubro;
 using System;
@@ -10,10 +11,12 @@ namespace Presentacion.Core.Producto.Rubro
     {
         private readonly IRubroServicio _rubroServicio;
         public long? rubroSeleccionado = null;
+        private bool vieneDeCargaRubro = true;
 
-        public FRubroConsulta() : this(new RubroServicio())
+        public FRubroConsulta(bool vieneDeCargaRubro = true) : this(new RubroServicio())
         {
             InitializeComponent();
+            this.vieneDeCargaRubro = vieneDeCargaRubro;
         }
 
         public FRubroConsulta(IRubroServicio rubroServicio)
@@ -23,15 +26,6 @@ namespace Presentacion.Core.Producto.Rubro
 
         private void FRubroConsulta_Load(object sender, EventArgs e)
         {
-            //ConfigurarFormularioConsulta(
-            //    "Consulta de Rubros",
-            //    true,   // nuevo
-            //    true,   // modificar
-            //    true,   // eliminar
-            //    false,  // restaurar
-            //    false,  // imprimir
-            //    false   // exportar
-            //);
         }
 
         public override void ResetearGrilla(DataGridView grilla)
@@ -49,21 +43,21 @@ namespace Presentacion.Core.Producto.Rubro
             grilla.Columns["Nombre"].HeaderText = "Rubro";
         }
 
-        //public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
-        //{
-        //    base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        {
+            base.ActualizarDatos(dgv, filtros);
 
-        //    if (check.Checked)
-        //    {
-        //        grilla.DataSource = _rubroServicio.ObtenerRubroEliminado(cadenaBuscar);
-        //        toolStrip.Enabled = false;
-        //    }
-        //    else
-        //    {
-        //        grilla.DataSource = _rubroServicio.ObtenerRubro(cadenaBuscar);
-        //        toolStrip.Enabled = true;
-        //    }
-        //}
+            if (filtros.VerEliminados)
+            {
+                dgv.DataSource = _rubroServicio.ObtenerRubroEliminado(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = false;
+            }
+            else
+            {
+                dgv.DataSource = _rubroServicio.ObtenerRubro(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = true;
+            }
+        }
 
         public override void EjecutarBtnNuevo()
         {
@@ -103,7 +97,35 @@ namespace Presentacion.Core.Producto.Rubro
 
             //ActualizarDatos(dgvGrilla, txtBuscar.Text, cbxEstaEliminado, BarraLateralBotones);
         }
+        #region 🔵 ACCIONES DINÁMICAS EXTRA
 
+        protected override void ConfigurarAccionesPersonalizadas()
+        {
+            // BOTON Seleccionar
+            if (vieneDeCargaRubro)
+            {
+                AgregarAccion(
+                    "Seleccionar Rubro",
+                    Constantes.Imagenes.ImgPerfilUsuario,
+                    SeleccionRubro,
+                    true
+                );
+            }
+
+        }
+
+
+        private void SeleccionRubro(long? id)
+        {
+            if (entidadID == null)
+                return;
+
+            rubroSeleccionado = (long)entidadID;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        #endregion
         private void btnRubroSeleccion_Click(object sender, EventArgs e)
         {
             if (entidadID == null)

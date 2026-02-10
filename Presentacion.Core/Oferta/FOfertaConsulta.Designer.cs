@@ -28,39 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnSeleccionarParaVenta = new Button();
-            btnActivarDesactivarOferta = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(btnActivarDesactivarOferta);
-            panel1.Controls.Add(btnSeleccionarParaVenta);
-            panel1.Controls.SetChildIndex(btnSeleccionarParaVenta, 0);
-            panel1.Controls.SetChildIndex(btnActivarDesactivarOferta, 0);
-            // 
-            // btnSeleccionarParaVenta
-            // 
-            btnSeleccionarParaVenta.Location = new Point(3, 241);
-            btnSeleccionarParaVenta.Name = "btnSeleccionarParaVenta";
-            btnSeleccionarParaVenta.Size = new Size(75, 85);
-            btnSeleccionarParaVenta.TabIndex = 1;
-            btnSeleccionarParaVenta.Text = "Seleccionar para venta";
-            btnSeleccionarParaVenta.UseVisualStyleBackColor = true;
-            btnSeleccionarParaVenta.Click += btnSeleccionarParaVenta_Click;
-            // 
-            // btnActivarDesactivarOferta
-            // 
-            btnActivarDesactivarOferta.Enabled = false;
-            btnActivarDesactivarOferta.Location = new Point(3, 332);
-            btnActivarDesactivarOferta.Name = "btnActivarDesactivarOferta";
-            btnActivarDesactivarOferta.Size = new Size(75, 85);
-            btnActivarDesactivarOferta.TabIndex = 2;
-            btnActivarDesactivarOferta.Text = "Activar/Desactivar";
-            btnActivarDesactivarOferta.UseVisualStyleBackColor = true;
-            btnActivarDesactivarOferta.Visible = false;
-            btnActivarDesactivarOferta.Click += btnActivarDesactivarOferta_Click;
+            panel1.Size = new Size(1052, 561);
             // 
             // FOfertaConsulta
             // 
@@ -73,12 +46,8 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private Button btnSeleccionarParaVenta;
-        private Button btnActivarDesactivarOferta;
     }
 }

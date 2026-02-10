@@ -1,4 +1,5 @@
-﻿using Presentacion.FBase;
+﻿using Presentacion.Core.Producto;
+using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Articulo.Categoria;
@@ -11,10 +12,12 @@ namespace Presentacion.Core.Categoria
     {
         private readonly ICategoriaServicio _CategoriaServicio;
         public long? categoriaSeleccionada = null;
+        private bool vieneDeCargaCategoria = true;
 
-        public FCategoriaConsulta() : this(new CategoriaServicio())
+        public FCategoriaConsulta(bool vieneDeCargaCategoria = true) : this(new CategoriaServicio())
         {
             InitializeComponent();
+            this.vieneDeCargaCategoria = vieneDeCargaCategoria;
         }
 
         public FCategoriaConsulta(ICategoriaServicio categoriaServicio)
@@ -107,10 +110,25 @@ namespace Presentacion.Core.Categoria
         }
 
         #endregion
+        #region 🔵 ACCIONES DINÁMICAS EXTRA
 
-        #region 🔷 SELECCIONAR (modo picker)
+        protected override void ConfigurarAccionesPersonalizadas()
+        {
+            // BOTON Seleccionar
+            if (vieneDeCargaCategoria)
+            {
+                AgregarAccion(
+                    "Seleccionar Categoria",
+                    Constantes.Imagenes.ImgPerfilUsuario,
+                    SeleccionCategoria,
+                    true
+                );
+            }
 
-        private void btnSeleccionarCategoria_Click(object sender, EventArgs e)
+        }
+        
+
+        private void SeleccionCategoria(long? id)
         {
             if (!entidadID.HasValue)
             {
@@ -124,5 +142,6 @@ namespace Presentacion.Core.Categoria
         }
 
         #endregion
+
     }
 }

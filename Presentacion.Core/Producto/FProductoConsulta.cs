@@ -43,37 +43,52 @@ namespace Presentacion.Core.Producto
                 AbrirGestionStock,
                 true
             );
-
-            // BOTON PRECIOS (ejemplo)
+            // BOTON Seleccionar
+            if (vieneDeCargaProducto)
+            {
             AgregarAccion(
-                "Precios",
-                Constantes.Imagenes.ImgCerrar,
-                AbrirGestionPrecios,
+                "Seleccionar Producto",
+                Constantes.Imagenes.ImgPerfilUsuario,
+                SeleccionProducto,
                 true
             );
+            }
+
         }
 
         private void AbrirGestionStock(long? id)
         {
             if (!id.HasValue) return;
 
-            var f = new FGestionStock(id.Value);
+            string nombreProducto = "";
+
+            if (dgvGrilla.CurrentRow != null)
+            {
+                var celda = dgvGrilla.CurrentRow.Cells["Descripcion"];
+                if (celda?.Value != null)
+                    nombreProducto = celda.Value.ToString();
+            }
+
+            var f = new FGestionStock(id.Value, nombreProducto);
             f.ShowDialog();
 
             if (f.RealizoOperacion)
                 Recargar();
         }
 
-        private void AbrirGestionPrecios(long? id)
+        private void SeleccionProducto(long? id)
         {
-            if (!id.HasValue) return;
+            if (!id.HasValue)
+            {
+                MessageBox.Show("Seleccione un registro.");
+                return;
+            }
 
-           // var f = new FProductoPrecios(id.Value);
-            //f.ShowDialog();
-
-           // if (f.RealizoOperacion)
-             //   Recargar();
+            productoSeleccionado = entidadID;
+            DialogResult = DialogResult.OK;
+            Close();
         }
+
 
         #endregion
 
@@ -173,22 +188,9 @@ namespace Presentacion.Core.Producto
 
         #region 🔷 SELECCIONAR PRODUCTO (MODO PICKER)
 
-        private void btnSeleccionarProducto_Click(object sender, EventArgs e)
-        {
-            if (!entidadID.HasValue)
-            {
-                MessageBox.Show("Seleccione un registro.");
-                return;
-            }
-
-            productoSeleccionado = entidadID;
-            DialogResult = DialogResult.OK;
-            Close();
-        }
 
         private void FProductoConsulta_Load(object sender, EventArgs e)
         {
-            btnSeleccionarProducto.Visible = vieneDeCargaProducto;
         }
 
         #endregion

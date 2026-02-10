@@ -119,21 +119,21 @@ namespace Presentacion.Core.Empleado.Rol
             }
         }
 
-        //public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
-        //{
-        //    base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        {
+            base.ActualizarDatos(dgv, filtros);
 
-        //    if (check.Checked)
-        //    {
-        //        grilla.DataSource = _rolServicio.ObtenerRolesEliminados(cadenaBuscar);
-        //        toolStrip.Enabled = false;
-        //    }
-        //    else
-        //    {
-        //        grilla.DataSource = _rolServicio.ObtenerRoles(cadenaBuscar);
-        //        toolStrip.Enabled = true;
-        //    }
-        //}
+            if (filtros.VerEliminados)
+            {
+                dgv.DataSource = _rolServicio.ObtenerRolesEliminados(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = false;
+            }
+            else
+            {
+                dgv.DataSource = _rolServicio.ObtenerRoles(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = true;
+            }
+        }
 
         #endregion
 
@@ -152,14 +152,6 @@ namespace Presentacion.Core.Empleado.Rol
 
         #endregion
 
-        #region BOTON VIEJO (si lo seguís usando en el form)
 
-        private void btnAsignacionRoles_Click(object sender, EventArgs e)
-        {
-            var f = new FAsignacionRolesEmpleados(TipoAsignacionRol.Nuevo);
-            f.ShowDialog();
-        }
-
-        #endregion
     }
 }

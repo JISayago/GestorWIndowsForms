@@ -35,8 +35,6 @@ namespace Presentacion.Core.Empleado
 
             vieneDeCargaVendedor = _vieneDeCargaVendedor;
 
-            btnSeleccionarVendedor.Visible = vieneDeCargaVendedor;
-            btnSeleccionarVendedor.Enabled = vieneDeCargaVendedor;
         }
 
         #region 🔷 ACCIONES DINAMICAS NUEVAS
@@ -56,6 +54,16 @@ namespace Presentacion.Core.Empleado
                 AbrirCrearUsuario,
                 true
             );
+            if (vieneDeCargaVendedor)
+            {
+
+            AgregarAccion(
+                "Asignar Vendedor",
+                Constantes.Imagenes.ImgNuevo,
+                AsignarVendedor,
+                true
+            );
+            }
         }
 
         private void AbrirAsignacionRoles(long? id)
@@ -72,6 +80,18 @@ namespace Presentacion.Core.Empleado
 
             var f = new FEmpleadoCrearUsuario(id);
             f.ShowDialog();
+        }
+        private void AsignarVendedor(long? id)
+        {
+            if (!entidadID.HasValue)
+            {
+                MessageBox.Show("Seleccione un empleado.");
+                return;
+            }
+
+            empleadoSeleccionado = entidadID;
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         #endregion
@@ -179,21 +199,5 @@ namespace Presentacion.Core.Empleado
 
         #endregion
 
-        #region 🔷 SELECCION VENDEDOR
-
-        private void btnSeleccionarVendedor_Click(object sender, System.EventArgs e)
-        {
-            if (!entidadID.HasValue)
-            {
-                MessageBox.Show("Seleccione un empleado.");
-                return;
-            }
-
-            empleadoSeleccionado = entidadID;
-            DialogResult = DialogResult.OK;
-            Close();
-        }
-
-        #endregion
     }
 }
