@@ -63,6 +63,8 @@
             tlpFiltradoGraficos1 = new TableLayoutPanel();
             dgvGrilla = new DataGridView();
             sqlCommand1 = new Microsoft.Data.SqlClient.SqlCommand();
+            formsPlot5 = new ScottPlot.WinForms.FormsPlot();
+            formsPlot6 = new ScottPlot.WinForms.FormsPlot();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             pnlInfoInicial.SuspendLayout();
@@ -75,7 +77,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { pRODUCTOToolStripMenuItem, eMPLEADOSToolStripMenuItem, cLIENTESToolStripMenuItem, oFERTASToolStripMenuItem, cONFIGURACIONToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1354, 24);
+            menuStrip1.Size = new Size(1430, 24);
             menuStrip1.TabIndex = 2;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -214,13 +216,13 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(1354, 94);
+            tableLayoutPanel1.Size = new Size(1430, 94);
             tableLayoutPanel1.TabIndex = 7;
             // 
             // btnGasto
             // 
             btnGasto.Anchor = AnchorStyles.Left;
-            btnGasto.Location = new Point(341, 15);
+            btnGasto.Location = new Point(360, 15);
             btnGasto.MaximumSize = new Size(236, 63);
             btnGasto.MinimumSize = new Size(236, 63);
             btnGasto.Name = "btnGasto";
@@ -233,7 +235,7 @@
             // btnMovimientos
             // 
             btnMovimientos.Anchor = AnchorStyles.Right;
-            btnMovimientos.Location = new Point(775, 15);
+            btnMovimientos.Location = new Point(832, 15);
             btnMovimientos.MaximumSize = new Size(236, 63);
             btnMovimientos.MinimumSize = new Size(236, 63);
             btnMovimientos.Name = "btnMovimientos";
@@ -246,7 +248,7 @@
             // btnVolver
             // 
             btnVolver.Anchor = AnchorStyles.Right;
-            btnVolver.Location = new Point(99, 15);
+            btnVolver.Location = new Point(118, 15);
             btnVolver.MaximumSize = new Size(236, 63);
             btnVolver.MinimumSize = new Size(236, 63);
             btnVolver.Name = "btnVolver";
@@ -259,7 +261,7 @@
             // btnComprobantes
             // 
             btnComprobantes.Anchor = AnchorStyles.Left;
-            btnComprobantes.Location = new Point(1017, 15);
+            btnComprobantes.Location = new Point(1074, 15);
             btnComprobantes.MaximumSize = new Size(236, 63);
             btnComprobantes.MinimumSize = new Size(236, 63);
             btnComprobantes.Name = "btnComprobantes";
@@ -277,7 +279,7 @@
             pnlInfoInicial.Dock = DockStyle.Fill;
             pnlInfoInicial.Location = new Point(0, 118);
             pnlInfoInicial.Name = "pnlInfoInicial";
-            pnlInfoInicial.Size = new Size(1354, 650);
+            pnlInfoInicial.Size = new Size(1430, 697);
             pnlInfoInicial.TabIndex = 24;
             pnlInfoInicial.Paint += pnlInfoInicial_Paint;
             // 
@@ -295,15 +297,18 @@
             tlpBase.Controls.Add(formsPlot2, 1, 1);
             tlpBase.Controls.Add(formsPlot3, 0, 3);
             tlpBase.Controls.Add(tlpFiltradoGraficos1, 0, 0);
-            tlpBase.Dock = DockStyle.Fill;
+            tlpBase.Controls.Add(formsPlot5, 0, 5);
+            tlpBase.Controls.Add(formsPlot6, 1, 5);
             tlpBase.Location = new Point(0, 0);
             tlpBase.Name = "tlpBase";
-            tlpBase.RowCount = 4;
-            tlpBase.RowStyles.Add(new RowStyle(SizeType.Percent, 11.0389624F));
-            tlpBase.RowStyles.Add(new RowStyle(SizeType.Percent, 38.9610367F));
-            tlpBase.RowStyles.Add(new RowStyle(SizeType.Percent, 11.0389624F));
-            tlpBase.RowStyles.Add(new RowStyle(SizeType.Percent, 38.9610329F));
-            tlpBase.Size = new Size(1354, 650);
+            tlpBase.RowCount = 6;
+            tlpBase.RowStyles.Add(new RowStyle(SizeType.Percent, 9.849361F));
+            tlpBase.RowStyles.Add(new RowStyle(SizeType.Percent, 26.76709F));
+            tlpBase.RowStyles.Add(new RowStyle(SizeType.Percent, 9.849363F));
+            tlpBase.RowStyles.Add(new RowStyle(SizeType.Percent, 26.76709F));
+            tlpBase.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tlpBase.RowStyles.Add(new RowStyle(SizeType.Percent, 26.76709F));
+            tlpBase.Size = new Size(1427, 697);
             tlpBase.TabIndex = 24;
             // 
             // tlpFiltradoGrafico4
@@ -313,25 +318,25 @@
             tlpFiltradoGrafico4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tlpFiltradoGrafico4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tlpFiltradoGrafico4.Dock = DockStyle.Fill;
-            tlpFiltradoGrafico4.Location = new Point(680, 327);
+            tlpFiltradoGrafico4.Location = new Point(716, 250);
             tlpFiltradoGrafico4.Name = "tlpFiltradoGrafico4";
             tlpFiltradoGrafico4.RowCount = 1;
             tlpFiltradoGrafico4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpFiltradoGrafico4.Size = new Size(671, 65);
+            tlpFiltradoGrafico4.Size = new Size(708, 60);
             tlpFiltradoGrafico4.TabIndex = 27;
             // 
             // tlpFiltradoGrafico3
             // 
             tlpFiltradoGrafico3.BackColor = SystemColors.Info;
             tlpFiltradoGrafico3.ColumnCount = 2;
-            tlpFiltradoGrafico3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tlpFiltradoGrafico3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tlpFiltradoGrafico3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 48.7332344F));
+            tlpFiltradoGrafico3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 51.2667656F));
             tlpFiltradoGrafico3.Dock = DockStyle.Fill;
-            tlpFiltradoGrafico3.Location = new Point(3, 327);
+            tlpFiltradoGrafico3.Location = new Point(3, 250);
             tlpFiltradoGrafico3.Name = "tlpFiltradoGrafico3";
             tlpFiltradoGrafico3.RowCount = 1;
             tlpFiltradoGrafico3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpFiltradoGrafico3.Size = new Size(671, 65);
+            tlpFiltradoGrafico3.Size = new Size(707, 60);
             tlpFiltradoGrafico3.TabIndex = 26;
             // 
             // tlpFiltradoGrafico2
@@ -341,20 +346,20 @@
             tlpFiltradoGrafico2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tlpFiltradoGrafico2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tlpFiltradoGrafico2.Dock = DockStyle.Fill;
-            tlpFiltradoGrafico2.Location = new Point(680, 3);
+            tlpFiltradoGrafico2.Location = new Point(716, 3);
             tlpFiltradoGrafico2.Name = "tlpFiltradoGrafico2";
             tlpFiltradoGrafico2.RowCount = 1;
             tlpFiltradoGrafico2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpFiltradoGrafico2.Size = new Size(671, 65);
+            tlpFiltradoGrafico2.Size = new Size(708, 60);
             tlpFiltradoGrafico2.TabIndex = 25;
             // 
             // formsPlot1
             // 
             formsPlot1.DisplayScale = 1F;
             formsPlot1.Dock = DockStyle.Fill;
-            formsPlot1.Location = new Point(3, 74);
+            formsPlot1.Location = new Point(3, 69);
             formsPlot1.Name = "formsPlot1";
-            formsPlot1.Size = new Size(671, 247);
+            formsPlot1.Size = new Size(707, 175);
             formsPlot1.TabIndex = 20;
             formsPlot1.Load += formsPlot1_Load;
             // 
@@ -362,27 +367,27 @@
             // 
             formsPlot4.DisplayScale = 1F;
             formsPlot4.Dock = DockStyle.Fill;
-            formsPlot4.Location = new Point(680, 398);
+            formsPlot4.Location = new Point(716, 316);
             formsPlot4.Name = "formsPlot4";
-            formsPlot4.Size = new Size(671, 249);
+            formsPlot4.Size = new Size(708, 175);
             formsPlot4.TabIndex = 23;
             // 
             // formsPlot2
             // 
             formsPlot2.DisplayScale = 1F;
             formsPlot2.Dock = DockStyle.Fill;
-            formsPlot2.Location = new Point(680, 74);
+            formsPlot2.Location = new Point(716, 69);
             formsPlot2.Name = "formsPlot2";
-            formsPlot2.Size = new Size(671, 247);
+            formsPlot2.Size = new Size(708, 175);
             formsPlot2.TabIndex = 21;
             // 
             // formsPlot3
             // 
             formsPlot3.DisplayScale = 1F;
             formsPlot3.Dock = DockStyle.Fill;
-            formsPlot3.Location = new Point(3, 398);
+            formsPlot3.Location = new Point(3, 316);
             formsPlot3.Name = "formsPlot3";
-            formsPlot3.Size = new Size(671, 249);
+            formsPlot3.Size = new Size(707, 175);
             formsPlot3.TabIndex = 22;
             // 
             // tlpFiltradoGraficos1
@@ -396,16 +401,16 @@
             tlpFiltradoGraficos1.Name = "tlpFiltradoGraficos1";
             tlpFiltradoGraficos1.RowCount = 1;
             tlpFiltradoGraficos1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpFiltradoGraficos1.Size = new Size(671, 65);
+            tlpFiltradoGraficos1.Size = new Size(707, 60);
             tlpFiltradoGraficos1.TabIndex = 24;
             // 
             // dgvGrilla
             // 
             dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvGrilla.Location = new Point(1768, -3);
+            dgvGrilla.Location = new Point(1844, -3);
             dgvGrilla.Name = "dgvGrilla";
-            dgvGrilla.Size = new Size(380, 1005);
+            dgvGrilla.Size = new Size(380, 1052);
             dgvGrilla.TabIndex = 17;
             // 
             // sqlCommand1
@@ -413,11 +418,29 @@
             sqlCommand1.CommandTimeout = 30;
             sqlCommand1.EnableOptimizedParameterBinding = false;
             // 
+            // formsPlot5
+            // 
+            formsPlot5.DisplayScale = 1F;
+            formsPlot5.Dock = DockStyle.Fill;
+            formsPlot5.Location = new Point(3, 517);
+            formsPlot5.Name = "formsPlot5";
+            formsPlot5.Size = new Size(707, 177);
+            formsPlot5.TabIndex = 28;
+            // 
+            // formsPlot6
+            // 
+            formsPlot6.DisplayScale = 1F;
+            formsPlot6.Dock = DockStyle.Fill;
+            formsPlot6.Location = new Point(716, 517);
+            formsPlot6.Name = "formsPlot6";
+            formsPlot6.Size = new Size(708, 177);
+            formsPlot6.TabIndex = 29;
+            // 
             // FAdministracion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1354, 768);
+            ClientSize = new Size(1430, 815);
             Controls.Add(pnlInfoInicial);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(menuStrip1);
@@ -473,5 +496,7 @@
         private TableLayoutPanel tlpFiltradoGrafico4;
         private TableLayoutPanel tlpFiltradoGrafico3;
         private TableLayoutPanel tlpFiltradoGrafico2;
+        private ScottPlot.WinForms.FormsPlot formsPlot5;
+        private ScottPlot.WinForms.FormsPlot formsPlot6;
     }
 }

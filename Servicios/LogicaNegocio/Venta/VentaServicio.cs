@@ -279,8 +279,15 @@ namespace Servicios.LogicaNegocio.Venta
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            return context.Ventas
-                .Where(v => v.FechaVenta.Month == mes && v.FechaVenta.Year == año)
+            var query = context.Ventas
+                .Where(v => v.FechaVenta.Year == año);
+
+            if (mes > 0)//Si queremos traer todo el año no filtramos por mes
+            {
+                query = query.Where(v => v.FechaVenta.Month == mes);
+            }
+
+            return query
                 .Select(v => new VentaDTO
                 {
                     VentaId = v.VentaId,

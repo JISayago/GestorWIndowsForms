@@ -179,14 +179,14 @@ namespace Presentacion.Core.Administracion
 
         private void FAdministracion_Load(object sender, EventArgs e)
         {
-            ////Primer grafico////
-            ///Ganacias por cajas (ultimas 31 cajas actual) 
+            ////////////////////////////////Deberiamos mostrar el balance final? y no solo el ingreso?
 
-            //Deberiamos mostrar el balance final? y no solo el ingreso?
+            ////Primer grafico////
+            ///Ganacias por cajas de un MES y un AÑO especificos
 
             var ultimas31Cajas = _cajaSerivicio.ObtenerUltimasXCajas(31);
 
-            //LO SIGUIENTE SERIA PODER MODIFICAR LA CANTIDAD DE CAJAS A MOSTRAR
+            //LO SIGUIENTE SERIA PODER MODIFICAR EL MES Y AÑO DE LAS VENTAS
 
             double[] gananciasPorCaja = ultimas31Cajas
                 .Select(c => (double)c.TotalIngresos)
@@ -213,9 +213,9 @@ namespace Presentacion.Core.Administracion
             formsPlot1.Refresh();
 
 
-
-            ////Primer grafico v2////
-            ///Ganacias por cajas agrupadas por X cantidad de dias (ultimos 31 dias actual) 
+            
+            ////Segundo Grafico////
+            ///Ganacias por cajas agrupadas por X cantidad de dias (ultimos 31 dias actual)  // Este grafico no me cierra mucho teniendo el grafico 1
 
             //Agrupar las cajas por dia de apertura y sumar los ingresos de cada dia
 
@@ -252,12 +252,12 @@ namespace Presentacion.Core.Administracion
 
             formsPlot2.Refresh();
 
+            
 
-
-            ////Segundo grafico/////
+            ////Tercer grafico/////
             ///Ganancias por mes de X año
 
-            ///LO SIGUIENTE FILTRAR POR AÑO TAMBIEN
+            ///LO SIGUIENTE FILTRAR POR AÑO TAMBIEN --------> solo falta el data entry para el año
 
             var cajasAñoX = _cajaSerivicio.ObtenerLasCajasDeXAño(2026); //Filtro de año
 
@@ -308,14 +308,109 @@ namespace Presentacion.Core.Administracion
 
 
 
-            ////Tercer grafico////
+            ////Cuarto grafico/////
+            ///Ventas por mes de X año
+
+            ///LO SIGUIENTE FILTRAR POR AÑO TAMBIEN --------> solo falta el data entry para el año
+
+            var ventasAñoX = _ventaServicio.ObtenerVentasPorMesYAño(0, 2026); //Filtro de año, pasamos 0 asi traemos el año completo
+
+            var fechasYVentasAgrupadasPorMeses = ventasAñoX.GroupBy(c => new { c.FechaVenta.Year, c.FechaVenta.Month })
+            .Select(g => new
+            {
+                Fecha = new DateTime(g.Key.Year, g.Key.Month, 1),
+                CantidadVentas = g.Count()
+            }).ToList();
+
+            string[] mesesVentas =
+            {
+                "Enero", "Febrero", "Marzo", "Abril",
+                "Mayo", "Junio", "Julio", "Agosto",
+                "Septiembre", "Octubre", "Noviembre", "Diciembre"
+            };
+
+            // X = índices (0..11)
+            double[] xsVentas = fechasYVentasAgrupadasPorMeses
+                .Select(x => x.Fecha.Month - 1)
+                .Select(m => (double)m)
+                .ToArray();
+
+            double[] ventasPorMesEjeY = fechasYVentasAgrupadasPorMeses
+                .Select(x => (double)x.CantidadVentas)
+                .ToArray();
+
+            string[] mesesVentasPresentesEjeX = fechasYGanaciasAgrupadasPorMeses
+                .Select(x => mesesVentas[x.Fecha.Month - 1])
+                .ToArray();
+
+
+            formsPlot4.Plot.Clear();
+
+            formsPlot4.Plot.Title("Ventas por mes");
+            formsPlot4.Plot.XLabel("Meses");
+            formsPlot4.Plot.YLabel("Total Ingresos");
+
+            formsPlot4.Plot.Add.Bars(xsVentas, ventasPorMesEjeY);
+
+            //Meses como labels del eje X
+            formsPlot4.Plot.Axes.Bottom.SetTicks(xsVentas, mesesVentasPresentesEjeX);
+
+            //Rotar etiquetas
+            formsPlot4.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
+
+            formsPlot4.Refresh();
+
+
+
+            ////Quinto grafico////
+            ///Ganacias por dias en un mes y año especificos
+
+            //LO SIGUIENTE SERIA PODER FILTRAR EL MES Y EL AÑO --------> solo falta agregar el data entry para las dates
+
+            var GananciasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year); //traemos toda las ventas de un mes y año especificos 
+
+            var ganaciasAgrupadasPorFecha = GananciasMesXAñoX
+                .GroupBy(i => i.FechaVenta.Date)
+                .Select(g => new
+                {
+                    Fecha = g.Key,
+                    IngresoTotal = g.Sum(x => x.Total)
+                })
+                .OrderBy(x => x.Fecha)
+                .ToList();
+
+            string[] diaDeLasGanancias = ganaciasAgrupadasPorFecha //seleccionamos las fechas de las ventas
+                .Select(x => x.Fecha.ToString("dd/MM"))
+                .ToArray();
+
+            double[] cantidadesGananciasPorDia = ganaciasAgrupadasPorFecha.Select(x => (double)x.IngresoTotal).ToArray(); //seleccionamos la cantidad de ventas por dia (valor de las bars)
+
+            double[] posicionesDiasGanancias = Enumerable.Range(0, diaDeLasGanancias.Length)
+                                .Select(i => (double)i)
+                                .ToArray();
+
+            formsPlot5.Plot.Clear();
+
+            formsPlot5.Plot.Title("Ganancias por Dia en el ultimo Mes");
+            formsPlot5.Plot.XLabel("Dias");
+            formsPlot5.Plot.YLabel("Total Ventas");
+
+            formsPlot5.Plot.Add.Bars(cantidadesGananciasPorDia);
+
+            formsPlot5.Plot.Axes.Bottom.SetTicks(posicionesDiasGanancias, diaDeLasGanancias); //agregamos al grafico 
+
+            formsPlot5.Refresh();
+
+
+            
+            ////Sexto grafico////
             ///Ventas por dias en un mes y año especificos
 
-            //LO SIGUIENTE SERIA PODER FILTRAR EL MES Y EL AÑO DIRECTAMENTE CON LA FUNCION ObtenerVentasPorMesYAño
+            //LO SIGUIENTE SERIA PODER FILTRAR EL MES Y EL AÑO --------> solo falta agregar el data entry para las dates
 
-            var ventasUltimoMes = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year);
+            var ventasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year); //traemos toda las ventas de un mes y año especificos
 
-            var ventasPorDia = ventasUltimoMes.Select(i => i.FechaVenta.Date)
+            var ventarAgrupadasPorFecha = ventasMesXAñoX.Select(i => i.FechaVenta.Date) //agrupamos por fecha y contamos la cantidad de ventas de cada dia
                 .GroupBy(fecha => fecha)
                 .Select(g => new
                 {
@@ -325,35 +420,38 @@ namespace Presentacion.Core.Administracion
                 .OrderBy(x => x.Fecha)
                 .ToList();
 
-            string[] diaDeLasVentas = ventasPorDia
+            string[] diaDeLasVentas = ventarAgrupadasPorFecha //seleccionamos las fechas de las ventas
                 .Select(x => x.Fecha.ToString("dd/MM"))
                 .ToArray();
 
-            double[] cantidadesVentasPorDia = ventasPorDia.Select(x => (double)x.CantidadVentas).ToArray();
+            double[] cantidadesVentasPorDia = ventarAgrupadasPorFecha.Select(x => (double)x.CantidadVentas).ToArray(); //seleccionamos la cantidad de ventas por dia (valor de las bars)
 
-            double[] posiciones = Enumerable.Range(0, diaDeLasVentas.Length) //para meses pero deberia mostar por dia las ventas
+            double[] posicionesDiasVentas = Enumerable.Range(0, diaDeLasVentas.Length)
                                 .Select(i => (double)i)
                                 .ToArray();
 
-            formsPlot4.Plot.Clear();
+            formsPlot6.Plot.Clear();
 
-            formsPlot4.Plot.Title("Ventas por Dia en el ultimo Mes");
-            formsPlot4.Plot.XLabel("Dias");
-            formsPlot4.Plot.YLabel("Total Ventas");
+            formsPlot6.Plot.Title("Ventas por Dia en el ultimo Mes");
+            formsPlot6.Plot.XLabel("Dias");
+            formsPlot6.Plot.YLabel("Total Ventas");
 
-            formsPlot4.Plot.Add.Bars(cantidadesVentasPorDia);
+            formsPlot6.Plot.Add.Bars(cantidadesVentasPorDia);
 
-            formsPlot4.Plot.Axes.Bottom.SetTicks(posiciones, diaDeLasVentas);
+            formsPlot6.Plot.Axes.Bottom.SetTicks(posicionesDiasVentas, diaDeLasVentas); //agregamos al grafico 
 
-            formsPlot4.Refresh();
+            formsPlot6.Refresh();
 
 
-            ////Cuarto grafico////
+
+            ////grafico X////
 
             //Ingresos, egresos
             //La idea que sea los dos graficos en un mismo formplot, barras lado a lado puede ser una 
             //o directamente con scatter
             //capaz es al pedo mostrar ingresos si ya lo estmaos mostrando como en 2 graficos pero en diferentes contextos
+
+
         }
 
         private void pnlInfoInicial_Paint(object sender, PaintEventArgs e)
