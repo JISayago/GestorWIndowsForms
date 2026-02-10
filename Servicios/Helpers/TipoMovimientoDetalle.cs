@@ -12,6 +12,7 @@ namespace Servicios.Helpers
         CuentaCorriente = 2,
         Stock = 3,
         Venta = 4,
-        Compra = 5
+        Compra = 5,
+        Servicios = 6
     }
 }
