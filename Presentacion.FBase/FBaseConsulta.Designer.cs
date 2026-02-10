@@ -82,7 +82,7 @@
             panel2.Controls.Add(label1);
             panel2.Controls.Add(btnBuscar);
             panel2.Controls.Add(txtBuscar);
-            panel2.Location = new Point(329, 12);
+            panel2.Location = new Point(325, 48);
             panel2.Name = "panel2";
             panel2.Size = new Size(447, 32);
             panel2.TabIndex = 1;
@@ -100,11 +100,10 @@
             // 
             BarraLateralBotones.BackColor = SystemColors.AppWorkspace;
             BarraLateralBotones.CanOverflow = false;
-            BarraLateralBotones.Dock = DockStyle.Bottom;
             BarraLateralBotones.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             BarraLateralBotones.Items.AddRange(new ToolStripItem[] { btnNuevo, btnEliminar, btnModificar, toolStripSeparator1, btnActualizar, toolStripSeparator2, btnImprimir, toolStripSeparator3, btnSalir });
             BarraLateralBotones.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            BarraLateralBotones.Location = new Point(0, 534);
+            BarraLateralBotones.Location = new Point(0, 0);
             BarraLateralBotones.Name = "BarraLateralBotones";
             BarraLateralBotones.Size = new Size(784, 27);
             BarraLateralBotones.Stretch = true;
@@ -177,7 +176,7 @@
             // cbxEstaEliminado
             // 
             cbxEstaEliminado.AutoSize = true;
-            cbxEstaEliminado.Location = new Point(23, 19);
+            cbxEstaEliminado.Location = new Point(23, 61);
             cbxEstaEliminado.Name = "cbxEstaEliminado";
             cbxEstaEliminado.Size = new Size(211, 19);
             cbxEstaEliminado.TabIndex = 3;
@@ -187,6 +186,7 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(panel2);
             panel1.Controls.Add(cbxEstaEliminado);
             panel1.Controls.Add(BarraLateralBotones);
             panel1.Controls.Add(dgvGrilla);
@@ -203,7 +203,6 @@
             AutoScroll = true;
             AutoSize = true;
             ClientSize = new Size(784, 561);
-            Controls.Add(panel2);
             Controls.Add(panel1);
             Name = "FBaseConsulta";
             StartPosition = FormStartPosition.CenterScreen;
