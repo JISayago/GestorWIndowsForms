@@ -856,6 +856,10 @@ namespace AccesoDatos
                     .HasColumnName("id_CuentaCorriente")
                     .IsRequired(false);
 
+                entity.Property(e => e.TipoMovimientoDetalle)
+                    .HasColumnName("tipo_movimiento_detalle")
+                    .IsRequired();
+
                 // Relación con Venta (si tenés definida la entidad Venta)
                 entity.HasOne(e => e.Venta)
                       .WithMany() // o .WithMany(v => v.Movimientos) si agregás la colección en Venta
