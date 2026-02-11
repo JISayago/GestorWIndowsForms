@@ -11,7 +11,6 @@ namespace Presentacion.FBase
         protected long? entidadID;
         protected bool puedeEjecutarComando;
 
-        // 🔵 lista acciones dinámicas barra lateral
         public List<AccionGrid> AccionesPersonalizadas = new List<AccionGrid>();
 
         public FBaseConsulta()
@@ -107,14 +106,17 @@ namespace Presentacion.FBase
 
         #endregion
 
-        #region FILTROS DINAMICOS
+        #region FILTROS DINAMICOS BASE
 
         protected virtual FiltroConsulta ObtenerFiltros()
         {
             return new FiltroConsulta
             {
                 TextoBuscar = txtBuscar.Text,
-                VerEliminados = cbxEstaEliminado.Checked
+                VerEliminados = cbxEstaEliminado.Checked,
+                FechaDesde = ObtenerFechaDesdeUI(),
+                FechaHasta = ObtenerFechaHastaUI(),
+                Extra = ObtenerFiltroExtraUI()
             };
         }
 
@@ -122,6 +124,80 @@ namespace Presentacion.FBase
         {
             var filtros = ObtenerFiltros();
             ActualizarDatos(dgvGrilla, filtros);
+        }
+
+        #endregion
+
+        #region LECTURA FILTROS UI
+
+        protected virtual DateTime? ObtenerFechaDesdeUI()
+        {
+            if (dtpDesde == null) return null;
+            if (!dtpDesde.Visible) return null;
+            if (chkUsarFecha != null && !chkUsarFecha.Checked) return null;
+
+            return dtpDesde.Value.Date;
+        }
+
+        protected virtual DateTime? ObtenerFechaHastaUI()
+        {
+            if (dtpHasta == null) return null;
+            if (!dtpHasta.Visible) return null;
+            if (chkUsarFecha != null && !chkUsarFecha.Checked) return null;
+
+            return dtpHasta.Value.Date;
+        }
+
+        protected virtual object ObtenerFiltroExtraUI()
+        {
+            if (cbxFiltroOpcional == null) return null;
+            if (!cbxFiltroOpcional.Visible) return null;
+            if (cbxFiltroOpcional.SelectedValue == null) return null;
+
+            return cbxFiltroOpcional.SelectedValue;
+        }
+
+        #endregion
+
+        #region CONFIGURAR FILTROS OPCIONALES (PARA LOS FORMS)
+
+        protected void ActivarFiltroCombo(string label, object data, string display, string value)
+        {
+            if (pnlFiltrosAvanzados != null)
+                pnlFiltrosAvanzados.Visible = true;
+
+            if (lblFiltro != null)
+            {
+                lblFiltro.Text = label;
+                lblFiltro.Visible = true;
+            }
+
+            if (cbxFiltroOpcional != null)
+            {
+                cbxFiltroOpcional.Visible = true;
+                cbxFiltroOpcional.DataSource = data;
+                cbxFiltroOpcional.DisplayMember = display;
+                cbxFiltroOpcional.ValueMember = value;
+                cbxFiltroOpcional.SelectedIndex = -1;
+            }
+        }
+
+        protected void ActivarFiltroFecha(bool rango = true)
+        {
+            if (pnlFiltrosAvanzados != null)
+                pnlFiltrosAvanzados.Visible = true;
+
+            if (chkUsarFecha != null)
+            {
+                chkUsarFecha.Visible = true;
+                chkUsarFecha.Checked = false;
+            }
+
+            if (dtpDesde != null)
+                dtpDesde.Visible = true;
+
+            if (dtpHasta != null)
+                dtpHasta.Visible = rango;
         }
 
         #endregion
@@ -144,6 +220,8 @@ namespace Presentacion.FBase
             }
 
             EvaluarAccionesPorEstado(filtros);
+
+            BarraLateralBotones.Enabled = AccionesPersonalizadas.Count > 0;
         }
 
         public virtual void ResetearGrilla(DataGridView grilla)
