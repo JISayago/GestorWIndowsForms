@@ -152,7 +152,7 @@ namespace Servicios.LogicaNegocio.Caja
 
         }
 
-        public void ActualizarSaldoCaja(AccesoDatos.Entidades.Caja caja, string tipo, decimal monto)
+        public void ActualizarSaldoCaja(AccesoDatos.Entidades.Caja caja, string tipo, decimal monto)  //Usar tipo movimiento
         {
             //TipoDeTransaccion podria es un enum en vez de string, fixear
             if (tipo == "Ingreso")
@@ -281,5 +281,7 @@ namespace Servicios.LogicaNegocio.Caja
 
             return cajas;
         }
+
+        //PODRIA HACER UNA FUNCION PARA BUSCAR FECHAS ESPECIFICAS,Y REUSAR ESA PARA LOS GRAFICOS FILTRADOS
     }
 }
