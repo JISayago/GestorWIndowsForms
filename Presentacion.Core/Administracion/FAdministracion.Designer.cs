@@ -48,14 +48,27 @@
             tIPOPAGOToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanel1 = new TableLayoutPanel();
             btnGasto = new Button();
-            btnMovimientos = new Button();
             btnVolver = new Button();
             btnComprobantes = new Button();
+            btnMovimientos = new Button();
+            tlpBaseFiltrado = new TableLayoutPanel();
+            tlpFiltradoMesYAño = new TableLayoutPanel();
+            lblMesGraficos = new Label();
+            lblAñoGraficos = new Label();
+            cbMesGrafico = new ComboBox();
+            cbAñoGraficos = new ComboBox();
+            tlpFiltradoBotones = new TableLayoutPanel();
+            btnFiltrarGraficos = new Button();
+            button2 = new Button();
+            btnFechaActualGraficos = new Button();
             pnlInfoInicial = new Panel();
             tlpBase = new TableLayoutPanel();
-            tableLayoutPanel2 = new TableLayoutPanel();
-            formsPlot2 = new ScottPlot.WinForms.FormsPlot();
+            tlpGraficosArriba = new TableLayoutPanel();
+            tabControl1 = new TabControl();
+            tabPage1 = new TabPage();
             formsPlot1 = new ScottPlot.WinForms.FormsPlot();
+            tabPage2 = new TabPage();
+            formsPlot2 = new ScottPlot.WinForms.FormsPlot();
             tableLayoutPanel3 = new TableLayoutPanel();
             formsPlot3 = new ScottPlot.WinForms.FormsPlot();
             formsPlot4 = new ScottPlot.WinForms.FormsPlot();
@@ -65,9 +78,15 @@
             sqlCommand1 = new Microsoft.Data.SqlClient.SqlCommand();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
+            tlpBaseFiltrado.SuspendLayout();
+            tlpFiltradoMesYAño.SuspendLayout();
+            tlpFiltradoBotones.SuspendLayout();
             pnlInfoInicial.SuspendLayout();
             tlpBase.SuspendLayout();
-            tableLayoutPanel2.SuspendLayout();
+            tlpGraficosArriba.SuspendLayout();
+            tabControl1.SuspendLayout();
+            tabPage1.SuspendLayout();
+            tabPage2.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
             SuspendLayout();
@@ -202,15 +221,17 @@
             // 
             // tableLayoutPanel1
             // 
-            tableLayoutPanel1.ColumnCount = 4;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnCount = 5;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 18.281538F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 18.2815361F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 26.8738575F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 18.2815361F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 18.2815361F));
             tableLayoutPanel1.Controls.Add(btnGasto, 1, 0);
-            tableLayoutPanel1.Controls.Add(btnMovimientos, 2, 0);
             tableLayoutPanel1.Controls.Add(btnVolver, 0, 0);
-            tableLayoutPanel1.Controls.Add(btnComprobantes, 3, 0);
+            tableLayoutPanel1.Controls.Add(btnComprobantes, 4, 0);
+            tableLayoutPanel1.Controls.Add(btnMovimientos, 3, 0);
+            tableLayoutPanel1.Controls.Add(tlpBaseFiltrado, 2, 0);
             tableLayoutPanel1.Dock = DockStyle.Top;
             tableLayoutPanel1.Location = new Point(0, 24);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -222,7 +243,7 @@
             // btnGasto
             // 
             btnGasto.Anchor = AnchorStyles.Left;
-            btnGasto.Location = new Point(405, 15);
+            btnGasto.Location = new Point(297, 15);
             btnGasto.MaximumSize = new Size(236, 63);
             btnGasto.MinimumSize = new Size(236, 63);
             btnGasto.Name = "btnGasto";
@@ -232,23 +253,10 @@
             btnGasto.UseVisualStyleBackColor = true;
             btnGasto.Click += btnGasto_Click;
             // 
-            // btnMovimientos
-            // 
-            btnMovimientos.Anchor = AnchorStyles.Right;
-            btnMovimientos.Location = new Point(967, 15);
-            btnMovimientos.MaximumSize = new Size(236, 63);
-            btnMovimientos.MinimumSize = new Size(236, 63);
-            btnMovimientos.Name = "btnMovimientos";
-            btnMovimientos.Size = new Size(236, 63);
-            btnMovimientos.TabIndex = 16;
-            btnMovimientos.Text = "MOVIMIENTOS";
-            btnMovimientos.UseVisualStyleBackColor = true;
-            btnMovimientos.Click += btnMovimientos_Click;
-            // 
             // btnVolver
             // 
             btnVolver.Anchor = AnchorStyles.Right;
-            btnVolver.Location = new Point(163, 15);
+            btnVolver.Location = new Point(55, 15);
             btnVolver.MaximumSize = new Size(236, 63);
             btnVolver.MinimumSize = new Size(236, 63);
             btnVolver.Name = "btnVolver";
@@ -261,7 +269,7 @@
             // btnComprobantes
             // 
             btnComprobantes.Anchor = AnchorStyles.Left;
-            btnComprobantes.Location = new Point(1209, 15);
+            btnComprobantes.Location = new Point(1317, 15);
             btnComprobantes.MaximumSize = new Size(236, 63);
             btnComprobantes.MinimumSize = new Size(236, 63);
             btnComprobantes.Name = "btnComprobantes";
@@ -270,6 +278,145 @@
             btnComprobantes.Text = "COMPROBANTES";
             btnComprobantes.UseVisualStyleBackColor = true;
             btnComprobantes.Click += btnComprobantes_Click;
+            // 
+            // btnMovimientos
+            // 
+            btnMovimientos.Anchor = AnchorStyles.Right;
+            btnMovimientos.Location = new Point(1075, 15);
+            btnMovimientos.MaximumSize = new Size(236, 63);
+            btnMovimientos.MinimumSize = new Size(236, 63);
+            btnMovimientos.Name = "btnMovimientos";
+            btnMovimientos.Size = new Size(236, 63);
+            btnMovimientos.TabIndex = 16;
+            btnMovimientos.Text = "MOVIMIENTOS";
+            btnMovimientos.UseVisualStyleBackColor = true;
+            btnMovimientos.Click += btnMovimientos_Click;
+            // 
+            // tlpBaseFiltrado
+            // 
+            tlpBaseFiltrado.ColumnCount = 1;
+            tlpBaseFiltrado.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tlpBaseFiltrado.Controls.Add(tlpFiltradoMesYAño, 0, 0);
+            tlpBaseFiltrado.Controls.Add(tlpFiltradoBotones, 0, 1);
+            tlpBaseFiltrado.Dock = DockStyle.Fill;
+            tlpBaseFiltrado.Location = new Point(591, 3);
+            tlpBaseFiltrado.Name = "tlpBaseFiltrado";
+            tlpBaseFiltrado.RowCount = 2;
+            tlpBaseFiltrado.RowStyles.Add(new RowStyle(SizeType.Percent, 61.363636F));
+            tlpBaseFiltrado.RowStyles.Add(new RowStyle(SizeType.Percent, 38.636364F));
+            tlpBaseFiltrado.Size = new Size(426, 88);
+            tlpBaseFiltrado.TabIndex = 17;
+            // 
+            // tlpFiltradoMesYAño
+            // 
+            tlpFiltradoMesYAño.ColumnCount = 2;
+            tlpFiltradoMesYAño.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tlpFiltradoMesYAño.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tlpFiltradoMesYAño.Controls.Add(lblMesGraficos, 0, 0);
+            tlpFiltradoMesYAño.Controls.Add(lblAñoGraficos, 1, 0);
+            tlpFiltradoMesYAño.Controls.Add(cbMesGrafico, 0, 1);
+            tlpFiltradoMesYAño.Controls.Add(cbAñoGraficos, 1, 1);
+            tlpFiltradoMesYAño.Dock = DockStyle.Fill;
+            tlpFiltradoMesYAño.Location = new Point(3, 3);
+            tlpFiltradoMesYAño.Name = "tlpFiltradoMesYAño";
+            tlpFiltradoMesYAño.RowCount = 2;
+            tlpFiltradoMesYAño.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
+            tlpFiltradoMesYAño.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
+            tlpFiltradoMesYAño.Size = new Size(420, 48);
+            tlpFiltradoMesYAño.TabIndex = 2;
+            // 
+            // lblMesGraficos
+            // 
+            lblMesGraficos.AutoSize = true;
+            lblMesGraficos.Dock = DockStyle.Bottom;
+            lblMesGraficos.Location = new Point(3, 4);
+            lblMesGraficos.Name = "lblMesGraficos";
+            lblMesGraficos.Size = new Size(204, 15);
+            lblMesGraficos.TabIndex = 0;
+            lblMesGraficos.Text = "Mes";
+            lblMesGraficos.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblAñoGraficos
+            // 
+            lblAñoGraficos.AutoSize = true;
+            lblAñoGraficos.Dock = DockStyle.Bottom;
+            lblAñoGraficos.Location = new Point(213, 4);
+            lblAñoGraficos.Name = "lblAñoGraficos";
+            lblAñoGraficos.Size = new Size(204, 15);
+            lblAñoGraficos.TabIndex = 1;
+            lblAñoGraficos.Text = "Año";
+            lblAñoGraficos.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // cbMesGrafico
+            // 
+            cbMesGrafico.Dock = DockStyle.Bottom;
+            cbMesGrafico.FormattingEnabled = true;
+            cbMesGrafico.Location = new Point(30, 22);
+            cbMesGrafico.Margin = new Padding(30, 3, 30, 3);
+            cbMesGrafico.Name = "cbMesGrafico";
+            cbMesGrafico.Size = new Size(150, 23);
+            cbMesGrafico.TabIndex = 4;
+            // 
+            // cbAñoGraficos
+            // 
+            cbAñoGraficos.Dock = DockStyle.Bottom;
+            cbAñoGraficos.FormattingEnabled = true;
+            cbAñoGraficos.Location = new Point(240, 22);
+            cbAñoGraficos.Margin = new Padding(30, 3, 30, 3);
+            cbAñoGraficos.Name = "cbAñoGraficos";
+            cbAñoGraficos.Size = new Size(150, 23);
+            cbAñoGraficos.TabIndex = 5;
+            // 
+            // tlpFiltradoBotones
+            // 
+            tlpFiltradoBotones.ColumnCount = 3;
+            tlpFiltradoBotones.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tlpFiltradoBotones.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tlpFiltradoBotones.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tlpFiltradoBotones.Controls.Add(btnFiltrarGraficos, 1, 0);
+            tlpFiltradoBotones.Controls.Add(button2, 0, 0);
+            tlpFiltradoBotones.Controls.Add(btnFechaActualGraficos, 2, 0);
+            tlpFiltradoBotones.Dock = DockStyle.Fill;
+            tlpFiltradoBotones.Location = new Point(3, 57);
+            tlpFiltradoBotones.Name = "tlpFiltradoBotones";
+            tlpFiltradoBotones.RowCount = 1;
+            tlpFiltradoBotones.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpFiltradoBotones.Size = new Size(420, 28);
+            tlpFiltradoBotones.TabIndex = 3;
+            // 
+            // btnFiltrarGraficos
+            // 
+            btnFiltrarGraficos.Dock = DockStyle.Fill;
+            btnFiltrarGraficos.Location = new Point(169, 3);
+            btnFiltrarGraficos.Margin = new Padding(30, 3, 30, 3);
+            btnFiltrarGraficos.Name = "btnFiltrarGraficos";
+            btnFiltrarGraficos.Size = new Size(79, 22);
+            btnFiltrarGraficos.TabIndex = 0;
+            btnFiltrarGraficos.Text = "Filtrar";
+            btnFiltrarGraficos.UseVisualStyleBackColor = true;
+            btnFiltrarGraficos.Click += btnFiltrarGraficos_Click;
+            // 
+            // button2
+            // 
+            button2.Dock = DockStyle.Fill;
+            button2.Location = new Point(15, 3);
+            button2.Margin = new Padding(15, 3, 15, 3);
+            button2.Name = "button2";
+            button2.Size = new Size(109, 22);
+            button2.TabIndex = 1;
+            button2.Text = "Mes Anterior";
+            button2.UseVisualStyleBackColor = true;
+            // 
+            // btnFechaActualGraficos
+            // 
+            btnFechaActualGraficos.Dock = DockStyle.Fill;
+            btnFechaActualGraficos.Location = new Point(293, 3);
+            btnFechaActualGraficos.Margin = new Padding(15, 3, 15, 3);
+            btnFechaActualGraficos.Name = "btnFechaActualGraficos";
+            btnFechaActualGraficos.Size = new Size(112, 22);
+            btnFechaActualGraficos.TabIndex = 2;
+            btnFechaActualGraficos.Text = "Mes Actual";
+            btnFechaActualGraficos.UseVisualStyleBackColor = true;
             // 
             // pnlInfoInicial
             // 
@@ -281,7 +428,6 @@
             pnlInfoInicial.Name = "pnlInfoInicial";
             pnlInfoInicial.Size = new Size(1610, 872);
             pnlInfoInicial.TabIndex = 24;
-            pnlInfoInicial.Paint += pnlInfoInicial_Paint;
             // 
             // tlpBase
             // 
@@ -289,14 +435,14 @@
             tlpBase.ColumnCount = 1;
             tlpBase.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tlpBase.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-            tlpBase.Controls.Add(tableLayoutPanel2, 0, 0);
+            tlpBase.Controls.Add(tlpGraficosArriba, 0, 0);
             tlpBase.Controls.Add(tableLayoutPanel3, 0, 1);
             tlpBase.Dock = DockStyle.Top;
             tlpBase.Location = new Point(0, 0);
             tlpBase.Name = "tlpBase";
             tlpBase.RowCount = 2;
             tlpBase.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpBase.RowStyles.Add(new RowStyle(SizeType.Absolute, 563F));
+            tlpBase.RowStyles.Add(new RowStyle(SizeType.Absolute, 557F));
             tlpBase.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tlpBase.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tlpBase.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
@@ -304,40 +450,71 @@
             tlpBase.Size = new Size(1610, 872);
             tlpBase.TabIndex = 24;
             // 
-            // tableLayoutPanel2
+            // tlpGraficosArriba
             // 
-            tableLayoutPanel2.BackColor = Color.FromArgb(192, 255, 192);
-            tableLayoutPanel2.ColumnCount = 1;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Controls.Add(formsPlot2, 0, 0);
-            tableLayoutPanel2.Controls.Add(formsPlot1, 0, 1);
-            tableLayoutPanel2.Dock = DockStyle.Fill;
-            tableLayoutPanel2.ForeColor = SystemColors.ButtonShadow;
-            tableLayoutPanel2.Location = new Point(3, 3);
-            tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 2;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 25.10917F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 74.89083F));
-            tableLayoutPanel2.Size = new Size(1604, 303);
-            tableLayoutPanel2.TabIndex = 0;
+            tlpGraficosArriba.BackColor = Color.FromArgb(192, 255, 192);
+            tlpGraficosArriba.ColumnCount = 1;
+            tlpGraficosArriba.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tlpGraficosArriba.Controls.Add(tabControl1, 0, 1);
+            tlpGraficosArriba.ForeColor = SystemColors.ButtonShadow;
+            tlpGraficosArriba.Location = new Point(3, 3);
+            tlpGraficosArriba.Name = "tlpGraficosArriba";
+            tlpGraficosArriba.RowCount = 2;
+            tlpGraficosArriba.RowStyles.Add(new RowStyle(SizeType.Percent, 2.71084332F));
+            tlpGraficosArriba.RowStyles.Add(new RowStyle(SizeType.Percent, 97.2891541F));
+            tlpGraficosArriba.Size = new Size(1604, 309);
+            tlpGraficosArriba.TabIndex = 0;
             // 
-            // formsPlot2
+            // tabControl1
             // 
-            formsPlot2.DisplayScale = 1F;
-            formsPlot2.Location = new Point(3, 3);
-            formsPlot2.Name = "formsPlot2";
-            formsPlot2.Size = new Size(1598, 70);
-            formsPlot2.TabIndex = 21;
+            tabControl1.Controls.Add(tabPage1);
+            tabControl1.Controls.Add(tabPage2);
+            tabControl1.Dock = DockStyle.Fill;
+            tabControl1.Location = new Point(3, 11);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(1598, 295);
+            tabControl1.TabIndex = 0;
+            // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(formsPlot1);
+            tabPage1.Location = new Point(4, 24);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(1590, 267);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "tabPage1";
+            tabPage1.UseVisualStyleBackColor = true;
             // 
             // formsPlot1
             // 
             formsPlot1.DisplayScale = 1F;
             formsPlot1.Dock = DockStyle.Fill;
-            formsPlot1.Location = new Point(3, 79);
+            formsPlot1.Location = new Point(3, 3);
             formsPlot1.Name = "formsPlot1";
-            formsPlot1.Size = new Size(1598, 221);
-            formsPlot1.TabIndex = 20;
-            formsPlot1.Load += formsPlot1_Load;
+            formsPlot1.Size = new Size(1584, 261);
+            formsPlot1.TabIndex = 0;
+            // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(formsPlot2);
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(1590, 267);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "tabPage2";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // formsPlot2
+            // 
+            formsPlot2.DisplayScale = 1F;
+            formsPlot2.Dock = DockStyle.Fill;
+            formsPlot2.Location = new Point(3, 3);
+            formsPlot2.Name = "formsPlot2";
+            formsPlot2.Size = new Size(1584, 261);
+            formsPlot2.TabIndex = 0;
             // 
             // tableLayoutPanel3
             // 
@@ -345,55 +522,55 @@
             tableLayoutPanel3.ColumnCount = 2;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 49.82332F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.1766777F));
-            tableLayoutPanel3.Controls.Add(formsPlot3, 0, 1);
-            tableLayoutPanel3.Controls.Add(formsPlot4, 1, 1);
-            tableLayoutPanel3.Controls.Add(formsPlot5, 0, 3);
-            tableLayoutPanel3.Controls.Add(formsPlot6, 1, 3);
+            tableLayoutPanel3.Controls.Add(formsPlot3, 0, 0);
+            tableLayoutPanel3.Controls.Add(formsPlot4, 1, 0);
+            tableLayoutPanel3.Controls.Add(formsPlot5, 0, 1);
+            tableLayoutPanel3.Controls.Add(formsPlot6, 1, 1);
             tableLayoutPanel3.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Location = new Point(3, 312);
+            tableLayoutPanel3.Location = new Point(3, 318);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
-            tableLayoutPanel3.RowCount = 4;
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 12.2641516F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 37.73585F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 12.2641516F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 37.73585F));
-            tableLayoutPanel3.Size = new Size(1604, 557);
+            tableLayoutPanel3.RowCount = 2;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.Size = new Size(1604, 551);
             tableLayoutPanel3.TabIndex = 1;
             // 
             // formsPlot3
             // 
             formsPlot3.DisplayScale = 1F;
             formsPlot3.Dock = DockStyle.Fill;
-            formsPlot3.Location = new Point(3, 71);
+            formsPlot3.Location = new Point(3, 3);
             formsPlot3.Name = "formsPlot3";
-            formsPlot3.Size = new Size(793, 204);
+            formsPlot3.Size = new Size(793, 269);
             formsPlot3.TabIndex = 22;
             // 
             // formsPlot4
             // 
             formsPlot4.DisplayScale = 1F;
             formsPlot4.Dock = DockStyle.Fill;
-            formsPlot4.Location = new Point(802, 71);
+            formsPlot4.Location = new Point(802, 3);
             formsPlot4.Name = "formsPlot4";
-            formsPlot4.Size = new Size(799, 204);
+            formsPlot4.Size = new Size(799, 269);
             formsPlot4.TabIndex = 23;
             // 
             // formsPlot5
             // 
             formsPlot5.DisplayScale = 1F;
             formsPlot5.Dock = DockStyle.Fill;
-            formsPlot5.Location = new Point(3, 349);
+            formsPlot5.Location = new Point(3, 278);
             formsPlot5.Name = "formsPlot5";
-            formsPlot5.Size = new Size(793, 205);
+            formsPlot5.Size = new Size(793, 270);
             formsPlot5.TabIndex = 28;
             // 
             // formsPlot6
             // 
             formsPlot6.DisplayScale = 1F;
             formsPlot6.Dock = DockStyle.Fill;
-            formsPlot6.Location = new Point(802, 349);
+            formsPlot6.Location = new Point(802, 278);
             formsPlot6.Name = "formsPlot6";
-            formsPlot6.Size = new Size(799, 205);
+            formsPlot6.Size = new Size(799, 270);
             formsPlot6.TabIndex = 29;
             // 
             // dgvGrilla
@@ -426,9 +603,16 @@
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
+            tlpBaseFiltrado.ResumeLayout(false);
+            tlpFiltradoMesYAño.ResumeLayout(false);
+            tlpFiltradoMesYAño.PerformLayout();
+            tlpFiltradoBotones.ResumeLayout(false);
             pnlInfoInicial.ResumeLayout(false);
             tlpBase.ResumeLayout(false);
-            tableLayoutPanel2.ResumeLayout(false);
+            tlpGraficosArriba.ResumeLayout(false);
+            tabControl1.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage2.ResumeLayout(false);
             tableLayoutPanel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
             ResumeLayout(false);
@@ -462,15 +646,28 @@
         private ToolStripMenuItem nUEVAOFERTAToolStripMenuItem;
         private Panel pnlInfoInicial;
         private DataGridView dgvGrilla;
-        private ScottPlot.WinForms.FormsPlot formsPlot2;
-        private ScottPlot.WinForms.FormsPlot formsPlot1;
         private ScottPlot.WinForms.FormsPlot formsPlot3;
         private ScottPlot.WinForms.FormsPlot formsPlot4;
         private TableLayoutPanel tlpBase;
         private Microsoft.Data.SqlClient.SqlCommand sqlCommand1;
         private ScottPlot.WinForms.FormsPlot formsPlot5;
         private ScottPlot.WinForms.FormsPlot formsPlot6;
-        private TableLayoutPanel tableLayoutPanel2;
+        private TableLayoutPanel tlpGraficosArriba;
         private TableLayoutPanel tableLayoutPanel3;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
+        private ScottPlot.WinForms.FormsPlot formsPlot1;
+        private TabPage tabPage2;
+        private ScottPlot.WinForms.FormsPlot formsPlot2;
+        private TableLayoutPanel tlpBaseFiltrado;
+        private TableLayoutPanel tlpFiltradoMesYAño;
+        private Label lblMesGraficos;
+        private Label lblAñoGraficos;
+        private ComboBox cbMesGrafico;
+        private ComboBox cbAñoGraficos;
+        private TableLayoutPanel tlpFiltradoBotones;
+        private Button btnFiltrarGraficos;
+        private Button button2;
+        private Button btnFechaActualGraficos;
     }
 }

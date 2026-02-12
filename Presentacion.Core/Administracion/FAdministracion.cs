@@ -21,6 +21,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,32 @@ namespace Presentacion.Core.Administracion
 
             _cajaSerivicio = new CajaServicio();
             _ventaServicio = new VentaServicio();
+
+            //ComboBox de meses para el filtro del grafico de ganancias por mes
+            var meses = DateTimeFormatInfo.CurrentInfo.MonthNames
+                .Where(m => !string.IsNullOrEmpty(m))
+                .ToArray();
+
+            cbMesGrafico.DataSource = meses;
+
+            cbMesGrafico.DropDownStyle = ComboBoxStyle.DropDown;
+            cbMesGrafico.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cbMesGrafico.AutoCompleteSource = AutoCompleteSource.ListItems;
+
+            //ComboBox de años para el filtro del grafico de ganancias por mes
+            //Buscar el año mas viejo en ventas o en caja, asi limitamos el rango de años a mostrar en el combo
+
+            int anioActual = DateTime.Now.Year;
+
+            var anios = Enumerable.Range(anioActual - 9, 10)
+                                  .OrderByDescending(a => a)
+                                  .ToList();
+
+            cbAñoGraficos.DataSource = anios;
+
+            cbAñoGraficos.DropDownStyle = ComboBoxStyle.DropDown;
+            cbAñoGraficos.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cbAñoGraficos.AutoCompleteSource = AutoCompleteSource.ListItems;
         }
 
         private void btnVolver_Click(object sender, EventArgs e)
@@ -213,7 +240,7 @@ namespace Presentacion.Core.Administracion
             formsPlot1.Refresh();
 
 
-            
+
             ////Segundo Grafico////
             ///Ganacias por cajas agrupadas por X cantidad de dias (ultimos 31 dias actual)  // Este grafico no me cierra mucho teniendo el grafico 1
 
@@ -252,7 +279,7 @@ namespace Presentacion.Core.Administracion
 
             formsPlot2.Refresh();
 
-            
+
 
             ////Tercer grafico/////
             ///Ganancias por mes de X año
@@ -308,7 +335,48 @@ namespace Presentacion.Core.Administracion
 
 
 
-            ////Cuarto grafico/////
+            ////Cuarto grafico////
+            ///Ganacias por dias en un mes y año especificos
+
+            //LO SIGUIENTE SERIA PODER FILTRAR EL MES Y EL AÑO --------> solo falta agregar el data entry para las dates
+
+            var GananciasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year); //traemos toda las ventas de un mes y año especificos 
+
+            var ganaciasAgrupadasPorFecha = GananciasMesXAñoX
+                .GroupBy(i => i.FechaVenta.Date)
+                .Select(g => new
+                {
+                    Fecha = g.Key,
+                    IngresoTotal = g.Sum(x => x.Total)
+                })
+                .OrderBy(x => x.Fecha)
+                .ToList();
+
+            string[] diaDeLasGanancias = ganaciasAgrupadasPorFecha //seleccionamos las fechas de las ventas
+                .Select(x => x.Fecha.ToString("dd/MM"))
+                .ToArray();
+
+            double[] cantidadesGananciasPorDia = ganaciasAgrupadasPorFecha.Select(x => (double)x.IngresoTotal).ToArray(); //seleccionamos la cantidad de ventas por dia (valor de las bars)
+
+            double[] posicionesDiasGanancias = Enumerable.Range(0, diaDeLasGanancias.Length)
+                                .Select(i => (double)i)
+                                .ToArray();
+
+            formsPlot4.Plot.Clear();
+
+            formsPlot4.Plot.Title("Ganancias por Dia en el ultimo Mes");
+            formsPlot4.Plot.XLabel("Dias");
+            formsPlot4.Plot.YLabel("Total Ventas");
+
+            formsPlot4.Plot.Add.Bars(cantidadesGananciasPorDia);
+
+            formsPlot4.Plot.Axes.Bottom.SetTicks(posicionesDiasGanancias, diaDeLasGanancias); //agregamos al grafico 
+
+            formsPlot4.Refresh();
+
+
+
+            ////Quinto grafico/////
             ///Ventas por mes de X año
 
             ///LO SIGUIENTE FILTRAR POR AÑO TAMBIEN --------> solo falta el data entry para el año
@@ -344,65 +412,24 @@ namespace Presentacion.Core.Administracion
                 .ToArray();
 
 
-            formsPlot4.Plot.Clear();
-
-            formsPlot4.Plot.Title("Ventas por mes");
-            formsPlot4.Plot.XLabel("Meses");
-            formsPlot4.Plot.YLabel("Total Ingresos");
-
-            formsPlot4.Plot.Add.Bars(xsVentas, ventasPorMesEjeY);
-
-            //Meses como labels del eje X
-            formsPlot4.Plot.Axes.Bottom.SetTicks(xsVentas, mesesVentasPresentesEjeX);
-
-            //Rotar etiquetas
-            formsPlot4.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
-
-            formsPlot4.Refresh();
-
-
-
-            ////Quinto grafico////
-            ///Ganacias por dias en un mes y año especificos
-
-            //LO SIGUIENTE SERIA PODER FILTRAR EL MES Y EL AÑO --------> solo falta agregar el data entry para las dates
-
-            var GananciasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year); //traemos toda las ventas de un mes y año especificos 
-
-            var ganaciasAgrupadasPorFecha = GananciasMesXAñoX
-                .GroupBy(i => i.FechaVenta.Date)
-                .Select(g => new
-                {
-                    Fecha = g.Key,
-                    IngresoTotal = g.Sum(x => x.Total)
-                })
-                .OrderBy(x => x.Fecha)
-                .ToList();
-
-            string[] diaDeLasGanancias = ganaciasAgrupadasPorFecha //seleccionamos las fechas de las ventas
-                .Select(x => x.Fecha.ToString("dd/MM"))
-                .ToArray();
-
-            double[] cantidadesGananciasPorDia = ganaciasAgrupadasPorFecha.Select(x => (double)x.IngresoTotal).ToArray(); //seleccionamos la cantidad de ventas por dia (valor de las bars)
-
-            double[] posicionesDiasGanancias = Enumerable.Range(0, diaDeLasGanancias.Length)
-                                .Select(i => (double)i)
-                                .ToArray();
-
             formsPlot5.Plot.Clear();
 
-            formsPlot5.Plot.Title("Ganancias por Dia en el ultimo Mes");
-            formsPlot5.Plot.XLabel("Dias");
-            formsPlot5.Plot.YLabel("Total Ventas");
+            formsPlot5.Plot.Title("Ventas por mes");
+            formsPlot5.Plot.XLabel("Meses");
+            formsPlot5.Plot.YLabel("Total Ingresos");
 
-            formsPlot5.Plot.Add.Bars(cantidadesGananciasPorDia);
+            formsPlot5.Plot.Add.Bars(xsVentas, ventasPorMesEjeY);
 
-            formsPlot5.Plot.Axes.Bottom.SetTicks(posicionesDiasGanancias, diaDeLasGanancias); //agregamos al grafico 
+            //Meses como labels del eje X
+            formsPlot5.Plot.Axes.Bottom.SetTicks(xsVentas, mesesVentasPresentesEjeX);
+
+            //Rotar etiquetas
+            formsPlot5.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
 
             formsPlot5.Refresh();
 
 
-            
+
             ////Sexto grafico////
             ///Ventas por dias en un mes y año especificos
 
@@ -454,7 +481,7 @@ namespace Presentacion.Core.Administracion
 
         }
 
-        private void pnlInfoInicial_Paint(object sender, PaintEventArgs e)
+        private void btnFiltrarGraficos_Click(object sender, EventArgs e)
         {
 
         }
