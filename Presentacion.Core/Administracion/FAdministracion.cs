@@ -200,11 +200,6 @@ namespace Presentacion.Core.Administracion
             }
         }
 
-        private void formsPlot1_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void FAdministracion_Load(object sender, EventArgs e)
         {
             grafico1();
@@ -236,36 +231,49 @@ namespace Presentacion.Core.Administracion
 
         private void filtrarGraficos(int año, int mes)
         {
+            grafico1(mes, año);
             grafico3(año);
             grafico4(año);
             grafico5(mes, año);
             grafico6(mes, año);
         }
 
-        private void grafico1()
+        private void grafico1(int? mes = null, int? año = null)
         {
 
             ////Primer grafico////
             ///Ganacias por cajas de un MES y un AÑO especificos
 
-            var ultimas31Cajas = _cajaSerivicio.ObtenerUltimasXCajas(31); //CAMBIAR LA FUNCION a una que traiga por mes y año
+            var cajasEnUnMesXyAñoX = _cajaSerivicio.ObtenerCajasPorMesYAño(DateTime.Now.Month, DateTime.Now.Year); //CAMBIAR LA FUNCION a una que traiga por mes y año
 
-            //LO SIGUIENTE SERIA PODER MODIFICAR EL MES Y AÑO DE LAS VENTAS
+            if(mes.HasValue && año.HasValue)
+            {
+                int añoBusqueda = año.Value;
+                int mesBusqueda = mes.Value;
 
-            double[] gananciasPorCaja = ultimas31Cajas
+                cajasEnUnMesXyAñoX = _cajaSerivicio.ObtenerCajasPorMesYAño(mesBusqueda, añoBusqueda);
+            }
+
+            double[] gananciasPorCaja = cajasEnUnMesXyAñoX
                 .Select(c => (double)c.TotalIngresos)
                 .ToArray();
 
-            string[] fechasDeCadaCaja = ultimas31Cajas
+            string[] fechasDeCadaCaja = cajasEnUnMesXyAñoX
             .Select(c => $"A: {c.FechaInicio:dd/MM}\nC: {c.FechaFin?.ToString("dd/MM") ?? "Abierta"}")
             .ToArray();
 
             double[] numerosCajas = Enumerable
-                .Range(1, ultimas31Cajas.Count)
+                .Range(1, cajasEnUnMesXyAñoX.Count)
                 .Select(i => (double)i)
                 .ToArray();
 
-            formsPlot1.Plot.Title("Caja Ultimo Mes");
+            formsPlot1.Plot.Clear();
+
+            string title = mes.HasValue ?
+                $"Cajas en {cbMesGrafico.SelectedItem}" :
+                $"Cajas en {CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(DateTime.Now.Month)}";
+
+            formsPlot1.Plot.Title(title);
             formsPlot1.Plot.XLabel("Fecha de las Cajas");
             formsPlot1.Plot.YLabel("Total Ingresos");
 
