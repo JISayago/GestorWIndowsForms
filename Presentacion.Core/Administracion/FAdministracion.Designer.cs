@@ -455,13 +455,13 @@
             tlpGraficosArriba.BackColor = Color.FromArgb(192, 255, 192);
             tlpGraficosArriba.ColumnCount = 1;
             tlpGraficosArriba.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tlpGraficosArriba.Controls.Add(tabControl1, 0, 1);
+            tlpGraficosArriba.Controls.Add(tabControl1, 0, 0);
             tlpGraficosArriba.ForeColor = SystemColors.ButtonShadow;
             tlpGraficosArriba.Location = new Point(3, 3);
             tlpGraficosArriba.Name = "tlpGraficosArriba";
-            tlpGraficosArriba.RowCount = 2;
-            tlpGraficosArriba.RowStyles.Add(new RowStyle(SizeType.Percent, 2.71084332F));
-            tlpGraficosArriba.RowStyles.Add(new RowStyle(SizeType.Percent, 97.2891541F));
+            tlpGraficosArriba.RowCount = 1;
+            tlpGraficosArriba.RowStyles.Add(new RowStyle(SizeType.Percent, 100.000008F));
+            tlpGraficosArriba.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tlpGraficosArriba.Size = new Size(1604, 309);
             tlpGraficosArriba.TabIndex = 0;
             // 
@@ -470,10 +470,10 @@
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
             tabControl1.Dock = DockStyle.Fill;
-            tabControl1.Location = new Point(3, 11);
+            tabControl1.Location = new Point(3, 3);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1598, 295);
+            tabControl1.Size = new Size(1598, 303);
             tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -482,7 +482,7 @@
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1590, 267);
+            tabPage1.Size = new Size(1590, 275);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "tabPage1";
             tabPage1.UseVisualStyleBackColor = true;
@@ -493,7 +493,7 @@
             formsPlot1.Dock = DockStyle.Fill;
             formsPlot1.Location = new Point(3, 3);
             formsPlot1.Name = "formsPlot1";
-            formsPlot1.Size = new Size(1584, 261);
+            formsPlot1.Size = new Size(1584, 269);
             formsPlot1.TabIndex = 0;
             // 
             // tabPage2
