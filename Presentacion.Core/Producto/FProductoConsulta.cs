@@ -1,4 +1,5 @@
-﻿using Presentacion.FBase;
+﻿using Presentacion.Core.Presentacion.Core.Helpers;
+using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Producto;
@@ -130,17 +131,21 @@ namespace Presentacion.Core.Producto
         {
             base.ActualizarDatos(dgv, filtros);
 
+            string columnaBuscar = filtros.Extra as string ?? "Descripcion";
+            string texto = filtros.TextoBuscar;
+
             if (filtros.VerEliminados)
             {
-                dgv.DataSource = _ProductoServicio.ObtenerProductosEliminados(filtros.TextoBuscar);
+                dgv.DataSource = _ProductoServicio.ObtenerProductosEliminados(texto, columnaBuscar);
                 BarraLateralBotones.Enabled = false;
             }
             else
             {
-                dgv.DataSource = _ProductoServicio.ObtenerProductos(filtros.TextoBuscar);
+                dgv.DataSource = _ProductoServicio.ObtenerProductos(texto, columnaBuscar);
                 BarraLateralBotones.Enabled = true;
             }
         }
+
 
         #endregion
 
@@ -191,8 +196,17 @@ namespace Presentacion.Core.Producto
 
         private void FProductoConsulta_Load(object sender, EventArgs e)
         {
+            var opciones = new List<OpcionFiltro>
+    {
+        new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
+        new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
+        new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
+        new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
+    };
+
+            ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
         }
+    }
 
         #endregion
-    }
 }

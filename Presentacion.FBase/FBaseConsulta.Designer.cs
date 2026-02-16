@@ -46,11 +46,11 @@
             cbxEstaEliminado = new CheckBox();
             panel1 = new Panel();
             pnlFiltrosAvanzados = new Panel();
-            cbxFiltroOpcional = new ComboBox();
-            dtpDesde = new DateTimePicker();
-            dtpHasta = new DateTimePicker();
-            chkUsarFecha = new CheckBox();
             lblFiltro = new Label();
+            chkUsarFecha = new CheckBox();
+            dtpHasta = new DateTimePicker();
+            dtpDesde = new DateTimePicker();
+            cbxFiltroOpcional = new ComboBox();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
             BarraLateralBotones.SuspendLayout();
@@ -216,42 +216,6 @@
             pnlFiltrosAvanzados.Size = new Size(716, 114);
             pnlFiltrosAvanzados.TabIndex = 4;
             // 
-            // cbxFiltroOpcional
-            // 
-            cbxFiltroOpcional.FormattingEnabled = true;
-            cbxFiltroOpcional.Location = new Point(22, 6);
-            cbxFiltroOpcional.Name = "cbxFiltroOpcional";
-            cbxFiltroOpcional.Size = new Size(121, 23);
-            cbxFiltroOpcional.TabIndex = 0;
-            cbxFiltroOpcional.Visible = false;
-            // 
-            // dtpDesde
-            // 
-            dtpDesde.Location = new Point(198, 20);
-            dtpDesde.Name = "dtpDesde";
-            dtpDesde.Size = new Size(200, 23);
-            dtpDesde.TabIndex = 1;
-            dtpDesde.Visible = false;
-            // 
-            // dtpHasta
-            // 
-            dtpHasta.Location = new Point(473, 25);
-            dtpHasta.Name = "dtpHasta";
-            dtpHasta.Size = new Size(200, 23);
-            dtpHasta.TabIndex = 2;
-            dtpHasta.Visible = false;
-            // 
-            // chkUsarFecha
-            // 
-            chkUsarFecha.AutoSize = true;
-            chkUsarFecha.Location = new Point(77, 64);
-            chkUsarFecha.Name = "chkUsarFecha";
-            chkUsarFecha.Size = new Size(83, 19);
-            chkUsarFecha.TabIndex = 3;
-            chkUsarFecha.Text = "Usar Fecha";
-            chkUsarFecha.UseVisualStyleBackColor = true;
-            chkUsarFecha.Visible = false;
-            // 
             // lblFiltro
             // 
             lblFiltro.AutoSize = true;
@@ -261,6 +225,42 @@
             lblFiltro.TabIndex = 4;
             lblFiltro.Text = "label2";
             lblFiltro.Visible = false;
+            // 
+            // chkUsarFecha
+            // 
+            chkUsarFecha.AutoSize = true;
+            chkUsarFecha.Location = new Point(22, 48);
+            chkUsarFecha.Name = "chkUsarFecha";
+            chkUsarFecha.Size = new Size(83, 19);
+            chkUsarFecha.TabIndex = 3;
+            chkUsarFecha.Text = "Usar Fecha";
+            chkUsarFecha.UseVisualStyleBackColor = true;
+            chkUsarFecha.Visible = false;
+            // 
+            // dtpHasta
+            // 
+            dtpHasta.Location = new Point(473, 25);
+            dtpHasta.Name = "dtpHasta";
+            dtpHasta.Size = new Size(200, 23);
+            dtpHasta.TabIndex = 2;
+            dtpHasta.Visible = false;
+            // 
+            // dtpDesde
+            // 
+            dtpDesde.Location = new Point(198, 20);
+            dtpDesde.Name = "dtpDesde";
+            dtpDesde.Size = new Size(200, 23);
+            dtpDesde.TabIndex = 1;
+            dtpDesde.Visible = false;
+            // 
+            // cbxFiltroOpcional
+            // 
+            cbxFiltroOpcional.FormattingEnabled = true;
+            cbxFiltroOpcional.Location = new Point(22, 6);
+            cbxFiltroOpcional.Name = "cbxFiltroOpcional";
+            cbxFiltroOpcional.Size = new Size(121, 23);
+            cbxFiltroOpcional.TabIndex = 0;
+            cbxFiltroOpcional.Visible = false;
             // 
             // FBaseConsulta
             // 
