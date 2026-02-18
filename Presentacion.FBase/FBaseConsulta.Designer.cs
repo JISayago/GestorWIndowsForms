@@ -46,6 +46,7 @@
             cbxEstaEliminado = new CheckBox();
             panel1 = new Panel();
             pnlFiltrosAvanzados = new Panel();
+            cbxFiltroExtraEstado = new ComboBox();
             lblFiltro = new Label();
             chkUsarFecha = new CheckBox();
             dtpHasta = new DateTimePicker();
@@ -206,6 +207,7 @@
             // 
             // pnlFiltrosAvanzados
             // 
+            pnlFiltrosAvanzados.Controls.Add(cbxFiltroExtraEstado);
             pnlFiltrosAvanzados.Controls.Add(lblFiltro);
             pnlFiltrosAvanzados.Controls.Add(chkUsarFecha);
             pnlFiltrosAvanzados.Controls.Add(dtpHasta);
@@ -215,6 +217,15 @@
             pnlFiltrosAvanzados.Name = "pnlFiltrosAvanzados";
             pnlFiltrosAvanzados.Size = new Size(716, 114);
             pnlFiltrosAvanzados.TabIndex = 4;
+            // 
+            // cbxFiltroExtraEstado
+            // 
+            cbxFiltroExtraEstado.FormattingEnabled = true;
+            cbxFiltroExtraEstado.Location = new Point(22, 88);
+            cbxFiltroExtraEstado.Name = "cbxFiltroExtraEstado";
+            cbxFiltroExtraEstado.Size = new Size(121, 23);
+            cbxFiltroExtraEstado.TabIndex = 5;
+            cbxFiltroExtraEstado.Visible = false;
             // 
             // lblFiltro
             // 
@@ -289,10 +300,10 @@
 
         #endregion
 
-        private TextBox txtBuscar;
-        private Button btnBuscar;
-        private Label label1;
-        private Panel panel2;
+        protected TextBox txtBuscar;
+        protected Button btnBuscar;
+        protected Label label1;
+        protected Panel panel2;
         protected DataGridView dgvGrilla;
         protected ToolStrip BarraLateralBotones;
         protected ToolStripButton btnNuevo;
@@ -306,11 +317,12 @@
         protected ToolStripButton btnSalir;
         protected CheckBox cbxEstaEliminado;
         public Panel panel1;
-        private Panel pnlFiltrosAvanzados;
-        private Label lblFiltro;
-        private CheckBox chkUsarFecha;
-        private DateTimePicker dtpHasta;
-        private DateTimePicker dtpDesde;
-        private ComboBox cbxFiltroOpcional;
+        protected Panel pnlFiltrosAvanzados;
+        protected Label lblFiltro;
+        protected CheckBox chkUsarFecha;
+        protected DateTimePicker dtpHasta;
+        protected DateTimePicker dtpDesde;
+        protected ComboBox cbxFiltroOpcional;
+        protected ComboBox cbxFiltroExtraEstado;
     }
 }

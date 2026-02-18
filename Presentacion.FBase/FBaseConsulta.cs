@@ -106,7 +106,7 @@ namespace Presentacion.FBase
 
         #endregion
 
-        #region FILTROS DINAMICOS BASE
+        #region FILTROS BASE
 
         protected virtual FiltroConsulta ObtenerFiltros()
         {
@@ -116,7 +116,8 @@ namespace Presentacion.FBase
                 VerEliminados = cbxEstaEliminado.Checked,
                 FechaDesde = ObtenerFechaDesdeUI(),
                 FechaHasta = ObtenerFechaHastaUI(),
-                Extra = ObtenerFiltroExtraUI()
+                Extra = ObtenerFiltroExtraUI(),
+                Extra2 = ObtenerComboOpcionalUI() // 🔵 NUEVO
             };
         }
 
@@ -157,47 +158,68 @@ namespace Presentacion.FBase
             return cbxFiltroOpcional.SelectedValue;
         }
 
+        // 🔵 NUEVO COMBO OPCIONAL EXTRA
+        protected virtual object ObtenerComboOpcionalUI()
+        {
+            if (cbxFiltroExtraEstado == null) return null;
+            if (!cbxFiltroExtraEstado.Visible) return null;
+            if (cbxFiltroExtraEstado.SelectedValue == null) return null;
+
+            return cbxFiltroExtraEstado.SelectedValue;
+        }
+
         #endregion
 
-        #region CONFIGURAR FILTROS OPCIONALES (PARA LOS FORMS)
+        #region CONFIGURAR FILTROS OPCIONALES
 
+        // combo existente (columna)
         protected void ActivarFiltroCombo(string label, object data, string display, string value)
         {
-            if (pnlFiltrosAvanzados != null)
-                pnlFiltrosAvanzados.Visible = true;
+            pnlFiltrosAvanzados.Visible = true;
 
-            if (lblFiltro != null)
-            {
-                lblFiltro.Text = label;
-                lblFiltro.Visible = true;
-            }
+            lblFiltro.Text = label;
+            lblFiltro.Visible = true;
 
-            if (cbxFiltroOpcional != null)
+            cbxFiltroOpcional.Visible = true;
+            cbxFiltroOpcional.DataSource = data;
+            cbxFiltroOpcional.DisplayMember = display;
+            cbxFiltroOpcional.ValueMember = value;
+            cbxFiltroOpcional.SelectedIndex = -1;
+        }
+
+        // 🔵 NUEVO COMBO OPCIONAL (estado u otro)
+        protected void ActivarComboOpcional(string label, object data, string display, string value)
+        {
+            pnlFiltrosAvanzados.Visible = true;
+
+            if (cbxFiltroExtraEstado != null)
             {
-                cbxFiltroOpcional.Visible = true;
-                cbxFiltroOpcional.DataSource = data;
-                cbxFiltroOpcional.DisplayMember = display;
-                cbxFiltroOpcional.ValueMember = value;
-                cbxFiltroOpcional.SelectedIndex = -1;
+                cbxFiltroExtraEstado.Visible = true;
+                cbxFiltroExtraEstado.DataSource = data;
+                cbxFiltroExtraEstado.DisplayMember = display;
+                cbxFiltroExtraEstado.ValueMember = value;
+                cbxFiltroExtraEstado.SelectedIndex = -1;
             }
         }
 
         protected void ActivarFiltroFecha(bool rango = true)
         {
-            if (pnlFiltrosAvanzados != null)
-                pnlFiltrosAvanzados.Visible = true;
+            pnlFiltrosAvanzados.Visible = true;
 
-            if (chkUsarFecha != null)
+            chkUsarFecha.Visible = true;
+            chkUsarFecha.Checked = false;
+
+            chkUsarFecha.CheckedChanged += (s, e) =>
             {
-                chkUsarFecha.Visible = true;
-                chkUsarFecha.Checked = false;
-            }
+                dtpDesde.Enabled = chkUsarFecha.Checked;
+                dtpHasta.Enabled = chkUsarFecha.Checked;
+            };
 
-            if (dtpDesde != null)
-                dtpDesde.Visible = true;
+            dtpDesde.Visible = true;
+            dtpDesde.Enabled = false;
 
-            if (dtpHasta != null)
-                dtpHasta.Visible = rango;
+            dtpHasta.Visible = rango;
+            dtpHasta.Enabled = false;
         }
 
         #endregion
@@ -220,7 +242,6 @@ namespace Presentacion.FBase
             }
 
             EvaluarAccionesPorEstado(filtros);
-
             BarraLateralBotones.Enabled = AccionesPersonalizadas.Count > 0;
         }
 
@@ -310,6 +331,8 @@ namespace Presentacion.FBase
                     Text = accion.Nombre,
                     Image = accion.Icono,
                     DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
+                    TextImageRelation = TextImageRelation.TextAboveImage,
+                    ImageScaling = ToolStripItemImageScaling.SizeToFit,
                     Enabled = true,
                     Tag = accion
                 };
@@ -358,7 +381,7 @@ namespace Presentacion.FBase
 
         #endregion
 
-        #region BOTONES POR FILA GRID (OPCIONAL)
+        #region BOTONES POR FILA GRID
 
         protected void AgregarBotonGrilla(string nombreColumna, string texto)
         {
@@ -382,6 +405,28 @@ namespace Presentacion.FBase
 
         protected virtual void EjecutarAccionGrilla(string nombreColumna)
         {
+        }
+
+        #endregion
+
+        #region FILTRO FECHAS SIMPLE
+
+        protected void ActivarFiltroFechas(string textoCheck)
+        {
+            chkUsarFecha.Visible = true;
+            chkUsarFecha.Text = textoCheck;
+
+            dtpDesde.Visible = true;
+            dtpHasta.Visible = true;
+
+            dtpDesde.Enabled = false;
+            dtpHasta.Enabled = false;
+
+            chkUsarFecha.CheckedChanged += (s, e) =>
+            {
+                dtpDesde.Enabled = chkUsarFecha.Checked;
+                dtpHasta.Enabled = chkUsarFecha.Checked;
+            };
         }
 
         #endregion

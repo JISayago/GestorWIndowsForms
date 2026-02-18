@@ -1,8 +1,10 @@
 ﻿using MigraDoc.DocumentObjectModel.Internals;
+using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Servicios.LogicaNegocio.Venta.Oferta;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -31,10 +33,9 @@ namespace Presentacion.Core.Oferta
         public FOfertaConsulta(bool ActivarDesactivar, string a) : this()
         {
             activarDesactivar = ActivarDesactivar;
-
         }
 
-        #region 🔥 ACCIONES DINAMICAS (si querés migrar botones al lateral base)
+        #region 🔥 ACCIONES DINAMICAS
 
         protected override void ConfigurarAccionesPersonalizadas()
         {
@@ -47,9 +48,10 @@ namespace Presentacion.Core.Oferta
                    true
                );
             }
+
             if (_vieneDeVenta)
             {
-                               AgregarAccion(
+                AgregarAccion(
                    "Seleccionar para venta",
                    Constantes.Imagenes.ImgPerfilUsuario,
                    SeleccionarParaVenta,
@@ -57,6 +59,7 @@ namespace Presentacion.Core.Oferta
                );
             }
         }
+
         private void ActivarDesactivar(long? id)
         {
             if (!id.HasValue)
@@ -72,6 +75,7 @@ namespace Presentacion.Core.Oferta
             else
                 MessageBox.Show("No se pudo cambiar el estado.");
         }
+
         private void SeleccionarParaVenta(long? id)
         {
             if (!id.HasValue) return;
@@ -80,6 +84,7 @@ namespace Presentacion.Core.Oferta
             DialogResult = DialogResult.OK;
             Close();
         }
+
         #endregion
 
         #region BOTONES BASE
@@ -92,7 +97,46 @@ namespace Presentacion.Core.Oferta
 
         #endregion
 
-        #region GRILLA
+        #region 🔵 FILTROS NUEVOS (combo + fechas)
+
+        protected override FiltroConsulta ObtenerFiltros()
+        {
+            var f = base.ObtenerFiltros();
+
+            if (cbxFiltroOpcional?.SelectedItem is OpcionFiltro op)
+                f.Extra = op.Valor;
+
+            if (chkUsarFecha != null && chkUsarFecha.Checked)
+            {
+                f.FechaDesde = dtpDesde.Value.Date;
+                f.FechaHasta = dtpHasta.Value.Date;
+            }
+
+            return f;
+        }
+
+
+        private void FOfertaConsulta_Load(object sender, EventArgs e)
+        {
+            cbxEstaEliminado.Text = "Mostrar ofertas inactivas";
+
+            // 🔵 combo columna búsqueda
+            var opciones = new List<OpcionFiltro>
+            {
+                new OpcionFiltro{ Texto="Descripción", Valor="Descripcion"},
+                new OpcionFiltro{ Texto="Código", Valor="Codigo"},
+                new OpcionFiltro{ Texto="Grupo", Valor="GrupoNombre"}
+            };
+
+            ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
+
+            // 🔵 activar rango fechas
+            ActivarFiltroFechas("Filtrar por fecha");
+        }
+
+        #endregion
+
+        #region 🔷 GRILLA
 
         public override void ResetearGrilla(DataGridView grilla)
         {
@@ -109,89 +153,35 @@ namespace Presentacion.Core.Oferta
                 grilla.Columns["Descripcion"].Visible = true;
                 grilla.Columns["Descripcion"].HeaderText = "Descripción";
                 grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                grilla.Columns["Descripcion"].FillWeight = 60;
             }
 
             if (grilla.Columns.Contains("Codigo"))
             {
                 grilla.Columns["Codigo"].Visible = true;
                 grilla.Columns["Codigo"].HeaderText = "Código";
-                grilla.Columns["Codigo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                grilla.Columns["Codigo"].FillWeight = 30;
             }
 
             if (grilla.Columns.Contains("GrupoNombre"))
             {
                 grilla.Columns["GrupoNombre"].Visible = true;
                 grilla.Columns["GrupoNombre"].HeaderText = "Grupo";
-                grilla.Columns["GrupoNombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                grilla.Columns["GrupoNombre"].FillWeight = 30;
-            }
-
-            if (grilla.Columns.Contains("Detalle"))
-            {
-                grilla.Columns["Detalle"].Visible = true;
-                grilla.Columns["Detalle"].HeaderText = "Detalle";
-            }
-
-            if (grilla.Columns.Contains("PrecioOriginal"))
-            {
-                grilla.Columns["PrecioOriginal"].Visible = true;
-                grilla.Columns["PrecioOriginal"].HeaderText = "Precio Original";
-                grilla.Columns["PrecioOriginal"].DefaultCellStyle.Format = "C2";
-            }
-
-            if (grilla.Columns.Contains("PrecioFinal"))
-            {
-                grilla.Columns["PrecioFinal"].Visible = true;
-                grilla.Columns["PrecioFinal"].HeaderText = "Precio Final";
-                grilla.Columns["PrecioFinal"].DefaultCellStyle.Format = "C2";
-            }
-
-            if (grilla.Columns.Contains("DescuentoTotalFinal"))
-            {
-                grilla.Columns["DescuentoTotalFinal"].Visible = true;
-                grilla.Columns["DescuentoTotalFinal"].HeaderText = "Descuento $";
-                grilla.Columns["DescuentoTotalFinal"].DefaultCellStyle.Format = "C2";
-            }
-
-            if (grilla.Columns.Contains("PorcentajeDescuento"))
-            {
-                grilla.Columns["PorcentajeDescuento"].Visible = true;
-                grilla.Columns["PorcentajeDescuento"].HeaderText = "% Desc.";
-                grilla.Columns["PorcentajeDescuento"].DefaultCellStyle.Format = "N2";
             }
 
             if (grilla.Columns.Contains("FechaInicio"))
             {
                 grilla.Columns["FechaInicio"].Visible = true;
-                grilla.Columns["FechaInicio"].HeaderText = "Inicio";
                 grilla.Columns["FechaInicio"].DefaultCellStyle.Format = "dd/MM/yyyy";
             }
 
             if (grilla.Columns.Contains("FechaFin"))
             {
                 grilla.Columns["FechaFin"].Visible = true;
-                grilla.Columns["FechaFin"].HeaderText = "Fin";
                 grilla.Columns["FechaFin"].DefaultCellStyle.Format = "dd/MM/yyyy";
-            }
-
-            if (grilla.Columns.Contains("CantidadProductosDentroOferta"))
-            {
-                grilla.Columns["CantidadProductosDentroOferta"].Visible = true;
-                grilla.Columns["CantidadProductosDentroOferta"].HeaderText = "Cant. Productos";
-            }
-
-            if (grilla.Columns.Contains("CantidadLimiteDeStock"))
-            {
-                grilla.Columns["CantidadLimiteDeStock"].Visible = true;
-                grilla.Columns["CantidadLimiteDeStock"].HeaderText = "Cant. Máx.";
             }
 
             if (grilla.Columns.Contains("EstaActiva"))
             {
                 grilla.Columns["EstaActiva"].HeaderText = "Estado";
-                grilla.Columns["EstaActiva"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
 
                 grilla.CellFormatting += (s, e) =>
                 {
@@ -205,41 +195,47 @@ namespace Presentacion.Core.Oferta
                     }
                 };
             }
-
-            if (grilla.Columns.Contains("EsUnSoloProducto")) grilla.Columns["EsUnSoloProducto"].Visible = false;
-            if (grilla.Columns.Contains("esOfertaPorGrupo")) grilla.Columns["esOfertaPorGrupo"].Visible = false;
-            if (grilla.Columns.Contains("TieneLimiteDeStock")) grilla.Columns["TieneLimiteDeStock"].Visible = false;
-
-            grilla.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
         }
+
+        #endregion
+
+        #region 🔥 ACTUALIZAR DATOS CON FILTROS
 
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
 
+            string columna = filtros.Extra?.ToString() ?? "Descripcion";
+
             if (_vieneDeVenta)
             {
                 if (filtros.VerEliminados)
                 {
-                    dgv.DataSource = _ofertaServicio.ObtenerOfertasInactivasCompuesta(filtros.TextoBuscar);
+                    dgv.DataSource = _ofertaServicio.ObtenerOfertasInactivasCompuesta(
+                        filtros.TextoBuscar,
+                        columna,
+                        filtros.FechaDesde,
+                        filtros.FechaHasta);
                 }
                 else
                 {
-                    dgv.DataSource = _ofertaServicio.ObtenerOfertasActivasCompuestas(filtros.TextoBuscar);
+                    dgv.DataSource = _ofertaServicio.ObtenerOfertasActivasCompuestas(
+                        filtros.TextoBuscar,
+                        columna,
+                        filtros.FechaDesde,
+                        filtros.FechaHasta);
                 }
             }
             else
             {
-                dgv.DataSource = _ofertaServicio.ObtenerOfertasActivasInactivas(filtros.TextoBuscar);
+                dgv.DataSource = _ofertaServicio.ObtenerOfertasActivasInactivas(
+                    filtros.TextoBuscar,
+                    columna,
+                    filtros.FechaDesde,
+                    filtros.FechaHasta);
             }
         }
 
         #endregion
-
-        private void FOfertaConsulta_Load(object sender, EventArgs e)
-        {
-            cbxEstaEliminado.Text = "Mostrar ofertas inactivas";
-        }
-
     }
 }

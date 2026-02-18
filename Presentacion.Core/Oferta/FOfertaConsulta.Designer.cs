@@ -28,12 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
+            panel2.SuspendLayout();
             panel1.SuspendLayout();
+            pnlFiltrosAvanzados.SuspendLayout();
             SuspendLayout();
+            // 
+            // txtBuscar
+            // 
+            txtBuscar.Location = new Point(106, 5);
             // 
             // panel1
             // 
             panel1.Size = new Size(1052, 561);
+            // 
+            // lblFiltro
+            // 
+            lblFiltro.Location = new Point(22, 83);
+            // 
+            // chkUsarFecha
+            // 
+            chkUsarFecha.Location = new Point(218, 11);
+            // 
+            // dtpHasta
+            // 
+            dtpHasta.Location = new Point(513, 6);
+            // 
+            // dtpDesde
+            // 
+            dtpDesde.Location = new Point(307, 6);
             // 
             // FOfertaConsulta
             // 
@@ -43,8 +65,12 @@
             Name = "FOfertaConsulta";
             Text = "FOfertaConsulta";
             Load += FOfertaConsulta_Load;
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            pnlFiltrosAvanzados.ResumeLayout(false);
+            pnlFiltrosAvanzados.PerformLayout();
             ResumeLayout(false);
         }
 

@@ -15,5 +15,6 @@ namespace Presentacion.FBase.Helpers
         public DateTime? FechaHasta { get; set; }
 
         public object Extra { get; set; } // cualquier cosa extra
+        public object Extra2 { get; set; } // cualquier cosa extra
     }
 }
