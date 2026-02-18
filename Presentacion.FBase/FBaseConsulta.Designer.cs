@@ -221,7 +221,7 @@
             // cbxFiltroExtraEstado
             // 
             cbxFiltroExtraEstado.FormattingEnabled = true;
-            cbxFiltroExtraEstado.Location = new Point(22, 88);
+            cbxFiltroExtraEstado.Location = new Point(22, 73);
             cbxFiltroExtraEstado.Name = "cbxFiltroExtraEstado";
             cbxFiltroExtraEstado.Size = new Size(121, 23);
             cbxFiltroExtraEstado.TabIndex = 5;
@@ -250,7 +250,7 @@
             // 
             // dtpHasta
             // 
-            dtpHasta.Location = new Point(473, 25);
+            dtpHasta.Location = new Point(513, 0);
             dtpHasta.Name = "dtpHasta";
             dtpHasta.Size = new Size(200, 23);
             dtpHasta.TabIndex = 2;
@@ -258,7 +258,7 @@
             // 
             // dtpDesde
             // 
-            dtpDesde.Location = new Point(198, 20);
+            dtpDesde.Location = new Point(307, 0);
             dtpDesde.Name = "dtpDesde";
             dtpDesde.Size = new Size(200, 23);
             dtpDesde.TabIndex = 1;
