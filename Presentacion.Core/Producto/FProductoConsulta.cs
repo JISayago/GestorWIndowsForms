@@ -1,4 +1,5 @@
 ﻿using Presentacion.Core.Presentacion.Core.Helpers;
+using Presentacion.Core.Producto;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
@@ -47,12 +48,12 @@ namespace Presentacion.Core.Producto
             // BOTON Seleccionar
             if (vieneDeCargaProducto)
             {
-            AgregarAccion(
-                "Seleccionar Producto",
-                Constantes.Imagenes.ImgPerfilUsuario,
-                SeleccionProducto,
-                true
-            );
+                AgregarAccion(
+                    "Seleccionar Producto",
+                    Constantes.Imagenes.ImgPerfilUsuario,
+                    SeleccionProducto,
+                    true
+                );
             }
 
         }
@@ -206,7 +207,42 @@ namespace Presentacion.Core.Producto
 
             ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
         }
-    }
+
 
         #endregion
+
+        public override void EjecutarDobleClickFila(long? id)
+        {
+            //ejemplo
+            if (!id.HasValue) return;
+
+            /* var f = new FProductoABM(id.Value);
+             f.ShowDialog();
+             RefrescarGrilla();*/
+            MessageBox.Show($"eeeee {id.Value}");
+        }
+
+        public override void EjecutarClickDerechoFila(long? id, Point pos)
+        {
+            //ejemplo
+            if (!id.HasValue) return;
+
+            ContextMenuStrip menu = new ContextMenuStrip();
+
+            menu.Items.Add("Editar", null, (s, e) =>
+            {
+                var f = new FProductoABM(TipoOperacion.Modificar, id.Value);
+                f.ShowDialog();
+                RefrescarGrilla();
+            });
+
+            menu.Items.Add("Eliminar", null, (s, e) =>
+            {
+                MessageBox.Show("Eliminar " + id);
+            });
+
+            menu.Show(dgvGrilla, pos);
+        }
+    }
 }
+
