@@ -19,18 +19,20 @@ namespace Presentacion.Core.Producto
         private readonly long _productoID;
         private int tipoMovimientoStock = 0;
         private decimal monto = 0;
+        private string nombreProducto = "";
+        public bool RealizoOperacion { get; private set; } = false;
 
-        public FGestionStock(long productoID)
+        public FGestionStock(long productoID, string nombreProducto)
         {
 
             InitializeComponent();
             _productoServicio = new ProductoServicio();
             _productoID = productoID;
+            lblProducto.Text = nombreProducto;
         }
 
         private void FGestionStock_Load(object sender, EventArgs e)
         {
-
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -88,6 +90,7 @@ namespace Presentacion.Core.Producto
             if (respuesta.Exitoso)
             {
                 MessageBox.Show($"{respuesta.Mensaje}", "Operación Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                RealizoOperacion = true;
                 this.Close();
             }
             else

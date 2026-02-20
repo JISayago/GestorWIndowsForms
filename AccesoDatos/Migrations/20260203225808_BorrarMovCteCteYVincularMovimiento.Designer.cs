@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20260203225808_BorrarMovCteCteYVincularMovimiento")]
+    partial class BorrarMovCteCteYVincularMovimiento
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -440,7 +443,7 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_Caja");
 
-                    b.Property<long?>("IdCuentaCorriente")
+                    b.Property<long>("IdCuentaCorriente")
                         .HasColumnType("bigint")
                         .HasColumnName("id_CuentaCorriente");
 
@@ -461,10 +464,6 @@ namespace AccesoDatos.Migrations
                     b.Property<int>("TipoMovimiento")
                         .HasColumnType("int")
                         .HasColumnName("tipo_movimiento");
-
-                    b.Property<int>("TipoMovimientoDetalle")
-                        .HasColumnType("int")
-                        .HasColumnName("tipo_movimiento_detalle");
 
                     b.HasKey("MovimientoId");
 
@@ -1093,7 +1092,8 @@ namespace AccesoDatos.Migrations
                     b.HasOne("AccesoDatos.Entidades.CuentaCorriente", "CuentaCorriente")
                         .WithMany("Movimientos")
                         .HasForeignKey("IdCuentaCorriente")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("AccesoDatos.Entidades.Venta", "Venta")
                         .WithMany()

@@ -28,24 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnSeleccionarMarca = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(btnSeleccionarMarca);
-            panel1.Controls.SetChildIndex(btnSeleccionarMarca, 0);
-            // 
-            // btnSeleccionarMarca
-            // 
-            btnSeleccionarMarca.Location = new Point(3, 272);
-            btnSeleccionarMarca.Name = "btnSeleccionarMarca";
-            btnSeleccionarMarca.Size = new Size(75, 50);
-            btnSeleccionarMarca.TabIndex = 1;
-            btnSeleccionarMarca.Text = "Seleccionar Marca";
-            btnSeleccionarMarca.UseVisualStyleBackColor = true;
-            btnSeleccionarMarca.Click += btnSeleccionarMarca_Click;
+            panel1.Size = new Size(800, 561);
             // 
             // FMarcaConsulta
             // 
@@ -57,11 +45,8 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private Button btnSeleccionarMarca;
     }
 }

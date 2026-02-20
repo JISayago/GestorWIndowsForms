@@ -3,6 +3,7 @@ using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
+using Servicios.LogicaNegocio.Movimiento;
 using Servicios.LogicaNegocio.Producto.DTO;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -10,6 +11,12 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 {
     public class CuentaCorrienteServicio : ICuentaCorrienteServicio
     {
+        private readonly IMovimientoServicio _movimientoServicio;
+        public CuentaCorrienteServicio()
+        {
+            _movimientoServicio = new MovimientoServicio();
+        }
+
         public EstadoOperacion Eliminar(long cuentacorrienteId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -146,7 +153,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             var cuentacorrienteBusqueda = context.CuentaCorriente
                 .Include(x => x.CuentaCorrienteAutorizado)
-                .Include(x => x.MovimientosCuentaCorriente)
+                .Include(x => x.Movimientos)
                 .FirstOrDefault(x => x.CuentaCorrienteId == cuentacorrienteId);
 
             if (cuentacorrienteBusqueda == null)
@@ -260,7 +267,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         }*/
 
         //Restar saldo de la cuenta corriente
-        public EstadoOperacion RegistrarCompra(long cuentaId, decimal monto, string descripcion = "Compra")
+        public EstadoOperacion RegistrarCompra(long cuentaId, decimal monto, long cajaId, string descripcion = "Compra")
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId);
@@ -275,23 +282,16 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             cuenta.Saldo -= monto;
 
-            // Registrar movimiento
-            cuenta.MovimientosCuentaCorriente ??= new List<AccesoDatos.Entidades.MovimientoCuentaCorriente>();
-            cuenta.MovimientosCuentaCorriente.Add(new AccesoDatos.Entidades.MovimientoCuentaCorriente
-            {
-                Fecha = DateTime.Now,
-                Monto = -monto,
-                Descripcion = descripcion,
-                TipoMovimientoCCorriente = 2,
-                CuentaCorrienteId = cuenta.CuentaCorrienteId
-            });
+            long ctacteId = cuenta.CuentaCorrienteId;
+
+            _movimientoServicio.CrearMovimientoCtaCte(monto, cajaId, ctacteId, TipoMovimientoDetalle.CuentaCorriente, context);
 
             context.SaveChanges();
 
             return new EstadoOperacion { Exitoso = true, Mensaje = "Compra registrada correctamente" };
         }
 
-        //Sumar saldo a la cuenta corriente
+        //Sumar saldo a la cuenta corriente, paga deuda de una ctacte, NO ESTA SIENDO INPLEMENTADO!!!!!!!!!!!!!
         public EstadoOperacion RegistrarPago(long cuentaId, decimal monto, string descripcion = "Pago")
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -301,15 +301,17 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             cuenta.Saldo += monto;
 
             // Registrar movimiento
-            cuenta.MovimientosCuentaCorriente ??= new List<AccesoDatos.Entidades.MovimientoCuentaCorriente>();
-            cuenta.MovimientosCuentaCorriente.Add(new AccesoDatos.Entidades.MovimientoCuentaCorriente
-            {
+            cuenta.Movimientos ??= new List<AccesoDatos.Entidades.Movimiento>();
+            cuenta.Movimientos.Add(new AccesoDatos.Entidades.Movimiento
+            {/*
                 Fecha = DateTime.Now,
                 Monto = monto,
                 Descripcion = descripcion,
                 TipoMovimientoCCorriente = 1,
-                CuentaCorrienteId = cuenta.CuentaCorrienteId
+                CuentaCorrienteId = cuenta.CuentaCorrienteId*/
             });
+
+            
 
             context.SaveChanges();
 
@@ -338,7 +340,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             var cuentacorrienteBusqueda = context.CuentaCorriente
                 .Include(x => x.CuentaCorrienteAutorizado)
-                .Include(x => x.MovimientosCuentaCorriente)
+                .Include(x => x.Movimientos)
                 .FirstOrDefault(x => x.ClienteId == clienteId && !x.EstaEliminado);
             if (cuentacorrienteBusqueda == null)
                 throw new Exception("No se encontró la cuentacorriente.");

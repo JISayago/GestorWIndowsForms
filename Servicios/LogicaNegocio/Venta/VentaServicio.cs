@@ -34,7 +34,7 @@ namespace Servicios.LogicaNegocio.Venta
             return _pdf.GenerarComprobante(venta);
         }
 
-        public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto)
+        public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto, TipoMovimientoDetalle movimientoDetalle)
         {
             var cajaServicio = new Caja.CajaServicio();
             var cajaId = cajaServicio.ObtenerIdCajaAbierta(context);
@@ -84,6 +84,7 @@ namespace Servicios.LogicaNegocio.Venta
                         Total = venta.Total
                     },
                     cajaId.Value,
+                    movimientoDetalle,
                     context
                 );
 
@@ -172,7 +173,7 @@ namespace Servicios.LogicaNegocio.Venta
 
             try
             {
-                CrearVentaInterna(context, ventaDto);
+                CrearVentaInterna(context, ventaDto, TipoMovimientoDetalle.Venta);
                 transaction.Commit();
 
                 return new EstadoOperacion
@@ -279,8 +280,15 @@ namespace Servicios.LogicaNegocio.Venta
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            return context.Ventas
-                .Where(v => v.FechaVenta.Month == mes && v.FechaVenta.Year == año)
+            var query = context.Ventas
+                .Where(v => v.FechaVenta.Year == año);
+
+            if (mes > 0)//Si queremos traer todo el año no filtramos por mes
+            {
+                query = query.Where(v => v.FechaVenta.Month == mes);
+            }
+
+            return query
                 .Select(v => new VentaDTO
                 {
                     VentaId = v.VentaId,
@@ -297,10 +305,7 @@ namespace Servicios.LogicaNegocio.Venta
                 .ToList();
         }
 
-        public List<long> ObtenerVentasParaCancelacion(
-DateTime fecha,
-string filtroNumero = null
-)
+        public List<long> ObtenerVentasParaCancelacion(DateTime fecha, string filtroNumero = null)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
@@ -395,7 +400,7 @@ string filtroNumero = null
                     }).ToList()
                 };
 
-                CrearVentaInterna(context, ventaCancelacionDto);
+                CrearVentaInterna(context, ventaCancelacionDto, TipoMovimientoDetalle.Cancelacion);
 
                 context.SaveChanges();
                 transaction.Commit();

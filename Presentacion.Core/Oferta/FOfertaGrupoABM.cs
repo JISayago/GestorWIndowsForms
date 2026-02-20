@@ -119,7 +119,7 @@ namespace Presentacion.Core.Oferta
         {
             if (_esMarca)
             {
-                var fMarca = new FMarcaConsulta();
+                var fMarca = new FMarcaConsulta(true);
                 if (fMarca.ShowDialog() == DialogResult.OK && fMarca.marcaSeleccionada.HasValue)
                 {
                     var marca = _marcaServicio.ObtenerPorId(fMarca.marcaSeleccionada.Value);
@@ -154,7 +154,7 @@ namespace Presentacion.Core.Oferta
         {
             if (_esRubro)
             {
-                var fRubro = new FRubroConsulta();
+                var fRubro = new FRubroConsulta(true);
                 if (fRubro.ShowDialog() == DialogResult.OK && fRubro.rubroSeleccionado.HasValue)
                 {
                     var rubro = _rubroServicio.ObtenerPorId(fRubro.rubroSeleccionado.Value);
@@ -170,7 +170,7 @@ namespace Presentacion.Core.Oferta
 
             if (_esCategoria)
             {
-                var fCategoria = new FCategoriaConsulta();
+                var fCategoria = new FCategoriaConsulta(true);
                 if (fCategoria.ShowDialog() == DialogResult.OK && fCategoria.categoriaSeleccionada.HasValue)
                 {
                     var categoria = _categoriaServicio.ObtenerPorId(fCategoria.categoriaSeleccionada.Value);

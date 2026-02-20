@@ -28,24 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnSeleccionarCliente = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(btnSeleccionarCliente);
-            panel1.Controls.SetChildIndex(btnSeleccionarCliente, 0);
-            // 
-            // btnSeleccionarCliente
-            // 
-            btnSeleccionarCliente.Location = new Point(3, 236);
-            btnSeleccionarCliente.Name = "btnSeleccionarCliente";
-            btnSeleccionarCliente.Size = new Size(80, 58);
-            btnSeleccionarCliente.TabIndex = 1;
-            btnSeleccionarCliente.Text = "Seleccionar Cliente";
-            btnSeleccionarCliente.UseVisualStyleBackColor = true;
-            btnSeleccionarCliente.Click += btnSeleccionarCliente_Click;
+            panel1.Size = new Size(800, 561);
             // 
             // FClienteConsulta
             // 
@@ -58,11 +46,8 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private Button btnSeleccionarCliente;
     }
 }

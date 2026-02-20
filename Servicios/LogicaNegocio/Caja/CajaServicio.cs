@@ -152,7 +152,7 @@ namespace Servicios.LogicaNegocio.Caja
 
         }
 
-        public void ActualizarSaldoCaja(AccesoDatos.Entidades.Caja caja, string tipo, decimal monto)
+        public void ActualizarSaldoCaja(AccesoDatos.Entidades.Caja caja, string tipo, decimal monto)  //Usar tipo movimiento
         {
             //TipoDeTransaccion podria es un enum en vez de string, fixear
             if (tipo == "Ingreso")
@@ -281,5 +281,33 @@ namespace Servicios.LogicaNegocio.Caja
 
             return cajas;
         }
+
+        public List<CajaDTO> ObtenerCajasPorMesYAño(int mesDeLasCajas, int añoDeLasCajas)
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+
+            var cajas = context.Cajas.Select(c => new CajaDTO
+            {
+                CajaId = c.CajaId,
+                SaldoInicial = c.SaldoInicial,
+                SaldoActual = c.SaldoActual,
+                FechaInicio = c.FechaInicio,
+                FechaFin = c.FechaFin,
+                TotalIngresos = c.TotalIngresos,
+                TotalEgresos = c.TotalEgresos,
+                BalanceFinal = c.BalanceFinal,
+                EmpleadoApertura = c.EmpleadoApertura,
+                EmpleadoCierre = c.EmpleadoCierre,
+                EstaCerrada = c.EstaCerrada,
+                MovimientoIds = c.Movimientos
+                        .Select(m => m.MovimientoId)
+                        .ToList()
+            }).Where(c => c.FechaInicio.Year == añoDeLasCajas && c.FechaInicio.Month == mesDeLasCajas)
+              .ToList();
+
+            return cajas;
+        }
+
+        //PODRIA HACER UNA FUNCION PARA BUSCAR FECHAS ESPECIFICAS,Y REUSAR ESA PARA LOS GRAFICOS FILTRADOS
     }
 }
