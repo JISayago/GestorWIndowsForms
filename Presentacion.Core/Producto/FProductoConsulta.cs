@@ -1,15 +1,11 @@
-﻿using Presentacion.FBase;
+﻿using Presentacion.Core.Presentacion.Core.Helpers;
+using Presentacion.Core.Producto;
+using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
-using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Producto;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Presentacion.Core.Producto
@@ -18,169 +14,235 @@ namespace Presentacion.Core.Producto
     {
         private readonly IProductoServicio _ProductoServicio;
 
-
         public long? productoSeleccionado = null;
         private bool vieneDeCargaProducto = false;
+
         public FProductoConsulta() : this(new ProductoServicio())
         {
             InitializeComponent();
         }
 
-        public FProductoConsulta(IProductoServicio ProductoServicio)
+        public FProductoConsulta(IProductoServicio productoServicio)
         {
-            _ProductoServicio = ProductoServicio;
+            _ProductoServicio = productoServicio;
+            InitializeComponent();
         }
+
         public FProductoConsulta(bool _vieneDeCargaProducto) : this(new ProductoServicio())
         {
             vieneDeCargaProducto = _vieneDeCargaProducto;
             InitializeComponent();
+        }
 
+        #region 🔵 ACCIONES DINÁMICAS EXTRA
+
+        protected override void ConfigurarAccionesPersonalizadas()
+        {
+            // BOTON STOCK
+            AgregarAccion(
+                "Stock",
+                Constantes.Imagenes.ImgActualizar,
+                AbrirGestionStock,
+                true
+            );
+            // BOTON Seleccionar
+            if (vieneDeCargaProducto)
+            {
+                AgregarAccion(
+                    "Seleccionar Producto",
+                    Constantes.Imagenes.ImgPerfilUsuario,
+                    SeleccionProducto,
+                    true
+                );
+            }
 
         }
+
+        private void AbrirGestionStock(long? id)
+        {
+            if (!id.HasValue) return;
+
+            string nombreProducto = "";
+
+            if (dgvGrilla.CurrentRow != null)
+            {
+                var celda = dgvGrilla.CurrentRow.Cells["Descripcion"];
+                if (celda?.Value != null)
+                    nombreProducto = celda.Value.ToString();
+            }
+
+            var f = new FGestionStock(id.Value, nombreProducto);
+            f.ShowDialog();
+
+            if (f.RealizoOperacion)
+                Recargar();
+        }
+
+        private void SeleccionProducto(long? id)
+        {
+            if (!id.HasValue)
+            {
+                MessageBox.Show("Seleccione un registro.");
+                return;
+            }
+
+            productoSeleccionado = entidadID;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+
+        #endregion
+
+        #region 🔷 GRILLA
 
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
 
+            if (!grilla.Columns.Contains("ProductoId"))
+                return;
+
             grilla.Columns["ProductoId"].Visible = false;
             grilla.Columns["ProductoId"].Name = "Id";
 
             grilla.Columns["Descripcion"].Visible = true;
-            grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             grilla.Columns["Descripcion"].HeaderText = "Producto";
+            grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
             grilla.Columns["MarcaNombre"].Visible = true;
-            grilla.Columns["MarcaNombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             grilla.Columns["MarcaNombre"].HeaderText = "Marca";
+            grilla.Columns["MarcaNombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
 
             grilla.Columns["RubroNombre"].Visible = true;
-            grilla.Columns["RubroNombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             grilla.Columns["RubroNombre"].HeaderText = "Rubro";
+            grilla.Columns["RubroNombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
 
             grilla.Columns["PrecioCosto"].Visible = true;
-            grilla.Columns["PrecioCosto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            grilla.Columns["PrecioCosto"].HeaderText = "Precio Costo";
-
             grilla.Columns["PrecioVenta"].Visible = true;
-            grilla.Columns["PrecioVenta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            grilla.Columns["PrecioVenta"].HeaderText = "Precio Venta";
-
             grilla.Columns["Stock"].Visible = true;
-            grilla.Columns["Stock"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            grilla.Columns["Stock"].HeaderText = "Stock";
-
             grilla.Columns["Estado"].Visible = true;
-            grilla.Columns["Estado"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            grilla.Columns["Estado"].HeaderText = "Estado";
-
         }
 
-        public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
+        #endregion
+
+        #region 🔥 ACTUALIZAR DATOS (CON FILTRO NUEVO)
+
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
+            base.ActualizarDatos(dgv, filtros);
 
-            base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
+            string columnaBuscar = filtros.Extra as string ?? "Descripcion";
+            string texto = filtros.TextoBuscar;
 
-            if (check.Checked)
+            if (filtros.VerEliminados)
             {
-                grilla.DataSource = _ProductoServicio.ObtenerProductosEliminados(cadenaBuscar);
-                toolStrip.Enabled = false;
+                dgv.DataSource = _ProductoServicio.ObtenerProductosEliminados(texto, columnaBuscar);
+                BarraLateralBotones.Enabled = false;
             }
             else
             {
-                grilla.DataSource = _ProductoServicio.ObtenerProductos(cadenaBuscar);
-                toolStrip.Enabled = true;
+                dgv.DataSource = _ProductoServicio.ObtenerProductos(texto, columnaBuscar);
+                BarraLateralBotones.Enabled = true;
             }
         }
 
-        public override void EjecutarBtnEliminar()
-        {
-            base.EjecutarBtnEliminar();
-            if (puedeEjecutarComando)
-            {
-                var FormularioABMProducto = new FProductoABM(TipoOperacion.Eliminar, entidadID);
-                FormularioABMProducto.ShowDialog();
-                ActualizarSegunOperacion(FormularioABMProducto.RealizoAlgunaOperacion);
-            }
-        }
 
-        private void ActualizarSegunOperacion(bool realizoOperacion)
+        #endregion
+
+        #region 🔷 BOTONES BASE
+
+        public override void EjecutarBtnNuevo()
         {
-            if (realizoOperacion)
-            {
-                ActualizarDatos(dgvGrilla, string.Empty, cbxEstaEliminado, BarraLateralBotones);
-            }
+            var f = new FProductoABM(TipoOperacion.Nuevo);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
 
         public override void EjecutarBtnModificar()
         {
             base.EjecutarBtnModificar();
-            if (puedeEjecutarComando)
-            {
-                var FormularioABMProducto = new FProductoABM(TipoOperacion.Modificar, entidadID);
-                FormularioABMProducto.ShowDialog();
-                ActualizarSegunOperacion(FormularioABMProducto.RealizoAlgunaOperacion);
-            }
-        }
-
-        public override void EjecutarBtnNuevo()
-        {
-            var FormularioABMProducto = new FProductoABM(TipoOperacion.Nuevo);
-            FormularioABMProducto.ShowDialog();
-            ActualizarSegunOperacion(FormularioABMProducto.RealizoAlgunaOperacion);
-        }
-        public void ControlCargaExistencaDatos()
-        {
-            if (dgvGrilla.RowCount > 0)
-            {
-                if (!entidadID.HasValue)
-                {
-                    MessageBox.Show("Por favor seleccione un registro.");
-                    puedeEjecutarComando = false;
-                    return;
-                }
-                else
-                {
-                    puedeEjecutarComando = true;
-                }
-            }
-            else
-            {
-                MessageBox.Show("No hay Datos Cargados.");
-            }
-        }
-
-        private void btnSeleccionarProducto_Click(object sender, EventArgs e)
-        {
-            ControlCargaExistencaDatos();
             if (!puedeEjecutarComando) return;
 
-            productoSeleccionado = (long)entidadID;
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            var f = new FProductoABM(TipoOperacion.Modificar, entidadID);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
+
+        public override void EjecutarBtnEliminar()
+        {
+            base.EjecutarBtnEliminar();
+            if (!puedeEjecutarComando) return;
+
+            var f = new FProductoABM(TipoOperacion.Eliminar, entidadID);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
+        }
+
+        private void Recargar()
+        {
+            //btnActualizar_Click_Base();
+        }
+
+        #endregion
+
+        #region 🔷 SELECCIONAR PRODUCTO (MODO PICKER)
+
 
         private void FProductoConsulta_Load(object sender, EventArgs e)
         {
-            if (vieneDeCargaProducto)
-            {
-                btnSeleccionarProducto.Visible = true;
-                btnSeleccionarProducto.Enabled = true;
-            }
-            else
-            {
-                btnSeleccionarProducto.Visible = false;
-                btnSeleccionarProducto.Enabled = false;
-            }
+            var opciones = new List<OpcionFiltro>
+    {
+        new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
+        new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
+        new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
+        new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
+    };
+
+            ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
         }
 
-        private void btnGestionStock_Click(object sender, EventArgs e)
+
+        #endregion
+
+        public override void EjecutarDobleClickFila(long? id)
         {
-            ControlCargaExistencaDatos();
-            if (!puedeEjecutarComando) return;
-            var formularioGestionStock = new FGestionStock(entidadID.Value);
-            formularioGestionStock.ShowDialog();
+            //ejemplo
+            if (!id.HasValue) return;
 
+            /* var f = new FProductoABM(id.Value);
+             f.ShowDialog();
+             RefrescarGrilla();*/
+            MessageBox.Show($"eeeee {id.Value}");
+        }
 
+        public override void EjecutarClickDerechoFila(long? id, Point pos)
+        {
+            //ejemplo
+            if (!id.HasValue) return;
+
+            ContextMenuStrip menu = new ContextMenuStrip();
+
+            menu.Items.Add("Editar", null, (s, e) =>
+            {
+                var f = new FProductoABM(TipoOperacion.Modificar, id.Value);
+                f.ShowDialog();
+                RefrescarGrilla();
+            });
+
+            menu.Items.Add("Eliminar", null, (s, e) =>
+            {
+                MessageBox.Show("Eliminar " + id);
+            });
+
+            menu.Show(dgvGrilla, pos);
         }
     }
 }
+

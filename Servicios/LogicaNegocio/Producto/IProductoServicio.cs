@@ -13,8 +13,8 @@ namespace Servicios.LogicaNegocio.Producto
 {
     public interface IProductoServicio
     {
-        IEnumerable<ProductoDTO> ObtenerProductos(string cadenabuscar);
-        IEnumerable<ProductoDTO> ObtenerProductosEliminados(string cadenabuscar);
+        IEnumerable<ProductoDTO> ObtenerProductos(string cadenabuscar, string columa);
+        IEnumerable<ProductoDTO> ObtenerProductosEliminados(string cadenabuscar, string columa);
         ProductoDTO ObtenerProductoPorId(long productoId);
         ProductosEnOfertaDescuentosDTO ControlarProductoEstaEnOfertaPorId(long productoId);
 

@@ -37,13 +37,15 @@
             txtCantidad = new TextBox();
             txtMotivo = new TextBox();
             btnAccion = new Button();
+            lblProductoCargado = new Label();
+            lblProducto = new Label();
             SuspendLayout();
             // 
             // lblTexto
             // 
             lblTexto.AutoSize = true;
             lblTexto.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTexto.Location = new Point(153, 22);
+            lblTexto.Location = new Point(143, 39);
             lblTexto.Name = "lblTexto";
             lblTexto.Size = new Size(320, 30);
             lblTexto.TabIndex = 0;
@@ -125,11 +127,34 @@
             btnAccion.UseVisualStyleBackColor = true;
             btnAccion.Click += btnAccion_Click;
             // 
+            // lblProductoCargado
+            // 
+            lblProductoCargado.AutoSize = true;
+            lblProductoCargado.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblProductoCargado.Location = new Point(56, 9);
+            lblProductoCargado.Name = "lblProductoCargado";
+            lblProductoCargado.Size = new Size(248, 30);
+            lblProductoCargado.TabIndex = 11;
+            lblProductoCargado.Text = "Producto seleccionado: ";
+            // 
+            // lblProducto
+            // 
+            lblProducto.AutoSize = true;
+            lblProducto.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblProducto.ForeColor = Color.SeaGreen;
+            lblProducto.Location = new Point(291, 9);
+            lblProducto.Name = "lblProducto";
+            lblProducto.Size = new Size(104, 30);
+            lblProducto.TabIndex = 12;
+            lblProducto.Text = "Producto";
+            // 
             // FGestionStock
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(624, 295);
+            Controls.Add(lblProducto);
+            Controls.Add(lblProductoCargado);
             Controls.Add(btnAccion);
             Controls.Add(txtMotivo);
             Controls.Add(txtCantidad);
@@ -157,5 +182,7 @@
         private TextBox txtCantidad;
         private TextBox txtMotivo;
         private Button btnAccion;
+        private Label lblProductoCargado;
+        private Label lblProducto;
     }
 }

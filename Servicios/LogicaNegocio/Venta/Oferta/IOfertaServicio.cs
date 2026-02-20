@@ -13,15 +13,15 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
     {
         public EstadoOperacion Insertar(OfertaDTO dto);
         public List<OfertaDTO> ObtenerOfertasActivas(string cadenaBuscar);
-        public List<OfertaDTO> ObtenerOfertasActivasCompuestas(string cadenaBuscar);
+        public List<OfertaDTO> ObtenerOfertasActivasCompuestas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
         public List<OfertaDTO> ObtenerOfertasInactivas(string cadenaBuscar);
-        public List<OfertaDTO> ObtenerOfertasInactivasCompuesta(string cadenaBuscar);
+        public List<OfertaDTO> ObtenerOfertasInactivasCompuesta(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
         public List<InformacionExistenciaOfertaDescuentoProducto> ObtenerProductosEnOferta(List<ProductoDTO> productosDentroOferta);
         public OfertaDTO ObtenerOfertaPorId(long idOFerta);
         public OfertaDTO ObtenerOfertaActivaPorId(long idOFerta);
 
-        
-        public List<OfertaDTO> ObtenerOfertasActivasInactivas(string cadenaBuscar);
+
+        public List<OfertaDTO> ObtenerOfertasActivasInactivas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
 
         public OfertaDTO? ActivarDesactivar(long ofertaId);
 

@@ -28,37 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnSeleccionarProducto = new Button();
-            btnGestionStock = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(btnGestionStock);
-            panel1.Controls.Add(btnSeleccionarProducto);
-            panel1.Controls.SetChildIndex(btnSeleccionarProducto, 0);
-            panel1.Controls.SetChildIndex(btnGestionStock, 0);
-            // 
-            // btnSeleccionarProducto
-            // 
-            btnSeleccionarProducto.Location = new Point(3, 238);
-            btnSeleccionarProducto.Name = "btnSeleccionarProducto";
-            btnSeleccionarProducto.Size = new Size(75, 44);
-            btnSeleccionarProducto.TabIndex = 1;
-            btnSeleccionarProducto.Text = "Seleccionar Producto";
-            btnSeleccionarProducto.UseVisualStyleBackColor = true;
-            btnSeleccionarProducto.Click += btnSeleccionarProducto_Click;
-            // 
-            // btnGestionStock
-            // 
-            btnGestionStock.Location = new Point(2, 311);
-            btnGestionStock.Name = "btnGestionStock";
-            btnGestionStock.Size = new Size(75, 72);
-            btnGestionStock.TabIndex = 2;
-            btnGestionStock.Text = "Gestión Stock";
-            btnGestionStock.UseVisualStyleBackColor = true;
-            btnGestionStock.Click += btnGestionStock_Click;
+            panel1.Size = new Size(1083, 561);
             // 
             // FProductoConsulta
             // 
@@ -71,12 +46,8 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private Button btnSeleccionarProducto;
-        private Button btnGestionStock;
     }
 }
