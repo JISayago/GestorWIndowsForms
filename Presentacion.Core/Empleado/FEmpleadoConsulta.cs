@@ -3,14 +3,7 @@ using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Empleado;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Presentacion.Core.Empleado
@@ -18,58 +11,102 @@ namespace Presentacion.Core.Empleado
     public partial class FEmpleadoConsulta : FBaseConsulta
     {
         private readonly IEmpleadoServicio _empleadoServicio;
+
         public long? empleadoSeleccionado = null;
         public bool soloSeleccion;
         public bool vieneDeCargaVendedor = false;
+
         public FEmpleadoConsulta() : this(new EmpleadoServicio())
         {
             InitializeComponent();
             soloSeleccion = false;
         }
+
         public FEmpleadoConsulta(IEmpleadoServicio empleadoServicio)
         {
             _empleadoServicio = empleadoServicio;
+            InitializeComponent();
             soloSeleccion = false;
         }
-        public FEmpleadoConsulta(bool _vieneDeCargaVendedor) :this(new EmpleadoServicio())
+
+        public FEmpleadoConsulta(bool _vieneDeCargaVendedor) : this(new EmpleadoServicio())
         {
             InitializeComponent();
-            this.vieneDeCargaVendedor = _vieneDeCargaVendedor;
-            if (vieneDeCargaVendedor)
-            {
-                btnSeleccionarVendedor.Visible = true;
-                btnSeleccionarVendedor.Enabled = true;
-            }
-            else
-            {
-                btnSeleccionarVendedor.Visible = false;
-                btnSeleccionarVendedor.Enabled = false;
-            }
-            // this.soloSeleccion = soloSeleccion;
-            //if (soloSeleccion) MessageBox.Show("Seleccione el empleado con doble click");
-            //_empleadoServicio = new EmpleadoServicio();
+
+            vieneDeCargaVendedor = _vieneDeCargaVendedor;
 
         }
-        /*  public override void EjecutarDobleClickFila()
-          {
-              if (soloSeleccion)
-              {
-                  Console.WriteLine("In ClienteCons");
-                  empleadoSeleccionado = (long)entidadID;
-                  Close();
-              }
-          }*/
-        public override void EjecutarBtnNuevo()
+
+        #region 🔷 ACCIONES DINAMICAS NUEVAS
+
+        protected override void ConfigurarAccionesPersonalizadas()
         {
-            var FormularioEmpleadoABM = new FEmpleadoABM(TipoOperacion.Nuevo);
-            FormularioEmpleadoABM.ShowDialog();
+            AgregarAccion(
+                "Roles",
+                Constantes.Imagenes.ImgModificar,
+                AbrirAsignacionRoles,
+                true
+            );
+
+            AgregarAccion(
+                "Crear Usuario",
+                Constantes.Imagenes.ImgNuevo,
+                AbrirCrearUsuario,
+                true
+            );
+            if (vieneDeCargaVendedor)
+            {
+
+            AgregarAccion(
+                "Asignar Vendedor",
+                Constantes.Imagenes.ImgNuevo,
+                AsignarVendedor,
+                true
+            );
+            }
         }
+
+        private void AbrirAsignacionRoles(long? id)
+        {
+            if (!id.HasValue) return;
+
+            var f = new FAsignacionRolesEmpleados(TipoAsignacionRol.Existente, id);
+            f.ShowDialog();
+        }
+
+        private void AbrirCrearUsuario(long? id)
+        {
+            if (!id.HasValue) return;
+
+            var f = new FEmpleadoCrearUsuario(id);
+            f.ShowDialog();
+        }
+        private void AsignarVendedor(long? id)
+        {
+            if (!entidadID.HasValue)
+            {
+                MessageBox.Show("Seleccione un empleado.");
+                return;
+            }
+
+            empleadoSeleccionado = entidadID;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        #endregion
+
+        #region 🔷 GRILLA
 
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
-            grilla.Columns["PersonaId"].Visible = false;
-            grilla.Columns["PersonaId"].Name = "Id";
+
+            if (grilla.Columns.Contains("PersonaId"))
+            {
+                grilla.Columns["PersonaId"].Visible = false;
+                grilla.Columns["PersonaId"].Name = "Id";
+            }
 
             grilla.Columns["Legajo"].Visible = true;
             grilla.Columns["Legajo"].Width = 80;
@@ -98,111 +135,69 @@ namespace Presentacion.Core.Empleado
             grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
         }
 
-        public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
+        #endregion
+
+        #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
+
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
-            base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
+            base.ActualizarDatos(dgv, filtros);
 
-            if (check.Checked)
+            if (filtros.VerEliminados)
             {
-                grilla.DataSource = _empleadoServicio.ObtenerEmpleadosEliminados(cadenaBuscar);
-                toolStrip.Enabled = false;
-
+                dgv.DataSource = _empleadoServicio.ObtenerEmpleadosEliminados(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = false;
             }
             else
             {
-                grilla.DataSource = _empleadoServicio.ObtenerEmpleados(cadenaBuscar);
-                toolStrip.Enabled = true;
+                dgv.DataSource = _empleadoServicio.ObtenerEmpleados(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = true;
             }
+        }
+
+        #endregion
+
+        #region 🔷 BOTONES BASE
+
+        public override void EjecutarBtnNuevo()
+        {
+            var f = new FEmpleadoABM(TipoOperacion.Nuevo);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
 
         public override void EjecutarBtnModificar()
         {
             base.EjecutarBtnModificar();
-            if (puedeEjecutarComando)
-            {
-                var FormularioABMEmpleado = new FEmpleadoABM(TipoOperacion.Modificar, entidadID);
-                FormularioABMEmpleado.ShowDialog();
-                ActualizarSegunOperacion(FormularioABMEmpleado.RealizoAlgunaOperacion);
-            }
+            if (!puedeEjecutarComando) return;
+
+            var f = new FEmpleadoABM(TipoOperacion.Modificar, entidadID);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
+
         public override void EjecutarBtnEliminar()
         {
             base.EjecutarBtnEliminar();
-            if (puedeEjecutarComando)
-            {
-                var FormularioABMEmpleado = new FEmpleadoABM(TipoOperacion.Eliminar, entidadID);
-                FormularioABMEmpleado.ShowDialog();
-                ActualizarSegunOperacion(FormularioABMEmpleado.RealizoAlgunaOperacion);
-            }
-        }
-        private void ActualizarSegunOperacion(bool realizoOperacion)
-        {
-            if (realizoOperacion)
-            {
-                ActualizarDatos(dgvGrilla, string.Empty, cbxEstaEliminado, BarraLateralBotones);
-            }
-        }
-        public override void EjecutarMostrarEliminados()
-        {
-            base.EjecutarMostrarEliminados();
-        }
-
-        private void btnAsignacionRoles_Click(object sender, EventArgs e)
-        {
-            ControlCargaExistencaDatos();
-            if (puedeEjecutarComando)
-            {
-                EjecutarAsignacionRoles();
-            }
-        }
-
-        private void EjecutarAsignacionRoles()
-        {
-            var FormularioAsignacionRolesEmpleados = new FAsignacionRolesEmpleados(TipoAsignacionRol.Existente, entidadID);
-            FormularioAsignacionRolesEmpleados.ShowDialog();
-            //ActualizarSegunOperacion(FormularioAsignacionRolesEmpleados.RealizoAlgunaOperacion);
-        }
-
-        public void ControlCargaExistencaDatos()
-        {
-            if (dgvGrilla.RowCount > 0)
-            {
-                if (!entidadID.HasValue)
-                {
-                    MessageBox.Show("Por favor seleccione un registro.");
-                    puedeEjecutarComando = false;
-                    return;
-                }
-                else
-                {
-                    puedeEjecutarComando = true;
-                }
-            }
-            else
-            {
-                MessageBox.Show("No hay Datos Cargados.");
-            }
-        }
-
-        private void btnCrearUsuario_Click(object sender, EventArgs e)
-        {
-            ControlCargaExistencaDatos();
-            if (puedeEjecutarComando)
-            {
-                var formularioCrearUsuario = new FEmpleadoCrearUsuario(entidadID);
-                formularioCrearUsuario.ShowDialog();
-            }
-        }
-
-        private void btnSeleccionarVendedor_Click(object sender, EventArgs e)
-        {
-            ControlCargaExistencaDatos();
             if (!puedeEjecutarComando) return;
 
-            empleadoSeleccionado = (long)entidadID;
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            var f = new FEmpleadoABM(TipoOperacion.Eliminar, entidadID);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
+
+        private void Recargar()
+        {
+            //btnActualizar_Click_Base();
+        }
+
+        #endregion
+
     }
 }
-
