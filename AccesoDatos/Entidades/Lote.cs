@@ -9,7 +9,7 @@ namespace AccesoDatos.Entidades
     public class Lote
     {
         public long LoteId { get; set; }
-        public long ProductoId { get; set; }
+        public long IdProducto { get; set; }
         public int Cantidad { get; set; }
         public string NumeroLote { get; set; } //autogenerado por el sistema
         public string NombreLote { get; set; } //
@@ -20,6 +20,5 @@ namespace AccesoDatos.Entidades
 
         public Producto Producto { get; set; }
         public List<Movimiento> Movimientos { get; set; }
-
     }
 }
