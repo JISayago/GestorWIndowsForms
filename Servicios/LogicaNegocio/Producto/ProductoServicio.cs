@@ -663,7 +663,7 @@ namespace Servicios.LogicaNegocio.Producto
 
             };
 
-            context.Lotes.Add(loteAlta);
+            //context.Lotes.Add(loteAlta);
             context.SaveChanges();
 
             return new EstadoOperacion
