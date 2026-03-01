@@ -22,9 +22,15 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
 
             try
             {
+
                 if (context.OfertasDescuentos.Any(o => o.Descripcion == dto.Descripcion))
                 {
                     return new EstadoOperacion { Exitoso = false, Mensaje = "Ya existe una oferta con la misma descripción." };
+                }
+
+                if (string.IsNullOrWhiteSpace(dto.Codigo) || dto.Codigo.Trim() == "*")
+                {
+                    dto.Codigo = GenerarCodigoOferta(context, dto);
                 }
 
                 var entidad = new OfertaDescuento
@@ -86,6 +92,39 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 transaction.Rollback();
                 return new EstadoOperacion { Exitoso = false, Mensaje = "Error al crear la oferta: " + ex.Message };
             }
+        }
+        private string GenerarCodigoOferta(GestorContextDB context, OfertaDTO dto)
+        {
+            string prefijo;
+
+            if (dto.esOfertaPorGrupo)
+                prefijo = "OF-GRUPO";
+            else if (dto.EsUnSoloProducto)
+                prefijo = "OF-PROD";
+            else
+                prefijo = "OF-COMBO";
+
+            var fecha = DateTime.Now.ToString("yyyyMMdd");
+
+            // Buscar el último código generado hoy para ese tipo
+            var ultimoCodigo = context.OfertasDescuentos
+                .Where(o => o.Codigo.StartsWith(prefijo + "-" + fecha))
+                .OrderByDescending(o => o.OfertaDescuentoId)
+                .Select(o => o.Codigo)
+                .FirstOrDefault();
+
+            int correlativo = 1;
+
+            if (!string.IsNullOrEmpty(ultimoCodigo))
+            {
+                var partes = ultimoCodigo.Split('-');
+                if (int.TryParse(partes.Last(), out int ultimoNumero))
+                {
+                    correlativo = ultimoNumero + 1;
+                }
+            }
+
+            return $"{prefijo}-{fecha}-{correlativo}";
         }
         private EstadoOperacion CrearProductosEnOferta(
             GestorContextDB context,
