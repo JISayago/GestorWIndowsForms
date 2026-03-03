@@ -5,6 +5,7 @@ using Presentacion.Core.Categoria;
 using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
+using Presentacion.Core.Venta;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Articulo.Categoria;
 using Servicios.LogicaNegocio.Articulo.Marca;
@@ -30,6 +31,7 @@ namespace Presentacion.Core.Oferta
     {
         private readonly OfertaServicio _ofertaServicio;
         private readonly TipoOferta _tipoOferta;
+        private bool _ofertaActiva = false;
         private DateTime _fechaInicio;
         private DateTime _fechaFin;
         private bool _esMarca = false;
@@ -41,7 +43,6 @@ namespace Presentacion.Core.Oferta
         private string _marcaN;
         private string _categoriaN;
         private string _rubroN;
-        private bool _ofertaActiva = false;
         private decimal _precioFinal;
         private decimal _precioOriginal;
         private decimal _cantidadProductos = 0.0m;
@@ -483,120 +484,20 @@ namespace Presentacion.Core.Oferta
 
         private void btnCrear_Click(object sender, EventArgs e)
         {
-            if (_productosParaOfertaDTO == null || !_productosParaOfertaDTO.Any())
-            {
-                MessageBox.Show("Debe agregar al menos un producto a la oferta.");
-                return;
-            }
-
-            if (!cbxDescuentoPorcentaje.Checked && !cbxDescuentoPesos.Checked)
-            {
-                MessageBox.Show("Debe seleccionar si la oferta es por porcentaje o por precio fijo.");
-                return;
-            }
-
-            if (cbxDescuentoPorcentaje.Checked && cbxDescuentoPesos.Checked)
-            {
-                MessageBox.Show("Seleccione solo un tipo de descuento.");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtMontoPorcentaje.Text))
-            {
-                MessageBox.Show("Debe ingresar un valor.");
-                return;
-            }
-
-            if (!_ofertaActiva)
-            {
-                var result = MessageBox.Show(
-                    "Está creando una oferta que no estará activa.\n\n¿Desea continuar?",
-                    "Confirmación",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (result == DialogResult.No)
-                    return;
-            }
-
             try
             {
                 btnCrear.Enabled = false;
 
-                decimal valorIngresado = Convert.ToDecimal(txtMontoPorcentaje.Text);
+                if (!ValidarFormulario())
+                    return;
 
-                decimal precioOriginalTotal = _productosParaOfertaDTO.Sum(p => p.PrecioVenta);
-
-                decimal descuentoTotal = 0;
-                decimal precioFinalCalculado = precioOriginalTotal;
-
-                if (cbxDescuentoPorcentaje.Checked)
-                {
-                    if (valorIngresado <= 0 || valorIngresado > 100)
-                    {
-                        MessageBox.Show("El porcentaje debe estar entre 1 y 100.");
-                        return;
-                    }
-
-                    descuentoTotal = precioOriginalTotal * (valorIngresado / 100m);
-                    precioFinalCalculado = precioOriginalTotal - descuentoTotal;
-                }
-                else if (cbxDescuentoPesos.Checked)
-                {
-                    if (valorIngresado <= 0 || valorIngresado >= precioOriginalTotal)
-                    {
-                        MessageBox.Show("El precio fijo debe ser menor al precio original.");
-                        return;
-                    }
-
-                    precioFinalCalculado = valorIngresado;
-                    descuentoTotal = precioOriginalTotal - precioFinalCalculado;
-                }
-
-                var hora = DateTime.Now;
-                var desc = txtDescripcion.Text?.Trim();
-                var cantidadLimite = -1.0m;
-
-                if (!string.IsNullOrEmpty(txtLimiteStock.Text))
-                    cantidadLimite = Convert.ToDecimal(txtLimiteStock.Text);
-
-                var ofertaDto = new OfertaDTO
-                {
-                    Descripcion = $"{desc} {hora}",
-                    PrecioFinal = precioFinalCalculado,
-                    PrecioOriginal = precioOriginalTotal,
-                    DescuentoTotalFinal = descuentoTotal,
-                    PorcentajeDescuento = cbxDescuentoPorcentaje.Checked ? valorIngresado : 0,
-                    FechaInicio = dtpFechaInicio.Value,
-                    FechaFin = dtpFechaFin.Value,
-                    CantidadProductosDentroOferta = _productosParaOfertaDTO
-                                                    .Sum(p => p.CantidadItemEnOferta),
-                    EstaActiva = forzarInactivo ? false : _ofertaActiva,
-                    EsUnSoloProducto = _productosParaOfertaDTO.Count == 1,
-                    Detalle = txtDetalle.Text?.Trim(),
-                    Codigo = _codigoN,
-                    esOfertaPorGrupo = true,
-                    TieneLimiteDeStock = cbxLimiteCumplirStock.Checked,
-                    CantidadLimiteDeStock = cantidadLimite,
-                    IdMarca = _marcaId,
-                    IdRubro = _rubroId,
-                    IdCategoria = _categoriaId,
-                    GrupoNombre = $"{_marcaN}-{_rubroN}-{_categoriaN}",
-                    Productos = _productosParaOfertaDTO.ToList()
-                };
+                var ofertaDto = ConstruirOfertaDto();
 
                 var resultado = _ofertaServicio.Insertar(ofertaDto);
 
-                if (resultado == null)
+                if (resultado == null || !resultado.Exitoso)
                 {
-                    MessageBox.Show("No se recibió respuesta del servicio.", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                if (!resultado.Exitoso)
-                {
-                    MessageBox.Show(resultado.Mensaje ?? "Error al crear la oferta.",
+                    MessageBox.Show(resultado?.Mensaje ?? "Error al crear la oferta.",
                         "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
@@ -613,6 +514,130 @@ namespace Presentacion.Core.Oferta
             {
                 btnCrear.Enabled = true;
             }
+        }
+
+        private bool ValidarFormulario()
+        {
+            if (cbxComboProductos.Checked &&
+                (_productosParaOfertaDTO == null || !_productosParaOfertaDTO.Any()))
+            {
+                MessageBox.Show("Debe agregar al menos un producto.");
+                return false;
+            }
+
+            if (!cbxDescuentoPorcentaje.Checked && !cbxDescuentoPesos.Checked)
+            {
+                MessageBox.Show("Debe seleccionar tipo de descuento.");
+                return false;
+            }
+
+            if (cbxDescuentoPorcentaje.Checked && cbxDescuentoPesos.Checked)
+            {
+                MessageBox.Show("Seleccione solo un tipo de descuento.");
+                return false;
+            }
+
+            if (!decimal.TryParse(txtMontoPorcentaje.Text, out decimal valor) || valor <= 0)
+            {
+                MessageBox.Show("Ingrese un valor válido.");
+                return false;
+            }
+
+            if (cbxLimiteCumplirStock.Checked)
+            {
+                if (!decimal.TryParse(txtLimiteStock.Text, out decimal limite) || limite <= 0)
+                {
+                    MessageBox.Show("El límite de stock debe ser mayor a 0.");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private (decimal precioOriginal, decimal precioFinal, decimal descuento, decimal porcentaje)
+            CalcularDescuento()
+        {
+            decimal precioOriginal;
+            if (cbxComboProductos.Checked)
+                precioOriginal = _productosParaOfertaDTO
+                    .Sum(p => p.PrecioVenta * (decimal)p.CantidadItemEnOferta);
+            else
+                precioOriginal = _productosParaOfertaDTO
+                    .Sum(p => p.PrecioVenta);
+
+            decimal valorIngresado = Convert.ToDecimal(txtMontoPorcentaje.Text);
+
+            decimal precioFinal = precioOriginal;
+            decimal descuento = 0;
+            decimal porcentaje = 0;
+
+            if (cbxDescuentoPorcentaje.Checked)
+            {
+                porcentaje = valorIngresado;
+                descuento = precioOriginal * (porcentaje / 100m);
+                precioFinal = precioOriginal - descuento;
+            }
+            else
+            {
+                precioFinal = valorIngresado;
+                descuento = precioOriginal - precioFinal;
+                porcentaje = (descuento / precioOriginal) * 100m;
+            }
+
+            return (precioOriginal, precioFinal, descuento, porcentaje);
+        }
+
+        private OfertaDTO ConstruirOfertaDto()
+        {
+            var calculo = CalcularDescuento();
+            var hora = DateTime.Now;
+            _ofertaActiva  = MessageBox.Show(
+                "¿Desea activar la oferta ahora? (Si no la activa, podrá activarla manualmente más adelante, pero no se ejecutará automáticamente en la fecha de inicio).",
+                "Activar oferta",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question) == DialogResult.Yes;
+
+            var ofertaDto = new OfertaDTO
+            {
+                Descripcion = $"{txtDescripcion.Text?.Trim()} {hora}",
+                PrecioOriginal = calculo.precioOriginal,
+                PrecioFinal = calculo.precioFinal,
+                Productos = _productosParaOfertaDTO?.ToList(),
+                DescuentoTotalFinal = calculo.descuento,
+                PorcentajeDescuento = calculo.porcentaje,
+                FechaInicio = dtpFechaInicio.Value,
+                FechaFin = dtpFechaFin.Value,
+                Detalle = txtDetalle.Text?.Trim(),
+                Codigo = _codigoN,
+                EstaActiva = _ofertaActiva,
+                EsUnSoloProducto = (_productosParaOfertaDTO?.Count ?? 0) == 1,
+                CantidadProductosDentroOferta =
+                    _productosParaOfertaDTO?.Sum(p => p.CantidadItemEnOferta) ?? 0,
+                TieneLimiteDeStock = cbxLimiteCumplirStock.Checked,
+                CantidadLimiteDeStock = cbxLimiteCumplirStock.Checked
+                    ? Convert.ToDecimal(txtLimiteStock.Text)
+                    : -1
+            };
+
+            if (cbxComboProductos.Checked)
+            {
+                ofertaDto.esOfertaPorGrupo = false;
+                ofertaDto.IdMarca = null;
+                ofertaDto.IdRubro = null;
+                ofertaDto.IdCategoria = null;
+                ofertaDto.GrupoNombre = string.Empty;
+            }
+            else
+            {
+                ofertaDto.esOfertaPorGrupo = true;
+                ofertaDto.IdMarca = _marcaId;
+                ofertaDto.IdRubro = _rubroId;
+                ofertaDto.IdCategoria = _categoriaId;
+                ofertaDto.GrupoNombre = $"{_marcaN}-{_rubroN}-{_categoriaN}";
+            }
+
+            return ofertaDto;
         }
 
         private void cbxEsUnProducto_CheckedChanged(object sender, EventArgs e)
@@ -674,24 +699,98 @@ namespace Presentacion.Core.Oferta
             cbxCategoria.Enabled = !cbxComboProductos.Checked;
             cbxMarca.Enabled = !cbxComboProductos.Checked;
             cbxRubro.Enabled = !cbxComboProductos.Checked;
-            cbxComboProductos.Enabled = !cbxComboProductos.Checked;
+            cbxDescuentoPorcentaje.Enabled = !cbxComboProductos.Checked;
+            cbxDescuentoPesos.Checked = cbxComboProductos.Checked;
+            cbxDescuentoPesos.Enabled = !cbxComboProductos.Checked;
             btnCargarProductosAlcanzados.Enabled = !cbxComboProductos.Checked;
+            btnCargarProducto.Enabled = cbxComboProductos.Checked;
             dgvProductosQuitados.Enabled = !cbxComboProductos.Checked;
             btnDevolverAOferta.Enabled = !cbxComboProductos.Checked;
             lblTotalPrecioCosto.Enabled = cbxComboProductos.Checked;
             lblTotalPrecioCosto.Visible = cbxComboProductos.Checked;
-            txtPrecioCostoAcumulado.Enabled = cbxComboProductos.Checked;
             txtPrecioCostoAcumulado.Visible = cbxComboProductos.Checked;
             lblTotalPrecioReal.Enabled = cbxComboProductos.Checked;
             lblTotalPrecioReal.Visible = cbxComboProductos.Checked;
-            txtPrecioVentaReal.Enabled = cbxComboProductos.Checked;
             txtPrecioVentaReal.Visible = cbxComboProductos.Checked;
 
         }
 
         private void btnCargarProducto_Click(object sender, EventArgs e)
         {
+            var fProductos = new FProductoConsulta(true);
 
+            if (fProductos.ShowDialog() != DialogResult.OK ||
+                !fProductos.productoSeleccionado.HasValue)
+                return;
+
+            var idProducto = fProductos.productoSeleccionado.Value;
+            var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
+            if (producto == null) return;
+
+            var fCantidad = new FCantidadItem();
+            if (fCantidad.ShowDialog() != DialogResult.OK || fCantidad.cantidad <= 0)
+                return;
+
+            var cantidad = fCantidad.cantidad;
+
+            var productoDto = new ProductoDTO
+            {
+                ProductoId = producto.ProductoId,
+                IdMarca = producto.IdMarca,
+                IdRubro = producto.IdRubro,
+                Stock = producto.Stock,
+                PrecioCosto = producto.PrecioCosto,
+                PrecioVenta = producto.PrecioVenta,
+                Descripcion = producto.Descripcion,
+                EstaEliminado = producto.EstaEliminado,
+                Estado = producto.Estado,
+                Medida = producto.Medida,
+                UnidadMedida = producto.UnidadMedida,
+                Codigo = producto.Codigo,
+                CodigoBarra = producto.CodigoBarra,
+                IvaIncluidoPrecioFinal = producto.IvaIncluidoPrecioFinal,
+                EsFraccionable = producto.EsFraccionable,
+                MarcaNombre = string.Empty,
+                RubroNombre = string.Empty,
+                CategoriaIds = producto.CategoriaIds,
+                CantidadItemEnOferta = cantidad
+            };
+
+            // 🔥 Validación real: productos distintos
+            var productosDistintos = _productosParaOfertaDTO
+                                        .Select(x => x.ProductoId)
+                                        .Distinct()
+                                        .Count();
+
+            if (productosDistintos >= 2)
+            {
+                var respuesta = MessageBox.Show(
+                    "La oferta ya tiene 2 productos distintos.\n¿Esta seguro que desea agregar un tercero?",
+                    "Advertencia",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (respuesta == DialogResult.No)
+                    return;
+            }
+
+            _productosParaOfertaDTO.Add(productoDto);
+
+            RecalcularTotales();
+
+            _descripcion += $"({productoDto.Descripcion} Código:{productoDto.Codigo} Cant:{cantidad}) + ";
+            txtDescripcion.Text = _descripcion;
+        }
+        private void RecalcularTotales()
+        {
+            var totalCosto = _productosParaOfertaDTO
+                                .Sum(x => x.PrecioCosto * x.CantidadItemEnOferta);
+
+            var totalVenta = _productosParaOfertaDTO
+                                .Sum(x => x.PrecioVenta * x.CantidadItemEnOferta);
+
+            txtPrecioCostoAcumulado.Text = totalCosto?.ToString("N2");
+            txtPrecioVentaReal.Text = totalVenta?.ToString("N2");
         }
     }
 }

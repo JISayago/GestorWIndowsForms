@@ -455,6 +455,7 @@
             // 
             // btnCargarProducto
             // 
+            btnCargarProducto.Enabled = false;
             btnCargarProducto.Location = new Point(960, 142);
             btnCargarProducto.Name = "btnCargarProducto";
             btnCargarProducto.Size = new Size(161, 32);
