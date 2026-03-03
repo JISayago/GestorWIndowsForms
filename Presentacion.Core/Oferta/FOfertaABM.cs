@@ -1,5 +1,6 @@
 ﻿using AccesoDatos.Entidades;
 using Microsoft.IdentityModel.Tokens;
+using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.Core.Producto;
 using Presentacion.Core.Venta;
 using Presentacion.FBase;
@@ -27,7 +28,7 @@ namespace Presentacion.Core.Oferta
 {
     public partial class FOfertaABM : FBase.FBase
     {
-        private readonly IOfertaServicio _ofertaServicio;
+        private readonly OfertaServicio _ofertaServicio;
         protected long? EntidadID;
         private bool _esCombinacionProductos = false;
         private bool _ofertaActiva = false;
@@ -56,41 +57,6 @@ namespace Presentacion.Core.Oferta
             _tipoOferta = tipoOferta;
 
         }
-
-        //private void cbxCantidadProductos_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    _esCombinacionProductos = cbxCombinacionProductos.Checked;
-        //    if (_esCombinacionProductos)
-        //    {
-        //        cbx2x1.Enabled = false;
-        //    }
-        //    else
-        //    {
-        //        cbx2x1.Enabled = true;
-
-        //    }
-        //}
-
-        //private void cbxEstaActiva_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    //_ofertaActiva = cbxEstaActiva.Checked;
-        //    //ahorava a ser una preg
-        //}
-
-        //private void cbx2x1_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    _es2x1 = cbx2x1.Checked;
-        //    if (_es2x1)
-        //    {
-        //        cbxCombinacionProductos.Enabled = false;
-        //    }
-        //    else
-        //    {
-        //        cbxCombinacionProductos.Enabled = true;
-
-        //    }
-        //}
-
         private void dtpFechaInicio_ValueChanged(object sender, EventArgs e)
         {
             if (dtpFechaFin.Value > dtpFechaFin.Value)
@@ -116,42 +82,6 @@ namespace Presentacion.Core.Oferta
                 _fechaFin = dtpFechaFin.Value;
             }
         }
-
-        //private void btnCrear_Click(object sender, EventArgs e)
-        //{
-        //    CrearNuevaOferta();
-        //}
-
-        //private void CrearNuevaOferta()
-        //{
-        //    var ofertaNueva = new OfertaDTO
-        //    {
-        //        Descripcion = _descripcion,
-        //        PrecioFinal = _precioFinal,
-        //        PrecioOriginal = _precioOriginal,
-        //        DescuentoTotalFinal = 0.0m,
-        //        PorcentajeDescuento = 0.0m,
-        //        FechaInicio = _fechaInicio,
-        //        Codigo = string.Empty,
-        //        Detalle = string.Empty,
-        //        FechaFin = _fechaFin,
-        //        CantidadProductosDentroOferta = 0.0m,
-        //        EstaActiva = _ofertaActiva,
-        //        EsUnSoloProducto = !_esCombinacionProductos,
-        //        Productos = _productosOfertaDTO,
-        //        esOfertaPorGrupo = false,
-        //        IdMarca = 0,
-        //        IdRubro = 0,
-        //        IdCategoria = 0,
-        //        GrupoNombre = string.Empty,
-        //    };
-        //}
-
-        private void ActualizarGrillas()
-        {
-            dgvProductos.Refresh(); // refresca la visualización
-        }
-
 
 
         public virtual void IniciarGrilla(DataGridView grilla)
@@ -244,7 +174,6 @@ namespace Presentacion.Core.Oferta
                 return;
 
             long entidadID = Convert.ToInt64(celda.Value);
-            // tu lógica...
         }
 
         private void btnCargarProducto_Click(object sender, EventArgs e)
@@ -269,7 +198,7 @@ namespace Presentacion.Core.Oferta
             {
                 ProductoId = producto.ProductoId,
                 IdMarca = producto.IdMarca,
-                IdRubro = producto.IdRubro, // 👈 OJO acá tenías mal IdMarca
+                IdRubro = producto.IdRubro, 
                 Stock = producto.Stock,
                 PrecioCosto = producto.PrecioCosto,
                 PrecioVenta = producto.PrecioVenta,
@@ -327,113 +256,17 @@ namespace Presentacion.Core.Oferta
         private void FOfertaABM_Load(object sender, EventArgs e)
         {
             LimpiarInicializarControles();
-            ConfigurarCodigoManualOAutomatico();
-        }
 
-        private void ConfigurarCodigoManualOAutomatico()
-        {
-            var respuesta = MessageBox.Show(
-                "¿Desea ingresar el código de la oferta manualmente?",
-                "Tipo de Código",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
+            _codigoN = CodigoOfertaHelper.ObtenerCodigo(_ofertaServicio, this);
 
-            if (respuesta == DialogResult.Yes)
+            if (_codigoN == null)
             {
-                while (true)
-                {
-                    string codigoManual = MostrarInputCodigo();
-
-                    if (string.IsNullOrWhiteSpace(codigoManual))
-                        return;
-
-                    if (_ofertaServicio.ExisteOfertaPorCodigo(codigoManual))
-                    {
-                        MessageBox.Show(
-                            $"Ya existe una oferta con el código '{codigoManual}'. Ingrese otro.",
-                            "Código duplicado",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning);
-
-                        continue; // vuelve al inicio del while
-                    }
-
-                    _codigoN = codigoManual;
-                    lblCodigoManual.Text = _codigoN;
-                    break; // sale del while
-                }
+                Close(); // canceló el usuario
+                return;
             }
-            else
-            {
-                _codigoN = "*";
-            }
+
+            lblCodigoManual.Text = _codigoN == "*" ? "AUTOMÁTICO" : _codigoN;
         }
-        private string MostrarInputCodigo()
-        {
-            Form prompt = new Form()
-            {
-                Width = 350,
-                Height = 170,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                Text = "Ingrese Código Manual",
-                StartPosition = FormStartPosition.CenterParent,
-                MinimizeBox = false,
-                MaximizeBox = false
-            };
-
-            Label lbl = new Label()
-            {
-                Left = 20,
-                Top = 20,
-                Text = "Código:",
-                AutoSize = true
-            };
-
-            TextBox txt = new TextBox()
-            {
-                Left = 20,
-                Top = 45,
-                Width = 280
-            };
-
-            Button btnOk = new Button()
-            {
-                Text = "Aceptar",
-                Left = 140,
-                Width = 75,
-                Top = 80,
-                DialogResult = DialogResult.OK
-            };
-
-            Button btnCancel = new Button()
-            {
-                Text = "Cancelar",
-                Left = 225,
-                Width = 75,
-                Top = 80,
-                DialogResult = DialogResult.Cancel
-            };
-
-            prompt.Controls.Add(lbl);
-            prompt.Controls.Add(txt);
-            prompt.Controls.Add(btnOk);
-            prompt.Controls.Add(btnCancel);
-
-            prompt.AcceptButton = btnOk;
-            prompt.CancelButton = btnCancel;
-
-            return prompt.ShowDialog() == DialogResult.OK ? txt.Text : null;
-        }
-
-        //private void cbxDescuentoPesos_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    _precioMontoFijo = cbxDescuentoPesos.Checked;
-        //    if (_precioMontoFijo)
-        //    {
-        //        txtPrecioDescuentoPesos.Text = string.Empty;
-        //        txtPrecioTotalOfertaAplicada.Text = string.Empty;
-        //    }
-        //}
 
 
         private void btnCrear_Click_1(object sender, EventArgs e)

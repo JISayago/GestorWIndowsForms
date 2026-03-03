@@ -200,7 +200,7 @@
             btnLimpiar.Name = "btnLimpiar";
             btnLimpiar.Size = new Size(177, 57);
             btnLimpiar.TabIndex = 64;
-            btnLimpiar.Text = "Limpiar campos";
+            btnLimpiar.Text = "Limpiar ";
             btnLimpiar.UseVisualStyleBackColor = true;
             btnLimpiar.Click += btnLimpiar_Click;
             // 
