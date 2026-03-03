@@ -86,6 +86,11 @@ namespace Presentacion.Core.Movimiento
         #endregion
         #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
 
+        #endregion
+
+
+        #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
+
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
@@ -102,6 +107,7 @@ namespace Presentacion.Core.Movimiento
             }
         }
 
+
         #endregion
 
         #region BOTON ABRIR DETALLE (label viejo)
@@ -115,5 +121,6 @@ namespace Presentacion.Core.Movimiento
         }
 
         #endregion
+
     }
 }
