@@ -18,8 +18,10 @@ namespace AccesoDatos.Entidades
         public decimal Cantidad { get; set; }
         public decimal Subtotal { get; set; }
 
+
         // Relaciones
         public Venta Venta { get; set; }
         public Producto Producto { get; set; }
+        public OfertaDescuento OfertaDescuento { get; set; }
     }
 }

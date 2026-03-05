@@ -66,7 +66,7 @@ namespace Presentacion.Core.Oferta
         private BindingList<ProductoDTO> _productosParaOfertaDTO;
         private BindingList<ProductoDTO> _productosParaQuitarDeOfertaDTO;
 
-        public FOfertaGrupoABM(TipoOferta tipoOferta)
+        public FOfertaGrupoABM()
         {
             InitializeComponent();
             _marcaServicio = new MarcaServicio();
@@ -74,7 +74,6 @@ namespace Presentacion.Core.Oferta
             _categoriaServicio = new CategoriaServicio();
             _productoServicio = new ProductoServicio();
             _ofertaServicio = new OfertaServicio();
-            _tipoOferta = tipoOferta;
         }
 
         private void cbxMarca_CheckedChanged(object sender, EventArgs e)
@@ -627,6 +626,7 @@ namespace Presentacion.Core.Oferta
                 ofertaDto.IdRubro = null;
                 ofertaDto.IdCategoria = null;
                 ofertaDto.GrupoNombre = string.Empty;
+                
             }
             else
             {

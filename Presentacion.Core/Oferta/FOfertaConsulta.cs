@@ -91,7 +91,7 @@ namespace Presentacion.Core.Oferta
 
         public override void EjecutarBtnNuevo()
         {
-            var f = new FSeleccionTipoOferta();
+            var f = new FOfertaGrupoABM();
             f.Show();
         }
 

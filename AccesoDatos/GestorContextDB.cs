@@ -191,7 +191,11 @@ namespace AccesoDatos
 
                 entity.Property(e => e.IdProducto)
                     .HasColumnName("id_Producto")
-                    .IsRequired();
+                    .IsRequired(false);
+              
+                entity.Property(e => e.IdOfertaDescuento)
+                    .HasColumnName("id_OfertaDescuento")
+                    .IsRequired(false);
 
                 entity.Property(e => e.Cantidad)
                     .HasColumnName("cantidad")
@@ -211,6 +215,11 @@ namespace AccesoDatos
                 entity.HasOne(d => d.Producto)
                     .WithMany(p => p.DetallesVentas)
                     .HasForeignKey(d => d.IdProducto)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(d => d.OfertaDescuento)
+                    .WithMany(Of => Of.DetallesVentas)
+                    .HasForeignKey(d => d.IdOfertaDescuento)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
