@@ -28,6 +28,18 @@ namespace AccesoDatos.Entidades
         public Venta Venta { get; set; }
         public Caja Caja { get; set; } //estoy obligado a tener la referencia a caja? no puedo solo tener el id?
         public CuentaCorriente CuentaCorriente { get; set; }
+        //public long? EntidadId { get; set; }
+        //public TipoEntidadMovimiento? TipoEntidad { get; set; }
+
+
+        //servicio movimiento llame switch case "Venta"
+        //    context.Ventas
+        //    case "ctacte"
+        //    context.CteCte
+        //    case "Producto"
+        //    case "Caja"
+        //    case "Gasto"
+
 
     }
 }

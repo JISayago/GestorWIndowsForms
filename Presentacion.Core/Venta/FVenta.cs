@@ -878,6 +878,8 @@ namespace Presentacion.Core.Venta
             {
                 var idOferta = Fofertas.ofertaSeleccionada.Value;
 
+                var cantidad = 0.0m;
+
                 var Oferta = _ofertaServicio.ObtenerOfertaActivaPorId(idOferta);
                 if (Oferta == null)
                 {
@@ -886,24 +888,29 @@ namespace Presentacion.Core.Venta
                 }
                 else
                 {
+                    var fCantidad = new FCantidadItem();
 
-                    var OfertaVenta = new ItemVentaDTO
+                    if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
                     {
-                        ItemId = Oferta.OfertaDescuentoId,
-                        Descripcion = Oferta.Descripcion,
-                        PrecioVenta = Oferta.PrecioOriginal,
-                        PrecioOferta = Oferta.PrecioFinal,
-                        Cantidad = (decimal)Oferta.CantidadProductosDentroOferta,
-                        Medida = string.Empty,
-                        UnidadMedida = string.Empty,
-                        EsOferta = true
-                    };
+                        cantidad = fCantidad.cantidad;
 
-                    itemsVenta.Add(OfertaVenta);  // Solo agregamos a la BindingList
-                                                  //txtProductoCargado.Text = $"{OfertaVenta.Descripcion}";
-                                                  // No necesitas reasignar DataSource ni resetear grilla acá
-                    ValidarCantidadySiEsOferta();
-                    CalcularTotal();
+                        var ofertaVenta = new ItemVentaDTO
+                        {
+                            ItemId = Oferta.OfertaDescuentoId,
+                            Descripcion = Oferta.Descripcion,
+                            PrecioVenta = Oferta.PrecioOriginal,
+                            PrecioOferta = Oferta.PrecioFinal,
+                            Cantidad = cantidad, // cantidad de ofertas vendidas
+                            Medida = string.Empty,
+                            UnidadMedida = string.Empty,
+                            EsOferta = true
+                        };
+
+                        itemsVenta.Add(ofertaVenta);
+
+                        ValidarCantidadySiEsOferta();
+                        CalcularTotal();
+                    }
                 }
             }
         }

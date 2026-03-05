@@ -12,6 +12,7 @@ using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
 using ScottPlot;
+using Servicios.Helpers;
 using Servicios.LogicaNegocio.Caja;
 using Servicios.LogicaNegocio.Caja.DTO;
 using Servicios.LogicaNegocio.Venta;
@@ -159,8 +160,10 @@ namespace Presentacion.Core.Administracion
 
         private void nUEVAOFERTAToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var FOferta = new FSeleccionTipoOferta();
-            FOferta.Show();
+            var fGrupo = new FOfertaGrupoABM();
+            
+                fGrupo.ShowDialog();
+            
         }
 
         private void btnGasto_Click(object sender, EventArgs e)

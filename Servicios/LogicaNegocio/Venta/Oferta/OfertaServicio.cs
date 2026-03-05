@@ -22,9 +22,15 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
 
             try
             {
+
                 if (context.OfertasDescuentos.Any(o => o.Descripcion == dto.Descripcion))
                 {
                     return new EstadoOperacion { Exitoso = false, Mensaje = "Ya existe una oferta con la misma descripción." };
+                }
+
+                if (string.IsNullOrWhiteSpace(dto.Codigo) || dto.Codigo.Trim() == "*")
+                {
+                    dto.Codigo = GenerarCodigoOferta(context, dto);
                 }
 
                 var entidad = new OfertaDescuento
@@ -87,20 +93,46 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 return new EstadoOperacion { Exitoso = false, Mensaje = "Error al crear la oferta: " + ex.Message };
             }
         }
-        private EstadoOperacion CrearProductosEnOferta(
-            GestorContextDB context,
-            long ofertaId,
-            OfertaDTO ofertaDto,
-            ICollection<ProductoDTO> productosDto,
-            decimal? cantidadLimiteDeStock = null
-        )
+        private string GenerarCodigoOferta(GestorContextDB context, OfertaDTO dto)
+        {
+            string prefijo;
+
+            if (dto.esOfertaPorGrupo)
+                prefijo = "OF-GRUPO";
+            else if (dto.EsUnSoloProducto)
+                prefijo = "OF-PROD";
+            else
+                prefijo = "OF-COMBO";
+
+            var fecha = DateTime.Now.ToString("yyyyMMdd");
+
+            // Buscar el último código generado hoy para ese tipo
+            var ultimoCodigo = context.OfertasDescuentos
+                .Where(o => o.Codigo.StartsWith(prefijo + "-" + fecha))
+                .OrderByDescending(o => o.OfertaDescuentoId)
+                .Select(o => o.Codigo)
+                .FirstOrDefault();
+
+            int correlativo = 1;
+
+            if (!string.IsNullOrEmpty(ultimoCodigo))
+            {
+                var partes = ultimoCodigo.Split('-');
+                if (int.TryParse(partes.Last(), out int ultimoNumero))
+                {
+                    correlativo = ultimoNumero + 1;
+                }
+            }
+
+            return $"{prefijo}-{fecha}-{correlativo}";
+        }
+        private EstadoOperacion CrearProductosEnOferta(GestorContextDB context,long ofertaId,OfertaDTO ofertaDto,ICollection<ProductoDTO> productosDto,decimal? cantidadLimiteDeStock = null)
         {
             if (productosDto == null || !productosDto.Any())
             {
                 return new EstadoOperacion { Exitoso = true, Mensaje = "No hay productos para agregar." };
             }
 
-            // Asegurar porcentaje (si es null lo tratamos como 0)
             var porcentaje = ofertaDto.PorcentajeDescuento ?? 0m;
 
             var entidadesHijas = productosDto.Select(p => new ProductosEnOfertaDescuentos
@@ -108,17 +140,36 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 OfertaId = ofertaId,
                 ProductoId = p.ProductoId,
                 Cantidad = p.CantidadItemEnOferta.HasValue ? (decimal)p.CantidadItemEnOferta.Value : -1m,
-                CantidadVendidaPorLimite = p.CantidadItemEnOferta.HasValue ? (decimal)ofertaDto.CantidadLimiteDeStock : -1m ,//agregart el limite segun corresponda
+                CantidadVendidaPorLimite = p.CantidadItemEnOferta.HasValue
+                    ? (decimal)ofertaDto.CantidadLimiteDeStock
+                    : -1m,
                 PrecioOrginal = p.PrecioVenta,
                 PrecioConDescuento = p.PrecioVenta * (1 - (porcentaje / 100m))
             }).ToList();
 
             context.Set<ProductosEnOfertaDescuentos>().AddRange(entidadesHijas);
+
+            // 🔹 ACTUALIZAR ESTADO DE LOS PRODUCTOS A 2
+            var productosIds = productosDto.Select(p => p.ProductoId).ToList();
+
+            var productos = context.Productos
+                .Where(p => productosIds.Contains(p.ProductoId))
+                .ToList();
+
+            foreach (var producto in productos)
+            {
+                producto.Estado = 2;
+            }
+
             context.SaveChanges();
 
-            return new EstadoOperacion { Exitoso = true, Mensaje = "Productos en oferta creados correctamente." };
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = "Productos en oferta creados correctamente."
+            };
         }
-      
+
 
         public OfertaDTO ObtenerOfertaPorId(long idOFerta)
         {

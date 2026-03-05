@@ -100,22 +100,118 @@ namespace Servicios.LogicaNegocio.Venta
                 // 5. Detalles
                 if (ventaDto.Items != null && ventaDto.Items.Any())
                 {
+                    var itemsStock = new List<ItemVentaDTO>();
+
+                    foreach (var item in ventaDto.Items)
+                    {
+                        // =========================
+                        // PRODUCTO NORMAL
+                        // =========================
+                        if (!item.EsOferta)
+                        {
+                            itemsStock.Add(new ItemVentaDTO
+                            {
+                                ItemId = item.ItemId,
+                                Cantidad = item.Cantidad
+                            });
+
+                            continue;
+                        }
+
+
+                        // =========================
+                        // VER SI ES PRODUCTO CON DESCUENTO %
+                        // =========================
+                        var producto = context.Productos
+                            .FirstOrDefault(p => p.ProductoId == item.ItemId);
+
+                        if (producto != null && producto.Estado == 2)
+                        {
+                            itemsStock.Add(new ItemVentaDTO
+                            {
+                                ItemId = producto.ProductoId,
+                                Cantidad = item.Cantidad
+                            });
+
+                            continue;
+                        }
+
+
+                        // =========================
+                        // OFERTA (COMBO)
+                        // =========================
+                        var oferta = context.OfertasDescuentos
+                            .FirstOrDefault(o => o.OfertaDescuentoId == item.ItemId);
+
+                        if (oferta == null)
+                            throw new Exception($"Oferta no encontrada. Id: {item.ItemId}");
+
+
+                        var productosOferta = context.ProductosEnOfertasDescuentos
+                            .Where(x => x.OfertaId == oferta.OfertaDescuentoId)
+                            .ToList();
+
+                        if (!productosOferta.Any())
+                            throw new Exception($"La oferta {oferta.Descripcion} no tiene productos asociados.");
+
+
+                        foreach (var po in productosOferta)
+                        {
+                            itemsStock.Add(new ItemVentaDTO
+                            {
+                                ItemId = po.ProductoId,
+                                Cantidad = po.Cantidad * item.Cantidad
+                            });
+                        }
+                    }
+
                     if (ventaDto.Total < 0)
                     {
-                        _productoServicio.RestaurarStockProductos(ventaDto.Items, context);
+                        _productoServicio.RestaurarStockProductos(itemsStock, context);
                     }
                     else
                     {
-                        _productoServicio.DescontarStockProductos(ventaDto.Items, context);
+                        _productoServicio.DescontarStockProductos(itemsStock, context);
                     }
 
-                    var detalles = ventaDto.Items.Select(i => new DetallesVenta
+                    var detalles = new List<DetallesVenta>();
+
+                    foreach (var i in ventaDto.Items)
                     {
-                        IdVenta = venta.VentaId,
-                        IdProducto = i.ItemId,
-                        Cantidad = i.Cantidad,
-                        Subtotal = i.PrecioVenta * i.Cantidad
-                    }).ToList();
+                        long? idProducto = null;
+                        long? idOferta = null;
+
+                        if (!i.EsOferta)
+                        {
+                            // PRODUCTO NORMAL
+                            idProducto = i.ItemId;
+                        }
+                        else
+                        {
+                            var producto = context.Productos
+                                .FirstOrDefault(p => p.ProductoId == i.ItemId);
+
+                            if (producto != null && producto.Estado == 2)
+                            {
+                                // PRODUCTO CON DESCUENTO %
+                                idProducto = producto.ProductoId;
+                            }
+                            else
+                            {
+                                // OFERTA COMBO
+                                idOferta = i.ItemId;
+                            }
+                        }
+
+                        detalles.Add(new DetallesVenta
+                        {
+                            IdVenta = venta.VentaId,
+                            IdProducto = idProducto,
+                            IdOfertaDescuento = idOferta,
+                            Cantidad = i.Cantidad,
+                            Subtotal = i.PrecioVenta * i.Cantidad
+                        });
+                    }
 
                     context.DetallesVentas.AddRange(detalles);
                 }
@@ -249,7 +345,7 @@ namespace Servicios.LogicaNegocio.Venta
                 }).ToList(),
                 Items = venta.DetallesVentas.Select(d => new ItemVentaDTO
                 {
-                    ItemId = d.IdProducto,
+                    ItemId = (long)d.IdProducto,
                     Descripcion = d.Producto.Descripcion,
                     Cantidad = d.Cantidad,
                     PrecioVenta = d.Subtotal / d.Cantidad
@@ -388,7 +484,7 @@ namespace Servicios.LogicaNegocio.Venta
 
                     Items = ventaOriginal.DetallesVentas.Select(d => new ItemVentaDTO
                     {
-                        ItemId = d.IdProducto,
+                        ItemId = (long)d.IdProducto,
                         Cantidad = d.Cantidad,
                         PrecioVenta = d.Subtotal / d.Cantidad
                     }).ToList(),

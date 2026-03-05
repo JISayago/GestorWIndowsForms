@@ -83,6 +83,8 @@ namespace Presentacion.Core.Movimiento
                 grilla.Columns["FechaMovimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             }
         }
+        #endregion
+        #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
 
         #endregion
 
