@@ -15,6 +15,7 @@ namespace AccesoDatos.Entidades
         public Marca Marca { get; set; }
         public long IdRubro { get; set; }
         public Rubro Rubro { get; set; }
+        public bool ControlPorLote { get; set; }
         public string Codigo { get; set; }
         public string CodigoBarra { get; set; }
         public decimal Stock { get; set; }

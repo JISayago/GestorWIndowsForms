@@ -158,6 +158,10 @@ namespace AccesoDatos
                 entity.Property(p => p.IdRubro)
                     .HasColumnName("id_Rubro");
 
+                entity.Property(p => p.ControlPorLote)
+                    .HasColumnName("control_por_lote")
+                    .IsRequired();
+
                 // 🔗 Relaciones con Marca
                 entity.HasOne(p => p.Marca)
                     .WithMany(m => m.Productos)
@@ -958,67 +962,6 @@ namespace AccesoDatos
                 entity.HasIndex(e => e.CategoriaGasto);
                 entity.HasIndex(e => e.EstadoGasto);
             });
-
-            /*//LOTE
-
-            modelBuilder.Entity<Lote>(entity =>
-                {
-                    entity.ToTable("Lotes");
-
-                    entity.HasKey(e => e.LoteId);
-
-                    entity.Property(e => e.LoteId)
-                        .HasColumnName("id_Lote");
-
-                    entity.Property(e => e.IdProducto)
-                        .HasColumnName("id_Producto")
-                        .IsRequired();
-
-                    entity.Property(e => e.Cantidad)
-                        .HasColumnName("cantidad")
-                        .HasColumnType("decimal(18,2)")
-                        .IsRequired();
-
-                    entity.Property(e => e.NumeroLote)
-                        .HasColumnName("numero_lote")
-                        .HasMaxLength(100)
-                        .IsRequired();
-
-                    entity.Property(e => e.NombreLote)
-                        .HasColumnName("numero_lote")
-                        .HasMaxLength(100)
-                        .IsRequired();
-
-                    entity.Property(e => e.Descripcion)
-                        .HasColumnName("numero_lote")
-                        .HasMaxLength(100)
-                        .IsRequired();
-
-                    entity.Property(e => e.FechaAlta)
-                        .HasColumnName("fecha_alta")
-                        .HasColumnType("date")
-                        .IsRequired();
-
-                    entity.Property(e => e.FechaVencimiento)
-                        .HasColumnName("fecha_vencimiento")
-                        .HasColumnType("date")
-                        .IsRequired(false);
-
-                    entity.Property(e => e.EstaEliminado)
-                        .HasColumnName("esta_eliminado")
-                        .IsRequired();
-
-                    // Relación con Producto
-                    entity.HasOne(l => l.Producto)
-                        .WithMany() // si querés, podés agregar ICollection<Lote> en Producto
-                        .HasForeignKey(l => l.IdProducto)
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    entity.HasMany(l => l.Movimientos)
-                        .WithOne(m => m.Lote)
-                        .HasForeignKey(m => m.IdLote)
-                        .OnDelete(DeleteBehavior.Restrict);
-            });*/
         }
     }
 }
