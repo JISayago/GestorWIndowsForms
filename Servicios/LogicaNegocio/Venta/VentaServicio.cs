@@ -100,19 +100,49 @@ namespace Servicios.LogicaNegocio.Venta
                 // 5. Detalles
                 if (ventaDto.Items != null && ventaDto.Items.Any())
                 {
+                    var itemsStock = new List<ItemVentaDTO>();
+
+                    foreach (var item in ventaDto.Items)
+                    {
+                        if (item.EsOferta) 
+                        {
+                            var productosOferta = context.ProductosEnOfertasDescuentos
+                                .Where(x => x.OfertaId == item.ItemId)
+                                .ToList();
+
+                            foreach (var po in productosOferta)
+                            {
+                                itemsStock.Add(new ItemVentaDTO
+                                {
+                                    ItemId = po.ProductoId,
+                                    Cantidad = po.Cantidad * item.Cantidad
+                                });
+                            }
+                        }
+                        else
+                        {
+                            itemsStock.Add(new ItemVentaDTO
+                            {
+                                ItemId = item.ItemId,
+                                Cantidad = item.Cantidad
+                            });
+                        }
+                    }
+
                     if (ventaDto.Total < 0)
                     {
-                        _productoServicio.RestaurarStockProductos(ventaDto.Items, context);
+                        _productoServicio.RestaurarStockProductos(itemsStock, context);
                     }
                     else
                     {
-                        _productoServicio.DescontarStockProductos(ventaDto.Items, context);
+                        _productoServicio.DescontarStockProductos(itemsStock, context);
                     }
 
                     var detalles = ventaDto.Items.Select(i => new DetallesVenta
                     {
                         IdVenta = venta.VentaId,
-                        IdProducto = i.ItemId,
+                        //IdProducto = i.EsOferta ? null : i.ItemId,
+                        //IdOferta = i.EsOferta ? i.ItemId : null,
                         Cantidad = i.Cantidad,
                         Subtotal = i.PrecioVenta * i.Cantidad
                     }).ToList();

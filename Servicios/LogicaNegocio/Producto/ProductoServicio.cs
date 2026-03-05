@@ -153,6 +153,7 @@ namespace Servicios.LogicaNegocio.Producto
                 if (item.EsOferta)
                 {
                     // RestaurarStockOferta(item, context);
+                    bool esoferta = true;
                 }
                 else
                 {
