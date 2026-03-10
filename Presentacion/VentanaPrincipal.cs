@@ -13,23 +13,27 @@ using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
 using Presentacion.Core.Venta;
+using Servicios.LogicaNegocio.Venta.Oferta;
 
 namespace Presentacion
 {
     public partial class VentanaPrincipal : FBase.FBase
     {
         private readonly UsuarioLogeado _usuarioLogeado;
+        private readonly IOfertaServicio _ofertaServicio;
         private DateTime _fechaActual = DateTime.Now;
         private DateTime _horaActual = DateTime.Now;
 
         public VentanaPrincipal() : this(new UsuarioLogeado())
         {
+
         }
 
         public VentanaPrincipal(UsuarioLogeado usuarioLogeado)
         {
-            _usuarioLogeado = usuarioLogeado;
             InitializeComponent();
+            _ofertaServicio = new OfertaServicio();
+            _usuarioLogeado = usuarioLogeado;
 
             this.Bounds = Screen.PrimaryScreen.WorkingArea;
 
@@ -46,7 +50,60 @@ namespace Presentacion
             MyTimer.Interval = 1000;
             MyTimer.Tick += new EventHandler(MyTimer_Tick);
             MyTimer.Start();
+
+            CargarInfo();
         }
+
+        private void CargarInfo()
+        {
+            CargarInfo1();
+            CargarInfo2();
+            CargarInfo3();
+            CargarInfo4();
+        }
+
+        private void CargarInfo4()
+        {
+            var InfoOferta = new InfoPantallaPrincipal
+            {
+                Titulo = "INFO 4",
+                TextoPrincipal = "Info 4",
+                TextoSecundario = "Info 4",
+                Tipo = TipoSectorPrincipal.Ofertas
+            };
+        }
+
+        private void CargarInfo3()
+        {
+            var InfoOferta = new InfoPantallaPrincipal
+            {
+                Titulo = "INFO 3",
+                TextoPrincipal = "Info 3",
+                TextoSecundario = "Info 3",
+                Tipo = TipoSectorPrincipal.Ofertas
+            };
+        }
+
+        private void CargarInfo2()
+        {
+            var InfoOferta = new InfoPantallaPrincipal
+            {
+                Titulo = "INFO 2",
+                TextoPrincipal = "Info 2",
+                TextoSecundario = "Info 2",
+                Tipo = TipoSectorPrincipal.Ofertas
+            };
+        }
+
+        private void CargarInfo1()
+        {
+            var ofertaInfo = _ofertaServicio.ObtenerInfoOferta();
+
+            lblTituloSector1.Text = ofertaInfo.Titulo;
+            lblConenido1.Text = ofertaInfo.TextoPrincipal;
+            lblConenido12.Text = ofertaInfo.TextoSecundario;
+        }
+
         private void MyTimer_Tick(object sender, EventArgs e)
         {
             lblFechaValor.Text = DateTime.Now.ToString("dd/MM/yyyy");
