@@ -28,18 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            dgvGrilla = new DataGridView();
             PnlBotones = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
             btnPanelAdmin = new Button();
             btnVenta = new Button();
             btnCaja = new Button();
             btnContraVenta = new Button();
-            pnlInfoInicial = new Panel();
-            label2 = new Label();
-            pnlTextos = new Panel();
-            label1 = new Label();
             panel1 = new Panel();
+            tableLayoutPanel3 = new TableLayoutPanel();
+            tableLayoutPanel7 = new TableLayoutPanel();
+            lblConenido42 = new Label();
+            lblConenido4 = new Label();
+            lblTituloSector4 = new Label();
+            tableLayoutPanel6 = new TableLayoutPanel();
+            tableLayoutPanel10 = new TableLayoutPanel();
+            button3 = new Button();
+            lblTituloSector3 = new Label();
+            lblConenido32 = new Label();
+            lblConenido3 = new Label();
+            tableLayoutPanel5 = new TableLayoutPanel();
+            tableLayoutPanel9 = new TableLayoutPanel();
+            button2 = new Button();
+            lblTituloSector2 = new Label();
+            lblConenido22 = new Label();
+            lblConenido2 = new Label();
+            tableLayoutPanel4 = new TableLayoutPanel();
+            tableLayoutPanel8 = new TableLayoutPanel();
+            button1 = new Button();
+            lblTituloSector1 = new Label();
+            lblConenido12 = new Label();
+            lblConenido1 = new Label();
             lblNombreUsuario = new Label();
             lblUsuario = new Label();
             flowLayoutPanel1 = new FlowLayoutPanel();
@@ -50,27 +68,24 @@
             flowLayoutPanel3 = new FlowLayoutPanel();
             lblHora = new Label();
             lblHoraValor = new Label();
+            llbCerrarSesion = new LinkLabel();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
             PnlBotones.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
-            pnlInfoInicial.SuspendLayout();
-            pnlTextos.SuspendLayout();
             panel1.SuspendLayout();
+            tableLayoutPanel3.SuspendLayout();
+            tableLayoutPanel7.SuspendLayout();
+            tableLayoutPanel6.SuspendLayout();
+            tableLayoutPanel10.SuspendLayout();
+            tableLayoutPanel5.SuspendLayout();
+            tableLayoutPanel9.SuspendLayout();
+            tableLayoutPanel4.SuspendLayout();
+            tableLayoutPanel8.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
             flowLayoutPanel3.SuspendLayout();
             SuspendLayout();
-            // 
-            // dgvGrilla
-            // 
-            dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvGrilla.Location = new Point(679, -3);
-            dgvGrilla.Name = "dgvGrilla";
-            dgvGrilla.Size = new Size(380, 455);
-            dgvGrilla.TabIndex = 17;
             // 
             // PnlBotones
             // 
@@ -152,58 +167,305 @@
             btnContraVenta.UseVisualStyleBackColor = true;
             btnContraVenta.Click += btnContraVenta_Click;
             // 
-            // pnlInfoInicial
-            // 
-            pnlInfoInicial.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            pnlInfoInicial.BackColor = SystemColors.ActiveCaption;
-            pnlInfoInicial.Controls.Add(label2);
-            pnlInfoInicial.Controls.Add(pnlTextos);
-            pnlInfoInicial.Controls.Add(dgvGrilla);
-            pnlInfoInicial.Location = new Point(-18, 3);
-            pnlInfoInicial.Name = "pnlInfoInicial";
-            pnlInfoInicial.Size = new Size(1062, 455);
-            pnlInfoInicial.TabIndex = 23;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.BackColor = SystemColors.ButtonFace;
-            label2.Location = new Point(663, 65);
-            label2.Name = "label2";
-            label2.Size = new Size(170, 15);
-            label2.TabIndex = 1;
-            label2.Text = "Grilla de deudores o ver de que";
-            // 
-            // pnlTextos
-            // 
-            pnlTextos.AllowDrop = true;
-            pnlTextos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            pnlTextos.BackColor = SystemColors.ActiveCaptionText;
-            pnlTextos.Controls.Add(label1);
-            pnlTextos.Location = new Point(3, 3);
-            pnlTextos.Name = "pnlTextos";
-            pnlTextos.Size = new Size(670, 449);
-            pnlTextos.TabIndex = 18;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.BackColor = SystemColors.ButtonFace;
-            label1.Location = new Point(122, 85);
-            label1.Name = "label1";
-            label1.Size = new Size(180, 15);
-            label1.TabIndex = 0;
-            label1.Text = "Contenedor de texto informativo";
-            // 
             // panel1
             // 
             panel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panel1.Controls.Add(tableLayoutPanel3);
             panel1.Controls.Add(PnlBotones);
-            panel1.Controls.Add(pnlInfoInicial);
             panel1.Location = new Point(30, 62);
             panel1.Name = "panel1";
             panel1.Size = new Size(1047, 580);
             panel1.TabIndex = 24;
+            // 
+            // tableLayoutPanel3
+            // 
+            tableLayoutPanel3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel3.BackColor = SystemColors.ActiveCaption;
+            tableLayoutPanel3.ColumnCount = 2;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.Controls.Add(tableLayoutPanel7, 1, 1);
+            tableLayoutPanel3.Controls.Add(tableLayoutPanel6, 0, 1);
+            tableLayoutPanel3.Controls.Add(tableLayoutPanel5, 1, 0);
+            tableLayoutPanel3.Controls.Add(tableLayoutPanel4, 0, 0);
+            tableLayoutPanel3.Location = new Point(0, 3);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 2;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.Size = new Size(1047, 501);
+            tableLayoutPanel3.TabIndex = 19;
+            // 
+            // tableLayoutPanel7
+            // 
+            tableLayoutPanel7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel7.BackColor = SystemColors.ControlDark;
+            tableLayoutPanel7.ColumnCount = 1;
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel7.Controls.Add(lblConenido42, 0, 2);
+            tableLayoutPanel7.Controls.Add(lblConenido4, 0, 1);
+            tableLayoutPanel7.Controls.Add(lblTituloSector4, 0, 0);
+            tableLayoutPanel7.ForeColor = SystemColors.ActiveCaptionText;
+            tableLayoutPanel7.Location = new Point(526, 253);
+            tableLayoutPanel7.Name = "tableLayoutPanel7";
+            tableLayoutPanel7.RowCount = 3;
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 45F));
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 45F));
+            tableLayoutPanel7.Size = new Size(518, 245);
+            tableLayoutPanel7.TabIndex = 3;
+            // 
+            // lblConenido42
+            // 
+            lblConenido42.AutoSize = true;
+            lblConenido42.Location = new Point(3, 134);
+            lblConenido42.Name = "lblConenido42";
+            lblConenido42.Size = new Size(72, 15);
+            lblConenido42.TabIndex = 3;
+            lblConenido42.Text = "Content-4-1";
+            // 
+            // lblConenido4
+            // 
+            lblConenido4.AutoSize = true;
+            lblConenido4.Location = new Point(3, 24);
+            lblConenido4.Name = "lblConenido4";
+            lblConenido4.Size = new Size(61, 15);
+            lblConenido4.TabIndex = 2;
+            lblConenido4.Text = "Content-4";
+            // 
+            // lblTituloSector4
+            // 
+            lblTituloSector4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            lblTituloSector4.AutoSize = true;
+            lblTituloSector4.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblTituloSector4.Location = new Point(3, 0);
+            lblTituloSector4.Name = "lblTituloSector4";
+            lblTituloSector4.Size = new Size(512, 21);
+            lblTituloSector4.TabIndex = 0;
+            lblTituloSector4.Text = "Datos Sistema";
+            lblTituloSector4.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // tableLayoutPanel6
+            // 
+            tableLayoutPanel6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel6.BackColor = SystemColors.ControlDark;
+            tableLayoutPanel6.ColumnCount = 1;
+            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel6.Controls.Add(tableLayoutPanel10, 0, 0);
+            tableLayoutPanel6.Controls.Add(lblConenido32, 0, 2);
+            tableLayoutPanel6.Controls.Add(lblConenido3, 0, 1);
+            tableLayoutPanel6.ForeColor = SystemColors.ActiveCaptionText;
+            tableLayoutPanel6.Location = new Point(3, 253);
+            tableLayoutPanel6.Name = "tableLayoutPanel6";
+            tableLayoutPanel6.RowCount = 3;
+            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 14.83113F));
+            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 41.1160049F));
+            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 44.0528641F));
+            tableLayoutPanel6.Size = new Size(517, 245);
+            tableLayoutPanel6.TabIndex = 2;
+            // 
+            // tableLayoutPanel10
+            // 
+            tableLayoutPanel10.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel10.ColumnCount = 2;
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 85F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15F));
+            tableLayoutPanel10.Controls.Add(button3, 1, 0);
+            tableLayoutPanel10.Controls.Add(lblTituloSector3, 0, 0);
+            tableLayoutPanel10.Location = new Point(3, 3);
+            tableLayoutPanel10.Name = "tableLayoutPanel10";
+            tableLayoutPanel10.RowCount = 1;
+            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel10.Size = new Size(511, 30);
+            tableLayoutPanel10.TabIndex = 27;
+            // 
+            // button3
+            // 
+            button3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            button3.Location = new Point(437, 3);
+            button3.Name = "button3";
+            button3.Size = new Size(71, 24);
+            button3.TabIndex = 25;
+            button3.Text = "Ver Más";
+            button3.UseVisualStyleBackColor = true;
+            // 
+            // lblTituloSector3
+            // 
+            lblTituloSector3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            lblTituloSector3.AutoSize = true;
+            lblTituloSector3.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblTituloSector3.Location = new Point(3, 0);
+            lblTituloSector3.Name = "lblTituloSector3";
+            lblTituloSector3.Size = new Size(428, 21);
+            lblTituloSector3.TabIndex = 0;
+            lblTituloSector3.Text = "Próximos Vencimientos";
+            lblTituloSector3.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // lblConenido32
+            // 
+            lblConenido32.AutoSize = true;
+            lblConenido32.Location = new Point(3, 136);
+            lblConenido32.Name = "lblConenido32";
+            lblConenido32.Size = new Size(72, 15);
+            lblConenido32.TabIndex = 3;
+            lblConenido32.Text = "Content-3-1";
+            // 
+            // lblConenido3
+            // 
+            lblConenido3.AutoSize = true;
+            lblConenido3.Location = new Point(3, 36);
+            lblConenido3.Name = "lblConenido3";
+            lblConenido3.Size = new Size(61, 15);
+            lblConenido3.TabIndex = 2;
+            lblConenido3.Text = "Content-3";
+            // 
+            // tableLayoutPanel5
+            // 
+            tableLayoutPanel5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel5.BackColor = SystemColors.ControlDark;
+            tableLayoutPanel5.ColumnCount = 1;
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel5.Controls.Add(tableLayoutPanel9, 0, 0);
+            tableLayoutPanel5.Controls.Add(lblConenido22, 0, 2);
+            tableLayoutPanel5.Controls.Add(lblConenido2, 0, 1);
+            tableLayoutPanel5.ForeColor = SystemColors.ActiveCaptionText;
+            tableLayoutPanel5.Location = new Point(526, 3);
+            tableLayoutPanel5.Name = "tableLayoutPanel5";
+            tableLayoutPanel5.RowCount = 3;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 14.4829264F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 42.7585373F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 42.7585373F));
+            tableLayoutPanel5.Size = new Size(518, 244);
+            tableLayoutPanel5.TabIndex = 1;
+            // 
+            // tableLayoutPanel9
+            // 
+            tableLayoutPanel9.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel9.ColumnCount = 2;
+            tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 85F));
+            tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15F));
+            tableLayoutPanel9.Controls.Add(button2, 1, 0);
+            tableLayoutPanel9.Controls.Add(lblTituloSector2, 0, 0);
+            tableLayoutPanel9.Location = new Point(3, 3);
+            tableLayoutPanel9.Name = "tableLayoutPanel9";
+            tableLayoutPanel9.RowCount = 1;
+            tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel9.Size = new Size(512, 29);
+            tableLayoutPanel9.TabIndex = 27;
+            // 
+            // button2
+            // 
+            button2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            button2.Location = new Point(438, 3);
+            button2.Name = "button2";
+            button2.Size = new Size(71, 23);
+            button2.TabIndex = 25;
+            button2.Text = "Ver Más";
+            button2.UseVisualStyleBackColor = true;
+            // 
+            // lblTituloSector2
+            // 
+            lblTituloSector2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            lblTituloSector2.AutoSize = true;
+            lblTituloSector2.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblTituloSector2.Location = new Point(3, 0);
+            lblTituloSector2.Name = "lblTituloSector2";
+            lblTituloSector2.Size = new Size(429, 21);
+            lblTituloSector2.TabIndex = 0;
+            lblTituloSector2.Text = "Info Deudores";
+            lblTituloSector2.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // lblConenido22
+            // 
+            lblConenido22.AutoSize = true;
+            lblConenido22.Location = new Point(3, 139);
+            lblConenido22.Name = "lblConenido22";
+            lblConenido22.Size = new Size(67, 15);
+            lblConenido22.TabIndex = 3;
+            lblConenido22.Text = "Content2-2";
+            // 
+            // lblConenido2
+            // 
+            lblConenido2.AutoSize = true;
+            lblConenido2.Location = new Point(3, 35);
+            lblConenido2.Name = "lblConenido2";
+            lblConenido2.Size = new Size(61, 15);
+            lblConenido2.TabIndex = 2;
+            lblConenido2.Text = "Content-2";
+            // 
+            // tableLayoutPanel4
+            // 
+            tableLayoutPanel4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel4.BackColor = SystemColors.ControlDark;
+            tableLayoutPanel4.ColumnCount = 1;
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel4.Controls.Add(tableLayoutPanel8, 0, 0);
+            tableLayoutPanel4.Controls.Add(lblConenido12, 0, 2);
+            tableLayoutPanel4.Controls.Add(lblConenido1, 0, 1);
+            tableLayoutPanel4.ForeColor = SystemColors.ActiveCaptionText;
+            tableLayoutPanel4.Location = new Point(3, 3);
+            tableLayoutPanel4.Name = "tableLayoutPanel4";
+            tableLayoutPanel4.RowCount = 3;
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 15.15152F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 42.4242439F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 42.42424F));
+            tableLayoutPanel4.Size = new Size(517, 244);
+            tableLayoutPanel4.TabIndex = 0;
+            // 
+            // tableLayoutPanel8
+            // 
+            tableLayoutPanel8.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel8.ColumnCount = 2;
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 85F));
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15F));
+            tableLayoutPanel8.Controls.Add(button1, 1, 0);
+            tableLayoutPanel8.Controls.Add(lblTituloSector1, 0, 0);
+            tableLayoutPanel8.Location = new Point(3, 3);
+            tableLayoutPanel8.Name = "tableLayoutPanel8";
+            tableLayoutPanel8.RowCount = 1;
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel8.Size = new Size(511, 30);
+            tableLayoutPanel8.TabIndex = 26;
+            // 
+            // button1
+            // 
+            button1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            button1.Location = new Point(437, 3);
+            button1.Name = "button1";
+            button1.Size = new Size(71, 24);
+            button1.TabIndex = 25;
+            button1.Text = "Ver Más";
+            button1.UseVisualStyleBackColor = true;
+            // 
+            // lblTituloSector1
+            // 
+            lblTituloSector1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            lblTituloSector1.AutoSize = true;
+            lblTituloSector1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblTituloSector1.Location = new Point(3, 0);
+            lblTituloSector1.Name = "lblTituloSector1";
+            lblTituloSector1.Size = new Size(428, 21);
+            lblTituloSector1.TabIndex = 0;
+            lblTituloSector1.Text = "Info Ofertas";
+            lblTituloSector1.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // lblConenido12
+            // 
+            lblConenido12.AutoSize = true;
+            lblConenido12.Location = new Point(3, 139);
+            lblConenido12.Name = "lblConenido12";
+            lblConenido12.Size = new Size(67, 15);
+            lblConenido12.TabIndex = 2;
+            lblConenido12.Text = "Content1-2";
+            // 
+            // lblConenido1
+            // 
+            lblConenido1.AutoSize = true;
+            lblConenido1.Location = new Point(3, 36);
+            lblConenido1.Name = "lblConenido1";
+            lblConenido1.Size = new Size(61, 15);
+            lblConenido1.TabIndex = 1;
+            lblConenido1.Text = "Content-1";
             // 
             // lblNombreUsuario
             // 
@@ -286,6 +548,7 @@
             flowLayoutPanel3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             flowLayoutPanel3.Controls.Add(lblHora);
             flowLayoutPanel3.Controls.Add(lblHoraValor);
+            flowLayoutPanel3.Controls.Add(llbCerrarSesion);
             error.SetIconAlignment(flowLayoutPanel3, ErrorIconAlignment.MiddleLeft);
             flowLayoutPanel3.Location = new Point(715, 3);
             flowLayoutPanel3.Name = "flowLayoutPanel3";
@@ -314,6 +577,17 @@
             lblHoraValor.TabIndex = 25;
             lblHoraValor.Text = "00:00:00";
             // 
+            // llbCerrarSesion
+            // 
+            llbCerrarSesion.AutoSize = true;
+            llbCerrarSesion.Location = new Point(175, 0);
+            llbCerrarSesion.Name = "llbCerrarSesion";
+            llbCerrarSesion.Size = new Size(76, 15);
+            llbCerrarSesion.TabIndex = 28;
+            llbCerrarSesion.TabStop = true;
+            llbCerrarSesion.Text = "Cerrar Sesión";
+            llbCerrarSesion.LinkClicked += llbCerrarSesion_LinkClicked;
+            // 
             // VentanaPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -331,14 +605,24 @@
             WindowState = FormWindowState.Maximized;
             Load += VentanaPrincipal_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
             PnlBotones.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
-            pnlInfoInicial.ResumeLayout(false);
-            pnlInfoInicial.PerformLayout();
-            pnlTextos.ResumeLayout(false);
-            pnlTextos.PerformLayout();
             panel1.ResumeLayout(false);
+            tableLayoutPanel3.ResumeLayout(false);
+            tableLayoutPanel7.ResumeLayout(false);
+            tableLayoutPanel7.PerformLayout();
+            tableLayoutPanel6.ResumeLayout(false);
+            tableLayoutPanel6.PerformLayout();
+            tableLayoutPanel10.ResumeLayout(false);
+            tableLayoutPanel10.PerformLayout();
+            tableLayoutPanel5.ResumeLayout(false);
+            tableLayoutPanel5.PerformLayout();
+            tableLayoutPanel9.ResumeLayout(false);
+            tableLayoutPanel9.PerformLayout();
+            tableLayoutPanel4.ResumeLayout(false);
+            tableLayoutPanel4.PerformLayout();
+            tableLayoutPanel8.ResumeLayout(false);
+            tableLayoutPanel8.PerformLayout();
             flowLayoutPanel1.ResumeLayout(false);
             flowLayoutPanel1.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
@@ -350,18 +634,13 @@
         }
 
         #endregion
-        private DataGridView dgvGrilla;
         private Panel PnlBotones;
-        private Panel pnlInfoInicial;
-        private Panel pnlTextos;
         private Panel panel1;
         private TableLayoutPanel tableLayoutPanel1;
         private Button btnVenta;
         private Button btnContraVenta;
         private Button btnPanelAdmin;
         private Button btnCaja;
-        private Label label2;
-        private Label label1;
         private Label lblNombreUsuario;
         private Label lblUsuario;
         private FlowLayoutPanel flowLayoutPanel1;
@@ -372,5 +651,29 @@
         private FlowLayoutPanel flowLayoutPanel3;
         private Label lblHoraValor;
         private Label lblHora;
+        private TableLayoutPanel tableLayoutPanel3;
+        private TableLayoutPanel tableLayoutPanel7;
+        private Label lblTituloSector4;
+        private TableLayoutPanel tableLayoutPanel6;
+        private Label lblTituloSector3;
+        private TableLayoutPanel tableLayoutPanel5;
+        private Label lblTituloSector2;
+        private TableLayoutPanel tableLayoutPanel4;
+        private Label lblTituloSector1;
+        private Label lblConenido1;
+        private Label lblConenido12;
+        private Label lblConenido42;
+        private Label lblConenido4;
+        private Label lblConenido32;
+        private Label lblConenido3;
+        private Label lblConenido22;
+        private Label lblConenido2;
+        private TableLayoutPanel tableLayoutPanel8;
+        private TableLayoutPanel tableLayoutPanel9;
+        private Button button2;
+        private Button button1;
+        private TableLayoutPanel tableLayoutPanel10;
+        private Button button3;
+        private LinkLabel llbCerrarSesion;
     }
 }

@@ -675,5 +675,118 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 return oferta;
             }
         }
+
+        public InfoOfertaDTO ObtenerInfoOferta()
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var hoy = DateTime.Now.Date;
+
+            var ofertas = context.OfertasDescuentos
+                .AsNoTracking()
+                .Select(x => new OfertaDTO
+                {
+                    OfertaDescuentoId = x.OfertaDescuentoId,
+                    Descripcion = x.Descripcion,
+                    Codigo = x.Codigo,
+                    FechaInicio = x.FechaInicio,
+                    FechaFin = x.FechaFin,
+                    EstaActiva = x.EstaActiva,
+                    esOfertaPorGrupo = x.esOfertaPorGrupo,
+                    IdMarca = x.IdMarca,
+                    IdRubro = x.IdRubro,
+                    IdCategoria = x.IdCategoria
+                })
+                .ToList();
+
+            var ofertasDentroDeFecha = ofertas
+                .Where(o =>
+                    o.FechaInicio.Date <= hoy &&
+                    (o.FechaFin == null || o.FechaFin.Value.Date >= hoy))
+                .ToList();
+
+            var ofertasActivas = ofertasDentroDeFecha
+                .Where(o => o.EstaActiva)
+                .OrderBy(o => o.FechaFin ?? DateTime.MaxValue)
+                .ToList();
+
+            var ofertasInactivas = ofertasDentroDeFecha
+                .Where(o => !o.EstaActiva)
+                .ToList();
+
+            var codigosActivos = ofertasActivas
+                .Select(o => o.Codigo)
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .ToList();
+
+            var codigosInactivos = ofertasInactivas
+                .Select(o => o.Codigo)
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .ToList();
+
+            var ofertasGrupoActivas = ofertasActivas
+                .Where(o => o.esOfertaPorGrupo)
+                .ToList();
+
+            var grupoMarca = ofertasGrupoActivas.Count(o => o.IdMarca != null);
+            var grupoCategoria = ofertasGrupoActivas.Count(o => o.IdCategoria != null);
+            var grupoRubro = ofertasGrupoActivas.Count(o => o.IdRubro != null);
+
+            var proximasAVencer = ofertasActivas
+                .Take(3)
+                .Select(o => $"{o.Codigo} (vence {o.FechaFin:dd/MM/yyyy})")
+                .ToList();
+
+            // TEXTO PRINCIPAL
+            var lineasPrincipal = new List<string>();
+
+            lineasPrincipal.Add($"Ofertas activas: {ofertasActivas.Count}");
+
+            foreach (var codigo in codigosActivos)
+                lineasPrincipal.Add($"   • {codigo}");
+
+            lineasPrincipal.Add($"Ofertas inactivas: {ofertasInactivas.Count}");
+
+            foreach (var codigo in codigosInactivos)
+                lineasPrincipal.Add($"   • {codigo}");
+
+            var textoPrincipal = string.Join(Environment.NewLine, lineasPrincipal);
+
+            // TEXTO SECUNDARIO
+            var lineasSecundario = new List<string>();
+
+            if (proximasAVencer.Any())
+            {
+                lineasSecundario.Add("• Próximas a vencer:");
+                foreach (var p in proximasAVencer)
+                    lineasSecundario.Add($"   • {p}");
+            }
+
+            if (ofertasGrupoActivas.Any())
+            {
+                var partesGrupo = new List<string>();
+
+                if (grupoMarca > 0)
+                    partesGrupo.Add($"Marca: {grupoMarca}");
+
+                if (grupoCategoria > 0)
+                    partesGrupo.Add($"Categoría: {grupoCategoria}");
+
+                if (grupoRubro > 0)
+                    partesGrupo.Add($"Rubro: {grupoRubro}");
+
+                lineasSecundario.Add($"• Grupos activos ({string.Join(", ", partesGrupo)})");
+            }
+
+            var textoSecundario = string.Join(Environment.NewLine, lineasSecundario);
+
+            return new InfoOfertaDTO
+            {
+                Titulo = "Estado de Ofertas",
+                TextoPrincipal = textoPrincipal,
+                TextoSecundario = textoSecundario,
+                Tipo = 1
+            };
+        }
     }
 }
