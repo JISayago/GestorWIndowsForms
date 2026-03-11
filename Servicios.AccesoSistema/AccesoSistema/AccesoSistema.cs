@@ -102,6 +102,33 @@ namespace ServicioAccesoSistema.AccesoSistema
             };
         }
 
+        public EstadoOperacion CerrarSesion(long usuarioId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var sesionActiva = context.Usuarios
+                .FirstOrDefault(s => s.UsuarioId == usuarioId && s.Activa);
+
+            if (sesionActiva == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "El usuario no tiene una sesión activa."
+                };
+            }
+
+            sesionActiva.Activa = false;
+            sesionActiva.FechaLogout = DateTime.Now;
+
+            context.SaveChanges();
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = "Sesión cerrada correctamente."
+            };
+        }
         public EstadoOperacion PrimerIngreso(string nombreUsuario, string pass)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);

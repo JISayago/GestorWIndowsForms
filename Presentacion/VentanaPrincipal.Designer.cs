@@ -68,6 +68,7 @@
             flowLayoutPanel3 = new FlowLayoutPanel();
             lblHora = new Label();
             lblHoraValor = new Label();
+            llbCerrarSesion = new LinkLabel();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             PnlBotones.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -547,6 +548,7 @@
             flowLayoutPanel3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             flowLayoutPanel3.Controls.Add(lblHora);
             flowLayoutPanel3.Controls.Add(lblHoraValor);
+            flowLayoutPanel3.Controls.Add(llbCerrarSesion);
             error.SetIconAlignment(flowLayoutPanel3, ErrorIconAlignment.MiddleLeft);
             flowLayoutPanel3.Location = new Point(715, 3);
             flowLayoutPanel3.Name = "flowLayoutPanel3";
@@ -574,6 +576,17 @@
             lblHoraValor.Size = new Size(97, 30);
             lblHoraValor.TabIndex = 25;
             lblHoraValor.Text = "00:00:00";
+            // 
+            // llbCerrarSesion
+            // 
+            llbCerrarSesion.AutoSize = true;
+            llbCerrarSesion.Location = new Point(175, 0);
+            llbCerrarSesion.Name = "llbCerrarSesion";
+            llbCerrarSesion.Size = new Size(76, 15);
+            llbCerrarSesion.TabIndex = 28;
+            llbCerrarSesion.TabStop = true;
+            llbCerrarSesion.Text = "Cerrar Sesión";
+            llbCerrarSesion.LinkClicked += llbCerrarSesion_LinkClicked;
             // 
             // VentanaPrincipal
             // 
@@ -661,5 +674,6 @@
         private Button button1;
         private TableLayoutPanel tableLayoutPanel10;
         private Button button3;
+        private LinkLabel llbCerrarSesion;
     }
 }

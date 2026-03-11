@@ -13,6 +13,7 @@ using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
 using Presentacion.Core.Venta;
+using ServicioAccesoSistema.AccesoSistema;
 using Servicios.LogicaNegocio.Sistema;
 using Servicios.LogicaNegocio.Venta.Oferta;
 
@@ -23,6 +24,7 @@ namespace Presentacion
         private readonly UsuarioLogeado _usuarioLogeado;
         private readonly IOfertaServicio _ofertaServicio;
         private readonly IDetallesSistemaServicio _dellesSistema;
+        private readonly IAccesoSistema _accesoSistema;
         private DateTime _fechaActual = DateTime.Now;
         private DateTime _horaActual = DateTime.Now;
 
@@ -36,6 +38,7 @@ namespace Presentacion
             InitializeComponent();
             _ofertaServicio = new OfertaServicio();
             _dellesSistema = new DetallesSistemaServicio();
+            _accesoSistema = new AccesoSistema();
             _usuarioLogeado = usuarioLogeado;
 
             this.Bounds = Screen.PrimaryScreen.WorkingArea;
@@ -72,7 +75,7 @@ namespace Presentacion
             lblTituloSector4.Text = detalleSistema.Titulo;
             lblConenido4.Text = detalleSistema.TextoPrincipal;
             lblConenido42.Text = detalleSistema.TextoSecundario;
-            
+
         }
 
         private void CargarInfo3()
@@ -133,6 +136,23 @@ namespace Presentacion
         {
             var NroCompr = new FNroComprobanteParaCancelacion(_usuarioLogeado.PersonaId);
             NroCompr.Show();
+        }
+
+        private void llbCerrarSesion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+
+            var respuesta = _accesoSistema.CerrarSesion(_usuarioLogeado.PersonaId);
+            if (!respuesta.Exitoso)
+            {
+                MessageBox.Show(respuesta.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            else
+            {
+                MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            this.Close();
+
         }
     }
 }
