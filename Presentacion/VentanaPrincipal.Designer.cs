@@ -37,7 +37,7 @@
             panel1 = new Panel();
             tableLayoutPanel3 = new TableLayoutPanel();
             tableLayoutPanel7 = new TableLayoutPanel();
-            lblConenido41 = new Label();
+            lblConenido42 = new Label();
             lblConenido4 = new Label();
             lblTituloSector4 = new Label();
             tableLayoutPanel6 = new TableLayoutPanel();
@@ -201,7 +201,7 @@
             tableLayoutPanel7.BackColor = SystemColors.ControlDark;
             tableLayoutPanel7.ColumnCount = 1;
             tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel7.Controls.Add(lblConenido41, 0, 2);
+            tableLayoutPanel7.Controls.Add(lblConenido42, 0, 2);
             tableLayoutPanel7.Controls.Add(lblConenido4, 0, 1);
             tableLayoutPanel7.Controls.Add(lblTituloSector4, 0, 0);
             tableLayoutPanel7.ForeColor = SystemColors.ActiveCaptionText;
@@ -214,14 +214,14 @@
             tableLayoutPanel7.Size = new Size(518, 245);
             tableLayoutPanel7.TabIndex = 3;
             // 
-            // lblConenido41
+            // lblConenido42
             // 
-            lblConenido41.AutoSize = true;
-            lblConenido41.Location = new Point(3, 134);
-            lblConenido41.Name = "lblConenido41";
-            lblConenido41.Size = new Size(72, 15);
-            lblConenido41.TabIndex = 3;
-            lblConenido41.Text = "Content-4-1";
+            lblConenido42.AutoSize = true;
+            lblConenido42.Location = new Point(3, 134);
+            lblConenido42.Name = "lblConenido42";
+            lblConenido42.Size = new Size(72, 15);
+            lblConenido42.TabIndex = 3;
+            lblConenido42.Text = "Content-4-1";
             // 
             // lblConenido4
             // 
@@ -649,7 +649,7 @@
         private Label lblTituloSector1;
         private Label lblConenido1;
         private Label lblConenido12;
-        private Label lblConenido41;
+        private Label lblConenido42;
         private Label lblConenido4;
         private Label lblConenido32;
         private Label lblConenido3;

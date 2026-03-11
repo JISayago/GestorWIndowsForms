@@ -13,6 +13,7 @@ using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
 using Presentacion.Core.Venta;
+using Servicios.LogicaNegocio.Sistema;
 using Servicios.LogicaNegocio.Venta.Oferta;
 
 namespace Presentacion
@@ -21,6 +22,7 @@ namespace Presentacion
     {
         private readonly UsuarioLogeado _usuarioLogeado;
         private readonly IOfertaServicio _ofertaServicio;
+        private readonly IDetallesSistemaServicio _dellesSistema;
         private DateTime _fechaActual = DateTime.Now;
         private DateTime _horaActual = DateTime.Now;
 
@@ -33,6 +35,7 @@ namespace Presentacion
         {
             InitializeComponent();
             _ofertaServicio = new OfertaServicio();
+            _dellesSistema = new DetallesSistemaServicio();
             _usuarioLogeado = usuarioLogeado;
 
             this.Bounds = Screen.PrimaryScreen.WorkingArea;
@@ -64,13 +67,12 @@ namespace Presentacion
 
         private void CargarInfo4()
         {
-            var InfoOferta = new InfoPantallaPrincipal
-            {
-                Titulo = "INFO 4",
-                TextoPrincipal = "Info 4",
-                TextoSecundario = "Info 4",
-                Tipo = TipoSectorPrincipal.Ofertas
-            };
+            var detalleSistema = _dellesSistema.ObtenerInfoSistema();
+
+            lblTituloSector4.Text = detalleSistema.Titulo;
+            lblConenido4.Text = detalleSistema.TextoPrincipal;
+            lblConenido42.Text = detalleSistema.TextoSecundario;
+            
         }
 
         private void CargarInfo3()
