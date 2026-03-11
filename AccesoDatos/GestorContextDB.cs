@@ -14,6 +14,7 @@ namespace AccesoDatos
         public GestorContextDB(DbContextOptions<GestorContextDB> options) : base(options) { }
         public DbSet<Persona> Personas { get; set; }
         public DbSet<Empleado> Empleados { get; set; }
+        public DbSet<UsuarioSesion> Usuarios { get; set; }
         public DbSet<DetallesVenta> DetallesVentas { get; set; }
         public DbSet<Venta> Ventas { get; set; }
         public DbSet<Rol> Roles { get; set; }
@@ -955,6 +956,28 @@ namespace AccesoDatos
                 entity.HasIndex(e => e.FechaGasto);
                 entity.HasIndex(e => e.CategoriaGasto);
                 entity.HasIndex(e => e.EstadoGasto);
+            });
+
+            modelBuilder.Entity<UsuarioSesion>(entity =>
+            {
+                entity.ToTable("Usuarios_Sesiones");
+
+                entity.HasKey(e => e.UsuarioSesionId);
+
+                entity.Property(e => e.FechaLogin)
+                      .HasColumnType("datetime");
+
+                entity.Property(e => e.FechaLogout)
+                      .HasColumnType("datetime");
+
+                entity.Property(e => e.Activa)
+                      .IsRequired();
+
+                entity.HasOne(e => e.Usuario)
+                      .WithMany(u => u.Sesiones)
+                      .HasForeignKey(e => e.UsuarioId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
             });
 
         }

@@ -17,9 +17,8 @@ namespace Servicios.LogicaNegocio.Sistema
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            // Corrección: pasar la variable 'context' como argumento
             var usuariosLogueados = ObtenerUsuariosLogueados(context);
-            var cajaAbierta = ObtenerCajaAbierta(context);
+            var cajaAbierta = ObtenerCajaAbierta();
 
             var lineasPrincipal = new List<string>();
 
@@ -57,47 +56,39 @@ namespace Servicios.LogicaNegocio.Sistema
             };
         }
 
-        // Corrección: quitar el punto y coma y corregir la declaración del método
         private List<string> ObtenerUsuariosLogueados(GestorContextDB context)
         {
-            // buscar en la tabla nueva de usuarios logeados. y armando la lista de usuarios logueados. por ahora lo simulo con una lista fija de usuarios
-            // Ejemplo simulado
-            return new List<string>
-            {
-                "admin",
-                "caja1",
-                "ventas3"
-            };
+             return context.Usuarios
+                .Where(x => x.Activa)
+               .Select(x => $"{x.Usuario.Username} ({x.FechaLogin:dd/MM/yyyy HH:mm:ss})")
+                .ToList();
         }
 
-            // Corrección: quitar el punto y coma y corregir la declaración del método
-        private CajaDTO? ObtenerCajaAbierta(GestorContextDB context)
+        private CajaDTO? ObtenerCajaAbierta()
         {
-            var CajaService = new CajaServicio();
-            var cajaId = CajaService.ObtenerIdCajaAbierta();
-            if (cajaId.HasValue)
-            {
-            var Cajadto = CajaService.ObtenerCaja((long)cajaId);
+            var cajaService = new CajaServicio();
+
+            var cajaId = cajaService.ObtenerIdCajaAbierta();
+
+            if (!cajaId.HasValue)
+                return null;
+
+            var caja = cajaService.ObtenerCaja((long)cajaId);
+
             return new CajaDTO
             {
-                CajaId = Cajadto.CajaId,
-                SaldoInicial = Cajadto.SaldoInicial,
-                SaldoActual = Cajadto.SaldoActual,
-                FechaInicio = Cajadto.FechaInicio,
-                FechaFin = Cajadto.FechaFin,
-                TotalIngresos = Cajadto.TotalIngresos,
-                TotalEgresos = Cajadto.TotalEgresos,
-                BalanceFinal = Cajadto.BalanceFinal,
-                EmpleadoApertura = Cajadto.EmpleadoApertura,
-                EmpleadoCierre = Cajadto.EmpleadoCierre,
-                EstaCerrada = Cajadto.EstaCerrada,
+                CajaId = caja.CajaId,
+                SaldoInicial = caja.SaldoInicial,
+                SaldoActual = caja.SaldoActual,
+                FechaInicio = caja.FechaInicio,
+                FechaFin = caja.FechaFin,
+                TotalIngresos = caja.TotalIngresos,
+                TotalEgresos = caja.TotalEgresos,
+                BalanceFinal = caja.BalanceFinal,
+                EmpleadoApertura = caja.EmpleadoApertura,
+                EmpleadoCierre = caja.EmpleadoCierre,
+                EstaCerrada = caja.EstaCerrada
             };
-            }
-            else
-            {
-                return null;
-            }
-
         }
     }
 }
