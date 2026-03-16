@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AccesoDatos.Migrations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -32,5 +33,7 @@ namespace AccesoDatos.Entidades
         // Navegación
         public ICollection<CategoriaProducto> CategoriasProductos { get; set; }
         public ICollection<DetallesVenta> DetallesVentas { get; set; }
+        public List<Movimiento> Movimientos { get; set; }
+        public List<Lote> Lotes { get; set; }
     }
 }

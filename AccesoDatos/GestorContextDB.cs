@@ -865,6 +865,10 @@ namespace AccesoDatos
                     .HasColumnName("id_Lote")
                     .IsRequired(false);
                
+                entity.Property(e => e.IdProducto)
+                    .HasColumnName("id_Producto")
+                    .IsRequired(false);
+
                 entity.Property(e => e.TipoMovimientoDetalle)
                     .HasColumnName("tipo_movimiento_detalle")
                     .IsRequired();
@@ -891,6 +895,12 @@ namespace AccesoDatos
                 entity.HasOne(e => e.Lote)
                       .WithMany(l => l.Movimientos) // o .WithMany(l => l.Movimientos) si agregás la colección en Lote
                       .HasForeignKey(e => e.IdLote)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                //Relacion con Producto
+                entity.HasOne(e => e.Producto)
+                      .WithMany(p => p.Movimientos) // o .WithMany(p => p.Movimientos) si agregás la colección en Producto
+                      .HasForeignKey(e => e.IdProducto)
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -962,6 +972,68 @@ namespace AccesoDatos
                 entity.HasIndex(e => e.CategoriaGasto);
                 entity.HasIndex(e => e.EstadoGasto);
             });
-        }
+
+            //LOTES
+            modelBuilder.Entity<Lote>(entity =>
+            {
+                entity.ToTable("Lotes");
+    
+                entity.HasKey(e => e.LoteId);
+    
+                entity.Property(e => e.LoteId)
+                    .HasColumnName("id_Lote");
+    
+                entity.Property(e => e.IdProducto)
+                    .HasColumnName("id_Producto")
+                    .IsRequired();
+
+                entity.Property(e => e.StockIncial)
+                    .HasColumnName("stock_inicial")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.StockActual)
+                    .HasColumnName("stock_actual")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.NumeroLote)
+                    .HasColumnName("numero_lote")
+                    .HasMaxLength(200)
+                    .IsRequired();
+
+                entity.Property(e => e.NombreLote)
+                    .HasColumnName("nombre_lote")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.Descripcion)
+                    .HasColumnName("descripcion")
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.FechaAlta)
+                    .HasColumnName("fecha_alta")
+                    .HasColumnType("date")
+                    .IsRequired();
+
+                entity.Property(e => e.FechaVencimiento)
+                    .HasColumnName("fecha_vencimiento")
+                    .HasColumnType("date")
+                    .IsRequired(false);
+
+                entity.Property(entity => entity.EstaVencido)
+                    .HasColumnName("esta_vencido")
+                    .IsRequired();
+
+                entity.Property(entity => entity.EstaActivo)
+                    .HasColumnName("esta_activo")
+                    .IsRequired();
+
+                //Relación con Producto
+                entity.HasOne(e => e.Producto)
+                    .WithMany(p => p.Lotes) // o .WithMany(p => p.Lotes) si agregás la colección en Producto
+                    .HasForeignKey(e => e.IdProducto)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+         }
     }
 }

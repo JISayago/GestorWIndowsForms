@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20260311200446_AddProductoIdAMovimientos")]
+    partial class AddProductoIdAMovimientos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -402,62 +405,51 @@ namespace AccesoDatos.Migrations
                 {
                     b.Property<long>("LoteId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_Lote");
+                        .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("LoteId"));
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("descripcion");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EstaActivo")
-                        .HasColumnType("bit")
-                        .HasColumnName("esta_activo");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("EstaVencido")
-                        .HasColumnType("bit")
-                        .HasColumnName("esta_vencido");
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("FechaAlta")
-                        .HasColumnType("date")
-                        .HasColumnName("fecha_alta");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("FechaVencimiento")
-                        .HasColumnType("date")
-                        .HasColumnName("fecha_vencimiento");
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("IdProducto")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_Producto");
+                        .HasColumnType("bigint");
 
                     b.Property<string>("NombreLote")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("nombre_lote");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NumeroLote")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("numero_lote");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("StockActual")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("stock_actual");
+                    b.Property<long>("ProductoId")
+                        .HasColumnType("bigint");
 
-                    b.Property<decimal>("StockIncial")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("stock_inicial");
+                    b.Property<int>("StockActual")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StockIncial")
+                        .HasColumnType("int");
 
                     b.HasKey("LoteId");
 
-                    b.HasIndex("IdProducto");
+                    b.HasIndex("ProductoId");
 
-                    b.ToTable("Lotes", (string)null);
+                    b.ToTable("Lotes");
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.Marca", b =>
@@ -1163,9 +1155,9 @@ namespace AccesoDatos.Migrations
             modelBuilder.Entity("AccesoDatos.Entidades.Lote", b =>
                 {
                     b.HasOne("AccesoDatos.Entidades.Producto", "Producto")
-                        .WithMany("Lotes")
-                        .HasForeignKey("IdProducto")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Producto");
@@ -1378,8 +1370,6 @@ namespace AccesoDatos.Migrations
                     b.Navigation("CategoriasProductos");
 
                     b.Navigation("DetallesVentas");
-
-                    b.Navigation("Lotes");
 
                     b.Navigation("Movimientos");
                 });
