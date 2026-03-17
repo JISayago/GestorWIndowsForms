@@ -8,12 +8,16 @@ namespace Servicios.LogicaNegocio.Producto.DTO
 {
     public class LoteDTO
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public long IdProducto { get; set; }
-        public int Cantidad { get; set; }
+        public decimal StockInicial { get; set; }
+        public decimal StockActual { get; set; }
         public string NumeroLote { get; set; }
         public string NombreLote { get; set; }
         public string Descripcion { get; set; }
-        public DateTime? FechaVencimiento { get; set; }
+        public DateOnly FechaAlta { get; set; }
+        public DateOnly? FechaVencimiento { get; set; }
+        public bool EstaVencido { get; set; }
+        public bool EstaActivo { get; set; }
     }
 }
