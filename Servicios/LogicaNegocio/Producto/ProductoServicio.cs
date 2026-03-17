@@ -638,40 +638,5 @@ namespace Servicios.LogicaNegocio.Producto
                 EntidadId = producto.ProductoId
             };
         }
-
-
-        // =============================
-        //            LOTES
-        // =============================
-
-        //Crear funcion para dar de alta un LOTE de productos, con su respectivo movimiento 
-
-        /*public EstadoOperacion CrearLote(LoteDTO loteDto)
-        {
-
-            var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var loteAlta = new AccesoDatos.Entidades.Lote
-            {
-                Descripcion = loteDto.Descripcion,
-                Cantidad = loteDto.Cantidad,
-                //ProductoId = loteDto.IdProducto,
-                NumeroLote = $"LOTE-{DateTime.Now:yyyyMMddHHmmss}", // Ejemplo de número de lote autogenerado
-                NombreLote = loteDto.NombreLote,
-                FechaAlta = DateTime.Now,
-                FechaVencimiento = loteDto.FechaVencimiento
-
-            };
-
-            //context.Lotes.Add(loteAlta);
-            context.SaveChanges();
-
-            return new EstadoOperacion
-                {
-                    Exitoso = true,
-                    Mensaje = "Lote creado correctamente.",
-                    EntidadId = 0 // Aquí podrías devolver el ID del lote creado si lo deseas
-                };
-        }*/
     }
 }

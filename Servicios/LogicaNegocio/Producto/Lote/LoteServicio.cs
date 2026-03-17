@@ -13,10 +13,10 @@ namespace Servicios.LogicaNegocio.Producto.Lote
     {
 
         // Implementar métodos para gestionar lotes de productos, como:
-        // - Crear un nuevo lote para un producto específico.
-        // - Obtener lotes por producto, incluyendo información sobre stock, fecha de vencimiento, etc.
+        // - Crear un nuevo lote para un producto específico. DONE
+        // - Obtener lotes por producto, incluyendo información sobre stock, fecha de vencimiento, etc. DONE
         // - Actualizar el stock de un lote específico.
-        // - Eliminar o marcar como inactivo un lote cuando ya no esté disponible.
+        // - Eliminar o marcar como inactivo un lote cuando ya no esté disponible. DONE
         // - Controlar el vencimiento de los lotes y notificar cuando un lote esté próximo a vencer o ya haya vencido.
         // - Integrar la gestión de lotes con el sistema de ventas para asegurar que se descuenten los lotes correctos al realizar una venta.
         // - Implementar validaciones para asegurar que no se puedan crear lotes con fechas de vencimiento pasadas o con stock negativo.
