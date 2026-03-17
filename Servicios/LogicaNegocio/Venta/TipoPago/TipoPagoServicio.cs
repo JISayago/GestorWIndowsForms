@@ -123,9 +123,9 @@ namespace Servicios.LogicaNegocio.Venta.TipoPago
                  .FirstOrDefault();
             return tipoPago;
         }
-        public TipoPagoDTO ObtenerTipoPagoPorNumero(int numero_referencia)
+        public TipoPagoDTO ObtenerTipoPagoPorNumero(GestorContextDB context, int numero_referencia)
         {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            //using var context = new GestorContextDBFactory().CreateDbContext(null);
             var tipoPago = context.TiposPago
                  .AsNoTracking()
                  .Where(tp => tp.NumeroReferencia == numero_referencia && !tp.EstaEliminado)

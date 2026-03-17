@@ -66,9 +66,10 @@ namespace Servicios.LogicaNegocio.Sistema
 
         private CajaDTO? ObtenerCajaAbierta()
         {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
             var cajaService = new CajaServicio();
 
-            var cajaId = cajaService.ObtenerIdCajaAbierta();
+            var cajaId = cajaService.ObtenerIdCajaAbierta(context);
 
             if (!cajaId.HasValue)
                 return null;

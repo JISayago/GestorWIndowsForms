@@ -809,6 +809,7 @@ namespace AccesoDatos
                         .HasColumnName("esta_cerrada")
                         .IsRequired();
 
+                
             });
 
             modelBuilder.Entity<Movimiento>(entity =>

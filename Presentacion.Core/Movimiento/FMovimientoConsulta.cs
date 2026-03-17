@@ -95,16 +95,16 @@ namespace Presentacion.Core.Movimiento
         {
             base.ActualizarDatos(dgv, filtros);
 
-            if (filtros.VerEliminados)
-            {
-                dgv.DataSource = _movimientoServicio.ObtenerMovimientoEliminado(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _movimientoServicio.ObtenerMovimiento(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
+            //if (filtros.VerEliminados)
+            //{
+            //    dgv.DataSource = _movimientoServicio.ObtenerMovimientoEliminado(filtros.TextoBuscar);
+            //    BarraLateralBotones.Enabled = false;
+            //}
+            //else
+            //{
+            //    dgv.DataSource = _movimientoServicio.ObtenerMovimiento(filtros.TextoBuscar);
+            //    BarraLateralBotones.Enabled = false;
+            //}
         }
 
 

@@ -25,8 +25,8 @@ namespace AccesoDatos.Entidades
         public bool EstaEliminado { get; set; }
 
         // referencia genérica a cualquier entidad del sistema
+        public int? TipoEntidad { get; set; }
         public long? EntidadId { get; set; }
 
-        public int? TipoEntidad { get; set; }
     }
 }
