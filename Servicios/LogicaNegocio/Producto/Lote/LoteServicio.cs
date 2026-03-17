@@ -1,11 +1,13 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Servicios.LogicaNegocio.Producto.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace Servicios.LogicaNegocio.Producto.Lote
 {
@@ -67,81 +69,55 @@ namespace Servicios.LogicaNegocio.Producto.Lote
 
             return listaLotes;
         }
-        public LoteDTO obtenerLoteFEFO(long productoId)
+        public AccesoDatos.Entidades.Lote obtenerLoteFEFO(long productoId, GestorContextDB context)
         {
             //traer con el productoId, el lote con la fecha de vencimiento más próxima pero que no esté vencido y que tenga stock disponible
-            //aplicamos FEFO (First Expired, First Out) para asegurar que se utilicen primero los lotes que están más próximos a vencer.
+            //aplicamos FEFO (First Expired, First Out) para asegurar que se utilicen primero los lotes que están más próximos a vencer. 
 
-            var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var lote = context.Lotes 
-                .Where(l => l.EstaActivo && !l.EstaVencido && l.StockActual > 0)
-                .OrderBy(l => l.FechaVencimiento)
-                .FirstOrDefault(l => l.IdProducto == productoId);
+            var loteFefo = context.Lotes
+            .Where(l => l.EstaActivo && !l.EstaVencido && l.StockActual > 0)
+            .OrderBy(l => l.FechaVencimiento)
+            .FirstOrDefault(l => l.IdProducto == productoId);
 
             //validar que no sea null
 
-            return new LoteDTO
-            {
-                Id = lote.LoteId,
-                IdProducto = lote.IdProducto,
-                StockInicial = lote.StockIncial,
-                StockActual = lote.StockActual,
-                NumeroLote = lote.NumeroLote,
-                NombreLote = lote.NombreLote,
-                Descripcion = lote.Descripcion,
-                FechaAlta = lote.FechaAlta,
-                FechaVencimiento = lote.FechaVencimiento,
-                EstaVencido = lote.EstaVencido,
-                EstaActivo = lote.EstaActivo
-            };
+            return loteFefo;
         }
 
-        public void actualizarStockLote(int cantidad, long productoId)
+        public void actualizarStockLote(decimal cantidadADescontar, long productoId)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var loteFefo = obtenerLoteFEFO(productoId);
+            //TODO: verificar si el stock total de los lotes activos es suficiente para cubrir la cantiadad
 
-            while(cantidad > 0 && loteFefo != null)
+            var loteFefo = obtenerLoteFEFO(productoId, context);
+
+            while (cantidadADescontar > 0 && loteFefo != null)
             {
-                if (loteFefo.StockActual >= cantidad)
+                if (loteFefo.StockActual >= cantidadADescontar)
                 {
-                    loteFefo.StockActual -= cantidad;
-                    cantidad = 0;
+                    //stock suficiente en el lote actual para cubrir la cantidad requerida
+                    loteFefo.StockActual -= cantidadADescontar;
+                    cantidadADescontar = 0;
                 }
                 else
                 {
-                    cantidad -= (int)loteFefo.StockActual;
+                    //stock insuficiente en el lote actual, se consume todo el stock del lote y se busca el siguiente lote por fefo
+                    cantidadADescontar -= loteFefo.StockActual;
                     loteFefo.StockActual = 0;
                 }
-                var loteEntity = context.Lotes.Find(loteFefo.Id);
-                if (loteEntity != null)
+                
+                if (cantidadADescontar > 0)
                 {
-                    loteEntity.StockActual = loteFefo.StockActual;
-                    context.SaveChanges();
-                }
-                if (cantidad > 0)
-                {
-                    loteFefo = obtenerLoteFEFO(productoId);
+                    loteFefo = obtenerLoteFEFO(productoId, context);
                 }
             }
-            //if (lote != null)
-            //{
-            //    lote.StockActual -= cantidad;
-
-            //    var loteEntity = context.Lotes.Find(lote.Id);
-            //    if (loteEntity != null)
-            //    {
-            //        loteEntity.StockActual = lote.StockActual;
-            //        context.SaveChanges();
-            //    }
-            //}
-
+            
+            context.SaveChanges();
 
             //traer el lote por fefo, si la cantidad de la compra supera el stock actual del lote,
             //descontar el stock del lote y traer el siguiente lote por fefo y asi sucesivamente
-            //hasta que se complete la cantidad de la compra o no haya más lotes disponibles.
+            //hasta que se complete la cantidad de la compra o no haya mas lotes disponibles.
         }
 
         public void loteEstaActivo(long loteId, bool estaActivo)
