@@ -1,6 +1,7 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
+using MigraDoc.DocumentObjectModel.Internals;
 using Servicios.Helpers;
 using Servicios.Infraestructura;
 using Servicios.LogicaNegocio.Caja;
@@ -296,13 +297,15 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
             {
                 Debug.WriteLine("D - Antes CrearVentaInterna");
 
-                CrearVentaInterna(context, ventaDto, TipoMovimientoDetalle.Venta);
+                var venta = CrearVentaInterna(context, ventaDto, TipoMovimientoDetalle.Venta);
 
                 Debug.WriteLine("E - Antes Commit");
 
                 transaction.Commit();
 
                 Debug.WriteLine("F - Commit realizado");
+                GeneracionComprobanteVenta(context, venta);
+
 
                 return new EstadoOperacion
                 {
@@ -325,6 +328,21 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                     Mensaje = ex.ToString()
                 };
             }
+        }
+
+        private void GeneracionComprobanteVenta(GestorContextDB context, AccesoDatos.Entidades.Venta venta)
+        {
+            var ventaCompleta = context.Ventas
+              .Include(v => v.DetallesVentas)
+                  .ThenInclude(d => d.Producto)
+              .Include(v => v.VentaPagoDetalles)
+                  .ThenInclude(p => p.TipoPago)
+              .Include(v => v.Cliente.Persona)
+              .Include(v => v.Empleado.Persona)
+              .Include(v => v.Vendedor.Persona)
+              .First(v => v.VentaId == venta.VentaId);
+
+            GenerarPdfDeVenta(ventaCompleta);
         }
 
         public VentaDTO ObtenerVentaPorId(long ventaId)
