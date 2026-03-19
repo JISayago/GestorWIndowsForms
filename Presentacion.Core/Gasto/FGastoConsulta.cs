@@ -48,6 +48,34 @@ namespace Presentacion.Core.Gasto
                 AnularGasto,
                 true
             );
+            AgregarAccion(
+               "Pagar",
+               Constantes.Imagenes.ImgEliminar,
+               MarcarComoPagada,
+               true
+           );
+        }
+
+        private void MarcarComoPagada(long? id)
+        {
+            if (!id.HasValue)
+            {
+                MessageBox.Show("Seleccione un gasto.");
+                return;
+            }
+
+            var resultado = _gastoServicio.ConfirmarPago(id.Value);
+
+            if (resultado.Exitoso)
+            {
+                Recargar();
+                MessageBox.Show(resultado.Mensaje, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                Recargar();
+                MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void AnularGasto(long? id)

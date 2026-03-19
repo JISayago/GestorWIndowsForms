@@ -21,5 +21,6 @@ namespace Servicios.LogicaNegocio.Gasto
       DateTime? fechaDesde = null,
       DateTime? fechaHasta = null);
         EstadoOperacion AnularGasto(long gastoId);
+        EstadoOperacion ConfirmarPago(long gastoId);
     }
 }
