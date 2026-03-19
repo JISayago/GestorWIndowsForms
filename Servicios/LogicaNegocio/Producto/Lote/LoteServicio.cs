@@ -109,6 +109,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 
                 if (cantidadADescontar > 0)
                 {
+                    ///////validar que no traiga el mismo lote1!??!!?!?!?!?!///////////////////////////////
                     loteFefo = obtenerLoteFEFO(productoId, context);
                 }
             }
@@ -135,7 +136,8 @@ namespace Servicios.LogicaNegocio.Producto.Lote
 
         public void controlarVencimientosLotes()
         {
-            //creo que no hace falta, capaz podria usarse para control de venciomientos en ventana principal
+            //se podria usar al inciar el sistema para controlar los vencimientos y actualizar ventana principal o enviar notificaciones,
+            //ademas de actualizar el estado de los lotes vencidos.
         }
         public void integrarGestionLotesConVentas()
         {

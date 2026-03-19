@@ -12,8 +12,8 @@ namespace AccesoDatos.Entidades
         public long IdProducto { get; set; }
         public decimal StockIncial { get; set; }
         public decimal StockActual { get; set; }
-        public string NumeroLote { get; set; } //autogenerado por el sistema
-        public string NombreLote { get; set; } //autogenerado?
+        public string NumeroLote { get; set; } //autogenerado por el sistema y el usuario puede cambiarlo si lo desea, o dejarlo como esta. El formato del numero de lote puede ser: "LOTE-0001", "LOTE-0002"
+        public string NombreLote { get; set; } //autogenerado por el sistema y el usuario puede cambiarlo si lo desea, o dejarlo como esta. El formato del nombre de lote puede ser: "Lote 1", "Lote
         public string Descripcion { get; set; }
         public DateOnly FechaAlta { get; set; }
         public DateOnly? FechaVencimiento { get; set; }
