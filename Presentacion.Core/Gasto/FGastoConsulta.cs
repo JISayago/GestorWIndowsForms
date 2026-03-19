@@ -154,8 +154,10 @@ namespace Presentacion.Core.Gasto
         {
             base.ActualizarDatos(dgv, filtros);
             int? estado = null;
+                Debug.WriteLine($"Valor de Extra: {filtros.Extra}"); // Agrega esta línea para depurar el valor de Extra
             if (filtros.Extra != null && filtros.Extra != "0")
-                estado = (int)filtros.Extra;
+
+            estado = Convert.ToInt32(filtros.Extra);
 
             dgv.DataSource = _gastoServicio.ObtenerGastosFiltrados(
                 filtros.TextoBuscar,
