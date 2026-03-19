@@ -394,7 +394,7 @@ namespace Presentacion.FBase
         private void DgvGrilla_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
-            EjecutarAccionGrilla(dgvGrilla.Columns[e.ColumnIndex].Name);
+            //EjecutarAccionGrilla(dgvGrilla.Columns[e.ColumnIndex].Name);
         }
 
         protected virtual void EjecutarAccionGrilla(string nombreColumna)
