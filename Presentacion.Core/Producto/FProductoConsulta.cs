@@ -213,13 +213,7 @@ namespace Presentacion.Core.Producto
 
         public override void EjecutarDobleClickFila(long? id)
         {
-            //ejemplo
-            if (!id.HasValue) return;
 
-            /* var f = new FProductoABM(id.Value);
-             f.ShowDialog();
-             RefrescarGrilla();*/
-            MessageBox.Show($"eeeee {id.Value}");
         }
 
         public override void EjecutarClickDerechoFila(long? id, Point pos)

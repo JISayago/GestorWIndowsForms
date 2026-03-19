@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,34 +11,22 @@ namespace AccesoDatos.Entidades
     {
         [Key]
         public long MovimientoId { get; set; }
+
         public string NumeroMovimiento { get; set; } = string.Empty;
-        public long IdCaja { get; set; }
-        public long? IdVenta { get; set; }     // Nullable si no siempre hay venta asociada
-        // long? IdGasto { get; set; }     // Nullable si no siempre hay gasto asociado
+
         public int TipoMovimiento { get; set; }
+
         public int TipoMovimientoDetalle { get; set; }
+
         public decimal Monto { get; set; }
+
         public DateTime FechaMovimiento { get; set; }
+
         public bool EstaEliminado { get; set; }
-        public long? IdCuentaCorriente { get; set; } // para vincular movimientos relacionados (ej: venta y su pago)
 
-
-        // Navegación
-        public Venta Venta { get; set; }
-        public Caja Caja { get; set; } //estoy obligado a tener la referencia a caja? no puedo solo tener el id?
-        public CuentaCorriente CuentaCorriente { get; set; }
-        //public long? EntidadId { get; set; }
-        //public TipoEntidadMovimiento? TipoEntidad { get; set; }
-
-
-        //servicio movimiento llame switch case "Venta"
-        //    context.Ventas
-        //    case "ctacte"
-        //    context.CteCte
-        //    case "Producto"
-        //    case "Caja"
-        //    case "Gasto"
-
+        // referencia genérica a cualquier entidad del sistema
+        public int? TipoEntidad { get; set; }
+        public long? EntidadId { get; set; }
 
     }
 }
