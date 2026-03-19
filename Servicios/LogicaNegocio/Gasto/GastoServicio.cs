@@ -164,8 +164,80 @@ namespace Servicios.LogicaNegocio.Gasto
             var query = context.Gastos.AsQueryable();
 
             if (estadoGasto.HasValue)
+            {
                 query = query.Where(g => g.EstadoGasto == estadoGasto.Value);
+            }
+            else
+            {
+                query = query.Where(g => g.EstadoGasto > 0);
+            }
 
+                var gastos = query
+                    .OrderByDescending(g => g.FechaGasto)
+                    .Select(g => new GastoDTO
+                    {
+                        GastoId = g.GastoId,
+                        NumeroGasto = g.NumeroGasto,
+                        IdEmpleado = g.IdEmpleado,
+                        NombreEmpleado = g.Empleado.Persona.Nombre + " " + g.Empleado.Persona.Apellido,
+                        CategoriaGasto = g.CategoriaGasto,
+                        FechaGasto = g.FechaGasto,
+                        FechaRegistro = g.FechaRegistro,
+                        MontoTotal = g.MontoTotal,
+                        MontoPagado = g.MontoPagado,
+                        EstadoGasto = g.EstadoGasto,
+                        Detalle = g.Detalle
+                    })
+                    .ToList();
+
+            return gastos;
+        }
+
+        public List<GastoDTO> ObtenerGastosFiltrados(
+      string textoBuscar = null,
+      int? estadoGasto = null,
+      DateTime? fechaDesde = null,
+      DateTime? fechaHasta = null)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var query = context.Gastos.AsQueryable();
+
+            // 🔍 filtro por texto
+            if (!string.IsNullOrWhiteSpace(textoBuscar))
+            {
+                query = query.Where(g =>
+                    g.Detalle.Contains(textoBuscar) ||
+                    g.NumeroGasto.Contains(textoBuscar) ||
+                    g.Empleado.Persona.Nombre.Contains(textoBuscar) ||
+                    g.Empleado.Persona.Apellido.Contains(textoBuscar)
+                );
+            }
+
+            // 🔥 filtro por estado (enum → int)
+            if (estadoGasto.HasValue)
+            {
+                query = query.Where(g => g.EstadoGasto == estadoGasto.Value);
+            }
+            else
+            {
+                // comportamiento por defecto (como ya tenías)
+                query = query.Where(g => g.EstadoGasto > 0);
+            }
+
+            // 📅 filtro por fechas
+            if (fechaDesde.HasValue)
+            {
+                query = query.Where(g => g.FechaGasto >= fechaDesde.Value);
+            }
+
+            if (fechaHasta.HasValue)
+            {
+                var hastaReal = fechaHasta.Value.AddDays(1);
+                query = query.Where(g => g.FechaGasto < hastaReal);
+            }
+
+            // 📊 resultado
             var gastos = query
                 .OrderByDescending(g => g.FechaGasto)
                 .Select(g => new GastoDTO

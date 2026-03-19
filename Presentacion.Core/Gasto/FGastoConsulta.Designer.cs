@@ -28,24 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnAnularGasto = new Button();
+            panel2.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(btnAnularGasto);
-            panel1.Controls.SetChildIndex(btnAnularGasto, 0);
+            panel1.Size = new Size(800, 561);
             // 
-            // btnAnularGasto
+            // pnlFiltrosAvanzados
             // 
-            btnAnularGasto.Location = new Point(0, 234);
-            btnAnularGasto.Name = "btnAnularGasto";
-            btnAnularGasto.Size = new Size(75, 73);
-            btnAnularGasto.TabIndex = 1;
-            btnAnularGasto.Text = "Anular Gasto";
-            btnAnularGasto.UseVisualStyleBackColor = true;
-            //btnAnularGasto.Click += btnAnularGasto_Click;
+            pnlFiltrosAvanzados.Size = new Size(447, 114);
             // 
             // FGastoConsulta
             // 
@@ -54,14 +47,14 @@
             ClientSize = new Size(800, 561);
             Name = "FGastoConsulta";
             Text = "FGastoConsulta";
+            Load += FGastoConsulta_Load;
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private Button btnAnularGasto;
     }
 }
