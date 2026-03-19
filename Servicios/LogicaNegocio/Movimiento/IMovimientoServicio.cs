@@ -14,7 +14,7 @@ namespace Servicios.LogicaNegocio.Movimiento
     {
         void CrearMovimientoVenta(long ventaId, decimal monto, TipoMovimientoDetalle detalleTipo, GestorContextDB context);
         void CrearMovimientoCtaCte(decimal total, long cajaId, long ctacteId, TipoMovimientoDetalle detalleTipo, GestorContextDB context);
-
+        void CrearMovimientoGasto(long gastoId, decimal monto, TipoMovimientoDetalle detalleTipo, GestorContextDB context);
         MovimientoDTO ObtenerMovimientoPorId(long movimientoId);
         IEnumerable<MovimientoDTO> ObtenerMovimiento(string cadenabuscar);
         IEnumerable<MovimientoDTO> ObtenerMovimientoEliminado(string cadenabuscar);

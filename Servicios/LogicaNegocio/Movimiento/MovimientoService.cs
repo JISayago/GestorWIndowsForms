@@ -97,6 +97,8 @@ namespace Servicios.LogicaNegocio.Movimiento
                     context.Dispose();
             }
         }
+
+
         public MovimientoDTO ObtenerMovimientoPorId(long movimientoId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -120,7 +122,39 @@ namespace Servicios.LogicaNegocio.Movimiento
                 EstaEliminado = movimiento.EstaEliminado
             };
         }
+        public void CrearMovimientoGasto(
+    long gastoId,
+    decimal monto,
+    TipoMovimientoDetalle detalleTipo,
+    GestorContextDB context)
+        {
+            if (gastoId <= 0)
+                throw new Exception("El movimiento no puede crearse porque el gasto no tiene un ID válido.");
 
+            try
+            {
+                var numeroMovimiento = $"MOV-GASTO-{gastoId}-{DateTime.Now:yyyyMMddHHmmss}";
+
+                var movimiento = new AccesoDatos.Entidades.Movimiento
+                {
+                    NumeroMovimiento = numeroMovimiento,
+                    EntidadId = gastoId,
+                    TipoEntidad = (int)TipoEntidadMovimiento.Gasto,
+                    TipoMovimiento = (int)TipoMovimiento.Egreso, // 🔴 importante
+                    TipoMovimientoDetalle = (int)detalleTipo,
+                    Monto = monto,
+                    FechaMovimiento = DateTime.Now,
+                    EstaEliminado = false
+                };
+
+                context.Movimientos.Add(movimiento);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al crear movimiento de gasto: {ex}");
+                throw;
+            }
+        }
         public IEnumerable<MovimientoDTO> ObtenerMovimiento(string cadenaBuscar)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
