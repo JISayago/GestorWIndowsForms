@@ -992,7 +992,7 @@ namespace AccesoDatos
                     .HasForeignKey(e => e.IdProducto)
                     .OnDelete(DeleteBehavior.Restrict);
             });
-         }
+         
             modelBuilder.Entity<UsuarioSesion>(entity =>
             {
                 entity.ToTable("Usuarios_Sesiones");
