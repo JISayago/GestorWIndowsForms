@@ -12,8 +12,7 @@ namespace Servicios.LogicaNegocio.Producto.DTO
         public long IdProducto { get; set; }
         public decimal StockInicial { get; set; }
         public decimal StockActual { get; set; }
-        public string? NumeroLote { get; set; } // se genera en el service
-        public string NombreLote { get; set; } // se genera en el front
+        public string? NumeroLote { get; set; } // se genera en el service, creo que no deberia ser null
         public string Descripcion { get; set; }
         public DateTime FechaAlta { get; set; }
         public DateTime? FechaVencimiento { get; set; }

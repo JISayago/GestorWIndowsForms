@@ -115,7 +115,6 @@ namespace Presentacion.Core.Producto
             if (lote != null)
             {
                 txtNumeroLote.Text = lote.NumeroLote;
-                txtNombreLote.Text = lote.NombreLote;
                 txtDescripcionLote.Text = lote.Descripcion;
                 nudStockInicial.Value = lote.StockInicial;
                 nudStockActual.Value = lote.StockActual;
@@ -155,7 +154,6 @@ namespace Presentacion.Core.Producto
                 IdProducto = EntidadID.Value,
                 StockInicial = nudStockInicial.Value,
                 StockActual = nudStockActual.Value,
-                NombreLote = txtNombreLote.Text,
                 NumeroLote = txtNumeroLote.Text,
                 Descripcion = txtDescripcionLote.Text,
                 FechaAlta = DateTime.Now, //cambiar por datetime , asi se puede filtrar el mas viejo con la hora incluida
@@ -258,7 +256,7 @@ namespace Presentacion.Core.Producto
             if (TipoOperacion == TipoOperacion.Nuevo) //Nombre default auto generado cuando cargar un lote nuevo
             {
                 chkLoteEstaActivo.Checked = true;
-                txtNombreLote.Text = $"{NombreProducto}-{DateTime.Now: yyyyMMddHHmmss}".ToUpper();
+                //txtNombreLote.Text = $"{NombreProducto}-{DateTime.Now: yyyyMMddHHmmss}".ToUpper();
                 txtNumeroLote.Text = NumeroLote;
             }
         }

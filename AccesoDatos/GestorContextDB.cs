@@ -960,10 +960,6 @@ namespace AccesoDatos
                     .HasMaxLength(200)
                     .IsRequired();
 
-                entity.Property(e => e.NombreLote)
-                    .HasColumnName("nombre_lote")
-                    .HasMaxLength(200);
-
                 entity.Property(e => e.Descripcion)
                     .HasColumnName("descripcion")
                     .HasMaxLength(500);
