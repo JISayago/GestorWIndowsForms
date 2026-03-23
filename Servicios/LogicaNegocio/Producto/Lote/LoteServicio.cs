@@ -149,6 +149,8 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                     lote.StockActual = 0;
                 }
 
+                context.SaveChanges(); //guardar cambios después de actualizar cada lote
+
                 if (cantidadADescontar > 0)
                 {
                     ///////TODO: validar que no traiga el mismo lote1!??!!?!?!?!?!///////////////////////////////
@@ -213,7 +215,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             {
                 // FEFO (First Expired, First Out) para asegurar que se utilicen primero los lotes que están más próximos a vencer. 
 
-                //mejorar llamada a db para que no traiga todos los lotes a memoria y luego ordene, sino que ordene y filtre en la consulta a la db
+                //TODO: mejorar llamada a db para que no traiga todos los lotes a memoria y luego ordene, sino que ordene y filtre en la consulta a la db
                 var loteFefo = context.Lotes
                 .Where(l => l.EstaActivo && !l.EstaVencido && l.StockActual > 0)
                 .OrderBy(l => l.FechaVencimiento)
@@ -226,7 +228,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             {
                 // LIFO (Last In, First Out - Último en Entrar, Primero en Salir)
 
-                //mejorar llamada a db para que no traiga todos los lotes a memoria y luego ordene, sino que ordene y filtre en la consulta a la db
+                //TODO: mejorar llamada a db para que no traiga todos los lotes a memoria y luego ordene, sino que ordene y filtre en la consulta a la db
                 var loteLifo = context.Lotes
                 .Where(l => l.EstaActivo && l.FechaVencimiento == null && l.StockActual > 0)
                 .OrderBy(l => l.FechaAlta)

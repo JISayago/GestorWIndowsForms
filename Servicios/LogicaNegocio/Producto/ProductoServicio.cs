@@ -140,12 +140,13 @@ namespace Servicios.LogicaNegocio.Producto
                     $"Stock insuficiente para {producto.Descripcion}. Stock actual: {producto.Stock}"
                 );
 
-            //IF CONTROL POR LOTES ESTA ACTIVADO USAR SERVICE DE LOTE Y ADEMAS REDUCIR STOCK DEL PRODUCTO, HACERLO ANTES DE ACTUALIZAR 
-            //DE ACTULIZAR LOTES?
+            //IF CONTROL POR LOTES ESTA ACTIVADO USAR SERVICE DE LOTE Y ADEMAS REDUCIR STOCK DEL LOTE
             if (producto.ControlPorLote)
             {
                 LoteServicio loteServicio = new LoteServicio();
-                loteServicio.DescontarStockLoteFifoLifo(item.Cantidad, producto.ProductoId, false);
+                loteServicio.DescontarStockLoteFifoLifo(item.Cantidad, producto.ProductoId, true);
+                //true por que tiene fecha de vencimiento, si no tuviera seria false,
+                //deberia pasar la propiedad del producto que indica si tiene o no fecha de vencimiento, para saber si aplico fifo o lifo
             }
 
             producto.Stock -= item.Cantidad;
