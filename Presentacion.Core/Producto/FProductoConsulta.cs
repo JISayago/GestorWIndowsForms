@@ -71,6 +71,17 @@ namespace Presentacion.Core.Producto
                     nombreProducto = celda.Value.ToString();
             }
 
+            //si el producto tiene control por stock abrir la ventana de getion de lote sino el de stock simple
+            /*
+            if(producto de la base. tiene control por lote activo)
+            {
+                var f = new FGestionLotes(id.Value, nombreProducto);
+                    f.ShowDialog();
+                    if (f.RealizoOperacion)
+                        Recargar();
+            }
+             
+             */
             var f = new FGestionStock(id.Value, nombreProducto);
             f.ShowDialog();
 
@@ -198,12 +209,12 @@ namespace Presentacion.Core.Producto
         private void FProductoConsulta_Load(object sender, EventArgs e)
         {
             var opciones = new List<OpcionFiltro>
-    {
+        {
         new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
         new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
         new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
         new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
-    };
+        };
 
             ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
         }

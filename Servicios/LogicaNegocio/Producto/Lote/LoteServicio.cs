@@ -11,7 +11,7 @@ using System.Transactions;
 
 namespace Servicios.LogicaNegocio.Producto.Lote
 {
-    public class LoteServicio
+    public class LoteServicio : ILoteServicio
     {
 
         // Implementar métodos para gestionar lotes de productos, como:
@@ -146,5 +146,9 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             //recibir la cantidad de la venta, el productoId y descontar el stock del lote por fefo
         }
 
+        public void eliminarLote(long loteId)
+        {
+            //eliminado logico
+        }
     }
 }

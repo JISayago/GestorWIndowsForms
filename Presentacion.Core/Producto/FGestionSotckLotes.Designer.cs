@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             lblTituloLotes = new Label();
-            label1 = new Label();
+            lblNombreProducto = new Label();
             label2 = new Label();
             label3 = new Label();
             lblNombreLote = new Label();
@@ -56,16 +56,16 @@
             lblTituloLotes.TabIndex = 0;
             lblTituloLotes.Text = "Crear Lote del producto:";
             // 
-            // label1
+            // lblNombreProducto
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
-            label1.ForeColor = Color.SeaGreen;
-            label1.Location = new Point(328, 20);
-            label1.Name = "label1";
-            label1.Size = new Size(126, 30);
-            label1.TabIndex = 1;
-            label1.Text = "PRODUCTO";
+            lblNombreProducto.AutoSize = true;
+            lblNombreProducto.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
+            lblNombreProducto.ForeColor = Color.SeaGreen;
+            lblNombreProducto.Location = new Point(328, 20);
+            lblNombreProducto.Name = "lblNombreProducto";
+            lblNombreProducto.Size = new Size(126, 30);
+            lblNombreProducto.TabIndex = 1;
+            lblNombreProducto.Text = "PRODUCTO";
             // 
             // label2
             // 
@@ -126,9 +126,9 @@
             cbLoteEstaActivo.AutoSize = true;
             cbLoteEstaActivo.Location = new Point(70, 198);
             cbLoteEstaActivo.Name = "cbLoteEstaActivo";
-            cbLoteEstaActivo.Size = new Size(84, 19);
+            cbLoteEstaActivo.Size = new Size(105, 19);
             cbLoteEstaActivo.TabIndex = 9;
-            cbLoteEstaActivo.Text = "Esta Activo";
+            cbLoteEstaActivo.Text = "Esta Habilitado";
             cbLoteEstaActivo.UseVisualStyleBackColor = true;
             // 
             // txtNumeroLote
@@ -202,7 +202,7 @@
             Controls.Add(lblNombreLote);
             Controls.Add(label3);
             Controls.Add(label2);
-            Controls.Add(label1);
+            Controls.Add(lblNombreProducto);
             Controls.Add(lblTituloLotes);
             Name = "FGestionSotckLotes";
             Text = "FGestionSotckLotes";
@@ -213,7 +213,7 @@
         #endregion
 
         private Label lblTituloLotes;
-        private Label label1;
+        private Label lblNombreProducto;
         private Label label2;
         private Label label3;
         private Label lblNombreLote;
