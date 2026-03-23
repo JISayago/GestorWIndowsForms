@@ -34,6 +34,7 @@ namespace AccesoDatos
         public DbSet<CuentaCorrienteAutorizado> CuentaCorrienteAutorizados { get; set; }
         public DbSet<Caja> Cajas { get; set; }
         public DbSet<Gasto> Gastos { get; set; }
+        public DbSet<Lote> Lotes { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -157,6 +158,10 @@ namespace AccesoDatos
 
                 entity.Property(p => p.IdRubro)
                     .HasColumnName("id_Rubro");
+
+                entity.Property(p => p.ControlPorLote)
+                    .HasColumnName("control_por_lote")
+                    .IsRequired();
 
                 // 🔗 Relaciones con Marca
                 entity.HasOne(p => p.Marca)
@@ -926,6 +931,64 @@ namespace AccesoDatos
                 entity.HasIndex(e => e.EstadoGasto);
             });
 
+            //LOTES
+            modelBuilder.Entity<Lote>(entity =>
+            {
+                entity.ToTable("Lotes");
+    
+                entity.HasKey(e => e.LoteId);
+    
+                entity.Property(e => e.LoteId)
+                    .HasColumnName("id_Lote");
+    
+                entity.Property(e => e.IdProducto)
+                    .HasColumnName("id_Producto")
+                    .IsRequired();
+
+                entity.Property(e => e.StockIncial)
+                    .HasColumnName("stock_inicial")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.StockActual)
+                    .HasColumnName("stock_actual")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.NumeroLote)
+                    .HasColumnName("numero_lote")
+                    .HasMaxLength(200)
+                    .IsRequired();
+
+                entity.Property(e => e.Descripcion)
+                    .HasColumnName("descripcion")
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.FechaAlta)
+                    .HasColumnName("fecha_alta")
+                    .HasColumnType("datetime2")
+                    .IsRequired();
+
+                entity.Property(e => e.FechaVencimiento)
+                    .HasColumnName("fecha_vencimiento")
+                    .HasColumnType("datetime2")
+                    .IsRequired(false);
+
+                entity.Property(entity => entity.EstaVencido)
+                    .HasColumnName("esta_vencido")
+                    .IsRequired();
+
+                entity.Property(entity => entity.EstaActivo)
+                    .HasColumnName("esta_activo")
+                    .IsRequired();
+
+                //Relación con Producto
+                entity.HasOne(e => e.Producto)
+                    .WithMany(p => p.Lotes) // o .WithMany(p => p.Lotes) si agregás la colección en Producto
+                    .HasForeignKey(e => e.IdProducto)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+         
             modelBuilder.Entity<UsuarioSesion>(entity =>
             {
                 entity.ToTable("Usuarios_Sesiones");

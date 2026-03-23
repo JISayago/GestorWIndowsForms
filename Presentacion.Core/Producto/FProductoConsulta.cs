@@ -71,11 +71,26 @@ namespace Presentacion.Core.Producto
                     nombreProducto = celda.Value.ToString();
             }
 
-            var f = new FGestionStock(id.Value, nombreProducto);
-            f.ShowDialog();
+            var controlPorLotes = dgvGrilla.CurrentRow.Cells["ControlPorLote"];
 
-            if (f.RealizoOperacion)
-                Recargar();
+            if ((bool)controlPorLotes.Value)
+            {
+                var fLotes = new FGestionStockLotes(nombreProducto, TipoOperacion.Nuevo, id.Value);
+                fLotes.ShowDialog();
+
+                if (fLotes.RealizoOperacion)
+                    Recargar();
+            }
+            else
+            {
+                var fStock = new FGestionStock(id.Value, nombreProducto);
+                fStock.ShowDialog();
+
+                if (fStock.RealizoOperacion)
+                    Recargar();
+            }
+
+            
         }
 
         private void SeleccionProducto(long? id)
@@ -122,6 +137,13 @@ namespace Presentacion.Core.Producto
             grilla.Columns["PrecioVenta"].Visible = true;
             grilla.Columns["Stock"].Visible = true;
             grilla.Columns["Estado"].Visible = true;
+
+            grilla.Columns["ControlPorLote"].Visible = true;
+            //hacer que el checkbox no sea modificable
+            grilla.Columns["ControlPorLote"].HeaderText = "Control por Lote";
+            grilla.Columns["ControlPorLote"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+
+            //acomodar las columnas
         }
 
         #endregion
@@ -198,12 +220,12 @@ namespace Presentacion.Core.Producto
         private void FProductoConsulta_Load(object sender, EventArgs e)
         {
             var opciones = new List<OpcionFiltro>
-    {
+        {
         new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
         new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
         new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
         new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
-    };
+        };
 
             ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
         }

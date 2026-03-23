@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Servicios.LogicaNegocio.Producto.DTO
+{
+    public class LoteDTO
+    {
+        public long Id { get; set; }
+        public long IdProducto { get; set; }
+        public decimal StockInicial { get; set; }
+        public decimal StockActual { get; set; }
+        public string? NumeroLote { get; set; } // se genera en el service, creo que no deberia ser null
+        public string Descripcion { get; set; }
+        public DateTime FechaAlta { get; set; }
+        public DateTime? FechaVencimiento { get; set; }
+        public bool EstaVencido { get; set; }
+        public bool EstaActivo { get; set; }
+    }
+}
