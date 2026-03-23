@@ -1012,12 +1012,12 @@ namespace AccesoDatos
 
                 entity.Property(e => e.FechaAlta)
                     .HasColumnName("fecha_alta")
-                    .HasColumnType("date")
+                    .HasColumnType("datetime2")
                     .IsRequired();
 
                 entity.Property(e => e.FechaVencimiento)
                     .HasColumnName("fecha_vencimiento")
-                    .HasColumnType("date")
+                    .HasColumnType("datetime2")
                     .IsRequired(false);
 
                 entity.Property(entity => entity.EstaVencido)

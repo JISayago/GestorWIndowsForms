@@ -75,7 +75,7 @@ namespace Presentacion.Core.Producto
 
             if ((bool)controlPorLotes.Value)
             {
-                var fLotes = new FGestionStockLotes(nombreProducto, id.Value, TipoOperacion.Nuevo);
+                var fLotes = new FGestionStockLotes(nombreProducto, TipoOperacion.Nuevo, id.Value);
                 fLotes.ShowDialog();
 
                 if (fLotes.RealizoOperacion)

@@ -14,9 +14,11 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         EstadoOperacion CrearLote(LoteDTO lote);
         void ModficiarLote(long loteId);
         void EliminarLote(long loteId);
-        /*public List<LoteDTO> ObtenerLotesDeUnProducto(long productoId);*/
+        LoteDTO ObtenerLotePorId(long loteId);
+        public List<LoteDTO> ObtenerLotesDeUnProducto(long productoId);
         void DescontarStockLoteFifoLifo(decimal cantidadADescontar, long productoId, bool tieneFechaVencimiento);
         void RestaurarStockLoteFifoLifo(decimal cantidadARestaurar, List<long> loteId, bool tieneFechaVencimiento);
+        string GenerarNumeroLote();
 
     }
 }

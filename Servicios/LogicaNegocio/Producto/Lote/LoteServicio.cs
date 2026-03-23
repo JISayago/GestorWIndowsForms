@@ -26,7 +26,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         // - Integrar la gestión de lotes con el sistema de ventas para asegurar que se descuenten los lotes correctos al realizar una venta.
         // - Implementar validaciones para asegurar que no se puedan crear lotes con fechas de vencimiento pasadas o con stock negativo.
         // - Integrar la gestión de lotes con el sistema de inventario para asegurar que el stock se actualice correctamente al recibir nuevos lotes o al realizar ventas.
-
+        
         public EstadoOperacion CrearLote(LoteDTO loteACrear)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -37,24 +37,26 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                     Exitoso = false,
                     Mensaje = "Ya existe una lote igual"
                 };
+            
+            //el numero de lote y el nombre debeerian ser autogenerados, y con la posibiiidad de cambiar
 
             var nuevoLote = new AccesoDatos.Entidades.Lote
             {
                 IdProducto = loteACrear.IdProducto,
                 StockIncial = loteACrear.StockInicial,
                 StockActual = loteACrear.StockActual,
-                NumeroLote = loteACrear.NumeroLote,
                 NombreLote = loteACrear.NombreLote,
+                NumeroLote = loteACrear.NumeroLote,
                 Descripcion = loteACrear.Descripcion,
-                FechaAlta = DateOnly.FromDateTime(loteACrear.FechaAlta), //cambiar en db a datetime
-                FechaVencimiento = DateOnly.FromDateTime(loteACrear.FechaVencimiento.Value), //cambiar en db a datetime
+                FechaAlta = loteACrear.FechaAlta,
+                FechaVencimiento = loteACrear.FechaVencimiento,
                 EstaVencido = loteACrear.EstaVencido,
                 EstaActivo = loteACrear.EstaActivo
             };
-
+            
             context.Lotes.Add(nuevoLote);
 
-            context.SaveChanges(); // Guarda en la DB
+            context.SaveChanges();
 
             return new EstadoOperacion
             {
@@ -73,7 +75,30 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         {
             //eliminado logico
         }
-        /*
+        public LoteDTO ObtenerLotePorId(long loteId)
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var lote = context.Lotes.FirstOrDefault(l => l.LoteId == loteId);
+
+            //TODO: validar que no sea null
+            var loteDTO = new LoteDTO
+            {
+                Id = lote.LoteId,
+                IdProducto = lote.IdProducto,
+                StockInicial = lote.StockIncial,
+                StockActual = lote.StockActual,
+                NumeroLote = lote.NumeroLote,
+                NombreLote = lote.NombreLote,
+                Descripcion = lote.Descripcion,
+                FechaAlta = lote.FechaAlta,
+                FechaVencimiento = lote.FechaVencimiento,
+                EstaVencido = lote.EstaVencido,
+                EstaActivo = lote.EstaActivo
+            };
+            return loteDTO;
+        }
+
         public List<LoteDTO> ObtenerLotesDeUnProducto(long productoId)
         {
            var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -98,7 +123,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
 
             return listaLotes;
         }
-        */
+        
         public void DescontarStockLoteFifoLifo(decimal cantidadADescontar, long productoId, bool tieneFechaVencimiento)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -158,11 +183,16 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             //ademas de actualizar el estado de los lotes vencidos.
         }
 
-        public void IntegrarGestionLotesConVentas()
+        public void ControlarStockEnProductoConLotes()
         {
-            //aca tambien deberia descontar el stock el stock que tiene producto tambien?
-
-            //recibir la cantidad de la venta, el productoId y descontar el stock del lote por fefo
+            //TODO Aca deberia actualizar el stock del producto?? 
+        }
+        public string GenerarNumeroLote()
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+            string numeroLoteGenerado;
+            // Generar un número de lote único utilizando un prefijo y un contador incremental
+            return numeroLoteGenerado = $"LOTE-{context.Lotes.Count() + 1:0000}";
         }
 
         public AccesoDatos.Entidades.Lote ObtenerLoteFefoLifo(long productoId, bool tieneFechaVencimiento, GestorContextDB context)

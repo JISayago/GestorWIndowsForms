@@ -210,6 +210,7 @@
             Controls.Add(lblTituloLotes);
             Name = "FGestionStockLotes";
             Text = "FGestionStockLotes";
+            Load += FGestionStockLotes_Load;
             Controls.SetChildIndex(lblTituloLotes, 0);
             Controls.SetChildIndex(lblNombreProducto, 0);
             Controls.SetChildIndex(label2, 0);

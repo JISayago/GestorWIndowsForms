@@ -22,17 +22,23 @@ namespace Presentacion.Core.Producto
         private readonly IProductoServicio _productoServicio;
 
         //borrar si no hacen falta
+        TipoOperacion TipoOperacion;
+        private string NombreProducto;
+        private string NumeroLote;
         private decimal stockIncial = 0;
         private decimal stockActual = 0;
         public bool RealizoOperacion { get; private set; } = false;
 
-        public FGestionStockLotes( string nombreProducto, long productoId, TipoOperacion tipoOperacion, long? entidadId = null)
+        public FGestionStockLotes(string nombreProducto, TipoOperacion tipoOperacion, long? entidadId = null)
             : base(tipoOperacion, entidadId)
         {
             InitializeComponent();
 
             _loteSevicio = new LoteServicio();
             _productoServicio = new ProductoServicio();
+
+            TipoOperacion = tipoOperacion;
+            NombreProducto = nombreProducto;
 
             lblNombreProducto.Text = nombreProducto;
 
@@ -51,6 +57,11 @@ namespace Presentacion.Core.Producto
                 // Simular NULL
                 dtpFechaVencimiento.Format = DateTimePickerFormat.Custom;
                 dtpFechaVencimiento.CustomFormat = " ";
+            }
+
+            if(TipoOperacion == TipoOperacion.Nuevo)
+            {
+                NumeroLote = _loteSevicio.GenerarNumeroLote();
             }
         }
 
@@ -75,7 +86,6 @@ namespace Presentacion.Core.Producto
 
         #endregion
         #region 🔵 OVERIDES FBASEABM
-        /*
         public override void DesactivarControles(object obj)
         {
             base.DesactivarControles(obj);
@@ -98,11 +108,29 @@ namespace Presentacion.Core.Producto
                 btnLimpiar.Enabled = false;
             }
 
-            var marca = _marcaServicio.ObtenerPorId(entidadId.Value);
+            var lote = _loteSevicio.ObtenerLotePorId(entidadId.Value);
 
-            if (marca != null)
+            if (lote != null)
             {
-                txtMarca.Text = marca.Nombre;
+                txtNumeroLote.Text = lote.NumeroLote;
+                txtNombreLote.Text = lote.NombreLote;
+                txtDescripcionLote.Text = lote.Descripcion;
+                nudStockInicial.Value = lote.StockInicial;
+                nudStockActual.Value = lote.StockActual;
+                if (lote.FechaVencimiento.HasValue)
+                {
+                    chkFechaVencimiento.Checked = true;
+                    chkFechaVencimiento.Enabled = false;
+                    dtpFechaVencimiento.Value = lote.FechaVencimiento.Value;
+                }
+                else
+                {
+                    chkFechaVencimiento.Checked = false;
+                    dtpFechaVencimiento.Enabled = false;
+                    // Simular NULL
+                    dtpFechaVencimiento.Format = DateTimePickerFormat.Custom;
+                    dtpFechaVencimiento.CustomFormat = " ";
+                }
             }
             else
             {
@@ -110,25 +138,26 @@ namespace Presentacion.Core.Producto
             }
 
         }
-        */
+
         public override bool EjecutarComandoNuevo()
         {
-            if (!VerificarDatosObligatorios())
+            if (!VerificarDatosObligatorios()) //no la estoy usando
             {
                 MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return false;
             }
+
             var loteNuevo = new LoteDTO
             {
                 IdProducto = EntidadID.Value,
                 StockInicial = nudStockInicial.Value,
                 StockActual = nudStockActual.Value,
-                NumeroLote = txtNumeroLote.Text,
                 NombreLote = txtNombreLote.Text,
+                NumeroLote = txtNumeroLote.Text,
                 Descripcion = txtDescripcionLote.Text,
                 FechaAlta = DateTime.Now, //cambiar por datetime , asi se puede filtrar el mas viejo con la hora incluida
-                FechaVencimiento = chkFechaVencimiento.Checked ? dtpFechaVencimiento.Value : (DateTime?)null,
+                FechaVencimiento = chkFechaVencimiento.Checked ? dtpFechaVencimiento.Value : null,
                 EstaVencido = false,
                 EstaActivo = true
             };
@@ -146,7 +175,6 @@ namespace Presentacion.Core.Producto
                    MessageBoxIcon.Error);
                 return false;
             }
-
         }
         /*
         public override bool EjecutarComandoEliminar()
@@ -221,5 +249,15 @@ namespace Presentacion.Core.Producto
         }
         */
         #endregion
+
+        private void FGestionStockLotes_Load(object sender, EventArgs e)
+        {
+            if (TipoOperacion == TipoOperacion.Nuevo) //Nombre default auto generado cuando cargar un lote nuevo
+            {
+                chkLoteEstaActivo.Checked = true;
+                txtNombreLote.Text = $"{NombreProducto}-{DateTime.Now: yyyyMMddHHmmss}".ToUpper();
+                txtNumeroLote.Text = NumeroLote;
+            }
+        }
     }
 }
