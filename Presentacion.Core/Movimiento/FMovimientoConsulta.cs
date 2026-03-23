@@ -1,4 +1,5 @@
 ﻿using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Servicios.LogicaNegocio.Movimiento;
 using System;
 using System.Drawing;
@@ -82,22 +83,30 @@ namespace Presentacion.Core.Movimiento
                 grilla.Columns["FechaMovimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             }
         }
+        #endregion
+        #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
 
-        //public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
-        //{
-        //    base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
+        #endregion
 
-        //    if (check.Checked)
-        //    {
-        //        grilla.DataSource = _movimientoServicio.ObtenerMovimientoEliminado(cadenaBuscar);
-        //        toolStrip.Enabled = false;
-        //    }
-        //    else
-        //    {
-        //        grilla.DataSource = _movimientoServicio.ObtenerMovimiento(cadenaBuscar);
-        //        toolStrip.Enabled = false;
-        //    }
-        //}
+
+        #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
+
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        {
+            base.ActualizarDatos(dgv, filtros);
+
+            //if (filtros.VerEliminados)
+            //{
+            //    dgv.DataSource = _movimientoServicio.ObtenerMovimientoEliminado(filtros.TextoBuscar);
+            //    BarraLateralBotones.Enabled = false;
+            //}
+            //else
+            //{
+            //    dgv.DataSource = _movimientoServicio.ObtenerMovimiento(filtros.TextoBuscar);
+            //    BarraLateralBotones.Enabled = false;
+            //}
+        }
+
 
         #endregion
 
@@ -112,5 +121,6 @@ namespace Presentacion.Core.Movimiento
         }
 
         #endregion
+
     }
 }

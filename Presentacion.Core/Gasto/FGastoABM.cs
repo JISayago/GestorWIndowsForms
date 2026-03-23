@@ -18,6 +18,7 @@ namespace Presentacion.Core.Gasto
         private readonly IGastoServicio _gastoServicio;
         private bool _esPagoPendiente;
         private readonly long _logeadoId;
+        public bool RealizoAlgunaOperacion = false;
         public FGastoABM(long logeadoId)
         {
             InitializeComponent();
@@ -60,6 +61,7 @@ namespace Presentacion.Core.Gasto
              var resultado = _gastoServicio.NuevoGasto(gasto);
             if (resultado.Exitoso)
             {
+                RealizoAlgunaOperacion = true;
                 MessageBox.Show($"{resultado.Mensaje}", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else

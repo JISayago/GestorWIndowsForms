@@ -30,16 +30,16 @@ namespace Presentacion.Core.Movimiento
             
             InitializeComponent();
 
-            var info = movimientoService.CargarDatosMovimiento(entidadID);
+            //var info = movimientoService.CargarDatosMovimiento(entidadID);
 
-            lblMontoMovimiento.Text = info.movimiento.Monto.ToString() + "$";
-            lblNumeroMovimiento.Text = info.movimiento.NumeroMovimiento;
-            lblTipoMovimiento.Text = info.movimiento.TipoMovimiento == 1 ? "Ingreso" : "Egreso";
-            lblFechaMovimiento.Text = info.movimiento.FechaMovimiento.ToString();
+            //lblMontoMovimiento.Text = info.movimiento.Monto.ToString() + "$";
+            //lblNumeroMovimiento.Text = info.movimiento.NumeroMovimiento;
+            //lblTipoMovimiento.Text = info.movimiento.TipoMovimiento == 1 ? "Ingreso" : "Egreso";
+            //lblFechaMovimiento.Text = info.movimiento.FechaMovimiento.ToString();
 
-            txtDetalle.Text = info.venta.Detalle;
+            //txtDetalle.Text = info.venta.Detalle;
 
-            lblNombreEmpleado.Text = info.empleado.Nombre;
+            //lblNombreEmpleado.Text = info.empleado.Nombre;
 
             dgvProductos.ReadOnly = true;
             dgvProductos.AutoGenerateColumns = false;
@@ -79,7 +79,7 @@ namespace Presentacion.Core.Movimiento
                 HeaderText = "Rubro",
             });
 
-            dgvProductos.DataSource = info.productos;
+            //dgvProductos.DataSource = info.productos;
 
             //AGREGAR CANTIDAD DE PRODUCTOS VENDIDOS EN LA GRILLA
         }

@@ -11,6 +11,7 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
 {
     public interface IOfertaServicio
     {
+        public InfoOfertaDTO ObtenerInfoOferta();
         public EstadoOperacion Insertar(OfertaDTO dto);
         public List<OfertaDTO> ObtenerOfertasActivas(string cadenaBuscar);
         public List<OfertaDTO> ObtenerOfertasActivasCompuestas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);

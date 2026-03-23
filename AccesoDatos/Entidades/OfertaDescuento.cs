@@ -35,5 +35,6 @@ namespace AccesoDatos.Entidades
         public Rubro? Rubro { get; set; }
         public Categoria? Categoria { get; set; }
         public ICollection<ProductosEnOfertaDescuentos> Productos { get; set; } = new List<ProductosEnOfertaDescuentos>();
+        public ICollection<DetallesVenta> DetallesVentas { get; set; }
     }
 }

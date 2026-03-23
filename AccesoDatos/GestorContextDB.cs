@@ -14,6 +14,7 @@ namespace AccesoDatos
         public GestorContextDB(DbContextOptions<GestorContextDB> options) : base(options) { }
         public DbSet<Persona> Personas { get; set; }
         public DbSet<Empleado> Empleados { get; set; }
+        public DbSet<UsuarioSesion> Usuarios { get; set; }
         public DbSet<DetallesVenta> DetallesVentas { get; set; }
         public DbSet<Venta> Ventas { get; set; }
         public DbSet<Rol> Roles { get; set; }
@@ -196,7 +197,11 @@ namespace AccesoDatos
 
                 entity.Property(e => e.IdProducto)
                     .HasColumnName("id_Producto")
-                    .IsRequired();
+                    .IsRequired(false);
+              
+                entity.Property(e => e.IdOfertaDescuento)
+                    .HasColumnName("id_OfertaDescuento")
+                    .IsRequired(false);
 
                 entity.Property(e => e.Cantidad)
                     .HasColumnName("cantidad")
@@ -216,6 +221,11 @@ namespace AccesoDatos
                 entity.HasOne(d => d.Producto)
                     .WithMany(p => p.DetallesVentas)
                     .HasForeignKey(d => d.IdProducto)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(d => d.OfertaDescuento)
+                    .WithMany(Of => Of.DetallesVentas)
+                    .HasForeignKey(d => d.IdOfertaDescuento)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -700,11 +710,6 @@ namespace AccesoDatos
                       .WithOne(c => c.CuentaCorriente)
                       .HasForeignKey<Cliente>(c => c.CuentaCorrienteId)
                       .OnDelete(DeleteBehavior.Restrict);
-                // Relación uno a muchos con Movimientos
-                entity.HasMany(cc => cc.Movimientos)
-                      .WithOne(mc => mc.CuentaCorriente)
-                      .HasForeignKey(mc => mc.IdCuentaCorriente)
-                      .OnDelete(DeleteBehavior.Restrict);
                 // Relación uno a muchos con CuentaCorrienteAutorizado
                 entity.HasMany(c => c.CuentaCorrienteAutorizado)
                       .WithOne() // sin navegación inversa
@@ -809,14 +814,9 @@ namespace AccesoDatos
                         .HasColumnName("esta_cerrada")
                         .IsRequired();
 
-                //Relacion con Movimiento
-                entity.HasMany(c => c.Movimientos)
-                      .WithOne(m => m.Caja)
-                      .HasForeignKey(m => m.IdCaja)
-                      .OnDelete(DeleteBehavior.Restrict);
+                
             });
 
-            // MOVIMIENTO
             modelBuilder.Entity<Movimiento>(entity =>
             {
                 entity.ToTable("Movimientos");
@@ -824,84 +824,42 @@ namespace AccesoDatos
                 entity.HasKey(e => e.MovimientoId);
 
                 entity.Property(e => e.MovimientoId)
-                        .HasColumnName("id_Movimiento");
+                    .HasColumnName("id_movimiento");
 
                 entity.Property(e => e.NumeroMovimiento)
-                        .HasColumnName("numero_movimiento")
-                        .HasMaxLength(100)
-                        .IsRequired();
-
-                entity.Property(e => e.IdVenta)
-                        .HasColumnName("id_Venta")
-                        .IsRequired(false);
-
-                entity.Property(e => e.TipoMovimiento)
-                        .HasColumnName("tipo_movimiento")
-                        .IsRequired();
-
-                entity.Property(e => e.Monto)
-                        .HasColumnName("monto")
-                        .HasColumnType("decimal(18,2)")
-                        .IsRequired();
-
-                entity.Property(e => e.FechaMovimiento)
-                        .HasColumnName("fecha_movimiento")
-                        .HasColumnType("date")
-                        .IsRequired();
-
-                entity.Property(e => e.EstaEliminado)
-                        .HasColumnName("esta_eliminado")
-                        .IsRequired();
-
-                entity.Property(e => e.IdCaja)
-                    .HasColumnName("id_Caja")
+                    .HasColumnName("numero_movimiento")
+                    .HasMaxLength(100)
                     .IsRequired();
 
-                entity.Property(e => e.IdCuentaCorriente)
-                    .HasColumnName("id_CuentaCorriente")
-                    .IsRequired(false);
-
-                entity.Property(e => e.IdLote)
-                    .HasColumnName("id_Lote")
-                    .IsRequired(false);
-               
-                entity.Property(e => e.IdProducto)
-                    .HasColumnName("id_Producto")
-                    .IsRequired(false);
+                entity.Property(e => e.TipoMovimiento)
+                    .HasColumnName("tipo_movimiento")
+                    .IsRequired();
 
                 entity.Property(e => e.TipoMovimientoDetalle)
                     .HasColumnName("tipo_movimiento_detalle")
                     .IsRequired();
 
-                // Relación con Venta (si tenés definida la entidad Venta)
-                entity.HasOne(e => e.Venta)
-                      .WithMany() // o .WithMany(v => v.Movimientos) si agregás la colección en Venta
-                      .HasForeignKey(e => e.IdVenta)
-                      .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(e => e.Monto)
+                    .HasColumnName("monto")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
 
-                //Relación con Caja
-                entity.HasOne(e => e.Caja)
-                      .WithMany(c => c.Movimientos)
-                      .HasForeignKey(e => e.IdCaja)
-                      .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(e => e.FechaMovimiento)
+                    .HasColumnName("fecha_movimiento")
+                    .HasColumnType("datetime")
+                    .IsRequired();
 
-                //Relacion con CuentaCorriente
-                entity.HasOne(e => e.CuentaCorriente)
-                      .WithMany(cc => cc.Movimientos) // o .WithMany(cc => cc.Movimientos) si agregás la colección en CuentaCorriente
-                      .HasForeignKey(e => e.IdCuentaCorriente)
-                      .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(e => e.EstaEliminado)
+                    .HasColumnName("esta_eliminado")
+                    .IsRequired();
 
-                //Relacion con Lote
-                entity.HasOne(e => e.Lote)
-                      .WithMany(l => l.Movimientos) // o .WithMany(l => l.Movimientos) si agregás la colección en Lote
-                      .HasForeignKey(e => e.IdLote)
-                      .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(e => e.EntidadId)
+                    .HasColumnName("entidad_id")
+                    .IsRequired(false);
 
-                //Relacion con Producto
-                entity.HasOne(e => e.Producto)
-                      .WithMany(p => p.Movimientos) // o .WithMany(p => p.Movimientos) si agregás la colección en Producto
-                      .HasForeignKey(e => e.IdProducto)
-                      .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(e => e.TipoEntidad)
+                    .HasColumnName("tipo_entidad")
+                    .IsRequired(false);
             });
 
             //GASTO
@@ -1035,5 +993,28 @@ namespace AccesoDatos
                     .OnDelete(DeleteBehavior.Restrict);
             });
          }
+            modelBuilder.Entity<UsuarioSesion>(entity =>
+            {
+                entity.ToTable("Usuarios_Sesiones");
+
+                entity.HasKey(e => e.UsuarioSesionId);
+
+                entity.Property(e => e.FechaLogin)
+                      .HasColumnType("datetime");
+
+                entity.Property(e => e.FechaLogout)
+                      .HasColumnType("datetime");
+
+                entity.Property(e => e.Activa)
+                      .IsRequired();
+
+                entity.HasOne(e => e.Usuario)
+                      .WithMany(u => u.Sesiones)
+                      .HasForeignKey(e => e.UsuarioId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+            });
+
+        }
     }
 }

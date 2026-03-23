@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace Servicios.Helpers
 {
-    public enum TipoMovimiento
+    public enum TipoEntidadMovimiento
     {
-        Ingreso = 1,
-        Egreso = 2,
-        
-
+        Venta = 1,
+        CuentaCorriente = 2,
+        Producto = 3,
+        Caja = 4,
+        Gasto = 5
     }
 }

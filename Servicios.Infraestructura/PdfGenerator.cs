@@ -83,9 +83,24 @@ namespace Servicios.Infraestructura
             foreach (var d in venta.DetallesVentas)
             {
                 var row = tabla.AddRow();
-                row.Cells[0].AddParagraph(d.Producto.Descripcion);
+
+                string descripcion = "";
+                decimal precioUnitario = 0;
+
+                if (d.Producto != null)
+                {
+                    descripcion = d.Producto.Descripcion;
+                    precioUnitario = d.Subtotal / d.Cantidad;
+                }
+                else if (d.OfertaDescuento != null)
+                {
+                    descripcion = $"OFERTA: {d.OfertaDescuento.Descripcion}";
+                    precioUnitario = d.Subtotal / d.Cantidad;
+                }
+
+                row.Cells[0].AddParagraph(descripcion);
                 row.Cells[1].AddParagraph(d.Cantidad.ToString("0.##"));
-                row.Cells[2].AddParagraph((d.Subtotal / d.Cantidad).ToString("C"));
+                row.Cells[2].AddParagraph(precioUnitario.ToString("C"));
                 row.Cells[3].AddParagraph(d.Subtotal.ToString("C"));
             }
 

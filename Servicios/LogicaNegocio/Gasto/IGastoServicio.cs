@@ -15,6 +15,12 @@ namespace Servicios.LogicaNegocio.Gasto
         EstadoOperacion NuevoGasto(GastoDTO gastoDto);
         GastoDTO ObtenerGastoPorId(long gastoId);
         List<GastoDTO> ObtenerGastos(int? estadoGasto);
+        public List<GastoDTO> ObtenerGastosFiltrados(
+      string textoBuscar = null,
+      int? estadoGasto = null,
+      DateTime? fechaDesde = null,
+      DateTime? fechaHasta = null);
         EstadoOperacion AnularGasto(long gastoId);
+        EstadoOperacion ConfirmarPago(long gastoId);
     }
 }

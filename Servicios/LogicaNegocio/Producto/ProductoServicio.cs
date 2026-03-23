@@ -118,7 +118,7 @@ namespace Servicios.LogicaNegocio.Producto
             {
                 if (item.EsOferta)
                 {
-                   // DescontarStockOferta(item, context);
+                    DescontarStockOferta(item, context);
                 }
                 else
                 {
@@ -153,6 +153,37 @@ namespace Servicios.LogicaNegocio.Producto
 
             context.Productos.Update(producto); 
         }
+
+        private void DescontarStockOferta(ItemVentaDTO item, GestorContextDB context)
+        {
+            var productosOferta = context.ProductosEnOfertasDescuentos
+                .Where(x => x.OfertaId == item.ItemId)
+                .ToList();
+
+            if (!productosOferta.Any())
+                throw new Exception($"La oferta {item.Descripcion} no tiene productos asociados.");
+
+            foreach (var prodOferta in productosOferta)
+            {
+                var producto = context.Productos
+                    .FirstOrDefault(p => p.ProductoId == prodOferta.ProductoId);
+
+                if (producto == null)
+                    throw new Exception($"Producto asociado a oferta no encontrado. Codigo: {prodOferta.Producto.Codigo}");
+
+                // cantidad real a descontar
+                var cantidadADescontar = prodOferta.Cantidad * item.Cantidad;
+
+                if (producto.Stock < cantidadADescontar)
+                    throw new Exception(
+                        $"Stock insuficiente para {producto.Descripcion}. Stock actual: {producto.Stock}"
+                    );
+
+                producto.Stock -= cantidadADescontar;
+
+                context.Productos.Update(producto);
+            }
+        }
         public void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context)
         {
             if (items == null || !items.Any())
@@ -163,6 +194,7 @@ namespace Servicios.LogicaNegocio.Producto
                 if (item.EsOferta)
                 {
                     // RestaurarStockOferta(item, context);
+                    bool esoferta = true;
                 }
                 else
                 {

@@ -25,5 +25,6 @@ namespace AccesoDatos.Entidades
         public Persona Persona { get; set; }        // Uno a uno con Persona
         public ICollection<Venta> Ventas { get; set; }
         public ICollection<EmpleadoRol> EmpleadoRoles { get; set; }
+        public ICollection<UsuarioSesion> Sesiones { get; set; }
     }
 }
