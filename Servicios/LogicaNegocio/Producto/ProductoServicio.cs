@@ -3,6 +3,7 @@ using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Producto.Lote;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
@@ -141,6 +142,11 @@ namespace Servicios.LogicaNegocio.Producto
 
             //IF CONTROL POR LOTES ESTA ACTIVADO USAR SERVICE DE LOTE Y ADEMAS REDUCIR STOCK DEL PRODUCTO, HACERLO ANTES DE ACTUALIZAR 
             //DE ACTULIZAR LOTES?
+            if (producto.ControlPorLote)
+            {
+                LoteServicio loteServicio = new LoteServicio();
+                loteServicio.DescontarStockLoteFifoLifo(item.Cantidad, producto.ProductoId, false);
+            }
 
             producto.Stock -= item.Cantidad;
 

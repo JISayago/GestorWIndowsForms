@@ -56,6 +56,8 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             
             context.Lotes.Add(nuevoLote);
 
+            ActualizarStockEnProductoConLotes(loteACrear.IdProducto, context, nuevoLote.StockActual);
+
             context.SaveChanges();
 
             return new EstadoOperacion
@@ -75,6 +77,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         {
             //eliminado logico
         }
+        
         public LoteDTO ObtenerLotePorId(long loteId)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -183,9 +186,18 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             //ademas de actualizar el estado de los lotes vencidos.
         }
 
-        public void ControlarStockEnProductoConLotes()
+        public void ActualizarStockEnProductoConLotes(long productoId, GestorContextDB context, decimal? stockLoteParaAgregar = null)
         {
-            //TODO Aca deberia actualizar el stock del producto?? 
+            var producto = context.Productos.FirstOrDefault(p => p.ProductoId == productoId);
+
+            producto.Stock = context.Lotes.Where(l => l.IdProducto == productoId && l.EstaActivo).Sum(l => l.StockActual);
+
+            if(stockLoteParaAgregar.HasValue) //si estamos creando un nuevo lote
+            {
+                producto.Stock += stockLoteParaAgregar.Value;
+            }
+
+            context.SaveChanges();
         }
         public string GenerarNumeroLote()
         {

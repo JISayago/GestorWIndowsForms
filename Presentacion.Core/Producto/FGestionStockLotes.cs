@@ -1,10 +1,12 @@
-﻿using Presentacion.FBase;
+﻿using AccesoDatos.Entidades;
+using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Producto.Lote;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -161,6 +163,7 @@ namespace Presentacion.Core.Producto
                 EstaVencido = false,
                 EstaActivo = true
             };
+
             var response = _loteSevicio.CrearLote(loteNuevo);
 
             if (response.Exitoso)
