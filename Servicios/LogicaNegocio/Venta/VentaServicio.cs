@@ -103,6 +103,7 @@ namespace Servicios.LogicaNegocio.Venta
                     if (ventaDto.Total < 0)
                     {
                         _productoServicio.RestaurarStockProductos(ventaDto.Items, context);
+                        //esto es para la cancelacion? si es asi tambien deberia restaurar stock del lote?
                     }
                     else
                     {

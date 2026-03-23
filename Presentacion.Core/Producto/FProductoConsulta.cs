@@ -71,22 +71,26 @@ namespace Presentacion.Core.Producto
                     nombreProducto = celda.Value.ToString();
             }
 
-            //si el producto tiene control por stock abrir la ventana de getion de lote sino el de stock simple
-            /*
-            if(producto de la base. tiene control por lote activo)
-            {
-                var f = new FGestionLotes(id.Value, nombreProducto);
-                    f.ShowDialog();
-                    if (f.RealizoOperacion)
-                        Recargar();
-            }
-             
-             */
-            var f = new FGestionStock(id.Value, nombreProducto);
-            f.ShowDialog();
+            var controlPorLotes = dgvGrilla.CurrentRow.Cells["ControlPorLote"];
 
-            if (f.RealizoOperacion)
-                Recargar();
+            if ((bool)controlPorLotes.Value)
+            {
+                var fLotes = new FGestionStockLotes(nombreProducto, id.Value, TipoOperacion.Nuevo);
+                fLotes.ShowDialog();
+
+                if (fLotes.RealizoOperacion)
+                    Recargar();
+            }
+            else
+            {
+                var fStock = new FGestionStock(id.Value, nombreProducto);
+                fStock.ShowDialog();
+
+                if (fStock.RealizoOperacion)
+                    Recargar();
+            }
+
+            
         }
 
         private void SeleccionProducto(long? id)
@@ -133,6 +137,13 @@ namespace Presentacion.Core.Producto
             grilla.Columns["PrecioVenta"].Visible = true;
             grilla.Columns["Stock"].Visible = true;
             grilla.Columns["Estado"].Visible = true;
+
+            grilla.Columns["ControlPorLote"].Visible = true;
+            //hacer que el checkbox no sea modificable
+            grilla.Columns["ControlPorLote"].HeaderText = "Control por Lote";
+            grilla.Columns["ControlPorLote"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+
+            //acomodar las columnas
         }
 
         #endregion

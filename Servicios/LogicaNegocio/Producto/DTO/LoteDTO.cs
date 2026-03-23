@@ -15,8 +15,8 @@ namespace Servicios.LogicaNegocio.Producto.DTO
         public string NumeroLote { get; set; }
         public string NombreLote { get; set; }
         public string Descripcion { get; set; }
-        public DateOnly FechaAlta { get; set; }
-        public DateOnly? FechaVencimiento { get; set; }
+        public DateTime FechaAlta { get; set; }
+        public DateTime? FechaVencimiento { get; set; }
         public bool EstaVencido { get; set; }
         public bool EstaActivo { get; set; }
     }

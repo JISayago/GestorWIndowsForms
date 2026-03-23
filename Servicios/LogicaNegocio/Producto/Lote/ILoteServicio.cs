@@ -1,4 +1,5 @@
 ﻿using AccesoDatos;
+using Servicios.Helpers;
 using Servicios.LogicaNegocio.Producto.DTO;
 using System;
 using System.Collections.Generic;
@@ -10,14 +11,12 @@ namespace Servicios.LogicaNegocio.Producto.Lote
 {
     public interface ILoteServicio
     {
-        public void crearLote(LoteDTO lote);
+        EstadoOperacion CrearLote(LoteDTO lote);
+        void ModficiarLote(long loteId);
+        void EliminarLote(long loteId);
+        /*public List<LoteDTO> ObtenerLotesDeUnProducto(long productoId);*/
+        void DescontarStockLoteFifoLifo(decimal cantidadADescontar, long productoId, bool tieneFechaVencimiento);
+        void RestaurarStockLoteFifoLifo(decimal cantidadARestaurar, List<long> loteId, bool tieneFechaVencimiento);
 
-        public List<LoteDTO> obtenerLotesDeUnProducto(long productoId);
-
-        public AccesoDatos.Entidades.Lote obtenerLoteFEFO(long productoId, GestorContextDB context);
-
-        public void actualizarStockLote(decimal cantidadADescontar, long productoId);
-
-        public void loteEstaActivo(long loteId, bool estaActivo);
     }
 }

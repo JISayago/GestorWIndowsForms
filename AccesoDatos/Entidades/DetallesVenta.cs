@@ -17,6 +17,8 @@ namespace AccesoDatos.Entidades
         public decimal Cantidad { get; set; }
         public decimal Subtotal { get; set; }
 
+        //AGREGAR DETALLEVENTALOTEID para guardar los lotes en casos de cancelaciones o devoluciones, y para poder hacer un seguimiento de los lotes vendidos
+
         // Relaciones
         public Venta Venta { get; set; }
         public Producto Producto { get; set; }

@@ -15,8 +15,8 @@ namespace AccesoDatos.Entidades
         public string NumeroLote { get; set; } //autogenerado por el sistema y el usuario puede cambiarlo si lo desea, o dejarlo como esta. El formato del numero de lote puede ser: "LOTE-0001", "LOTE-0002"
         public string NombreLote { get; set; } //autogenerado por el sistema y el usuario puede cambiarlo si lo desea, o dejarlo como esta. El formato del nombre de lote puede ser: "Lote 1", "Lote
         public string Descripcion { get; set; }
-        public DateOnly FechaAlta { get; set; }
-        public DateOnly? FechaVencimiento { get; set; }
+        public DateTime FechaAlta { get; set; } //cambiar por datetime , asi se puede filtrar el mas viejo con la hora incluida, no mostrar desp la hora 
+        public DateTime? FechaVencimiento { get; set; }
         public bool EstaVencido { get; set; }
         public bool EstaActivo { get; set; }
 

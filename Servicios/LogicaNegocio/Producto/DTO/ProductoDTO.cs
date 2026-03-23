@@ -18,7 +18,8 @@ namespace Servicios.LogicaNegocio.Producto.DTO
 
         public decimal? CantidadItemEnOferta { get; set; } // Usado para ofertas
 
-        public decimal Stock { get; set; }
+        public decimal Stock { get; set; } 
+        public bool ControlPorLote { get; set; }
         public decimal PrecioCosto { get; set; }
         public decimal PrecioVenta { get; set; }
         public string Descripcion { get; set; }

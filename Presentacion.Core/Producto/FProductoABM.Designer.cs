@@ -54,13 +54,14 @@
             lblCodigoBarra = new Label();
             chkIvaIncluido = new CheckBox();
             chkEsFraccionable = new CheckBox();
+            chkControlPorLotes = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
             // lblDescripcion
             // 
             lblDescripcion.AutoSize = true;
-            lblDescripcion.Location = new Point(22, 108);
+            lblDescripcion.Location = new Point(24, 128);
             lblDescripcion.Name = "lblDescripcion";
             lblDescripcion.Size = new Size(69, 15);
             lblDescripcion.TabIndex = 1;
@@ -69,7 +70,7 @@
             // lblMarca
             // 
             lblMarca.AutoSize = true;
-            lblMarca.Location = new Point(413, 112);
+            lblMarca.Location = new Point(415, 132);
             lblMarca.Name = "lblMarca";
             lblMarca.Size = new Size(40, 15);
             lblMarca.TabIndex = 2;
@@ -78,7 +79,7 @@
             // lblPrecioCosto
             // 
             lblPrecioCosto.AutoSize = true;
-            lblPrecioCosto.Location = new Point(22, 207);
+            lblPrecioCosto.Location = new Point(12, 228);
             lblPrecioCosto.Name = "lblPrecioCosto";
             lblPrecioCosto.Size = new Size(74, 15);
             lblPrecioCosto.TabIndex = 3;
@@ -87,7 +88,7 @@
             // lblPrecioVenta
             // 
             lblPrecioVenta.AutoSize = true;
-            lblPrecioVenta.Location = new Point(212, 207);
+            lblPrecioVenta.Location = new Point(214, 227);
             lblPrecioVenta.Name = "lblPrecioVenta";
             lblPrecioVenta.Size = new Size(72, 15);
             lblPrecioVenta.TabIndex = 4;
@@ -95,21 +96,21 @@
             // 
             // txtProducto
             // 
-            txtProducto.Location = new Point(97, 105);
+            txtProducto.Location = new Point(99, 125);
             txtProducto.Name = "txtProducto";
             txtProducto.Size = new Size(303, 23);
             txtProducto.TabIndex = 5;
             // 
             // txtPrecioCosto
             // 
-            txtPrecioCosto.Location = new Point(97, 202);
+            txtPrecioCosto.Location = new Point(99, 222);
             txtPrecioCosto.Name = "txtPrecioCosto";
             txtPrecioCosto.Size = new Size(100, 23);
             txtPrecioCosto.TabIndex = 7;
             // 
             // txtPrecioVenta
             // 
-            txtPrecioVenta.Location = new Point(300, 204);
+            txtPrecioVenta.Location = new Point(302, 224);
             txtPrecioVenta.Name = "txtPrecioVenta";
             txtPrecioVenta.Size = new Size(100, 23);
             txtPrecioVenta.TabIndex = 8;
@@ -117,7 +118,7 @@
             // lblStock
             // 
             lblStock.AutoSize = true;
-            lblStock.Location = new Point(413, 211);
+            lblStock.Location = new Point(415, 231);
             lblStock.Name = "lblStock";
             lblStock.Size = new Size(36, 15);
             lblStock.TabIndex = 10;
@@ -125,7 +126,7 @@
             // 
             // txtStock
             // 
-            txtStock.Location = new Point(461, 205);
+            txtStock.Location = new Point(463, 225);
             txtStock.Name = "txtStock";
             txtStock.Size = new Size(100, 23);
             txtStock.TabIndex = 11;
@@ -133,7 +134,7 @@
             // lblEstado
             // 
             lblEstado.AutoSize = true;
-            lblEstado.Location = new Point(413, 262);
+            lblEstado.Location = new Point(415, 282);
             lblEstado.Name = "lblEstado";
             lblEstado.Size = new Size(42, 15);
             lblEstado.TabIndex = 12;
@@ -141,7 +142,7 @@
             // 
             // txtEstado
             // 
-            txtEstado.Location = new Point(461, 256);
+            txtEstado.Location = new Point(463, 276);
             txtEstado.Name = "txtEstado";
             txtEstado.Size = new Size(100, 23);
             txtEstado.TabIndex = 13;
@@ -149,16 +150,16 @@
             // lblCategoria
             // 
             lblCategoria.AutoSize = true;
-            lblCategoria.Location = new Point(587, 116);
+            lblCategoria.Location = new Point(589, 132);
             lblCategoria.Name = "lblCategoria";
-            lblCategoria.Size = new Size(58, 15);
+            lblCategoria.Size = new Size(63, 15);
             lblCategoria.TabIndex = 15;
-            lblCategoria.Text = "Categoria";
+            lblCategoria.Text = "Categorias";
             // 
             // lblMedida
             // 
             lblMedida.AutoSize = true;
-            lblMedida.Location = new Point(22, 156);
+            lblMedida.Location = new Point(24, 181);
             lblMedida.Name = "lblMedida";
             lblMedida.Size = new Size(47, 15);
             lblMedida.TabIndex = 16;
@@ -167,7 +168,7 @@
             // lblUnidadMedida
             // 
             lblUnidadMedida.AutoSize = true;
-            lblUnidadMedida.Location = new Point(212, 156);
+            lblUnidadMedida.Location = new Point(208, 181);
             lblUnidadMedida.Name = "lblUnidadMedida";
             lblUnidadMedida.Size = new Size(88, 15);
             lblUnidadMedida.TabIndex = 17;
@@ -175,14 +176,14 @@
             // 
             // txtMedida
             // 
-            txtMedida.Location = new Point(97, 156);
+            txtMedida.Location = new Point(99, 176);
             txtMedida.Name = "txtMedida";
             txtMedida.Size = new Size(100, 23);
             txtMedida.TabIndex = 18;
             // 
             // txtUnidadMedida
             // 
-            txtUnidadMedida.Location = new Point(300, 156);
+            txtUnidadMedida.Location = new Point(302, 176);
             txtUnidadMedida.Name = "txtUnidadMedida";
             txtUnidadMedida.Size = new Size(100, 23);
             txtUnidadMedida.TabIndex = 19;
@@ -190,25 +191,25 @@
             // cmbMarca
             // 
             cmbMarca.FormattingEnabled = true;
-            cmbMarca.Location = new Point(461, 109);
+            cmbMarca.Location = new Point(463, 129);
             cmbMarca.Name = "cmbMarca";
             cmbMarca.Size = new Size(100, 23);
             cmbMarca.TabIndex = 21;
             // 
             // btnCategorias
             // 
-            btnCategorias.Location = new Point(651, 112);
+            btnCategorias.Location = new Point(658, 128);
             btnCategorias.Name = "btnCategorias";
-            btnCategorias.Size = new Size(75, 23);
+            btnCategorias.Size = new Size(91, 23);
             btnCategorias.TabIndex = 22;
-            btnCategorias.Text = "Categorias";
+            btnCategorias.Text = "Seleccionar..";
             btnCategorias.UseVisualStyleBackColor = true;
             btnCategorias.Click += btnCategorias_Click;
             // 
             // cmbRubro
             // 
             cmbRubro.FormattingEnabled = true;
-            cmbRubro.Location = new Point(461, 156);
+            cmbRubro.Location = new Point(463, 176);
             cmbRubro.Name = "cmbRubro";
             cmbRubro.Size = new Size(99, 23);
             cmbRubro.TabIndex = 24;
@@ -216,7 +217,7 @@
             // lblRubro
             // 
             lblRubro.AutoSize = true;
-            lblRubro.Location = new Point(414, 161);
+            lblRubro.Location = new Point(416, 181);
             lblRubro.Name = "lblRubro";
             lblRubro.Size = new Size(39, 15);
             lblRubro.TabIndex = 23;
@@ -224,14 +225,14 @@
             // 
             // txtCodigo
             // 
-            txtCodigo.Location = new Point(97, 256);
+            txtCodigo.Location = new Point(99, 276);
             txtCodigo.Name = "txtCodigo";
             txtCodigo.Size = new Size(100, 23);
             txtCodigo.TabIndex = 25;
             // 
             // txtCodigoBarra
             // 
-            txtCodigoBarra.Location = new Point(300, 256);
+            txtCodigoBarra.Location = new Point(302, 276);
             txtCodigoBarra.Name = "txtCodigoBarra";
             txtCodigoBarra.Size = new Size(100, 23);
             txtCodigoBarra.TabIndex = 26;
@@ -239,7 +240,7 @@
             // lblCodigo
             // 
             lblCodigo.AutoSize = true;
-            lblCodigo.Location = new Point(31, 259);
+            lblCodigo.Location = new Point(40, 282);
             lblCodigo.Name = "lblCodigo";
             lblCodigo.Size = new Size(46, 15);
             lblCodigo.TabIndex = 27;
@@ -248,7 +249,7 @@
             // lblCodigoBarra
             // 
             lblCodigoBarra.AutoSize = true;
-            lblCodigoBarra.Location = new Point(218, 259);
+            lblCodigoBarra.Location = new Point(220, 279);
             lblCodigoBarra.Name = "lblCodigoBarra";
             lblCodigoBarra.Size = new Size(76, 15);
             lblCodigoBarra.TabIndex = 28;
@@ -257,7 +258,7 @@
             // chkIvaIncluido
             // 
             chkIvaIncluido.AutoSize = true;
-            chkIvaIncluido.Location = new Point(587, 156);
+            chkIvaIncluido.Location = new Point(589, 178);
             chkIvaIncluido.Name = "chkIvaIncluido";
             chkIvaIncluido.Size = new Size(170, 19);
             chkIvaIncluido.TabIndex = 29;
@@ -267,18 +268,29 @@
             // chkEsFraccionable
             // 
             chkEsFraccionable.AutoSize = true;
-            chkEsFraccionable.Location = new Point(587, 202);
+            chkEsFraccionable.Location = new Point(589, 226);
             chkEsFraccionable.Name = "chkEsFraccionable";
             chkEsFraccionable.Size = new Size(107, 19);
             chkEsFraccionable.TabIndex = 30;
             chkEsFraccionable.Text = "Es Fraccionable";
             chkEsFraccionable.UseVisualStyleBackColor = true;
             // 
+            // chkControlPorLotes
+            // 
+            chkControlPorLotes.AutoSize = true;
+            chkControlPorLotes.Location = new Point(589, 275);
+            chkControlPorLotes.Name = "chkControlPorLotes";
+            chkControlPorLotes.Size = new Size(160, 19);
+            chkControlPorLotes.TabIndex = 31;
+            chkControlPorLotes.Text = "Controlar Stock por Lotes";
+            chkControlPorLotes.UseVisualStyleBackColor = true;
+            // 
             // FProductoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(784, 450);
+            ClientSize = new Size(784, 341);
+            Controls.Add(chkControlPorLotes);
             Controls.Add(chkEsFraccionable);
             Controls.Add(chkIvaIncluido);
             Controls.Add(lblCodigoBarra);
@@ -333,6 +345,7 @@
             Controls.SetChildIndex(lblCodigoBarra, 0);
             Controls.SetChildIndex(chkIvaIncluido, 0);
             Controls.SetChildIndex(chkEsFraccionable, 0);
+            Controls.SetChildIndex(chkControlPorLotes, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -366,5 +379,6 @@
         private Label lblCodigoBarra;
         private CheckBox chkIvaIncluido;
         private CheckBox chkEsFraccionable;
+        private CheckBox chkControlPorLotes;
     }
 }
