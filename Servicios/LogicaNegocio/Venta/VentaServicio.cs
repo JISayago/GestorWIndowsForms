@@ -227,6 +227,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                         Cantidad = i.Cantidad,
                         Subtotal = i.PrecioVenta * i.Cantidad
                     });
+
                 }
 
                 Debug.WriteLine("23 - Agregar detalles");

@@ -309,6 +309,8 @@ namespace AccesoDatos
                     .HasForeignKey(dv => dv.IdVenta)
                     .OnDelete(DeleteBehavior.Cascade);
 
+                
+
                 entity.HasMany(e => e.VentaPagoDetalles)
                     .WithOne(vp => vp.Venta)
                     .HasForeignKey(vp => vp.IdVenta)
