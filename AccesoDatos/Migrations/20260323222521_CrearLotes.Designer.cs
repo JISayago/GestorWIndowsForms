@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    [Migration("20260311200446_AddProductoIdAMovimientos")]
-    partial class AddProductoIdAMovimientos
+    [Migration("20260323222521_CrearLotes")]
+    partial class CrearLotes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -249,7 +249,11 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("cantidad");
 
-                    b.Property<long>("IdProducto")
+                    b.Property<long?>("IdOfertaDescuento")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_OfertaDescuento");
+
+                    b.Property<long?>("IdProducto")
                         .HasColumnType("bigint")
                         .HasColumnName("id_Producto");
 
@@ -262,6 +266,8 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("subtotal");
 
                     b.HasKey("DetalleVentaId");
+
+                    b.HasIndex("IdOfertaDescuento");
 
                     b.HasIndex("IdProducto");
 
@@ -405,51 +411,56 @@ namespace AccesoDatos.Migrations
                 {
                     b.Property<long>("LoteId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_Lote");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("LoteId"));
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("descripcion");
 
                     b.Property<bool>("EstaActivo")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnName("esta_activo");
 
                     b.Property<bool>("EstaVencido")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnName("esta_vencido");
 
                     b.Property<DateTime>("FechaAlta")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnName("fecha_alta");
 
                     b.Property<DateTime?>("FechaVencimiento")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnName("fecha_vencimiento");
 
                     b.Property<long>("IdProducto")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("NombreLote")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_Producto");
 
                     b.Property<string>("NumeroLote")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("numero_lote");
 
-                    b.Property<long>("ProductoId")
-                        .HasColumnType("bigint");
+                    b.Property<decimal>("StockActual")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("stock_actual");
 
-                    b.Property<int>("StockActual")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StockIncial")
-                        .HasColumnType("int");
+                    b.Property<decimal>("StockIncial")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("stock_inicial");
 
                     b.HasKey("LoteId");
 
-                    b.HasIndex("ProductoId");
+                    b.HasIndex("IdProducto");
 
-                    b.ToTable("Lotes");
+                    b.ToTable("Lotes", (string)null);
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.Marca", b =>
@@ -478,37 +489,21 @@ namespace AccesoDatos.Migrations
                     b.Property<long>("MovimientoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
-                        .HasColumnName("id_Movimiento");
+                        .HasColumnName("id_movimiento");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("MovimientoId"));
+
+                    b.Property<long?>("EntidadId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("entidad_id");
 
                     b.Property<bool>("EstaEliminado")
                         .HasColumnType("bit")
                         .HasColumnName("esta_eliminado");
 
                     b.Property<DateTime>("FechaMovimiento")
-                        .HasColumnType("date")
+                        .HasColumnType("datetime")
                         .HasColumnName("fecha_movimiento");
-
-                    b.Property<long>("IdCaja")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_Caja");
-
-                    b.Property<long?>("IdCuentaCorriente")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_CuentaCorriente");
-
-                    b.Property<long?>("IdLote")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_Lote");
-
-                    b.Property<long?>("IdProducto")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_Producto");
-
-                    b.Property<long?>("IdVenta")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_Venta");
 
                     b.Property<decimal>("Monto")
                         .HasColumnType("decimal(18,2)")
@@ -520,6 +515,10 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("numero_movimiento");
 
+                    b.Property<int?>("TipoEntidad")
+                        .HasColumnType("int")
+                        .HasColumnName("tipo_entidad");
+
                     b.Property<int>("TipoMovimiento")
                         .HasColumnType("int")
                         .HasColumnName("tipo_movimiento");
@@ -529,16 +528,6 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("tipo_movimiento_detalle");
 
                     b.HasKey("MovimientoId");
-
-                    b.HasIndex("IdCaja");
-
-                    b.HasIndex("IdCuentaCorriente");
-
-                    b.HasIndex("IdLote");
-
-                    b.HasIndex("IdProducto");
-
-                    b.HasIndex("IdVenta");
 
                     b.ToTable("Movimientos", (string)null);
                 });
@@ -934,6 +923,33 @@ namespace AccesoDatos.Migrations
                     b.ToTable("TiposPago", (string)null);
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.UsuarioSesion", b =>
+                {
+                    b.Property<long>("UsuarioSesionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("UsuarioSesionId"));
+
+                    b.Property<bool>("Activa")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaLogin")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("FechaLogout")
+                        .HasColumnType("datetime");
+
+                    b.Property<long>("UsuarioId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("UsuarioSesionId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Usuarios_Sesiones", (string)null);
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.Venta", b =>
                 {
                     b.Property<long>("VentaId")
@@ -1094,17 +1110,23 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.DetallesVenta", b =>
                 {
+                    b.HasOne("AccesoDatos.Entidades.OfertaDescuento", "OfertaDescuento")
+                        .WithMany("DetallesVentas")
+                        .HasForeignKey("IdOfertaDescuento")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("AccesoDatos.Entidades.Producto", "Producto")
                         .WithMany("DetallesVentas")
                         .HasForeignKey("IdProducto")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("AccesoDatos.Entidades.Venta", "Venta")
                         .WithMany("DetallesVentas")
                         .HasForeignKey("IdVenta")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("OfertaDescuento");
 
                     b.Navigation("Producto");
 
@@ -1155,51 +1177,12 @@ namespace AccesoDatos.Migrations
             modelBuilder.Entity("AccesoDatos.Entidades.Lote", b =>
                 {
                     b.HasOne("AccesoDatos.Entidades.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Producto");
-                });
-
-            modelBuilder.Entity("AccesoDatos.Entidades.Movimiento", b =>
-                {
-                    b.HasOne("AccesoDatos.Entidades.Caja", "Caja")
-                        .WithMany("Movimientos")
-                        .HasForeignKey("IdCaja")
+                        .WithMany("Lotes")
+                        .HasForeignKey("IdProducto")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AccesoDatos.Entidades.CuentaCorriente", "CuentaCorriente")
-                        .WithMany("Movimientos")
-                        .HasForeignKey("IdCuentaCorriente")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("AccesoDatos.Entidades.Lote", "Lote")
-                        .WithMany("Movimientos")
-                        .HasForeignKey("IdLote")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("AccesoDatos.Entidades.Producto", "Producto")
-                        .WithMany("Movimientos")
-                        .HasForeignKey("IdProducto")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("AccesoDatos.Entidades.Venta", "Venta")
-                        .WithMany()
-                        .HasForeignKey("IdVenta")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Caja");
-
-                    b.Navigation("CuentaCorriente");
-
-                    b.Navigation("Lote");
-
                     b.Navigation("Producto");
-
-                    b.Navigation("Venta");
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.OfertaDescuento", b =>
@@ -1264,6 +1247,17 @@ namespace AccesoDatos.Migrations
                     b.Navigation("Producto");
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.UsuarioSesion", b =>
+                {
+                    b.HasOne("AccesoDatos.Entidades.Empleado", "Usuario")
+                        .WithMany("Sesiones")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.Venta", b =>
                 {
                     b.HasOne("AccesoDatos.Entidades.Cliente", "Cliente")
@@ -1315,11 +1309,6 @@ namespace AccesoDatos.Migrations
                     b.Navigation("Venta");
                 });
 
-            modelBuilder.Entity("AccesoDatos.Entidades.Caja", b =>
-                {
-                    b.Navigation("Movimientos");
-                });
-
             modelBuilder.Entity("AccesoDatos.Entidades.Categoria", b =>
                 {
                     b.Navigation("CategoriasProductos");
@@ -1334,13 +1323,13 @@ namespace AccesoDatos.Migrations
             modelBuilder.Entity("AccesoDatos.Entidades.CuentaCorriente", b =>
                 {
                     b.Navigation("CuentaCorrienteAutorizado");
-
-                    b.Navigation("Movimientos");
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.Empleado", b =>
                 {
                     b.Navigation("EmpleadoRoles");
+
+                    b.Navigation("Sesiones");
 
                     b.Navigation("Ventas");
                 });
@@ -1350,11 +1339,6 @@ namespace AccesoDatos.Migrations
                     b.Navigation("VentaPagoDetalles");
                 });
 
-            modelBuilder.Entity("AccesoDatos.Entidades.Lote", b =>
-                {
-                    b.Navigation("Movimientos");
-                });
-
             modelBuilder.Entity("AccesoDatos.Entidades.Marca", b =>
                 {
                     b.Navigation("Productos");
@@ -1362,6 +1346,8 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.OfertaDescuento", b =>
                 {
+                    b.Navigation("DetallesVentas");
+
                     b.Navigation("Productos");
                 });
 
@@ -1371,7 +1357,7 @@ namespace AccesoDatos.Migrations
 
                     b.Navigation("DetallesVentas");
 
-                    b.Navigation("Movimientos");
+                    b.Navigation("Lotes");
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.Rol", b =>
