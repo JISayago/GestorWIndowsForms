@@ -163,6 +163,10 @@ namespace AccesoDatos
                     .HasColumnName("control_por_lote")
                     .IsRequired();
 
+                entity.Property(p => p.TieneVencimiento)
+                    .HasColumnName("tiene_vencimiento")
+                    .IsRequired();
+
                 // 🔗 Relaciones con Marca
                 entity.HasOne(p => p.Marca)
                     .WithMany(m => m.Productos)

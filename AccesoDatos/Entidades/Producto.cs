@@ -29,6 +29,7 @@ namespace AccesoDatos.Entidades
         public int Estado { get; set; }
         public string Medida { get; set; }
         public string UnidadMedida { get; set; }
+        public bool TieneVencimiento { get; set; }
 
         // Navegación
         public ICollection<CategoriaProducto> CategoriasProductos { get; set; }
