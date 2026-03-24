@@ -988,7 +988,7 @@ namespace AccesoDatos
                     .HasForeignKey(e => e.IdProducto)
                     .OnDelete(DeleteBehavior.Restrict);
             });
-         
+            
             modelBuilder.Entity<UsuarioSesion>(entity =>
             {
                 entity.ToTable("Usuarios_Sesiones");
@@ -1011,6 +1011,44 @@ namespace AccesoDatos
 
             });
 
+            modelBuilder.Entity<DetalleVentaLote>(entity =>
+            {
+                entity.ToTable("DetalleVentaLote");
+
+                entity.HasKey(e => e.DetalleVentaLoteId);
+
+                entity.Property(e => e.IdProducto)
+                    .HasColumnName("id_Producto")
+                    .IsRequired();
+
+                entity.Property(e => e.IdVenta)
+                    .HasColumnName("id_Venta")
+                    .IsRequired();
+
+                entity.Property(e => e.IdLote)
+                    .HasColumnName("id_Lote")
+                    .IsRequired();
+
+                entity.Property(e => e.Cantidad)
+                    .HasColumnName("cantidad")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.HasOne(d => d.Venta)
+                    .WithMany(v => v.DetallesVentasLotes)
+                    .HasForeignKey(d => d.IdVenta)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(d => d.Producto)
+                    .WithMany(p => p.DetalleVentaLotes)
+                    .HasForeignKey(d => d.IdProducto)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(d => d.Lote)
+                    .WithMany(p => p.DetalleVentaLote)
+                    .HasForeignKey(d => d.IdLote)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }

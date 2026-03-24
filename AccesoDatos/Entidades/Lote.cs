@@ -20,6 +20,6 @@ namespace AccesoDatos.Entidades
         public bool EstaActivo { get; set; }
 
         public Producto Producto { get; set; }
-        //public List<Movimiento> Movimientos { get; set; }
+        public ICollection<DetalleVentaLote> DetalleVentaLote { get; set; }
     }
 }
