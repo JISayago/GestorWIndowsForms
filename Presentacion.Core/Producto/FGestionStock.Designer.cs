@@ -53,7 +53,7 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(375, 233);
+            btnCancelar.Location = new Point(291, 233);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(164, 50);
             btnCancelar.TabIndex = 3;
@@ -64,7 +64,7 @@
             // rdbAgregar
             // 
             rdbAgregar.AutoSize = true;
-            rdbAgregar.Location = new Point(125, 83);
+            rdbAgregar.Location = new Point(41, 83);
             rdbAgregar.Name = "rdbAgregar";
             rdbAgregar.Size = new Size(99, 19);
             rdbAgregar.TabIndex = 4;
@@ -76,7 +76,7 @@
             // rdbQuitar
             // 
             rdbQuitar.AutoSize = true;
-            rdbQuitar.Location = new Point(360, 83);
+            rdbQuitar.Location = new Point(276, 83);
             rdbQuitar.Name = "rdbQuitar";
             rdbQuitar.Size = new Size(90, 19);
             rdbQuitar.TabIndex = 5;
@@ -88,7 +88,7 @@
             // lblDetalle
             // 
             lblDetalle.AutoSize = true;
-            lblDetalle.Location = new Point(140, 133);
+            lblDetalle.Location = new Point(56, 133);
             lblDetalle.Name = "lblDetalle";
             lblDetalle.Size = new Size(43, 15);
             lblDetalle.TabIndex = 6;
@@ -97,7 +97,7 @@
             // lblMotivo
             // 
             lblMotivo.AutoSize = true;
-            lblMotivo.Location = new Point(140, 183);
+            lblMotivo.Location = new Point(56, 183);
             lblMotivo.Name = "lblMotivo";
             lblMotivo.Size = new Size(45, 15);
             lblMotivo.TabIndex = 7;
@@ -105,21 +105,21 @@
             // 
             // txtCantidad
             // 
-            txtCantidad.Location = new Point(143, 151);
+            txtCantidad.Location = new Point(59, 151);
             txtCantidad.Name = "txtCantidad";
             txtCantidad.Size = new Size(100, 23);
             txtCantidad.TabIndex = 8;
             // 
             // txtMotivo
             // 
-            txtMotivo.Location = new Point(143, 201);
+            txtMotivo.Location = new Point(59, 201);
             txtMotivo.Name = "txtMotivo";
             txtMotivo.Size = new Size(396, 23);
             txtMotivo.TabIndex = 9;
             // 
             // btnAccion
             // 
-            btnAccion.Location = new Point(140, 233);
+            btnAccion.Location = new Point(56, 233);
             btnAccion.Name = "btnAccion";
             btnAccion.Size = new Size(164, 50);
             btnAccion.TabIndex = 10;

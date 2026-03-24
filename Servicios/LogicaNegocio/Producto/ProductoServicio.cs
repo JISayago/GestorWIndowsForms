@@ -3,6 +3,7 @@ using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Producto.Lote;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
@@ -139,6 +140,15 @@ namespace Servicios.LogicaNegocio.Producto
                     $"Stock insuficiente para {producto.Descripcion}. Stock actual: {producto.Stock}"
                 );
 
+            //IF CONTROL POR LOTES ESTA ACTIVADO USAR SERVICE DE LOTE Y ADEMAS REDUCIR STOCK DEL LOTE
+            if (producto.ControlPorLote)
+            {
+                LoteServicio loteServicio = new LoteServicio();
+                loteServicio.DescontarStockLoteFifoLifo(item.Cantidad, producto.ProductoId, true);
+                //true por que tiene fecha de vencimiento, si no tuviera seria false,
+                //deberia pasar la propiedad del producto que indica si tiene o no fecha de vencimiento, para saber si aplico fifo o lifo
+            }
+
             producto.Stock -= item.Cantidad;
 
             context.Productos.Update(producto); 
@@ -199,6 +209,9 @@ namespace Servicios.LogicaNegocio.Producto
 
             if (producto == null)
                 throw new Exception($"Producto no encontrado. {item.Descripcion}");
+
+            //IF CONTROL POR LOTES ESTA ACTIVADO USAR SERVICE DE LOTE Y ADEMAS REDUCIR STOCK DEL PRODUCTO, HACERLO ANTES DE ACTUALIZAR 
+            //DE ACTULIZAR LOTES?
 
             producto.Stock += item.Cantidad;
 
@@ -265,6 +278,7 @@ namespace Servicios.LogicaNegocio.Producto
 
             var producto = new AccesoDatos.Entidades.Producto{
                 Stock = productoDto.Stock,
+                ControlPorLote = productoDto.ControlPorLote,
                 PrecioCosto = productoDto.PrecioCosto,
                 PrecioVenta = productoDto.PrecioVenta,
                 Descripcion = productoDto.Descripcion,
@@ -318,6 +332,7 @@ namespace Servicios.LogicaNegocio.Producto
             //bool productoDuplicado ??
 
             productoEditar.Stock = productoDto.Stock;
+            productoEditar.ControlPorLote = productoDto.ControlPorLote;
             productoEditar.PrecioCosto = productoDto.PrecioCosto;
             productoEditar.PrecioVenta = productoDto.PrecioVenta;
             productoEditar.Descripcion = productoDto.Descripcion;
@@ -368,6 +383,7 @@ namespace Servicios.LogicaNegocio.Producto
                      MarcaNombre = e.Marca.Nombre,
                      RubroNombre = e.Rubro.Nombre,
                      Stock = Convert.ToDecimal(e.Stock),
+                     ControlPorLote = e.ControlPorLote,
                      PrecioCosto = e.PrecioCosto,
                      PrecioVenta = e.PrecioVenta,
                      Descripcion = e.Descripcion,
@@ -438,6 +454,7 @@ namespace Servicios.LogicaNegocio.Producto
                     MarcaNombre = e.Marca.Nombre,
                     RubroNombre = e.Rubro.Nombre,
                     Stock = Convert.ToDecimal(e.Stock),
+                    ControlPorLote = e.ControlPorLote,
                     PrecioCosto = e.PrecioCosto,
                     PrecioVenta = e.PrecioVenta,
                     Descripcion = e.Descripcion,
@@ -507,6 +524,7 @@ namespace Servicios.LogicaNegocio.Producto
                     MarcaNombre = e.Marca.Nombre,
                     RubroNombre = e.Rubro != null ? e.Rubro.Nombre : "",
                     Stock = Convert.ToDecimal(e.Stock),
+                    ControlPorLote = e.ControlPorLote,
                     PrecioCosto = e.PrecioCosto,
                     PrecioVenta = e.PrecioVenta,
                     Descripcion = e.Descripcion,
@@ -570,6 +588,7 @@ namespace Servicios.LogicaNegocio.Producto
                     IdMarca = p.IdMarca,
                     IdRubro = p.IdRubro,
                     Stock = p.Stock,
+                    ControlPorLote = p.ControlPorLote,
                     PrecioCosto = p.PrecioCosto,
                     PrecioVenta = p.PrecioVenta,
                     Descripcion = p.Descripcion,
@@ -670,8 +689,5 @@ namespace Servicios.LogicaNegocio.Producto
                 EntidadId = producto.ProductoId
             };
         }
-
-
-
     }
 }

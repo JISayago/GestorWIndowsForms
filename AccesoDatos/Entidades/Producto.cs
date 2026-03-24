@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AccesoDatos.Migrations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace AccesoDatos.Entidades
         public Marca Marca { get; set; }
         public long IdRubro { get; set; }
         public Rubro Rubro { get; set; }
+        public bool ControlPorLote { get; set; }
         public string Codigo { get; set; }
         public string CodigoBarra { get; set; }
         public decimal Stock { get; set; }
@@ -31,5 +33,7 @@ namespace AccesoDatos.Entidades
         // Navegación
         public ICollection<CategoriaProducto> CategoriasProductos { get; set; }
         public ICollection<DetallesVenta> DetallesVentas { get; set; }
+        //public List<Movimiento> Movimientos { get; set; }
+        public List<Lote> Lotes { get; set; }
     }
 }
