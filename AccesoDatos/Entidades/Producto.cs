@@ -29,11 +29,12 @@ namespace AccesoDatos.Entidades
         public int Estado { get; set; }
         public string Medida { get; set; }
         public string UnidadMedida { get; set; }
+        public bool TieneVencimiento { get; set; }
 
         // Navegación
         public ICollection<CategoriaProducto> CategoriasProductos { get; set; }
         public ICollection<DetallesVenta> DetallesVentas { get; set; }
-        //public List<Movimiento> Movimientos { get; set; }
+        public ICollection<DetalleVentaLote> DetalleVentaLotes { get; set; }
         public List<Lote> Lotes { get; set; }
     }
 }

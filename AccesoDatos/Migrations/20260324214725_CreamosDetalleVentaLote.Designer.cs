@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20260324214725_CreamosDetalleVentaLote")]
+    partial class CreamosDetalleVentaLote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -795,10 +798,6 @@ namespace AccesoDatos.Migrations
                     b.Property<decimal>("Stock")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("stock");
-
-                    b.Property<bool>("TieneVencimiento")
-                        .HasColumnType("bit")
-                        .HasColumnName("tiene_vencimiento");
 
                     b.Property<string>("UnidadMedida")
                         .IsRequired()
