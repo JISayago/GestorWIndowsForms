@@ -331,7 +331,7 @@ namespace AccesoDatos
                 entity.HasKey(e => e.VentaLibreId);
 
                 entity.Property(e => e.VentaLibreId)
-                    .HasColumnName("id_Venta");
+                    .HasColumnName("id_VentaLibre");
 
                 entity.Property(e => e.IdEmpleado)
                     .HasColumnName("id_Empleado")
@@ -395,7 +395,7 @@ namespace AccesoDatos
 
                 entity.HasMany(e => e.VentaPagoDetalles)
                     .WithOne(vp => vp.VentaLibre)
-                    .HasForeignKey(vp => vp.IdVenta)
+                    .HasForeignKey(vp => vp.IdVentaLibre)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
