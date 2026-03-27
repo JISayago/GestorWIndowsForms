@@ -25,7 +25,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 var venta = CrearVentaLibreInterna(
                     context,
                     dto,
-                    TipoMovimientoDetalle.Venta
+                    TipoMovimientoDetalle.VentaLibre
                 );
 
                 transaction.Commit();
