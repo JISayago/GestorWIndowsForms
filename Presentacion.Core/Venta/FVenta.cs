@@ -36,7 +36,6 @@ namespace Presentacion.Core.Venta
         private long idVendedor = 0;
         private VentaDTO _venta;
         private bool finalizarVenta = false;
-        private CuerpoDetalleVenta _cuerpoDetalleVenta;
         private readonly long _usuarioLogeadoID;
         private UsuarioLogeado _usuarioLogeado;
         private ClienteDTO _clienteVenta;
@@ -51,6 +50,7 @@ namespace Presentacion.Core.Venta
         private bool _incluirCtaCte = true;
         //private List<ItemVentaDTO> itemsVenta;
         private BindingList<ItemVentaDTO> itemsVenta;
+        private CuerpoDetalleVenta _cuerpoDetalleVenta;
         private List<FormaPago> tipoDePagosVenta;
         private bool _actualizandoGrilla = false;
         private bool cargarOferta = false;
@@ -176,9 +176,9 @@ namespace Presentacion.Core.Venta
 
         private void cbxConsumidorFinal_CheckedChanged(object sender, EventArgs e)
         {
-            esConsumidorFinal = !esConsumidorFinal;
-            ActualizarCamposInicio(VENTAID);
+            esConsumidorFinal = cbxConsumidorFinal.Checked;
             btnCargarCliente.Enabled = !esConsumidorFinal;
+            ActualizarCamposInicio(VENTAID);
         }
 
         private void btnConfirmarYFPago_Click(object sender, EventArgs e)
