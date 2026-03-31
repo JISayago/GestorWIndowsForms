@@ -152,7 +152,7 @@ namespace Presentacion.Core.Producto.Lote
             var f = new FGestionStockLotes(TipoOperacion.Eliminar, null, entidadID); // deberia pasar tambien el producto? o directamente del service
             f.ShowDialog();
 
-            //ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
+            Recargar(f.RealizoAlgunaOperacion);
         }
 
         public override void EjecutarBtnModificar()
@@ -163,7 +163,7 @@ namespace Presentacion.Core.Producto.Lote
             var f = new FGestionStockLotes(TipoOperacion.Modificar, null, entidadID); // deberia pasar tambien el producto? o directamente del service
             f.ShowDialog();
 
-            //ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
+            Recargar(f.RealizoAlgunaOperacion);
         }
 
         public override void EjecutarBtnNuevo()
@@ -171,13 +171,13 @@ namespace Presentacion.Core.Producto.Lote
             var f = new FGestionStockLotes(TipoOperacion.Nuevo); //Deberia abrir el form de alta lote con el producto del lote seleccionado?
             f.ShowDialog();
 
-            //ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
+            Recargar(f.RealizoAlgunaOperacion);
         }
 
-        private void ActualizarSegunOperacion(bool realizoOperacion)
+        private void Recargar(bool realizoOperacion)
         {
             //if (realizoOperacion)
-            //    btnActualizar_Click_Base();
+              //btnActualizar_Click_Base();
         }
 
         #endregion

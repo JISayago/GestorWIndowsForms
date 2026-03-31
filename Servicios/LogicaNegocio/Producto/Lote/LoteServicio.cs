@@ -147,8 +147,6 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 Exitoso = true,
                 Mensaje = $"El lote {loteEliminar.NumeroLote} de {loteEliminar.Producto.Descripcion} fue eliminado correctamente."
             };
-
-
         }
 
         public IEnumerable<LoteDTO> ObtenerLotesEliminados(string cadenabuscar, string columna)
