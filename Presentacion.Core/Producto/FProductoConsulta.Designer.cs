@@ -28,21 +28,48 @@
         /// </summary>
         private void InitializeComponent()
         {
+            panel2.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Size = new Size(1083, 561);
+            panel1.Size = new Size(1258, 561);
+            // 
+            // pnlFiltrosAvanzados
+            // 
+            pnlFiltrosAvanzados.Size = new Size(1258, 114);
+            // 
+            // dtpHasta
+            // 
+            dtpHasta.Location = new Point(193, 42);
+            dtpHasta.Size = new Size(184, 23);
+            // 
+            // dtpDesde
+            // 
+            dtpDesde.Location = new Point(193, 3);
+            dtpDesde.Size = new Size(184, 23);
+            // 
+            // cbxFiltroOpcional
+            // 
+            cbxFiltroOpcional.Location = new Point(134, 3);
+            cbxFiltroOpcional.Size = new Size(125, 23);
+            // 
+            // cbxFiltroExtraEstado
+            // 
+            cbxFiltroExtraEstado.Location = new Point(497, 42);
+            cbxFiltroExtraEstado.Size = new Size(262, 23);
             // 
             // FProductoConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1083, 561);
+            ClientSize = new Size(1258, 561);
             Name = "FProductoConsulta";
             Text = "FProductoConsulta";
             Load += FProductoConsulta_Load;
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);

@@ -13,9 +13,10 @@ namespace Servicios.LogicaNegocio.Producto.Lote
     {
         EstadoOperacion CrearLote(LoteDTO lote);
         IEnumerable<LoteDTO> ObtenerLote(string cadenaBuscar);
-        void ModficiarLote(long loteId);
-        void EliminarLote(long loteId);
+        EstadoOperacion ModficiarLote(LoteDTO loteDto, long loteId);
+        EstadoOperacion EliminarLote(long loteId);
         LoteDTO ObtenerLotePorId(long loteId);
+        IEnumerable<LoteDTO> ObtenerLotesEliminados(string cadenabuscar, string columna);
         public List<LoteDTO> ObtenerLotesDeUnProducto(long productoId);
         void DescontarStockLoteFifoLifo(decimal cantidadADescontar, long productoId, bool tieneFechaVencimiento);
         void RestaurarStockLoteFifoLifo(decimal cantidadARestaurar, List<long> loteId, bool tieneFechaVencimiento);
