@@ -29,7 +29,7 @@ namespace AccesoDatos.Entidades
         public decimal MontoPagado { get; set; }
 
         public ICollection<DetallesVenta> DetallesVentas { get; set; }
-
+        public ICollection<DetalleVentaLote> DetallesVentasLotes{ get; set; }
         public ICollection<VentaPagoDetalle> VentaPagoDetalles { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
+using MigraDoc.DocumentObjectModel.Internals;
 using Servicios.Helpers;
 using Servicios.Infraestructura;
 using Servicios.LogicaNegocio.Caja;
@@ -10,6 +11,7 @@ using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.TipoPago;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Servicios.LogicaNegocio.Venta
@@ -34,146 +36,278 @@ namespace Servicios.LogicaNegocio.Venta
             return _pdf.GenerarComprobante(venta);
         }
 
-        public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto)
+
+public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto, TipoMovimientoDetalle movimientoDetalle)
+    {
+        Debug.WriteLine("1 - Inicio CrearVentaInterna");
+
+        try
         {
+            Debug.WriteLine("2 - Obtener caja");
+
             var cajaServicio = new Caja.CajaServicio();
-            var cajaId = cajaServicio.ObtenerIdCajaAbierta(context);
+            var cajaId = cajaServicio.ObtenerIdDeEña(context);
 
-            if (cajaId.HasValue)
+            if (!cajaId.HasValue)
+                throw new Exception("No hay una caja abierta. No se puede registrar la venta.");
+
+            Debug.WriteLine("3 - Generar número venta");
+
+            var fecha = DateTime.Today;
+            var prefijo = ventaDto.Total < 0 ? "CAN" : "VEN";
+
+            var cantidadHoy = context.Ventas.Count(v =>
+                v.NumeroVenta.StartsWith($"{prefijo}-{fecha:yyyyMMdd}")
+            );
+
+            ventaDto.NumeroVenta = GeneradorNumeroComprobante.Generar(
+                prefijo,
+                fecha,
+                cantidadHoy
+            );
+
+            Debug.WriteLine("4 - Crear entidad venta");
+
+            var venta = new AccesoDatos.Entidades.Venta
             {
+                NumeroVenta = ventaDto.NumeroVenta,
+                IdEmpleado = ventaDto.IdEmpleado,
+                IdVendedor = ventaDto.IdVendedor,
+                IdCliente = ventaDto.IdCliente,
+                FechaVenta = ventaDto.FechaVenta,
+                Total = ventaDto.Total,
+                TotalSinDescuento = ventaDto.TotalSinDescuento,
+                Descuento = ventaDto.Descuento,
+                Estado = ventaDto.Estado,
+                Detalle = ventaDto.Detalle,
+                MontoAdeudado = 0,
+                MontoPagado = ventaDto.Total
+            };
 
-                var fecha = DateTime.Today;
-                var prefijo = ventaDto.Total < 0 ? "CAN" : "VEN";
+            Debug.WriteLine("5 - Add venta");
 
-                var cantidadHoy = context.Ventas.Count(v =>
-                    v.NumeroVenta.StartsWith($"{prefijo}-{fecha:yyyyMMdd}")
-                );
+            context.Ventas.Add(venta);
 
-                ventaDto.NumeroVenta = GeneradorNumeroComprobante.Generar(
-                    prefijo,
-                    fecha,
-                    cantidadHoy
-                );
+            Debug.WriteLine("6 - SaveChanges venta");
 
-                var venta = new AccesoDatos.Entidades.Venta
-                {
-                    NumeroVenta = ventaDto.NumeroVenta,
-                    IdEmpleado = ventaDto.IdEmpleado,
-                    IdVendedor = ventaDto.IdVendedor,
-                    IdCliente = ventaDto.IdCliente,
-                    FechaVenta = ventaDto.FechaVenta,
-                    Total = ventaDto.Total,
-                    TotalSinDescuento = ventaDto.TotalSinDescuento,
-                    Descuento = ventaDto.Descuento,
-                    Estado = ventaDto.Estado,
-                    Detalle = ventaDto.Detalle,
-                    MontoAdeudado = 0,
-                    MontoPagado = ventaDto.Total
-                };
+            context.SaveChanges();
 
-                context.Ventas.Add(venta);
-                context.SaveChanges(); // necesito VentaId
+            Debug.WriteLine("7 - Venta guardada ID: " + venta.VentaId);
 
-                // 3. Movimiento
-                var movimientoServicio = new Movimiento.MovimientoServicio();
+            Debug.WriteLine("8 - Crear movimiento");
+
+            var movimientoServicio = new Movimiento.MovimientoServicio();
                 movimientoServicio.CrearMovimientoVenta(
-                    new VentaDTO
-                    {
-                        VentaId = venta.VentaId,
-                        NumeroVenta = venta.NumeroVenta,
-                        Total = venta.Total
-                    },
-                    cajaId.Value,
-                    context
-                );
+           venta.VentaId,
+           venta.Total,
+           movimientoDetalle,
+           TipoEntidadMovimiento.Venta,
+           context
+       );
 
-                // 4. Caja
-                cajaServicio.RegistrarTransaccion(
-                    context,
-                    venta.Total,
-                    venta.Total >= 0
-                        ? TipoMovimiento.Ingreso.ToString()
-                        : TipoMovimiento.Egreso.ToString()
-                );
+                Debug.WriteLine("9 - Movimiento creado");
 
-                // 5. Detalles
-                if (ventaDto.Items != null && ventaDto.Items.Any())
+            Debug.WriteLine("10 - Actualizar caja");
+
+            cajaServicio.RegistrarTransaccion(
+                context,
+                venta.Total,
+                venta.Total >= 0 ? TipoMovimiento.Ingreso : TipoMovimiento.Egreso,
+                cajaId.Value
+            );
+
+            Debug.WriteLine("11 - Caja actualizada");
+
+            Debug.WriteLine("12 - Procesar items");
+
+            if (ventaDto.Items != null && ventaDto.Items.Any())
+            {
+                Debug.WriteLine("13 - Items detectados");
+
+                var itemsStock = new List<ItemVentaDTO>();
+
+                foreach (var item in ventaDto.Items)
                 {
-                    if (ventaDto.Total < 0)
+                    Debug.WriteLine("14 - Item: " + item.ItemId);
+
+                    if (!item.EsOferta)
                     {
-                        _productoServicio.RestaurarStockProductos(ventaDto.Items, context);
+                        itemsStock.Add(new ItemVentaDTO
+                        {
+                            ItemId = item.ItemId,
+                            Cantidad = item.Cantidad
+                        });
+                        continue;
+                    }
+
+                    Debug.WriteLine("15 - Buscar producto");
+
+                    var producto = context.Productos
+                        .FirstOrDefault(p => p.ProductoId == item.ItemId);
+
+                    if (producto != null && producto.Estado == 2)
+                    {
+                        Debug.WriteLine("16 - Producto con descuento");
+
+                        itemsStock.Add(new ItemVentaDTO
+                        {
+                            ItemId = producto.ProductoId,
+                            Cantidad = item.Cantidad
+                        });
+
+                        continue;
+                    }
+
+                    Debug.WriteLine("17 - Buscar oferta");
+
+                    var oferta = context.OfertasDescuentos
+                        .FirstOrDefault(o => o.OfertaDescuentoId == item.ItemId);
+
+                    if (oferta == null)
+                        throw new Exception($"Oferta no encontrada. Id: {item.ItemId}");
+
+                    Debug.WriteLine("18 - Oferta encontrada");
+
+                    var productosOferta = context.ProductosEnOfertasDescuentos
+                        .Where(x => x.OfertaId == oferta.OfertaDescuentoId)
+                        .ToList();
+
+                    if (!productosOferta.Any())
+                        throw new Exception($"La oferta {oferta.Descripcion} no tiene productos asociados.");
+
+                    Debug.WriteLine("19 - Productos de oferta cargados");
+
+                    foreach (var po in productosOferta)
+                    {
+                        itemsStock.Add(new ItemVentaDTO
+                        {
+                            ItemId = po.ProductoId,
+                            Cantidad = po.Cantidad * item.Cantidad
+                        });
+                    }
+                }
+
+                Debug.WriteLine("20 - Actualizar stock");
+                    //EVALUAR EL FORMATO DE ITEMVENTADTO PUEDE SER OFERTA Y TENER QUE DESCONTAR EN MAS DE UN PRODUCTO.
+                if (ventaDto.Total < 0)
+                    _productoServicio.RestaurarStockProductos(itemsStock, context);
+                else
+                    _productoServicio.DescontarStockProductos(itemsStock, context);
+
+                Debug.WriteLine("21 - Stock actualizado");
+
+                var detalles = new List<DetallesVenta>();
+
+                foreach (var i in ventaDto.Items)
+                {
+                    Debug.WriteLine("22 - Crear detalle item");
+
+                    long? idProducto = null;
+                    long? idOferta = null;
+
+                    if (!i.EsOferta)
+                    {
+                        idProducto = i.ItemId;
                     }
                     else
                     {
-                        _productoServicio.DescontarStockProductos(ventaDto.Items, context);
+                        var producto = context.Productos
+                            .FirstOrDefault(p => p.ProductoId == i.ItemId);
+
+                        if (producto != null && producto.Estado == 2)
+                            idProducto = producto.ProductoId;
+                        else
+                            idOferta = i.ItemId;
                     }
 
-                    var detalles = ventaDto.Items.Select(i => new DetallesVenta
+                    detalles.Add(new DetallesVenta
                     {
                         IdVenta = venta.VentaId,
-                        IdProducto = i.ItemId,
+                        IdProducto = idProducto,
+                        IdOfertaDescuento = idOferta,
                         Cantidad = i.Cantidad,
                         Subtotal = i.PrecioVenta * i.Cantidad
-                    }).ToList();
+                    });
 
-                    context.DetallesVentas.AddRange(detalles);
                 }
 
-                // 6. Pagos
-                if (ventaDto.TiposDePagoSeleccionado != null &&
-                    ventaDto.TiposDePagoSeleccionado.Any())
+                Debug.WriteLine("23 - Agregar detalles");
+
+                context.DetallesVentas.AddRange(detalles);
+            }
+
+            Debug.WriteLine("24 - Procesar pagos");
+
+            if (ventaDto.TiposDePagoSeleccionado != null &&
+                ventaDto.TiposDePagoSeleccionado.Any())
+            {
+                var servicioTP = new TipoPagoServicio();
+
+                var pagos = ventaDto.TiposDePagoSeleccionado.Select(p => new VentaPagoDetalle
                 {
-                    var servicioTP = new TipoPagoServicio();
+                    IdVenta = venta.VentaId,
+                    IdTipoPago = servicioTP
+                        .ObtenerTipoPagoPorNumero(context, Convert.ToInt32(p.TipoDePago.Value))
+                        .TipoPagoId,
+                    Monto = p.Monto
+                }).ToList();
 
-                    var pagos = ventaDto.TiposDePagoSeleccionado.Select(p => new VentaPagoDetalle
-                    {
-                        IdVenta = venta.VentaId,
-                        IdTipoPago = p.TipoDePago.HasValue
-                            ? servicioTP
-                                .ObtenerTipoPagoPorNumero(
-                                    Convert.ToInt32(p.TipoDePago.Value)
-                                  ).TipoPagoId
-                            : 0,
-                        Monto = p.Monto
-                    }).ToList();
+                context.VentaPagosDetalles.AddRange(pagos);
+            }
 
-                    context.VentaPagosDetalles.AddRange(pagos);
+                var cambios = context.ChangeTracker.Entries()
+               .Select(e => new
+               {
+                   Entidad = e.Entity.GetType().Name,
+                   Estado = e.State
+               })
+               .ToList();
+
+                foreach (var c in cambios)
+                {
+                    Debug.WriteLine($"{c.Entidad} - {c.Estado}");
                 }
-
+                Debug.WriteLine(context.Model.ToDebugString());
                 context.SaveChanges();
 
-                // 7. Recargar venta completa
-                var ventaCompleta = context.Ventas
-                    .Include(v => v.DetallesVentas)
-                        .ThenInclude(d => d.Producto)
-                    .Include(v => v.VentaPagoDetalles)
-                        .ThenInclude(p => p.TipoPago)
-                    .Include(v => v.Cliente.Persona)
-                    .Include(v => v.Empleado.Persona)
-                    .Include(v => v.Vendedor.Persona)
-                    .First(v => v.VentaId == venta.VentaId);
+            Debug.WriteLine("26 - SaveChanges final OK");
 
-                // 8. PDF
-                GenerarPdfDeVenta(ventaCompleta);
-
-                return venta;
-            }
-            else
-            {
-                throw new Exception("No hay una caja abierta. No se puede registrar la venta.");
-            }
-
+            return venta;
         }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("=================================");
+            Debug.WriteLine("ERROR EN PASO");
+            Debug.WriteLine(ex.ToString());
+            Debug.WriteLine("=================================");
+
+            throw;
+        }
+    }
 
         public EstadoOperacion NuevaVenta(VentaDTO ventaDto)
         {
+            Debug.WriteLine("A - Inicio NuevaVenta");
+
             using var context = new GestorContextDBFactory().CreateDbContext(null);
+            Debug.WriteLine("B - Context creado");
+
             using var transaction = context.Database.BeginTransaction();
+            Debug.WriteLine("C - Transacción iniciada");
 
             try
             {
-                CrearVentaInterna(context, ventaDto);
+                Debug.WriteLine("D - Antes CrearVentaInterna");
+
+                var venta = CrearVentaInterna(context, ventaDto, TipoMovimientoDetalle.Venta);
+
+                Debug.WriteLine("E - Antes Commit");
+
                 transaction.Commit();
+
+                Debug.WriteLine("F - Commit realizado");
+                GeneracionComprobanteVenta(context, venta);
+
 
                 return new EstadoOperacion
                 {
@@ -183,14 +317,34 @@ namespace Servicios.LogicaNegocio.Venta
             }
             catch (Exception ex)
             {
+                Debug.WriteLine("=================================");
+                Debug.WriteLine("ERROR EN NUEVA VENTA");
+                Debug.WriteLine(ex.ToString());
+                Debug.WriteLine("=================================");
+
                 transaction.Rollback();
 
                 return new EstadoOperacion
                 {
                     Exitoso = false,
-                    Mensaje = ex.Message
+                    Mensaje = ex.ToString()
                 };
             }
+        }
+
+        private void GeneracionComprobanteVenta(GestorContextDB context, AccesoDatos.Entidades.Venta venta)
+        {
+            var ventaCompleta = context.Ventas
+              .Include(v => v.DetallesVentas)
+                  .ThenInclude(d => d.Producto)
+              .Include(v => v.VentaPagoDetalles)
+                  .ThenInclude(p => p.TipoPago)
+              .Include(v => v.Cliente.Persona)
+              .Include(v => v.Empleado.Persona)
+              .Include(v => v.Vendedor.Persona)
+              .First(v => v.VentaId == venta.VentaId);
+
+            GenerarPdfDeVenta(ventaCompleta);
         }
 
         public VentaDTO ObtenerVentaPorId(long ventaId)
@@ -226,9 +380,10 @@ namespace Servicios.LogicaNegocio.Venta
                 .Include(v => v.VentaPagoDetalles)
                 .Include(v => v.DetallesVentas)
                     .ThenInclude(d => d.Producto)
+                .Include(v => v.DetallesVentas)
+                    .ThenInclude(d => d.OfertaDescuento)
                 .First(v => v.VentaId == ventaId);
-
-            return new VentaDTO
+            var ventaDto = new VentaDTO
             {
                 VentaId = venta.VentaId,
                 NumeroVenta = venta.NumeroVenta,
@@ -241,19 +396,46 @@ namespace Servicios.LogicaNegocio.Venta
                 Descuento = venta.Descuento,
                 Estado = venta.Estado,
                 Detalle = venta.Detalle,
+
                 TiposDePagoSeleccionado = venta.VentaPagoDetalles.Select(vp => new FormaPago
                 {
                     TipoDePago = (TipoDePago?)vp.IdTipoPago,
                     Monto = vp.Monto
                 }).ToList(),
-                Items = venta.DetallesVentas.Select(d => new ItemVentaDTO
+
+                Items = venta.DetallesVentas.Select(d =>
                 {
-                    ItemId = d.IdProducto,
-                    Descripcion = d.Producto.Descripcion,
-                    Cantidad = d.Cantidad,
-                    PrecioVenta = d.Subtotal / d.Cantidad
+                    var esOferta = d.IdProducto == null;
+
+                    return new ItemVentaDTO
+                    {
+                        ItemId = esOferta
+                            ? d.IdOfertaDescuento.Value
+                            : d.IdProducto.Value,
+
+                        EsOferta = esOferta,
+
+                        Descripcion = esOferta
+                            ? d.OfertaDescuento.Descripcion
+                            : d.Producto.Descripcion,
+
+                        Cantidad = d.Cantidad,
+
+                        PrecioVenta = d.Cantidad != 0
+                            ? d.Subtotal / d.Cantidad
+                            : 0
+                    };
                 }).ToList()
             };
+
+            if (ventaDto != null)
+            {
+                return ventaDto; 
+
+            }
+            else {              
+                throw new Exception("No se encontró la venta.");
+            }
         }
 
         public List<VentaDTO> ObtenerTodasLasVentas()
@@ -279,8 +461,15 @@ namespace Servicios.LogicaNegocio.Venta
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            return context.Ventas
-                .Where(v => v.FechaVenta.Month == mes && v.FechaVenta.Year == año)
+            var query = context.Ventas
+                .Where(v => v.FechaVenta.Year == año);
+
+            if (mes > 0)//Si queremos traer todo el año no filtramos por mes
+            {
+                query = query.Where(v => v.FechaVenta.Month == mes);
+            }
+
+            return query
                 .Select(v => new VentaDTO
                 {
                     VentaId = v.VentaId,
@@ -297,16 +486,13 @@ namespace Servicios.LogicaNegocio.Venta
                 .ToList();
         }
 
-        public List<long> ObtenerVentasParaCancelacion(
-DateTime fecha,
-string filtroNumero = null
-)
+        public List<long> ObtenerVentasParaCancelacion(DateTime fecha, string filtroNumero = null)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var query = context.Ventas
                 .Where(v =>
-                    v.Estado != 99 &&
+                    v.Estado != 99 && v.Estado != 10 &&
                     v.Total > 0 &&
                     v.FechaVenta.Date == fecha.Date &&
                     v.NumeroVenta.StartsWith($"VEN-{fecha:yyyyMMdd}")
@@ -383,7 +569,7 @@ string filtroNumero = null
 
                     Items = ventaOriginal.DetallesVentas.Select(d => new ItemVentaDTO
                     {
-                        ItemId = d.IdProducto,
+                        ItemId = (long)d.IdProducto,
                         Cantidad = d.Cantidad,
                         PrecioVenta = d.Subtotal / d.Cantidad
                     }).ToList(),
@@ -395,7 +581,7 @@ string filtroNumero = null
                     }).ToList()
                 };
 
-                CrearVentaInterna(context, ventaCancelacionDto);
+                CrearVentaInterna(context, ventaCancelacionDto, TipoMovimientoDetalle.Cancelacion);
 
                 context.SaveChanges();
                 transaction.Commit();

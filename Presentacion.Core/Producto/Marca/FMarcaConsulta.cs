@@ -1,14 +1,9 @@
 ﻿using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Presentacion.Core.Articulo.Marca
@@ -17,10 +12,12 @@ namespace Presentacion.Core.Articulo.Marca
     {
         private readonly IMarcaServicio _marcaServicio;
         public long? marcaSeleccionada = null;
+        private bool vieneDeCargaMarca = true;
 
-        public FMarcaConsulta() : this(new MarcaServicio())
+        public FMarcaConsulta(bool vieneDeCargaMarca = true) : this(new MarcaServicio())
         {
             InitializeComponent();
+            this.vieneDeCargaMarca = vieneDeCargaMarca;
         }
 
         public FMarcaConsulta(IMarcaServicio marcaServicio)
@@ -28,76 +25,124 @@ namespace Presentacion.Core.Articulo.Marca
             _marcaServicio = marcaServicio;
         }
 
+        #region INIT
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            ConfigurarFormulario();
+        }
+
+        private void ConfigurarFormulario()
+        {
+            Text = "Consulta de Marcas";
+        }
+
+        #endregion
+
+        #region 🔥 ACCIONES PERSONALIZADAS DINAMICAS
+
+        protected override void ConfigurarAccionesPersonalizadas()
+        {
+            if (vieneDeCargaMarca)
+            {
+
+            // Seleccion ID marca
+            AgregarAccion(
+                "Seleccionar Marca",
+                SystemIcons.Information.ToBitmap(),
+                SeleccionMarca,
+                false
+            );
+            }
+        }
+
+        private void SeleccionMarca(long? id)
+        {
+            if (!id.HasValue) return;
+
+            marcaSeleccionada = entidadID;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        #endregion
+
+        #region 🧱 GRILLA
+
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
 
-
-            grilla.Columns["Nombre"].Visible = true;
-            grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            grilla.Columns["Nombre"].HeaderText = "Marca";
-
+            if (grilla.Columns.Contains("Nombre"))
+            {
+                grilla.Columns["Nombre"].Visible = true;
+                grilla.Columns["Nombre"].HeaderText = "Marca";
+                grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
         }
 
-        public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
+            base.ActualizarDatos(dgv, filtros);
 
-            base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
-
-            if (check.Checked)
+            if (filtros.VerEliminados)
             {
-                grilla.DataSource = _marcaServicio.ObtenerMarcaEliminada(cadenaBuscar);
-                toolStrip.Enabled = false;
+                dgv.DataSource = _marcaServicio.ObtenerMarcaEliminada(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = false;
             }
             else
             {
-                grilla.DataSource = _marcaServicio.ObtenerMarca(cadenaBuscar);
-                toolStrip.Enabled = true;
+                dgv.DataSource = _marcaServicio.ObtenerMarca(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = true;
             }
         }
+
+        #endregion
+
+        #region 🧰 BOTONES BASE
 
         public override void EjecutarBtnEliminar()
         {
             base.EjecutarBtnEliminar();
-            if (puedeEjecutarComando)
-            {
-                var FormularioABMMarca = new FMarcaABM(TipoOperacion.Eliminar, entidadID);
-                FormularioABMMarca.ShowDialog();
-                ActualizarSegunOperacion(FormularioABMMarca.RealizoAlgunaOperacion);
-            }
-        }
+            if (!puedeEjecutarComando) return;
 
-        private void ActualizarSegunOperacion(bool realizoOperacion)
-        {
-            if (realizoOperacion)
-            {
-                ActualizarDatos(dgvGrilla, string.Empty, cbxEstaEliminado, BarraLateralBotones);
-            }
+            var f = new FMarcaABM(TipoOperacion.Eliminar, entidadID);
+            f.ShowDialog();
+
+            ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
         }
 
         public override void EjecutarBtnModificar()
         {
             base.EjecutarBtnModificar();
-            if (puedeEjecutarComando)
-            {
-                var FormularioABMMarca = new FMarcaABM(TipoOperacion.Modificar, entidadID);
-                FormularioABMMarca.ShowDialog();
-                ActualizarSegunOperacion(FormularioABMMarca.RealizoAlgunaOperacion);
-            }
+            if (!puedeEjecutarComando) return;
+
+            var f = new FMarcaABM(TipoOperacion.Modificar, entidadID);
+            f.ShowDialog();
+
+            ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
         }
 
         public override void EjecutarBtnNuevo()
         {
-            var FormularioABMMarca = new FMarcaABM(TipoOperacion.Nuevo);
-            FormularioABMMarca.ShowDialog();
-            ActualizarSegunOperacion(FormularioABMMarca.RealizoAlgunaOperacion);
+            var f = new FMarcaABM(TipoOperacion.Nuevo);
+            f.ShowDialog();
+
+            ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
         }
 
-        private void btnSeleccionarMarca_Click(object sender, EventArgs e)
+        private void ActualizarSegunOperacion(bool realizoOperacion)
         {
-            marcaSeleccionada = (long)entidadID;
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-    }
+            //if (realizoOperacion)
+            //    btnActualizar_Click_Base();
+        }
+
+        #endregion
+
+        #region 🎯 SELECCIONAR
+
+
+        #endregion
     }
 }

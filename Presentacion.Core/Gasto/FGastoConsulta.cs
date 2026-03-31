@@ -1,14 +1,11 @@
-﻿using Presentacion.FBase;
+﻿using Presentacion.Core.Presentacion.Core.Helpers;
+using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers;
 using Servicios.LogicaNegocio.Gasto;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Presentacion.Core.Gasto
@@ -31,6 +28,7 @@ namespace Presentacion.Core.Gasto
         {
             _gastoServicio = gastoServicio;
             _logeadoId = logeadoId;
+            InitializeComponent();
         }
 
         public FGastoConsulta(bool _vieneDeSeleccionGasto, long logeadoId)
@@ -40,12 +38,81 @@ namespace Presentacion.Core.Gasto
             InitializeComponent();
         }
 
+        #region 🔷 ACCIONES DINAMICAS
+
+        protected override void ConfigurarAccionesPersonalizadas()
+        {
+            AgregarAccion(
+                "Anular",
+                Constantes.Imagenes.ImgEliminar,
+                AnularGasto,
+                true
+            );
+            AgregarAccion(
+               "Pagar",
+               Constantes.Imagenes.ImgEliminar,
+               MarcarComoPagada,
+               true
+           );
+        }
+
+        private void MarcarComoPagada(long? id)
+        {
+            if (!id.HasValue)
+            {
+                MessageBox.Show("Seleccione un gasto.");
+                return;
+            }
+
+            var resultado = _gastoServicio.ConfirmarPago(id.Value);
+
+            if (resultado.Exitoso)
+            {
+                Recargar();
+                MessageBox.Show(resultado.Mensaje, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                Recargar();
+                MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void AnularGasto(long? id)
+        {
+            if (!id.HasValue)
+            {
+                MessageBox.Show("Seleccione un gasto.");
+                return;
+            }
+
+            var resultado = _gastoServicio.AnularGasto(id.Value);
+
+            if (resultado.Exitoso)
+            {
+                Recargar();
+                MessageBox.Show(resultado.Mensaje, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                Recargar();
+                MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        #endregion
+
+        #region 🔷 GRILLA
+
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
 
-            grilla.Columns["GastoId"].Visible = false;
-            grilla.Columns["GastoId"].Name = "Id";
+            if (grilla.Columns.Contains("GastoId"))
+            {
+                grilla.Columns["GastoId"].Visible = false;
+                grilla.Columns["GastoId"].Name = "Id";
+            }
 
             grilla.Columns["NumeroGasto"].Visible = true;
             grilla.Columns["NumeroGasto"].HeaderText = "N° Gasto";
@@ -54,6 +121,10 @@ namespace Presentacion.Core.Gasto
             grilla.Columns["FechaGasto"].Visible = true;
             grilla.Columns["FechaGasto"].HeaderText = "Fecha";
             grilla.Columns["FechaGasto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+
+            grilla.Columns["NombreEmpleado"].Visible = true;
+            grilla.Columns["NombreEmpleado"].HeaderText = "Empleado";
+            grilla.Columns["NombreEmpleado"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
 
             grilla.Columns["CategoriaGasto"].Visible = true;
             grilla.Columns["CategoriaGasto"].HeaderText = "Categoría";
@@ -75,59 +146,87 @@ namespace Presentacion.Core.Gasto
             grilla.Columns["Detalle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
         }
 
-        public override void ActualizarDatos(
-            DataGridView grilla,
-            string cadenaBuscar,
-            CheckBox check,
-            ToolStrip toolStrip)
-        {
-            base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
+        #endregion
 
-            grilla.DataSource = _gastoServicio.ObtenerGastos(1);
-            toolStrip.Enabled = true;
+        #region 🔥 ACTUALIZAR DATOS (NUEVO)
+
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        {
+            base.ActualizarDatos(dgv, filtros);
+            int? estado = null;
+                Debug.WriteLine($"Valor de Extra: {filtros.Extra}"); // Agrega esta línea para depurar el valor de Extra
+            if (filtros.Extra != null && filtros.Extra != "0")
+
+            estado = Convert.ToInt32(filtros.Extra);
+
+            dgv.DataSource = _gastoServicio.ObtenerGastosFiltrados(
+                filtros.TextoBuscar,
+                estado,
+                filtros.FechaDesde,
+                filtros.FechaHasta
+            );
         }
+
+        #endregion
+
+        #region 🔷 BOTONES BASE
 
         public override void EjecutarBtnNuevo()
         {
-            var fGastoAbm = new FGastoABM(_logeadoId);
-            fGastoAbm.ShowDialog();
+            var f = new FGastoABM(_logeadoId);
+            f.ShowDialog();
+
+           if (f.RealizoAlgunaOperacion)
+           Recargar();
         }
 
-        private void ActualizarSegunOperacion(bool realizoOperacion)
+        private void Recargar()
         {
-            if (realizoOperacion)
+            var filtros = new FiltroConsulta();
+           ActualizarDatos(dgvGrilla, filtros);
+        }
+
+        #endregion
+
+        #region 🔷 SELECCIONAR GASTO
+
+        private void btnSeleccionarGasto_Click(object sender, System.EventArgs e)
+        {
+            if (!entidadID.HasValue)
             {
-                ActualizarDatos(dgvGrilla, string.Empty, cbxEstaEliminado, BarraLateralBotones);
+                MessageBox.Show("Seleccione un gasto.");
+                return;
             }
-        }
-
-        private void btnSeleccionarGasto_Click(object sender, EventArgs e)
-        {
-            if (!puedeEjecutarComando) return;
 
             gastoSeleccionado = entidadID;
             DialogResult = DialogResult.OK;
             Close();
         }
 
-        private void btnAnularGasto_Click(object sender, EventArgs e)
-        {
-            if (entidadID == null)
-            {
-                MessageBox.Show("Por favor seleccione un gasto.");
-                return;
-            }
-            var resultado = _gastoServicio.AnularGasto(entidadID.Value);
-            if (resultado.Exitoso)
-            {
-                MessageBox.Show($"{resultado.Mensaje}", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                ActualizarDatos(dgvGrilla, string.Empty, cbxEstaEliminado, BarraLateralBotones);
-            }
-            else
-            {
-                MessageBox.Show($"{resultado.Mensaje}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+        #endregion
 
+        private void FGastoConsulta_Load(object sender, EventArgs e)
+        {
+            var opciones = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "0" }
+            };
+
+            foreach (EstadoGasto estado in Enum.GetValues(typeof(EstadoGasto)))
+            {
+                opciones.Add(new OpcionFiltro
+                {
+                    Texto = estado.ToString(),
+                    Valor = Convert.ToString((int)estado)
+                });
+            }
+
+            ActivarFiltroCombo("Estado del gasto:", opciones, "Texto", "Valor");
+
+            // 👉 seleccionar "Todos" por defecto
+            cbxFiltroOpcional.SelectedValue = Convert.ToString(0);
+
+            ActivarFiltroFechas("Filtrar por fecha");
+        }
     }
 }

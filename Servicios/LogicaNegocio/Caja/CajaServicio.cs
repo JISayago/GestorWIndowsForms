@@ -1,5 +1,6 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
+using Servicios.Helpers;
 using Servicios.LogicaNegocio.Caja.DTO;
 using System;
 using System.Collections.Generic;
@@ -11,21 +12,6 @@ namespace Servicios.LogicaNegocio.Caja
 {
     public class CajaServicio
     {
-
-        /*  Antes hacer migracion 
-         * 
-         * 
-         *  Crear la caja (abrir caja) y establecer los valores de inicio del negocio
-         *  
-         *  Cerrar caja y establecer los valores finales del negocio  
-         *
-         *  abrir y cerrar deberian ser la misma funcion con un parametro que indique si es apertura o cierre? o cu con su funcion respectiva
-         *  
-         *  Update balance de caja
-         *  
-         *  Obtener el estado actual de la caja (abierta o cerrada) y su saldo
-         */
-
 
         public void AbrirCaja(decimal montoInicial, long empleadoId)
         {
@@ -87,7 +73,6 @@ namespace Servicios.LogicaNegocio.Caja
                     EmpleadoApertura = c.EmpleadoApertura,
                     EmpleadoCierre = c.EmpleadoCierre,
                     EstaCerrada = c.EstaCerrada,
-                    MovimientoIds = c.Movimientos.Select(m => m.MovimientoId).ToList()
                 })
                 .FirstOrDefault();
 
@@ -100,13 +85,25 @@ namespace Servicios.LogicaNegocio.Caja
             return caja;
         }
 
-        public long? ObtenerIdCajaAbierta(GestorContextDB context = null)
+            public long? ObtenerIdCajaAbierta(GestorContextDB context = null)
         {
             if (context == null)
             {
                 context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
             }
 
+            var caja = context.Cajas
+                .Where(c => !c.EstaCerrada)
+                .OrderByDescending(c => c.FechaInicio)
+                .FirstOrDefault();
+            if (caja == null)
+            {
+                return null;
+            }
+            return caja.CajaId;
+        }
+            public long? ObtenerIdDeEña(GestorContextDB context)
+        {
             var caja = context.Cajas
                 .Where(c => !c.EstaCerrada)
                 .OrderByDescending(c => c.FechaInicio)
@@ -138,10 +135,10 @@ namespace Servicios.LogicaNegocio.Caja
             return saldo;
         }
 
-        public void RegistrarTransaccion(GestorContextDB context, decimal monto, string tipo)
+        public void RegistrarTransaccion(GestorContextDB context, decimal monto, TipoMovimiento tipo,long cajaId)
         {
             var caja = context.Cajas
-                .Where(c => !c.EstaCerrada)
+                .Where(c => !c.EstaCerrada && c.CajaId == cajaId)
                 .OrderByDescending(c => c.FechaInicio)
                 .FirstOrDefault();
 
@@ -150,28 +147,28 @@ namespace Servicios.LogicaNegocio.Caja
 
             ActualizarSaldoCaja(caja, tipo, monto);
 
+            //context.SaveChanges();
+            context.Cajas.Update(caja);
+
         }
 
-        public void ActualizarSaldoCaja(AccesoDatos.Entidades.Caja caja, string tipo, decimal monto)
+        public void ActualizarSaldoCaja(AccesoDatos.Entidades.Caja caja, TipoMovimiento tipo, decimal monto)
         {
             //TipoDeTransaccion podria es un enum en vez de string, fixear
-            if (tipo == "Ingreso")
+            switch (tipo)
             {
-                //caja.SaldoActual += monto;
-                caja.TotalIngresos += monto;
-            }
-            else if (tipo == "Egreso")
-            {
-                //caja.SaldoActual -= monto;
-                caja.TotalEgresos += monto;
-            }
-            else
-            {
-                throw new ArgumentException("Tipo de transacción inválido. Debe ser 'Ingreso' o 'Egreso'.");
-            }
+                case TipoMovimiento.Ingreso:
+                    caja.TotalIngresos += monto;
+                    break;
 
+                case TipoMovimiento.Egreso:
+                    caja.TotalEgresos += monto;
+                    break;
+
+                default:
+                    throw new ArgumentException("Tipo de movimiento inválido.");
+            }
             caja.SaldoActual = caja.SaldoInicial + (caja.TotalIngresos - caja.TotalEgresos);
-            //context.SaveChanges();
         }
         public List<CajaDTO> ObetenerTodasLasCajas() //se usa para Caja Consulta, podria paginarse si hay muchas cajas.
         {
@@ -191,7 +188,7 @@ namespace Servicios.LogicaNegocio.Caja
                     EmpleadoApertura = c.EmpleadoApertura,
                     EmpleadoCierre = c.EmpleadoCierre,
                     EstaCerrada = c.EstaCerrada,
-                    MovimientoIds = c.Movimientos.Select(m => m.MovimientoId).ToList()
+                    //MovimientoIds = c.Movimientos.Select(m => m.MovimientoId).ToList()
                 }).ToList();
 
             return cajas;
@@ -217,9 +214,9 @@ namespace Servicios.LogicaNegocio.Caja
                     EmpleadoApertura = c.EmpleadoApertura,
                     EmpleadoCierre = c.EmpleadoCierre,
                     EstaCerrada = c.EstaCerrada,
-                    MovimientoIds = c.Movimientos
-                        .Select(m => m.MovimientoId)
-                        .ToList()
+                    //MovimientoIds = c.Movimientos
+                    //    .Select(m => m.MovimientoId)
+                    //    .ToList()
                 })
                 .OrderBy(c => c.FechaInicio)
                 .ToList();
@@ -246,9 +243,9 @@ namespace Servicios.LogicaNegocio.Caja
                     EmpleadoApertura = c.EmpleadoApertura,
                     EmpleadoCierre = c.EmpleadoCierre,
                     EstaCerrada = c.EstaCerrada,
-                    MovimientoIds = c.Movimientos
-                        .Select(m => m.MovimientoId)
-                        .ToList()
+                    //MovimientoIds = c.Movimientos
+                    //    .Select(m => m.MovimientoId)
+                    //    .ToList()
                 })
                 .OrderBy(c => c.FechaInicio)
                 .ToList();
@@ -273,13 +270,41 @@ namespace Servicios.LogicaNegocio.Caja
                 EmpleadoApertura = c.EmpleadoApertura,
                 EmpleadoCierre = c.EmpleadoCierre,
                 EstaCerrada = c.EstaCerrada,
-                MovimientoIds = c.Movimientos
-                        .Select(m => m.MovimientoId)
-                        .ToList()
+                //MovimientoIds = c.Movimientos
+                //        .Select(m => m.MovimientoId)
+                //        .ToList()
             }).Where(c => c.FechaInicio.Year == AñoDeLasCajas)
               .ToList();
 
             return cajas;
         }
+
+        public List<CajaDTO> ObtenerCajasPorMesYAño(int mesDeLasCajas, int añoDeLasCajas)
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+
+            var cajas = context.Cajas.Select(c => new CajaDTO
+            {
+                CajaId = c.CajaId,
+                SaldoInicial = c.SaldoInicial,
+                SaldoActual = c.SaldoActual,
+                FechaInicio = c.FechaInicio,
+                FechaFin = c.FechaFin,
+                TotalIngresos = c.TotalIngresos,
+                TotalEgresos = c.TotalEgresos,
+                BalanceFinal = c.BalanceFinal,
+                EmpleadoApertura = c.EmpleadoApertura,
+                EmpleadoCierre = c.EmpleadoCierre,
+                EstaCerrada = c.EstaCerrada,
+                //MovimientoIds = c.Movimientos
+                //        .Select(m => m.MovimientoId)
+                //        .ToList()
+            }).Where(c => c.FechaInicio.Year == añoDeLasCajas && c.FechaInicio.Month == mesDeLasCajas)
+              .ToList();
+
+            return cajas;
+        }
+
+        //PODRIA HACER UNA FUNCION PARA BUSCAR FECHAS ESPECIFICAS,Y REUSAR ESA PARA LOS GRAFICOS FILTRADOS
     }
 }

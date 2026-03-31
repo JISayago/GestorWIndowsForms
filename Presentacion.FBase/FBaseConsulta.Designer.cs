@@ -28,8 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FBaseConsulta));
-            panel1 = new Panel();
+            txtBuscar = new TextBox();
+            btnBuscar = new Button();
+            label1 = new Label();
+            panel2 = new Panel();
+            dgvGrilla = new DataGridView();
             BarraLateralBotones = new ToolStrip();
             btnNuevo = new ToolStripButton();
             btnEliminar = new ToolStripButton();
@@ -40,67 +43,105 @@
             btnImprimir = new ToolStripButton();
             toolStripSeparator3 = new ToolStripSeparator();
             btnSalir = new ToolStripButton();
-            panel2 = new Panel();
-            label1 = new Label();
-            btnBuscar = new Button();
-            txtBuscar = new TextBox();
-            dgvGrilla = new DataGridView();
             cbxEstaEliminado = new CheckBox();
-            panel1.SuspendLayout();
-            BarraLateralBotones.SuspendLayout();
+            panel1 = new Panel();
+            lblFiltro = new Label();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            chkUsarFecha = new CheckBox();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            lvlFiltrarPorColumna = new Label();
+            cbxFiltroOpcional = new ComboBox();
+            dtpDesde = new DateTimePicker();
+            dtpHasta = new DateTimePicker();
+            cbxFiltroExtraEstado = new ComboBox();
+            pnlFiltrosAvanzados = new Panel();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
+            BarraLateralBotones.SuspendLayout();
+            panel1.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
             SuspendLayout();
             // 
-            // panel1
+            // txtBuscar
             // 
-            panel1.Controls.Add(BarraLateralBotones);
-            panel1.Location = new Point(12, 12);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(86, 537);
-            panel1.TabIndex = 0;
+            txtBuscar.Location = new Point(67, 12);
+            txtBuscar.Name = "txtBuscar";
+            txtBuscar.Size = new Size(254, 23);
+            txtBuscar.TabIndex = 0;
+            // 
+            // btnBuscar
+            // 
+            btnBuscar.Location = new Point(327, 0);
+            btnBuscar.Name = "btnBuscar";
+            btnBuscar.Size = new Size(97, 44);
+            btnBuscar.TabIndex = 1;
+            btnBuscar.Text = "Buscar";
+            btnBuscar.UseVisualStyleBackColor = true;
+            btnBuscar.Click += btnBuscar_Click_1;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(11, 15);
+            label1.Name = "label1";
+            label1.Size = new Size(59, 15);
+            label1.TabIndex = 2;
+            label1.Text = "Busqueda";
+            // 
+            // panel2
+            // 
+            panel2.Controls.Add(label1);
+            panel2.Controls.Add(btnBuscar);
+            panel2.Controls.Add(txtBuscar);
+            panel2.Location = new Point(23, 156);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(447, 50);
+            panel2.TabIndex = 1;
+            // 
+            // dgvGrilla
+            // 
+            dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvGrilla.Location = new Point(12, 212);
+            dgvGrilla.Name = "dgvGrilla";
+            dgvGrilla.Size = new Size(1094, 337);
+            dgvGrilla.TabIndex = 2;
             // 
             // BarraLateralBotones
             // 
-            BarraLateralBotones.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             BarraLateralBotones.BackColor = SystemColors.AppWorkspace;
             BarraLateralBotones.CanOverflow = false;
-            BarraLateralBotones.Dock = DockStyle.None;
+            BarraLateralBotones.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             BarraLateralBotones.Items.AddRange(new ToolStripItem[] { btnNuevo, btnEliminar, btnModificar, toolStripSeparator1, btnActualizar, toolStripSeparator2, btnImprimir, toolStripSeparator3, btnSalir });
-            BarraLateralBotones.LayoutStyle = ToolStripLayoutStyle.VerticalStackWithOverflow;
+            BarraLateralBotones.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             BarraLateralBotones.Location = new Point(0, 0);
             BarraLateralBotones.Name = "BarraLateralBotones";
-            BarraLateralBotones.Size = new Size(64, 257);
+            BarraLateralBotones.Size = new Size(1118, 27);
             BarraLateralBotones.Stretch = true;
             BarraLateralBotones.TabIndex = 0;
             BarraLateralBotones.Text = "toolStrip1";
             // 
             // btnNuevo
             // 
-            btnNuevo.Image = (Image)resources.GetObject("btnNuevo.Image");
-            btnNuevo.ImageTransparentColor = Color.Magenta;
             btnNuevo.Name = "btnNuevo";
-            btnNuevo.Size = new Size(62, 35);
+            btnNuevo.Size = new Size(59, 24);
             btnNuevo.Text = "Nuevo";
             btnNuevo.TextImageRelation = TextImageRelation.TextAboveImage;
             btnNuevo.Click += btnNuevo_Click;
             // 
             // btnEliminar
             // 
-            btnEliminar.Image = (Image)resources.GetObject("btnEliminar.Image");
-            btnEliminar.ImageTransparentColor = Color.Magenta;
             btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(62, 35);
+            btnEliminar.Size = new Size(70, 24);
             btnEliminar.Text = "Eliminar";
             btnEliminar.TextImageRelation = TextImageRelation.TextAboveImage;
             btnEliminar.Click += btnEliminar_Click;
             // 
             // btnModificar
             // 
-            btnModificar.Image = (Image)resources.GetObject("btnModificar.Image");
-            btnModificar.ImageTransparentColor = Color.Magenta;
             btnModificar.Name = "btnModificar";
-            btnModificar.Size = new Size(62, 35);
+            btnModificar.Size = new Size(80, 24);
             btnModificar.Text = "Modificar";
             btnModificar.TextImageRelation = TextImageRelation.TextAboveImage;
             btnModificar.Click += btnModificar_Click;
@@ -108,14 +149,12 @@
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(62, 6);
+            toolStripSeparator1.Size = new Size(6, 27);
             // 
             // btnActualizar
             // 
-            btnActualizar.Image = (Image)resources.GetObject("btnActualizar.Image");
-            btnActualizar.ImageTransparentColor = Color.Magenta;
             btnActualizar.Name = "btnActualizar";
-            btnActualizar.Size = new Size(62, 35);
+            btnActualizar.Size = new Size(83, 24);
             btnActualizar.Text = "Actualizar";
             btnActualizar.TextImageRelation = TextImageRelation.TextAboveImage;
             btnActualizar.Click += btnActualizar_Click;
@@ -123,83 +162,33 @@
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(62, 6);
+            toolStripSeparator2.Size = new Size(6, 27);
             // 
             // btnImprimir
             // 
-            btnImprimir.Image = (Image)resources.GetObject("btnImprimir.Image");
-            btnImprimir.ImageTransparentColor = Color.Magenta;
             btnImprimir.Name = "btnImprimir";
-            btnImprimir.Size = new Size(62, 35);
+            btnImprimir.Size = new Size(75, 24);
             btnImprimir.Text = "Imprimir";
             btnImprimir.TextImageRelation = TextImageRelation.TextAboveImage;
-            btnImprimir.Click += btnImprimir_Click;
             // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new Size(62, 6);
+            toolStripSeparator3.Size = new Size(6, 27);
             // 
             // btnSalir
             // 
             btnSalir.Alignment = ToolStripItemAlignment.Right;
-            btnSalir.Image = (Image)resources.GetObject("btnSalir.Image");
-            btnSalir.ImageTransparentColor = Color.Magenta;
             btnSalir.Name = "btnSalir";
-            btnSalir.Size = new Size(62, 35);
+            btnSalir.Size = new Size(43, 24);
             btnSalir.Text = "Salir";
             btnSalir.TextImageRelation = TextImageRelation.TextAboveImage;
             btnSalir.Click += btnSalir_Click;
             // 
-            // panel2
-            // 
-            panel2.Controls.Add(label1);
-            panel2.Controls.Add(btnBuscar);
-            panel2.Controls.Add(txtBuscar);
-            panel2.Location = new Point(329, 12);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(447, 32);
-            panel2.TabIndex = 1;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(41, 6);
-            label1.Name = "label1";
-            label1.Size = new Size(59, 15);
-            label1.TabIndex = 2;
-            label1.Text = "Busqueda";
-            // 
-            // btnBuscar
-            // 
-            btnBuscar.Location = new Point(366, 4);
-            btnBuscar.Name = "btnBuscar";
-            btnBuscar.Size = new Size(75, 23);
-            btnBuscar.TabIndex = 1;
-            btnBuscar.Text = "buscar";
-            btnBuscar.UseVisualStyleBackColor = true;
-            btnBuscar.Click += btnBuscar_Click_1;
-            // 
-            // txtBuscar
-            // 
-            txtBuscar.Location = new Point(106, 3);
-            txtBuscar.Name = "txtBuscar";
-            txtBuscar.Size = new Size(254, 23);
-            txtBuscar.TabIndex = 0;
-            // 
-            // dgvGrilla
-            // 
-            dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvGrilla.Location = new Point(108, 50);
-            dgvGrilla.Name = "dgvGrilla";
-            dgvGrilla.Size = new Size(662, 499);
-            dgvGrilla.TabIndex = 2;
-            // 
             // cbxEstaEliminado
             // 
             cbxEstaEliminado.AutoSize = true;
-            cbxEstaEliminado.Location = new Point(104, 19);
+            cbxEstaEliminado.Location = new Point(586, 175);
             cbxEstaEliminado.Name = "cbxEstaEliminado";
             cbxEstaEliminado.Size = new Size(211, 19);
             cbxEstaEliminado.TabIndex = 3;
@@ -207,50 +196,189 @@
             cbxEstaEliminado.UseVisualStyleBackColor = true;
             cbxEstaEliminado.CheckedChanged += cbxEstaEliminado_CheckedChanged;
             // 
+            // panel1
+            // 
+            panel1.Controls.Add(lblFiltro);
+            panel1.Controls.Add(tableLayoutPanel1);
+            panel1.Controls.Add(pnlFiltrosAvanzados);
+            panel1.Controls.Add(panel2);
+            panel1.Controls.Add(cbxEstaEliminado);
+            panel1.Controls.Add(BarraLateralBotones);
+            panel1.Controls.Add(dgvGrilla);
+            panel1.Dock = DockStyle.Fill;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(1118, 561);
+            panel1.TabIndex = 0;
+            // 
+            // lblFiltro
+            // 
+            lblFiltro.AutoSize = true;
+            lblFiltro.Location = new Point(524, 176);
+            lblFiltro.Name = "lblFiltro";
+            lblFiltro.Size = new Size(38, 15);
+            lblFiltro.TabIndex = 4;
+            lblFiltro.Text = "label2";
+            lblFiltro.Visible = false;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel1.ColumnCount = 4;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
+            tableLayoutPanel1.Controls.Add(chkUsarFecha, 0, 0);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 3, 0);
+            tableLayoutPanel1.Controls.Add(dtpDesde, 1, 0);
+            tableLayoutPanel1.Controls.Add(dtpHasta, 1, 1);
+            tableLayoutPanel1.Controls.Add(cbxFiltroExtraEstado, 3, 1);
+            tableLayoutPanel1.Location = new Point(26, 42);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 47.5609741F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 52.4390259F));
+            tableLayoutPanel1.Size = new Size(587, 82);
+            tableLayoutPanel1.TabIndex = 6;
+            // 
+            // chkUsarFecha
+            // 
+            chkUsarFecha.AutoSize = true;
+            chkUsarFecha.Location = new Point(3, 3);
+            chkUsarFecha.Name = "chkUsarFecha";
+            chkUsarFecha.Size = new Size(83, 19);
+            chkUsarFecha.TabIndex = 3;
+            chkUsarFecha.Text = "Usar Fecha";
+            chkUsarFecha.UseVisualStyleBackColor = true;
+            chkUsarFecha.Visible = false;
+            // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel2.ColumnCount = 2;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.Controls.Add(lvlFiltrarPorColumna, 0, 0);
+            tableLayoutPanel2.Controls.Add(cbxFiltroOpcional, 1, 0);
+            tableLayoutPanel2.Location = new Point(383, 3);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.Size = new Size(201, 33);
+            tableLayoutPanel2.TabIndex = 7;
+            // 
+            // lvlFiltrarPorColumna
+            // 
+            lvlFiltrarPorColumna.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lvlFiltrarPorColumna.AutoSize = true;
+            lvlFiltrarPorColumna.Location = new Point(39, 0);
+            lvlFiltrarPorColumna.Name = "lvlFiltrarPorColumna";
+            lvlFiltrarPorColumna.Size = new Size(58, 15);
+            lvlFiltrarPorColumna.TabIndex = 8;
+            lvlFiltrarPorColumna.Text = "Filtrar por";
+            // 
+            // cbxFiltroOpcional
+            // 
+            cbxFiltroOpcional.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cbxFiltroOpcional.FormattingEnabled = true;
+            cbxFiltroOpcional.Location = new Point(103, 3);
+            cbxFiltroOpcional.Name = "cbxFiltroOpcional";
+            cbxFiltroOpcional.Size = new Size(95, 23);
+            cbxFiltroOpcional.TabIndex = 0;
+            cbxFiltroOpcional.Visible = false;
+            // 
+            // dtpDesde
+            // 
+            dtpDesde.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dtpDesde.Location = new Point(149, 3);
+            dtpDesde.Name = "dtpDesde";
+            dtpDesde.Size = new Size(140, 23);
+            dtpDesde.TabIndex = 1;
+            dtpDesde.Visible = false;
+            // 
+            // dtpHasta
+            // 
+            dtpHasta.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dtpHasta.Location = new Point(149, 42);
+            dtpHasta.Name = "dtpHasta";
+            dtpHasta.Size = new Size(140, 23);
+            dtpHasta.TabIndex = 2;
+            dtpHasta.Visible = false;
+            // 
+            // cbxFiltroExtraEstado
+            // 
+            cbxFiltroExtraEstado.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cbxFiltroExtraEstado.FormattingEnabled = true;
+            cbxFiltroExtraEstado.Location = new Point(383, 42);
+            cbxFiltroExtraEstado.Name = "cbxFiltroExtraEstado";
+            cbxFiltroExtraEstado.Size = new Size(201, 23);
+            cbxFiltroExtraEstado.TabIndex = 5;
+            cbxFiltroExtraEstado.Visible = false;
+            // 
+            // pnlFiltrosAvanzados
+            // 
+            pnlFiltrosAvanzados.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlFiltrosAvanzados.Location = new Point(23, 42);
+            pnlFiltrosAvanzados.Name = "pnlFiltrosAvanzados";
+            pnlFiltrosAvanzados.Size = new Size(1083, 114);
+            pnlFiltrosAvanzados.TabIndex = 4;
+            // 
             // FBaseConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             AutoSize = true;
-            ClientSize = new Size(784, 561);
-            Controls.Add(cbxEstaEliminado);
-            Controls.Add(dgvGrilla);
-            Controls.Add(panel2);
+            ClientSize = new Size(1118, 561);
             Controls.Add(panel1);
             Name = "FBaseConsulta";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FBaseConsulta";
             WindowState = FormWindowState.Maximized;
             Load += FBaseConsulta_Load;
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
-            BarraLateralBotones.ResumeLayout(false);
-            BarraLateralBotones.PerformLayout();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
+            BarraLateralBotones.ResumeLayout(false);
+            BarraLateralBotones.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            tableLayoutPanel2.ResumeLayout(false);
+            tableLayoutPanel2.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-        private Panel panel2;
-        private TextBox txtBuscar;
-        private Label label1;
-        private Button btnBuscar;
-        private ToolStripButton btnNuevo;
-        private ToolStripButton btnEliminar;
-        private ToolStripButton btnModificar;
-        private ToolStripSeparator toolStripSeparator1;
-        private ToolStripButton btnActualizar;
-        private ToolStripSeparator toolStripSeparator2;
-        private ToolStripButton btnImprimir;
-        private ToolStripSeparator toolStripSeparator3;
-        private ToolStripButton btnSalir;
+
+        protected TextBox txtBuscar;
+        protected Button btnBuscar;
+        protected Label label1;
+        protected Panel panel2;
         protected DataGridView dgvGrilla;
-        protected CheckBox cbxEstaEliminado;
         protected ToolStrip BarraLateralBotones;
+        protected ToolStripButton btnNuevo;
+        protected ToolStripButton btnEliminar;
+        protected ToolStripButton btnModificar;
+        protected ToolStripSeparator toolStripSeparator1;
+        protected ToolStripButton btnActualizar;
+        protected ToolStripSeparator toolStripSeparator2;
+        protected ToolStripButton btnImprimir;
+        protected ToolStripSeparator toolStripSeparator3;
+        protected ToolStripButton btnSalir;
+        protected CheckBox cbxEstaEliminado;
         public Panel panel1;
+        protected Panel pnlFiltrosAvanzados;
+        protected Label lblFiltro;
+        protected CheckBox chkUsarFecha;
+        protected DateTimePicker dtpHasta;
+        protected DateTimePicker dtpDesde;
+        protected ComboBox cbxFiltroOpcional;
+        protected ComboBox cbxFiltroExtraEstado;
+        private TableLayoutPanel tableLayoutPanel1;
+        private TableLayoutPanel tableLayoutPanel2;
+        protected Label lvlFiltrarPorColumna;
     }
 }

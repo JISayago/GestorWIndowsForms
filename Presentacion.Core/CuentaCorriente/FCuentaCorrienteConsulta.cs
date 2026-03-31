@@ -1,6 +1,8 @@
 ﻿using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.CuentaCorriente;
+using System.Windows.Forms;
 
 namespace Presentacion.Core.CuentaCorriente
 {
@@ -12,83 +14,100 @@ namespace Presentacion.Core.CuentaCorriente
         {
             InitializeComponent();
         }
+
         public FCuentaCorrienteConsulta(ICuentaCorrienteServicio cuentacorrienteServicio)
         {
             _cuentacorrienteServicio = cuentacorrienteServicio;
+            InitializeComponent();
         }
 
-        public override void EjecutarBtnNuevo()
-        {
-            var FormularioCuentaCorrienteABM = new FCuentaCorrienteABM(TipoOperacion.Nuevo);
-            FormularioCuentaCorrienteABM.ShowDialog();
-        }
+        #region 🔷 GRILLA
 
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
-            grilla.Columns["CuentaCorrienteId"].Visible = false;
-            grilla.Columns["CuentaCorrienteId"].Name = "Id";
+
+            if (grilla.Columns.Contains("CuentaCorrienteId"))
+            {
+                grilla.Columns["CuentaCorrienteId"].Visible = false;
+                grilla.Columns["CuentaCorrienteId"].Name = "Id";
+            }
 
             grilla.Columns["NombreCuentaCorriente"].Visible = true;
-            grilla.Columns["NombreCuentaCorriente"].Width = 100;
+            grilla.Columns["NombreCuentaCorriente"].Width = 150;
             grilla.Columns["NombreCuentaCorriente"].HeaderText = "Nombre CC";
-            
+
             grilla.Columns["FechaVencimiento"].Visible = true;
-            grilla.Columns["FechaVencimiento"].Width = 100;
+            grilla.Columns["FechaVencimiento"].Width = 120;
             grilla.Columns["FechaVencimiento"].HeaderText = "Fecha Vencimiento";
 
             grilla.Columns["EstadoCuentaCorriente"].Visible = true;
-            grilla.Columns["EstadoCuentaCorriente"].Width = 100;
+            grilla.Columns["EstadoCuentaCorriente"].Width = 120;
             grilla.Columns["EstadoCuentaCorriente"].HeaderText = "Estado CC";
         }
 
-        public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
+        #endregion
+
+        #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
+
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
-            base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
+            base.ActualizarDatos(dgv, filtros);
 
-            if (check.Checked)
+            if (filtros.VerEliminados)
             {
-                grilla.DataSource = _cuentacorrienteServicio.ObtenerCuentaCorrientesEliminada(cadenaBuscar);
-                toolStrip.Enabled = false;
-
+                dgv.DataSource = _cuentacorrienteServicio.ObtenerCuentaCorrientesEliminada(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = false;
             }
             else
             {
-                grilla.DataSource = _cuentacorrienteServicio.ObtenerCuentaCorrientes(cadenaBuscar);
-                toolStrip.Enabled = true;
+                dgv.DataSource = _cuentacorrienteServicio.ObtenerCuentaCorrientes(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = true;
             }
+        }
+
+        #endregion
+
+        #region 🔷 BOTONES BASE
+
+        public override void EjecutarBtnNuevo()
+        {
+            var f = new FCuentaCorrienteABM(TipoOperacion.Nuevo);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
 
         public override void EjecutarBtnModificar()
         {
             base.EjecutarBtnModificar();
-            if (puedeEjecutarComando)
-            {
-                var FormularioABMCuentaCorriente = new FCuentaCorrienteABM(TipoOperacion.Modificar, entidadID);
-                FormularioABMCuentaCorriente.ShowDialog();
-                ActualizarSegunOperacion(FormularioABMCuentaCorriente.RealizoAlgunaOperacion);
-            }
+            if (!puedeEjecutarComando) return;
+
+            var f = new FCuentaCorrienteABM(TipoOperacion.Modificar, entidadID);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
+
         public override void EjecutarBtnEliminar()
         {
             base.EjecutarBtnEliminar();
-            if (puedeEjecutarComando)
-            {
-                var FormularioABMCuentaCorriente = new FCuentaCorrienteABM(TipoOperacion.Eliminar, entidadID);
-                FormularioABMCuentaCorriente.ShowDialog();
-                ActualizarSegunOperacion(FormularioABMCuentaCorriente.RealizoAlgunaOperacion);
-            }
+            if (!puedeEjecutarComando) return;
+
+            var f = new FCuentaCorrienteABM(TipoOperacion.Eliminar, entidadID);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
-        private void ActualizarSegunOperacion(bool realizoOperacion)
+
+        private void Recargar()
         {
-            if (realizoOperacion)
-            {
-                ActualizarDatos(dgvGrilla, string.Empty, cbxEstaEliminado, BarraLateralBotones);
-            }
+         //   btnActualizar_Click_Base();
         }
-        public override void EjecutarMostrarEliminados()
-        {
-            base.EjecutarMostrarEliminados();
-        }
+
+        #endregion
     }
 }

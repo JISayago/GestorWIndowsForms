@@ -28,24 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnAsignacionRoles = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(btnAsignacionRoles);
-            panel1.Controls.SetChildIndex(btnAsignacionRoles, 0);
-            // 
-            // btnAsignacionRoles
-            // 
-            btnAsignacionRoles.Location = new Point(3, 235);
-            btnAsignacionRoles.Name = "btnAsignacionRoles";
-            btnAsignacionRoles.Size = new Size(75, 66);
-            btnAsignacionRoles.TabIndex = 1;
-            btnAsignacionRoles.Text = "Asignación Roles";
-            btnAsignacionRoles.UseVisualStyleBackColor = true;
-            btnAsignacionRoles.Click += btnAsignacionRoles_Click;
+            panel1.Size = new Size(800, 561);
             // 
             // FRolConsulta
             // 
@@ -57,12 +45,8 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
-
         #endregion
-
-        private Button btnAsignacionRoles;
     }
 }

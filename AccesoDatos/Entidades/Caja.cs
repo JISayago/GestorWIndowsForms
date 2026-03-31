@@ -27,6 +27,5 @@ namespace AccesoDatos.Entidades
 
         public bool EstaCerrada { get; set; } //default false
 
-        public ICollection<Movimiento> Movimientos { get; set; } //collection o list
     }
 }

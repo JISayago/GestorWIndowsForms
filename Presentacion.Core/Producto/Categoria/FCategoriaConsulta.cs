@@ -1,14 +1,9 @@
-﻿using Presentacion.FBase;
+﻿using Presentacion.Core.Producto;
+using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Articulo.Categoria;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Presentacion.Core.Categoria
@@ -17,87 +12,136 @@ namespace Presentacion.Core.Categoria
     {
         private readonly ICategoriaServicio _CategoriaServicio;
         public long? categoriaSeleccionada = null;
+        private bool vieneDeCargaCategoria = true;
 
-        public FCategoriaConsulta() : this(new CategoriaServicio())
+        public FCategoriaConsulta(bool vieneDeCargaCategoria = true) : this(new CategoriaServicio())
         {
+            InitializeComponent();
+            this.vieneDeCargaCategoria = vieneDeCargaCategoria;
+        }
+
+        public FCategoriaConsulta(ICategoriaServicio categoriaServicio)
+        {
+            _CategoriaServicio = categoriaServicio;
             InitializeComponent();
         }
 
-        public FCategoriaConsulta(ICategoriaServicio CategoriaServicio)
-        {
-            _CategoriaServicio = CategoriaServicio;
-        }
+        #region 🔷 GRILLA
 
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
 
+            if (!grilla.Columns.Contains("CategoriaId") && !grilla.Columns.Contains("Id"))
+                return;
+
+            // ocultar id
+            if (grilla.Columns.Contains("CategoriaId"))
+            {
+                grilla.Columns["CategoriaId"].Visible = false;
+                grilla.Columns["CategoriaId"].Name = "Id";
+            }
 
             grilla.Columns["Nombre"].Visible = true;
-            grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             grilla.Columns["Nombre"].HeaderText = "Categoria";
-
+            grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
         }
 
-        public override void ActualizarDatos(DataGridView grilla, string cadenaBuscar, CheckBox check, ToolStrip toolStrip)
+        #endregion
+
+        #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
+
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
+            base.ActualizarDatos(dgv, filtros);
 
-            base.ActualizarDatos(grilla, cadenaBuscar, check, toolStrip);
-
-            if (check.Checked)
+            if (filtros.VerEliminados)
             {
-                grilla.DataSource = _CategoriaServicio.ObtenerCategoriaEliminada(cadenaBuscar);
-                toolStrip.Enabled = false;
+                dgv.DataSource = _CategoriaServicio.ObtenerCategoriaEliminada(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = false;
             }
             else
             {
-                grilla.DataSource = _CategoriaServicio.ObtenerCategoria(cadenaBuscar);
-                toolStrip.Enabled = true;
+                dgv.DataSource = _CategoriaServicio.ObtenerCategoria(filtros.TextoBuscar);
+                BarraLateralBotones.Enabled = true;
             }
         }
 
-        public override void EjecutarBtnEliminar()
-        {
-            base.EjecutarBtnEliminar();
-            if (puedeEjecutarComando)
-            {
-                var FABMCategoria = new FCategoriaABM(TipoOperacion.Eliminar, entidadID);
-                FABMCategoria.ShowDialog();
-                ActualizarSegunOperacion(FABMCategoria.RealizoAlgunaOperacion);
-            }
-        }
+        #endregion
 
-        private void ActualizarSegunOperacion(bool realizoOperacion)
+        #region 🔷 BOTONES BASE
+
+        public override void EjecutarBtnNuevo()
         {
-            if (realizoOperacion)
-            {
-                ActualizarDatos(dgvGrilla, string.Empty, cbxEstaEliminado, BarraLateralBotones);
-            }
+            var f = new FCategoriaABM(TipoOperacion.Nuevo);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
 
         public override void EjecutarBtnModificar()
         {
             base.EjecutarBtnModificar();
-            if (puedeEjecutarComando)
+            if (!puedeEjecutarComando) return;
+
+            var f = new FCategoriaABM(TipoOperacion.Modificar, entidadID);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
+        }
+
+        public override void EjecutarBtnEliminar()
+        {
+            base.EjecutarBtnEliminar();
+            if (!puedeEjecutarComando) return;
+
+            var f = new FCategoriaABM(TipoOperacion.Eliminar, entidadID);
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
+        }
+
+        private void Recargar()
+        {
+           // btnActualizar_Click_Base();
+        }
+
+        #endregion
+        #region 🔵 ACCIONES DINÁMICAS EXTRA
+
+        protected override void ConfigurarAccionesPersonalizadas()
+        {
+            // BOTON Seleccionar
+            if (vieneDeCargaCategoria)
             {
-                var FABMCategoria = new FCategoriaABM(TipoOperacion.Modificar, entidadID);
-                FABMCategoria.ShowDialog();
-                ActualizarSegunOperacion(FABMCategoria.RealizoAlgunaOperacion);
+                AgregarAccion(
+                    "Seleccionar Categoria",
+                    Constantes.Imagenes.ImgPerfilUsuario,
+                    SeleccionCategoria,
+                    true
+                );
             }
+
+        }
+        
+
+        private void SeleccionCategoria(long? id)
+        {
+            if (!entidadID.HasValue)
+            {
+                MessageBox.Show("Seleccione una categoria");
+                return;
+            }
+
+            categoriaSeleccionada = entidadID;
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
-        public override void EjecutarBtnNuevo()
-        {
-            var FABMCategoria = new FCategoriaABM(TipoOperacion.Nuevo);
-            FABMCategoria.ShowDialog();
-            ActualizarSegunOperacion(FABMCategoria.RealizoAlgunaOperacion);
-        }
+        #endregion
 
-        private void btnSeleccionarCategoria_Click(object sender, EventArgs e)
-        {
-            categoriaSeleccionada = (long)entidadID;
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-        }
     }
 }

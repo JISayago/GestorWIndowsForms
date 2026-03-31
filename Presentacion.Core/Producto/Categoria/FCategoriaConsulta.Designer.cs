@@ -28,24 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnSeleccionarCategoria = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(btnSeleccionarCategoria);
-            panel1.Controls.SetChildIndex(btnSeleccionarCategoria, 0);
-            // 
-            // btnSeleccionarCategoria
-            // 
-            btnSeleccionarCategoria.Location = new Point(3, 259);
-            btnSeleccionarCategoria.Name = "btnSeleccionarCategoria";
-            btnSeleccionarCategoria.Size = new Size(75, 78);
-            btnSeleccionarCategoria.TabIndex = 1;
-            btnSeleccionarCategoria.Text = "Seleccionar Categoria";
-            btnSeleccionarCategoria.UseVisualStyleBackColor = true;
-            btnSeleccionarCategoria.Click += btnSeleccionarCategoria_Click;
+            panel1.Size = new Size(800, 561);
             // 
             // FCategoriaConsulta
             // 
@@ -57,11 +45,8 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private Button btnSeleccionarCategoria;
     }
 }

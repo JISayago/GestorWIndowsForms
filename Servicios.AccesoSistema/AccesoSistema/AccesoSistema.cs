@@ -1,4 +1,5 @@
 ﻿using AccesoDatos;
+using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers;
 using System;
@@ -37,48 +38,97 @@ namespace ServicioAccesoSistema.AccesoSistema
 
         public EstadoOperacion LogeoAlSistema(string username, string pass)
         {
-            if (VerificarSiExisteUsuario(username))
+            if (!VerificarSiExisteUsuario(username))
             {
-                if (VerificarSiUsuarioEstaBloqueado(username))
-                {
-
-                    return new EstadoOperacion {
-                        Exitoso = false,
-                        Mensaje = "Usuario bloqueado. Por favor comuníquese con un Administrador."
-                    };
-                }
-
-                using var context = new GestorContextDBFactory().CreateDbContext(null);
-                var empleado = context.Empleados
-                    .FirstOrDefault(e => e.Username == username);
-
-                if (empleado == null || !HashPass.VerifyPassword(pass, empleado.Pass))
-                {
-
-                    return new EstadoOperacion
-                    {
-                        Exitoso = false,
-                        Mensaje = "El usuario y/o la contraseña son incorrectos"
-                    };
-
-                }
-
-                // Login exitoso
                 return new EstadoOperacion
                 {
-                    Exitoso = true,
-                    Mensaje = "Ingreso Exitoso!",
-                    EntidadId = empleado.PersonaId
+                    Exitoso = false,
+                    Mensaje = "Usuario no encontrado. Por favor comuníquese con un Administrador."
                 };
             }
-            return new EstadoOperacion
+
+            if (VerificarSiUsuarioEstaBloqueado(username))
             {
-                Exitoso = false,
-                Mensaje = "Usuario no encontrado. Por favor comuníquese con un Administrador."
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Usuario bloqueado. Por favor comuníquese con un Administrador."
+                };
+            }
+
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var empleado = context.Empleados
+                .FirstOrDefault(e => e.Username == username);
+
+            if (empleado == null || !HashPass.VerifyPassword(pass, empleado.Pass))
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "El usuario y/o la contraseña son incorrectos"
+                };
+            }
+
+            // Cerrar sesiones activas previas del usuario (seguridad)
+            var sesionesActivas = context.Usuarios
+                .Where(s => s.UsuarioId == empleado.PersonaId && s.Activa)
+                .ToList();
+
+            foreach (var sesion in sesionesActivas)
+            {
+                sesion.Activa = false;
+                sesion.FechaLogout = DateTime.Now;
+            }
+
+            // Crear nueva sesión
+            var nuevaSesion = new UsuarioSesion
+            {
+                UsuarioId = empleado.PersonaId,
+                FechaLogin = DateTime.Now,
+                Activa = true
             };
 
+            context.Usuarios.Add(nuevaSesion);
+
+            context.SaveChanges();
+
+            // Login exitoso
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = "Ingreso Exitoso!",
+                EntidadId = empleado.PersonaId
+            };
         }
 
+        public EstadoOperacion CerrarSesion(long usuarioId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var sesionActiva = context.Usuarios
+                .FirstOrDefault(s => s.UsuarioId == usuarioId && s.Activa);
+
+            if (sesionActiva == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "El usuario no tiene una sesión activa."
+                };
+            }
+
+            sesionActiva.Activa = false;
+            sesionActiva.FechaLogout = DateTime.Now;
+
+            context.SaveChanges();
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = "Sesión cerrada correctamente."
+            };
+        }
         public EstadoOperacion PrimerIngreso(string nombreUsuario, string pass)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);

@@ -28,55 +28,53 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnSeleccionarProducto = new Button();
-            btnGestionStock = new Button();
+            panel2.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(btnGestionStock);
-            panel1.Controls.Add(btnSeleccionarProducto);
-            panel1.Controls.SetChildIndex(btnSeleccionarProducto, 0);
-            panel1.Controls.SetChildIndex(btnGestionStock, 0);
+            panel1.Size = new Size(1258, 561);
             // 
-            // btnSeleccionarProducto
+            // pnlFiltrosAvanzados
             // 
-            btnSeleccionarProducto.Location = new Point(3, 238);
-            btnSeleccionarProducto.Name = "btnSeleccionarProducto";
-            btnSeleccionarProducto.Size = new Size(75, 44);
-            btnSeleccionarProducto.TabIndex = 1;
-            btnSeleccionarProducto.Text = "Seleccionar Producto";
-            btnSeleccionarProducto.UseVisualStyleBackColor = true;
-            btnSeleccionarProducto.Click += btnSeleccionarProducto_Click;
+            pnlFiltrosAvanzados.Size = new Size(1258, 114);
             // 
-            // btnGestionStock
+            // dtpHasta
             // 
-            btnGestionStock.Location = new Point(2, 311);
-            btnGestionStock.Name = "btnGestionStock";
-            btnGestionStock.Size = new Size(75, 72);
-            btnGestionStock.TabIndex = 2;
-            btnGestionStock.Text = "Gestión Stock";
-            btnGestionStock.UseVisualStyleBackColor = true;
-            btnGestionStock.Click += btnGestionStock_Click;
+            dtpHasta.Location = new Point(193, 42);
+            dtpHasta.Size = new Size(184, 23);
+            // 
+            // dtpDesde
+            // 
+            dtpDesde.Location = new Point(193, 3);
+            dtpDesde.Size = new Size(184, 23);
+            // 
+            // cbxFiltroOpcional
+            // 
+            cbxFiltroOpcional.Location = new Point(134, 3);
+            cbxFiltroOpcional.Size = new Size(125, 23);
+            // 
+            // cbxFiltroExtraEstado
+            // 
+            cbxFiltroExtraEstado.Location = new Point(497, 42);
+            cbxFiltroExtraEstado.Size = new Size(262, 23);
             // 
             // FProductoConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1083, 561);
+            ClientSize = new Size(1258, 561);
             Name = "FProductoConsulta";
             Text = "FProductoConsulta";
             Load += FProductoConsulta_Load;
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private Button btnSeleccionarProducto;
-        private Button btnGestionStock;
     }
 }

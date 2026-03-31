@@ -126,6 +126,7 @@ namespace Presentacion.Core.Producto
                 chkEsFraccionable.Checked = Producto.EsFraccionable;
                 cmbMarca.SelectedValue = Producto.IdMarca;
                 cmbRubro.SelectedValue = Producto.IdRubro;
+                chkControlPorLotes.Checked = Producto.ControlPorLote;
             }
             else
             {
@@ -158,7 +159,8 @@ namespace Presentacion.Core.Producto
                 IdMarca = (long)cmbMarca.SelectedValue,
                 IdRubro = (long)cmbRubro.SelectedValue,
                 CategoriaIds = _categoriasSeleccionadas.ToList(),
-                EstaEliminado = false
+                EstaEliminado = false,
+                ControlPorLote = chkControlPorLotes.Checked
             };
 
             //ARREGLAR LOS PARSE y TIPOS DE DATOS
@@ -242,7 +244,8 @@ namespace Presentacion.Core.Producto
                     IdMarca = (long)cmbMarca.SelectedValue,
                     IdRubro = (long)cmbRubro.SelectedValue,
                     CategoriaIds = _categoriasSeleccionadas.ToList(),
-                    EstaEliminado = false
+                    EstaEliminado = false,
+                    ControlPorLote = chkControlPorLotes.Checked
                 };
 
                 var response = _ProductoServicio.Modificar(ProductoModificar, EntidadID);

@@ -28,39 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnSeleccionarParaVenta = new Button();
-            btnActivarDesactivarOferta = new Button();
+            panel2.SuspendLayout();
             panel1.SuspendLayout();
+            pnlFiltrosAvanzados.SuspendLayout();
             SuspendLayout();
+            // 
+            // txtBuscar
+            // 
+            txtBuscar.Location = new Point(106, 5);
             // 
             // panel1
             // 
-            panel1.Controls.Add(btnActivarDesactivarOferta);
-            panel1.Controls.Add(btnSeleccionarParaVenta);
-            panel1.Controls.SetChildIndex(btnSeleccionarParaVenta, 0);
-            panel1.Controls.SetChildIndex(btnActivarDesactivarOferta, 0);
+            panel1.Size = new Size(1052, 561);
             // 
-            // btnSeleccionarParaVenta
+            // lblFiltro
             // 
-            btnSeleccionarParaVenta.Location = new Point(3, 241);
-            btnSeleccionarParaVenta.Name = "btnSeleccionarParaVenta";
-            btnSeleccionarParaVenta.Size = new Size(75, 85);
-            btnSeleccionarParaVenta.TabIndex = 1;
-            btnSeleccionarParaVenta.Text = "Seleccionar para venta";
-            btnSeleccionarParaVenta.UseVisualStyleBackColor = true;
-            btnSeleccionarParaVenta.Click += btnSeleccionarParaVenta_Click;
+            lblFiltro.Location = new Point(22, 83);
             // 
-            // btnActivarDesactivarOferta
+            // chkUsarFecha
             // 
-            btnActivarDesactivarOferta.Enabled = false;
-            btnActivarDesactivarOferta.Location = new Point(3, 332);
-            btnActivarDesactivarOferta.Name = "btnActivarDesactivarOferta";
-            btnActivarDesactivarOferta.Size = new Size(75, 85);
-            btnActivarDesactivarOferta.TabIndex = 2;
-            btnActivarDesactivarOferta.Text = "Activar/Desactivar";
-            btnActivarDesactivarOferta.UseVisualStyleBackColor = true;
-            btnActivarDesactivarOferta.Visible = false;
-            btnActivarDesactivarOferta.Click += btnActivarDesactivarOferta_Click;
+            chkUsarFecha.Location = new Point(218, 11);
+            // 
+            // dtpHasta
+            // 
+            dtpHasta.Location = new Point(513, 6);
+            // 
+            // dtpDesde
+            // 
+            dtpDesde.Location = new Point(307, 6);
             // 
             // FOfertaConsulta
             // 
@@ -70,15 +65,15 @@
             Name = "FOfertaConsulta";
             Text = "FOfertaConsulta";
             Load += FOfertaConsulta_Load;
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            pnlFiltrosAvanzados.ResumeLayout(false);
+            pnlFiltrosAvanzados.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private Button btnSeleccionarParaVenta;
-        private Button btnActivarDesactivarOferta;
     }
 }

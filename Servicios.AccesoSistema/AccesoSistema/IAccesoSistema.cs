@@ -11,6 +11,7 @@ namespace ServicioAccesoSistema.AccesoSistema
     public interface IAccesoSistema
     {
         EstadoOperacion LogeoAlSistema(string username, string pass);
+        EstadoOperacion CerrarSesion(long usuarioId);
         bool VerificarSiExisteUsuario(string username);
         bool VerificarSiUsuarioEstaBloqueado(string nombreUsuario);
         EstadoOperacion PrimerIngreso(string nombreUsuario, string pass);

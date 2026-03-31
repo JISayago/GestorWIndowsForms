@@ -36,7 +36,6 @@ namespace Presentacion.Core.Venta
         private long idVendedor = 0;
         private VentaDTO _venta;
         private bool finalizarVenta = false;
-        private CuerpoDetalleVenta _cuerpoDetalleVenta;
         private readonly long _usuarioLogeadoID;
         private UsuarioLogeado _usuarioLogeado;
         private ClienteDTO _clienteVenta;
@@ -51,6 +50,7 @@ namespace Presentacion.Core.Venta
         private bool _incluirCtaCte = true;
         //private List<ItemVentaDTO> itemsVenta;
         private BindingList<ItemVentaDTO> itemsVenta;
+        private CuerpoDetalleVenta _cuerpoDetalleVenta;
         private List<FormaPago> tipoDePagosVenta;
         private bool _actualizandoGrilla = false;
         private bool cargarOferta = false;
@@ -176,149 +176,156 @@ namespace Presentacion.Core.Venta
 
         private void cbxConsumidorFinal_CheckedChanged(object sender, EventArgs e)
         {
-            esConsumidorFinal = !esConsumidorFinal;
-            ActualizarCamposInicio(VENTAID);
+            esConsumidorFinal = cbxConsumidorFinal.Checked;
             btnCargarCliente.Enabled = !esConsumidorFinal;
+            ActualizarCamposInicio(VENTAID);
         }
 
         private void btnConfirmarYFPago_Click(object sender, EventArgs e)
         {
-            if (DatosSistema.CajaId.HasValue) //Verificamos antes que nada que tengamos una caja abierta
+            if (_totalVenta == 0)
             {
-                if (_totalVenta == 0)
-                {
-                    MessageBox.Show("Debe cargar al menos un producto antes de confirmar la venta.");
-                    return;
-                }
-
-                // Si ya se confirmó antes, registrar la venta directamente
-                if (finalizarVenta)
-                {
-                    this.DialogResult = DialogResult.OK;
-                    _venta = new VentaDTO
-                    {
-                        NumeroVenta = lblNro.Text,
-                        IdEmpleado = _usuarioLogeadoID,
-                        IdVendedor = idVendedor,
-                        IdCliente = VENTAID != null ? (long?)idCliente : _clienteVenta.PersonaId,
-                        FechaVenta = DateTime.Now,
-                        Total = _totalVenta,
-                        TotalSinDescuento = _totalVenta, // actualizar cuando maneje descuentos
-                        Descuento = _porcentajeDescuento,
-                        Detalle = Convert.ToString(_cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta)),
-                        Items = itemsVenta.ToList(),
-                        TiposDePagoSeleccionado = tipoDePagosVenta,
-                    };
-
-                    // Impactar cuenta corriente si corresponde
-                    _venta.TiposDePagoSeleccionado.ForEach(tp =>
-                    {
-                        if (tp.TipoDePago == TipoDePago.CtaCte)
-                        {
-                            var ctaCteServicio = new CuentaCorrienteServicio();
-                            var ctacte = ctaCteServicio.ObtenerCuentaCorrientePorClienteId(idCliente);
-
-                            if (ctacte != null)
-                            {
-                                ctaCteServicio.RegistrarCompra(ctacte.CuentaCorrienteId, tp.Monto);
-                            }
-                        }
-                    });
-                    //Deberia juntar movimiento ctacte con movimiento venta en uno solo.
-
-                    var m = _ventaServicio.NuevaVenta(_venta);
-                    MessageBox.Show($"{m.Mensaje}");
-                    //_movimientoServicio.CrearMovimientoVenta(_venta);
-
-
-                    //MessageBox.Show("Venta confirmada exitosamente.");
-                    this.Close();
-                    return;
-                }
-
-                DatosVenta datosVenta = new DatosVenta
-                {
-                    Total = _totalVenta,
-                    IncluirCtaCte = _incluirCtaCte,
-                    DescuentoEfectivo = cbxDescEfectivo.Checked
-                };
-
-                // Primer paso: elegir 1 pago / múltiples
-                var fSeleccionCantidad = new FSeleccionCantidadPagos();
-                if (fSeleccionCantidad.ShowDialog() != DialogResult.OK)
-                    return; // usuario canceló
-
-                bool esMultiples = fSeleccionCantidad.multiplePagos;
-                int cantidadPagos = fSeleccionCantidad.CantidadPagos; // en 1-pago será 1
-
-                // --- caso: múltiples pagos -> abrir FPagoMultiple para ingresar montos y formas ---
-                if (esMultiples)
-                {
-                    using var fPagoMultiple = new FPagoMultiple(cantidadPagos, _totalVenta, datosVenta, idCliente);
-                    var drMulti = fPagoMultiple.ShowDialog();
-                    if (drMulti != DialogResult.OK)
-                    {
-                        // usuario canceló el ingreso de múltiples pagos -> volvemos al flujo
-                        return;
-                    }
-
-                    var pagosSeleccionados = fPagoMultiple.ResultPagos;
-                    if (pagosSeleccionados == null || pagosSeleccionados.Count == 0)
-                    {
-                        MessageBox.Show("Debe ingresar al menos un pago válido.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-
-                    // Asignar a los objetos usados por el resto del formulario
-                    tipoDePagosVenta = pagosSeleccionados;
-                    _cuerpoDetalleVenta.tiposDePago = pagosSeleccionados;
-
-                    // Calcular pendiente
-                    var suma = pagosSeleccionados.Sum(p => p.Monto);
-                    _cuerpoDetalleVenta.saldoPendiente = _totalVenta - suma;
-                    _cuerpoDetalleVenta.pagoParcial = _cuerpoDetalleVenta.saldoPendiente > 0m;
-                    txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoTP();
-
-                    GenerarDetalleVenta(tipoDePagosVenta);
-                    return;
-                }
-                // 1 pago
-
-                var fConfirmarVenta = new FConfirmacionVenta(datosVenta, idCliente)
-                {
-                    PermitirMultiplesPagos = false
-                };
-
-                if (fConfirmarVenta.ShowDialog() == DialogResult.OK)
-                {
-                    var tipoPagosSeleccionados = fConfirmarVenta.pagos;
-                    if (tipoPagosSeleccionados == null || tipoPagosSeleccionados.Count == 0)
-                    {
-                        MessageBox.Show("Debe seleccionar al menos un tipo de pago.");
-                        return;
-                    }
-
-                    _cuerpoDetalleVenta.tiposDePago = tipoPagosSeleccionados;
-                    tipoDePagosVenta = tipoPagosSeleccionados;
-
-                    _cuerpoDetalleVenta.saldoPendiente = fConfirmarVenta.MontoPendiente;
-
-                    if (fConfirmarVenta.MontoPendiente > 0.00m)
-                    {
-                        _cuerpoDetalleVenta.pagoParcial = true;
-                    }
-
-                    txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoTP();
-
-                    GenerarDetalleVenta(tipoPagosSeleccionados);
-                }
+                MessageBox.Show("Debe cargar al menos un producto antes de confirmar la venta.");
+                return;
             }
-            else
+            if (!DatosSistema.CajaId.HasValue)
             {
                 MessageBox.Show("No hay una caja abierta. No se puede registrar la venta.");
+                return;
+            }
+            // Si ya se confirmó antes, registrar la venta directamente
+            if (finalizarVenta)
+            {
+                FinalizacionVenta();
+                return;
             }
 
-            
+            DatosVenta datosVenta = new DatosVenta
+            {
+                Total = _totalVenta,
+                IncluirCtaCte = _incluirCtaCte,
+                DescuentoEfectivo = cbxDescEfectivo.Checked
+            };
+
+            // Primer paso: elegir 1 pago / múltiples
+            var fSeleccionCantidad = new FSeleccionCantidadPagos();
+            if (fSeleccionCantidad.ShowDialog() != DialogResult.OK)
+                return; // usuario canceló
+
+            bool esMultiples = fSeleccionCantidad.multiplePagos;
+            int cantidadPagos = fSeleccionCantidad.CantidadPagos; // en 1-pago será 1
+
+            // --- caso: múltiples pagos -> abrir FPagoMultiple para ingresar montos y formas ---
+            if (esMultiples)
+            {
+                using var fPagoMultiple = new FPagoMultiple(cantidadPagos, _totalVenta, datosVenta, idCliente);
+                var drMulti = fPagoMultiple.ShowDialog();
+                if (drMulti != DialogResult.OK)
+                {
+                    // usuario canceló el ingreso de múltiples pagos -> volvemos al flujo
+                    return;
+                }
+
+                var pagosSeleccionados = fPagoMultiple.ResultPagos;
+                if (pagosSeleccionados == null || pagosSeleccionados.Count == 0)
+                {
+                    MessageBox.Show("Debe ingresar al menos un pago válido.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Asignar a los objetos usados por el resto del formulario
+                tipoDePagosVenta = pagosSeleccionados;
+                _cuerpoDetalleVenta.tiposDePago = pagosSeleccionados;
+
+                // Calcular pendiente
+                var suma = pagosSeleccionados.Sum(p => p.Monto);
+                _cuerpoDetalleVenta.saldoPendiente = _totalVenta - suma;
+                _cuerpoDetalleVenta.pagoParcial = _cuerpoDetalleVenta.saldoPendiente > 0m;
+                txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoTP();
+
+                GenerarDetalleVenta(tipoDePagosVenta);
+                return;
+            }
+            // 1 pago
+
+            var fConfirmarVenta = new FConfirmacionVenta(datosVenta, idCliente)
+            {
+                PermitirMultiplesPagos = false
+            };
+
+            if (fConfirmarVenta.ShowDialog() == DialogResult.OK)
+            {
+                var tipoPagosSeleccionados = fConfirmarVenta.pagos;
+                if (tipoPagosSeleccionados == null || tipoPagosSeleccionados.Count == 0)
+                {
+                    MessageBox.Show("Debe seleccionar al menos un tipo de pago.");
+                    return;
+                }
+
+                _cuerpoDetalleVenta.tiposDePago = tipoPagosSeleccionados;
+                tipoDePagosVenta = tipoPagosSeleccionados;
+
+                _cuerpoDetalleVenta.saldoPendiente = fConfirmarVenta.MontoPendiente;
+
+                if (fConfirmarVenta.MontoPendiente > 0.00m)
+                {
+                    _cuerpoDetalleVenta.pagoParcial = true;
+                }
+
+                txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoTP();
+
+                GenerarDetalleVenta(tipoPagosSeleccionados);
+            }
+        }
+    
+        private void FinalizacionVenta()
+        {
+            if (finalizarVenta)
+            {
+                this.DialogResult = DialogResult.OK;
+                _venta = new VentaDTO
+                {
+                    NumeroVenta = lblNro.Text,
+                    IdEmpleado = _usuarioLogeadoID,
+                    IdVendedor = idVendedor,
+                    IdCliente = VENTAID != null ? (long?)idCliente : _clienteVenta.PersonaId,
+                    FechaVenta = DateTime.Now,
+                    Total = _totalVenta,
+                    TotalSinDescuento = _totalVenta, // actualizar cuando maneje descuentos
+                    Descuento = _porcentajeDescuento,
+                    Detalle = Convert.ToString(_cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta)),
+                    Items = itemsVenta.ToList(),
+                    TiposDePagoSeleccionado = tipoDePagosVenta,
+                };
+                // Impactar cuenta corriente si corresponde
+                _venta.TiposDePagoSeleccionado.ForEach(tp =>
+                {
+                    if (tp.TipoDePago == TipoDePago.CtaCte)
+                    {
+                        var ctaCteServicio = new CuentaCorrienteServicio();
+                        var ctacte = ctaCteServicio.ObtenerCuentaCorrientePorClienteId(idCliente);
+
+                        if (ctacte != null)
+                        {
+                            ctaCteServicio.RegistrarCompra(ctacte.CuentaCorrienteId, tp.Monto, DatosSistema.CajaId.Value);
+                        }
+                    }
+                });
+
+                var m = _ventaServicio.NuevaVenta(_venta);
+                if (m.Exitoso)
+                {
+                    MessageBox.Show("Venta confirmada exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show($"Hubo un error al finalizar la venta: {m.Mensaje}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                    //MessageBox.Show("Venta confirmada exitosamente.");
+
+                    this.Close();
+                return;
+            }
         }
 
         private void GenerarDetalleVenta(List<FormaPago> tipoPagosSeleccionados)
@@ -402,9 +409,9 @@ namespace Presentacion.Core.Venta
                         EsOferta = esOF
                     };
 
-                    itemsVenta.Add(itemVenta);  // Solo agregamos a la BindingList
+                    itemsVenta.Add(itemVenta);  
                                                 //txtProductoCargado.Text = $"{itemVenta.Descripcion}";
-                                                // No necesitas reasignar DataSource ni resetear grilla acá
+                                               
                     if (cbxDescEfectivo.Checked)
                     {
                         ValidarCantidadySiEsOferta();
@@ -636,6 +643,7 @@ namespace Presentacion.Core.Venta
                 var _clienteCargado = new ClienteServicio().ObtenerClientePorId(idCliente);
                 _clienteVenta = new ClienteDTO
                 {
+                    PersonaId = _clienteCargado.PersonaId,
                     Nombre = _clienteCargado.Nombre,
                     Apellido = _clienteCargado.Apellido
                 };
@@ -872,6 +880,8 @@ namespace Presentacion.Core.Venta
             {
                 var idOferta = Fofertas.ofertaSeleccionada.Value;
 
+                var cantidad = 0.0m;
+
                 var Oferta = _ofertaServicio.ObtenerOfertaActivaPorId(idOferta);
                 if (Oferta == null)
                 {
@@ -880,24 +890,29 @@ namespace Presentacion.Core.Venta
                 }
                 else
                 {
+                    var fCantidad = new FCantidadItem();
 
-                    var OfertaVenta = new ItemVentaDTO
+                    if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
                     {
-                        ItemId = Oferta.OfertaDescuentoId,
-                        Descripcion = Oferta.Descripcion,
-                        PrecioVenta = Oferta.PrecioOriginal,
-                        PrecioOferta = Oferta.PrecioFinal,
-                        Cantidad = (decimal)Oferta.CantidadProductosDentroOferta,
-                        Medida = string.Empty,
-                        UnidadMedida = string.Empty,
-                        EsOferta = true
-                    };
+                        cantidad = fCantidad.cantidad;
 
-                    itemsVenta.Add(OfertaVenta);  // Solo agregamos a la BindingList
-                                                  //txtProductoCargado.Text = $"{OfertaVenta.Descripcion}";
-                                                  // No necesitas reasignar DataSource ni resetear grilla acá
-                    ValidarCantidadySiEsOferta();
-                    CalcularTotal();
+                        var ofertaVenta = new ItemVentaDTO
+                        {
+                            ItemId = Oferta.OfertaDescuentoId,
+                            Descripcion = Oferta.Descripcion,
+                            PrecioVenta = Oferta.PrecioOriginal,
+                            PrecioOferta = Oferta.PrecioFinal,
+                            Cantidad = cantidad, // cantidad de ofertas vendidas
+                            Medida = string.Empty,
+                            UnidadMedida = string.Empty,
+                            EsOferta = true
+                        };
+
+                        itemsVenta.Add(ofertaVenta);
+
+                        ValidarCantidadySiEsOferta();
+                        CalcularTotal();
+                    }
                 }
             }
         }

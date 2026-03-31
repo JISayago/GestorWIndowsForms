@@ -54,7 +54,7 @@
             ClientSize = new Size(800, 561);
             Name = "FMovimientoConsulta";
             Text = "FMovimientoConsulta";
-            Load += FMovimientoConsulta_Load;
+            //Load += FMovimientoConsulta_Load;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);

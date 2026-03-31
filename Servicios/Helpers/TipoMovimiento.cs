@@ -9,6 +9,8 @@ namespace Servicios.Helpers
     public enum TipoMovimiento
     {
         Ingreso = 1,
-        Egreso = 2
+        Egreso = 2,
+        
+
     }
 }
