@@ -18,6 +18,7 @@ namespace AccesoDatos.Entidades
         public DateTime? FechaVencimiento { get; set; }
         public bool EstaVencido { get; set; }
         public bool EstaActivo { get; set; }
+        public bool EstaEliminado { get; set; }
 
         public Producto Producto { get; set; }
         public ICollection<DetalleVentaLote> DetalleVentaLote { get; set; }

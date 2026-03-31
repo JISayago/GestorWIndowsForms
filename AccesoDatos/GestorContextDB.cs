@@ -1063,6 +1063,10 @@ namespace AccesoDatos
                     .HasColumnName("esta_activo")
                     .IsRequired();
 
+                entity.Property(entity => entity.EstaEliminado)
+                    .HasColumnName("esta_eliminado")
+                    .IsRequired();
+
                 //Relación con Producto
                 entity.HasOne(e => e.Producto)
                     .WithMany(p => p.Lotes) // o .WithMany(p => p.Lotes) si agregás la colección en Producto
