@@ -187,7 +187,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                 }
 
                 Debug.WriteLine("20 - Actualizar stock");
-
+                    //EVALUAR EL FORMATO DE ITEMVENTADTO PUEDE SER OFERTA Y TENER QUE DESCONTAR EN MAS DE UN PRODUCTO.
                 if (ventaDto.Total < 0)
                     _productoServicio.RestaurarStockProductos(itemsStock, context);
                 else
