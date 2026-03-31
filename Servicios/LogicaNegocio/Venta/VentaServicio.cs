@@ -97,14 +97,15 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
             Debug.WriteLine("8 - Crear movimiento");
 
             var movimientoServicio = new Movimiento.MovimientoServicio();
-            movimientoServicio.CrearMovimientoVenta(
-                venta.VentaId,
-                venta.Total,
-                movimientoDetalle,
-                context
-            );
+                movimientoServicio.CrearMovimientoVenta(
+           venta.VentaId,
+           venta.Total,
+           movimientoDetalle,
+           TipoEntidadMovimiento.Venta,
+           context
+       );
 
-            Debug.WriteLine("9 - Movimiento creado");
+                Debug.WriteLine("9 - Movimiento creado");
 
             Debug.WriteLine("10 - Actualizar caja");
 
