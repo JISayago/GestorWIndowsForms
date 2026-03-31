@@ -35,7 +35,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     };
                 }
 
-                if (venta.Estado == 3) // 3 = Anulado
+                if (venta.Estado == 3) // Anulado
                 {
                     return new EstadoOperacion
                     {
@@ -52,6 +52,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 if (!cajaId.HasValue)
                     throw new Exception("No hay una caja abierta para revertir la operación.");
 
+                // 🏦 Caja (correcto)
                 cajaServicio.RegistrarTransaccion(
                     context,
                     venta.Total,
@@ -59,13 +60,15 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     cajaId.Value
                 );
 
-                // 🔁 Movimiento inverso
+                // 🔁 Movimiento inverso (corregido)
                 var movimientoServicio = new Movimiento.MovimientoServicio();
 
                 movimientoServicio.CrearMovimientoVenta(
                     venta.VentaLibreId,
-                    venta.Total,
-                    TipoMovimientoDetalle.Cancelacion, context
+                    -venta.Total, // 🔥 invertir signo
+                    TipoMovimientoDetalle.Cancelacion,
+                    TipoEntidadMovimiento.VentaLibre, // 🔥 nuevo
+                    context
                 );
 
                 context.SaveChanges();
@@ -125,9 +128,9 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
         }
 
         public AccesoDatos.Entidades.VentaLibre CrearVentaLibreInterna(
-    GestorContextDB context,
-    VentaLibreDTO dto,
-    TipoMovimientoDetalle movimientoDetalle)
+         GestorContextDB context,
+         VentaLibreDTO dto,
+         TipoMovimientoDetalle movimientoDetalle)
         {
             try
             {
@@ -171,10 +174,12 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 
                 // 💰 Movimiento
                 var movimientoServicio = new Movimiento.MovimientoServicio();
+
                 movimientoServicio.CrearMovimientoVenta(
                     venta.VentaLibreId,
-                    venta.Total,
+                    venta.Total, // 👈 negativo si es cancelación
                     movimientoDetalle,
+                    TipoEntidadMovimiento.VentaLibre, // 👈 🔥 CLAVE
                     context
                 );
 
