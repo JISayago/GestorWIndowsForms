@@ -31,7 +31,7 @@ namespace Presentacion.Core.Producto
         private decimal stockActual = 0;
         public bool RealizoOperacion { get; private set; } = false;
 
-        public FGestionStockLotes(string nombreProducto, TipoOperacion tipoOperacion, long? entidadId = null)
+        public FGestionStockLotes(TipoOperacion tipoOperacion, string? nombreProducto = null, long? entidadId = null)
             : base(tipoOperacion, entidadId)
         {
             InitializeComponent();

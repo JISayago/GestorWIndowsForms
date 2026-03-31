@@ -1,6 +1,6 @@
-﻿namespace Presentacion.Core.Producto
+﻿namespace Presentacion.Core.Producto.Lote
 {
-    partial class FProductoConsulta
+    partial class FLoteConsulta
     {
         /// <summary>
         /// Required designer variable.
@@ -34,40 +34,44 @@
             // 
             // panel1
             // 
-            panel1.Size = new Size(1258, 561);
+            panel1.Size = new Size(800, 450);
             // 
             // pnlFiltrosAvanzados
             // 
-            pnlFiltrosAvanzados.Size = new Size(1258, 114);
+            pnlFiltrosAvanzados.Size = new Size(765, 114);
+            // 
+            // chkUsarFecha
+            // 
+            chkUsarFecha.Size = new Size(61, 19);
             // 
             // dtpHasta
             // 
-            dtpHasta.Location = new Point(193, 42);
-            dtpHasta.Size = new Size(184, 23);
+            dtpHasta.Location = new Point(70, 42);
+            dtpHasta.Size = new Size(61, 23);
             // 
             // dtpDesde
             // 
-            dtpDesde.Location = new Point(193, 3);
-            dtpDesde.Size = new Size(184, 23);
+            dtpDesde.Location = new Point(70, 3);
+            dtpDesde.Size = new Size(61, 23);
             // 
             // cbxFiltroOpcional
             // 
-            cbxFiltroOpcional.Location = new Point(134, 3);
-            cbxFiltroOpcional.Size = new Size(125, 23);
+            cbxFiltroOpcional.Location = new Point(47, 3);
+            cbxFiltroOpcional.Size = new Size(39, 23);
             // 
             // cbxFiltroExtraEstado
             // 
-            cbxFiltroExtraEstado.Location = new Point(497, 42);
-            cbxFiltroExtraEstado.Size = new Size(262, 23);
+            cbxFiltroExtraEstado.Location = new Point(177, 42);
+            cbxFiltroExtraEstado.Size = new Size(89, 23);
             // 
-            // FProductoConsulta
+            // FLoteConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1258, 561);
-            Name = "FProductoConsulta";
-            Text = "FProductoConsulta";
-            Load += FProductoConsulta_Load;
+            ClientSize = new Size(800, 450);
+            Name = "FLoteConsulta";
+            Text = "FLoteConsulta";
+            Load += FLoteConsulta_Load;
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             panel1.ResumeLayout(false);

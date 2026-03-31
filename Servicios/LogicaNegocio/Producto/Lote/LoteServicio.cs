@@ -1,5 +1,6 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
@@ -66,22 +67,146 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 EntidadId = nuevoLote.LoteId
             };
         }
-        
-        public void ModficiarLote(long loteId) 
+
+        public IEnumerable<LoteDTO> ObtenerLote(string cadenaBuscar)
         {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            return context.Lotes
+                .Where(x => x.NumeroLote.Contains(cadenaBuscar))
+                .Select(x => new LoteDTO
+                {
+                    Id = x.LoteId,
+                    IdProducto = x.IdProducto,
+                    StockInicial = x.StockIncial,
+                    StockActual = x.StockActual,
+                    NumeroLote = x.NumeroLote,
+                    Descripcion = x.Descripcion,
+                    FechaAlta = x.FechaAlta,
+                    FechaVencimiento = x.FechaVencimiento,
+                    EstaVencido = x.EstaVencido,
+                    EstaActivo = x.EstaActivo,
+                    NombreProducto = x.Producto.Descripcion
+                })
+                .ToList();
+        }
+
+        public EstadoOperacion ModficiarLote(LoteDTO loteDto, long loteId) 
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+            var loteEditar = context.Lotes
+                    .FirstOrDefault(x => x.LoteId == loteId);
+
+            if (loteEditar == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Lote no encontrado."
+                };
+            }
+
+            loteEditar.NumeroLote = loteDto.NumeroLote;
+            loteEditar.StockIncial = loteDto.StockInicial;
+            loteEditar.StockActual = loteDto.StockActual;
+            loteEditar.Descripcion = loteDto.Descripcion;
+            loteEditar.FechaAlta = loteDto.FechaAlta;
+            loteEditar.FechaVencimiento = loteDto.FechaVencimiento;
+            loteEditar.EstaVencido = loteDto.EstaVencido;
+            loteEditar.EstaActivo = loteDto.EstaActivo;
+
+            context.SaveChanges();
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = $"El lote {loteEditar.NumeroLote} de {loteEditar.Producto.Descripcion} fue modificado correctamente."
+            };
 
         }
 
-        public void EliminarLote(long loteId)
+        public EstadoOperacion EliminarLote(long loteId)
         {
-            //eliminado logico
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+            var loteEliminar = context.Lotes
+                    .FirstOrDefault(x => x.LoteId == loteId);
+
+            if (loteEliminar == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Lote no encontrado."
+                };
+            }
+
+            //loteEliminar.EstaEliminado = true;
+
+            context.SaveChanges();
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = $"El lote {loteEliminar.NumeroLote} de {loteEliminar.Producto.Descripcion} fue eliminado correctamente."
+            };
         }
-        
+
+        public IEnumerable<LoteDTO> ObtenerLotesEliminados(string cadenabuscar, string columna)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var query = context.Lotes
+                .AsNoTracking();
+                //.Where(e => e.EstaEliminado);
+
+            /*if (!string.IsNullOrWhiteSpace(cadenabuscar))
+            {
+                switch (columna)
+                {
+                    case "MarcaNombre":
+                        query = query.Where(e => e.Marca.Nombre.Contains(cadenabuscar));
+                        break;
+
+                    case "RubroNombre":
+                        query = query.Where(e => e.Rubro.Nombre.Contains(cadenabuscar));
+                        break;
+
+                    case "Codigo":
+                        query = query.Where(e => e.Codigo.Contains(cadenabuscar));
+                        break;
+
+                    case "CodigoBarra":
+                        query = query.Where(e => e.CodigoBarra.Contains(cadenabuscar));
+                        break;
+
+                    default:
+                        query = query.Where(e => e.Descripcion.Contains(cadenabuscar));
+                        break;
+                }
+            }*/
+
+            return query
+                .ToList()
+                .Select(e => new LoteDTO
+                {
+                    Id = e.LoteId,
+                    IdProducto = e.IdProducto,
+                    StockInicial = e.StockIncial,
+                    StockActual = e.StockActual,
+                    NumeroLote = e.NumeroLote,
+                    Descripcion = e.Descripcion,
+                    FechaAlta = e.FechaAlta,
+                    FechaVencimiento = e.FechaVencimiento,
+                    EstaVencido = e.EstaVencido,
+                    EstaActivo = e.EstaActivo,
+                    NombreProducto = e.Producto.Descripcion
+                })
+                .ToList();
+        }
+
         public LoteDTO ObtenerLotePorId(long loteId)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var lote = context.Lotes.FirstOrDefault(l => l.LoteId == loteId);
+            var lote = context.Lotes.Include(l => l.Producto).FirstOrDefault(l => l.LoteId == loteId);
 
             //TODO: validar que no sea null
             var loteDTO = new LoteDTO
@@ -95,10 +220,12 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 FechaAlta = lote.FechaAlta,
                 FechaVencimiento = lote.FechaVencimiento,
                 EstaVencido = lote.EstaVencido,
-                EstaActivo = lote.EstaActivo
+                EstaActivo = lote.EstaActivo,
+                NombreProducto = lote.Producto.Descripcion
             };
             return loteDTO;
         }
+
 
         public List<LoteDTO> ObtenerLotesDeUnProducto(long productoId)
         {
@@ -198,6 +325,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
 
             context.SaveChanges();
         }
+
         public string GenerarNumeroLote()
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);

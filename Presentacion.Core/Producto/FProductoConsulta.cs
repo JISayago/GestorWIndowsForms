@@ -75,7 +75,7 @@ namespace Presentacion.Core.Producto
 
             if ((bool)controlPorLotes.Value)
             {
-                var fLotes = new FGestionStockLotes(nombreProducto, TipoOperacion.Nuevo, id.Value);
+                var fLotes = new FGestionStockLotes(TipoOperacion.Nuevo, nombreProducto, id.Value);
                 fLotes.ShowDialog();
 
                 if (fLotes.RealizoOperacion)
@@ -220,12 +220,12 @@ namespace Presentacion.Core.Producto
         private void FProductoConsulta_Load(object sender, EventArgs e)
         {
             var opciones = new List<OpcionFiltro>
-        {
-        new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
-        new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
-        new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
-        new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
-        };
+            {
+            new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
+            new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
+            new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
+            new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
+            };
 
             ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
         }

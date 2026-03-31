@@ -9,6 +9,7 @@ using Presentacion.Core.Herramientas;
 using Presentacion.Core.Movimiento;
 using Presentacion.Core.Oferta;
 using Presentacion.Core.Producto;
+using Presentacion.Core.Producto.Lote;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
 using Presentacion.Core.Venta;
@@ -139,6 +140,12 @@ namespace Presentacion.Core.Administracion
         {
             var FActDesac = new FOfertaConsulta(true, "a");
             FActDesac.Show();
+        }
+
+        private void lOTESToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var flote = new FLoteConsulta();
+            flote.Show();
         }
 
         private void btnMovimientos_Click(object sender, EventArgs e)
