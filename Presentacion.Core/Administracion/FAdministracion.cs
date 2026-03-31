@@ -11,6 +11,7 @@ using Presentacion.Core.Oferta;
 using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
+using Presentacion.Core.Venta;
 using ScottPlot;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Caja;
@@ -161,9 +162,9 @@ namespace Presentacion.Core.Administracion
         private void nUEVAOFERTAToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var fGrupo = new FOfertaGrupoABM();
-            
-                fGrupo.ShowDialog();
-            
+
+            fGrupo.ShowDialog();
+
         }
 
         private void btnGasto_Click(object sender, EventArgs e)
@@ -570,6 +571,19 @@ namespace Presentacion.Core.Administracion
             grafico5(DateTime.Now.Year);
             grafico6(DateTime.Now.Year);
             cbMesGrafico.SelectedIndex = DateTime.Now.Month - 1;
+        }
+
+        private void ventaLibreToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fvl = new FVentaLibre(_logeadoId);
+
+            fvl.Show();
+        }
+
+        private void consultaVentaLibreToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var cfvl = new FVentaLibreConsulta();
+            cfvl.Show();
         }
     }
 }

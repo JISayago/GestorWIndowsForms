@@ -34,19 +34,28 @@ namespace Servicios.LogicaNegocio.Movimiento
 
             try
             {
-                var numeroMovimiento = $"MOV-VENTA-{ventaId}-{DateTime.Now:yyyyMMddHHmmss}";
-
-                var movimiento = new AccesoDatos.Entidades.Movimiento
+                var numeroMovimiento = string.Empty;
+                if ((int)detalleTipo == 4)
                 {
-                    NumeroMovimiento = numeroMovimiento,
-                    EntidadId = ventaId,
-                    TipoEntidad = (int)TipoEntidadMovimiento.Venta,
-                    TipoMovimiento = (int)TipoMovimiento.Ingreso,
-                    TipoMovimientoDetalle = (int)detalleTipo,
-                    Monto = monto,
-                    FechaMovimiento = DateTime.Now,
-                    EstaEliminado = false
-                };
+                 numeroMovimiento = $"MOV-VENTA-{ventaId}-{DateTime.Now:yyyyMMddHHmmss}";
+
+                }
+                else
+                {
+                     numeroMovimiento = $"MOV-VENTALi-{ventaId}-{DateTime.Now:yyyyMMddHHmmss}";
+                }
+
+                    var movimiento = new AccesoDatos.Entidades.Movimiento
+                    {
+                        NumeroMovimiento = numeroMovimiento,
+                        EntidadId = ventaId,
+                        TipoEntidad = (int)detalleTipo == 4 ? (int)TipoEntidadMovimiento.Venta : (int)TipoEntidadMovimiento.VentaLibre,
+                        TipoMovimiento = (int)TipoMovimiento.Ingreso,
+                        TipoMovimientoDetalle = (int)detalleTipo,
+                        Monto = monto,
+                        FechaMovimiento = DateTime.Now,
+                        EstaEliminado = false
+                    };
 
                 context.Movimientos.Add(movimiento);
             }
