@@ -12,6 +12,7 @@ namespace Servicios.Helpers
         CuentaCorriente = 2,
         Producto = 3,
         Caja = 4,
-        Gasto = 5
+        Gasto = 5,
+        VentaLibre = 6,
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Servicios.LogicaNegocio.Venta.DTO
 {
-    internal class VentaPagoDetalleDTO
+    public class VentaPagoDetalleDTO
     {
         public long VentaPagoDetalleId { get; set; }
         public long IdVenta { get; set; }

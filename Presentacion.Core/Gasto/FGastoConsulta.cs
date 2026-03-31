@@ -208,9 +208,9 @@ namespace Presentacion.Core.Gasto
         private void FGastoConsulta_Load(object sender, EventArgs e)
         {
             var opciones = new List<OpcionFiltro>
-    {
-        new OpcionFiltro { Texto = "Todos", Valor = "0" }
-    };
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "0" }
+            };
 
             foreach (EstadoGasto estado in Enum.GetValues(typeof(EstadoGasto)))
             {

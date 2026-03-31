@@ -46,6 +46,7 @@
             nUEVAOFERTAToolStripMenuItem = new ToolStripMenuItem();
             cONFIGURACIONToolStripMenuItem = new ToolStripMenuItem();
             tIPOPAGOToolStripMenuItem = new ToolStripMenuItem();
+            ventaLibreToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanel1 = new TableLayoutPanel();
             btnGasto = new Button();
             btnVolver = new Button();
@@ -81,6 +82,7 @@
             formsPlot5 = new ScottPlot.WinForms.FormsPlot();
             dgvGrilla = new DataGridView();
             sqlCommand1 = new Microsoft.Data.SqlClient.SqlCommand();
+            consultaVentaLibreToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             tlpBaseFiltrado.SuspendLayout();
@@ -217,7 +219,7 @@
             // 
             // cONFIGURACIONToolStripMenuItem
             // 
-            cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tIPOPAGOToolStripMenuItem });
+            cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tIPOPAGOToolStripMenuItem, ventaLibreToolStripMenuItem, consultaVentaLibreToolStripMenuItem });
             cONFIGURACIONToolStripMenuItem.Name = "cONFIGURACIONToolStripMenuItem";
             cONFIGURACIONToolStripMenuItem.Size = new Size(114, 20);
             cONFIGURACIONToolStripMenuItem.Text = "CONFIGURACION";
@@ -225,9 +227,16 @@
             // tIPOPAGOToolStripMenuItem
             // 
             tIPOPAGOToolStripMenuItem.Name = "tIPOPAGOToolStripMenuItem";
-            tIPOPAGOToolStripMenuItem.Size = new Size(144, 22);
+            tIPOPAGOToolStripMenuItem.Size = new Size(180, 22);
             tIPOPAGOToolStripMenuItem.Text = "TIPO PAGO??";
             tIPOPAGOToolStripMenuItem.Click += tIPOPAGOToolStripMenuItem_Click;
+            // 
+            // ventaLibreToolStripMenuItem
+            // 
+            ventaLibreToolStripMenuItem.Name = "ventaLibreToolStripMenuItem";
+            ventaLibreToolStripMenuItem.Size = new Size(180, 22);
+            ventaLibreToolStripMenuItem.Text = "VentaLibre";
+            ventaLibreToolStripMenuItem.Click += ventaLibreToolStripMenuItem_Click;
             // 
             // tableLayoutPanel1
             // 
@@ -656,6 +665,13 @@
             sqlCommand1.CommandTimeout = 30;
             sqlCommand1.EnableOptimizedParameterBinding = false;
             // 
+            // consultaVentaLibreToolStripMenuItem
+            // 
+            consultaVentaLibreToolStripMenuItem.Name = "consultaVentaLibreToolStripMenuItem";
+            consultaVentaLibreToolStripMenuItem.Size = new Size(180, 22);
+            consultaVentaLibreToolStripMenuItem.Text = "ConsultaVentaLibre";
+            consultaVentaLibreToolStripMenuItem.Click += consultaVentaLibreToolStripMenuItem_Click;
+            // 
             // FAdministracion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -748,5 +764,7 @@
         private ScottPlot.WinForms.FormsPlot formsPlot5;
         private ScottPlot.WinForms.FormsPlot formsPlot4;
         private ScottPlot.WinForms.FormsPlot formsPlot6;
+        private ToolStripMenuItem ventaLibreToolStripMenuItem;
+        private ToolStripMenuItem consultaVentaLibreToolStripMenuItem;
     }
 }

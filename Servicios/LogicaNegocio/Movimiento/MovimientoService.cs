@@ -22,53 +22,63 @@ namespace Servicios.LogicaNegocio.Movimiento
 {
     public class MovimientoServicio : IMovimientoServicio
     {
-        public void CrearMovimientoVenta(
-     long ventaId,
-     decimal monto,
-     TipoMovimientoDetalle detalleTipo,
-     GestorContextDB context)
+public void CrearMovimientoVenta(
+    long ventaId,
+    decimal monto,
+    TipoMovimientoDetalle detalleTipo,
+    GestorContextDB context)
+{
+    if (ventaId <= 0)
+        throw new Exception("El movimiento no puede crearse porque la venta no tiene un ID válido.");
+
+    try
+    {
+        // 🔥 1. Tipo de movimiento (Ingreso / Egreso) según monto
+        var esEgreso = monto < 0;
+
+        var tipoMovimiento = esEgreso
+            ? TipoMovimiento.Egreso
+            : TipoMovimiento.Ingreso;
+
+        // 🔥 2. Tipo de entidad (Venta o VentaLibre)
+        TipoEntidadMovimiento tipoEntidad;
+
+        if (detalleTipo == TipoMovimientoDetalle.Venta)
+            tipoEntidad = TipoEntidadMovimiento.Venta;
+        else if (detalleTipo == TipoMovimientoDetalle.VentaLibre)
+            tipoEntidad = TipoEntidadMovimiento.VentaLibre;
+        else
+            throw new Exception("Tipo de movimiento no válido para ventas.");
+
+        // 🔥 3. Prefijo del número
+        var prefijoOperacion = esEgreso ? "CAN" : "MOV";
+        var prefijoEntidad = tipoEntidad == TipoEntidadMovimiento.Venta
+            ? "VENTA"
+            : "VENTALIB";
+
+        var numeroMovimiento = $"{prefijoOperacion}-{prefijoEntidad}-{ventaId}-{DateTime.Now:yyyyMMddHHmmss}";
+
+        // 🔥 4. Crear movimiento
+        var movimiento = new AccesoDatos.Entidades.Movimiento
         {
+            NumeroMovimiento = numeroMovimiento,
+            EntidadId = ventaId,
+            TipoEntidad = (int)tipoEntidad,
+            TipoMovimiento = (int)tipoMovimiento,
+            TipoMovimientoDetalle = (int)detalleTipo,
+            Monto = Math.Abs(monto), // siempre positivo
+            FechaMovimiento = DateTime.Now,
+            EstaEliminado = false
+        };
 
-            if (ventaId <= 0)
-                throw new Exception("El movimiento no puede crearse porque la venta no tiene un ID válido.");
-
-            try
-            {
-                var esEgreso = monto < 0;
-
-                var tipoMovimiento = esEgreso
-                    ? TipoMovimiento.Egreso
-                    : TipoMovimiento.Ingreso;
-
-               
-                var prefijo = esEgreso ? "CAN-VENTA" : "MOV-VENTA";
-
-                var numeroMovimiento = $"{prefijo}-{ventaId}-{DateTime.Now:yyyyMMddHHmmss}";
-
-                var movimiento = new AccesoDatos.Entidades.Movimiento
-                {
-                    NumeroMovimiento = numeroMovimiento,
-                    EntidadId = ventaId,
-                    TipoEntidad = (int)TipoEntidadMovimiento.Venta,
-
-                    TipoMovimiento = (int)tipoMovimiento,
-
-                    TipoMovimientoDetalle = (int)detalleTipo,
-
-                    Monto = Math.Abs(monto),
-
-                    FechaMovimiento = DateTime.Now,
-                    EstaEliminado = false
-                };
-
-                context.Movimientos.Add(movimiento);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al crear movimiento de venta: {ex}");
-                throw;
-            }
-        }
+        context.Movimientos.Add(movimiento);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error al crear movimiento de venta: {ex}");
+        throw;
+    }
+}
 
         public void CrearMovimientoCtaCte(decimal total, long cajaId, long cuentaCorrienteId, TipoMovimientoDetalle detalleTipo, GestorContextDB context = null)
         {
