@@ -579,5 +579,11 @@ namespace Presentacion.Core.Administracion
 
             fvl.Show();
         }
+
+        private void consultaVentaLibreToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var cfvl = new FVentaLibreConsulta();
+            cfvl.Show();
+        }
     }
 }

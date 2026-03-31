@@ -42,7 +42,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                 }
                 else
                 {
-                     numeroMovimiento = $"MOV-VENTA-LIBRE-{ventaId}-{DateTime.Now:yyyyMMddHHmmss}";
+                     numeroMovimiento = $"MOV-VENTALi-{ventaId}-{DateTime.Now:yyyyMMddHHmmss}";
                 }
 
                     var movimiento = new AccesoDatos.Entidades.Movimiento

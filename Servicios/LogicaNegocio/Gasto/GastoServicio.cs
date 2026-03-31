@@ -144,6 +144,8 @@ namespace Servicios.LogicaNegocio.Gasto
                 if (!existeEmpleado)
                     return new EstadoOperacion { Exitoso = false, Mensaje = "El empleado indicado no existe." };
 
+           
+
                 if (!string.IsNullOrEmpty(gastoDto.NumeroGasto) &&
                     context.Gastos.Any(g => g.NumeroGasto == gastoDto.NumeroGasto))
                 {
