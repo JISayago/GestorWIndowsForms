@@ -12,6 +12,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
     public interface ILoteServicio
     {
         EstadoOperacion CrearLote(LoteDTO lote);
+        IEnumerable<LoteDTO> ObtenerLote(string cadenaBuscar);
         void ModficiarLote(long loteId);
         void EliminarLote(long loteId);
         LoteDTO ObtenerLotePorId(long loteId);

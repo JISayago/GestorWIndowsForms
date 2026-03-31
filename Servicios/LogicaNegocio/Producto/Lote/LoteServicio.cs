@@ -66,7 +66,29 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 EntidadId = nuevoLote.LoteId
             };
         }
-        
+
+        public IEnumerable<LoteDTO> ObtenerLote(string cadenaBuscar)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            return context.Lotes
+                .Where(x => /*!x.EstaEliminado &&*/ x.NumeroLote.Contains(cadenaBuscar))
+                .Select(x => new LoteDTO
+                {
+                    Id = x.LoteId,
+                    IdProducto = x.IdProducto,
+                    StockInicial = x.StockIncial,
+                    StockActual = x.StockActual,
+                    NumeroLote = x.NumeroLote,
+                    Descripcion = x.Descripcion,
+                    FechaAlta = x.FechaAlta,
+                    FechaVencimiento = x.FechaVencimiento,
+                    EstaVencido = x.EstaVencido,
+                    EstaActivo = x.EstaActivo
+                })
+                .ToList();
+        }
+
         public void ModficiarLote(long loteId) 
         {
 
@@ -99,6 +121,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             };
             return loteDTO;
         }
+
 
         public List<LoteDTO> ObtenerLotesDeUnProducto(long productoId)
         {
@@ -198,6 +221,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
 
             context.SaveChanges();
         }
+
         public string GenerarNumeroLote()
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);

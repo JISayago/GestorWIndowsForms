@@ -81,6 +81,7 @@
             formsPlot5 = new ScottPlot.WinForms.FormsPlot();
             dgvGrilla = new DataGridView();
             sqlCommand1 = new Microsoft.Data.SqlClient.SqlCommand();
+            lOTESToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             tlpBaseFiltrado.SuspendLayout();
@@ -112,7 +113,7 @@
             // 
             // pRODUCTOToolStripMenuItem
             // 
-            pRODUCTOToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sTOCKToolStripMenuItem, mARCASToolStripMenuItem, cATEGORIASToolStripMenuItem, rUBROSToolStripMenuItem });
+            pRODUCTOToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sTOCKToolStripMenuItem, mARCASToolStripMenuItem, cATEGORIASToolStripMenuItem, rUBROSToolStripMenuItem, lOTESToolStripMenuItem });
             pRODUCTOToolStripMenuItem.Name = "pRODUCTOToolStripMenuItem";
             pRODUCTOToolStripMenuItem.Size = new Size(81, 20);
             pRODUCTOToolStripMenuItem.Text = "PRODUCTO";
@@ -120,28 +121,28 @@
             // sTOCKToolStripMenuItem
             // 
             sTOCKToolStripMenuItem.Name = "sTOCKToolStripMenuItem";
-            sTOCKToolStripMenuItem.Size = new Size(143, 22);
+            sTOCKToolStripMenuItem.Size = new Size(180, 22);
             sTOCKToolStripMenuItem.Text = "STOCK";
             sTOCKToolStripMenuItem.Click += sTOCKToolStripMenuItem_Click;
             // 
             // mARCASToolStripMenuItem
             // 
             mARCASToolStripMenuItem.Name = "mARCASToolStripMenuItem";
-            mARCASToolStripMenuItem.Size = new Size(143, 22);
+            mARCASToolStripMenuItem.Size = new Size(180, 22);
             mARCASToolStripMenuItem.Text = "MARCAS";
             mARCASToolStripMenuItem.Click += mARCASToolStripMenuItem_Click;
             // 
             // cATEGORIASToolStripMenuItem
             // 
             cATEGORIASToolStripMenuItem.Name = "cATEGORIASToolStripMenuItem";
-            cATEGORIASToolStripMenuItem.Size = new Size(143, 22);
+            cATEGORIASToolStripMenuItem.Size = new Size(180, 22);
             cATEGORIASToolStripMenuItem.Text = "CATEGORIAS";
             cATEGORIASToolStripMenuItem.Click += cATEGORIASToolStripMenuItem_Click;
             // 
             // rUBROSToolStripMenuItem
             // 
             rUBROSToolStripMenuItem.Name = "rUBROSToolStripMenuItem";
-            rUBROSToolStripMenuItem.Size = new Size(143, 22);
+            rUBROSToolStripMenuItem.Size = new Size(180, 22);
             rUBROSToolStripMenuItem.Text = "RUBROS";
             rUBROSToolStripMenuItem.Click += rUBROSToolStripMenuItem_Click;
             // 
@@ -656,6 +657,13 @@
             sqlCommand1.CommandTimeout = 30;
             sqlCommand1.EnableOptimizedParameterBinding = false;
             // 
+            // lOTESToolStripMenuItem
+            // 
+            lOTESToolStripMenuItem.Name = "lOTESToolStripMenuItem";
+            lOTESToolStripMenuItem.Size = new Size(180, 22);
+            lOTESToolStripMenuItem.Text = "LOTES";
+            lOTESToolStripMenuItem.Click += lOTESToolStripMenuItem_Click;
+            // 
             // FAdministracion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -748,5 +756,6 @@
         private ScottPlot.WinForms.FormsPlot formsPlot5;
         private ScottPlot.WinForms.FormsPlot formsPlot4;
         private ScottPlot.WinForms.FormsPlot formsPlot6;
+        private ToolStripMenuItem lOTESToolStripMenuItem;
     }
 }
