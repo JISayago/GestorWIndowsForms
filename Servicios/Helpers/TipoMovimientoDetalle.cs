@@ -13,6 +13,7 @@ namespace Servicios.Helpers
         Stock = 3,
         Venta = 4,
         Compra = 5,
-        Servicios = 6 // ver por el tema de los tipos de gasto mirarlo con el abm de gasto en las opciones de categoria de movimiento
+        Servicios = 6, // ver por el tema de los tipos de gasto mirarlo con el abm de gasto en las opciones de categoria de movimiento
+        VentaLibre = 7,
     }
 }

@@ -23,27 +23,56 @@ namespace Servicios.LogicaNegocio.Movimiento
     public class MovimientoServicio : IMovimientoServicio
     {
         public void CrearMovimientoVenta(
-     long ventaId,
-     decimal monto,
-     TipoMovimientoDetalle detalleTipo,
-     GestorContextDB context)
+            long ventaId,
+            decimal monto,
+            TipoMovimientoDetalle detalleTipo,
+            TipoEntidadMovimiento tipoEntidad,
+            GestorContextDB context)
         {
-
             if (ventaId <= 0)
                 throw new Exception("El movimiento no puede crearse porque la venta no tiene un ID válido.");
 
             try
             {
-                var numeroMovimiento = $"MOV-VENTA-{ventaId}-{DateTime.Now:yyyyMMddHHmmss}";
+                // 🔥 1. Tipo de movimiento (Ingreso / Egreso)
+                var esEgreso = monto < 0;
 
+                var tipoMovimiento = esEgreso
+                    ? TipoMovimiento.Egreso
+                    : TipoMovimiento.Ingreso;
+
+                // 🔥 2. Prefijo de operación
+                var prefijoOperacion = esEgreso ? "CAN" : "MOV";
+
+                // 🔥 3. Prefijo de entidad
+                string prefijoEntidad;
+
+                switch (tipoEntidad)
+                {
+                    case TipoEntidadMovimiento.Venta:
+                        prefijoEntidad = "VENTA";
+                        break;
+
+                    case TipoEntidadMovimiento.VentaLibre:
+                        prefijoEntidad = "VENTALIBRE";
+                        break;
+
+                    default:
+                        throw new Exception("Tipo de entidad no válido para movimientos de venta.");
+                }
+
+                // 🔥 4. Número de movimiento
+                var numeroMovimiento = $"{prefijoOperacion}-{prefijoEntidad}-{ventaId}-{DateTime.Now:yyyyMMddHHmmss}";
+
+                // 🔥 5. Crear movimiento
                 var movimiento = new AccesoDatos.Entidades.Movimiento
                 {
                     NumeroMovimiento = numeroMovimiento,
                     EntidadId = ventaId,
-                    TipoEntidad = (int)TipoEntidadMovimiento.Venta,
-                    TipoMovimiento = (int)TipoMovimiento.Ingreso,
+                    TipoEntidad = (int)tipoEntidad,
+                    TipoMovimiento = (int)tipoMovimiento,
                     TipoMovimientoDetalle = (int)detalleTipo,
-                    Monto = monto,
+                    Monto = Math.Abs(monto), // siempre positivo
                     FechaMovimiento = DateTime.Now,
                     EstaEliminado = false
                 };

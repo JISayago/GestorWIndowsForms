@@ -97,14 +97,15 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
             Debug.WriteLine("8 - Crear movimiento");
 
             var movimientoServicio = new Movimiento.MovimientoServicio();
-            movimientoServicio.CrearMovimientoVenta(
-                venta.VentaId,
-                venta.Total,
-                movimientoDetalle,
-                context
-            );
+                movimientoServicio.CrearMovimientoVenta(
+           venta.VentaId,
+           venta.Total,
+           movimientoDetalle,
+           TipoEntidadMovimiento.Venta,
+           context
+       );
 
-            Debug.WriteLine("9 - Movimiento creado");
+                Debug.WriteLine("9 - Movimiento creado");
 
             Debug.WriteLine("10 - Actualizar caja");
 
@@ -187,7 +188,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                 }
 
                 Debug.WriteLine("20 - Actualizar stock");
-
+                    //EVALUAR EL FORMATO DE ITEMVENTADTO PUEDE SER OFERTA Y TENER QUE DESCONTAR EN MAS DE UN PRODUCTO.
                 if (ventaDto.Total < 0)
                     _productoServicio.RestaurarStockProductos(itemsStock, context);
                 else
@@ -227,6 +228,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                         Cantidad = i.Cantidad,
                         Subtotal = i.PrecioVenta * i.Cantidad
                     });
+
                 }
 
                 Debug.WriteLine("23 - Agregar detalles");
@@ -378,9 +380,10 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                 .Include(v => v.VentaPagoDetalles)
                 .Include(v => v.DetallesVentas)
                     .ThenInclude(d => d.Producto)
+                .Include(v => v.DetallesVentas)
+                    .ThenInclude(d => d.OfertaDescuento)
                 .First(v => v.VentaId == ventaId);
-
-            return new VentaDTO
+            var ventaDto = new VentaDTO
             {
                 VentaId = venta.VentaId,
                 NumeroVenta = venta.NumeroVenta,
@@ -393,19 +396,46 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                 Descuento = venta.Descuento,
                 Estado = venta.Estado,
                 Detalle = venta.Detalle,
+
                 TiposDePagoSeleccionado = venta.VentaPagoDetalles.Select(vp => new FormaPago
                 {
                     TipoDePago = (TipoDePago?)vp.IdTipoPago,
                     Monto = vp.Monto
                 }).ToList(),
-                Items = venta.DetallesVentas.Select(d => new ItemVentaDTO
+
+                Items = venta.DetallesVentas.Select(d =>
                 {
-                    ItemId = (long)d.IdProducto,
-                    Descripcion = d.Producto.Descripcion,
-                    Cantidad = d.Cantidad,
-                    PrecioVenta = d.Subtotal / d.Cantidad
+                    var esOferta = d.IdProducto == null;
+
+                    return new ItemVentaDTO
+                    {
+                        ItemId = esOferta
+                            ? d.IdOfertaDescuento.Value
+                            : d.IdProducto.Value,
+
+                        EsOferta = esOferta,
+
+                        Descripcion = esOferta
+                            ? d.OfertaDescuento.Descripcion
+                            : d.Producto.Descripcion,
+
+                        Cantidad = d.Cantidad,
+
+                        PrecioVenta = d.Cantidad != 0
+                            ? d.Subtotal / d.Cantidad
+                            : 0
+                    };
                 }).ToList()
             };
+
+            if (ventaDto != null)
+            {
+                return ventaDto; 
+
+            }
+            else {              
+                throw new Exception("No se encontró la venta.");
+            }
         }
 
         public List<VentaDTO> ObtenerTodasLasVentas()
@@ -462,7 +492,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
 
             var query = context.Ventas
                 .Where(v =>
-                    v.Estado != 99 &&
+                    v.Estado != 99 && v.Estado != 10 &&
                     v.Total > 0 &&
                     v.FechaVenta.Date == fecha.Date &&
                     v.NumeroVenta.StartsWith($"VEN-{fecha:yyyyMMdd}")
