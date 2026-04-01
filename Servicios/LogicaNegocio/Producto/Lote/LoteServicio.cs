@@ -156,6 +156,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var query = context.Lotes
+                .Include(e => e.Producto)
                 .AsNoTracking()
                 .Where(e => e.EstaEliminado);
 
