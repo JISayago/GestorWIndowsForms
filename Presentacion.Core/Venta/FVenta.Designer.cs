@@ -46,7 +46,7 @@
             btnCambiarVendedor = new Button();
             btnConfirmarYFPago = new Button();
             btnCancelar = new Button();
-            txtSubtotal = new TextBox();
+            txtSubtotalSinDescuento = new TextBox();
             txtDescuentoEfectivo = new TextBox();
             txtTotal = new TextBox();
             cbxIncluirCtaCte = new CheckBox();
@@ -290,15 +290,15 @@
             btnCancelar.UseVisualStyleBackColor = true;
             btnCancelar.Click += btnCancelar_Click;
             // 
-            // txtSubtotal
+            // txtSubtotalSinDescuento
             // 
-            txtSubtotal.BorderStyle = BorderStyle.FixedSingle;
-            txtSubtotal.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            txtSubtotal.Location = new Point(226, 3);
-            txtSubtotal.Name = "txtSubtotal";
-            txtSubtotal.ReadOnly = true;
-            txtSubtotal.Size = new Size(161, 33);
-            txtSubtotal.TabIndex = 33;
+            txtSubtotalSinDescuento.BorderStyle = BorderStyle.FixedSingle;
+            txtSubtotalSinDescuento.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            txtSubtotalSinDescuento.Location = new Point(226, 3);
+            txtSubtotalSinDescuento.Name = "txtSubtotalSinDescuento";
+            txtSubtotalSinDescuento.ReadOnly = true;
+            txtSubtotalSinDescuento.Size = new Size(161, 33);
+            txtSubtotalSinDescuento.TabIndex = 33;
             // 
             // txtDescuentoEfectivo
             // 
@@ -695,7 +695,7 @@
             // flowLayoutPanel12
             // 
             flowLayoutPanel12.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            flowLayoutPanel12.Controls.Add(txtSubtotal);
+            flowLayoutPanel12.Controls.Add(txtSubtotalSinDescuento);
             flowLayoutPanel12.Controls.Add(lblSubtotal);
             flowLayoutPanel12.FlowDirection = FlowDirection.RightToLeft;
             flowLayoutPanel12.Location = new Point(3, 44);
@@ -845,5 +845,6 @@
         private FlowLayoutPanel flowLayoutPanel14;
         private FlowLayoutPanel flowLayoutPanel15;
         private TextBox txtAreaDetallesVenta;
+        private TextBox txtSubtotalSinDescuento;
     }
 }

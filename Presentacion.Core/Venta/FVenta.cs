@@ -423,39 +423,39 @@ namespace Presentacion.Core.Venta
         }
         private void CalcularTotal()
         {
-            //replantar oferta en gral
-            if (dgvProductos.RowCount > 0)
-            {
-                decimal total = 0m;
+            decimal totalFinal = 0m;
+            decimal totalSinDescuento = 0m;
 
+            if (itemsVenta != null && itemsVenta.Any())
+            {
                 foreach (var item in itemsVenta)
                 {
-                    decimal subtotal;
+                    // 🔹 Siempre calculás el original
+                    var subtotalOriginal = item.PrecioVenta * item.Cantidad;
+                    totalSinDescuento += subtotalOriginal;
+
+                    decimal subtotalFinal;
 
                     if (item.EsOferta)
                     {
-                        // Caso oferta → el precio ya es total de la oferta, no depende de Cantidad
-                        subtotal = item.PrecioOferta;
+                        // 🔥 OFERTA
+                        subtotalFinal = item.PrecioOferta * item.Cantidad;
                     }
                     else
                     {
-                        // Caso producto normal → precio * cantidad
-                        subtotal = item.PrecioVenta * item.Cantidad;
+                        // 🔹 PRODUCTO NORMAL
+                        subtotalFinal = item.PrecioVenta * item.Cantidad;
                     }
 
-                    total += subtotal;
+                    totalFinal += subtotalFinal;
                 }
+            }
 
-                _subTotalVenta = total;
-            }
-            else
-            {
-                _subTotalVenta = 0.00m;
-            }
-            _totalVenta = _subTotalVenta; //iria el descuento por porcentaje.
-            txtTotal.Text = _totalVenta.ToString("C2");
-            txtSubtotal.Text = _subTotalVenta.ToString("C2");
-            txtTotal.Text = _totalVenta.ToString("C2");
+            _subTotalVenta = totalSinDescuento;
+            _totalVenta = totalFinal;
+
+            txtSubtotalSinDescuento.Text = totalSinDescuento.ToString("C2");
+            txtTotal.Text = totalFinal.ToString("C2");
         }
 
         private void ActualizarGrillas()
@@ -792,7 +792,7 @@ namespace Presentacion.Core.Venta
                 cbxIncluirCtaCte.Checked = true;
                 dgvProductos.AllowUserToAddRows = false;
                 cbxDescEfectivo.Checked = false;
-                txtSubtotal.Text = _subTotalVenta.ToString("C2");
+                txtSubtotalSinDescuento.Text = _subTotalVenta.ToString("C2");
                 txtTotal.Text = _totalVenta.ToString("C2");
                 if (idCliente < 0)
                 {
@@ -902,10 +902,11 @@ namespace Presentacion.Core.Venta
                             Descripcion = Oferta.Descripcion,
                             PrecioVenta = Oferta.PrecioOriginal,
                             PrecioOferta = Oferta.PrecioFinal,
-                            Cantidad = cantidad, // cantidad de ofertas vendidas
+                            Cantidad = cantidad,
                             Medida = string.Empty,
                             UnidadMedida = string.Empty,
-                            EsOferta = true
+                            EsOferta = true,
+                            EsOfertaPorGrupo = Oferta.esOfertaPorGrupo
                         };
 
                         itemsVenta.Add(ofertaVenta);
