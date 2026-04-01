@@ -51,7 +51,8 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 FechaAlta = loteACrear.FechaAlta,
                 FechaVencimiento = loteACrear.FechaVencimiento,
                 EstaVencido = loteACrear.EstaVencido,
-                EstaActivo = loteACrear.EstaActivo
+                EstaActivo = loteACrear.EstaActivo,
+                EstaEliminado = false
             };
             
             context.Lotes.Add(nuevoLote);
@@ -73,7 +74,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             return context.Lotes
-                .Where(x => x.NumeroLote.Contains(cadenaBuscar))
+                .Where(x => x.NumeroLote.Contains(cadenaBuscar) && !x.EstaEliminado)
                 .Select(x => new LoteDTO
                 {
                     Id = x.LoteId,
@@ -95,6 +96,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
             var loteEditar = context.Lotes
+                    .Include(x => x.Producto)
                     .FirstOrDefault(x => x.LoteId == loteId);
 
             if (loteEditar == null)
@@ -110,7 +112,6 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             loteEditar.StockIncial = loteDto.StockInicial;
             loteEditar.StockActual = loteDto.StockActual;
             loteEditar.Descripcion = loteDto.Descripcion;
-            loteEditar.FechaAlta = loteDto.FechaAlta;
             loteEditar.FechaVencimiento = loteDto.FechaVencimiento;
             loteEditar.EstaVencido = loteDto.EstaVencido;
             loteEditar.EstaActivo = loteDto.EstaActivo;
@@ -128,6 +129,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
             var loteEliminar = context.Lotes
+                    .Include(x => x.Producto)
                     .FirstOrDefault(x => x.LoteId == loteId);
 
             if (loteEliminar == null)
@@ -139,7 +141,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 };
             }
 
-            //loteEliminar.EstaEliminado = true;
+            loteEliminar.EstaEliminado = true;
 
             context.SaveChanges();
             return new EstadoOperacion
@@ -154,8 +156,8 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var query = context.Lotes
-                .AsNoTracking();
-                //.Where(e => e.EstaEliminado);
+                .AsNoTracking()
+                .Where(e => e.EstaEliminado);
 
             /*if (!string.IsNullOrWhiteSpace(cadenabuscar))
             {
@@ -206,7 +208,8 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var lote = context.Lotes.Include(l => l.Producto).FirstOrDefault(l => l.LoteId == loteId);
+            var lote = context.Lotes.Include(l => l.Producto)
+                .FirstOrDefault(l => l.LoteId == loteId);
 
             //TODO: validar que no sea null
             var loteDTO = new LoteDTO

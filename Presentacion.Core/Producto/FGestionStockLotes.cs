@@ -112,16 +112,21 @@ namespace Presentacion.Core.Producto
 
             var lote = _loteSevicio.ObtenerLotePorId(entidadId.Value);
 
+            //CARGAR ESTADOS CHECKBOX CON EL LOTE BUSCADO
+
             if (lote != null)
             {
                 txtNumeroLote.Text = lote.NumeroLote;
                 txtDescripcionLote.Text = lote.Descripcion;
                 nudStockInicial.Value = lote.StockInicial;
                 nudStockActual.Value = lote.StockActual;
+                chkLoteEstaActivo.Checked = lote.EstaActivo;
+
                 if (lote.FechaVencimiento.HasValue)
                 {
                     chkFechaVencimiento.Checked = true;
                     chkFechaVencimiento.Enabled = false;
+
                     dtpFechaVencimiento.Value = lote.FechaVencimiento.Value;
                 }
                 else
@@ -177,7 +182,7 @@ namespace Presentacion.Core.Producto
                 return false;
             }
         }
-        /*
+
         public override bool EjecutarComandoEliminar()
         {
             if (!EntidadID.HasValue)
@@ -188,7 +193,7 @@ namespace Presentacion.Core.Producto
             }
             if (TipoOperacion == TipoOperacion.Eliminar)
             {
-                var response = _marcaServicio.Eliminar((long)EntidadID);
+                var response = _loteSevicio.EliminarLote((long)EntidadID);
                 if (response.Exitoso)
                 {
                     MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
@@ -224,12 +229,18 @@ namespace Presentacion.Core.Producto
 
                 }
 
-                var MarcaModificar = new MarcaDTO
+                var LoteModificar = new LoteDTO
                 {
-                    Id = EntidadID.Value,
-                    Nombre = txtMarca.Text,
+                    NumeroLote = txtNumeroLote.Text,
+                    IdProducto = EntidadID.Value,
+                    StockInicial = nudStockInicial.Value,
+                    StockActual = nudStockActual.Value,
+                    Descripcion = txtDescripcionLote.Text,
+                    FechaVencimiento = chkFechaVencimiento.Checked ? dtpFechaVencimiento.Value : null,
+                    EstaVencido = chkFechaVencimiento.Checked && dtpFechaVencimiento.Value < DateTime.Now, //revisar
+                    EstaActivo = chkLoteEstaActivo.Checked
                 };
-                var response = _marcaServicio.Modificar(MarcaModificar);
+                var response = _loteSevicio.ModficiarLote(LoteModificar, EntidadID.Value);
 
                 if (response.Exitoso)
                 {
@@ -248,12 +259,12 @@ namespace Presentacion.Core.Producto
             return true;
 
         }
-        */
+        
         #endregion
 
         private void FGestionStockLotes_Load(object sender, EventArgs e)
         {
-            if (TipoOperacion == TipoOperacion.Nuevo) //Nombre default auto generado cuando cargar un lote nuevo
+            if (TipoOperacion == TipoOperacion.Nuevo ) //Nombre default auto generado cuando cargar un lote nuevo
             {
                 chkLoteEstaActivo.Checked = true;
                 //txtNombreLote.Text = $"{NombreProducto}-{DateTime.Now: yyyyMMddHHmmss}".ToUpper();
