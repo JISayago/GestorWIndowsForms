@@ -109,10 +109,13 @@ namespace Servicios.LogicaNegocio.Producto
         }
 
 
-        public void DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context)
+        public List<DetalleVentaLoteDTO> DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context)
         {
+            //DEVUELO DETALLEVENTALOTEDTO PORQUE NO PUEDO CREAR DVL EN LOTE SERVICE, TENGO QUE HACERLO EN VENTAINTERNA
+            var detallesLotesUsados = new List<DetalleVentaLoteDTO>();
+
             if (items == null || !items.Any())
-                return;
+                return detallesLotesUsados;
 
             foreach (var item in items)
             {
@@ -122,15 +125,21 @@ namespace Servicios.LogicaNegocio.Producto
                 }
                 else
                 {
-                    DescontarStockProducto(item, context);
+                    detallesLotesUsados = DescontarStockProducto(item, context);
+                    
+                    
                 }
             }
+            
+            return detallesLotesUsados;
         }
      
-        private void DescontarStockProducto(ItemVentaDTO item, GestorContextDB context)
+        private List<DetalleVentaLoteDTO> DescontarStockProducto(ItemVentaDTO item, GestorContextDB context)
         {
             var producto = context.Productos
                 .FirstOrDefault(p => p.ProductoId == item.ItemId);
+
+            var detallesLotesUsados = new List<DetalleVentaLoteDTO>();
 
             if (producto == null)
                 throw new Exception($"Producto no encontrado. {item.Descripcion}");
@@ -144,14 +153,16 @@ namespace Servicios.LogicaNegocio.Producto
             if (producto.ControlPorLote)
             {
                 LoteServicio loteServicio = new LoteServicio();
-                loteServicio.DescontarStockLoteFifoLifo(item.Cantidad, producto.ProductoId, true);
-                //true por que tiene fecha de vencimiento, si no tuviera seria false,
-                //deberia pasar la propiedad del producto que indica si tiene o no fecha de vencimiento, para saber si aplico fifo o lifo
+                
+                detallesLotesUsados = loteServicio.DescontarStockLoteFifoLifo(item.Cantidad, producto.ProductoId, producto.TieneVencimiento);
+                //DESCONTAR STOCK DE LOTES NOS DEVUELVE LA INFO DE LOS LOTES USADOS
             }
 
             producto.Stock -= item.Cantidad;
 
-            context.Productos.Update(producto); 
+            context.Productos.Update(producto);
+
+            return detallesLotesUsados;
         }
 
         private void DescontarStockOferta(ItemVentaDTO item, GestorContextDB context)
@@ -184,7 +195,7 @@ namespace Servicios.LogicaNegocio.Producto
                 context.Productos.Update(producto);
             }
         }
-        public void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context)
+        public void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context, long ventdaId)
         {
             if (items == null || !items.Any())
                 return;
@@ -198,11 +209,11 @@ namespace Servicios.LogicaNegocio.Producto
                 }
                 else
                 {
-                    RestaurarStockProducto(item, context);
+                    RestaurarStockProducto(item, context, ventdaId);
                 }
             }
         }
-        private void RestaurarStockProducto(ItemVentaDTO item, GestorContextDB context)
+        private void RestaurarStockProducto(ItemVentaDTO item, GestorContextDB context, long ventaId)
         {
             var producto = context.Productos
                 .FirstOrDefault(p => p.ProductoId == item.ItemId);
@@ -210,8 +221,26 @@ namespace Servicios.LogicaNegocio.Producto
             if (producto == null)
                 throw new Exception($"Producto no encontrado. {item.Descripcion}");
 
-            //IF CONTROL POR LOTES ESTA ACTIVADO USAR SERVICE DE LOTE Y ADEMAS REDUCIR STOCK DEL PRODUCTO, HACERLO ANTES DE ACTUALIZAR 
-            //DE ACTULIZAR LOTES?
+            if(producto.ControlPorLote)
+            {
+                var lotesUsadosEnVenta = context.DetalleVentaLotes
+                    .Where(dvl => dvl.IdVenta == ventaId)
+                    .ToList();
+
+                var idsLotes = lotesUsadosEnVenta.Select(x => x.IdLote).ToList();
+
+                var lotes = context.Lotes
+                    .Where(l => idsLotes.Contains(l.LoteId))
+                    .ToList();
+
+                foreach (var detalle in lotesUsadosEnVenta)
+                {
+                    var lote = lotes.First(l => l.LoteId == detalle.IdLote);
+                    lote.StockActual += detalle.Cantidad;
+                }
+
+                    context.Lotes.UpdateRange(lotes);
+            }
 
             producto.Stock += item.Cantidad;
 

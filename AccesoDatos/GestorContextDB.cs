@@ -36,6 +36,7 @@ namespace AccesoDatos
         public DbSet<Caja> Cajas { get; set; }
         public DbSet<Gasto> Gastos { get; set; }
         public DbSet<Lote> Lotes { get; set; }
+        public DbSet<DetalleVentaLote> DetalleVentaLotes { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
