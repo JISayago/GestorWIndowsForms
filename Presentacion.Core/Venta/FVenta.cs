@@ -715,7 +715,7 @@ namespace Presentacion.Core.Venta
                 ResetearGrilla(dgvProductos);
                 ActualizarCamposInicio(VENTAID);
                 txtTotal.Text = VENTAELIMINAR.Total.ToString("C2");
-                txtSubtotal.Text = VENTAELIMINAR.TotalSinDescuento.ToString("C2");
+                txtSubtotalSinDescuento.Text = VENTAELIMINAR.TotalSinDescuento.ToString("C2");
                 txtDescuentoEfectivo.Text = VENTAELIMINAR.TotalSinDescuento.ToString("C2");
                 lblNro.Text = VENTAELIMINAR.NumeroVenta;
                 txtAreaDetallesVenta.Text = VENTAELIMINAR.Detalle;
@@ -737,7 +737,7 @@ namespace Presentacion.Core.Venta
                 btnConfirmarYFPago.Enabled = false;
                 btnConfirmarYFPago.Visible = false;
                 txtAreaDetallesVenta.Enabled = false;
-                txtSubtotal.Enabled = false;
+                txtSubtotalSinDescuento.Enabled = false;
                 txtTotal.Enabled = false;
                 cbxConsumidorFinal.Enabled = false;
                 cbxConsumidorFinal.Visible = false;
