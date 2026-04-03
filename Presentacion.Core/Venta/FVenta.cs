@@ -371,52 +371,65 @@ namespace Presentacion.Core.Venta
 
             if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
             {
-
                 var idProducto = fProductos.productoSeleccionado.Value;
-                var cantidad = 0.0m;
+                decimal cantidad = 0m;
 
-                //var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
                 var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
+
                 if (ofertaDesc == null)
                 {
                     MessageBox.Show("El producto seleccionado no está disponible.");
                     return;
                 }
-                var esOF = false;
-                if (ofertaDesc.Oferta != null) { esOF = true; } else { esOF = false; }
+
+                var producto = ofertaDesc.Producto;
+                var oferta = ofertaDesc.Oferta;
+
+                bool tieneOferta = oferta != null;
+                bool esOfertaPorGrupo = tieneOferta && oferta.esOfertaPorGrupo;
+
                 var fCantidad = new FCantidadItem();
 
                 if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
                 {
-                    if (fCantidad.cantidad > ofertaDesc.Producto.Stock)
+                    cantidad = fCantidad.cantidad > producto.Stock
+                        ? producto.Stock
+                        : fCantidad.cantidad;
+
+                    if (fCantidad.cantidad > producto.Stock)
                     {
-                        cantidad = ofertaDesc.Producto.Stock;
-                        MessageBox.Show($"La cantidad solicitada supera el stock disponible. Por lo que se pondra la cantidad máxima disponible: {cantidad}.");
+                        MessageBox.Show($"Stock insuficiente. Se ajusta a {cantidad}.");
                     }
-                    else
-                    {
-                        cantidad = fCantidad.cantidad;
-                    }
+
                     var itemVenta = new ItemVentaDTO
                     {
-                        ItemId = ofertaDesc.Producto.ProductoId,
-                        Descripcion = ofertaDesc.Producto.Descripcion,
-                        PrecioVenta = ofertaDesc.Producto.PrecioVenta,
-                        PrecioOferta = ofertaDesc.PrecioEnOferta,
+                        ItemId = producto.ProductoId,
+                        Descripcion = producto.Descripcion,
+
                         Cantidad = cantidad,
-                        Medida = ofertaDesc.Producto.Medida,
-                        UnidadMedida = ofertaDesc.Producto.UnidadMedida,
-                        EsOferta = esOF
+
+                        PrecioVenta = producto.PrecioVenta,
+                        PrecioOferta = esOfertaPorGrupo
+                            ? ofertaDesc.PrecioEnOferta
+                            : producto.PrecioVenta,
+
+                        PrecioOriginalOferta = producto.PrecioVenta,
+
+                        Medida = producto.Medida,
+                        UnidadMedida = producto.UnidadMedida,
+
+                        EsOferta = esOfertaPorGrupo,          // 🔥 SOLO si hay descuento real
+                        EsOfertaPorGrupo = esOfertaPorGrupo   // 🔥 clave para lógica después
                     };
 
-                    itemsVenta.Add(itemVenta);  
-                                                //txtProductoCargado.Text = $"{itemVenta.Descripcion}";
-                                               
+                    itemsVenta.Add(itemVenta);
+
                     if (cbxDescEfectivo.Checked)
                     {
                         ValidarCantidadySiEsOferta();
                         AplicarDescuentoEfectivo();
                     }
+
                     CalcularTotal();
                 }
             }
