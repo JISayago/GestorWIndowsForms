@@ -203,7 +203,7 @@ namespace AccesoDatos
                 entity.Property(e => e.IdProducto)
                     .HasColumnName("id_Producto")
                     .IsRequired(false);
-              
+
                 entity.Property(e => e.IdOfertaDescuento)
                     .HasColumnName("id_OfertaDescuento")
                     .IsRequired(false);
@@ -213,11 +213,40 @@ namespace AccesoDatos
                     .HasColumnType("decimal(18,2)")
                     .IsRequired();
 
+                // 🔹 Precio original
+                entity.Property(e => e.PrecioUnitarioOriginal)
+                    .HasColumnName("precio_unitario_original")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                // 🔹 Precio final aplicado
+                entity.Property(e => e.PrecioUnitarioFinal)
+                    .HasColumnName("precio_unitario_final")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                // 🔹 Subtotal final
                 entity.Property(e => e.Subtotal)
                     .HasColumnName("subtotal")
                     .HasColumnType("decimal(18,2)")
                     .IsRequired();
 
+                // 🔥 Flags
+                entity.Property(e => e.EsOferta)
+                    .HasColumnName("es_oferta")
+                    .IsRequired();
+
+                entity.Property(e => e.EsOfertaPorGrupo)
+                    .HasColumnName("es_oferta_por_grupo")
+                    .IsRequired();
+
+                // 🔹 Descripción congelada
+                entity.Property(e => e.Descripcion)
+                    .HasColumnName("descripcion")
+                    .HasMaxLength(500)
+                    .IsRequired();
+
+                // 🔗 Relaciones
                 entity.HasOne(d => d.Venta)
                     .WithMany(v => v.DetallesVentas)
                     .HasForeignKey(d => d.IdVenta)
@@ -229,7 +258,7 @@ namespace AccesoDatos
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(d => d.OfertaDescuento)
-                    .WithMany(Of => Of.DetallesVentas)
+                    .WithMany(o => o.DetallesVentas)
                     .HasForeignKey(d => d.IdOfertaDescuento)
                     .OnDelete(DeleteBehavior.Restrict);
             });
