@@ -855,6 +855,7 @@ namespace Presentacion.Core.Venta
 
         private void txtDescuentoEfectivo_TextChanged(object sender, EventArgs e)
         {
+           
             AplicarDescuentoEfectivo();
         }
         private void AplicarDescuentoEfectivo()
