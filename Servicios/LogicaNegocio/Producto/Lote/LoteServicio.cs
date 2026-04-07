@@ -2,9 +2,11 @@
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Venta.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -51,7 +53,8 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 FechaAlta = loteACrear.FechaAlta,
                 FechaVencimiento = loteACrear.FechaVencimiento,
                 EstaVencido = loteACrear.EstaVencido,
-                EstaActivo = loteACrear.EstaActivo
+                EstaActivo = loteACrear.EstaActivo,
+                EstaEliminado = false
             };
             
             context.Lotes.Add(nuevoLote);
@@ -73,7 +76,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             return context.Lotes
-                .Where(x => x.NumeroLote.Contains(cadenaBuscar))
+                .Where(x => x.NumeroLote.Contains(cadenaBuscar) && !x.EstaEliminado)
                 .Select(x => new LoteDTO
                 {
                     Id = x.LoteId,
@@ -95,6 +98,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
             var loteEditar = context.Lotes
+                    .Include(x => x.Producto)
                     .FirstOrDefault(x => x.LoteId == loteId);
 
             if (loteEditar == null)
@@ -110,7 +114,6 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             loteEditar.StockIncial = loteDto.StockInicial;
             loteEditar.StockActual = loteDto.StockActual;
             loteEditar.Descripcion = loteDto.Descripcion;
-            loteEditar.FechaAlta = loteDto.FechaAlta;
             loteEditar.FechaVencimiento = loteDto.FechaVencimiento;
             loteEditar.EstaVencido = loteDto.EstaVencido;
             loteEditar.EstaActivo = loteDto.EstaActivo;
@@ -128,6 +131,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
             var loteEliminar = context.Lotes
+                    .Include(x => x.Producto)
                     .FirstOrDefault(x => x.LoteId == loteId);
 
             if (loteEliminar == null)
@@ -139,7 +143,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 };
             }
 
-            //loteEliminar.EstaEliminado = true;
+            loteEliminar.EstaEliminado = true;
 
             context.SaveChanges();
             return new EstadoOperacion
@@ -154,8 +158,9 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var query = context.Lotes
-                .AsNoTracking();
-                //.Where(e => e.EstaEliminado);
+                .Include(e => e.Producto)
+                .AsNoTracking()
+                .Where(e => e.EstaEliminado);
 
             /*if (!string.IsNullOrWhiteSpace(cadenabuscar))
             {
@@ -206,7 +211,8 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var lote = context.Lotes.Include(l => l.Producto).FirstOrDefault(l => l.LoteId == loteId);
+            var lote = context.Lotes.Include(l => l.Producto)
+                .FirstOrDefault(l => l.LoteId == loteId);
 
             //TODO: validar que no sea null
             var loteDTO = new LoteDTO
@@ -251,41 +257,54 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             return listaLotes;
         }
         
-        public void DescontarStockLoteFifoLifo(decimal cantidadADescontar, long productoId, bool tieneFechaVencimiento)
+        public List<DetalleVentaLoteDTO> DescontarStockLoteFifoLifo(decimal cantidadADescontar, long productoId, bool tieneFechaVencimiento)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
 
+            var detallesLotes = new List<DetalleVentaLoteDTO>();
+
             var lote = ObtenerLoteFefoLifo(productoId, tieneFechaVencimiento, context);
+
 
             //TODO: verificar si el stock total de los lotes activos es suficiente para cubrir la cantiadad
             while (cantidadADescontar > 0 && lote != null)
             {
+                decimal cantidadConsumida;
+
                 if (lote.StockActual >= cantidadADescontar)
                 {
-                    //stock suficiente en el lote actual para cubrir la cantidad requerida
+                    cantidadConsumida = cantidadADescontar;
                     lote.StockActual -= cantidadADescontar;
                     cantidadADescontar = 0;
                 }
                 else
                 {
-                    //stock insuficiente en el lote actual, se consume todo el stock del lote y se busca el siguiente lote por fefo
+                    cantidadConsumida = lote.StockActual;
                     cantidadADescontar -= lote.StockActual;
                     lote.StockActual = 0;
                 }
 
-                context.SaveChanges(); //guardar cambios después de actualizar cada lote
+                // 👉 Crear detalle por cada lote usado
+                detallesLotes.Add(new DetalleVentaLoteDTO
+                {
+                    IdProducto = productoId,
+                    IdLote = lote.LoteId,
+                    Cantidad = cantidadConsumida
+                });
+
+                context.SaveChanges();
 
                 if (cantidadADescontar > 0)
                 {
-                    ///////TODO: validar que no traiga el mismo lote1!??!!?!?!?!?!///////////////////////////////
                     lote = ObtenerLoteFefoLifo(productoId, tieneFechaVencimiento, context);
                 }
             }
 
             context.SaveChanges();
-        }
 
-        public void RestaurarStockLoteFifoLifo(decimal cantidadARestaurar, List<long> loteId, bool tieneFechaVencimiento)
+            return detallesLotes;
+        }
+        public void RestaurarStockLoteFifoLifo(decimal cantidadARestaurar, List<long> loteId, bool tieneFechaVencimiento)//ESTO NOSE USA DEBERIA BORRARLO
         {
             //TO DO
             //agregar a ventdaDetalle, DetalleVentaLoteId para guardar el lote del que se descontó el stock, asi en caso de cancelaciones o devoluciones.
