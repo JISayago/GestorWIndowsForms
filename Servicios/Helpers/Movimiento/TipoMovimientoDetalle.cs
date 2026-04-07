@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicios.Helpers
+namespace Servicios.Helpers.Movimiento
 {
     public enum TipoMovimientoDetalle
     {
+        /*--------------------------------
+         * Para aclarar el Area del movimiento.
+         * -------------------------*/
         Cancelacion = 1,
         CuentaCorriente = 2,
         Stock = 3,

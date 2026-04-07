@@ -1,7 +1,9 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
-using Servicios.Helpers;
+using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.Extras;
 using Servicios.LogicaNegocio.Venta.TipoPago;
 using Servicios.LogicaNegocio.Venta.VentaLibre.DTO;
 using System;

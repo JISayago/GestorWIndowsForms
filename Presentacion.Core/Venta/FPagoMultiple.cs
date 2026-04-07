@@ -1,6 +1,6 @@
 ﻿using Presentacion.Core.Venta.HelpersVenta;
 using Presentacion.Core.Venta.TipoPago;
-using Servicios.Helpers;
+using Servicios.Helpers.OpcionesPagos;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

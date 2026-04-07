@@ -1,7 +1,7 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.Core.Venta.HelpersVenta;
 using Presentacion.Core.Venta.TipoPago;
-using Servicios.Helpers;
+using Servicios.Helpers.OpcionesPagos;
 using Servicios.LogicaNegocio.Cliente.DTO;
 using System;
 using System.Collections.Generic;

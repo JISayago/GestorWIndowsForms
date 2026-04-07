@@ -1,6 +1,9 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
-using Servicios.Helpers;
+using Servicios.Helpers.Gasto;
+using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.Extras;
 using Servicios.LogicaNegocio.Gasto.DTO;
 using Servicios.LogicaNegocio.Movimiento;
 using System;

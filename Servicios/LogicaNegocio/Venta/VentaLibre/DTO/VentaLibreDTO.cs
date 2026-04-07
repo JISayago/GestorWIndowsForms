@@ -1,4 +1,4 @@
-﻿using Servicios.Helpers;
+﻿using Servicios.Helpers.OpcionesPagos;
 using Servicios.LogicaNegocio.Venta.DTO;
 using System;
 using System.Collections.Generic;

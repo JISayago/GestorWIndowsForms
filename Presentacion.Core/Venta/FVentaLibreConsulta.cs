@@ -1,7 +1,7 @@
 ﻿using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
-using Servicios.Helpers;
+using Servicios.Helpers.Gasto;
 using Servicios.LogicaNegocio.Venta.VentaLibre;
 using System;
 using System.Collections.Generic;

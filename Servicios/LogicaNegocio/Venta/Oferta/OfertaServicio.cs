@@ -1,6 +1,5 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
-using Servicios.Helpers;
 using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using AccesoDatos.Entidades;
 using System;
@@ -10,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.Admin;
 
 namespace Servicios.LogicaNegocio.Venta.Oferta
 {

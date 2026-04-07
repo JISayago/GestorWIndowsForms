@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicios.Helpers
+namespace Servicios.Helpers.Sistema.Extras
 {
     public class GeneradorNumeroComprobante
     {
@@ -14,7 +14,7 @@ namespace Servicios.Helpers
         int cantidadDelDia
     )
         {
-            return $"{prefijo}-{fecha:yyyyMMdd}-{(cantidadDelDia + 1):D3}";
+            return $"{prefijo}-{fecha:yyyyMMdd}-{cantidadDelDia + 1:D3}";
         }
     }
 }

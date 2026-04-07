@@ -1,7 +1,8 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
-using Servicios.Helpers;
+using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.Extras;
 using Servicios.LogicaNegocio.Empleado.DTO;
 using System;
 using System.Collections.Generic;
