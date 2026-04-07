@@ -277,7 +277,7 @@ namespace Presentacion.Core.Venta
                 GenerarDetalleVenta(tipoPagosSeleccionados);
             }
         }
-    
+
         private void FinalizacionVenta()
         {
             if (finalizarVenta)
@@ -321,9 +321,9 @@ namespace Presentacion.Core.Venta
                 {
                     MessageBox.Show($"Hubo un error al finalizar la venta: {m.Mensaje}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                    //MessageBox.Show("Venta confirmada exitosamente.");
+                //MessageBox.Show("Venta confirmada exitosamente.");
 
-                    this.Close();
+                this.Close();
                 return;
             }
         }
@@ -576,25 +576,25 @@ namespace Presentacion.Core.Venta
             if (!VENTAID.HasValue)
             {
 
-            // ✏️ Botón editar
-            grilla.Columns.Add(new DataGridViewButtonColumn
-            {
-                Name = "BtnEditar",
-                HeaderText = "Editar",
-                Text = "✏ Editar",
-                UseColumnTextForButtonValue = true,
-                Width = 130
-            });
+                // ✏️ Botón editar
+                grilla.Columns.Add(new DataGridViewButtonColumn
+                {
+                    Name = "BtnEditar",
+                    HeaderText = "Editar",
+                    Text = "✏ Editar",
+                    UseColumnTextForButtonValue = true,
+                    Width = 130
+                });
 
-            // 🗑 Botón eliminar
-            grilla.Columns.Add(new DataGridViewButtonColumn
-            {
-                Name = "BtnEliminar",
-                HeaderText = "Eliminar",
-                Text = "🗑 Eliminar",
-                UseColumnTextForButtonValue = true,
-                Width = 130
-            });
+                // 🗑 Botón eliminar
+                grilla.Columns.Add(new DataGridViewButtonColumn
+                {
+                    Name = "BtnEliminar",
+                    HeaderText = "Eliminar",
+                    Text = "🗑 Eliminar",
+                    UseColumnTextForButtonValue = true,
+                    Width = 130
+                });
             }
         }
 
@@ -855,7 +855,7 @@ namespace Presentacion.Core.Venta
 
         private void txtDescuentoEfectivo_TextChanged(object sender, EventArgs e)
         {
-           
+
             AplicarDescuentoEfectivo();
         }
         private void AplicarDescuentoEfectivo()
@@ -863,16 +863,40 @@ namespace Presentacion.Core.Venta
             if (!decimal.TryParse(txtDescuentoEfectivo.Text, out decimal porcentajeDesc))
                 return;
 
-            if (porcentajeDesc <= 0 || porcentajeDesc > 100)
-                return;
+            if (porcentajeDesc < 0 || porcentajeDesc > 100)
+            {
+                MessageBox.Show("Ingresar un número entre 1 y 100.");
+                if(porcentajeDesc > 100)
+                {
+                    txtDescuentoEfectivo.Text = "100";
+                    porcentajeDesc = 100;
+                }
+                else
+                {
+                    txtDescuentoEfectivo.Text = "0";
+                    porcentajeDesc = 0;
+                }
+                    return;
+            }
 
-            decimal totalVenta = itemsVenta.Sum(i => i.PrecioVenta * i.Cantidad); // o la propiedad que uses
-            decimal descuento = totalVenta * (porcentajeDesc / 100m);
-            decimal totalConDescuento = totalVenta - descuento;
+            // 🔹 total de productos SIN oferta
+            decimal totalSinOferta = itemsVenta
+                .Where(i => !i.EsOferta)
+                .Sum(i => i.PrecioVenta * i.Cantidad);
 
-            _totalVenta = totalConDescuento;
-            txtTotal.Text = totalConDescuento.ToString("N2");
+            // 🔹 total de productos CON oferta (no se toca)
+            decimal totalConOferta = itemsVenta
+                .Where(i => i.EsOferta)
+                .Sum(i => i.Subtotal);
 
+            // 🔥 descuento solo sobre los que NO tienen oferta
+            decimal descuento = totalSinOferta * (porcentajeDesc / 100m);
+
+            decimal totalFinal = totalConOferta + (totalSinOferta - descuento);
+
+            _totalVenta = totalFinal;
+
+            txtTotal.Text = totalFinal.ToString("C2");
         }
 
         private void btnCambiarVendedor_Click(object sender, EventArgs e)
@@ -1011,6 +1035,17 @@ namespace Presentacion.Core.Venta
                 dgvProductos.Refresh();
                 CalcularTotal();
             }
+        }
+
+        private void txtDescuentoEfectivo_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // permitir control (backspace)
+            if (char.IsControl(e.KeyChar))
+                return;
+
+            // permitir números
+            if (!char.IsDigit(e.KeyChar))
+                e.Handled = true;
         }
     }
 }

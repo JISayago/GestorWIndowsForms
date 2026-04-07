@@ -310,6 +310,7 @@
             txtDescuentoEfectivo.Size = new Size(161, 33);
             txtDescuentoEfectivo.TabIndex = 34;
             txtDescuentoEfectivo.TextChanged += txtDescuentoEfectivo_TextChanged;
+            txtDescuentoEfectivo.KeyPress += txtDescuentoEfectivo_KeyPress;
             // 
             // txtTotal
             // 
