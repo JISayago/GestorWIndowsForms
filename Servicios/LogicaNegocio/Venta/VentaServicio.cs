@@ -54,7 +54,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
             Debug.WriteLine("3 - Generar número venta");
 
             var fecha = DateTime.Today;
-            var prefijo = ventaDto.Total < 0 ? "CAN" : "VEN";
+            var prefijo = ventaDto.Estado == 99 ? "CAN" : "VEN";
 
             var cantidadHoy = context.Ventas.Count(v =>
                 v.NumeroVenta.StartsWith($"{prefijo}-{fecha:yyyyMMdd}")
@@ -100,6 +100,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                 movimientoServicio.CrearMovimientoVenta(
            venta.VentaId,
            venta.Total,
+           venta.Estado,
            movimientoDetalle,
            TipoEntidadMovimiento.Venta,
            context
@@ -118,74 +119,81 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
 
             Debug.WriteLine("11 - Caja actualizada");
 
-            Debug.WriteLine("12 - Procesar items");
+                Debug.WriteLine("12 - Procesar items");
 
-            if (ventaDto.Items != null && ventaDto.Items.Any())
-            {
-                Debug.WriteLine("13 - Items detectados");
-
-                var itemsStock = new List<ItemVentaDTO>();
-
-                foreach (var item in ventaDto.Items)
+                if (ventaDto.Items != null && ventaDto.Items.Any())
                 {
-                    Debug.WriteLine("14 - Item: " + item.ItemId);
+                    Debug.WriteLine("13 - Items detectados");
 
-                    if (!item.EsOferta)
+                    var itemsStock = new List<ItemVentaDTO>();
+
+                    foreach (var item in ventaDto.Items)
                     {
-                        itemsStock.Add(new ItemVentaDTO
+                        Debug.WriteLine($"14 - Item: {item.ItemId} | EsOferta:{item.EsOferta} | Grupo:{item.EsOfertaPorGrupo}");
+
+                        // 🔹 1. PRODUCTO NORMAL
+                        if (!item.EsOferta )
                         {
-                            ItemId = item.ItemId,
-                            Cantidad = item.Cantidad
-                        });
-                        continue;
-                    }
+                            Debug.WriteLine("15 - Producto normal");
 
-                    Debug.WriteLine("15 - Buscar producto");
+                            itemsStock.Add(new ItemVentaDTO
+                            {
+                                ItemId = item.ItemId,
+                                Cantidad = item.Cantidad
+                            });
 
-                    var producto = context.Productos
-                        .FirstOrDefault(p => p.ProductoId == item.ItemId);
+                            continue;
+                        }
 
-                    if (producto != null && producto.Estado == 2)
-                    {
-                        Debug.WriteLine("16 - Producto con descuento");
-
-                        itemsStock.Add(new ItemVentaDTO
+                        // 🔹 2. PRODUCTO CON DESCUENTO (POR GRUPO)
+                        if (item.EsOfertaPorGrupo)
                         {
-                            ItemId = producto.ProductoId,
-                            Cantidad = item.Cantidad
-                        });
+                            Debug.WriteLine("16 - Producto con descuento por grupo");
 
-                        continue;
-                    }
+                            var existeProducto = context.Productos
+                                .Any(p => p.ProductoId == item.ItemId);
 
-                    Debug.WriteLine("17 - Buscar oferta");
+                            if (!existeProducto)
+                                throw new Exception($"Producto con descuento inválido. Id: {item.ItemId}");
 
-                    var oferta = context.OfertasDescuentos
-                        .FirstOrDefault(o => o.OfertaDescuentoId == item.ItemId);
+                            itemsStock.Add(new ItemVentaDTO
+                            {
+                                ItemId = item.ItemId,
+                                Cantidad = item.Cantidad
+                            });
 
-                    if (oferta == null)
-                        throw new Exception($"Oferta no encontrada. Id: {item.ItemId}");
+                            continue;
+                        }
 
-                    Debug.WriteLine("18 - Oferta encontrada");
+                        // 🔹 3. OFERTA COMBO
+                        Debug.WriteLine("17 - Buscar oferta combo");
 
-                    var productosOferta = context.ProductosEnOfertasDescuentos
-                        .Where(x => x.OfertaId == oferta.OfertaDescuentoId)
-                        .ToList();
+                        var oferta = context.OfertasDescuentos
+                            .FirstOrDefault(o => o.OfertaDescuentoId == item.ItemId);
 
-                    if (!productosOferta.Any())
-                        throw new Exception($"La oferta {oferta.Descripcion} no tiene productos asociados.");
+                        if (oferta == null)
+                            throw new Exception($"Oferta combo inválida. Id: {item.ItemId}");
 
-                    Debug.WriteLine("19 - Productos de oferta cargados");
+                        Debug.WriteLine("18 - Oferta encontrada");
 
-                    foreach (var po in productosOferta)
-                    {
-                        itemsStock.Add(new ItemVentaDTO
+                        var productosOferta = context.ProductosEnOfertasDescuentos
+                            .Where(x => x.OfertaId == oferta.OfertaDescuentoId)
+                            .ToList();
+
+                        if (!productosOferta.Any())
+                            throw new Exception($"La oferta {oferta.Descripcion} no tiene productos asociados.");
+
+                        Debug.WriteLine("19 - Productos de oferta cargados");
+
+                        foreach (var po in productosOferta)
                         {
-                            ItemId = po.ProductoId,
-                            Cantidad = po.Cantidad * item.Cantidad
-                        });
+                            itemsStock.Add(new ItemVentaDTO
+                            {
+                                ItemId = po.ProductoId,
+                                Cantidad = po.Cantidad * item.Cantidad
+                            });
+                        }
                     }
-                }
 
                 Debug.WriteLine("20 - Actualizar stock");
 
@@ -216,45 +224,42 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
 
                     var detalles = new List<DetallesVenta>();
 
-                foreach (var i in ventaDto.Items)
-                {
-                    Debug.WriteLine("22 - Crear detalle item");
-
-                    long? idProducto = null;
-                    long? idOferta = null;
-
-                    if (!i.EsOferta)
+                    foreach (var i in ventaDto.Items)
                     {
-                        idProducto = i.ItemId;
+                        Debug.WriteLine($"22 - Crear detalle item | Id: {i.ItemId} | EsOferta: {i.EsOferta}");
+
+                        var precioOriginal = i.PrecioVenta;
+                        var precioFinal = i.EsOferta ? i.PrecioOferta : i.PrecioVenta;
+
+                        var detalle = new DetallesVenta
+                        {
+                            IdVenta = venta.VentaId,
+
+                            IdProducto = i.EsOferta && !i.EsOfertaPorGrupo ? null : i.ItemId,
+                            IdOfertaDescuento = i.EsOferta && !i.EsOfertaPorGrupo ? i.ItemId : null,
+
+                            Cantidad = i.Cantidad,
+
+                            PrecioUnitarioOriginal = precioOriginal,
+                            PrecioUnitarioFinal = precioFinal,
+
+                            Subtotal = precioFinal * i.Cantidad,
+
+                            EsOferta = i.EsOferta,
+                            EsOfertaPorGrupo = i.EsOfertaPorGrupo,
+
+                            Descripcion = i.Descripcion ?? string.Empty
+                        };
+
+                        detalles.Add(detalle);
                     }
-                    else
-                    {
-                        var producto = context.Productos
-                            .FirstOrDefault(p => p.ProductoId == i.ItemId);
 
-                        if (producto != null && producto.Estado == 2)
-                            idProducto = producto.ProductoId;
-                        else
-                            idOferta = i.ItemId;
-                    }
+                    Debug.WriteLine("23 - Agregar detalles");
 
-                    detalles.Add(new DetallesVenta
-                    {
-                        IdVenta = venta.VentaId,
-                        IdProducto = idProducto,
-                        IdOfertaDescuento = idOferta,
-                        Cantidad = i.Cantidad,
-                        Subtotal = i.PrecioVenta * i.Cantidad
-                    });
-
+                    context.DetallesVentas.AddRange(detalles);
                 }
 
-                Debug.WriteLine("23 - Agregar detalles");
-
-                context.DetallesVentas.AddRange(detalles);
-            }
-
-            Debug.WriteLine("24 - Procesar pagos");
+                Debug.WriteLine("24 - Procesar pagos");
 
             if (ventaDto.TiposDePagoSeleccionado != null &&
                 ventaDto.TiposDePagoSeleccionado.Any())
@@ -577,19 +582,50 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                     IdVendedor = ventaOriginal.IdVendedor,
                     IdCliente = ventaOriginal.IdCliente,
                     FechaVenta = DateTime.Now,
-
-                    Total = -ventaOriginal.Total,
-                    TotalSinDescuento = -ventaOriginal.TotalSinDescuento,
-                    Descuento = -ventaOriginal.Descuento,
+                    // se cambia el negativo de la oferta cancelada, solo va a filtrar en caso de estado 99 (cancelado.) pero los montos son iguales a lo de la venta en positivo.
+                    Total = ventaOriginal.Total,
+                    TotalSinDescuento = ventaOriginal.TotalSinDescuento,
+                    Descuento = ventaOriginal.Descuento,
 
                     Estado = 99,
                     Detalle = $"Cancelación de venta N° {ventaOriginal.NumeroVenta}",
 
-                    Items = ventaOriginal.DetallesVentas.Select(d => new ItemVentaDTO
+                    Items = ventaOriginal.DetallesVentas.Select(d =>
                     {
-                        ItemId = (long)d.IdProducto,
-                        Cantidad = d.Cantidad,
-                        PrecioVenta = d.Subtotal / d.Cantidad
+                        long itemId;
+
+                        if (d.EsOferta && !d.EsOfertaPorGrupo)
+                        {
+                            if (!d.IdOfertaDescuento.HasValue)
+                                throw new Exception($"Detalle inconsistente: falta IdOfertaDescuento en DetalleVentaId {d.DetalleVentaId}");
+
+                            itemId = d.IdOfertaDescuento.Value;
+                        }
+                        else
+                        {
+                            if (!d.IdProducto.HasValue)
+                                throw new Exception($"Detalle inconsistente: falta IdProducto en DetalleVentaId {d.DetalleVentaId}");
+
+                            itemId = d.IdProducto.Value;
+                        }
+
+                        return new ItemVentaDTO
+                        {
+                            ItemId = itemId,
+
+                            Cantidad = d.Cantidad,
+
+                            // 🔥 precios correctos
+                            PrecioVenta = d.PrecioUnitarioOriginal,
+                            PrecioOferta = d.PrecioUnitarioFinal,
+                            PrecioOriginalOferta = d.PrecioUnitarioOriginal,
+
+                            // 🔥 flags correctos
+                            EsOferta = d.EsOferta,
+                            EsOfertaPorGrupo = d.EsOfertaPorGrupo,
+
+                            Descripcion = d.Descripcion ?? string.Empty
+                        };
                     }).ToList(),
 
                     
@@ -614,6 +650,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
             catch (Exception ex)
             {
                 transaction.Rollback();
+
                 return new EstadoOperacion
                 {
                     Exitoso = false,

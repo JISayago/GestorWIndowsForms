@@ -65,7 +65,8 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 
                 movimientoServicio.CrearMovimientoVenta(
                     venta.VentaLibreId,
-                    -venta.Total, // 🔥 invertir signo
+                    venta.Total,
+                    venta.Estado,
                     TipoMovimientoDetalle.Cancelacion,
                     TipoEntidadMovimiento.VentaLibre, // 🔥 nuevo
                     context
@@ -142,7 +143,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 
                 // 🔢 Número comprobante
                 var fecha = DateTime.Today;
-                var prefijo = dto.Total < 0 ? "CAN" : "VLIB";
+                var prefijo = dto.Estado == 3 ? "CAN" : "VLIB";
 
                 var cantidadHoy = context.VentasLibres.Count(v =>
                     v.NumeroVenta.StartsWith($"{prefijo}-{fecha:yyyyMMdd}")
@@ -177,7 +178,8 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 
                 movimientoServicio.CrearMovimientoVenta(
                     venta.VentaLibreId,
-                    venta.Total, // 👈 negativo si es cancelación
+                    venta.Total,
+                    venta.Estado,
                     movimientoDetalle,
                     TipoEntidadMovimiento.VentaLibre, // 👈 🔥 CLAVE
                     context
