@@ -13,20 +13,38 @@ namespace Presentacion.Core.Venta.HelpersVenta
         public bool pagoParcial { get; set; }
         public decimal saldoPendiente { get; set; } = 0.00m;
 
+        public bool ofertaIncluidas { get; set; }
+        public string descripcionOferta { get; set; }
 
-    public string CuerpoDelTextoTP()
+        public string CuerpoDelTextoTP()
         {
-            return $"Pagos Realizados: {string.Join(", ", tiposDePago.Select(p => $"{p.TipoDePago}: {p.Monto:C2}"))} "+
-                   $"  Saldo Pendiente: {saldoPendiente:C2}";
+            var pagos = tiposDePago != null && tiposDePago.Any()
+                ? string.Join(", ", tiposDePago.Select(p => $"{p.TipoDePago}: {p.Monto:C2}"))
+                : "Sin pagos registrados";
 
+            var texto = $"Pagos Realizados: {pagos}";
+
+            if (pagoParcial)
+                texto += $"{Environment.NewLine}Saldo Pendiente: {saldoPendiente:C2}";
+
+            return texto;
         }
+
         public string CuerpoDelTextoFinal(string extra)
         {
-            string cuerpo = $"Pagos Realizados: {string.Join(", ", tiposDePago.Select(p => $"{p.TipoDePago}: {p.Monto:C2}"))}" +
-                            $"{Environment.NewLine}Saldo Pendiente: {saldoPendiente:C2}\n" +
-                            $"{Environment.NewLine}Detalle adicional: {extra}";
+            var pagos = $"Pagos Realizados: {string.Join(", ", tiposDePago.Select(p => $"{p.TipoDePago}: {p.Monto:C2}"))}";
+            var saldo = $"Saldo Pendiente: {saldoPendiente:C2}";
 
-            return cuerpo;
+            var ofertas = string.Empty;
+
+            if (ofertaIncluidas && !string.IsNullOrWhiteSpace(descripcionOferta))
+            {
+                ofertas = $"{Environment.NewLine}Ofertas aplicadas: {descripcionOferta}";
+            }
+
+            var detalleExtra = $"{Environment.NewLine}Detalle adicional: {extra}";
+
+            return $"{pagos}{Environment.NewLine}{saldo}{ofertas}{detalleExtra}";
         }
     }
 }

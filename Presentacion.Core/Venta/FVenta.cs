@@ -119,6 +119,8 @@ namespace Presentacion.Core.Venta
                     tiposDePago = new List<FormaPago>(),
                     pagoParcial = false,
                     saldoPendiente = 0.00m,
+                    ofertaIncluidas = false,
+                    descripcionOferta = ""
                 };
                 itemsVenta = new BindingList<ItemVentaDTO>();
             }
@@ -181,7 +183,6 @@ namespace Presentacion.Core.Venta
             btnCargarCliente.Enabled = !esConsumidorFinal;
             ActualizarCamposInicio(VENTAID);
         }
-
         private void btnConfirmarYFPago_Click(object sender, EventArgs e)
         {
             if (_totalVenta == 0)
@@ -189,11 +190,13 @@ namespace Presentacion.Core.Venta
                 MessageBox.Show("Debe cargar al menos un producto antes de confirmar la venta.");
                 return;
             }
+
             if (!DatosSistema.CajaId.HasValue)
             {
                 MessageBox.Show("No hay una caja abierta. No se puede registrar la venta.");
                 return;
             }
+
             // Si ya se confirmó antes, registrar la venta directamente
             if (finalizarVenta)
             {
@@ -208,47 +211,51 @@ namespace Presentacion.Core.Venta
                 DescuentoEfectivo = cbxDescEfectivo.Checked
             };
 
-            // Primer paso: elegir 1 pago / múltiples
             var fSeleccionCantidad = new FSeleccionCantidadPagos();
+
             if (fSeleccionCantidad.ShowDialog() != DialogResult.OK)
-                return; // usuario canceló
+                return;
 
             bool esMultiples = fSeleccionCantidad.multiplePagos;
-            int cantidadPagos = fSeleccionCantidad.CantidadPagos; // en 1-pago será 1
+            int cantidadPagos = fSeleccionCantidad.CantidadPagos;
 
-            // --- caso: múltiples pagos -> abrir FPagoMultiple para ingresar montos y formas ---
+            // =========================
+            // 🔥 MULTIPLES PAGOS
+            // =========================
             if (esMultiples)
             {
                 using var fPagoMultiple = new FPagoMultiple(cantidadPagos, _totalVenta, datosVenta, idCliente);
-                var drMulti = fPagoMultiple.ShowDialog();
-                if (drMulti != DialogResult.OK)
-                {
-                    // usuario canceló el ingreso de múltiples pagos -> volvemos al flujo
+
+                if (fPagoMultiple.ShowDialog() != DialogResult.OK)
                     return;
-                }
 
                 var pagosSeleccionados = fPagoMultiple.ResultPagos;
+
                 if (pagosSeleccionados == null || pagosSeleccionados.Count == 0)
                 {
                     MessageBox.Show("Debe ingresar al menos un pago válido.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                // Asignar a los objetos usados por el resto del formulario
                 tipoDePagosVenta = pagosSeleccionados;
                 _cuerpoDetalleVenta.tiposDePago = pagosSeleccionados;
 
-                // Calcular pendiente
                 var suma = pagosSeleccionados.Sum(p => p.Monto);
                 _cuerpoDetalleVenta.saldoPendiente = _totalVenta - suma;
                 _cuerpoDetalleVenta.pagoParcial = _cuerpoDetalleVenta.saldoPendiente > 0m;
+
+                // 🔥 CLAVE: cargar ofertas ANTES
+                CargarInfoOfertas();
+
                 txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoTP();
 
                 GenerarDetalleVenta(tipoDePagosVenta);
                 return;
             }
-            // 1 pago
 
+            // =========================
+            // 🔥 UN SOLO PAGO
+            // =========================
             var fConfirmarVenta = new FConfirmacionVenta(datosVenta, idCliente)
             {
                 PermitirMultiplesPagos = false
@@ -257,28 +264,54 @@ namespace Presentacion.Core.Venta
             if (fConfirmarVenta.ShowDialog() == DialogResult.OK)
             {
                 var tipoPagosSeleccionados = fConfirmarVenta.pagos;
+
                 if (tipoPagosSeleccionados == null || tipoPagosSeleccionados.Count == 0)
                 {
                     MessageBox.Show("Debe seleccionar al menos un tipo de pago.");
                     return;
                 }
 
-                _cuerpoDetalleVenta.tiposDePago = tipoPagosSeleccionados;
                 tipoDePagosVenta = tipoPagosSeleccionados;
+                _cuerpoDetalleVenta.tiposDePago = tipoPagosSeleccionados;
 
                 _cuerpoDetalleVenta.saldoPendiente = fConfirmarVenta.MontoPendiente;
+                _cuerpoDetalleVenta.pagoParcial = fConfirmarVenta.MontoPendiente > 0.00m;
 
-                if (fConfirmarVenta.MontoPendiente > 0.00m)
-                {
-                    _cuerpoDetalleVenta.pagoParcial = true;
-                }
+                // 🔥 CLAVE: cargar ofertas ANTES
+                CargarInfoOfertas();
 
                 txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoTP();
 
                 GenerarDetalleVenta(tipoPagosSeleccionados);
             }
         }
+        private void CargarInfoOfertas()
+        {
+            if (itemsVenta?.Any(iv => iv.EsOferta) == true)
+            {
+                _cuerpoDetalleVenta.ofertaIncluidas = true;
 
+                var descripciones = itemsVenta
+                    .Where(iv => iv.EsOferta)
+                    .Select(iv => new
+                    {
+                        iv.Descripcion,
+                        iv.EsOfertaPorGrupo
+                    })
+                    .Distinct()
+                    .Select(o => o.EsOfertaPorGrupo
+                        ? $"Descuento: {o.Descripcion}"
+                        : $"Combo: {o.Descripcion}")
+                    .ToList();
+
+                _cuerpoDetalleVenta.descripcionOferta = string.Join(", ", descripciones);
+            }
+            else
+            {
+                _cuerpoDetalleVenta.ofertaIncluidas = false;
+                _cuerpoDetalleVenta.descripcionOferta = string.Empty;
+            }
+        }
         private void FinalizacionVenta()
         {
             if (finalizarVenta)
@@ -334,6 +367,7 @@ namespace Presentacion.Core.Venta
             if (tipoPagosSeleccionados.Count > 0)
             {
                 var fConfirmarDetalle = new FDetalleVenta();
+
                 if (fConfirmarDetalle.ShowDialog() == DialogResult.OK)
                 {
                     if (fConfirmarDetalle.confirmarDetalle)
@@ -351,7 +385,9 @@ namespace Presentacion.Core.Venta
                         descripcionVenta = "Sin detalles adicionales.";
                     }
 
-                    txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta);
+                    // 🔥 ACÁ ya incluye pagos + saldo + ofertas + extra
+                    txtAreaDetallesVenta.Text =
+                        _cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta);
                 }
             }
         }
@@ -846,11 +882,17 @@ namespace Presentacion.Core.Venta
             {
                 _suspendCbxDesc = true;
                 cbxDescEfectivo.Checked = false;
+                cbxDescEfectivo.Enabled = false;
                 txtDescuentoEfectivo.Text = string.Empty;
                 txtDescuentoEfectivo.Enabled = false;
                 _suspendCbxDesc = false;
+                
                 MessageBox.Show("No se puede aplicar descuento por efectivo cuando hay ofertas en la venta.");
                 return;
+            }
+            else
+            {
+                cbxDescEfectivo.Enabled = true;
             }
         }
 
@@ -1019,6 +1061,7 @@ namespace Presentacion.Core.Venta
             {
                 itemsVenta.Remove(item);   // lista bindada
                 dgvProductos.Refresh();
+                ValidarCantidadySiEsOferta();
                 CalcularTotal();
             }
         }
