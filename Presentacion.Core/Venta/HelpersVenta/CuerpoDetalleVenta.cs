@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Presentacion.Core.Venta
+namespace Presentacion.Core.Venta.HelpersVenta
 {
     public class CuerpoDetalleVenta
     {

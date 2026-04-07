@@ -1,5 +1,6 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.Core.CuentaCorriente;
+using Presentacion.Core.Venta.HelpersVenta;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Cliente.DTO;
 using System;

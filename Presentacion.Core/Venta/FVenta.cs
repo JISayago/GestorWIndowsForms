@@ -6,6 +6,7 @@ using Presentacion.Core.Cliente;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Oferta;
 using Presentacion.Core.Producto;
+using Presentacion.Core.Venta.HelpersVenta;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Cliente;
