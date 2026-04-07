@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20260331220724_AddEstaEliminadoEnLote")]
+    partial class AddEstaEliminadoEnLote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,20 +284,6 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("cantidad");
 
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("descripcion");
-
-                    b.Property<bool>("EsOferta")
-                        .HasColumnType("bit")
-                        .HasColumnName("es_oferta");
-
-                    b.Property<bool>("EsOfertaPorGrupo")
-                        .HasColumnType("bit")
-                        .HasColumnName("es_oferta_por_grupo");
-
                     b.Property<long?>("IdOfertaDescuento")
                         .HasColumnType("bigint")
                         .HasColumnName("id_OfertaDescuento");
@@ -306,14 +295,6 @@ namespace AccesoDatos.Migrations
                     b.Property<long>("IdVenta")
                         .HasColumnType("bigint")
                         .HasColumnName("id_Venta");
-
-                    b.Property<decimal>("PrecioUnitarioFinal")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_unitario_final");
-
-                    b.Property<decimal>("PrecioUnitarioOriginal")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_unitario_original");
 
                     b.Property<decimal>("Subtotal")
                         .HasColumnType("decimal(18,2)")

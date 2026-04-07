@@ -25,6 +25,7 @@ namespace Servicios.LogicaNegocio.Movimiento
         public void CrearMovimientoVenta(
             long ventaId,
             decimal monto,
+            int estado,
             TipoMovimientoDetalle detalleTipo,
             TipoEntidadMovimiento tipoEntidad,
             GestorContextDB context)
@@ -35,7 +36,7 @@ namespace Servicios.LogicaNegocio.Movimiento
             try
             {
                 // 🔥 1. Tipo de movimiento (Ingreso / Egreso)
-                var esEgreso = monto < 0;
+                var esEgreso = estado == 99;
 
                 var tipoMovimiento = esEgreso
                     ? TipoMovimiento.Egreso

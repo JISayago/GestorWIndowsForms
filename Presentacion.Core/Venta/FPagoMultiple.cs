@@ -1,4 +1,5 @@
-﻿using Presentacion.Core.Venta.TipoPago;
+﻿using Presentacion.Core.Venta.HelpersVenta;
+using Presentacion.Core.Venta.TipoPago;
 using Servicios.Helpers;
 using System;
 using System.Collections.Generic;

@@ -139,9 +139,10 @@ namespace Presentacion.Core.Producto
             grilla.Columns["Estado"].Visible = true;
 
             grilla.Columns["ControlPorLote"].Visible = true;
-            //hacer que el checkbox no sea modificable
             grilla.Columns["ControlPorLote"].HeaderText = "Control por Lote";
             grilla.Columns["ControlPorLote"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            grilla.Columns["ControlPorLote"].DefaultCellStyle.NullValue = false;
+            grilla.Columns["ControlPorLote"].ReadOnly = true;
 
             //acomodar las columnas
         }

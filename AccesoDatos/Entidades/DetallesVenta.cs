@@ -13,13 +13,23 @@ namespace AccesoDatos.Entidades
         public long DetalleVentaId { get; set; }
 
         public long IdVenta { get; set; }
+
         public long? IdProducto { get; set; }
         public long? IdOfertaDescuento { get; set; }
+
         public decimal Cantidad { get; set; }
+
+        public decimal PrecioUnitarioOriginal { get; set; }
+
+        public decimal PrecioUnitarioFinal { get; set; }
+
         public decimal Subtotal { get; set; }
 
+        public bool EsOferta { get; set; }
+        public bool EsOfertaPorGrupo { get; set; }
 
-        // Relaciones
+        public string Descripcion { get; set; }
+
         public Venta Venta { get; set; }
         public Producto Producto { get; set; }
         public OfertaDescuento OfertaDescuento { get; set; }

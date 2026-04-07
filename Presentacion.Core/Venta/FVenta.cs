@@ -6,6 +6,7 @@ using Presentacion.Core.Cliente;
 using Presentacion.Core.Empleado;
 using Presentacion.Core.Oferta;
 using Presentacion.Core.Producto;
+using Presentacion.Core.Venta.HelpersVenta;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Cliente;
@@ -118,6 +119,8 @@ namespace Presentacion.Core.Venta
                     tiposDePago = new List<FormaPago>(),
                     pagoParcial = false,
                     saldoPendiente = 0.00m,
+                    ofertaIncluidas = false,
+                    descripcionOferta = ""
                 };
                 itemsVenta = new BindingList<ItemVentaDTO>();
             }
@@ -180,7 +183,6 @@ namespace Presentacion.Core.Venta
             btnCargarCliente.Enabled = !esConsumidorFinal;
             ActualizarCamposInicio(VENTAID);
         }
-
         private void btnConfirmarYFPago_Click(object sender, EventArgs e)
         {
             if (_totalVenta == 0)
@@ -188,11 +190,13 @@ namespace Presentacion.Core.Venta
                 MessageBox.Show("Debe cargar al menos un producto antes de confirmar la venta.");
                 return;
             }
+
             if (!DatosSistema.CajaId.HasValue)
             {
                 MessageBox.Show("No hay una caja abierta. No se puede registrar la venta.");
                 return;
             }
+
             // Si ya se confirmó antes, registrar la venta directamente
             if (finalizarVenta)
             {
@@ -207,47 +211,51 @@ namespace Presentacion.Core.Venta
                 DescuentoEfectivo = cbxDescEfectivo.Checked
             };
 
-            // Primer paso: elegir 1 pago / múltiples
             var fSeleccionCantidad = new FSeleccionCantidadPagos();
+
             if (fSeleccionCantidad.ShowDialog() != DialogResult.OK)
-                return; // usuario canceló
+                return;
 
             bool esMultiples = fSeleccionCantidad.multiplePagos;
-            int cantidadPagos = fSeleccionCantidad.CantidadPagos; // en 1-pago será 1
+            int cantidadPagos = fSeleccionCantidad.CantidadPagos;
 
-            // --- caso: múltiples pagos -> abrir FPagoMultiple para ingresar montos y formas ---
+            // =========================
+            // 🔥 MULTIPLES PAGOS
+            // =========================
             if (esMultiples)
             {
                 using var fPagoMultiple = new FPagoMultiple(cantidadPagos, _totalVenta, datosVenta, idCliente);
-                var drMulti = fPagoMultiple.ShowDialog();
-                if (drMulti != DialogResult.OK)
-                {
-                    // usuario canceló el ingreso de múltiples pagos -> volvemos al flujo
+
+                if (fPagoMultiple.ShowDialog() != DialogResult.OK)
                     return;
-                }
 
                 var pagosSeleccionados = fPagoMultiple.ResultPagos;
+
                 if (pagosSeleccionados == null || pagosSeleccionados.Count == 0)
                 {
                     MessageBox.Show("Debe ingresar al menos un pago válido.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                // Asignar a los objetos usados por el resto del formulario
                 tipoDePagosVenta = pagosSeleccionados;
                 _cuerpoDetalleVenta.tiposDePago = pagosSeleccionados;
 
-                // Calcular pendiente
                 var suma = pagosSeleccionados.Sum(p => p.Monto);
                 _cuerpoDetalleVenta.saldoPendiente = _totalVenta - suma;
                 _cuerpoDetalleVenta.pagoParcial = _cuerpoDetalleVenta.saldoPendiente > 0m;
+
+                // 🔥 CLAVE: cargar ofertas ANTES
+                CargarInfoOfertas();
+
                 txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoTP();
 
                 GenerarDetalleVenta(tipoDePagosVenta);
                 return;
             }
-            // 1 pago
 
+            // =========================
+            // 🔥 UN SOLO PAGO
+            // =========================
             var fConfirmarVenta = new FConfirmacionVenta(datosVenta, idCliente)
             {
                 PermitirMultiplesPagos = false
@@ -256,28 +264,54 @@ namespace Presentacion.Core.Venta
             if (fConfirmarVenta.ShowDialog() == DialogResult.OK)
             {
                 var tipoPagosSeleccionados = fConfirmarVenta.pagos;
+
                 if (tipoPagosSeleccionados == null || tipoPagosSeleccionados.Count == 0)
                 {
                     MessageBox.Show("Debe seleccionar al menos un tipo de pago.");
                     return;
                 }
 
-                _cuerpoDetalleVenta.tiposDePago = tipoPagosSeleccionados;
                 tipoDePagosVenta = tipoPagosSeleccionados;
+                _cuerpoDetalleVenta.tiposDePago = tipoPagosSeleccionados;
 
                 _cuerpoDetalleVenta.saldoPendiente = fConfirmarVenta.MontoPendiente;
+                _cuerpoDetalleVenta.pagoParcial = fConfirmarVenta.MontoPendiente > 0.00m;
 
-                if (fConfirmarVenta.MontoPendiente > 0.00m)
-                {
-                    _cuerpoDetalleVenta.pagoParcial = true;
-                }
+                // 🔥 CLAVE: cargar ofertas ANTES
+                CargarInfoOfertas();
 
                 txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoTP();
 
                 GenerarDetalleVenta(tipoPagosSeleccionados);
             }
         }
-    
+        private void CargarInfoOfertas()
+        {
+            if (itemsVenta?.Any(iv => iv.EsOferta) == true)
+            {
+                _cuerpoDetalleVenta.ofertaIncluidas = true;
+
+                var descripciones = itemsVenta
+                    .Where(iv => iv.EsOferta)
+                    .Select(iv => new
+                    {
+                        iv.Descripcion,
+                        iv.EsOfertaPorGrupo
+                    })
+                    .Distinct()
+                    .Select(o => o.EsOfertaPorGrupo
+                        ? $"Descuento: {o.Descripcion}"
+                        : $"Combo: {o.Descripcion}")
+                    .ToList();
+
+                _cuerpoDetalleVenta.descripcionOferta = string.Join(", ", descripciones);
+            }
+            else
+            {
+                _cuerpoDetalleVenta.ofertaIncluidas = false;
+                _cuerpoDetalleVenta.descripcionOferta = string.Empty;
+            }
+        }
         private void FinalizacionVenta()
         {
             if (finalizarVenta)
@@ -321,9 +355,9 @@ namespace Presentacion.Core.Venta
                 {
                     MessageBox.Show($"Hubo un error al finalizar la venta: {m.Mensaje}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                    //MessageBox.Show("Venta confirmada exitosamente.");
+                //MessageBox.Show("Venta confirmada exitosamente.");
 
-                    this.Close();
+                this.Close();
                 return;
             }
         }
@@ -333,6 +367,7 @@ namespace Presentacion.Core.Venta
             if (tipoPagosSeleccionados.Count > 0)
             {
                 var fConfirmarDetalle = new FDetalleVenta();
+
                 if (fConfirmarDetalle.ShowDialog() == DialogResult.OK)
                 {
                     if (fConfirmarDetalle.confirmarDetalle)
@@ -350,7 +385,9 @@ namespace Presentacion.Core.Venta
                         descripcionVenta = "Sin detalles adicionales.";
                     }
 
-                    txtAreaDetallesVenta.Text = _cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta);
+                    // 🔥 ACÁ ya incluye pagos + saldo + ofertas + extra
+                    txtAreaDetallesVenta.Text =
+                        _cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta);
                 }
             }
         }
@@ -371,91 +408,104 @@ namespace Presentacion.Core.Venta
 
             if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
             {
-
                 var idProducto = fProductos.productoSeleccionado.Value;
-                var cantidad = 0.0m;
+                decimal cantidad = 0m;
 
-                //var producto = new ProductoServicio().ObtenerProductoPorId(idProducto);
                 var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
+
                 if (ofertaDesc == null)
                 {
                     MessageBox.Show("El producto seleccionado no está disponible.");
                     return;
                 }
-                var esOF = false;
-                if (ofertaDesc.Oferta != null) { esOF = true; } else { esOF = false; }
+
+                var producto = ofertaDesc.Producto;
+                var oferta = ofertaDesc.Oferta;
+
+                bool tieneOferta = oferta != null;
+                bool esOfertaPorGrupo = tieneOferta && oferta.esOfertaPorGrupo;
+
                 var fCantidad = new FCantidadItem();
 
                 if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
                 {
-                    if (fCantidad.cantidad > ofertaDesc.Producto.Stock)
+                    cantidad = fCantidad.cantidad > producto.Stock
+                        ? producto.Stock
+                        : fCantidad.cantidad;
+
+                    if (fCantidad.cantidad > producto.Stock)
                     {
-                        cantidad = ofertaDesc.Producto.Stock;
-                        MessageBox.Show($"La cantidad solicitada supera el stock disponible. Por lo que se pondra la cantidad máxima disponible: {cantidad}.");
+                        MessageBox.Show($"Stock insuficiente. Se ajusta a {cantidad}.");
                     }
-                    else
-                    {
-                        cantidad = fCantidad.cantidad;
-                    }
+
                     var itemVenta = new ItemVentaDTO
                     {
-                        ItemId = ofertaDesc.Producto.ProductoId,
-                        Descripcion = ofertaDesc.Producto.Descripcion,
-                        PrecioVenta = ofertaDesc.Producto.PrecioVenta,
-                        PrecioOferta = ofertaDesc.PrecioEnOferta,
+                        ItemId = producto.ProductoId,
+                        Descripcion = producto.Descripcion,
+
                         Cantidad = cantidad,
-                        Medida = ofertaDesc.Producto.Medida,
-                        UnidadMedida = ofertaDesc.Producto.UnidadMedida,
-                        EsOferta = esOF
+
+                        PrecioVenta = producto.PrecioVenta,
+                        PrecioOferta = esOfertaPorGrupo
+                            ? ofertaDesc.PrecioEnOferta
+                            : producto.PrecioVenta,
+
+                        PrecioOriginalOferta = producto.PrecioVenta,
+
+                        Medida = producto.Medida,
+                        UnidadMedida = producto.UnidadMedida,
+
+                        EsOferta = esOfertaPorGrupo,          // 🔥 SOLO si hay descuento real
+                        EsOfertaPorGrupo = esOfertaPorGrupo   // 🔥 clave para lógica después
                     };
 
-                    itemsVenta.Add(itemVenta);  
-                                                //txtProductoCargado.Text = $"{itemVenta.Descripcion}";
-                                               
+                    itemsVenta.Add(itemVenta);
+
                     if (cbxDescEfectivo.Checked)
                     {
                         ValidarCantidadySiEsOferta();
                         AplicarDescuentoEfectivo();
                     }
+
                     CalcularTotal();
                 }
             }
         }
         private void CalcularTotal()
         {
-            //replantar oferta en gral
-            if (dgvProductos.RowCount > 0)
-            {
-                decimal total = 0m;
+            decimal totalFinal = 0m;
+            decimal totalSinDescuento = 0m;
 
+            if (itemsVenta != null && itemsVenta.Any())
+            {
                 foreach (var item in itemsVenta)
                 {
-                    decimal subtotal;
+                    // 🔹 Siempre calculás el original
+                    var subtotalOriginal = item.PrecioVenta * item.Cantidad;
+                    totalSinDescuento += subtotalOriginal;
+
+                    decimal subtotalFinal;
 
                     if (item.EsOferta)
                     {
-                        // Caso oferta → el precio ya es total de la oferta, no depende de Cantidad
-                        subtotal = item.PrecioOferta;
+                        // 🔥 OFERTA
+                        subtotalFinal = item.PrecioOferta * item.Cantidad;
                     }
                     else
                     {
-                        // Caso producto normal → precio * cantidad
-                        subtotal = item.PrecioVenta * item.Cantidad;
+                        // 🔹 PRODUCTO NORMAL
+                        subtotalFinal = item.PrecioVenta * item.Cantidad;
                     }
 
-                    total += subtotal;
+                    totalFinal += subtotalFinal;
                 }
+            }
 
-                _subTotalVenta = total;
-            }
-            else
-            {
-                _subTotalVenta = 0.00m;
-            }
-            _totalVenta = _subTotalVenta; //iria el descuento por porcentaje.
-            txtTotal.Text = _totalVenta.ToString("C2");
-            txtSubtotal.Text = _subTotalVenta.ToString("C2");
-            txtTotal.Text = _totalVenta.ToString("C2");
+            _subTotalVenta = totalSinDescuento;
+            _totalVenta = totalFinal;
+
+            txtSubtotalSinDescuento.Text = totalSinDescuento.ToString("C2");
+            txtTotal.Text = totalFinal.ToString("C2");
         }
 
         private void ActualizarGrillas()
@@ -559,25 +609,30 @@ namespace Presentacion.Core.Venta
                 DefaultCellStyle = { Format = "C2" }
             });
 
-            // ✏️ Botón editar
-            grilla.Columns.Add(new DataGridViewButtonColumn
-            {
-                Name = "BtnEditar",
-                HeaderText = "Editar",
-                Text = "✏ Editar",
-                UseColumnTextForButtonValue = true,
-                Width = 130
-            });
 
-            // 🗑 Botón eliminar
-            grilla.Columns.Add(new DataGridViewButtonColumn
+            if (!VENTAID.HasValue)
             {
-                Name = "BtnEliminar",
-                HeaderText = "Eliminar",
-                Text = "🗑 Eliminar",
-                UseColumnTextForButtonValue = true,
-                Width = 130
-            });
+
+                // ✏️ Botón editar
+                grilla.Columns.Add(new DataGridViewButtonColumn
+                {
+                    Name = "BtnEditar",
+                    HeaderText = "Editar",
+                    Text = "✏ Editar",
+                    UseColumnTextForButtonValue = true,
+                    Width = 130
+                });
+
+                // 🗑 Botón eliminar
+                grilla.Columns.Add(new DataGridViewButtonColumn
+                {
+                    Name = "BtnEliminar",
+                    HeaderText = "Eliminar",
+                    Text = "🗑 Eliminar",
+                    UseColumnTextForButtonValue = true,
+                    Width = 130
+                });
+            }
         }
 
 
@@ -715,7 +770,7 @@ namespace Presentacion.Core.Venta
                 ResetearGrilla(dgvProductos);
                 ActualizarCamposInicio(VENTAID);
                 txtTotal.Text = VENTAELIMINAR.Total.ToString("C2");
-                txtSubtotal.Text = VENTAELIMINAR.TotalSinDescuento.ToString("C2");
+                txtSubtotalSinDescuento.Text = VENTAELIMINAR.TotalSinDescuento.ToString("C2");
                 txtDescuentoEfectivo.Text = VENTAELIMINAR.TotalSinDescuento.ToString("C2");
                 lblNro.Text = VENTAELIMINAR.NumeroVenta;
                 txtAreaDetallesVenta.Text = VENTAELIMINAR.Detalle;
@@ -737,7 +792,7 @@ namespace Presentacion.Core.Venta
                 btnConfirmarYFPago.Enabled = false;
                 btnConfirmarYFPago.Visible = false;
                 txtAreaDetallesVenta.Enabled = false;
-                txtSubtotal.Enabled = false;
+                txtSubtotalSinDescuento.Enabled = false;
                 txtTotal.Enabled = false;
                 cbxConsumidorFinal.Enabled = false;
                 cbxConsumidorFinal.Visible = false;
@@ -792,7 +847,7 @@ namespace Presentacion.Core.Venta
                 cbxIncluirCtaCte.Checked = true;
                 dgvProductos.AllowUserToAddRows = false;
                 cbxDescEfectivo.Checked = false;
-                txtSubtotal.Text = _subTotalVenta.ToString("C2");
+                txtSubtotalSinDescuento.Text = _subTotalVenta.ToString("C2");
                 txtTotal.Text = _totalVenta.ToString("C2");
                 if (idCliente < 0)
                 {
@@ -811,6 +866,12 @@ namespace Presentacion.Core.Venta
             ValidarCantidadySiEsOferta();
 
             txtDescuentoEfectivo.Enabled = cbxDescEfectivo.Checked;
+
+            if (!cbxDescEfectivo.Checked)
+            {
+                txtDescuentoEfectivo.Text = string.Empty;
+                CalcularTotal();
+            }
         }
         private void ValidarCantidadySiEsOferta()
         {
@@ -827,16 +888,23 @@ namespace Presentacion.Core.Venta
             {
                 _suspendCbxDesc = true;
                 cbxDescEfectivo.Checked = false;
+                cbxDescEfectivo.Enabled = false;
                 txtDescuentoEfectivo.Text = string.Empty;
                 txtDescuentoEfectivo.Enabled = false;
                 _suspendCbxDesc = false;
+                
                 MessageBox.Show("No se puede aplicar descuento por efectivo cuando hay ofertas en la venta.");
                 return;
+            }
+            else
+            {
+                cbxDescEfectivo.Enabled = true;
             }
         }
 
         private void txtDescuentoEfectivo_TextChanged(object sender, EventArgs e)
         {
+
             AplicarDescuentoEfectivo();
         }
         private void AplicarDescuentoEfectivo()
@@ -844,16 +912,40 @@ namespace Presentacion.Core.Venta
             if (!decimal.TryParse(txtDescuentoEfectivo.Text, out decimal porcentajeDesc))
                 return;
 
-            if (porcentajeDesc <= 0 || porcentajeDesc > 100)
-                return;
+            if (porcentajeDesc < 0 || porcentajeDesc > 100)
+            {
+                MessageBox.Show("Ingresar un número entre 1 y 100.");
+                if(porcentajeDesc > 100)
+                {
+                    txtDescuentoEfectivo.Text = "100";
+                    porcentajeDesc = 100;
+                }
+                else
+                {
+                    txtDescuentoEfectivo.Text = "0";
+                    porcentajeDesc = 0;
+                }
+                    return;
+            }
 
-            decimal totalVenta = itemsVenta.Sum(i => i.PrecioVenta * i.Cantidad); // o la propiedad que uses
-            decimal descuento = totalVenta * (porcentajeDesc / 100m);
-            decimal totalConDescuento = totalVenta - descuento;
+            // 🔹 total de productos SIN oferta
+            decimal totalSinOferta = itemsVenta
+                .Where(i => !i.EsOferta)
+                .Sum(i => i.PrecioVenta * i.Cantidad);
 
-            txtTotal.Text = totalConDescuento.ToString("N2");
-            _totalVenta = totalConDescuento;
+            // 🔹 total de productos CON oferta (no se toca)
+            decimal totalConOferta = itemsVenta
+                .Where(i => i.EsOferta)
+                .Sum(i => i.Subtotal);
 
+            // 🔥 descuento solo sobre los que NO tienen oferta
+            decimal descuento = totalSinOferta * (porcentajeDesc / 100m);
+
+            decimal totalFinal = totalConOferta + (totalSinOferta - descuento);
+
+            _totalVenta = totalFinal;
+
+            txtTotal.Text = totalFinal.ToString("C2");
         }
 
         private void btnCambiarVendedor_Click(object sender, EventArgs e)
@@ -902,10 +994,11 @@ namespace Presentacion.Core.Venta
                             Descripcion = Oferta.Descripcion,
                             PrecioVenta = Oferta.PrecioOriginal,
                             PrecioOferta = Oferta.PrecioFinal,
-                            Cantidad = cantidad, // cantidad de ofertas vendidas
+                            Cantidad = cantidad,
                             Medida = string.Empty,
                             UnidadMedida = string.Empty,
-                            EsOferta = true
+                            EsOferta = true,
+                            EsOfertaPorGrupo = Oferta.esOfertaPorGrupo
                         };
 
                         itemsVenta.Add(ofertaVenta);
@@ -938,7 +1031,7 @@ namespace Presentacion.Core.Venta
                     return;
                 }
 
-                e.Value = esOferta ? "En Oferta Activa" : "Sin Oferta";
+                e.Value = esOferta ? "En Oferta Activa" : "Sin Oferta Activa";
                 e.FormattingApplied = true;
             }
 
@@ -974,6 +1067,7 @@ namespace Presentacion.Core.Venta
             {
                 itemsVenta.Remove(item);   // lista bindada
                 dgvProductos.Refresh();
+                ValidarCantidadySiEsOferta();
                 CalcularTotal();
             }
         }
@@ -991,6 +1085,17 @@ namespace Presentacion.Core.Venta
                 dgvProductos.Refresh();
                 CalcularTotal();
             }
+        }
+
+        private void txtDescuentoEfectivo_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // permitir control (backspace)
+            if (char.IsControl(e.KeyChar))
+                return;
+
+            // permitir números
+            if (!char.IsDigit(e.KeyChar))
+                e.Handled = true;
         }
     }
 }
