@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicios.Helpers
+namespace Servicios.Helpers.Gasto
 {
-    public enum TipoOferta
+    public enum EstadoGasto
     {
-        Grupo = 1,
-        Compuesta = 2
+        Pagado = 1,
+        Pendiente = 2,
+        Anulado = 3
     }
 }

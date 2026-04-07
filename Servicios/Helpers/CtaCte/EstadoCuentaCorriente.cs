@@ -1,4 +1,4 @@
-﻿namespace Servicios.Helpers
+﻿namespace Servicios.Helpers.CtaCte
 {
     public enum EstadoCuentaCorriente
     {

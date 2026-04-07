@@ -1,6 +1,6 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
-using Servicios.Helpers;
+using Servicios.Helpers.Sistema;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using System;
 using System.Collections.Generic;

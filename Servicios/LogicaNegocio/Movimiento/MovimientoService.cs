@@ -1,6 +1,6 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
-using Servicios.Helpers;
+using Servicios.Helpers.Movimiento;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using Servicios.LogicaNegocio.Cliente.DTO;
 using Servicios.LogicaNegocio.Empleado;

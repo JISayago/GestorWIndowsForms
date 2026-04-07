@@ -1,6 +1,5 @@
 ﻿using AccesoDatos.Entidades;
 using AccesoDatos;
-using Servicios.Helpers;
 using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Empleado.Rol.DTO;
 using System;
@@ -9,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Servicios.Helpers.Sistema;
 
 namespace Servicios.LogicaNegocio.Empleado.Rol
 {

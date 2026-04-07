@@ -2,7 +2,10 @@
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using MigraDoc.DocumentObjectModel.Internals;
-using Servicios.Helpers;
+using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.OpcionesPagos;
+using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.Extras;
 using Servicios.Infraestructura;
 using Servicios.LogicaNegocio.Caja;
 using Servicios.LogicaNegocio.Empleado.DTO;

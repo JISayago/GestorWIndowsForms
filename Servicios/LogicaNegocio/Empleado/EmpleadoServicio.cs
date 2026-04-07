@@ -7,9 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AccesoDatos.Entidades;
-using Servicios.Helpers;
 using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.Admin;
 
 namespace Servicios.LogicaNegocio.Empleado
 {

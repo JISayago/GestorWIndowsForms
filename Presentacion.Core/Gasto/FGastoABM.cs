@@ -1,4 +1,4 @@
-﻿using Servicios.Helpers;
+﻿using Servicios.Helpers.Gasto;
 using Servicios.LogicaNegocio.Gasto;
 using Servicios.LogicaNegocio.Gasto.DTO;
 using System;

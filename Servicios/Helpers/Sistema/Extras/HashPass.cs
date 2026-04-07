@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicios.Helpers
+namespace Servicios.Helpers.Sistema.Extras
 {
     public class HashPass
     {

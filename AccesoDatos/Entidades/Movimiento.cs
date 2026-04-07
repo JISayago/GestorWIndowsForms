@@ -14,9 +14,9 @@ namespace AccesoDatos.Entidades
 
         public string NumeroMovimiento { get; set; } = string.Empty;
 
-        public int TipoMovimiento { get; set; }
+        public int TipoMovimiento { get; set; } // Ingreso - Egreso, se puede utilizar un enum para definir los tipos de movimiento, esto es importante para el manejo de caja y reportes financieros.
 
-        public int TipoMovimientoDetalle { get; set; }
+        public int TipoMovimientoDetalle { get; set; } // Para aclarar el Area del movimiento. principalmente para filtrar el tipo de movimiento.
 
         public decimal Monto { get; set; }
 
@@ -25,7 +25,7 @@ namespace AccesoDatos.Entidades
         public bool EstaEliminado { get; set; }
 
         // referencia genérica a cualquier entidad del sistema
-        public int? TipoEntidad { get; set; }
+        public int? TipoEntidad { get; set; } // TipoEntidadMovimiento enum, para identificar a que entidad se refiere el movimiento nombre representativo de la carpeta de entidades. (venta, producto, caja, etc)
         public long? EntidadId { get; set; }
 
     }

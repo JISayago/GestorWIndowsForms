@@ -1,7 +1,8 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
-using Servicios.Helpers;
+using Servicios.Helpers.CtaCte;
+using Servicios.Helpers.Sistema;
 using Servicios.LogicaNegocio.Cliente.DTO;
 
 namespace Servicios.LogicaNegocio.Cliente

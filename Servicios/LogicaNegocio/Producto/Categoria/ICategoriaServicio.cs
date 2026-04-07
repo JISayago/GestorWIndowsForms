@@ -1,4 +1,4 @@
-﻿using Servicios.Helpers;
+﻿using Servicios.Helpers.Sistema;
 using Servicios.LogicaNegocio.Articulo.Categoria.DTO;
 using System;
 using System.Collections.Generic;
