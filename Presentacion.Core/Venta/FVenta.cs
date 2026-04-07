@@ -866,6 +866,12 @@ namespace Presentacion.Core.Venta
             ValidarCantidadySiEsOferta();
 
             txtDescuentoEfectivo.Enabled = cbxDescEfectivo.Checked;
+
+            if (!cbxDescEfectivo.Checked)
+            {
+                txtDescuentoEfectivo.Text = string.Empty;
+                CalcularTotal();
+            }
         }
         private void ValidarCantidadySiEsOferta()
         {
