@@ -1,6 +1,6 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
-using Servicios.Helpers;
+using Servicios.Helpers.Movimiento;
 using Servicios.LogicaNegocio.Caja.DTO;
 using System;
 using System.Collections.Generic;

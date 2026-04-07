@@ -1,6 +1,6 @@
 ﻿using AccesoDatos.Entidades;
 using Azure;
-using Servicios.Helpers;
+using Servicios.Helpers.OpcionesPagos;
 using Servicios.LogicaNegocio.Venta.TipoPago.DTO;
 using System;
 using System.Collections.Generic;

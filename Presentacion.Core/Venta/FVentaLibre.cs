@@ -4,7 +4,7 @@ using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Cliente;
 using Presentacion.Core.Venta.HelpersVenta;
 using Presentacion.FBase.Helpers;
-using Servicios.Helpers;
+using Servicios.Helpers.OpcionesPagos;
 using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.Cliente.DTO;
 using Servicios.LogicaNegocio.CuentaCorriente;

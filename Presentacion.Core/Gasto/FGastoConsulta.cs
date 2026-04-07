@@ -2,7 +2,7 @@
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
-using Servicios.Helpers;
+using Servicios.Helpers.Gasto;
 using Servicios.LogicaNegocio.Gasto;
 using System.Diagnostics;
 using System.Drawing;

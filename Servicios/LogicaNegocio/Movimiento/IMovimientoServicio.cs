@@ -1,5 +1,5 @@
 ﻿using AccesoDatos;
-using Servicios.Helpers;
+using Servicios.Helpers.Movimiento;
 using Servicios.LogicaNegocio.Movimiento.DTO;
 using System;
 using System.Collections.Generic;

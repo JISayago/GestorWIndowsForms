@@ -1,6 +1,6 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
-using Servicios.Helpers;
+using Servicios.Helpers.Sistema;
 using Servicios.LogicaNegocio.Articulo.Categoria.DTO;
 using Servicios.LogicaNegocio.Empleado.DTO;
 using System;
