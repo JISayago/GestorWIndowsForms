@@ -572,6 +572,10 @@ namespace Presentacion.Core.Venta
                 DefaultCellStyle = { Format = "C2" }
             });
 
+
+            if (!VENTAID.HasValue)
+            {
+
             // ✏️ Botón editar
             grilla.Columns.Add(new DataGridViewButtonColumn
             {
@@ -591,6 +595,7 @@ namespace Presentacion.Core.Venta
                 UseColumnTextForButtonValue = true,
                 Width = 130
             });
+            }
         }
 
 
@@ -864,8 +869,8 @@ namespace Presentacion.Core.Venta
             decimal descuento = totalVenta * (porcentajeDesc / 100m);
             decimal totalConDescuento = totalVenta - descuento;
 
-            txtTotal.Text = totalConDescuento.ToString("N2");
             _totalVenta = totalConDescuento;
+            txtTotal.Text = totalConDescuento.ToString("N2");
 
         }
 
@@ -952,7 +957,7 @@ namespace Presentacion.Core.Venta
                     return;
                 }
 
-                e.Value = esOferta ? "En Oferta Activa" : "Sin Oferta";
+                e.Value = esOferta ? "En Oferta Activa" : "Sin Oferta Activa";
                 e.FormattingApplied = true;
             }
 
