@@ -37,7 +37,7 @@ namespace Servicios.LogicaNegocio.Venta
         }
 
 
-public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto, TipoMovimientoDetalle movimientoDetalle)
+public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto, TipoMovimientoDetalle movimientoDetalle, long? ventdaIdOriginalParaCancerlar = null)
     {
         Debug.WriteLine("1 - Inicio CrearVentaInterna");
 
@@ -188,15 +188,33 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                 }
 
                 Debug.WriteLine("20 - Actualizar stock");
+
+                    var detallesLotesUsado = new List<DetalleVentaLoteDTO>();
                     //EVALUAR EL FORMATO DE ITEMVENTADTO PUEDE SER OFERTA Y TENER QUE DESCONTAR EN MAS DE UN PRODUCTO.
-                if (ventaDto.Total < 0)
-                    _productoServicio.RestaurarStockProductos(itemsStock, context);
-                else
-                    _productoServicio.DescontarStockProductos(itemsStock, context);
+                    if (ventaDto.Total < 0) //Cancelacion de venta, restaurar stock //ESTA FUNCION SOLO SE USA CUANDO SE CANCELA???
+                    _productoServicio.RestaurarStockProductos(itemsStock, context, (long)ventdaIdOriginalParaCancerlar);
+                    else
+                    detallesLotesUsado = _productoServicio.DescontarStockProductos(itemsStock, context);
+                    //Si el descuento de stock se hizo por lotes, guardamos el detalle venta lote para luego poder restaurar el stock correctamente en caso de cancelacion de venta.
 
-                Debug.WriteLine("21 - Stock actualizado");
 
-                var detalles = new List<DetallesVenta>();
+                    //CREAR DETALLE VENTA LOTE
+                    if (detallesLotesUsado.Any())
+                    {
+                        var detallesLotes = detallesLotesUsado.Select(d => new DetalleVentaLote
+                        {
+                            IdVenta = venta.VentaId,
+                            IdProducto = d.IdProducto,
+                            IdLote = d.IdLote,
+                            Cantidad = d.Cantidad
+                        }).ToList();
+                        
+                        context.DetalleVentaLotes.AddRange(detallesLotes);
+                    }
+
+                    Debug.WriteLine("21 - Stock actualizado");
+
+                    var detalles = new List<DetallesVenta>();
 
                 foreach (var i in ventaDto.Items)
                 {
@@ -574,14 +592,15 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                         PrecioVenta = d.Subtotal / d.Cantidad
                     }).ToList(),
 
+                    
                     TiposDePagoSeleccionado = ventaOriginal.VentaPagoDetalles.Select(p => new FormaPago
                     {
                         TipoDePago = (TipoDePago)p.IdTipoPago,
                         Monto = -p.Monto
                     }).ToList()
-                };
+                }; //AGREGAR DETALLEVENTALOTE EN EL CASO QUE EXISTA if(ventaOriginal.DetallesVentasLotes.any()), cargar en el dto 
 
-                CrearVentaInterna(context, ventaCancelacionDto, TipoMovimientoDetalle.Cancelacion);
+                CrearVentaInterna(context, ventaCancelacionDto, TipoMovimientoDetalle.Cancelacion, ventaId);
 
                 context.SaveChanges();
                 transaction.Commit();

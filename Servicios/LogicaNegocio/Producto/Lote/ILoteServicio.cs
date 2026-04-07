@@ -1,6 +1,7 @@
 ﻿using AccesoDatos;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Venta.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         LoteDTO ObtenerLotePorId(long loteId);
         IEnumerable<LoteDTO> ObtenerLotesEliminados(string cadenabuscar, string columna);
         public List<LoteDTO> ObtenerLotesDeUnProducto(long productoId);
-        void DescontarStockLoteFifoLifo(decimal cantidadADescontar, long productoId, bool tieneFechaVencimiento);
+        List<DetalleVentaLoteDTO> DescontarStockLoteFifoLifo(decimal cantidadADescontar, long productoId, bool tieneFechaVencimiento);
         void RestaurarStockLoteFifoLifo(decimal cantidadARestaurar, List<long> loteId, bool tieneFechaVencimiento);
         string GenerarNumeroLote();
 

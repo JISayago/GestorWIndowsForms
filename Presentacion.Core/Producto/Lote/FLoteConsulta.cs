@@ -168,10 +168,10 @@ namespace Presentacion.Core.Producto.Lote
 
         public override void EjecutarBtnNuevo()
         {
-            var f = new FGestionStockLotes(TipoOperacion.Nuevo); //Deberia abrir el form de alta lote con el producto del lote seleccionado?
+            var f = new FProductoConsulta(); //Abrimos Producto Consulta, de ahi arranca el ciclo para alta lote
             f.ShowDialog();
 
-            Recargar(f.RealizoAlgunaOperacion);
+            //Recargar(f.RealizoAlgunaOperacion);
         }
 
         private void Recargar(bool realizoOperacion)
