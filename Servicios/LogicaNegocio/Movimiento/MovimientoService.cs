@@ -1,6 +1,7 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
 using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.VentaEnum;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using Servicios.LogicaNegocio.Cliente.DTO;
 using Servicios.LogicaNegocio.Empleado;
@@ -36,7 +37,7 @@ namespace Servicios.LogicaNegocio.Movimiento
             try
             {
                 // 🔥 1. Tipo de movimiento (Ingreso / Egreso)
-                var esEgreso = estado == 99;
+                var esEgreso = estado == (int)EstadoVenta.CancelacionVenta;
 
                 var tipoMovimiento = esEgreso
                     ? TipoMovimiento.Egreso
