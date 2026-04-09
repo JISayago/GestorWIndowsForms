@@ -65,9 +65,9 @@ namespace Presentacion.AccesoAlSistema
                     form.ShowDialog();
                     return;
                 }
-
+                // mejorar el filtro de accion no puede ser solo con un string.contains, se puede agregar un campo de tipo enum o algo similar para identificar la accion a realizar
                 // 🔸 Recuperación de contraseña
-                if (estadoUsuario.Mensaje.Contains("5 minutos"))
+                if (estadoUsuario.Mensaje.Contains("recuperación"))
                 {
                     MessageBox.Show(estadoUsuario.Mensaje,
                         "Recuperación", MessageBoxButtons.OK, MessageBoxIcon.Warning);

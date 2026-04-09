@@ -219,8 +219,8 @@ namespace ServicioAccesoSistema.AccesoSistema
                 return new EstadoOperacion
                 {
                     Exitoso = true,
-                    Mensaje = $"Código de recuperación: {codigo}. Válido por 5 minutos.",
-                    EntidadId = empleado.PersonaId
+                    Mensaje = $"Código de recuperación: {codigo}. Válido por 5 minutos .",
+                    EntidadId = empleado.PersonaId // forzamos estado en vez de id
                 };
             }
 
