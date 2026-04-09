@@ -247,7 +247,8 @@ namespace Servicios.LogicaNegocio.Empleado
 
                 if (!tienePermiso)
                 {
-                    
+                    usuario.Estado = (int)EstadoEmpleado.SinPass;
+                    context.SaveChanges();
                     return new EstadoOperacion
                     {
                         Exitoso = false,
