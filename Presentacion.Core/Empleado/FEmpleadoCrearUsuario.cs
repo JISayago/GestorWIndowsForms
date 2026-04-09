@@ -14,6 +14,7 @@ using Servicios.LogicaNegocio.Empleado.DTO;
 using AccesoDatos.Entidades;
 using Presentacion.Core.Empleado;
 using Servicios.Helpers;
+using Servicios.Helpers.Sistema.Admin;
 
 namespace Presentacion.Core.Empleado
 {
@@ -79,7 +80,7 @@ namespace Presentacion.Core.Empleado
                 PersonaId = _empleadoDto.PersonaId,
                 Username = txtNombreUsuario.Text,
                 Pass = "123456789",
-                Estado = 0
+                Estado = (int)EstadoEmpleado.Inhablitado
             };
             var estadoOperacion = _usuarioServicio.CrearUsuario(usuarioDto);
             if (estadoOperacion.Exitoso)

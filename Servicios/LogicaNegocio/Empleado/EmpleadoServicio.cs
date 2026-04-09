@@ -16,8 +16,8 @@ namespace Servicios.LogicaNegocio.Empleado
 {
     public class EmpleadoServicio : IEmpleadoServicio
     {
-        
 
+        
         public EstadoOperacion Eliminar(long empleadoId)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);

@@ -1,4 +1,5 @@
-﻿using Presentacion.Core.Empleado.Rol;
+﻿using Presentacion.AccesoAlSistema;
+using Presentacion.Core.Empleado.Rol;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
@@ -11,25 +12,32 @@ namespace Presentacion.Core.Empleado
     public partial class FEmpleadoConsulta : FBaseConsulta
     {
         private readonly IEmpleadoServicio _empleadoServicio;
+        private readonly IUsuarioServicio _usuarioServicio;
 
+        private readonly ICollection<long> _empleadosConUsuariosBloqueados = new List<long>();
         public long? empleadoSeleccionado = null;
         public bool soloSeleccion;
         public bool vieneDeCargaVendedor = false;
+        private bool estaInhabilitado = false;
+        private long logeadoID;
 
-        public FEmpleadoConsulta() : this(new EmpleadoServicio())
+        public FEmpleadoConsulta(long logeadoid) : this(new EmpleadoServicio(), new UsuarioServicio())
         {
             InitializeComponent();
             soloSeleccion = false;
+                logeadoID = logeadoid;
         }
 
-        public FEmpleadoConsulta(IEmpleadoServicio empleadoServicio)
+        public FEmpleadoConsulta(IEmpleadoServicio empleadoServicio, IUsuarioServicio usuarioServicio)
         {
             _empleadoServicio = empleadoServicio;
+            _usuarioServicio = usuarioServicio;
             InitializeComponent();
             soloSeleccion = false;
+            _empleadosConUsuariosBloqueados = _usuarioServicio.ObtenerEmpleadosSinPassIDs();
         }
 
-        public FEmpleadoConsulta(bool _vieneDeCargaVendedor) : this(new EmpleadoServicio())
+        public FEmpleadoConsulta(bool _vieneDeCargaVendedor) : this(new EmpleadoServicio(),new UsuarioServicio())
         {
             InitializeComponent();
 
@@ -54,13 +62,17 @@ namespace Presentacion.Core.Empleado
                 AbrirCrearUsuario,
                 true
             );
-            if (vieneDeCargaVendedor)
             {
-
             AgregarAccion(
                 "Asignar Vendedor",
                 Constantes.Imagenes.ImgNuevo,
                 AsignarVendedor,
+                true
+            );
+            AgregarAccion(
+                "Resetear Contrtaseña",
+                Constantes.Imagenes.ImgNuevo,
+                ResetarContraseniaUsuario,
                 true
             );
             }
@@ -80,6 +92,23 @@ namespace Presentacion.Core.Empleado
 
             var f = new FEmpleadoCrearUsuario(id);
             f.ShowDialog();
+        }
+
+        private void ResetarContraseniaUsuario(long? id)
+        {
+            if (!id.HasValue) return;
+            MessageBox.Show("¿Confirma que desea resetear la contraseña del usuario?", "Confirmar acción", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var adminId = logeadoID;
+            var usuarioDesbloquerID = id.Value;
+            var resp = _usuarioServicio.ResetearContra(adminId, usuarioDesbloquerID);
+            if (resp.Exitoso)
+            {
+                MessageBox.Show($"{resp.Mensaje}");
+            }
+            else
+            {
+                MessageBox.Show($"{resp.Mensaje}");
+            }
         }
         private void AsignarVendedor(long? id)
         {

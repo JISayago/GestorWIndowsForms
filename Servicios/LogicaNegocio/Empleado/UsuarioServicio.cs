@@ -2,8 +2,10 @@
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.Admin;
 using Servicios.Helpers.Sistema.Extras;
 using Servicios.LogicaNegocio.Empleado.DTO;
+using Servicios.LogicaNegocio.Empleado.Rol.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -213,6 +215,135 @@ namespace Servicios.LogicaNegocio.Empleado
                     Estado = 0
                 };
             }
+        }
+
+        public EstadoOperacion DeshabilitarUsuarioYRecuperarContra(string user,string nro)
+        {
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                var usuario = context.Empleados
+                    .Include(e => e.Persona)
+                    .Include(e => e.EmpleadoRoles)
+                        .ThenInclude(er => er.Rol)
+                    .FirstOrDefault(x => (x.Persona.Dni == nro || x.Legajo == nro) && x.Username == user);
+
+                if (usuario == null)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "Usuario no encontrado",
+                        EntidadId = null
+                    };
+                }
+
+                // Roles
+                var roles = usuario.EmpleadoRoles
+                    .Select(er => er.Rol)
+                    .ToList();
+
+                // Validación de rol
+                bool tienePermiso = roles.Any(r => r.CodigoRol == "SADMIN"); // mejor por ID
+
+                if (!tienePermiso)
+                {
+                    
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = $"Hola {usuario.Username}!. Se notificó a un administrador para la recuperacion de contraseña.",
+                        EntidadId = usuario.PersonaId
+                    };
+                }
+
+                // Deshabilitar
+                usuario.Estado = (int)EstadoEmpleado.SinPass;
+                usuario.UsuarioEstaHabilitado = false;
+
+                context.SaveChanges();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "Usuario deshabilitado correctamente",
+                    EntidadId = usuario.PersonaId
+                };
+            }
+        }
+        public ICollection<long> ObtenerEmpleadosSinPassIDs()
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+            var usuariosInhabilitadosIDs = context.Empleados
+                .Where(e => !e.UsuarioEstaHabilitado && (e.Estado == (int)EstadoEmpleado.SinPass))
+                .Select(e => e.PersonaId)
+                .ToList();
+            return usuariosInhabilitadosIDs;
+        }
+
+        public EstadoOperacion ResetearContra(long adminId, long usuarioDesbloquearId)
+        {
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                var admin = context.Empleados
+                    .Include(e => e.EmpleadoRoles)
+                        .ThenInclude(er => er.Rol)
+                    .FirstOrDefault(x => x.PersonaId == adminId);
+
+                if (admin == null)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "Administrador no encontrado"
+                    };
+                }
+
+                bool esSAdmin = admin.EmpleadoRoles
+                    .Any(er => er.Rol.CodigoRol == "SADMIN");
+
+                if (!esSAdmin)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "No tiene permisos para resetear contraseñas",
+                        EntidadId = adminId
+                    };
+                }
+
+                var usuario = context.Empleados
+                    .FirstOrDefault(x => x.PersonaId == usuarioDesbloquearId
+                                      && x.Estado == (int)EstadoEmpleado.SinPass);
+
+                if (usuario == null)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "Usuario a resetear no encontrado"
+                    };
+                }
+
+                string codigo = GenerarCodigoRecuperacion();
+
+                usuario.Estado = (int)EstadoEmpleado.Inhablitado;
+
+                // usuario.CodigoRecuperacion = codigo;
+
+                context.SaveChanges();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = $"Código de recuperación para el usuario {usuario.Username}: {codigo}. Válido por 5 minutos.",
+                    EntidadId = usuario.PersonaId
+                };
+            }
+        }
+        private string GenerarCodigoRecuperacion(int longitud = 5)
+        {
+            var random = new Random();
+            return random.Next((int)Math.Pow(10, longitud - 1), (int)Math.Pow(10, longitud)).ToString();
         }
     }
 }

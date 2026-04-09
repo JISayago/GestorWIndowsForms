@@ -2,6 +2,7 @@
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.Admin;
 using Servicios.Helpers.Sistema.Extras;
 using System;
 using System.Collections.Generic;
@@ -153,6 +154,60 @@ namespace ServicioAccesoSistema.AccesoSistema
                 };
 
             }
+        }
+
+        public EstadoOperacion ValidarEstadoUsuario(string username)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var empleado = context.Empleados
+                .FirstOrDefault(e => e.Username == username);
+
+            if (empleado == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Usuario no encontrado"
+                };
+            }
+
+            // 🔹 Usuario activo → login normal
+            if (empleado.Estado == (int)EstadoEmpleado.Habilitado)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false // sigue flujo normal de login
+                };
+            }
+
+            // 🔹 Primer ingreso
+            if (empleado.Estado == (int)EstadoEmpleado.Inhablitado)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "Primer ingreso. Debe crear una contraseña.",
+                    EntidadId = empleado.PersonaId
+                };
+            }
+
+            // 🔹 Recuperación
+            if (empleado.Estado == (int)EstadoEmpleado.SinPass)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "Debe ingresar código de recuperación.",
+                    EntidadId = empleado.PersonaId
+                };
+            }
+
+            return new EstadoOperacion
+            {
+                Exitoso = false,
+                Mensaje = "Estado de usuario no válido"
+            };
         }
     }
 }

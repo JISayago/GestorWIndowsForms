@@ -40,48 +40,74 @@ namespace Presentacion.AccesoAlSistema
 
         private void IngresarAlSistema()
         {
-            if (!string.IsNullOrEmpty(txtPass.Text) && !string.IsNullOrEmpty(txtUsuario.Text))
+            if (string.IsNullOrEmpty(txtUsuario.Text) || string.IsNullOrEmpty(txtPass.Text))
             {
-                username = txtUsuario.Text;
-                pass = txtPass.Text;
-                var PrimerIngreso = _accesoSistema.PrimerIngreso(username, pass);
-                if (!PrimerIngreso.Exitoso)
-                {
-                    var response = _accesoSistema.LogeoAlSistema(username, pass);
-                    if (!response.Exitoso)
-                    {
-                        MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        var uLogeado = _empleadoServicio.ObtenerEmpleadoPorId((long)response.EntidadId);
-                        if (uLogeado.PersonaId != null)
-                        {
-                            _usuarioLogeado = new UsuarioLogeado
-                            {
-                                PersonaId = uLogeado.PersonaId,
-                                Nombre = uLogeado.Nombre,
-                                Apellido = uLogeado.Apellido,
-                                Username = uLogeado.Username,
+                MessageBox.Show("Por favor el usuario y la contraseña son obligatorios",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-                            };
-                            MessageBox.Show(response.Mensaje, "Ingreso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            PuedeAccederAlSistema = true;
-                        }
-                        this.Close();
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Primer Ingreso, actualizar contraseña", "Accion Primer Ingreso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    var FActualizacionNuevaPass = new ActualizarPass((long)PrimerIngreso.EntidadId);
-                    FActualizacionNuevaPass.ShowDialog();
-                }
-            }
-            else
+            username = txtUsuario.Text;
+            pass = txtPass.Text;
+
+            // 🔹 1. Validar estado del usuario
+            var estadoUsuario = _accesoSistema.ValidarEstadoUsuario(username);
+
+            if (estadoUsuario.Exitoso)
             {
-                MessageBox.Show("Por favor el usuario y la contraseña son Obligatrorios", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                // 🔸 Primer ingreso
+                if (estadoUsuario.Mensaje.Contains("Primer ingreso"))
+                {
+                    MessageBox.Show(estadoUsuario.Mensaje,
+                        "Acción requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    var form = new ActualizarPass((long)estadoUsuario.EntidadId);
+                    form.ShowDialog();
+                    return;
+                }
+
+                // 🔸 Recuperación de contraseña
+                if (estadoUsuario.Mensaje.Contains("código"))
+                {
+                    MessageBox.Show(estadoUsuario.Mensaje,
+                        "Recuperación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    var form = new FCodigoRecuperacion((long)estadoUsuario.EntidadId);
+                    form.ShowDialog();
+                    return;
+                }
             }
+
+            // 🔹 2. Login normal
+            var response = _accesoSistema.LogeoAlSistema(username, pass);
+
+            if (!response.Exitoso)
+            {
+                MessageBox.Show(response.Mensaje,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // 🔹 3. Obtener usuario logueado
+            var uLogeado = _empleadoServicio.ObtenerEmpleadoPorId((long)response.EntidadId);
+
+            if (uLogeado.PersonaId != null)
+            {
+                _usuarioLogeado = new UsuarioLogeado
+                {
+                    PersonaId = uLogeado.PersonaId,
+                    Nombre = uLogeado.Nombre,
+                    Apellido = uLogeado.Apellido,
+                    Username = uLogeado.Username
+                };
+
+                MessageBox.Show(response.Mensaje,
+                    "Ingreso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                PuedeAccederAlSistema = true;
+            }
+
+            this.Close();
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -92,6 +118,12 @@ namespace Presentacion.AccesoAlSistema
         private void lblPass_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void lnklblRecuperacionContra_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var Frec = new FRecuperarContra();
+            Frec.ShowDialog();
         }
     }
 }

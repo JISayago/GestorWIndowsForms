@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Servicios.LogicaNegocio.Empleado.Rol.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,9 @@ namespace Servicios.LogicaNegocio.Empleado.DTO
         public int Estado { get; set; }
         public string Username { get; set; }
         public string Pass { get; set; }
+
+        public bool UsuarioEstaHabilitado { get; set; }
+
+        public IEnumerable<RolDTO> Roles { get; set; }
     }
 }
