@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Admin;
 using Servicios.Helpers.Sistema.Extras;
+using Servicios.LogicaNegocio.Empleado;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -155,12 +156,13 @@ namespace ServicioAccesoSistema.AccesoSistema
 
             }
         }
-
         public EstadoOperacion ValidarEstadoUsuario(string username)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            var _usuarioServicio = new UsuarioServicio();
             var empleado = context.Empleados
+                .Include(e => e.EmpleadoRoles)
+                    .ThenInclude(er => er.Rol)
                 .FirstOrDefault(e => e.Username == username);
 
             if (empleado == null)
@@ -172,12 +174,53 @@ namespace ServicioAccesoSistema.AccesoSistema
                 };
             }
 
+            // 🔹 Verificar si es SADMIN
+            bool esSAdmin = empleado.EmpleadoRoles
+                .Any(er => er.Rol.CodigoRol == "SADMIN");
+
             // 🔹 Usuario activo → login normal
             if (empleado.Estado == (int)EstadoEmpleado.Habilitado)
             {
                 return new EstadoOperacion
                 {
-                    Exitoso = false // sigue flujo normal de login
+                    Exitoso = false
+                };
+            }
+
+            // 🔹 Caso especial: SADMIN en recuperación → generar código automático
+            if (empleado.Estado == (int)EstadoEmpleado.SinPass && esSAdmin)
+            {
+                // 🔸 invalidar códigos anteriores
+                var codigosActivos = context.CodigosRecuperacionPass
+                    .Where(c => c.UsuarioAsignadoId == empleado.PersonaId && !c.EstaUsado)
+                    .ToList();
+
+                foreach (var c in codigosActivos)
+                {
+                    c.EstaUsado = true;
+                }
+
+                // 🔸 generar nuevo código
+                string codigo = _usuarioServicio.GenerarCodigoRecuperacion();
+
+                var nuevoCodigo = new CodigoRecuperacionPass
+                {
+                    UsuarioAsignadoId = empleado.PersonaId,
+                    Codigo = codigo,
+                    FechaCreacion = DateTime.Now,
+                    FechaExpiracion = DateTime.Now.AddMinutes(5),
+                    EstaUsado = false
+                };
+
+                context.CodigosRecuperacionPass.Add(nuevoCodigo);
+
+                context.SaveChanges();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = $"Código de recuperación: {codigo}. Válido por 5 minutos.",
+                    EntidadId = empleado.PersonaId
                 };
             }
 
@@ -192,7 +235,7 @@ namespace ServicioAccesoSistema.AccesoSistema
                 };
             }
 
-            // 🔹 Recuperación
+            // 🔹 Recuperación normal
             if (empleado.Estado == (int)EstadoEmpleado.SinPass)
             {
                 return new EstadoOperacion
@@ -209,5 +252,58 @@ namespace ServicioAccesoSistema.AccesoSistema
                 Mensaje = "Estado de usuario no válido"
             };
         }
+        //public EstadoOperacion ValidarEstadoUsuario(string username)
+        //{
+        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+        //    var empleado = context.Empleados
+        //        .FirstOrDefault(e => e.Username == username);
+
+        //    if (empleado == null)
+        //    {
+        //        return new EstadoOperacion
+        //        {
+        //            Exitoso = false,
+        //            Mensaje = "Usuario no encontrado"
+        //        };
+        //    }
+
+        //    // 🔹 Usuario activo → login normal
+        //    if (empleado.Estado == (int)EstadoEmpleado.Habilitado)
+        //    {
+        //        return new EstadoOperacion
+        //        {
+        //            Exitoso = false // sigue flujo normal de login
+        //        };
+        //    }
+
+        //    // 🔹 Primer ingreso
+        //    if (empleado.Estado == (int)EstadoEmpleado.Inhablitado)
+        //    {
+        //        return new EstadoOperacion
+        //        {
+        //            Exitoso = true,
+        //            Mensaje = "Primer ingreso. Debe crear una contraseña.",
+        //            EntidadId = empleado.PersonaId
+        //        };
+        //    }
+
+        //    // 🔹 Recuperación
+        //    if (empleado.Estado == (int)EstadoEmpleado.SinPass)
+        //    {
+        //        return new EstadoOperacion
+        //        {
+        //            Exitoso = true,
+        //            Mensaje = "Debe ingresar código de recuperación.",
+        //            EntidadId = empleado.PersonaId
+        //        };
+        //    }
+
+        //    return new EstadoOperacion
+        //    {
+        //        Exitoso = false,
+        //        Mensaje = "Estado de usuario no válido"
+        //    };
+        //}
     }
 }

@@ -18,5 +18,6 @@ namespace Servicios.LogicaNegocio.Empleado
         EstadoOperacion ActualziarPassPrimerIngreso(long usuarioId, string pass);
         UsuarioDTO ObtenerUsuarioPorId(long usuarioId);
         UsuarioDTO GeneracionNombreUsuario(string nombre, string apellido, long empleadoId);
+        EstadoOperacion ValidarCodigoRecuperacion(long usuarioId, string CodigoRecuperacion);
     }
 }

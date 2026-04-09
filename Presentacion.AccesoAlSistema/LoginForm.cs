@@ -67,7 +67,7 @@ namespace Presentacion.AccesoAlSistema
                 }
 
                 // 🔸 Recuperación de contraseña
-                if (estadoUsuario.Mensaje.Contains("código"))
+                if (estadoUsuario.Mensaje.Contains("5 minutos"))
                 {
                     MessageBox.Show(estadoUsuario.Mensaje,
                         "Recuperación", MessageBoxButtons.OK, MessageBoxIcon.Warning);

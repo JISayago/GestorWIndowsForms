@@ -324,11 +324,30 @@ namespace Servicios.LogicaNegocio.Empleado
                     };
                 }
 
+                // 🔹 1. Invalidar códigos anteriores
+                var codigosActivos = context.Set<CodigoRecuperacionPass>()
+                    .Where(c => c.UsuarioAsignadoId == usuario.PersonaId && !c.EstaUsado)
+                    .ToList(); // 👈 importante
+
+                foreach (var c in codigosActivos)
+                {
+                    c.EstaUsado = true;
+                }
+
+                // 🔹 2. Generar nuevo código
                 string codigo = GenerarCodigoRecuperacion();
 
-                usuario.Estado = (int)EstadoEmpleado.Inhablitado;
+                // 🔹 3. Crear nuevo registro
+                var codigoRecuperacion = new CodigoRecuperacionPass
+                {
+                    UsuarioAsignadoId = usuario.PersonaId,
+                    Codigo = codigo,
+                    FechaCreacion = DateTime.Now,
+                    FechaExpiracion = DateTime.Now.AddMinutes(5),
+                    EstaUsado = false
+                };
 
-                // usuario.CodigoRecuperacion = codigo;
+                context.CodigosRecuperacionPass.Add(codigoRecuperacion);
 
                 context.SaveChanges();
 
@@ -340,10 +359,83 @@ namespace Servicios.LogicaNegocio.Empleado
                 };
             }
         }
-        private string GenerarCodigoRecuperacion(int longitud = 5)
+        public string GenerarCodigoRecuperacion(int longitud = 5)
         {
             var random = new Random();
             return random.Next((int)Math.Pow(10, longitud - 1), (int)Math.Pow(10, longitud)).ToString();
+        }
+
+        public EstadoOperacion ValidarCodigoRecuperacion(long usuarioId, string codigoRecuperacion)
+        {
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                // 🔹 1. Traer el último código generado para el usuario
+                var codigo = context.Set<CodigoRecuperacionPass>()
+                    .Where(c => c.UsuarioAsignadoId == usuarioId)
+                    .OrderByDescending(c => c.FechaCreacion)
+                    .FirstOrDefault();
+
+                if (codigo == null)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "No existe un código de recuperación para este usuario"
+                    };
+                }
+
+                // 🔹 2. Validar si ya fue usado
+                if (codigo.EstaUsado)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "El código ya fue utilizado"
+                    };
+                }
+
+                // 🔹 3. Validar expiración
+                if (DateTime.Now > codigo.FechaExpiracion)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "El código ha expirado"
+                    };
+                }
+
+                // 🔹 4. Validar que coincida el código
+                if (codigo.Codigo != codigoRecuperacion)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "Código incorrecto"
+                    };
+                }
+
+                // 🔹 5. Marcar como usado
+                codigo.EstaUsado = true;
+                codigo.FechaUso = DateTime.Now;
+
+                // 🔹 6. Cambiar estado del usuario (habilitado para nueva pass)
+                var usuario = context.Empleados
+                    .FirstOrDefault(x => x.PersonaId == usuarioId);
+
+                if (usuario != null)
+                {
+                    usuario.Estado = (int)EstadoEmpleado.Inhablitado;
+                }
+
+                context.SaveChanges();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "Código válido. Puede continuar con el cambio de contraseña.",
+                    EntidadId = usuarioId
+                };
+            }
         }
     }
 }
