@@ -25,13 +25,12 @@ namespace Presentacion.Core.Producto
 
         //borrar si no hacen falta
         TipoOperacion TipoOperacion;
-        private string NombreProducto;
+        private ProductoDTO productoDTO;
+        private LoteDTO loteDTO;
         private string NumeroLote;
-        private decimal stockIncial = 0;
-        private decimal stockActual = 0;
         public bool RealizoOperacion { get; private set; } = false;
 
-        public FGestionStockLotes(TipoOperacion tipoOperacion, string? nombreProducto = null, long? entidadId = null)
+        public FGestionStockLotes(TipoOperacion tipoOperacion, long? entidadId = null)
             : base(tipoOperacion, entidadId)
         {
             InitializeComponent();
@@ -40,30 +39,44 @@ namespace Presentacion.Core.Producto
             _productoServicio = new ProductoServicio();
 
             TipoOperacion = tipoOperacion;
-            NombreProducto = nombreProducto;
-
-            lblNombreProducto.Text = nombreProducto;
 
             dtpFechaVencimiento.Format = DateTimePickerFormat.Short;
-            dtpFechaVencimiento.MinDate = DateTime.Now;
-
-            if (chkFechaVencimiento.Checked)
+            
+            if(tipoOperacion == TipoOperacion.Nuevo)
             {
-                dtpFechaVencimiento.Enabled = true;
-                dtpFechaVencimiento.Value = DateTime.Now; // o el valor que quieras
-            }
-            else
-            {
-                dtpFechaVencimiento.Enabled = false;
+                productoDTO = _productoServicio.ObtenerProductoPorId(entidadId.Value);
 
-                // Simular NULL
-                dtpFechaVencimiento.Format = DateTimePickerFormat.Custom;
-                dtpFechaVencimiento.CustomFormat = " ";
-            }
+                lblNombreProducto.Text = productoDTO.Descripcion.ToString();
 
-            if(TipoOperacion == TipoOperacion.Nuevo)
-            {
                 NumeroLote = _loteSevicio.GenerarNumeroLote();
+
+                dtpFechaVencimiento.MinDate = DateTime.Now;
+
+                if (productoDTO.TieneVencimiento)
+                {
+                    chkFechaVencimiento.Checked = true;
+                }
+            }
+            else 
+            {
+                loteDTO = _loteSevicio.ObtenerLotePorId(entidadId.Value);
+                productoDTO = _productoServicio.ObtenerProductoPorId(loteDTO.IdProducto);
+
+                lblNombreProducto.Text = productoDTO.Descripcion.ToString();
+
+                if (productoDTO.TieneVencimiento)
+                {
+                    chkFechaVencimiento.Checked = true;
+                    dtpFechaVencimiento.Value = loteDTO.FechaVencimiento.Value;
+                }
+                else
+                {
+                    chkFechaVencimiento.Checked = false;
+                    dtpFechaVencimiento.Enabled = false;
+                    // Simular NULL
+                    dtpFechaVencimiento.Format = DateTimePickerFormat.Custom;
+                    dtpFechaVencimiento.CustomFormat = " ";
+                }
             }
         }
 
@@ -154,9 +167,16 @@ namespace Presentacion.Core.Producto
                 return false;
             }
 
+            if(nudStockActual.Value > nudStockInicial.Value)
+            {
+                MessageBox.Show(@"El Stock Actual no puede ser mayor al Stock Inicial.", @"Atención", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return false;
+            }
+
             var loteNuevo = new LoteDTO
             {
-                IdProducto = EntidadID.Value,
+                IdProducto = productoDTO.ProductoId,
                 StockInicial = nudStockInicial.Value,
                 StockActual = nudStockActual.Value,
                 NumeroLote = txtNumeroLote.Text,
@@ -232,7 +252,7 @@ namespace Presentacion.Core.Producto
                 var LoteModificar = new LoteDTO
                 {
                     NumeroLote = txtNumeroLote.Text,
-                    IdProducto = EntidadID.Value,
+                    IdProducto = productoDTO.ProductoId,
                     StockInicial = nudStockInicial.Value,
                     StockActual = nudStockActual.Value,
                     Descripcion = txtDescripcionLote.Text,

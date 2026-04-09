@@ -308,6 +308,7 @@ namespace Servicios.LogicaNegocio.Producto
             var producto = new AccesoDatos.Entidades.Producto{
                 Stock = productoDto.Stock,
                 ControlPorLote = productoDto.ControlPorLote,
+                TieneVencimiento = productoDto.TieneVencimiento,
                 PrecioCosto = productoDto.PrecioCosto,
                 PrecioVenta = productoDto.PrecioVenta,
                 Descripcion = productoDto.Descripcion,
@@ -362,6 +363,7 @@ namespace Servicios.LogicaNegocio.Producto
 
             productoEditar.Stock = productoDto.Stock;
             productoEditar.ControlPorLote = productoDto.ControlPorLote;
+            productoEditar.TieneVencimiento = productoDto.TieneVencimiento;
             productoEditar.PrecioCosto = productoDto.PrecioCosto;
             productoEditar.PrecioVenta = productoDto.PrecioVenta;
             productoEditar.Descripcion = productoDto.Descripcion;
@@ -413,6 +415,7 @@ namespace Servicios.LogicaNegocio.Producto
                      RubroNombre = e.Rubro.Nombre,
                      Stock = Convert.ToDecimal(e.Stock),
                      ControlPorLote = e.ControlPorLote,
+                     TieneVencimiento = e.TieneVencimiento,
                      PrecioCosto = e.PrecioCosto,
                      PrecioVenta = e.PrecioVenta,
                      Descripcion = e.Descripcion,
@@ -484,6 +487,7 @@ namespace Servicios.LogicaNegocio.Producto
                     RubroNombre = e.Rubro.Nombre,
                     Stock = Convert.ToDecimal(e.Stock),
                     ControlPorLote = e.ControlPorLote,
+                    TieneVencimiento = e.TieneVencimiento,
                     PrecioCosto = e.PrecioCosto,
                     PrecioVenta = e.PrecioVenta,
                     Descripcion = e.Descripcion,
@@ -554,6 +558,7 @@ namespace Servicios.LogicaNegocio.Producto
                     RubroNombre = e.Rubro != null ? e.Rubro.Nombre : "",
                     Stock = Convert.ToDecimal(e.Stock),
                     ControlPorLote = e.ControlPorLote,
+                    TieneVencimiento = e.TieneVencimiento,
                     PrecioCosto = e.PrecioCosto,
                     PrecioVenta = e.PrecioVenta,
                     Descripcion = e.Descripcion,
@@ -618,6 +623,7 @@ namespace Servicios.LogicaNegocio.Producto
                     IdRubro = p.IdRubro,
                     Stock = p.Stock,
                     ControlPorLote = p.ControlPorLote,
+                    TieneVencimiento = p.TieneVencimiento,
                     PrecioCosto = p.PrecioCosto,
                     PrecioVenta = p.PrecioVenta,
                     Descripcion = p.Descripcion,

@@ -94,63 +94,106 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 .ToList();
         }
 
-        public EstadoOperacion ModficiarLote(LoteDTO loteDto, long loteId) 
+        public EstadoOperacion ModficiarLote(LoteDTO loteDto, long loteId)
         {
-            var context = new GestorContextDBFactory().CreateDbContext(null);
-            var loteEditar = context.Lotes
-                    .Include(x => x.Producto)
-                    .FirstOrDefault(x => x.LoteId == loteId);
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            using var transaction = context.Database.BeginTransaction();
 
-            if (loteEditar == null)
+            try
             {
+                var loteEditar = context.Lotes
+                        .Include(x => x.Producto)
+                        .FirstOrDefault(x => x.LoteId == loteId);
+
+                if (loteEditar == null)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "Lote no encontrado."
+                    };
+                }
+
+                loteEditar.NumeroLote = loteDto.NumeroLote;
+                loteEditar.StockIncial = loteDto.StockInicial;
+                loteEditar.StockActual = loteDto.StockActual;
+                loteEditar.Descripcion = loteDto.Descripcion;
+                loteEditar.FechaVencimiento = loteDto.FechaVencimiento;
+                loteEditar.EstaVencido = loteDto.EstaVencido;
+                loteEditar.EstaActivo = loteDto.EstaActivo;
+
+                context.SaveChanges();
+
+                ActualizarStockEnProductoConLotes(loteDto.IdProducto, context);
+
+                context.SaveChanges();
+
+                transaction.Commit();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = $"El lote {loteEditar.NumeroLote} de {loteEditar.Producto.Descripcion} fue modificado correctamente."
+                };
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
                 return new EstadoOperacion
                 {
                     Exitoso = false,
-                    Mensaje = "Lote no encontrado."
+                    Mensaje = $"Error al modificar lote: {ex.Message}"
                 };
             }
-
-            loteEditar.NumeroLote = loteDto.NumeroLote;
-            loteEditar.StockIncial = loteDto.StockInicial;
-            loteEditar.StockActual = loteDto.StockActual;
-            loteEditar.Descripcion = loteDto.Descripcion;
-            loteEditar.FechaVencimiento = loteDto.FechaVencimiento;
-            loteEditar.EstaVencido = loteDto.EstaVencido;
-            loteEditar.EstaActivo = loteDto.EstaActivo;
-
-            context.SaveChanges();
-            return new EstadoOperacion
-            {
-                Exitoso = true,
-                Mensaje = $"El lote {loteEditar.NumeroLote} de {loteEditar.Producto.Descripcion} fue modificado correctamente."
-            };
-
         }
 
         public EstadoOperacion EliminarLote(long loteId)
         {
-            var context = new GestorContextDBFactory().CreateDbContext(null);
-            var loteEliminar = context.Lotes
-                    .Include(x => x.Producto)
-                    .FirstOrDefault(x => x.LoteId == loteId);
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            using var transaction = context.Database.BeginTransaction();
 
-            if (loteEliminar == null)
+            try
             {
+                var loteEliminar = context.Lotes
+                        .Include(x => x.Producto)
+                        .FirstOrDefault(x => x.LoteId == loteId);
+
+                if (loteEliminar == null)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "Lote no encontrado."
+                    };
+                }
+
+                loteEliminar.EstaEliminado = true;
+
+                context.SaveChanges();
+
+                ActualizarStockEnProductoConLotes(loteEliminar.IdProducto, context);
+
+                context.SaveChanges();
+
+                transaction.Commit();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = $"El lote {loteEliminar.NumeroLote} de {loteEliminar.Producto.Descripcion} fue eliminado correctamente."
+                };
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
                 return new EstadoOperacion
                 {
                     Exitoso = false,
-                    Mensaje = "Lote no encontrado."
+                    Mensaje = $"Error al eliminar lote: {ex.Message}"
                 };
             }
-
-            loteEliminar.EstaEliminado = true;
-
-            context.SaveChanges();
-            return new EstadoOperacion
-            {
-                Exitoso = true,
-                Mensaje = $"El lote {loteEliminar.NumeroLote} de {loteEliminar.Producto.Descripcion} fue eliminado correctamente."
-            };
         }
 
         public IEnumerable<LoteDTO> ObtenerLotesEliminados(string cadenabuscar, string columna)
@@ -335,14 +378,16 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         {
             var producto = context.Productos.FirstOrDefault(p => p.ProductoId == productoId);
 
-            producto.Stock = context.Lotes.Where(l => l.IdProducto == productoId && l.EstaActivo).Sum(l => l.StockActual);
+            var totalLotes = context.Lotes
+                .Where(l => l.IdProducto == productoId && l.EstaActivo && !l.EstaEliminado)
+                .Sum(l => l.StockActual);
 
-            if(stockLoteParaAgregar.HasValue) //si estamos creando un nuevo lote
+            producto.Stock = totalLotes;
+
+            if (stockLoteParaAgregar.HasValue)
             {
                 producto.Stock += stockLoteParaAgregar.Value;
             }
-
-            context.SaveChanges();
         }
 
         public string GenerarNumeroLote()
