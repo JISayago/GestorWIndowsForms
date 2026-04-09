@@ -149,7 +149,7 @@ namespace Presentacion.Core.Producto.Lote
             base.EjecutarBtnEliminar();
             if (!puedeEjecutarComando) return;
 
-            var f = new FGestionStockLotes(TipoOperacion.Eliminar, null, entidadID); // deberia pasar tambien el producto? o directamente del service
+            var f = new FGestionStockLotes(TipoOperacion.Eliminar, entidadID); // deberia pasar tambien el producto? o directamente del service
             f.ShowDialog();
 
             Recargar(f.RealizoAlgunaOperacion);
@@ -160,7 +160,7 @@ namespace Presentacion.Core.Producto.Lote
             base.EjecutarBtnModificar();
             if (!puedeEjecutarComando) return;
 
-            var f = new FGestionStockLotes(TipoOperacion.Modificar, null, entidadID); // deberia pasar tambien el producto? o directamente del service
+            var f = new FGestionStockLotes(TipoOperacion.Modificar, entidadID); // deberia pasar tambien el producto? o directamente del service
             f.ShowDialog();
 
             Recargar(f.RealizoAlgunaOperacion);

@@ -127,6 +127,7 @@ namespace Presentacion.Core.Producto
                 cmbMarca.SelectedValue = Producto.IdMarca;
                 cmbRubro.SelectedValue = Producto.IdRubro;
                 chkControlPorLotes.Checked = Producto.ControlPorLote;
+                chkTieneVencimiento.Checked = Producto.TieneVencimiento;
             }
             else
             {
@@ -160,7 +161,8 @@ namespace Presentacion.Core.Producto
                 IdRubro = (long)cmbRubro.SelectedValue,
                 CategoriaIds = _categoriasSeleccionadas.ToList(),
                 EstaEliminado = false,
-                ControlPorLote = chkControlPorLotes.Checked
+                ControlPorLote = chkControlPorLotes.Checked,
+                TieneVencimiento = chkTieneVencimiento.Checked
             };
 
             //ARREGLAR LOS PARSE y TIPOS DE DATOS
@@ -245,7 +247,8 @@ namespace Presentacion.Core.Producto
                     IdRubro = (long)cmbRubro.SelectedValue,
                     CategoriaIds = _categoriasSeleccionadas.ToList(),
                     EstaEliminado = false,
-                    ControlPorLote = chkControlPorLotes.Checked
+                    ControlPorLote = chkControlPorLotes.Checked,
+                    TieneVencimiento = chkTieneVencimiento.Checked
                 };
 
                 var response = _ProductoServicio.Modificar(ProductoModificar, EntidadID);
