@@ -8,9 +8,9 @@ namespace Servicios.Helpers.Sistema.Admin
 {
     public enum EstadoEmpleado
     {
-        Inhablitado = 0, //valor por defecto
+        Inhablitado = 0, //valor por defecto inicio usuario primer ingreso.
         Habilitado = 1, // Activo
-        Bloqueado = 2, // No permitir acceso posiblemente por EstaEliminado True
-        Suspendido = 3, // Activo pero sin acceso momentaneo del sistema
+        SinPass = 2, // olvido pass
+       // Suspendido = 3, // Activo pero sin acceso momentaneo del sistema
     }
 }

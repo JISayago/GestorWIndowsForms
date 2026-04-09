@@ -110,7 +110,7 @@ namespace Presentacion.Core.Administracion
 
         private void lISTADOEMPLEADOSToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var fEmpleado = new FEmpleadoConsulta();
+            var fEmpleado = new FEmpleadoConsulta(_logeadoId);
             fEmpleado.Show();
         }
 
