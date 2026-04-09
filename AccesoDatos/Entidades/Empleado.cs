@@ -27,5 +27,7 @@ namespace AccesoDatos.Entidades
         public ICollection<VentaLibre> VentasLibres { get; set; }
         public ICollection<EmpleadoRol> EmpleadoRoles { get; set; }
         public ICollection<UsuarioSesion> Sesiones { get; set; }
+
+        public ICollection<CodigoRecuperacionPass> CodigosRecuperacion { get; set; }
     }
 }
