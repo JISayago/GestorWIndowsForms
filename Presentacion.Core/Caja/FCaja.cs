@@ -66,7 +66,9 @@ namespace Presentacion.Core.Caja
             }
             else
             {
+                var x = 0.00m;
                 btnCerrarCaja.Enabled = false;
+                lblSaldoCaja.Text = x.ToString("C");
             }
             lblEstadoCaja.Text = !cajaInicial.EstaCerrada ? "CAJA ABIERTA" : "CAJA CERRADA";
         }
