@@ -134,6 +134,17 @@ namespace Servicios.LogicaNegocio.Caja
 
             return saldo;
         }
+        public CajaDTO EstadoInicioCaja()
+        {
+            var estado = ObtenerEstadoCaja();
+            var saldo = ObtenerSaldoCaja(); 
+            var caja = new CajaDTO
+            {
+                EstaCerrada = !estado, //si no hay caja abierta, entonces esta cerrada
+                SaldoActual = saldo
+            };
+            return caja;
+        }
 
         public void RegistrarTransaccion(GestorContextDB context, decimal monto, TipoMovimiento tipo,long cajaId)
         {

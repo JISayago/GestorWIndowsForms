@@ -33,22 +33,24 @@
             btnCerrarCaja = new Button();
             btnAbrirCaja = new Button();
             lblEstadoCaja = new Label();
+            lblSaldoCaja = new Label();
             SuspendLayout();
             // 
             // btnConsultarMovimientos
             // 
-            btnConsultarMovimientos.Location = new Point(33, 133);
+            btnConsultarMovimientos.Location = new Point(51, 214);
             btnConsultarMovimientos.Name = "btnConsultarMovimientos";
-            btnConsultarMovimientos.Size = new Size(193, 24);
+            btnConsultarMovimientos.Size = new Size(220, 42);
             btnConsultarMovimientos.TabIndex = 7;
             btnConsultarMovimientos.Text = "Consultar Movimientos";
             btnConsultarMovimientos.UseVisualStyleBackColor = true;
+            btnConsultarMovimientos.Click += btnConsultarMovimientos_Click;
             // 
             // btnConsultarCajas
             // 
-            btnConsultarCajas.Location = new Point(33, 103);
+            btnConsultarCajas.Location = new Point(51, 166);
             btnConsultarCajas.Name = "btnConsultarCajas";
-            btnConsultarCajas.Size = new Size(193, 24);
+            btnConsultarCajas.Size = new Size(220, 42);
             btnConsultarCajas.TabIndex = 6;
             btnConsultarCajas.Text = "Consulta Cajas";
             btnConsultarCajas.UseVisualStyleBackColor = true;
@@ -56,9 +58,10 @@
             // 
             // btnCerrarCaja
             // 
-            btnCerrarCaja.Location = new Point(131, 74);
+            btnCerrarCaja.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnCerrarCaja.Location = new Point(165, 106);
             btnCerrarCaja.Name = "btnCerrarCaja";
-            btnCerrarCaja.Size = new Size(95, 23);
+            btnCerrarCaja.Size = new Size(106, 54);
             btnCerrarCaja.TabIndex = 5;
             btnCerrarCaja.Text = "Cerrar Caja";
             btnCerrarCaja.UseVisualStyleBackColor = true;
@@ -66,9 +69,10 @@
             // 
             // btnAbrirCaja
             // 
-            btnAbrirCaja.Location = new Point(33, 74);
+            btnAbrirCaja.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnAbrirCaja.Location = new Point(51, 106);
             btnAbrirCaja.Name = "btnAbrirCaja";
-            btnAbrirCaja.Size = new Size(95, 23);
+            btnAbrirCaja.Size = new Size(106, 54);
             btnAbrirCaja.TabIndex = 4;
             btnAbrirCaja.Text = "Abrir Caja";
             btnAbrirCaja.UseVisualStyleBackColor = true;
@@ -77,17 +81,29 @@
             // lblEstadoCaja
             // 
             lblEstadoCaja.AutoSize = true;
-            lblEstadoCaja.Location = new Point(92, 37);
+            lblEstadoCaja.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblEstadoCaja.Location = new Point(108, 9);
             lblEstadoCaja.Name = "lblEstadoCaja";
-            lblEstadoCaja.Size = new Size(65, 15);
+            lblEstadoCaja.Size = new Size(108, 25);
             lblEstadoCaja.TabIndex = 8;
             lblEstadoCaja.Text = "estadoCaja";
+            // 
+            // lblSaldoCaja
+            // 
+            lblSaldoCaja.AutoSize = true;
+            lblSaldoCaja.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblSaldoCaja.Location = new Point(125, 55);
+            lblSaldoCaja.Name = "lblSaldoCaja";
+            lblSaldoCaja.Size = new Size(77, 21);
+            lblSaldoCaja.TabIndex = 9;
+            lblSaldoCaja.Text = "saldocaja";
             // 
             // FCaja
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(263, 187);
+            ClientSize = new Size(353, 297);
+            Controls.Add(lblSaldoCaja);
             Controls.Add(lblEstadoCaja);
             Controls.Add(btnConsultarMovimientos);
             Controls.Add(btnConsultarCajas);
@@ -108,5 +124,6 @@
         private Button btnCerrarCaja;
         private Button btnAbrirCaja;
         private Label lblEstadoCaja;
+        private Label lblSaldoCaja;
     }
 }
