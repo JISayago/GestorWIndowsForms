@@ -43,16 +43,16 @@ namespace Presentacion.Core.Cliente
             }
 
             grilla.Columns["Nombre"].Visible = true;
-            grilla.Columns["Nombre"].Width = 100;
+            grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
             grilla.Columns["Apellido"].Visible = true;
-            grilla.Columns["Apellido"].Width = 100;
+            grilla.Columns["Apellido"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
             grilla.Columns["DNI"].Visible = true;
             grilla.Columns["DNI"].Width = 100;
 
             grilla.Columns["Email"].Visible = true;
-            grilla.Columns["Email"].Width = 130;
+            grilla.Columns["Email"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
             grilla.Columns["Telefono"].Visible = true;
             grilla.Columns["Telefono"].Width = 100;

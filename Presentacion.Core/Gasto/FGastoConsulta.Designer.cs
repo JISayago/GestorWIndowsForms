@@ -28,30 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            panel2.SuspendLayout();
-            panel1.SuspendLayout();
             SuspendLayout();
-            // 
-            // panel1
-            // 
-            panel1.Size = new Size(800, 561);
-            // 
-            // pnlFiltrosAvanzados
-            // 
-            pnlFiltrosAvanzados.Size = new Size(447, 114);
             // 
             // FGastoConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 561);
+            ClientSize = new Size(1161, 561);
             Name = "FGastoConsulta";
             Text = "FGastoConsulta";
             Load += FGastoConsulta_Load;
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
             ResumeLayout(false);
         }
 

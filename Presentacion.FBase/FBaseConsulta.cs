@@ -166,10 +166,10 @@ namespace Presentacion.FBase
 
         protected void ActivarFiltroCombo(string label, object data, string display, string value)
         {
-            pnlFiltrosAvanzados.Visible = true;
+            //pnlFiltrosAvanzados.Visible = true;
 
-            lblFiltro.Text = label;
-            lblFiltro.Visible = true;
+            //lblFiltro.Text = label;
+            //lblFiltro.Visible = true;
 
             cbxFiltroOpcional.Visible = true;
             cbxFiltroOpcional.DataSource = data;
@@ -180,10 +180,11 @@ namespace Presentacion.FBase
 
         protected void ActivarComboOpcional(string label, object data, string display, string value)
         {
-            pnlFiltrosAvanzados.Visible = true;
+            //pnlFiltrosAvanzados.Visible = true;
 
             if (cbxFiltroExtraEstado != null)
             {
+                lblFiltrarPorColumna.Visible = true;
                 cbxFiltroExtraEstado.Visible = true;
                 cbxFiltroExtraEstado.DataSource = data;
                 cbxFiltroExtraEstado.DisplayMember = display;
