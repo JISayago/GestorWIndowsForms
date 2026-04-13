@@ -57,57 +57,57 @@ namespace Presentacion
             MyTimer.Tick += new EventHandler(MyTimer_Tick);
             MyTimer.Start();
 
-            CargarInfo();
+            //CargarInfo();
         }
 
-        private void CargarInfo()
-        {
-            CargarInfo1();
-            CargarInfo2();
-            CargarInfo3();
-            CargarInfo4();
-        }
+        //private void CargarInfo()
+        //{
+        //    CargarInfo1();
+        //    CargarInfo2();
+        //    CargarInfo3();
+        //    CargarInfo4();
+        //}
 
-        private void CargarInfo4()
-        {
-            var detalleSistema = _dellesSistema.ObtenerInfoSistema();
+        //private void CargarInfo4()
+        //{
+        //    var detalleSistema = _dellesSistema.ObtenerInfoSistema();
 
-            lblTituloSector4.Text = detalleSistema.Titulo;
-            lblConenido4.Text = detalleSistema.TextoPrincipal;
-            lblConenido42.Text = detalleSistema.TextoSecundario;
+        //    lblTituloSector4.Text = detalleSistema.Titulo;
+        //    lblConenido4.Text = detalleSistema.TextoPrincipal;
+        //    lblConenido42.Text = detalleSistema.TextoSecundario;
 
-        }
+        //}
 
-        private void CargarInfo3()
-        {
-            var InfoOferta = new InfoPantallaPrincipal
-            {
-                Titulo = "INFO 3",
-                TextoPrincipal = "Info 3",
-                TextoSecundario = "Info 3",
-                Tipo = TipoSectorPrincipal.Ofertas
-            };
-        }
+        //private void CargarInfo3()
+        //{
+        //    var InfoOferta = new InfoPantallaPrincipal
+        //    {
+        //        Titulo = "INFO 3",
+        //        TextoPrincipal = "Info 3",
+        //        TextoSecundario = "Info 3",
+        //        Tipo = TipoSectorPrincipal.Ofertas
+        //    };
+        //}
 
-        private void CargarInfo2()
-        {
-            var InfoOferta = new InfoPantallaPrincipal
-            {
-                Titulo = "INFO 2",
-                TextoPrincipal = "Info 2",
-                TextoSecundario = "Info 2",
-                Tipo = TipoSectorPrincipal.Ofertas
-            };
-        }
+        //private void CargarInfo2()
+        //{
+        //    var InfoOferta = new InfoPantallaPrincipal
+        //    {
+        //        Titulo = "INFO 2",
+        //        TextoPrincipal = "Info 2",
+        //        TextoSecundario = "Info 2",
+        //        Tipo = TipoSectorPrincipal.Ofertas
+        //    };
+        //}
 
-        private void CargarInfo1()
-        {
-            var ofertaInfo = _ofertaServicio.ObtenerInfoOferta();
+        //private void CargarInfo1()
+        //{
+        //    var ofertaInfo = _ofertaServicio.ObtenerInfoOferta();
 
-            lblTituloSector1.Text = ofertaInfo.Titulo;
-            lblConenido1.Text = ofertaInfo.TextoPrincipal;
-            lblConenido12.Text = ofertaInfo.TextoSecundario;
-        }
+        //    lblTituloSector1.Text = ofertaInfo.Titulo;
+        //    lblConenido1.Text = ofertaInfo.TextoPrincipal;
+        //    lblConenido12.Text = ofertaInfo.TextoSecundario;
+        //}
 
         private void MyTimer_Tick(object sender, EventArgs e)
         {
