@@ -48,8 +48,9 @@ namespace Presentacion.Core.Caja
 
         private void FCaja_Load(object sender, EventArgs e)
         {
-            var estadoCaja = cajaServicio.ObtenerEstadoCaja();
-            if (estadoCaja)
+            //var estadoCaja = cajaServicio.ObtenerEstadoCaja();
+            var cajaInicial = cajaServicio.EstadoInicioCaja();
+            if (!cajaInicial.EstaCerrada)
             {
                 btnAbrirCaja.Enabled = false;
             }
@@ -57,7 +58,7 @@ namespace Presentacion.Core.Caja
             {
                 btnCerrarCaja.Enabled = false;
             }
-                lblEstadoCaja.Text = estadoCaja ? "CAJA ABIERTA" : "CAJA CERRADA";
+                lblEstadoCaja.Text = !cajaInicial.EstaCerrada ? "CAJA ABIERTA" : "CAJA CERRADA";
         }
 
         private void btnConsultarCajas_Click(object sender, EventArgs e)
