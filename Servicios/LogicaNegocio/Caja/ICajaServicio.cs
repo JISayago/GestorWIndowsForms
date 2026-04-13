@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Servicios.LogicaNegocio.Caja.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace Servicios.LogicaNegocio.Caja
 {
     public interface ICajaServicio
     {
+        CajaDTO EstadoInicioCaja();
         public void AbrirCaja(decimal montoInicial);
 
         public void CerrarCaja();
