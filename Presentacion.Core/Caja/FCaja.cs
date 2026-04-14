@@ -1,4 +1,5 @@
-﻿using Servicios.LogicaNegocio.Caja;
+﻿using Presentacion.Core.Movimiento;
+using Servicios.LogicaNegocio.Caja;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -48,15 +49,41 @@ namespace Presentacion.Core.Caja
 
         private void FCaja_Load(object sender, EventArgs e)
         {
-            var estadoCaja = cajaServicio.ObtenerEstadoCaja();
-
-            lblEstadoCaja.Text = estadoCaja ? "CAJA ABIERTA" : "CAJA CERRADA";
+            //var estadoCaja = cajaServicio.ObtenerEstadoCaja();
+            var cajaInicial = cajaServicio.EstadoInicioCaja();
+            if (!cajaInicial.EstaCerrada)
+            {
+                btnAbrirCaja.Enabled = false;
+                lblSaldoCaja.Text = cajaInicial.SaldoActual.ToString("C");
+                if (cajaInicial.SaldoActual > 0)
+                {
+                    lblSaldoCaja.ForeColor = Color.Green;
+                }
+                else
+                {
+                    lblSaldoCaja.ForeColor = Color.Red;
+                }
+            }
+            else
+            {
+                var x = 0.00m;
+                btnCerrarCaja.Enabled = false;
+                lblSaldoCaja.Text = x.ToString("C");
+            }
+            lblEstadoCaja.Text = !cajaInicial.EstaCerrada ? "CAJA ABIERTA" : "CAJA CERRADA";
         }
 
         private void btnConsultarCajas_Click(object sender, EventArgs e)
         {
             var formConsultaCajas = new FCajaConsulta();
             formConsultaCajas.ShowDialog();
+        }
+
+        private void btnConsultarMovimientos_Click(object sender, EventArgs e)
+        {
+            var fmov = new FMovimientoConsulta();
+            fmov.ShowDialog();
+            // debería abrir un formulario específico para consultar movimientos de caja, pero por ahora reutilizo el de movimientos generales
         }
     }
 }
