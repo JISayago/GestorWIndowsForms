@@ -2,6 +2,7 @@
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto.Lote;
 using System;
 using System.Collections.Generic;
@@ -81,12 +82,12 @@ namespace Presentacion.Core.Producto.Lote
         {
             base.ResetearGrilla(grilla);
 
-            //if (grilla.Columns.Contains("NumeroLote"))
-            //{
-            grilla.Columns["NumeroLote"].Visible = true;
+            if (grilla.Columns.Contains("NumeroLote"))
+            {
+                grilla.Columns["NumeroLote"].Visible = true;
             grilla.Columns["NumeroLote"].HeaderText = "Numero Lote";
             grilla.Columns["NumeroLote"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            //}
+            }
 
             grilla.Columns["NombreProducto"].Visible = true;
             grilla.Columns["NombreProducto"].HeaderText = "Producto";
@@ -194,7 +195,7 @@ namespace Presentacion.Core.Producto.Lote
             new OpcionFiltro { Texto = "Numero Lote", Valor = "NumeroLote" },
             };
 
-            ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
+            //ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
         }
 
         public override void EjecutarClickDerechoFila(long? id, Point pos)

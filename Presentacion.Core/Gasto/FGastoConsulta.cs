@@ -3,6 +3,7 @@ using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers.Gasto;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Gasto;
 using System.Diagnostics;
 using System.Drawing;
@@ -221,7 +222,7 @@ namespace Presentacion.Core.Gasto
                 });
             }
 
-            ActivarFiltroCombo("Estado del gasto:", opciones, "Texto", "Valor");
+            //ActivarFiltroCombo("Estado del gasto:", opciones, "Texto", "Valor");
 
             // 👉 seleccionar "Todos" por defecto
             cbxFiltroOpcional.SelectedValue = Convert.ToString(0);

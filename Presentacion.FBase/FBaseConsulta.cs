@@ -1,4 +1,5 @@
 ﻿using Presentacion.FBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,6 +11,10 @@ namespace Presentacion.FBase
     {
         protected long? entidadID;
         protected bool puedeEjecutarComando;
+
+        protected int paginaActual = 1;
+        protected int pageSize = 10;
+        protected int totalPaginas = 1;
 
         public List<AccionGrid> AccionesPersonalizadas = new List<AccionGrid>();
 
@@ -35,8 +40,43 @@ namespace Presentacion.FBase
             dgvGrilla.MouseDown += DgvGrilla_MouseDown;
         }
 
-        #region LOAD
+        private void DgvGrilla_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right) return;
 
+            var hit = dgvGrilla.HitTest(e.X, e.Y);
+
+            if (hit.RowIndex >= 0)
+            {
+                dgvGrilla.ClearSelection();
+                dgvGrilla.Rows[hit.RowIndex].Selected = true;
+
+                RowEnter(new DataGridViewCellEventArgs(0, hit.RowIndex));
+
+                EjecutarClickDerechoFila(entidadID, e.Location);
+            }
+        }
+        public virtual void EjecutarClickDerechoFila(long? id, Point posicionMouse)
+        {
+            // override en hijo
+        }
+        private void DgvGrilla_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+            //EjecutarAccionGrilla(dgvGrilla.Columns[e.ColumnIndex].Name);
+        }
+        #region LOAD
+        private void DgvGrilla_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            RowEnter(e);
+            EjecutarDobleClickFila(entidadID);
+        }
+        public virtual void EjecutarDobleClickFila(long? id)
+        {
+            // override en hijo
+        }
         private void FBaseConsulta_Load(object sender, EventArgs e)
         {
             ConfigurarFiltrosUI();
@@ -58,6 +98,8 @@ namespace Presentacion.FBase
             // Todo visible, pero deshabilitado por defecto
             if (chkUsarFecha != null)
                 chkUsarFecha.Enabled = false;
+            if (chkUsarRango != null)
+                chkUsarRango.Enabled = false;
 
             if (dtpDesde != null)
                 dtpDesde.Enabled = false;
@@ -77,18 +119,19 @@ namespace Presentacion.FBase
             chkUsarFecha.Enabled = true;
             chkUsarFecha.Text = textoCheck;
 
+            chkUsarRango.Enabled = false;
+            chkUsarRango.Checked = false;
+
             dtpDesde.Enabled = false;
             dtpHasta.Enabled = false;
 
-            chkUsarFecha.CheckedChanged -= ChkUsarFecha_CheckedChanged;
-            chkUsarFecha.CheckedChanged += ChkUsarFecha_CheckedChanged;
+            chkUsarFecha.CheckedChanged -= chkUsarFecha_CheckedChanged;
+            chkUsarFecha.CheckedChanged += chkUsarFecha_CheckedChanged;
+
+            chkUsarRango.CheckedChanged -= chkUsarRango_CheckedChanged;
+            chkUsarRango.CheckedChanged += chkUsarRango_CheckedChanged;
         }
 
-        private void ChkUsarFecha_CheckedChanged(object sender, EventArgs e)
-        {
-            dtpDesde.Enabled = chkUsarFecha.Checked;
-            dtpHasta.Enabled = chkUsarFecha.Checked;
-        }
 
         protected void ActivarFiltroCombo(object data, string display, string value)
         {
@@ -156,19 +199,6 @@ namespace Presentacion.FBase
 
         #endregion
 
-        #region BUSQUEDA
-
-        public virtual void btnBuscar_Click_1(object sender, EventArgs e)
-        {
-            RefrescarGrilla();
-        }
-
-        private void cbxEstaEliminado_CheckedChanged(object sender, EventArgs e)
-        {
-            RefrescarGrilla();
-        }
-
-        #endregion
 
         #region FILTROS
 
@@ -181,7 +211,10 @@ namespace Presentacion.FBase
                 FechaDesde = ObtenerFechaDesdeUI(),
                 FechaHasta = ObtenerFechaHastaUI(),
                 Extra = ObtenerFiltroExtraUI(),
-                Extra2 = ObtenerComboOpcionalUI()
+                Extra2 = ObtenerComboOpcionalUI(),
+
+                Page = paginaActual,
+                PageSize = pageSize
             };
         }
 
@@ -199,19 +232,21 @@ namespace Presentacion.FBase
 
         protected virtual DateTime? ObtenerFechaDesdeUI()
         {
-            if (dtpDesde == null || !dtpDesde.Enabled) return null;
-            if (chkUsarFecha != null && !chkUsarFecha.Checked) return null;
+            if (!chkUsarFecha.Checked) return null;
 
             return dtpDesde.Value.Date;
         }
 
         protected virtual DateTime? ObtenerFechaHastaUI()
         {
-            if (dtpHasta == null || !dtpHasta.Enabled) return null;
-            if (chkUsarFecha != null && !chkUsarFecha.Checked) return null;
+            if (!chkUsarFecha.Checked) return null;
+
+            if (!chkUsarRango.Checked)
+                return dtpDesde.Value.Date;
 
             return dtpHasta.Value.Date;
         }
+
 
         protected virtual object ObtenerFiltroExtraUI()
         {
@@ -234,6 +269,7 @@ namespace Presentacion.FBase
             btnEliminar.Enabled = !filtros.VerEliminados;
             btnNuevo.Enabled = !filtros.VerEliminados;
             btnModificar.Enabled = !filtros.VerEliminados;
+
         }
 
         public virtual void ResetearGrilla(DataGridView grilla)
@@ -348,5 +384,81 @@ namespace Presentacion.FBase
         }
 
         #endregion
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        protected void ActualizarPaginacionUI(DatosPaginacion resultado)
+        {
+            paginaActual = resultado.PaginaActual;
+            totalPaginas = resultado.TotalPaginas;
+
+            lblPagina.Text = $"Página {paginaActual} de {totalPaginas}";
+            lblTotalRegistros.Text = $"Total: {resultado.CantidadRegistros}";
+
+            btnAnterior.Enabled = paginaActual > 1;
+            btnSiguiente.Enabled = paginaActual < totalPaginas;
+        }
+
+        private void btnSiguiente_Click(object sender, EventArgs e)
+        {
+            if (paginaActual < totalPaginas)
+            {
+                paginaActual++;
+                RefrescarGrilla();
+            }
+        }
+
+        private void btnAnterior_Click(object sender, EventArgs e)
+        {
+            if (paginaActual > 1)
+            {
+                paginaActual--;
+                RefrescarGrilla();
+            }
+        }
+
+        private void cbxEstaEliminado_CheckedChanged(object sender, EventArgs e)
+        {
+            paginaActual = 1;
+            RefrescarGrilla();
+        }
+
+        private void btnBuscar_Click(object sender, EventArgs e)
+        {
+            paginaActual = 1;
+            RefrescarGrilla();
+        }
+
+        private void chkUsarFecha_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkUsarFecha.Checked)
+            {
+                dtpDesde.Enabled = false;
+                dtpHasta.Enabled = false;
+                chkUsarRango.Checked = false;
+                chkUsarRango.Enabled = false;
+                return;
+            }
+
+            // Si activa filtro
+            dtpDesde.Enabled = true;
+            chkUsarRango.Enabled = true;
+
+            // Si no es rango, dtpHasta apagado
+            dtpHasta.Enabled = chkUsarRango.Checked;
+        }
+
+        private void chkUsarRango_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkUsarFecha.Checked)
+        return;
+
+            dtpHasta.Enabled = chkUsarRango.Checked;
+        }
     }
 }
+
+

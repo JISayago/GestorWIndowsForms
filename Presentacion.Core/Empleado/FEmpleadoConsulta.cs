@@ -3,6 +3,7 @@ using Presentacion.Core.Empleado.Rol;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado;
 using System.Drawing;
 using System.Windows.Forms;

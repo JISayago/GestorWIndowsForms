@@ -2,6 +2,7 @@
 using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Venta.Oferta;
 using System;
 using System.Collections.Generic;
@@ -128,7 +129,7 @@ namespace Presentacion.Core.Oferta
                 new OpcionFiltro{ Texto="Grupo", Valor="GrupoNombre"}
             };
 
-            ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
+            //ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
 
             // 🔵 activar rango fechas
             ActivarFiltroFechas("Filtrar por fecha");

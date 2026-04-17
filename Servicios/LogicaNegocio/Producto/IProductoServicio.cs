@@ -1,5 +1,6 @@
 ﻿using AccesoDatos;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta.DTO;
@@ -13,8 +14,9 @@ namespace Servicios.LogicaNegocio.Producto
 {
     public interface IProductoServicio
     {
-        IEnumerable<ProductoDTO> ObtenerProductos(string cadenabuscar, string columa);
-        IEnumerable<ProductoDTO> ObtenerProductosEliminados(string cadenabuscar, string columa);
+        public ResultadoPaginacion<ProductoDTO> ObtenerProductos(FiltroConsulta filtros);
+        //IEnumerable<ProductoDTO> ObtenerProductos(string cadenabuscar, string columa);
+        //IEnumerable<ProductoDTO> ObtenerProductosEliminados(string cadenabuscar, string columa);
         ProductoDTO ObtenerProductoPorId(long productoId);
         ProductosEnOfertaDescuentosDTO ControlarProductoEstaEnOfertaPorId(long productoId);
 

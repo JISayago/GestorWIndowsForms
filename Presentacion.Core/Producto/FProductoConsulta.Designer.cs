@@ -30,6 +30,14 @@
         {
             SuspendLayout();
             // 
+            // cbxEstaEliminado
+            // 
+            cbxEstaEliminado.Location = new Point(666, 90);
+            // 
+            // panel1
+            // 
+            panel1.Size = new Size(1365, 561);
+            // 
             // FProductoConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -37,7 +45,6 @@
             ClientSize = new Size(1365, 561);
             Name = "FProductoConsulta";
             Text = "FProductoConsulta";
-            Load += FProductoConsulta_Load;
             ResumeLayout(false);
         }
 

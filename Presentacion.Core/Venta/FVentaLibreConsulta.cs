@@ -2,6 +2,7 @@
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Gasto;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Venta.VentaLibre;
 using System;
 using System.Collections.Generic;
@@ -179,7 +180,7 @@ namespace Presentacion.Core.Venta
                     });
                 }
 
-                ActivarFiltroCombo("Estado de la Venta:", opciones, "Texto", "Valor");
+                //ActivarFiltroCombo("Estado de la Venta:", opciones, "Texto", "Valor");
 
                 // 👉 seleccionar "Todos" por defecto
                 cbxFiltroOpcional.SelectedValue = Convert.ToString(0);

@@ -1,6 +1,7 @@
 ﻿using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado.Rol;
 using System;
 using System.Drawing;

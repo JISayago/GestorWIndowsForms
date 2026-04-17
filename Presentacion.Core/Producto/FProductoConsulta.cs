@@ -1,12 +1,16 @@
-﻿using Presentacion.Core.Presentacion.Core.Helpers;
+﻿using PdfSharp;
+using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.Core.Producto;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using FiltroConsulta = Servicios.Helpers.Sistema.FiltrosConsulta.FiltroConsulta;
 
 namespace Presentacion.Core.Producto
 {
@@ -16,6 +20,8 @@ namespace Presentacion.Core.Producto
 
         public long? productoSeleccionado = null;
         private bool vieneDeCargaProducto = false;
+         
+        // PAGINACIÓN 
 
         public FProductoConsulta() : this(new ProductoServicio())
         {
@@ -34,18 +40,39 @@ namespace Presentacion.Core.Producto
             InitializeComponent();
         }
 
-        #region 🔵 ACCIONES DINÁMICAS EXTRA
+        #region 🔧 CONFIG FILTROS
+
+        protected override void ConfigurarFiltrosUI()
+        {
+            base.ConfigurarFiltrosUI();
+
+            var opciones = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
+                new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
+                new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
+                new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
+            };
+
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
+
+            // Si querés fechas en el futuro:
+            // ActivarFiltroFechas("Filtrar por fecha");
+        }
+
+        #endregion
+
+        #region 🔵 ACCIONES DINÁMICAS
 
         protected override void ConfigurarAccionesPersonalizadas()
         {
-            // BOTON STOCK
             AgregarAccion(
                 "Stock",
                 Constantes.Imagenes.ImgActualizar,
                 AbrirGestionStock,
                 true
             );
-            // BOTON Seleccionar
+
             if (vieneDeCargaProducto)
             {
                 AgregarAccion(
@@ -55,7 +82,6 @@ namespace Presentacion.Core.Producto
                     true
                 );
             }
-
         }
 
         private void AbrirGestionStock(long? id)
@@ -79,7 +105,7 @@ namespace Presentacion.Core.Producto
                 fLotes.ShowDialog();
 
                 if (fLotes.RealizoOperacion)
-                    Recargar();
+                    RefrescarGrilla();
             }
             else
             {
@@ -87,10 +113,8 @@ namespace Presentacion.Core.Producto
                 fStock.ShowDialog();
 
                 if (fStock.RealizoOperacion)
-                    Recargar();
+                    RefrescarGrilla();
             }
-
-            
         }
 
         private void SeleccionProducto(long? id)
@@ -105,7 +129,6 @@ namespace Presentacion.Core.Producto
             DialogResult = DialogResult.OK;
             Close();
         }
-
 
         #endregion
 
@@ -143,35 +166,49 @@ namespace Presentacion.Core.Producto
             grilla.Columns["ControlPorLote"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             grilla.Columns["ControlPorLote"].DefaultCellStyle.NullValue = false;
             grilla.Columns["ControlPorLote"].ReadOnly = true;
-
-            //acomodar las columnas
         }
 
         #endregion
 
-        #region 🔥 ACTUALIZAR DATOS (CON FILTRO NUEVO)
+        #region 🔥 DATOS
 
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
 
-            string columnaBuscar = filtros.Extra as string ?? "Descripcion";
-            string texto = filtros.TextoBuscar;
+            filtros.Extra ??= "Descripcion";
 
-            if (filtros.VerEliminados)
+            var resultado = _ProductoServicio.ObtenerProductos(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            var paginacion = new DatosPaginacion
             {
-                dgv.DataSource = _ProductoServicio.ObtenerProductosEliminados(texto, columnaBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _ProductoServicio.ObtenerProductos(texto, columnaBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
         }
-
-
         #endregion
+        protected override FiltroConsulta ObtenerFiltros()
+        {
+            return new FiltroConsulta
+            {
+                TextoBuscar = txtBuscar.Text,
+                VerEliminados = cbxEstaEliminado.Checked,
+
+                FechaDesde = ObtenerFechaDesdeUI(),
+                FechaHasta = ObtenerFechaHastaUI(),
+
+                Extra = cbxFiltroOpcional?.SelectedValue,
+                Extra2 = cbxFiltroExtraEstado?.SelectedValue,
+
+                Page = paginaActual,
+                PageSize = pageSize
+            };
+        }
 
         #region 🔷 BOTONES BASE
 
@@ -181,7 +218,7 @@ namespace Presentacion.Core.Producto
             f.ShowDialog();
 
             if (f.RealizoAlgunaOperacion)
-                Recargar();
+                RefrescarGrilla();
         }
 
         public override void EjecutarBtnModificar()
@@ -193,7 +230,7 @@ namespace Presentacion.Core.Producto
             f.ShowDialog();
 
             if (f.RealizoAlgunaOperacion)
-                Recargar();
+                RefrescarGrilla();
         }
 
         public override void EjecutarBtnEliminar()
@@ -205,43 +242,20 @@ namespace Presentacion.Core.Producto
             f.ShowDialog();
 
             if (f.RealizoAlgunaOperacion)
-                Recargar();
-        }
-
-        private void Recargar()
-        {
-            //btnActualizar_Click_Base();
+                RefrescarGrilla();
         }
 
         #endregion
 
-        #region 🔷 SELECCIONAR PRODUCTO (MODO PICKER)
-
-
-        private void FProductoConsulta_Load(object sender, EventArgs e)
-        {
-            var opciones = new List<OpcionFiltro>
-            {
-            new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
-            new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
-            new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
-            new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
-            };
-
-            ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
-        }
-
-
-        #endregion
+        #region 🔷 INTERACCIONES
 
         public override void EjecutarDobleClickFila(long? id)
         {
-
+            // opcional
         }
 
         public override void EjecutarClickDerechoFila(long? id, Point pos)
         {
-            //ejemplo
             if (!id.HasValue) return;
 
             ContextMenuStrip menu = new ContextMenuStrip();
@@ -260,6 +274,7 @@ namespace Presentacion.Core.Producto
 
             menu.Show(dgvGrilla, pos);
         }
+
+        #endregion
     }
 }
-

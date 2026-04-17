@@ -1,5 +1,6 @@
 ﻿using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Movimiento;
 using System;
 using System.Drawing;
