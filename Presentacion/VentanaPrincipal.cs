@@ -14,6 +14,8 @@ using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
 using Presentacion.Core.Venta;
 using ServicioAccesoSistema.AccesoSistema;
+using Servicios.LogicaNegocio.PantallaPrincipal;
+using Servicios.LogicaNegocio.Producto.Lote;
 using Servicios.LogicaNegocio.Sistema;
 using Servicios.LogicaNegocio.Venta.Oferta;
 
@@ -25,6 +27,7 @@ namespace Presentacion
         private readonly IOfertaServicio _ofertaServicio;
         private readonly IDetallesSistemaServicio _dellesSistema;
         private readonly IAccesoSistema _accesoSistema;
+        private readonly IPantallaPrincipalServicio _pantallaPrincipalServicio;
         private DateTime _fechaActual = DateTime.Now;
         private DateTime _horaActual = DateTime.Now;
 
@@ -39,6 +42,7 @@ namespace Presentacion
             _ofertaServicio = new OfertaServicio();
             _dellesSistema = new DetallesSistemaServicio();
             _accesoSistema = new AccesoSistema();
+            _pantallaPrincipalServicio = new PantallaPrincipalServicio();
             _usuarioLogeado = usuarioLogeado;
 
             this.Bounds = Screen.PrimaryScreen.WorkingArea;
@@ -56,6 +60,10 @@ namespace Presentacion
             MyTimer.Interval = 1000;
             MyTimer.Tick += new EventHandler(MyTimer_Tick);
             MyTimer.Start();
+
+
+            crearNotificaciones1();
+            crearNotificaciones2();
 
             //CargarInfo();
         }
@@ -154,5 +162,32 @@ namespace Presentacion
             this.Close();
 
         }
+
+        private void crearNotificaciones1()
+        {
+            var listaLotesVencidos = _pantallaPrincipalServicio.checkearProductosVencidos(null);
+
+
+            var notiProdVencidos = new NotificationGroupBox();
+            notiProdVencidos.Width = flowLayoutNotificaciones.Width - 25;
+
+            flowLayoutNotificaciones.Controls.Add(notiProdVencidos);
+
+            notiProdVencidos.SetData(listaLotesVencidos, "Productos vencidos");
+        }
+
+        private void crearNotificaciones2()
+        {
+            var listaOfertasVencidas = _pantallaPrincipalServicio.checkearOfertasVencidas(null);
+            ////////////
+
+            var notifOferVencidos = new NotificationGroupBox();
+            notifOferVencidos.Width = flowLayoutNotificaciones.Width - 25;
+
+            flowLayoutNotificaciones.Controls.Add(notifOferVencidos);
+
+            notifOferVencidos.SetData(listaOfertasVencidas, "Ofertas Vencidas");
+        }
+
     }
 }

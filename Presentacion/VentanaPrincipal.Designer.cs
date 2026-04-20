@@ -51,8 +51,8 @@
             tcIzquierda = new TabControl();
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
-            tableLayoutPanel3 = new TableLayoutPanel();
-            panel2 = new Panel();
+            tlpNotificaciones0 = new TableLayoutPanel();
+            flowLayoutNotificaciones = new FlowLayoutPanel();
             panel1 = new Panel();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             PnlBotones.SuspendLayout();
@@ -64,7 +64,7 @@
             flowLayoutPanel3.SuspendLayout();
             tlpInoformacion1.SuspendLayout();
             tcIzquierda.SuspendLayout();
-            tableLayoutPanel3.SuspendLayout();
+            tlpNotificaciones0.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -300,7 +300,7 @@
             tlpInoformacion1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.80027F));
             tlpInoformacion1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.19973F));
             tlpInoformacion1.Controls.Add(tcIzquierda, 0, 0);
-            tlpInoformacion1.Controls.Add(tableLayoutPanel3, 1, 0);
+            tlpInoformacion1.Controls.Add(tlpNotificaciones0, 1, 0);
             tlpInoformacion1.Dock = DockStyle.Fill;
             tlpInoformacion1.Location = new Point(3, 66);
             tlpInoformacion1.Name = "tlpInoformacion1";
@@ -340,29 +340,32 @@
             tabPage2.Text = "tabPage2";
             tabPage2.UseVisualStyleBackColor = true;
             // 
-            // tableLayoutPanel3
+            // tlpNotificaciones0
             // 
-            tableLayoutPanel3.BackColor = Color.SaddleBrown;
-            tableLayoutPanel3.ColumnCount = 1;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.Controls.Add(panel2, 0, 1);
-            tableLayoutPanel3.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Location = new Point(844, 3);
-            tableLayoutPanel3.Name = "tableLayoutPanel3";
-            tableLayoutPanel3.RowCount = 2;
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.Size = new Size(412, 648);
-            tableLayoutPanel3.TabIndex = 1;
+            tlpNotificaciones0.BackColor = Color.SaddleBrown;
+            tlpNotificaciones0.ColumnCount = 1;
+            tlpNotificaciones0.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tlpNotificaciones0.Controls.Add(flowLayoutNotificaciones, 0, 1);
+            tlpNotificaciones0.Dock = DockStyle.Fill;
+            tlpNotificaciones0.Location = new Point(844, 3);
+            tlpNotificaciones0.Name = "tlpNotificaciones0";
+            tlpNotificaciones0.RowCount = 2;
+            tlpNotificaciones0.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tlpNotificaciones0.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpNotificaciones0.Size = new Size(412, 648);
+            tlpNotificaciones0.TabIndex = 1;
             // 
-            // panel2
+            // flowLayoutNotificaciones
             // 
-            panel2.BackColor = Color.MistyRose;
-            panel2.Dock = DockStyle.Fill;
-            panel2.Location = new Point(3, 23);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(406, 622);
-            panel2.TabIndex = 0;
+            flowLayoutNotificaciones.AutoScroll = true;
+            flowLayoutNotificaciones.BackColor = Color.Salmon;
+            flowLayoutNotificaciones.Dock = DockStyle.Fill;
+            flowLayoutNotificaciones.FlowDirection = FlowDirection.TopDown;
+            flowLayoutNotificaciones.Location = new Point(3, 23);
+            flowLayoutNotificaciones.Name = "flowLayoutNotificaciones";
+            flowLayoutNotificaciones.Size = new Size(406, 622);
+            flowLayoutNotificaciones.TabIndex = 0;
+            flowLayoutNotificaciones.WrapContents = false;
             // 
             // panel1
             // 
@@ -401,7 +404,7 @@
             flowLayoutPanel3.PerformLayout();
             tlpInoformacion1.ResumeLayout(false);
             tcIzquierda.ResumeLayout(false);
-            tableLayoutPanel3.ResumeLayout(false);
+            tlpNotificaciones0.ResumeLayout(false);
             panel1.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -431,7 +434,7 @@
         private TabControl tcIzquierda;
         private TabPage tabPage1;
         private TabPage tabPage2;
-        private TableLayoutPanel tableLayoutPanel3;
-        private Panel panel2;
+        private TableLayoutPanel tlpNotificaciones0;
+        private FlowLayoutPanel flowLayoutNotificaciones;
     }
 }

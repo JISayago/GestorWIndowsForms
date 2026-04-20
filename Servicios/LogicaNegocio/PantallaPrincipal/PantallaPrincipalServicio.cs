@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Servicios.LogicaNegocio.PantallaPrincipal
 {
-    public class PantallaPrincipalServicio
+    public class PantallaPrincipalServicio : IPantallaPrincipalServicio
     {
         private readonly ILoteServicio _loteServicio;
         private readonly IOfertaServicio _ofertaServicio;
@@ -45,9 +45,9 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             return listaNotificaciones;
         }
 
-        public void crearNotifiaciones()
+        public List<NotificacionPP> crearNotifiaciones()
         {
-            checkearProductosVencidos();
+            return checkearProductosVencidos();
             //checkearOfertasVencidas();
 
 
@@ -73,9 +73,18 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             }).ToList();
         }
 
-        public void checkearOfertasVencidas()
+        public List<NotificacionPP> checkearOfertasVencidas(DateTime? fecha = null)
         {
-            //usar el service de ofertas para obtener las ofertas que estan vencidas y crear una notificacion para cada una de ellas
+            var promocionesNotificar = _ofertaServicio.ObtenerOfertasVencidas();
+
+            return promocionesNotificar.Select(p => new NotificacionPP
+            {
+                NotificacionId = p.OfertaDescuentoId, // o algún ID único para la notificación
+                Titulo = "Oferta Vencida",
+                Descripcion = $"La oferta {p.Codigo} - {p.Descripcion} venció el {p.FechaFin.Value:dd/MM/yyyy}.",
+                FechaNotificacion = DateTime.Now,
+                Leida = false
+            }).ToList();
         }
     }
 }

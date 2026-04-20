@@ -15,6 +15,7 @@ using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Servicios.LogicaNegocio.Producto.Lote
 {
@@ -434,11 +435,14 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
 
+            DateTime datae = new DateTime(2025, 4, 20);//BORRAR ES PARA PROBAR NADA MAS
+
             //Default trae los productos vencidos de hoy, pero se le puede pasar una fecha para traer los vencidos de una fecha
-            var dateTimeVencimiento = fechaVencimiento.HasValue ? fechaVencimiento.Value : DateTime.Today;
+            var dateTimeVencimiento = fechaVencimiento.HasValue ? fechaVencimiento.Value : datae;
+            //FIXEA EL FILTRO PARA MOSTRAR LOS LOTES A NOTIFICAR, ACTUALMENTE TRAER TODO PARA PROBAR EL FORMULARIO
 
             List<LoteDTO> lotesVencidos = context.Lotes
-                .Where(x => x.FechaVencimiento == dateTimeVencimiento)
+                .Where(x => x.FechaVencimiento > dateTimeVencimiento)
                 .Select(x => new LoteDTO
                 {
                     Id = x.LoteId,

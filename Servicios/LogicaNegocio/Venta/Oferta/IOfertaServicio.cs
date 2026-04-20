@@ -28,5 +28,7 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         public OfertaDTO? ActivarDesactivar(long ofertaId);
 
         public bool ExisteOfertaPorCodigo(string codigo);
+
+        public List<OfertaDTO> ObtenerOfertasVencidas(DateTime? fecha = null);
     }
 }

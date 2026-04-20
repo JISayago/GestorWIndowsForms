@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Admin;
+using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 
 namespace Servicios.LogicaNegocio.Venta.Oferta
 {
@@ -788,6 +789,35 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 TextoSecundario = textoSecundario,
                 Tipo = 1
             };
+        }
+
+        public List<OfertaDTO> ObtenerOfertasVencidas(DateTime? fecha = null)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var fechaComparacion = fecha ?? DateTime.Now;
+
+            DateTime datae = new DateTime(2025, 4, 20);//BORRAR ES PARA PROBAR NADA MAS
+
+            var ofertasVencidas = context.OfertasDescuentos
+                //.Where(o => o.FechaFin != null && o.FechaFin < fechaComparacion)
+                .Where(o => o.FechaFin > datae)
+                .Select(o => new OfertaDTO
+                {
+                    OfertaDescuentoId = o.OfertaDescuentoId,
+                    Descripcion = o.Descripcion,
+                    Codigo = o.Codigo,
+                    FechaInicio = o.FechaInicio,
+                    FechaFin = o.FechaFin,
+                    EstaActiva = o.EstaActiva,
+                    esOfertaPorGrupo = o.esOfertaPorGrupo,
+                    IdMarca = o.IdMarca,
+                    IdRubro = o.IdRubro,
+                    IdCategoria = o.IdCategoria,
+                    GrupoNombre = o.GrupoNombre
+                }).ToList();
+
+            return ofertasVencidas;
         }
     }
 }
