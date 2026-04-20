@@ -28,6 +28,7 @@ namespace Presentacion
         private readonly IDetallesSistemaServicio _dellesSistema;
         private readonly IAccesoSistema _accesoSistema;
         private readonly IPantallaPrincipalServicio _pantallaPrincipalServicio;
+        private readonly ILoteServicio _loteServicio;
         private DateTime _fechaActual = DateTime.Now;
         private DateTime _horaActual = DateTime.Now;
 
@@ -43,6 +44,7 @@ namespace Presentacion
             _dellesSistema = new DetallesSistemaServicio();
             _accesoSistema = new AccesoSistema();
             _pantallaPrincipalServicio = new PantallaPrincipalServicio();
+            _loteServicio = new LoteServicio();
             _usuarioLogeado = usuarioLogeado;
 
             this.Bounds = Screen.PrimaryScreen.WorkingArea;
@@ -165,7 +167,7 @@ namespace Presentacion
 
         private void crearNotificaciones1()
         {
-            var listaLotesVencidos = _pantallaPrincipalServicio.checkearProductosVencidos(null);
+            var listaLotesVencidos = _loteServicio.ObtenerLotesVencidos(null);
 
 
             var notiProdVencidos = new NotificationGroupBox();
@@ -173,7 +175,11 @@ namespace Presentacion
 
             flowLayoutNotificaciones.Controls.Add(notiProdVencidos);
 
-            notiProdVencidos.SetData(listaLotesVencidos, "Productos vencidos");
+            var listaStrings = listaLotesVencidos
+                .Select(x => $"Lotes Nro: {x.NumeroLote} - {x.NombreProducto} -  Vence: {x.FechaVencimiento:dd/MM}")
+                .ToList();  
+
+            notiProdVencidos.SetDataTexto(listaStrings, "Productos vencidos");
         }
 
         private void crearNotificaciones2()
@@ -186,7 +192,7 @@ namespace Presentacion
 
             flowLayoutNotificaciones.Controls.Add(notifOferVencidos);
 
-            notifOferVencidos.SetData(listaOfertasVencidas, "Ofertas Vencidas");
+            notifOferVencidos.SetDataGrid(listaOfertasVencidas, "Ofertas Vencidas");
         }
 
     }

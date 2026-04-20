@@ -7,10 +7,15 @@ using System.Windows.Forms;
 public class NotificationGroupBox : GroupBox
 {
     private Button btnToggle;
-    private DataGridView grid;
 
-    private bool expanded = false;
+    // Modos de contenido
+    private DataGridView grid;
+    private FlowLayoutPanel panelItems;
+
+    private bool expanded = true; // abierto por default
     private int maxFilasVisibles = 6;
+
+    public bool UseTextMode { get; set; } = true; // true = lista texto, false = grid
 
     public NotificationGroupBox()
     {
@@ -22,13 +27,14 @@ public class NotificationGroupBox : GroupBox
         this.Height = 50;
 
         btnToggle = new Button();
-        btnToggle.Text = "▼";
+        btnToggle.Text = "▲";
         btnToggle.Width = 30;
         btnToggle.Height = 25;
         btnToggle.Top = 15;
         btnToggle.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         btnToggle.Click += BtnToggle_Click;
 
+        // GRID (modo tabla)
         grid = new DataGridView();
         grid.Top = 45;
         grid.Left = 10;
@@ -39,8 +45,19 @@ public class NotificationGroupBox : GroupBox
         grid.RowHeadersVisible = false;
         grid.AllowUserToAddRows = false;
 
+        // PANEL TEXTO (modo notificación)
+        panelItems = new FlowLayoutPanel();
+        panelItems.Top = 45;
+        panelItems.Left = 10;
+        panelItems.Width = this.Width - 20;
+        panelItems.AutoSize = true;
+        panelItems.FlowDirection = FlowDirection.TopDown;
+        panelItems.WrapContents = false;
+        panelItems.Visible = false;
+
         this.Controls.Add(btnToggle);
         this.Controls.Add(grid);
+        this.Controls.Add(panelItems);
 
         this.Resize += NotificationGroupBox_Resize;
     }
@@ -49,6 +66,7 @@ public class NotificationGroupBox : GroupBox
     {
         btnToggle.Left = this.Width - 40;
         grid.Width = this.Width - 20;
+        panelItems.Width = this.Width - 20;
     }
 
     private void BtnToggle_Click(object sender, EventArgs e)
@@ -57,7 +75,8 @@ public class NotificationGroupBox : GroupBox
         AplicarEstado();
     }
 
-    public void SetData<T>(List<T> data, string tituloBase)
+    // ================= GRID =================
+    public void SetDataGrid<T>(List<T> data, string tituloBase)
     {
         if (data == null || data.Count == 0)
         {
@@ -65,16 +84,18 @@ public class NotificationGroupBox : GroupBox
             return;
         }
 
+        UseTextMode = false;
+
         this.Visible = true;
         this.Text = $"{tituloBase} ({data.Count})";
 
         grid.DataSource = data;
 
-        AjustarAltura(data.Count);
+        AjustarAlturaGrid(data.Count);
         AplicarEstado();
     }
 
-    private void AjustarAltura(int cantidadFilas)
+    private void AjustarAlturaGrid(int cantidadFilas)
     {
         int alturaFila = grid.RowTemplate.Height;
         int filasMostradas = Math.Min(cantidadFilas, maxFilasVisibles);
@@ -83,14 +104,49 @@ public class NotificationGroupBox : GroupBox
         grid.Height = alturaGrid;
     }
 
+    // ================= TEXTO =================
+    public void SetDataTexto(List<string> items, string tituloBase)
+    {
+        if (items == null || items.Count == 0)
+        {
+            this.Visible = false;
+            return;
+        }
+
+        UseTextMode = true;
+
+        this.Visible = true;
+        this.Text = $"{tituloBase} ({items.Count})";
+
+        panelItems.Controls.Clear();
+
+        foreach (var item in items)
+        {
+            var label = new Label();
+            label.Text = "• " + item;
+            label.AutoSize = true;
+            label.Margin = new Padding(3);
+
+            panelItems.Controls.Add(label);
+        }
+
+        AplicarEstado();
+    }
+
+    // ================= ESTADO =================
     private void AplicarEstado()
     {
-        grid.Visible = expanded;
+        grid.Visible = !UseTextMode && expanded;
+        panelItems.Visible = UseTextMode && expanded;
 
         if (expanded)
         {
             btnToggle.Text = "▲";
-            this.Height = grid.Top + grid.Height + 10;
+
+            if (UseTextMode)
+                this.Height = panelItems.Bottom + 10;
+            else
+                this.Height = grid.Top + grid.Height + 10;
         }
         else
         {
@@ -102,9 +158,8 @@ public class NotificationGroupBox : GroupBox
 
 
 // ================= USO =================
-// En tu Form:
+// TEXTO (recomendado para notificaciones)
+// notif.SetDataTexto(listaStrings, "Productos vencidos");
 
-// var notif = new NotificationGroupBox();
-// notif.Width = flowLayoutPanel1.Width - 25;
-// flowLayoutPanel1.Controls.Add(notif);
-// notif.SetData(lotesVencidos, "Productos vencidos");
+// GRID (si necesitás tabla)
+// notif.SetDataGrid(listaObjetos, "Productos vencidos");
