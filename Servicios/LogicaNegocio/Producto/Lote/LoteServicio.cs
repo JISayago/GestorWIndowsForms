@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -429,5 +430,32 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             }
         }
 
+        public List<LoteDTO> ObtenerLotesVencidos(DateTime? fechaVencimiento = null)
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            //Default trae los productos vencidos de hoy, pero se le puede pasar una fecha para traer los vencidos de una fecha
+            var dateTimeVencimiento = fechaVencimiento.HasValue ? fechaVencimiento.Value : DateTime.Today;
+
+            List<LoteDTO> lotesVencidos = context.Lotes
+                .Where(x => x.FechaVencimiento == dateTimeVencimiento)
+                .Select(x => new LoteDTO
+                {
+                    Id = x.LoteId,
+                    IdProducto = x.IdProducto,
+                    StockInicial = x.StockIncial,
+                    StockActual = x.StockActual,
+                    NumeroLote = x.NumeroLote,
+                    Descripcion = x.Descripcion,
+                    FechaAlta = x.FechaAlta,
+                    FechaVencimiento = x.FechaVencimiento,
+                    EstaVencido = x.EstaVencido,
+                    EstaActivo = x.EstaActivo,
+                    NombreProducto = x.Producto.Descripcion
+                })
+                .ToList();
+
+            return lotesVencidos;
+        }
     }
 }

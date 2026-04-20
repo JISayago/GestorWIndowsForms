@@ -108,7 +108,6 @@ namespace Servicios.LogicaNegocio.Producto
             return dto;
         }
 
-
         public List<DetalleVentaLoteDTO> DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context)
         {
             //DEVUELO DETALLEVENTALOTEDTO PORQUE NO PUEDO CREAR DVL EN LOTE SERVICE, TENGO QUE HACERLO EN VENTAINTERNA
@@ -435,6 +434,7 @@ namespace Servicios.LogicaNegocio.Producto
 
             return producto;
         }
+        
 
         // =============================
         // PRODUCTOS ACTIVOS (NUEVO CON COLUMNA DINÁMICA)
@@ -591,9 +591,7 @@ namespace Servicios.LogicaNegocio.Producto
             return ObtenerProductosEliminados(cadenabuscar, "Descripcion");
         }
 
-
-        public IEnumerable<ProductoDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(
-     long? MarcaId = null, long? RubroId = null, long? CategoriaId = null)
+        public IEnumerable<ProductoDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(long? MarcaId = null, long? RubroId = null, long? CategoriaId = null)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
@@ -724,5 +722,6 @@ namespace Servicios.LogicaNegocio.Producto
                 EntidadId = producto.ProductoId
             };
         }
+
     }
 }
