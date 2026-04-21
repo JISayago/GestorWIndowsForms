@@ -92,48 +92,48 @@ namespace Presentacion.Core.Empleado.Rol
         {
             base.ResetearGrilla(grilla);
 
-            if (grilla.Columns.Contains("RolId"))
-            {
+            if (!grilla.Columns.Contains("RolId")) return;
+
                 grilla.Columns["RolId"].Visible = false;
                 grilla.Columns["RolId"].Name = "Id";
-            }
 
-            if (grilla.Columns.Contains("Nombre"))
-            {
                 grilla.Columns["Nombre"].Visible = true;
                 grilla.Columns["Nombre"].HeaderText = "Rol";
                 grilla.Columns["Nombre"].Width = 120;
-            }
-
-            if (grilla.Columns.Contains("CodigoRol"))
-            {
-                grilla.Columns["CodigoRol"].Visible = true;
+            
+            grilla.Columns["CodigoRol"].Visible = true;
                 grilla.Columns["CodigoRol"].Width = 120;
                 grilla.Columns["CodigoRol"].HeaderText = "Código";
-            }
-
-            if (grilla.Columns.Contains("DetalleRol"))
-            {
-                grilla.Columns["DetalleRol"].Visible = true;
+         
+            grilla.Columns["DetalleRol"].Visible = true;
                 grilla.Columns["DetalleRol"].HeaderText = "Detalle";
                 grilla.Columns["DetalleRol"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            }
         }
+
 
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
 
-            if (filtros.VerEliminados)
+            filtros.Extra ??= "ApyNom";
+
+            var resultado = _rolServicio.ObtenerRoles(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 CLAVE: volver a aplicar formato
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
             {
-                dgv.DataSource = _rolServicio.ObtenerRolesEliminados(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _rolServicio.ObtenerRoles(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
 
         #endregion

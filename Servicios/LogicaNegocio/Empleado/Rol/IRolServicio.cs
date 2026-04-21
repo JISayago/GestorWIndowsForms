@@ -1,4 +1,5 @@
 ﻿using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Empleado.Rol.DTO;
 using System;
@@ -11,8 +12,7 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
 {
     public  interface IRolServicio
     {
-        IEnumerable<RolDTO> ObtenerRoles(string cadenabuscar);
-        IEnumerable<RolDTO> ObtenerRolesAsignadosAEmpleados(long empleadoId);
+        ResultadoPaginacion<RolDTO> ObtenerRoles(FiltroConsulta filtros);
         IEnumerable<RolDTO> ObtenerRolesEliminados(string cadenabuscar);
 
         EstadoOperacion ActualizarRolesDeEmpleado(List<RolDTO> rolesAsignados, long empleadoId, DateTime fechaAsignacion);
