@@ -12,9 +12,8 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
 {
     public  interface IRolServicio
     {
+        IEnumerable<RolDTO> ObtenerRolesAsignadosAEmpleados(long empleadoId);
         ResultadoPaginacion<RolDTO> ObtenerRoles(FiltroConsulta filtros);
-        IEnumerable<RolDTO> ObtenerRolesEliminados(string cadenabuscar);
-
         EstadoOperacion ActualizarRolesDeEmpleado(List<RolDTO> rolesAsignados, long empleadoId, DateTime fechaAsignacion);
         EstadoOperacion Insertar(RolDTO rolDto);
         RolDTO ObtenerRolPorId(long rolId);

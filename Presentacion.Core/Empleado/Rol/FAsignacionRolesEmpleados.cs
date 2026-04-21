@@ -226,7 +226,7 @@ namespace Presentacion.Core.Empleado.Rol
 
         private void InicializacionGrillas()
         {
-            _rolesDisponibles = _rolServicio.ObtenerRoles(string.Empty).ToList();
+            //_rolesDisponibles = _rolServicio.ObtenerRoles(string.Empty).ToList();
             if (EntidadID.HasValue)
             {
                 _rolesAsignados = _rolServicio.ObtenerRolesAsignadosAEmpleados(EntidadID.Value).ToList();

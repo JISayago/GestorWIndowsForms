@@ -109,11 +109,11 @@ namespace Presentacion.Core.Gasto
         {
             base.ResetearGrilla(grilla);
 
-            if (grilla.Columns.Contains("GastoId"))
-            {
-                grilla.Columns["GastoId"].Visible = false;
-                grilla.Columns["GastoId"].Name = "Id";
-            }
+
+            if (!grilla.Columns.Contains("GastoId")) return;
+
+            grilla.Columns["GastoId"].Visible = false;
+            grilla.Columns["GastoId"].Name = "Id";
 
             grilla.Columns["NumeroGasto"].Visible = true;
             grilla.Columns["NumeroGasto"].HeaderText = "N° Gasto";
@@ -154,18 +154,21 @@ namespace Presentacion.Core.Gasto
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
-            int? estado = null;
-                Debug.WriteLine($"Valor de Extra: {filtros.Extra}"); // Agrega esta línea para depurar el valor de Extra
-            if (filtros.Extra != null && filtros.Extra != "0")
 
-            estado = Convert.ToInt32(filtros.Extra);
+            var resultado = _gastoServicio.ObtenerGastos(filtros);
 
-            dgv.DataSource = _gastoServicio.ObtenerGastosFiltrados(
-                filtros.TextoBuscar,
-                estado,
-                filtros.FechaDesde,
-                filtros.FechaHasta
-            );
+            dgv.DataSource = resultado.Items;
+
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
+            {
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
         }
 
         #endregion
@@ -205,29 +208,35 @@ namespace Presentacion.Core.Gasto
         }
 
         #endregion
-
-        private void FGastoConsulta_Load(object sender, EventArgs e)
+        protected override void ConfigurarFiltrosUI()
         {
+            base.ConfigurarFiltrosUI();
+
+            // 🔹 combo de estados
             var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todos", Valor = "0" }
-            };
+    {
+        new OpcionFiltro { Texto = "Todos", Valor = "0" }
+    };
 
             foreach (EstadoGasto estado in Enum.GetValues(typeof(EstadoGasto)))
             {
                 opciones.Add(new OpcionFiltro
                 {
                     Texto = estado.ToString(),
-                    Valor = Convert.ToString((int)estado)
+                    Valor = ((int)estado).ToString()
                 });
             }
 
-            //ActivarFiltroCombo("Estado del gasto:", opciones, "Texto", "Valor");
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
 
-            // 👉 seleccionar "Todos" por defecto
-            cbxFiltroOpcional.SelectedValue = Convert.ToString(0);
+            // 👉 valor por defecto
+            cbxFiltroOpcional.SelectedValue = "0";
 
+            // 📅 activar fechas
             ActivarFiltroFechas("Filtrar por fecha");
+        }
+        private void FGastoConsulta_Load(object sender, EventArgs e)
+        {
         }
     }
 }
