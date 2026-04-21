@@ -66,8 +66,8 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             return productosNotificar.Select(p => new NotificacionPP
             {
                 NotificacionId = p.Id, //o algun id unico para la notificacion
-                Titulo = "Producto Vencido",
-                Descripcion = $"El producto {p.NombreProducto} con fecha de vencimiento {p.FechaVencimiento?.ToString("dd/MM/yyyy")} está vencido.",
+                Titulo = $"Producto: {p.NombreProducto}  ",
+                Descripcion = $"Lote: {p.NumeroLote} con fecha de vencimiento: {p.FechaVencimiento?.ToString("dd/MM/yyyy")}.",
                 FechaNotificacion = DateTime.Now,
                 Leida = false
             }).ToList();

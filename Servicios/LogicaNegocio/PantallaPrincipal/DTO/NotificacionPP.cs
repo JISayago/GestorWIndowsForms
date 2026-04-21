@@ -13,5 +13,6 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal.DTO
         public string Descripcion { get; set; }
         public DateTime FechaNotificacion { get; set; }
         public bool Leida { get; set; }
+        public int NivelUrgencia { get; set; }
     }
 }

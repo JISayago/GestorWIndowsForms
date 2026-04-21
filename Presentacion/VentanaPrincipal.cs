@@ -167,19 +167,14 @@ namespace Presentacion
 
         private void crearNotificaciones1()
         {
-            var listaLotesVencidos = _loteServicio.ObtenerLotesVencidos(null);
-
+            var listaLotesNotificar= _pantallaPrincipalServicio.checkearProductosVencidos(null);
 
             var notiProdVencidos = new NotificationGroupBox();
             notiProdVencidos.Width = flowLayoutNotificaciones.Width - 25;
 
             flowLayoutNotificaciones.Controls.Add(notiProdVencidos);
 
-            var listaStrings = listaLotesVencidos
-                .Select(x => $"Lotes Nro: {x.NumeroLote} - {x.NombreProducto} -  Vence: {x.FechaVencimiento:dd/MM}")
-                .ToList();  
-
-            notiProdVencidos.SetDataTexto(listaStrings, "Productos vencidos");
+            notiProdVencidos.SetData(listaLotesNotificar, "Lotes Vencidos");
         }
 
         private void crearNotificaciones2()
@@ -192,7 +187,9 @@ namespace Presentacion
 
             flowLayoutNotificaciones.Controls.Add(notifOferVencidos);
 
-            notifOferVencidos.SetDataGrid(listaOfertasVencidas, "Ofertas Vencidas");
+            notifOferVencidos.SetData(listaOfertasVencidas, "Ofertas Vencidas");
+            //notifOferVencidos.SetDataGrid(listaOfertasVencidas, "Ofertas Vencidas"); SE MUESTRAN LOS DATOS EN UN DATAGRID
+
         }
 
     }
