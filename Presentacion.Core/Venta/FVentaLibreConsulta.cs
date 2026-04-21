@@ -2,6 +2,7 @@
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Gasto;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Venta.VentaLibre;
 using System;
 using System.Collections.Generic;
@@ -75,11 +76,9 @@ namespace Presentacion.Core.Venta
         {
             base.ResetearGrilla(grilla);
 
-            if (grilla.Columns.Contains("VentaLibreId"))
-            {
-                grilla.Columns["VentaLibreId"].Visible = false;
-                grilla.Columns["VentaLibreId"].Name = "Id";
-            }
+            if (!grilla.Columns.Contains("VentaLibreId")) return;
+            grilla.Columns["VentaLibreId"].Visible = false;
+            grilla.Columns["VentaLibreId"].Name = "Id";
 
             grilla.Columns["NumeroVenta"].Visible = true;
             grilla.Columns["NumeroVenta"].HeaderText = "N° Venta";
@@ -120,18 +119,28 @@ namespace Presentacion.Core.Venta
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
-            int ? estado = null;
 
-            if (filtros.Extra != null && filtros.Extra != "0")
+            // 🔹 llamada unificada
+            var resultado = _ventaLibreServicio.ObtenerVentasLibres(filtros);
+
+            // 🔹 bind
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 clave: reaplicar formato
+            ResetearGrilla(dgv);
+
+            // 🔹 paginación
+            var paginacion = new DatosPaginacion
             {
-                estado = Convert.ToInt32(filtros.Extra);
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
             };
-            dgv.DataSource = _ventaLibreServicio.ObtenerVentasLibresFiltrados(filtros.TextoBuscar,
-                estado,
-                filtros.FechaDesde,
-                filtros.FechaHasta);
 
+            ActualizarPaginacionUI(paginacion);
 
+            // 🔹 estado botones
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
 
         //public override void EjecutarBtnNuevo()
@@ -164,28 +173,33 @@ namespace Presentacion.Core.Venta
 
         private void FVentaLibreConsulta_Load(object sender, EventArgs e)
         {
-            {
-                var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todos", Valor = "0" }
-            };
+        }
+        protected override void ConfigurarFiltrosUI()
+        {
+            base.ConfigurarFiltrosUI();
 
-                foreach (EstadoGasto estado in Enum.GetValues(typeof(EstadoGasto)))
-                {
-                    opciones.Add(new OpcionFiltro
-                    {
-                        Texto = estado.ToString(),
-                        Valor = Convert.ToString((int)estado)
-                    });
-                }
+            // 🔵 combo estado
+    //        var opciones = new List<OpcionFiltro>
+    //{
+    //    new OpcionFiltro { Texto = "Todos", Valor = 0 }
+    //};
 
-                ActivarFiltroCombo("Estado de la Venta:", opciones, "Texto", "Valor");
+    //        foreach (EstadoGasto estado in Enum.GetValues(typeof(EstadoGasto)))
+    //        {
+    //            opciones.Add(new OpcionFiltro
+    //            {
+    //                Texto = estado.ToString(),
+    //                Valor = (int)estado
+    //            });
+    //        }
 
-                // 👉 seleccionar "Todos" por defecto
-                cbxFiltroOpcional.SelectedValue = Convert.ToString(0);
+            //ActivarFiltroCombo(opciones, "Texto", "Valor");
 
-                ActivarFiltroFechas("Filtrar por fecha");
-            }
+            // 👉 default
+            cbxFiltroOpcional.SelectedValue = 0;
+
+            // 🔵 fechas
+            ActivarFiltroFechas("Filtrar por fecha");
         }
     }
 }
