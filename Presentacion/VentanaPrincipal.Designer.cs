@@ -297,8 +297,8 @@
             // 
             tlpInoformacion1.BackColor = Color.SandyBrown;
             tlpInoformacion1.ColumnCount = 2;
-            tlpInoformacion1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.80027F));
-            tlpInoformacion1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.19973F));
+            tlpInoformacion1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 62.5F));
+            tlpInoformacion1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 37.5F));
             tlpInoformacion1.Controls.Add(tcIzquierda, 0, 0);
             tlpInoformacion1.Controls.Add(tlpNotificaciones0, 1, 0);
             tlpInoformacion1.Dock = DockStyle.Fill;
@@ -317,7 +317,7 @@
             tcIzquierda.Location = new Point(3, 3);
             tcIzquierda.Name = "tcIzquierda";
             tcIzquierda.SelectedIndex = 0;
-            tcIzquierda.Size = new Size(835, 648);
+            tcIzquierda.Size = new Size(780, 648);
             tcIzquierda.TabIndex = 0;
             // 
             // tabPage1
@@ -325,7 +325,7 @@
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(827, 620);
+            tabPage1.Size = new Size(772, 620);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "tabPage1";
             tabPage1.UseVisualStyleBackColor = true;
@@ -335,7 +335,7 @@
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(827, 620);
+            tabPage2.Size = new Size(772, 620);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "tabPage2";
             tabPage2.UseVisualStyleBackColor = true;
@@ -347,12 +347,12 @@
             tlpNotificaciones0.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tlpNotificaciones0.Controls.Add(flowLayoutNotificaciones, 0, 1);
             tlpNotificaciones0.Dock = DockStyle.Fill;
-            tlpNotificaciones0.Location = new Point(844, 3);
+            tlpNotificaciones0.Location = new Point(789, 3);
             tlpNotificaciones0.Name = "tlpNotificaciones0";
             tlpNotificaciones0.RowCount = 2;
             tlpNotificaciones0.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tlpNotificaciones0.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpNotificaciones0.Size = new Size(412, 648);
+            tlpNotificaciones0.Size = new Size(467, 648);
             tlpNotificaciones0.TabIndex = 1;
             // 
             // flowLayoutNotificaciones
@@ -363,7 +363,7 @@
             flowLayoutNotificaciones.FlowDirection = FlowDirection.TopDown;
             flowLayoutNotificaciones.Location = new Point(3, 23);
             flowLayoutNotificaciones.Name = "flowLayoutNotificaciones";
-            flowLayoutNotificaciones.Size = new Size(406, 622);
+            flowLayoutNotificaciones.Size = new Size(461, 622);
             flowLayoutNotificaciones.TabIndex = 0;
             flowLayoutNotificaciones.WrapContents = false;
             // 

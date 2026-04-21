@@ -180,7 +180,6 @@ namespace Presentacion
         private void crearNotificaciones2()
         {
             var listaOfertasVencidas = _pantallaPrincipalServicio.checkearOfertasVencidas(null);
-            ////////////
 
             var notifOferVencidos = new NotificationGroupBox();
             notifOferVencidos.Width = flowLayoutNotificaciones.Width - 25;
