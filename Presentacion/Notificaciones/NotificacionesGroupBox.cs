@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 public class NotificationGroupBox : GroupBox
 {
     private Button btnToggle;
     private FlowLayoutPanel panelItems;
-
     private bool expanded = true;
 
     public NotificationGroupBox()
@@ -38,6 +38,11 @@ public class NotificationGroupBox : GroupBox
         panelItems.FlowDirection = FlowDirection.TopDown;
         panelItems.WrapContents = false;
 
+        // FIX: Eliminamos el marco gris oscuro
+        panelItems.BorderStyle = BorderStyle.None;
+
+        panelItems.Padding = new Padding(0);
+
         this.Controls.Add(btnToggle);
         this.Controls.Add(panelItems);
 
@@ -46,10 +51,9 @@ public class NotificationGroupBox : GroupBox
             btnToggle.Left = this.Width - 40;
             panelItems.Width = this.Width - 20;
 
-            // Recalcular ancho de items cuando cambia el tamaño
             foreach (Control ctrl in panelItems.Controls)
             {
-                ctrl.Width = panelItems.Width - 5;
+                ctrl.Width = panelItems.Width - 10;
             }
         };
     }
@@ -73,7 +77,12 @@ public class NotificationGroupBox : GroupBox
 
         panelItems.Controls.Clear();
 
-        foreach (var item in notificaciones)
+        var notificacionesOrdenadas = notificaciones
+            .OrderByDescending(n => n.NivelUrgencia)
+            .ThenByDescending(n => n.FechaNotificacion)
+            .ToList();
+
+        foreach (var item in notificacionesOrdenadas)
         {
             panelItems.Controls.Add(CrearItem(item));
         }
@@ -84,8 +93,8 @@ public class NotificationGroupBox : GroupBox
     private Control CrearItem(NotificacionPP item)
     {
         var panelItem = new Panel();
-        panelItem.Width = panelItems.Width - 5;
-        panelItem.Margin = new Padding(3);
+        panelItem.Width = panelItems.Width - 10;
+        panelItem.Margin = new Padding(0, 0, 0, 8);
         panelItem.BorderStyle = BorderStyle.FixedSingle;
         panelItem.Cursor = Cursors.Hand;
 
@@ -93,47 +102,57 @@ public class NotificationGroupBox : GroupBox
             ? Color.FromArgb(240, 240, 240)
             : Color.FromArgb(255, 235, 235);
 
-        // Título
+        panelItem.Paint += (s, e) =>
+        {
+            Color colorUrgencia;
+            switch (item.NivelUrgencia)
+            {
+                case (int)NivelUrgencia.Alta: colorUrgencia = Color.Crimson; break;
+                case (int)NivelUrgencia.Media: colorUrgencia = Color.DarkOrange; break;
+                case (int)NivelUrgencia.Baja: colorUrgencia = Color.ForestGreen; break;
+                default: colorUrgencia = Color.Gray; break;
+            }
+            using (SolidBrush brush = new SolidBrush(colorUrgencia))
+            {
+                e.Graphics.FillRectangle(brush, 0, 0, 6, panelItem.Height);
+            }
+        };
+
+        var lblFecha = new Label();
+        lblFecha.Text = item.FechaNotificacion.ToString("dd/MM/yyyy");
+        lblFecha.Font = new Font("Segoe UI", 7);
+        lblFecha.AutoSize = true;
+        lblFecha.ForeColor = Color.Gray;
+        lblFecha.Top = 5;
+        lblFecha.Left = panelItem.Width - 75;
+        lblFecha.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+
         var lblTitulo = new Label();
         lblTitulo.Text = item.Titulo;
         lblTitulo.Font = new Font("Segoe UI", 9, FontStyle.Bold);
         lblTitulo.Top = 5;
-        lblTitulo.Left = 8;
+        lblTitulo.Left = 14;
         lblTitulo.AutoSize = true;
 
-        // Fecha
-        var lblFecha = new Label();
-        lblFecha.Text = item.FechaNotificacion.ToString("dd/MM/yyyy");
-        lblFecha.Font = new Font("Segoe UI", 7);
-        lblFecha.Top = 5;
-        lblFecha.Left = panelItem.Width - 80;
-        lblFecha.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        lblFecha.ForeColor = Color.Gray;
-        lblFecha.AutoSize = true;
-
-        // Descripción (FIX DEFINITIVO)
         var lblDescripcion = new Label();
         lblDescripcion.Text = item.Descripcion;
         lblDescripcion.Font = new Font("Segoe UI", 8);
-        lblDescripcion.Left = 8;
+        lblDescripcion.Left = 14;
         lblDescripcion.Top = lblTitulo.Bottom + 3;
         lblDescripcion.ForeColor = Color.DimGray;
-
-        int anchoDisponible = panelItems.Width - 25;
-
         lblDescripcion.AutoSize = true;
-        lblDescripcion.MaximumSize = new Size(anchoDisponible, 0);
+        lblDescripcion.MaximumSize = new Size(panelItem.Width - 25, 0);
 
-        // Click
-        panelItem.Click += (s, e) => OnItemClick(item);
-        lblTitulo.Click += (s, e) => OnItemClick(item);
-        lblDescripcion.Click += (s, e) => OnItemClick(item);
+        Action<object, EventArgs> clickHandler = (s, e) => OnItemClick(item);
+        panelItem.Click += new EventHandler(clickHandler);
+        lblTitulo.Click += new EventHandler(clickHandler);
+        lblDescripcion.Click += new EventHandler(clickHandler);
+        lblFecha.Click += new EventHandler(clickHandler);
 
+        panelItem.Controls.Add(lblFecha);
         panelItem.Controls.Add(lblTitulo);
         panelItem.Controls.Add(lblDescripcion);
-        panelItem.Controls.Add(lblFecha);
 
-        // Altura dinámica DESPUÉS de agregar controles
         panelItem.Height = lblDescripcion.Bottom + 10;
 
         return panelItem;
@@ -151,7 +170,7 @@ public class NotificationGroupBox : GroupBox
         if (expanded)
         {
             btnToggle.Text = "▲";
-            this.Height = panelItems.Bottom + 10;
+            this.Height = panelItems.Bottom + 15;
         }
         else
         {

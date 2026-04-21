@@ -69,7 +69,14 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
                 Titulo = $"Producto: {p.NombreProducto}  ",
                 Descripcion = $"Lote: {p.NumeroLote} con fecha de vencimiento: {p.FechaVencimiento?.ToString("dd/MM/yyyy")}.",
                 FechaNotificacion = DateTime.Now,
-                Leida = false
+                Leida = false,
+                NivelUrgencia = (int)(p.FechaVencimiento.HasValue
+                    ? (p.FechaVencimiento.Value.Date < DateTime.Now.Date
+                        ? Helpers.Sistema.NivelUrgencia.Alta
+                        : (p.FechaVencimiento.Value.Date <= DateTime.Now.Date.AddDays(3)
+                            ? Helpers.Sistema.NivelUrgencia.Media
+                            : Helpers.Sistema.NivelUrgencia.Baja))
+                    : Helpers.Sistema.NivelUrgencia.Baja) // Si no tiene fecha de vencimiento, se considera baja urgencia
             }).ToList();
         }
 
