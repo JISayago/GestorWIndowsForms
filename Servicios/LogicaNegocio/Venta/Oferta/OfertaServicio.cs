@@ -1,16 +1,17 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
-using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using AccesoDatos.Entidades;
+using Microsoft.EntityFrameworkCore;
+using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.Admin;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Servicios.LogicaNegocio.Producto.DTO;
-using Servicios.Helpers.Sistema;
-using Servicios.Helpers.Sistema.Admin;
 
 namespace Servicios.LogicaNegocio.Venta.Oferta
 {
@@ -220,124 +221,182 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
             return context.OfertasDescuentos
                           .Any(o => o.Codigo != null && o.Codigo.ToLower() == codigo);
         }
-      
-        public List<OfertaDTO> ObtenerOfertasInactivas(string cadenaBuscar)
+
+        //public List<OfertaDTO> ObtenerOfertasInactivas(string cadenaBuscar)
+        //{
+        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
+        //    var ofertas = context.OfertasDescuentos
+        //        .Where(o => (string.IsNullOrEmpty(cadenaBuscar) || o.Descripcion.Contains(cadenaBuscar) || o.Codigo.Contains(cadenaBuscar))
+        //                    && o.EstaActiva == false)
+        //        .Include(o => o.Productos)
+        //        .ToList()
+        //        .Select(x => new OfertaDTO
+        //        {
+        //            OfertaDescuentoId = x.OfertaDescuentoId,
+        //            Descripcion = x.Descripcion,
+        //            PrecioFinal = x.PrecioFinal,
+        //            PrecioOriginal = x.PrecioOriginal,
+        //            DescuentoTotalFinal = x.DescuentoTotalFinal,
+        //            PorcentajeDescuento = x.PorcentajeDescuento,
+        //            FechaInicio = x.FechaInicio,
+        //            FechaFin = x.FechaFin,
+        //            CantidadProductosDentroOferta = x.CantidadProductosDentroOferta,
+        //            EstaActiva = x.EstaActiva,
+        //            EsUnSoloProducto = x.EsUnSoloProducto,
+        //            Detalle = x.Detalle,
+        //            Codigo = x.Codigo,
+        //            esOfertaPorGrupo = x.esOfertaPorGrupo,
+        //            TieneLimiteDeStock = x.TieneLimiteDeStock,
+        //            CantidadLimiteDeStock = x.CantidadLimiteDeStock,
+        //            IdMarca = x.IdMarca,
+        //            IdRubro = x.IdRubro,
+        //            IdCategoria = x.IdCategoria,
+        //            GrupoNombre = x.GrupoNombre,
+        //            Productos = x.Productos.Select(p => new ProductoDTO
+        //            {
+        //                ProductoId = p.ProductoId,
+        //                PrecioVenta = p.PrecioOrginal
+        //            }).ToList()
+        //        })
+        //    .ToList();
+
+        //    return ofertas;
+        //}
+        //public List<OfertaDTO> ObtenerOfertasActivas(string cadenaBuscar)
+        //{
+        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
+        //    var ofertas = context.OfertasDescuentos
+        //        .Where(o => (string.IsNullOrEmpty(cadenaBuscar) || o.Descripcion.Contains(cadenaBuscar) || o.Codigo.Contains(cadenaBuscar)) && o.EstaActiva == true)
+        //        .Include(o => o.Productos)
+        //        .ToList()
+        //        .Select(x => new OfertaDTO
+        //        {
+        //            OfertaDescuentoId = x.OfertaDescuentoId,
+        //            Descripcion = x.Descripcion,
+        //            PrecioFinal = x.PrecioFinal,
+        //            PrecioOriginal = x.PrecioOriginal,
+        //            DescuentoTotalFinal = x.DescuentoTotalFinal,
+        //            PorcentajeDescuento = x.PorcentajeDescuento,
+        //            FechaInicio = x.FechaInicio,
+        //            FechaFin = x.FechaFin,
+        //            CantidadProductosDentroOferta = x.CantidadProductosDentroOferta,
+        //            EstaActiva = x.EstaActiva,
+        //            EsUnSoloProducto = x.EsUnSoloProducto,
+        //            Detalle = x.Detalle,
+        //            Codigo = x.Codigo,
+        //            esOfertaPorGrupo = x.esOfertaPorGrupo,
+        //            TieneLimiteDeStock = x.TieneLimiteDeStock,
+        //            CantidadLimiteDeStock = x.CantidadLimiteDeStock,
+        //            IdMarca = x.IdMarca,
+        //            IdRubro = x.IdRubro,
+        //            IdCategoria = x.IdCategoria,
+        //            GrupoNombre = x.GrupoNombre,
+        //            Productos = x.Productos.Select(p => new ProductoDTO
+        //            {
+        //                ProductoId = p.ProductoId,
+        //                PrecioVenta = p.PrecioOrginal
+        //            }).ToList()
+        //        })
+        //    .ToList();
+        //    return ofertas;
+        //}
+
+
+        public ResultadoPaginacion<OfertaDTO> ObtenerOfertas(FiltroConsulta filtros, bool vieneDeVenta)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-            var ofertas = context.OfertasDescuentos
-                .Where(o => (string.IsNullOrEmpty(cadenaBuscar) || o.Descripcion.Contains(cadenaBuscar) || o.Codigo.Contains(cadenaBuscar))
-                            && o.EstaActiva == false)
-                .Include(o => o.Productos)
-                .ToList()
-                .Select(x => new OfertaDTO
-                {
-                    OfertaDescuentoId = x.OfertaDescuentoId,
-                    Descripcion = x.Descripcion,
-                    PrecioFinal = x.PrecioFinal,
-                    PrecioOriginal = x.PrecioOriginal,
-                    DescuentoTotalFinal = x.DescuentoTotalFinal,
-                    PorcentajeDescuento = x.PorcentajeDescuento,
-                    FechaInicio = x.FechaInicio,
-                    FechaFin = x.FechaFin,
-                    CantidadProductosDentroOferta = x.CantidadProductosDentroOferta,
-                    EstaActiva = x.EstaActiva,
-                    EsUnSoloProducto = x.EsUnSoloProducto,
-                    Detalle = x.Detalle,
-                    Codigo = x.Codigo,
-                    esOfertaPorGrupo = x.esOfertaPorGrupo,
-                    TieneLimiteDeStock = x.TieneLimiteDeStock,
-                    CantidadLimiteDeStock = x.CantidadLimiteDeStock,
-                    IdMarca = x.IdMarca,
-                    IdRubro = x.IdRubro,
-                    IdCategoria = x.IdCategoria,
-                    GrupoNombre = x.GrupoNombre,
-                    Productos = x.Productos.Select(p => new ProductoDTO
-                    {
-                        ProductoId = p.ProductoId,
-                        PrecioVenta = p.PrecioOrginal
-                    }).ToList()
-                })
-            .ToList();
 
-            return ofertas;
-        }
-        public List<OfertaDTO> ObtenerOfertasActivas(string cadenaBuscar)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-            var ofertas = context.OfertasDescuentos
-                .Where(o => (string.IsNullOrEmpty(cadenaBuscar) || o.Descripcion.Contains(cadenaBuscar) || o.Codigo.Contains(cadenaBuscar)) && o.EstaActiva == true)
-                .Include(o => o.Productos)
-                .ToList()
-                .Select(x => new OfertaDTO
-                {
-                    OfertaDescuentoId = x.OfertaDescuentoId,
-                    Descripcion = x.Descripcion,
-                    PrecioFinal = x.PrecioFinal,
-                    PrecioOriginal = x.PrecioOriginal,
-                    DescuentoTotalFinal = x.DescuentoTotalFinal,
-                    PorcentajeDescuento = x.PorcentajeDescuento,
-                    FechaInicio = x.FechaInicio,
-                    FechaFin = x.FechaFin,
-                    CantidadProductosDentroOferta = x.CantidadProductosDentroOferta,
-                    EstaActiva = x.EstaActiva,
-                    EsUnSoloProducto = x.EsUnSoloProducto,
-                    Detalle = x.Detalle,
-                    Codigo = x.Codigo,
-                    esOfertaPorGrupo = x.esOfertaPorGrupo,
-                    TieneLimiteDeStock = x.TieneLimiteDeStock,
-                    CantidadLimiteDeStock = x.CantidadLimiteDeStock,
-                    IdMarca = x.IdMarca,
-                    IdRubro = x.IdRubro,
-                    IdCategoria = x.IdCategoria,
-                    GrupoNombre = x.GrupoNombre,
-                    Productos = x.Productos.Select(p => new ProductoDTO
-                    {
-                        ProductoId = p.ProductoId,
-                        PrecioVenta = p.PrecioOrginal
-                    }).ToList()
-                })
-            .ToList();
-            return ofertas;
-        }
-      
-
-
-        public List<InformacionExistenciaOfertaDescuentoProducto> ObtenerProductosEnOferta(List<ProductoDTO> productosDentroOferta)
-        {
-            if (productosDentroOferta == null || productosDentroOferta.Count == 0)
-                return new List<InformacionExistenciaOfertaDescuentoProducto>();
-
-            var productoIds = productosDentroOferta
-                .Where(p => p != null)
-                .Select(p => p.ProductoId)
-                .Distinct()
-                .ToList();
-
-            if (productoIds.Count == 0) return new List<InformacionExistenciaOfertaDescuentoProducto>();
-
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-            //roto 
-            // Traemos coincidencias y los datos de la oferta (navegación)
-            var matches = context.ProductosEnOfertasDescuentos
-                .Where(pe => productoIds.Contains(pe.ProductoId))
-                .Include(pe => pe.Oferta) // si existe la navegación
+            var query = context.OfertasDescuentos
                 .AsNoTracking()
-                .Select(pe => new InformacionExistenciaOfertaDescuentoProducto
+                .Include(o => o.Productos)
+                .AsQueryable();
+
+            // 🔹 SOLO PRODUCTOS (cuando viene de venta)
+            if (vieneDeVenta)
+                query = query.Where(o => !o.esOfertaPorGrupo);
+
+            // 🔴 ACTIVAS / INACTIVAS
+            query = filtros.VerEliminados
+                ? query.Where(o => !o.EstaActiva)
+                : query.Where(o => o.EstaActiva);
+
+            // 🔍 BUSQUEDA
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                var texto = filtros.TextoBuscar.ToLower();
+
+                switch (filtros.Extra?.ToString())
                 {
-                    ProductoId = pe.ProductoId,
-                    OfertaId = pe.OfertaId, // o pe.OfertaId si se llama distinto
-                    OfertaCodigo = pe.Oferta != null ? pe.Oferta.Codigo : "",
-                    OfertaActiva = pe.Oferta != null && pe.Oferta.EstaActiva,
-                    cantidadProductoEnOferta = pe.Cantidad
+                    case "Codigo":
+                        query = query.Where(o => o.Codigo.ToLower().Contains(texto));
+                        break;
+
+                    case "Detalle":
+                        query = query.Where(o => o.Detalle.ToLower().Contains(texto));
+                        break;
+
+                    default:
+                        query = query.Where(o => o.Descripcion.ToLower().Contains(texto));
+                        break;
+                }
+            }
+
+            // 📅 FECHAS
+            if (filtros.FechaDesde.HasValue)
+                query = query.Where(o => o.FechaInicio >= filtros.FechaDesde.Value);
+
+            if (filtros.FechaHasta.HasValue)
+                query = query.Where(o => o.FechaFin <= filtros.FechaHasta.Value);
+
+            // 📊 TOTAL
+            var total = query.Count();
+
+            // 📦 PAGINACION
+            var data = query
+                .OrderBy(o => o.FechaFin)
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
+                .Select(x => new OfertaDTO
+                {
+                    OfertaDescuentoId = x.OfertaDescuentoId,
+                    Descripcion = x.Descripcion,
+                    PrecioFinal = x.PrecioFinal,
+                    PrecioOriginal = x.PrecioOriginal,
+                    DescuentoTotalFinal = x.DescuentoTotalFinal,
+                    PorcentajeDescuento = x.PorcentajeDescuento,
+                    FechaInicio = x.FechaInicio,
+                    FechaFin = x.FechaFin,
+                    CantidadProductosDentroOferta = x.CantidadProductosDentroOferta,
+                    EstaActiva = x.EstaActiva,
+                    EsUnSoloProducto = x.EsUnSoloProducto,
+                    Detalle = x.Detalle,
+                    Codigo = x.Codigo,
+                    esOfertaPorGrupo = x.esOfertaPorGrupo,
+                    TieneLimiteDeStock = x.TieneLimiteDeStock,
+                    CantidadLimiteDeStock = x.CantidadLimiteDeStock,
+                    IdMarca = x.IdMarca,
+                    IdRubro = x.IdRubro,
+                    IdCategoria = x.IdCategoria,
+                    GrupoNombre = x.GrupoNombre,
+
+                    Productos = x.Productos
+                        .Select(p => new ProductoDTO
+                        {
+                            ProductoId = p.ProductoId,
+                            PrecioVenta = p.PrecioOrginal
+                        }).ToList()
                 })
-                // Evitamos duplicados exactos (si hay múltiples filas iguales)
-                .AsEnumerable()
-                .GroupBy(x => new { x.ProductoId, x.OfertaId })
-                .Select(g => g.First())
                 .ToList();
 
-            return matches;
+            return new ResultadoPaginacion<OfertaDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
         }
+
         public List<OfertaDTO> ObtenerOfertasActivasCompuestas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -788,6 +847,42 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 TextoSecundario = textoSecundario,
                 Tipo = 1
             };
+        }
+        public List<InformacionExistenciaOfertaDescuentoProducto> ObtenerProductosEnOferta(List<ProductoDTO> productosDentroOferta)
+        {
+            if (productosDentroOferta == null || productosDentroOferta.Count == 0)
+                return new List<InformacionExistenciaOfertaDescuentoProducto>();
+
+            var productoIds = productosDentroOferta
+                .Where(p => p != null)
+                .Select(p => p.ProductoId)
+                .Distinct()
+                .ToList();
+
+            if (productoIds.Count == 0) return new List<InformacionExistenciaOfertaDescuentoProducto>();
+
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            //roto 
+            // Traemos coincidencias y los datos de la oferta (navegación)
+            var matches = context.ProductosEnOfertasDescuentos
+                .Where(pe => productoIds.Contains(pe.ProductoId))
+                .Include(pe => pe.Oferta) // si existe la navegación
+                .AsNoTracking()
+                .Select(pe => new InformacionExistenciaOfertaDescuentoProducto
+                {
+                    ProductoId = pe.ProductoId,
+                    OfertaId = pe.OfertaId, // o pe.OfertaId si se llama distinto
+                    OfertaCodigo = pe.Oferta != null ? pe.Oferta.Codigo : "",
+                    OfertaActiva = pe.Oferta != null && pe.Oferta.EstaActiva,
+                    cantidadProductoEnOferta = pe.Cantidad
+                })
+                // Evitamos duplicados exactos (si hay múltiples filas iguales)
+                .AsEnumerable()
+                .GroupBy(x => new { x.ProductoId, x.OfertaId })
+                .Select(g => g.First())
+                .ToList();
+
+            return matches;
         }
     }
 }

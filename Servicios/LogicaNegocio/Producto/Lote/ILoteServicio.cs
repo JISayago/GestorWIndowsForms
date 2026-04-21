@@ -1,5 +1,6 @@
 ﻿using AccesoDatos;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
 using System;
@@ -13,7 +14,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
     public interface ILoteServicio
     {
         EstadoOperacion CrearLote(LoteDTO lote);
-        IEnumerable<LoteDTO> ObtenerLote(string cadenaBuscar);
+        ResultadoPaginacion<LoteDTO> ObtenerLotes(FiltroConsulta filtros);
         EstadoOperacion ModficiarLote(LoteDTO loteDto, long loteId);
         EstadoOperacion EliminarLote(long loteId);
         LoteDTO ObtenerLotePorId(long loteId);

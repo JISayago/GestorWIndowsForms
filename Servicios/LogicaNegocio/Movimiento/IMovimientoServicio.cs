@@ -1,5 +1,6 @@
 ﻿using AccesoDatos;
 using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Movimiento.DTO;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,6 @@ namespace Servicios.LogicaNegocio.Movimiento
         void CrearMovimientoCtaCte(decimal total, long cajaId, long ctacteId, TipoMovimientoDetalle detalleTipo, GestorContextDB context);
         void CrearMovimientoGasto(long gastoId, decimal monto, TipoMovimientoDetalle detalleTipo, GestorContextDB context);
         MovimientoDTO ObtenerMovimientoPorId(long movimientoId);
-        IEnumerable<MovimientoDTO> ObtenerMovimiento(string cadenabuscar);
-        IEnumerable<MovimientoDTO> ObtenerMovimientoEliminado(string cadenabuscar);
+        ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros);
     }
 }

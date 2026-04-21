@@ -1,5 +1,6 @@
 ﻿using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Admin;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
@@ -14,9 +15,9 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
     {
         public InfoOfertaDTO ObtenerInfoOferta();
         public EstadoOperacion Insertar(OfertaDTO dto);
-        public List<OfertaDTO> ObtenerOfertasActivas(string cadenaBuscar);
+        //public List<OfertaDTO> ObtenerOfertasActivas(string cadenaBuscar);
         public List<OfertaDTO> ObtenerOfertasActivasCompuestas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
-        public List<OfertaDTO> ObtenerOfertasInactivas(string cadenaBuscar);
+        //public List<OfertaDTO> ObtenerOfertasInactivas(string cadenaBuscar);
         public List<OfertaDTO> ObtenerOfertasInactivasCompuesta(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
         public List<InformacionExistenciaOfertaDescuentoProducto> ObtenerProductosEnOferta(List<ProductoDTO> productosDentroOferta);
         public OfertaDTO ObtenerOfertaPorId(long idOFerta);
@@ -26,7 +27,7 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         public List<OfertaDTO> ObtenerOfertasActivasInactivas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
 
         public OfertaDTO? ActivarDesactivar(long ofertaId);
-
+        ResultadoPaginacion<OfertaDTO> ObtenerOfertas(FiltroConsulta filtros, bool vieneDeVenta);
         public bool ExisteOfertaPorCodigo(string codigo);
     }
 }

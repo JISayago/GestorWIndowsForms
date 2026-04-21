@@ -2,6 +2,7 @@
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto.Lote;
 using System;
@@ -82,12 +83,11 @@ namespace Presentacion.Core.Producto.Lote
         {
             base.ResetearGrilla(grilla);
 
-            if (grilla.Columns.Contains("NumeroLote"))
-            {
-                grilla.Columns["NumeroLote"].Visible = true;
+            if (!grilla.Columns.Contains("NumeroLote")) return;
+
+            grilla.Columns["NumeroLote"].Visible = true;
             grilla.Columns["NumeroLote"].HeaderText = "Numero Lote";
             grilla.Columns["NumeroLote"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            }
 
             grilla.Columns["NombreProducto"].Visible = true;
             grilla.Columns["NombreProducto"].HeaderText = "Producto";
@@ -125,22 +125,26 @@ namespace Presentacion.Core.Producto.Lote
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
-
             string columnaBuscar = filtros.Extra as string ?? "Descripcion";
-            string texto = filtros.TextoBuscar;
 
-            if (filtros.VerEliminados)
+            var resultado = _LoteServicio.ObtenerLotes(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 CLAVE: volver a aplicar formato
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
             {
-                dgv.DataSource = _LoteServicio.ObtenerLotesEliminados(texto, filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _LoteServicio.ObtenerLote(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
-
         #endregion
 
         #region 🧰 BOTONES BASE
@@ -190,14 +194,37 @@ namespace Presentacion.Core.Producto.Lote
 
         private void FLoteConsulta_Load(object sender, EventArgs e)
         {
-            var opciones = new List<OpcionFiltro>
-            {
-            new OpcionFiltro { Texto = "Numero Lote", Valor = "NumeroLote" },
-            };
-
-            //ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
         }
+        protected override void ConfigurarFiltrosUI()
+        {
+            base.ConfigurarFiltrosUI();
 
+            // 🔵 combo búsqueda
+            var opciones = new List<OpcionFiltro>
+    {
+        new OpcionFiltro { Texto = "Número Lote", Valor = "NumeroLote" },
+        new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
+        new OpcionFiltro { Texto = "Producto", Valor = "Producto" }
+    };
+
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
+
+            // 🔵 fechas (clave para lotes)
+            ActivarFiltroFechas("Filtrar por fecha");
+
+            // 🔵 combo tipo fecha (Alta / Vencimiento)
+    //        var tiposFecha = new List<OpcionFiltro>
+    //{
+    //    new OpcionFiltro { Texto = "Ninguno", Valor = TipoFiltroFecha.Ninguno },
+    //    new OpcionFiltro { Texto = "Fecha Alta", Valor = TipoFiltroFecha.Alta },
+    //    new OpcionFiltro { Texto = "Vencimiento", Valor = TipoFiltroFecha.Vencimiento }
+    //};
+
+    //        ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+
+            // 👉 default útil
+            cbxFiltroOpcional.SelectedValue = "NumeroLote";
+        }
         public override void EjecutarClickDerechoFila(long? id, Point pos)
         {
             //ejemplo

@@ -1,4 +1,5 @@
-﻿using Presentacion.FBase;
+﻿using Presentacion.Core.Presentacion.Core.Helpers;
+using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Movimiento;
@@ -64,25 +65,18 @@ namespace Presentacion.Core.Movimiento
         {
             base.ResetearGrilla(grilla);
 
-            if (grilla.Columns.Contains("MovimientoId"))
-            {
+            if (!grilla.Columns.Contains("MovimientoId")) return;
+
                 grilla.Columns["MovimientoId"].Visible = false;
                 grilla.Columns["MovimientoId"].Name = "Id";
-            }
 
-            if (grilla.Columns.Contains("NumeroMovimiento"))
-            {
                 grilla.Columns["NumeroMovimiento"].Visible = true;
                 grilla.Columns["NumeroMovimiento"].HeaderText = "Número";
                 grilla.Columns["NumeroMovimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            }
 
-            if (grilla.Columns.Contains("FechaMovimiento"))
-            {
                 grilla.Columns["FechaMovimiento"].Visible = true;
                 grilla.Columns["FechaMovimiento"].HeaderText = "Fecha";
                 grilla.Columns["FechaMovimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            }
         }
         #endregion
         #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
@@ -92,20 +86,28 @@ namespace Presentacion.Core.Movimiento
 
         #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
 
+
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
 
-            if (filtros.VerEliminados)
+            var resultado = _movimientoServicio.ObtenerMovimientos(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 CLAVE: volver a aplicar formato
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
             {
-                dgv.DataSource = _movimientoServicio.ObtenerMovimientoEliminado(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _movimientoServicio.ObtenerMovimiento(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
 
 
@@ -122,6 +124,24 @@ namespace Presentacion.Core.Movimiento
         }
 
         #endregion
+        protected override void ConfigurarFiltrosUI()
+        {
+            base.ConfigurarFiltrosUI();
 
+            // 🔹 Combo opcional → Tipo de movimiento (opcional)
+            var opciones = new List<OpcionFiltro>
+    {
+        new OpcionFiltro { Texto = "Todos", Valor = "0" },
+        new OpcionFiltro { Texto = "Ingreso", Valor = "1" },
+        new OpcionFiltro { Texto = "Egreso", Valor = "2" }
+    };
+
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
+
+            cbxFiltroOpcional.SelectedValue = "0";
+
+            // 📅 Fechas (clave para movimientos)
+            ActivarFiltroFechas("Filtrar por fecha de movimiento");
+        }
     }
 }
