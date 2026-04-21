@@ -449,10 +449,12 @@ namespace Servicios.LogicaNegocio.Producto
                 .Include(e => e.CategoriasProductos)
                 .AsQueryable();
 
+            // 🔹 Eliminados
             query = filtros.VerEliminados
                 ? query.Where(e => e.EstaEliminado)
                 : query.Where(e => !e.EstaEliminado);
 
+            // 🔹 Buscador
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
                 switch (filtros.Extra?.ToString())
@@ -478,47 +480,26 @@ namespace Servicios.LogicaNegocio.Producto
                         break;
                 }
             }
-            var tipoFecha = (TipoFiltroFecha?)filtros.Extra2; // no esta aplicado todavia
 
-            if (tipoFecha.HasValue && tipoFecha != TipoFiltroFecha.Ninguno)
-            {
-                if (tipoFecha == TipoFiltroFecha.Alta)
-                {
-                    query = query.Where(p =>
+            // 🔹 TOTAL REAL
+            var total = query.Count();
 
-                        // 🔹 CASO 1: TIENE LOTES
-                        p.Lotes.Any(l =>
-                            (!filtros.FechaDesde.HasValue || l.FechaAlta >= filtros.FechaDesde.Value) &&
-                            (!filtros.FechaHasta.HasValue || l.FechaAlta <= filtros.FechaHasta.Value)
-                        )
+            // 🔴 CALCULAR TOTAL PAGINAS
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
 
-                        ||
+            // 🔴 AJUSTAR PAGINA SI SE FUE DE RANGO
+            if (totalPaginas == 0) totalPaginas = 1;
 
-                        // 🔹 CASO 2: NO TIENE LOTES → usa fecha del producto
-                        //(!p.Lotes.Any() &&
-                        //    (!filtros.FechaDesde.HasValue || p.FechaCargaStock >= filtros.FechaDesde.Value) &&
-                        //    (!filtros.FechaHasta.HasValue || p.FechaCargaStock <= filtros.FechaHasta.Value)
-                        //) va cuando tenga valor en bbdd de producto
-                        (!p.Lotes.Any())
-                    );
-                }
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
 
-                if (tipoFecha == TipoFiltroFecha.Vencimiento)
-                {
-                    query = query.Where(p =>
-                        p.Lotes.Any(l =>
-                            l.FechaVencimiento.HasValue &&
-                            (!filtros.FechaDesde.HasValue || l.FechaVencimiento.Value >= filtros.FechaDesde.Value) &&
-                            (!filtros.FechaHasta.HasValue || l.FechaVencimiento.Value <= filtros.FechaHasta.Value)
-                        )
-                    );
-                }
-            }
+            if (filtros.Page < 1)
+                filtros.Page = 1;
 
-            var total = query.Count();// cantidad total de registros sin paginar
+            // 🔹 ORDEN
+            query = query.OrderBy(e => e.ProductoId);
 
-            query = query.OrderBy(e => e.ProductoId);// orden generico por id vendria a ser el order de columnas tal vez
-
+            // 🔹 PAGINADO
             var data = query
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)
@@ -552,7 +533,7 @@ namespace Servicios.LogicaNegocio.Producto
             {
                 Items = data,
                 TotalRegistros = total,
-                Page = filtros.Page,
+                Page = filtros.Page, // 🔴 importante devolver la corregida
                 PageSize = filtros.PageSize
             };
         }

@@ -65,18 +65,32 @@ namespace Presentacion.Core.Movimiento
         {
             base.ResetearGrilla(grilla);
 
-            if (!grilla.Columns.Contains("MovimientoId")) return;
+            if (grilla.Columns.Count == 0)
+                return;
 
+            // 🔹 ID
+            if (grilla.Columns.Contains("MovimientoId"))
+            {
                 grilla.Columns["MovimientoId"].Visible = false;
                 grilla.Columns["MovimientoId"].Name = "Id";
+            }
 
+            // 🔹 Número
+            if (grilla.Columns.Contains("NumeroMovimiento"))
+            {
                 grilla.Columns["NumeroMovimiento"].Visible = true;
                 grilla.Columns["NumeroMovimiento"].HeaderText = "Número";
                 grilla.Columns["NumeroMovimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
 
+            // 🔹 Fecha
+            if (grilla.Columns.Contains("FechaMovimiento"))
+            {
                 grilla.Columns["FechaMovimiento"].Visible = true;
                 grilla.Columns["FechaMovimiento"].HeaderText = "Fecha";
                 grilla.Columns["FechaMovimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                grilla.Columns["FechaMovimiento"].DefaultCellStyle.Format = "dd/MM/yyyy";
+            }
         }
         #endregion
         #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)

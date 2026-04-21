@@ -92,22 +92,34 @@ namespace Presentacion.Core.Empleado.Rol
         {
             base.ResetearGrilla(grilla);
 
-            if (!grilla.Columns.Contains("RolId")) return;
+            if (grilla.Columns.Count == 0) return;
 
+            if (grilla.Columns.Contains("RolId"))
+            {
                 grilla.Columns["RolId"].Visible = false;
                 grilla.Columns["RolId"].Name = "Id";
+            }
 
+            if (grilla.Columns.Contains("Nombre"))
+            {
                 grilla.Columns["Nombre"].Visible = true;
                 grilla.Columns["Nombre"].HeaderText = "Rol";
                 grilla.Columns["Nombre"].Width = 120;
-            
-            grilla.Columns["CodigoRol"].Visible = true;
+            }
+
+            if (grilla.Columns.Contains("CodigoRol"))
+            {
+                grilla.Columns["CodigoRol"].Visible = true;
                 grilla.Columns["CodigoRol"].Width = 120;
                 grilla.Columns["CodigoRol"].HeaderText = "Código";
-         
-            grilla.Columns["DetalleRol"].Visible = true;
+            }
+
+            if (grilla.Columns.Contains("DetalleRol"))
+            {
+                grilla.Columns["DetalleRol"].Visible = true;
                 grilla.Columns["DetalleRol"].HeaderText = "Detalle";
                 grilla.Columns["DetalleRol"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
         }
 
 

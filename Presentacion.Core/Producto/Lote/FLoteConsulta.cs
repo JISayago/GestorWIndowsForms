@@ -83,43 +83,68 @@ namespace Presentacion.Core.Producto.Lote
         {
             base.ResetearGrilla(grilla);
 
-            if (!grilla.Columns.Contains("NumeroLote")) return;
+            if (grilla.Columns.Count == 0)
+                return;
 
-            grilla.Columns["NumeroLote"].Visible = true;
-            grilla.Columns["NumeroLote"].HeaderText = "Numero Lote";
-            grilla.Columns["NumeroLote"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("LoteId"))
+            {
+                grilla.Columns["LoteId"].Visible = false;
+                grilla.Columns["LoteId"].Name = "Id";
+            }
 
-            grilla.Columns["NombreProducto"].Visible = true;
-            grilla.Columns["NombreProducto"].HeaderText = "Producto";
-            grilla.Columns["NombreProducto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("NumeroLote"))
+            {
+                grilla.Columns["NumeroLote"].Visible = true;
+                grilla.Columns["NumeroLote"].HeaderText = "Número Lote";
+                grilla.Columns["NumeroLote"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
 
-            grilla.Columns["FechaAlta"].Visible = true;
-            grilla.Columns["FechaAlta"].HeaderText = "Creado";
-            grilla.Columns["FechaAlta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("NombreProducto"))
+            {
+                grilla.Columns["NombreProducto"].Visible = true;
+                grilla.Columns["NombreProducto"].HeaderText = "Producto";
+                grilla.Columns["NombreProducto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
 
-            grilla.Columns["FechaVencimiento"].Visible = true;
-            grilla.Columns["FechaVencimiento"].HeaderText = "Vencimiento";
-            grilla.Columns["FechaVencimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("FechaAlta"))
+            {
+                grilla.Columns["FechaAlta"].Visible = true;
+                grilla.Columns["FechaAlta"].HeaderText = "Creado";
+            }
 
-            grilla.Columns["StockInicial"].Visible = true;
-            grilla.Columns["StockInicial"].HeaderText = "Stock Incial";
-            grilla.Columns["StockInicial"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("FechaVencimiento"))
+            {
+                grilla.Columns["FechaVencimiento"].Visible = true;
+                grilla.Columns["FechaVencimiento"].HeaderText = "Vencimiento";
+            }
 
-            grilla.Columns["StockActual"].Visible = true;
-            grilla.Columns["StockActual"].HeaderText = "Stock Actual";
-            grilla.Columns["StockActual"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("StockInicial"))
+            {
+                grilla.Columns["StockInicial"].Visible = true;
+                grilla.Columns["StockInicial"].HeaderText = "Stock Inicial";
+            }
 
-            grilla.Columns["EstaVencido"].Visible = true;
-            grilla.Columns["EstaVencido"].HeaderText = "Vencido";
-            grilla.Columns["EstaVencido"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            grilla.Columns["EstaVencido"].DefaultCellStyle.NullValue = false;
-            grilla.Columns["EstaVencido"].ReadOnly = true;
+            if (grilla.Columns.Contains("StockActual"))
+            {
+                grilla.Columns["StockActual"].Visible = true;
+                grilla.Columns["StockActual"].HeaderText = "Stock Actual";
+            }
 
-            grilla.Columns["EstaActivo"].Visible = true;
-            grilla.Columns["EstaActivo"].HeaderText = "Activo";
-            grilla.Columns["EstaActivo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            grilla.Columns["EstaActivo"].DefaultCellStyle.NullValue = false;
-            grilla.Columns["EstaActivo"].ReadOnly = true;
+            if (grilla.Columns.Contains("EstaVencido"))
+            {
+                grilla.Columns["EstaVencido"].Visible = true;
+                grilla.Columns["EstaVencido"].HeaderText = "Vencido";
+                grilla.Columns["EstaVencido"].DefaultCellStyle.NullValue = false;
+                grilla.Columns["EstaVencido"].ReadOnly = true;
+            }
+
+            if (grilla.Columns.Contains("EstaActivo"))
+            {
+                grilla.Columns["EstaActivo"].Visible = true;
+                grilla.Columns["EstaActivo"].HeaderText = "Activo";
+                grilla.Columns["EstaActivo"].DefaultCellStyle.NullValue = false;
+                grilla.Columns["EstaActivo"].ReadOnly = true;
+            }
         }
 
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)

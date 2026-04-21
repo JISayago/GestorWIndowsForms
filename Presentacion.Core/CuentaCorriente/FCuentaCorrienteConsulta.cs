@@ -28,23 +28,34 @@ namespace Presentacion.Core.CuentaCorriente
         {
             base.ResetearGrilla(grilla);
 
-            if (!grilla.Columns.Contains("CuentaCorrienteId"))
-                return;
+            if (grilla.Columns.Count == 0) return;
 
-            grilla.Columns["CuentaCorrienteId"].Visible = false;
-            grilla.Columns["CuentaCorrienteId"].Name = "Id";
+            if (grilla.Columns.Contains("CuentaCorrienteId"))
+            {
+                grilla.Columns["CuentaCorrienteId"].Visible = false;
+                grilla.Columns["CuentaCorrienteId"].Name = "Id";
+            }
 
-            grilla.Columns["NombreCuentaCorriente"].Visible = true;
-            grilla.Columns["NombreCuentaCorriente"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            grilla.Columns["NombreCuentaCorriente"].HeaderText = "Nombre CC";
+            if (grilla.Columns.Contains("NombreCuentaCorriente"))
+            {
+                grilla.Columns["NombreCuentaCorriente"].Visible = true;
+                grilla.Columns["NombreCuentaCorriente"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                grilla.Columns["NombreCuentaCorriente"].HeaderText = "Nombre CC";
+            }
 
-            grilla.Columns["FechaVencimiento"].Visible = true;
-            grilla.Columns["FechaVencimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            grilla.Columns["FechaVencimiento"].HeaderText = "Fecha Vencimiento";
+            if (grilla.Columns.Contains("FechaVencimiento"))
+            {
+                grilla.Columns["FechaVencimiento"].Visible = true;
+                grilla.Columns["FechaVencimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                grilla.Columns["FechaVencimiento"].HeaderText = "Fecha Vencimiento";
+            }
 
-            grilla.Columns["EstadoCuentaCorriente"].Visible = true;
-            grilla.Columns["EstadoCuentaCorriente"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            grilla.Columns["EstadoCuentaCorriente"].HeaderText = "Estado CC";
+            if (grilla.Columns.Contains("EstadoCuentaCorriente"))
+            {
+                grilla.Columns["EstadoCuentaCorriente"].Visible = true;
+                grilla.Columns["EstadoCuentaCorriente"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                grilla.Columns["EstadoCuentaCorriente"].HeaderText = "Estado CC";
+            }
         }
 
         #endregion

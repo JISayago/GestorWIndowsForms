@@ -38,30 +38,50 @@ namespace Presentacion.Core.Cliente
         {
             base.ResetearGrilla(grilla);
 
-            if (!grilla.Columns.Contains("PersonaId"))
-                return;
+            if (grilla.Columns.Count == 0) return;
 
-            grilla.Columns["PersonaId"].Visible = false;
-            grilla.Columns["PersonaId"].Name = "Id";
+            if (grilla.Columns.Contains("PersonaId"))
+            {
+                grilla.Columns["PersonaId"].Visible = false;
+                grilla.Columns["PersonaId"].Name = "Id";
+            }
 
-            grilla.Columns["Nombre"].Visible = true;
-            grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("Nombre"))
+            {
+                grilla.Columns["Nombre"].Visible = true;
+                grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
 
-            grilla.Columns["Apellido"].Visible = true;
-            grilla.Columns["Apellido"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("Apellido"))
+            {
+                grilla.Columns["Apellido"].Visible = true;
+                grilla.Columns["Apellido"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
 
-            grilla.Columns["Dni"].Visible = true;
-            grilla.Columns["Dni"].Width = 100;
+            if (grilla.Columns.Contains("Dni"))
+            {
+                grilla.Columns["Dni"].Visible = true;
+                grilla.Columns["Dni"].Width = 100;
+            }
 
-            grilla.Columns["Email"].Visible = true;
-            grilla.Columns["Email"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("Email"))
+            {
+                grilla.Columns["Email"].Visible = true;
+                grilla.Columns["Email"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
 
-            grilla.Columns["Telefono"].Visible = true;
-            grilla.Columns["Telefono"].Width = 100;
+            if (grilla.Columns.Contains("Telefono"))
+            {
+                grilla.Columns["Telefono"].Visible = true;
+                grilla.Columns["Telefono"].Width = 100;
+            }
 
-            grilla.Columns["EstadoDescripcion"].Visible = true;
-            grilla.Columns["EstadoDescripcion"].Width = 100;
-            grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+            if (grilla.Columns.Contains("EstadoDescripcion"))
+            {
+                grilla.Columns["EstadoDescripcion"].Visible = true;
+                grilla.Columns["EstadoDescripcion"].Width = 100;
+                grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+            }
         }
 
         #endregion
@@ -86,6 +106,7 @@ namespace Presentacion.Core.Cliente
                 PaginaActual = resultado.Page,
                 PageSize = resultado.PageSize,
                 CantidadRegistros = resultado.TotalRegistros,
+                
             };
 
             ActualizarPaginacionUI(paginacion);

@@ -147,34 +147,64 @@ namespace Presentacion.Core.Producto
         {
             base.ResetearGrilla(grilla);
 
-            if (!grilla.Columns.Contains("ProductoId"))
-                return;
+            if (grilla.Columns.Contains("ProductoId"))
+            {
+                grilla.Columns["ProductoId"].Visible = false;
+                grilla.Columns["ProductoId"].Name = "Id";
+            }
 
-            grilla.Columns["ProductoId"].Visible = false;
-            grilla.Columns["ProductoId"].Name = "Id";
+            if (grilla.Columns.Contains("Descripcion"))
+            {
 
             grilla.Columns["Descripcion"].Visible = true;
             grilla.Columns["Descripcion"].HeaderText = "Producto";
             grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
+
+            if (grilla.Columns.Contains("MarcaNombre"))
+            {
 
             grilla.Columns["MarcaNombre"].Visible = true;
             grilla.Columns["MarcaNombre"].HeaderText = "Marca";
             grilla.Columns["MarcaNombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
+            if (grilla.Columns.Contains("RubroNombre"))
+            {
 
             grilla.Columns["RubroNombre"].Visible = true;
             grilla.Columns["RubroNombre"].HeaderText = "Rubro";
             grilla.Columns["RubroNombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
 
+            if (grilla.Columns.Contains("PrecioCosto"))
+            {
             grilla.Columns["PrecioCosto"].Visible = true;
+            }
+            if (grilla.Columns.Contains("PrecioVenta"))
+            {
+
             grilla.Columns["PrecioVenta"].Visible = true;
+            }
+            if (grilla.Columns.Contains("Stock"))
+            {
+
             grilla.Columns["Stock"].Visible = true;
+            }
+            if (grilla.Columns.Contains("Estado"))
+            {
             grilla.Columns["Estado"].Visible = true;
+            }
+
+            if (grilla.Columns.Contains("ControlPorLote"))
+            {
 
             grilla.Columns["ControlPorLote"].Visible = true;
             grilla.Columns["ControlPorLote"].HeaderText = "Control por Lote";
             grilla.Columns["ControlPorLote"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             grilla.Columns["ControlPorLote"].DefaultCellStyle.NullValue = false;
             grilla.Columns["ControlPorLote"].ReadOnly = true;
+            }
         }
 
         #endregion
@@ -191,19 +221,17 @@ namespace Presentacion.Core.Producto
 
             dgv.DataSource = resultado.Items;
 
-            // 🔴 CLAVE: reaplicar formato de columnas
             ResetearGrilla(dgv);
 
             var paginacion = new DatosPaginacion
             {
                 PaginaActual = resultado.Page,
                 PageSize = resultado.PageSize,
-                CantidadRegistros = resultado.TotalRegistros,
+                CantidadRegistros = resultado.TotalRegistros
             };
 
             ActualizarPaginacionUI(paginacion);
 
-            // 🔹 estado de botones laterales (te faltaba esto también)
             BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
         #endregion

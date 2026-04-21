@@ -143,37 +143,85 @@ namespace Presentacion.Core.Oferta
         {
             base.ResetearGrilla(grilla);
 
-            if (!grilla.Columns.Contains("OfertaDescuentoId")) return;
+            if (grilla.Columns.Count == 0)
+                return;
+
+            // 🔹 ID
+            if (grilla.Columns.Contains("OfertaDescuentoId"))
+            {
                 grilla.Columns["OfertaDescuentoId"].Visible = false;
                 grilla.Columns["OfertaDescuentoId"].Name = "Id";
+            }
 
+            // 🔹 Descripción
+            if (grilla.Columns.Contains("Descripcion"))
+            {
                 grilla.Columns["Descripcion"].Visible = true;
                 grilla.Columns["Descripcion"].HeaderText = "Descripción";
                 grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
+
+            // 🔹 Código
+            if (grilla.Columns.Contains("Codigo"))
+            {
                 grilla.Columns["Codigo"].Visible = true;
                 grilla.Columns["Codigo"].HeaderText = "Código";
+            }
+
+            // 🔹 Grupo
+            if (grilla.Columns.Contains("GrupoNombre"))
+            {
                 grilla.Columns["GrupoNombre"].Visible = true;
                 grilla.Columns["GrupoNombre"].HeaderText = "Grupo";
+            }
+
+            // 🔹 Fechas
+            if (grilla.Columns.Contains("FechaInicio"))
+            {
                 grilla.Columns["FechaInicio"].Visible = true;
                 grilla.Columns["FechaInicio"].DefaultCellStyle.Format = "dd/MM/yyyy";
+            }
 
+            if (grilla.Columns.Contains("FechaFin"))
+            {
                 grilla.Columns["FechaFin"].Visible = true;
                 grilla.Columns["FechaFin"].DefaultCellStyle.Format = "dd/MM/yyyy";
+            }
 
+            // 🔹 Estado
+            if (grilla.Columns.Contains("EstaActiva"))
+            {
+                grilla.Columns["EstaActiva"].Visible = true;
                 grilla.Columns["EstaActiva"].HeaderText = "Estado";
+                //grilla.CellFormatting += (s, e) => 
+                //{ 
+                //    if (e.RowIndex < 0) return;
+                //    if (grilla.Columns[e.ColumnIndex].Name != "EstaActiva") return;
+                //    if (e.Value is bool b)
+                //    { e.Value = b ? "Activa" : "Inactiva"; 
+                //        e.FormattingApplied = true; }
+                //};
+            }
 
-                grilla.CellFormatting += (s, e) =>
-                {
-                    if (e.RowIndex < 0) return;
-                    if (grilla.Columns[e.ColumnIndex].Name != "EstaActiva") return;
 
-                    if (e.Value is bool b)
-                    {
-                        e.Value = b ? "Activa" : "Inactiva";
-                        e.FormattingApplied = true;
-                    }
-                };
+            //    // 🔴 LIMPIAR EVENTO ANTES DE VOLVER A ASIGNAR
+            //    grilla.CellFormatting -= FormatearEstadoOferta;
+            //    grilla.CellFormatting += FormatearEstadoOferta;
         }
+        //private void FormatearEstadoOferta(object sender, DataGridViewCellFormattingEventArgs e)
+        //{
+        //    var grilla = (DataGridView)sender;
+
+        //    if (e.RowIndex < 0) return;
+        //    if (!grilla.Columns.Contains("EstaActiva")) return;
+        //    if (grilla.Columns[e.ColumnIndex].Name != "EstaActiva") return;
+
+        //    if (e.Value is bool b)
+        //    {
+        //        e.Value = b ? "Activa" : "Inactiva";
+        //        e.FormattingApplied = true;
+        //    }
+        //}
 
         #endregion
 

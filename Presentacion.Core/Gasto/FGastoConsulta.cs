@@ -109,42 +109,78 @@ namespace Presentacion.Core.Gasto
         {
             base.ResetearGrilla(grilla);
 
+            if (grilla.Columns.Count == 0)
+                return;
 
-            if (!grilla.Columns.Contains("GastoId")) return;
+            // 🔹 ID
+            if (grilla.Columns.Contains("GastoId"))
+            {
+                grilla.Columns["GastoId"].Visible = false;
+                grilla.Columns["GastoId"].Name = "Id";
+            }
 
-            grilla.Columns["GastoId"].Visible = false;
-            grilla.Columns["GastoId"].Name = "Id";
+            // 🔹 Número
+            if (grilla.Columns.Contains("NumeroGasto"))
+            {
+                grilla.Columns["NumeroGasto"].Visible = true;
+                grilla.Columns["NumeroGasto"].HeaderText = "N° Gasto";
+                grilla.Columns["NumeroGasto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
 
-            grilla.Columns["NumeroGasto"].Visible = true;
-            grilla.Columns["NumeroGasto"].HeaderText = "N° Gasto";
-            grilla.Columns["NumeroGasto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            // 🔹 Fecha
+            if (grilla.Columns.Contains("FechaGasto"))
+            {
+                grilla.Columns["FechaGasto"].Visible = true;
+                grilla.Columns["FechaGasto"].HeaderText = "Fecha";
+                grilla.Columns["FechaGasto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                grilla.Columns["FechaGasto"].DefaultCellStyle.Format = "dd/MM/yyyy";
+            }
 
-            grilla.Columns["FechaGasto"].Visible = true;
-            grilla.Columns["FechaGasto"].HeaderText = "Fecha";
-            grilla.Columns["FechaGasto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            // 🔹 Empleado
+            if (grilla.Columns.Contains("NombreEmpleado"))
+            {
+                grilla.Columns["NombreEmpleado"].Visible = true;
+                grilla.Columns["NombreEmpleado"].HeaderText = "Empleado";
+                grilla.Columns["NombreEmpleado"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
 
-            grilla.Columns["NombreEmpleado"].Visible = true;
-            grilla.Columns["NombreEmpleado"].HeaderText = "Empleado";
-            grilla.Columns["NombreEmpleado"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            // 🔹 Categoría
+            if (grilla.Columns.Contains("CategoriaGasto"))
+            {
+                grilla.Columns["CategoriaGasto"].Visible = true;
+                grilla.Columns["CategoriaGasto"].HeaderText = "Categoría";
+                grilla.Columns["CategoriaGasto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
 
-            grilla.Columns["CategoriaGasto"].Visible = true;
-            grilla.Columns["CategoriaGasto"].HeaderText = "Categoría";
-            grilla.Columns["CategoriaGasto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            // 🔹 Montos
+            if (grilla.Columns.Contains("MontoTotal"))
+            {
+                grilla.Columns["MontoTotal"].Visible = true;
+                grilla.Columns["MontoTotal"].HeaderText = "Monto Total";
+                grilla.Columns["MontoTotal"].DefaultCellStyle.Format = "C2";
+            }
 
-            grilla.Columns["MontoTotal"].Visible = true;
-            grilla.Columns["MontoTotal"].HeaderText = "Monto Total";
-            grilla.Columns["MontoTotal"].DefaultCellStyle.Format = "C2";
+            if (grilla.Columns.Contains("MontoPagado"))
+            {
+                grilla.Columns["MontoPagado"].Visible = true;
+                grilla.Columns["MontoPagado"].HeaderText = "Monto Pagado";
+                grilla.Columns["MontoPagado"].DefaultCellStyle.Format = "C2";
+            }
 
-            grilla.Columns["MontoPagado"].Visible = true;
-            grilla.Columns["MontoPagado"].HeaderText = "Monto Pagado";
-            grilla.Columns["MontoPagado"].DefaultCellStyle.Format = "C2";
+            // 🔹 Estado
+            if (grilla.Columns.Contains("EstadoGasto"))
+            {
+                grilla.Columns["EstadoGasto"].Visible = true;
+                grilla.Columns["EstadoGasto"].HeaderText = "Estado";
+                grilla.Columns["EstadoGasto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
 
-            grilla.Columns["EstadoGasto"].Visible = true;
-            grilla.Columns["EstadoGasto"].HeaderText = "Estado";
-            grilla.Columns["EstadoGasto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-
-            grilla.Columns["Detalle"].Visible = true;
-            grilla.Columns["Detalle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            // 🔹 Detalle
+            if (grilla.Columns.Contains("Detalle"))
+            {
+                grilla.Columns["Detalle"].Visible = true;
+                grilla.Columns["Detalle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
         }
 
         #endregion

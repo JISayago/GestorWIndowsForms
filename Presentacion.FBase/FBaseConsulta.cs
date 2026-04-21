@@ -11,7 +11,7 @@ namespace Presentacion.FBase
     {
         protected long? entidadID;
         protected bool puedeEjecutarComando;
-
+        private FiltroConsulta ultimoFiltro;
         protected int paginaActual = 1;
         protected int pageSize = 10;
         protected int totalPaginas = 1;
@@ -220,10 +220,10 @@ namespace Presentacion.FBase
 
         protected void RefrescarGrilla()
         {
-            var filtros = ObtenerFiltros();
+            ultimoFiltro = ObtenerFiltros();
 
-            ActualizarDatos(dgvGrilla, filtros);
-            EvaluarAccionesPorEstado(filtros);
+            ActualizarDatos(dgvGrilla, ultimoFiltro);
+            EvaluarAccionesPorEstado(ultimoFiltro);
         }
 
         #endregion
@@ -407,7 +407,10 @@ namespace Presentacion.FBase
             if (paginaActual < totalPaginas)
             {
                 paginaActual++;
-                RefrescarGrilla();
+
+                ultimoFiltro.Page = paginaActual;
+
+                ActualizarDatos(dgvGrilla, ultimoFiltro);
             }
         }
 
@@ -416,7 +419,10 @@ namespace Presentacion.FBase
             if (paginaActual > 1)
             {
                 paginaActual--;
-                RefrescarGrilla();
+
+                ultimoFiltro.Page = paginaActual;
+
+                ActualizarDatos(dgvGrilla, ultimoFiltro);
             }
         }
 
