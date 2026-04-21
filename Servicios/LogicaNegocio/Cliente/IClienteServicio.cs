@@ -1,4 +1,5 @@
 ﻿using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Cliente.DTO;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,7 @@ namespace Servicios.LogicaNegocio.Cliente
 {
     public interface IClienteServicio
     {
-        IEnumerable<ClienteDTO> ObtenerClientes(string cadenabuscar);
-        IEnumerable<ClienteDTO> ObtenerClientesEliminados(string cadenabuscar);
+        ResultadoPaginacion<ClienteDTO> ObtenerClientes(FiltroConsulta filtros);
         ClienteDTO ObtenerClientePorId(long personaId);
         ClienteDTO ObtenerClientePorNumero(string numero);
         EstadoOperacion Insertar(ClienteDTO clienteDto);

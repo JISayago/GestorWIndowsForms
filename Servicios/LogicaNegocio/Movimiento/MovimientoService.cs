@@ -1,6 +1,8 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
+using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.Helpers.VentaEnum;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using Servicios.LogicaNegocio.Cliente.DTO;
@@ -186,12 +188,49 @@ namespace Servicios.LogicaNegocio.Movimiento
                 throw;
             }
         }
-        public IEnumerable<MovimientoDTO> ObtenerMovimiento(string cadenaBuscar)
+        public ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            return context.Movimientos
-                .Where(x => !x.EstaEliminado && x.NumeroMovimiento.Contains(cadenaBuscar))
+            var query = context.Movimientos
+                .AsNoTracking()
+                .AsQueryable();
+
+            // 🔴 Eliminados
+            query = filtros.VerEliminados
+                ? query.Where(x => x.EstaEliminado)
+                : query.Where(x => !x.EstaEliminado);
+
+            // 🔍 TEXTO
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                query = query.Where(x =>
+                    x.NumeroMovimiento.Contains(filtros.TextoBuscar)
+                );
+            }
+
+            // 📅 FECHAS (movimiento SÍ tiene fecha propia → más simple que productos)
+            if (filtros.FechaDesde.HasValue)
+            {
+                query = query.Where(x => x.FechaMovimiento >= filtros.FechaDesde.Value);
+            }
+
+            if (filtros.FechaHasta.HasValue)
+            {
+                var hastaReal = filtros.FechaHasta.Value.AddDays(1);
+                query = query.Where(x => x.FechaMovimiento < hastaReal);
+            }
+
+            // 📊 TOTAL
+            var total = query.Count();
+
+            // 📌 ORDEN
+            query = query.OrderByDescending(x => x.FechaMovimiento);
+
+            // 📄 PAGINACIÓN + PROYECCIÓN
+            var data = query
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
                 .Select(x => new MovimientoDTO
                 {
                     MovimientoId = x.MovimientoId,
@@ -205,30 +244,15 @@ namespace Servicios.LogicaNegocio.Movimiento
                     TipoEntidad = x.TipoEntidad
                 })
                 .ToList();
+
+            return new ResultadoPaginacion<MovimientoDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
         }
-
-        public IEnumerable<MovimientoDTO> ObtenerMovimientoEliminado(string cadenaBuscar)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            return context.Movimientos
-                .Where(x => x.EstaEliminado &&
-                       (string.IsNullOrEmpty(cadenaBuscar) || x.NumeroMovimiento.Contains(cadenaBuscar)))
-                .Select(x => new MovimientoDTO
-                {
-                    MovimientoId = x.MovimientoId,
-                    NumeroMovimiento = x.NumeroMovimiento,
-                    TipoMovimiento = x.TipoMovimiento,
-                    TipoMovimientoDetalle = x.TipoMovimientoDetalle,
-                    Monto = x.Monto,
-                    FechaMovimiento = x.FechaMovimiento,
-                    EstaEliminado = x.EstaEliminado,
-                    EntidadId = x.EntidadId,
-                    TipoEntidad = x.TipoEntidad
-                })
-                .ToList();
-        }
-
         public (EmpleadoDTO empleado, VentaDTO venta, MovimientoDTO movimiento, List<ProductoDTO> productos) CargarDatosMovimiento(long movimientoId)
         {
             var movimientoService = new MovimientoServicio();

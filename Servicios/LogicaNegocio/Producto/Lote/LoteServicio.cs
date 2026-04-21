@@ -3,7 +3,9 @@ using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
@@ -73,12 +75,75 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             };
         }
 
-        public IEnumerable<LoteDTO> ObtenerLote(string cadenaBuscar)
+        public ResultadoPaginacion<LoteDTO> ObtenerLotes(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            return context.Lotes
-                .Where(x => x.NumeroLote.Contains(cadenaBuscar) && !x.EstaEliminado)
+            var query = context.Lotes
+                .AsNoTracking()
+                .Include(l => l.Producto)
+                .AsQueryable();
+
+            // 🔴 Eliminados
+            query = filtros.VerEliminados
+                ? query.Where(x => x.EstaEliminado)
+                : query.Where(x => !x.EstaEliminado);
+
+            // 🔍 BUSQUEDA
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                var texto = filtros.TextoBuscar.ToLower();
+
+                switch (filtros.Extra?.ToString())
+                {
+                    case "Producto":
+                        query = query.Where(x => x.Producto.Descripcion.ToLower().Contains(texto));
+                        break;
+
+                    case "Descripcion":
+                        query = query.Where(x => x.Descripcion.ToLower().Contains(texto));
+                        break;
+
+                    default: // NumeroLote
+                        query = query.Where(x => x.NumeroLote.ToLower().Contains(texto));
+                        break;
+                }
+            }
+
+            // 📅 FECHAS (acá usamos Extra2 como tipo filtro)
+            var tipoFecha = (TipoFiltroFecha?)filtros.Extra2;
+
+            if (tipoFecha.HasValue && tipoFecha != TipoFiltroFecha.Ninguno)
+            {
+                if (tipoFecha == TipoFiltroFecha.Alta)
+                {
+                    if (filtros.FechaDesde.HasValue)
+                        query = query.Where(x => x.FechaAlta >= filtros.FechaDesde.Value);
+
+                    if (filtros.FechaHasta.HasValue)
+                        query = query.Where(x => x.FechaAlta <= filtros.FechaHasta.Value);
+                }
+
+                if (tipoFecha == TipoFiltroFecha.Vencimiento)
+                {
+                    query = query.Where(x => x.FechaVencimiento.HasValue);
+
+                    if (filtros.FechaDesde.HasValue)
+                        query = query.Where(x => x.FechaVencimiento.Value >= filtros.FechaDesde.Value);
+
+                    if (filtros.FechaHasta.HasValue)
+                        query = query.Where(x => x.FechaVencimiento.Value <= filtros.FechaHasta.Value);
+                }
+            }
+
+            // 📊 TOTAL
+            var total = query.Count();
+
+            // 📦 PAGINACION
+            var data = query
+                .OrderByDescending(x => x.FechaAlta)
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
                 .Select(x => new LoteDTO
                 {
                     Id = x.LoteId,
@@ -94,6 +159,14 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                     NombreProducto = x.Producto.Descripcion
                 })
                 .ToList();
+
+            return new ResultadoPaginacion<LoteDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
         }
 
         public EstadoOperacion ModficiarLote(LoteDTO loteDto, long loteId)

@@ -1,4 +1,5 @@
 ﻿using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado.DTO;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,7 @@ namespace Servicios.LogicaNegocio.Empleado
 {
     public interface IEmpleadoServicio
     {
-        IEnumerable<EmpleadoDTO> ObtenerEmpleados(string cadenabuscar);
-        IEnumerable<EmpleadoDTO> ObtenerEmpleadosEliminados(string cadenabuscar);
+        ResultadoPaginacion<EmpleadoDTO> ObtenerEmpleados(FiltroConsulta filtros);
         EstadoOperacion Insertar(EmpleadoDTO empleadoDto);
         EmpleadoDTO ObtenerEmpleadoPorId(long personaId);
         EstadoOperacion Modificar(EmpleadoDTO empleadoDto, long? empleadoId);

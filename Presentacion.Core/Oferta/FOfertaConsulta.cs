@@ -2,6 +2,7 @@
 using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Venta.Oferta;
 using System;
 using System.Collections.Generic;
@@ -128,7 +129,7 @@ namespace Presentacion.Core.Oferta
                 new OpcionFiltro{ Texto="Grupo", Valor="GrupoNombre"}
             };
 
-            ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
+            //ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
 
             // 🔵 activar rango fechas
             ActivarFiltroFechas("Filtrar por fecha");
@@ -142,12 +143,17 @@ namespace Presentacion.Core.Oferta
         {
             base.ResetearGrilla(grilla);
 
+            if (grilla.Columns.Count == 0)
+                return;
+
+            // 🔹 ID
             if (grilla.Columns.Contains("OfertaDescuentoId"))
             {
                 grilla.Columns["OfertaDescuentoId"].Visible = false;
                 grilla.Columns["OfertaDescuentoId"].Name = "Id";
             }
 
+            // 🔹 Descripción
             if (grilla.Columns.Contains("Descripcion"))
             {
                 grilla.Columns["Descripcion"].Visible = true;
@@ -155,18 +161,21 @@ namespace Presentacion.Core.Oferta
                 grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             }
 
+            // 🔹 Código
             if (grilla.Columns.Contains("Codigo"))
             {
                 grilla.Columns["Codigo"].Visible = true;
                 grilla.Columns["Codigo"].HeaderText = "Código";
             }
 
+            // 🔹 Grupo
             if (grilla.Columns.Contains("GrupoNombre"))
             {
                 grilla.Columns["GrupoNombre"].Visible = true;
                 grilla.Columns["GrupoNombre"].HeaderText = "Grupo";
             }
 
+            // 🔹 Fechas
             if (grilla.Columns.Contains("FechaInicio"))
             {
                 grilla.Columns["FechaInicio"].Visible = true;
@@ -179,23 +188,40 @@ namespace Presentacion.Core.Oferta
                 grilla.Columns["FechaFin"].DefaultCellStyle.Format = "dd/MM/yyyy";
             }
 
+            // 🔹 Estado
             if (grilla.Columns.Contains("EstaActiva"))
             {
+                grilla.Columns["EstaActiva"].Visible = true;
                 grilla.Columns["EstaActiva"].HeaderText = "Estado";
-
-                grilla.CellFormatting += (s, e) =>
-                {
-                    if (e.RowIndex < 0) return;
-                    if (grilla.Columns[e.ColumnIndex].Name != "EstaActiva") return;
-
-                    if (e.Value is bool b)
-                    {
-                        e.Value = b ? "Activa" : "Inactiva";
-                        e.FormattingApplied = true;
-                    }
-                };
+                //grilla.CellFormatting += (s, e) => 
+                //{ 
+                //    if (e.RowIndex < 0) return;
+                //    if (grilla.Columns[e.ColumnIndex].Name != "EstaActiva") return;
+                //    if (e.Value is bool b)
+                //    { e.Value = b ? "Activa" : "Inactiva"; 
+                //        e.FormattingApplied = true; }
+                //};
             }
+
+
+            //    // 🔴 LIMPIAR EVENTO ANTES DE VOLVER A ASIGNAR
+            //    grilla.CellFormatting -= FormatearEstadoOferta;
+            //    grilla.CellFormatting += FormatearEstadoOferta;
         }
+        //private void FormatearEstadoOferta(object sender, DataGridViewCellFormattingEventArgs e)
+        //{
+        //    var grilla = (DataGridView)sender;
+
+        //    if (e.RowIndex < 0) return;
+        //    if (!grilla.Columns.Contains("EstaActiva")) return;
+        //    if (grilla.Columns[e.ColumnIndex].Name != "EstaActiva") return;
+
+        //    if (e.Value is bool b)
+        //    {
+        //        e.Value = b ? "Activa" : "Inactiva";
+        //        e.FormattingApplied = true;
+        //    }
+        //}
 
         #endregion
 
@@ -205,37 +231,47 @@ namespace Presentacion.Core.Oferta
         {
             base.ActualizarDatos(dgv, filtros);
 
-            string columna = filtros.Extra?.ToString() ?? "Descripcion";
+            filtros.Extra ??= "Descripcion";
 
-            if (_vieneDeVenta)
+            var resultado = _ofertaServicio.ObtenerOfertas(filtros, _vieneDeVenta);
+
+            dgv.DataSource = resultado.Items;
+
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
             {
-                if (filtros.VerEliminados)
-                {
-                    dgv.DataSource = _ofertaServicio.ObtenerOfertasInactivasCompuesta(
-                        filtros.TextoBuscar,
-                        columna,
-                        filtros.FechaDesde,
-                        filtros.FechaHasta);
-                }
-                else
-                {
-                    dgv.DataSource = _ofertaServicio.ObtenerOfertasActivasCompuestas(
-                        filtros.TextoBuscar,
-                        columna,
-                        filtros.FechaDesde,
-                        filtros.FechaHasta);
-                }
-            }
-            else
-            {
-                dgv.DataSource = _ofertaServicio.ObtenerOfertasActivasInactivas(
-                    filtros.TextoBuscar,
-                    columna,
-                    filtros.FechaDesde,
-                    filtros.FechaHasta);
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
 
         #endregion
+
+        protected override void ConfigurarFiltrosUI()
+        {
+            base.ConfigurarFiltrosUI();
+
+            // 🔴 texto del check de eliminados (en tu caso "inactivas")
+            cbxEstaEliminado.Text = "Mostrar ofertas inactivas";
+
+            // 🔵 combo de búsqueda
+            var opciones = new List<OpcionFiltro>
+    {
+        new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
+        new OpcionFiltro { Texto = "Código", Valor = "Codigo" },
+        new OpcionFiltro { Texto = "Grupo", Valor = "GrupoNombre" }
+    };
+
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
+
+            // 🔵 fechas
+            ActivarFiltroFechas("Filtrar por fecha");
+        }
     }
 }

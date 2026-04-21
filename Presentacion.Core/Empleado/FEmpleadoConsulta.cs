@@ -3,6 +3,7 @@ using Presentacion.Core.Empleado.Rol;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado;
 using System.Drawing;
 using System.Windows.Forms;
@@ -131,57 +132,93 @@ namespace Presentacion.Core.Empleado
         {
             base.ResetearGrilla(grilla);
 
+            if (grilla.Columns.Count == 0) return;
+
             if (grilla.Columns.Contains("PersonaId"))
             {
                 grilla.Columns["PersonaId"].Visible = false;
                 grilla.Columns["PersonaId"].Name = "Id";
             }
 
-            grilla.Columns["Legajo"].Visible = true;
-            grilla.Columns["Legajo"].Width = 80;
+            if (grilla.Columns.Contains("Legajo"))
+            {
+                grilla.Columns["Legajo"].Visible = true;
+                grilla.Columns["Legajo"].Width = 80;
+            }
 
-            grilla.Columns["Nombre"].Visible = true;
-            grilla.Columns["Nombre"].Width = 100;
+            if (grilla.Columns.Contains("Nombre"))
+            {
+                grilla.Columns["Nombre"].Visible = true;
+                grilla.Columns["Nombre"].Width = 100;
+            }
 
-            grilla.Columns["Apellido"].Visible = true;
-            grilla.Columns["Apellido"].Width = 100;
+            if (grilla.Columns.Contains("Apellido"))
+            {
+                grilla.Columns["Apellido"].Visible = true;
+                grilla.Columns["Apellido"].Width = 100;
+            }
 
-            grilla.Columns["Username"].Visible = true;
-            grilla.Columns["Username"].HeaderText = "Usuario";
-            grilla.Columns["Username"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("Username"))
+            {
+                grilla.Columns["Username"].Visible = true;
+                grilla.Columns["Username"].HeaderText = "Usuario";
+                grilla.Columns["Username"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
 
-            grilla.Columns["DNI"].Visible = true;
-            grilla.Columns["DNI"].Width = 100;
+            if (grilla.Columns.Contains("DNI"))
+            {
+                grilla.Columns["DNI"].Visible = true;
+                grilla.Columns["DNI"].Width = 100;
+            }
 
-            grilla.Columns["Email"].Visible = true;
-            grilla.Columns["Email"].Width = 130;
+            if (grilla.Columns.Contains("Email"))
+            {
+                grilla.Columns["Email"].Visible = true;
+                grilla.Columns["Email"].Width = 130;
+            }
 
-            grilla.Columns["Telefono"].Visible = true;
-            grilla.Columns["Telefono"].Width = 100;
+            if (grilla.Columns.Contains("Telefono"))
+            {
+                grilla.Columns["Telefono"].Visible = true;
+                grilla.Columns["Telefono"].Width = 100;
+            }
 
-            grilla.Columns["EstadoDescripcion"].Visible = true;
-            grilla.Columns["EstadoDescripcion"].Width = 100;
-            grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+            if (grilla.Columns.Contains("EstadoDescripcion"))
+            {
+                grilla.Columns["EstadoDescripcion"].Visible = true;
+                grilla.Columns["EstadoDescripcion"].Width = 100;
+                grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+            }
         }
 
         #endregion
 
         #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
 
+
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
 
-            if (filtros.VerEliminados)
+            filtros.Extra ??= "ApyNom";
+
+            var resultado = _empleadoServicio.ObtenerEmpleados(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 CLAVE: volver a aplicar formato
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
             {
-                dgv.DataSource = _empleadoServicio.ObtenerEmpleadosEliminados(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _empleadoServicio.ObtenerEmpleados(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
 
         #endregion

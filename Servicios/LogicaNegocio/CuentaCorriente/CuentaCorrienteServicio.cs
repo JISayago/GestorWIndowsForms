@@ -3,6 +3,7 @@ using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.CtaCte;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
 using Servicios.LogicaNegocio.Movimiento;
 using Servicios.LogicaNegocio.Producto.DTO;
@@ -172,47 +173,86 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             };
         }
 
-        public IEnumerable<CuentaCorrienteDTO> ObtenerCuentaCorrientes(string cadenaBuscar)
+        public ResultadoPaginacion<CuentaCorrienteDTO> ObtenerCuentaCorrientes(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            return context.CuentaCorriente
-                .Where(x => !x.EstaEliminado && x.NombreCuentaCorriente.Contains(cadenaBuscar))
-                .Select(x => new CuentaCorrienteDTO
-                {
-                    Saldo = x.Saldo,
-                    LimiteDeuda = x.LimiteDeuda,
-                    NombreCuentaCorriente = x.NombreCuentaCorriente,
-                    LimiteDeudaActivo = x.LimiteDeudaActivo,
-                    FechaVencimiento = x.FechaVencimiento,
-                    CuentaCorrienteId = x.CuentaCorrienteId,
-                    DniAutorizados = x.CuentaCorrienteAutorizado
-                        .Select(c => c.Dni)
-                        .ToList()
-                })
-                .ToList();
-        }
-
-        public IEnumerable<CuentaCorrienteDTO> ObtenerCuentaCorrientesEliminada(string cadenaBuscar)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            return context.CuentaCorriente
-                .Where(x => x.EstaEliminado && x.NombreCuentaCorriente.Contains(cadenaBuscar))
+            var query = context.CuentaCorriente
+                .AsNoTracking()
                 .Include(x => x.CuentaCorrienteAutorizado)
+                .AsQueryable();
+
+            // 🔴 Eliminados
+            query = filtros.VerEliminados
+                ? query.Where(x => x.EstaEliminado)
+                : query.Where(x => !x.EstaEliminado);
+
+            // 🔍 TEXTO
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                switch (filtros.Extra?.ToString())
+                {
+                    case "Nombre":
+                        query = query.Where(x => x.NombreCuentaCorriente.Contains(filtros.TextoBuscar));
+                        break;
+
+                    case "DniAutorizado":
+                        query = query.Where(x => x.CuentaCorrienteAutorizado
+                            .Any(a => a.Dni.ToString().Contains(filtros.TextoBuscar)));
+                        break;
+
+                    default:
+                        query = query.Where(x => x.NombreCuentaCorriente.Contains(filtros.TextoBuscar));
+                        break;
+                }
+            }
+
+            // 📅 FECHA (si querés usar vencimiento)
+            if (filtros.FechaDesde.HasValue)
+            {
+                query = query.Where(x =>
+                    x.FechaVencimiento.HasValue &&
+                    x.FechaVencimiento.Value >= filtros.FechaDesde.Value);
+            }
+
+            if (filtros.FechaHasta.HasValue)
+            {
+                query = query.Where(x =>
+                    x.FechaVencimiento.HasValue &&
+                    x.FechaVencimiento.Value <= filtros.FechaHasta.Value);
+            }
+
+            // 🔢 TOTAL
+            var total = query.Count();
+
+            // 🔽 ORDEN (básico por ahora)
+            query = query.OrderBy(x => x.CuentaCorrienteId);
+
+            // 📄 PAGINACIÓN
+            var data = query
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
                 .Select(x => new CuentaCorrienteDTO
                 {
+                    CuentaCorrienteId = x.CuentaCorrienteId,
+                    NombreCuentaCorriente = x.NombreCuentaCorriente,
                     Saldo = x.Saldo,
                     LimiteDeuda = x.LimiteDeuda,
-                    NombreCuentaCorriente = x.NombreCuentaCorriente,
                     LimiteDeudaActivo = x.LimiteDeudaActivo,
                     FechaVencimiento = x.FechaVencimiento,
-                    CuentaCorrienteId = x.CuentaCorrienteId,
                     DniAutorizados = x.CuentaCorrienteAutorizado
-                        .Select(cp => cp.Dni)
+                        .Select(a => a.Dni)
                         .ToList()
                 })
                 .ToList();
+
+            return new ResultadoPaginacion<CuentaCorrienteDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
         }
 
         // =====================

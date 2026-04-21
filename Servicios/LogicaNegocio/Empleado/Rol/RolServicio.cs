@@ -1,5 +1,8 @@
-﻿using AccesoDatos.Entidades;
-using AccesoDatos;
+﻿using AccesoDatos;
+using AccesoDatos.Entidades;
+using Microsoft.EntityFrameworkCore;
+using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Empleado.Rol.DTO;
 using System;
@@ -7,8 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Servicios.Helpers.Sistema;
 
 namespace Servicios.LogicaNegocio.Empleado.Rol
 {
@@ -144,25 +145,7 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
             };
         }
 
-        public IEnumerable<RolDTO> ObtenerRoles(string cadenabuscar)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var roles = context.Roles
-                .AsNoTracking()
-                .Where(e => e.Nombre.Contains(cadenabuscar) && !e.EstaEliminado)
-                .Select(e => new RolDTO
-                {
-                    RolId = e.RolId,
-                    Nombre = e.Nombre,
-                    CodigoRol = e.CodigoRol,
-                    DetalleRol = e.DetalleRol,
-                    
-                })
-                .ToList();
-
-            return roles;
-        }
+      
 
         public IEnumerable<RolDTO> ObtenerRolesAsignadosAEmpleados(long empleadoId)
         {
@@ -184,27 +167,52 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
 
             return rolesAsignados;
         }
-
-        public IEnumerable<RolDTO> ObtenerRolesEliminados(string cadenabuscar)
+        public ResultadoPaginacion<RolDTO> ObtenerRoles(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var roles = context.Roles
+            var query = context.Roles
                 .AsNoTracking()
-                .Where(e => e.Nombre.Contains(cadenabuscar) && e.EstaEliminado)
+                .AsQueryable();
+
+            // 🔴 Eliminados
+            query = filtros.VerEliminados
+                ? query.Where(e => e.EstaEliminado)
+                : query.Where(e => !e.EstaEliminado);
+
+            // 🔍 BÚSQUEDA
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                query = query.Where(e => e.Nombre.Contains(filtros.TextoBuscar));
+            }
+
+            // 📊 TOTAL
+            var total = query.Count();
+
+            // 📌 ORDEN
+            query = query.OrderBy(e => e.RolId);
+
+            // 📄 PAGINACIÓN + PROYECCIÓN
+            var data = query
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
                 .Select(e => new RolDTO
                 {
                     RolId = e.RolId,
                     Nombre = e.Nombre,
                     CodigoRol = e.CodigoRol,
-                    DetalleRol = e.DetalleRol,
-
+                    DetalleRol = e.DetalleRol
                 })
                 .ToList();
 
-            return roles;
+            return new ResultadoPaginacion<RolDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
         }
-
         public RolDTO ObtenerRolPorId(long rolId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);

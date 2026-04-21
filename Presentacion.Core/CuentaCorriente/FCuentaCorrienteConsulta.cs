@@ -1,6 +1,7 @@
 ﻿using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.CuentaCorriente;
 using System.Windows.Forms;
 
@@ -27,23 +28,34 @@ namespace Presentacion.Core.CuentaCorriente
         {
             base.ResetearGrilla(grilla);
 
+            if (grilla.Columns.Count == 0) return;
+
             if (grilla.Columns.Contains("CuentaCorrienteId"))
             {
                 grilla.Columns["CuentaCorrienteId"].Visible = false;
                 grilla.Columns["CuentaCorrienteId"].Name = "Id";
             }
 
-            grilla.Columns["NombreCuentaCorriente"].Visible = true;
-            grilla.Columns["NombreCuentaCorriente"].Width = 150;
-            grilla.Columns["NombreCuentaCorriente"].HeaderText = "Nombre CC";
+            if (grilla.Columns.Contains("NombreCuentaCorriente"))
+            {
+                grilla.Columns["NombreCuentaCorriente"].Visible = true;
+                grilla.Columns["NombreCuentaCorriente"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                grilla.Columns["NombreCuentaCorriente"].HeaderText = "Nombre CC";
+            }
 
-            grilla.Columns["FechaVencimiento"].Visible = true;
-            grilla.Columns["FechaVencimiento"].Width = 120;
-            grilla.Columns["FechaVencimiento"].HeaderText = "Fecha Vencimiento";
+            if (grilla.Columns.Contains("FechaVencimiento"))
+            {
+                grilla.Columns["FechaVencimiento"].Visible = true;
+                grilla.Columns["FechaVencimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                grilla.Columns["FechaVencimiento"].HeaderText = "Fecha Vencimiento";
+            }
 
-            grilla.Columns["EstadoCuentaCorriente"].Visible = true;
-            grilla.Columns["EstadoCuentaCorriente"].Width = 120;
-            grilla.Columns["EstadoCuentaCorriente"].HeaderText = "Estado CC";
+            if (grilla.Columns.Contains("EstadoCuentaCorriente"))
+            {
+                grilla.Columns["EstadoCuentaCorriente"].Visible = true;
+                grilla.Columns["EstadoCuentaCorriente"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                grilla.Columns["EstadoCuentaCorriente"].HeaderText = "Estado CC";
+            }
         }
 
         #endregion
@@ -54,16 +66,30 @@ namespace Presentacion.Core.CuentaCorriente
         {
             base.ActualizarDatos(dgv, filtros);
 
-            if (filtros.VerEliminados)
+            // 🔹 valor por defecto de búsqueda (ajustalo a tu modelo)
+            filtros.Extra ??= "Nombre";
+
+            // 🔹 llamada única al servicio (nuevo esquema)
+            var resultado = _cuentacorrienteServicio.ObtenerCuentaCorrientes(filtros);
+
+            // 🔹 bind
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 CLAVE: reaplicar columnas
+            ResetearGrilla(dgv);
+
+            // 🔹 paginación
+            var paginacion = new DatosPaginacion
             {
-                dgv.DataSource = _cuentacorrienteServicio.ObtenerCuentaCorrientesEliminada(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _cuentacorrienteServicio.ObtenerCuentaCorrientes(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            // 🔹 estado botones
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
 
         #endregion
