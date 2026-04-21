@@ -93,7 +93,17 @@ namespace Presentacion.Core.CuentaCorriente
             }
 
             var cuentacorriente = _cuentacorrienteServicio.ObtenerCuentaCorrientePorId(entidadId.Value);
-            //var clienteDeCuentaCorriente = _clienteServicio.ObtenerClientes(cuentacorriente.ClienteId.ToString()).ToList();                 Error de obtener clientes
+            var filtros = new FiltroConsulta
+            {
+                TextoBuscar = cuentacorriente.ClienteId.ToString(),
+                VerEliminados = false,
+                Page = 1,
+                PageSize = 1
+            };
+
+            var resultado = _clienteServicio.ObtenerClientes(filtros);
+
+            var clienteDeCuentaCorriente = resultado.Items.FirstOrDefault();
             // Datos Personales
 
             txtNombreCC.Text = cuentacorriente.NombreCuentaCorriente;
@@ -104,7 +114,7 @@ namespace Presentacion.Core.CuentaCorriente
             txtLimiteDeuda.Enabled = cuentacorriente.LimiteDeudaActivo;
             cmbClientes.DisplayMember = "NombreCompleto"; // lo que se muestra
             cmbClientes.ValueMember = "PersonaId";
-            //cmbClientes.DataSource = clienteDeCuentaCorriente;                                                                           Error de obtener clientes
+            cmbClientes.DataSource = clienteDeCuentaCorriente;                                                                           
             cmbClientes.Enabled = false; // No se puede cambiar el cliente asociado en la modificación
 
             dgvDni.DataSource = cuentacorriente.DniAutorizados.Select(x => new { DNI = x }).ToList();
