@@ -132,11 +132,11 @@ namespace Presentacion.Core.Empleado
         {
             base.ResetearGrilla(grilla);
 
-            if (grilla.Columns.Contains("PersonaId"))
-            {
-                grilla.Columns["PersonaId"].Visible = false;
-                grilla.Columns["PersonaId"].Name = "Id";
-            }
+            if (!grilla.Columns.Contains("PersonaId"))
+                return;
+
+            grilla.Columns["PersonaId"].Visible = false;
+            grilla.Columns["PersonaId"].Name = "Id";
 
             grilla.Columns["Legajo"].Visible = true;
             grilla.Columns["Legajo"].Width = 80;
@@ -169,20 +169,30 @@ namespace Presentacion.Core.Empleado
 
         #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
 
+
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
 
-            if (filtros.VerEliminados)
+            filtros.Extra ??= "ApyNom";
+
+            var resultado = _empleadoServicio.ObtenerEmpleados(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 CLAVE: volver a aplicar formato
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
             {
-                dgv.DataSource = _empleadoServicio.ObtenerEmpleadosEliminados(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _empleadoServicio.ObtenerEmpleados(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
 
         #endregion

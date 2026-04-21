@@ -41,15 +41,15 @@ namespace Presentacion.Core.Empleado.Rol
             EntidadID = entidadID;
             RealizoAlgunaOperacion = false;
 
-            var empleados = _empleadoServicio.ObtenerEmpleados(string.Empty);
-            CargarComboBox(cbxEmpleado, empleados, "Nombre", "PersonaId");
+            //var empleados = _empleadoServicio.ObtenerEmpleados(string.Empty);                                          ERROR EN CAMBIO DE CONSULTA
+            //CargarComboBox(cbxEmpleado, empleados, "Nombre", "PersonaId");
             EntidadID = cbxEmpleado.SelectedValue as long?;
 
             if (tipoAsignacionRol == TipoAsignacionRol.Existente)
             {
                 CargarDatos(entidadID);
 
-                if (entidadID.HasValue && empleados.Any(e => e.PersonaId == entidadID.Value))
+                //if (entidadID.HasValue && empleados.Any(e => e.PersonaId == entidadID.Value))
                 {
                     cbxEmpleado.SelectedValue = entidadID.Value;
                     cbxEmpleado.Enabled = false;
