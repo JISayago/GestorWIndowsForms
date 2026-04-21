@@ -1,6 +1,7 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.CuentaCorriente;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
@@ -49,7 +50,15 @@ namespace Presentacion.Core.CuentaCorriente
 
             dtpFechaVencimiento.MinDate = DateTime.Now;
 
-            var clientes = _clienteServicio.ObtenerClientes("").ToList();
+            var filtros = new FiltroConsulta
+            {
+                TextoBuscar = "",
+                VerEliminados = false,
+                Page = 1,
+                PageSize = 1000 // o un número alto para traer todos
+            };
+
+            var clientes = _clienteServicio.ObtenerClientes(filtros).Items;
 
             cmbClientes.DisplayMember = "NombreCompleto"; // lo que se muestra
             cmbClientes.ValueMember = "PersonaId";
@@ -84,7 +93,7 @@ namespace Presentacion.Core.CuentaCorriente
             }
 
             var cuentacorriente = _cuentacorrienteServicio.ObtenerCuentaCorrientePorId(entidadId.Value);
-            var clienteDeCuentaCorriente = _clienteServicio.ObtenerClientes(cuentacorriente.ClienteId.ToString()).ToList();
+            //var clienteDeCuentaCorriente = _clienteServicio.ObtenerClientes(cuentacorriente.ClienteId.ToString()).ToList();                 Error de obtener clientes
             // Datos Personales
 
             txtNombreCC.Text = cuentacorriente.NombreCuentaCorriente;
@@ -95,7 +104,7 @@ namespace Presentacion.Core.CuentaCorriente
             txtLimiteDeuda.Enabled = cuentacorriente.LimiteDeudaActivo;
             cmbClientes.DisplayMember = "NombreCompleto"; // lo que se muestra
             cmbClientes.ValueMember = "PersonaId";
-            cmbClientes.DataSource = clienteDeCuentaCorriente;
+            //cmbClientes.DataSource = clienteDeCuentaCorriente;                                                                           Error de obtener clientes
             cmbClientes.Enabled = false; // No se puede cambiar el cliente asociado en la modificación
 
             dgvDni.DataSource = cuentacorriente.DniAutorizados.Select(x => new { DNI = x }).ToList();

@@ -51,10 +51,19 @@ namespace Presentacion.Core.Producto
                 new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
                 new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
                 new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
-                new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
+                new OpcionFiltro { Texto = "Código", Valor = "Codigo" },
+                new OpcionFiltro { Texto = "Todos", Valor = "" }
+            };
+            var opciones2 = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Discontinuado", Valor = "Descripcion" },
+                new OpcionFiltro { Texto = "Todos", Valor = "" }
             };
 
+
             ActivarFiltroCombo(opciones, "Texto", "Valor");
+
+            ActivarComboOpcional(opciones2, "Texto", "Valor");
 
             // Si querés fechas en el futuro:
             // ActivarFiltroFechas("Filtrar por fecha");
@@ -182,6 +191,9 @@ namespace Presentacion.Core.Producto
 
             dgv.DataSource = resultado.Items;
 
+            // 🔴 CLAVE: reaplicar formato de columnas
+            ResetearGrilla(dgv);
+
             var paginacion = new DatosPaginacion
             {
                 PaginaActual = resultado.Page,
@@ -190,6 +202,9 @@ namespace Presentacion.Core.Producto
             };
 
             ActualizarPaginacionUI(paginacion);
+
+            // 🔹 estado de botones laterales (te faltaba esto también)
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
         #endregion
         protected override FiltroConsulta ObtenerFiltros()

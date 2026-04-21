@@ -2,7 +2,9 @@
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.CtaCte;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Cliente.DTO;
 
 namespace Servicios.LogicaNegocio.Cliente
@@ -190,78 +192,119 @@ namespace Servicios.LogicaNegocio.Cliente
             return cliente;
         }
 
-        public IEnumerable<ClienteDTO> ObtenerClientes(string cadenabuscar)
+        public ResultadoPaginacion<ClienteDTO> ObtenerClientes(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var clientes = context.Cliente
-            .AsNoTracking()
-            .Include(e => e.Persona)
-            .Where(e => e.Persona != null && !e.Persona.EstaEliminado &&
-                (e.Persona.Nombre.Contains(cadenabuscar)
-                || e.Persona.Apellido.Contains(cadenabuscar)
-                || e.Persona.Dni == cadenabuscar
-                || e.Persona.Email == cadenabuscar))
-            .ToList()
-            .Select(e => new ClienteDTO
-            {
-                PersonaId = e.PersonaId,
-                Nombre = e.Persona.Nombre,
-                Apellido = e.Persona.Apellido,
-                Dni = e.Persona.Dni,
-                Cuil = e.Persona.Cuil,
-                Telefono = e.Persona.Telefono,
-                Telefono2 = e.Persona.Telefono2,
-                Email = e.Persona.Email,
-                Direccion = e.Persona.Direccion,
-                FechaNacimiento = e.Persona.FechaNacimiento,
-                EstaEliminado = e.Persona.EstaEliminado,
-                NumeroCliente = e.NumeroCliente,
-                FechaAlta = e.FechaAlta,
-                FechaBaja = e.FechaBaja,
-                Estado = e.Estado,
-                EstadoDescripcion = Enum.GetName(typeof(EstadoCliente), e.Estado) ?? "Desconocido"
-            })
-            .ToList();
-
-
-            return clientes;
-        }
-
-        public IEnumerable<ClienteDTO> ObtenerClientesEliminados(string cadenabuscar)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var clientes = context.Cliente
+            var query = context.Cliente
                 .AsNoTracking()
-                .Include(e => e.Persona)
-                .Where(e => e.Persona != null && e.Persona.EstaEliminado && (e.Persona.Nombre.Contains(cadenabuscar)
-                                || e.Persona.Apellido.Contains(cadenabuscar)
-                                || e.Persona.Dni == (cadenabuscar)
-                                || e.Persona.Email == (cadenabuscar)))
-                .ToList()
-                .Select(e => new ClienteDTO
+                .Include(c => c.Persona)
+                .Where(c => c.Persona != null)
+                .AsQueryable();
+
+            // 🔴 ELIMINADOS (centralizado)
+            query = filtros.VerEliminados
+                ? query.Where(c => c.Persona.EstaEliminado)
+                : query.Where(c => !c.Persona.EstaEliminado);
+
+            // 🔍 BUSQUEDA
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                var texto = filtros.TextoBuscar;
+
+                switch (filtros.Extra?.ToString())
                 {
-                    PersonaId = e.PersonaId,
-                    Nombre = e.Persona.Nombre,
-                    Apellido = e.Persona.Apellido,
-                    Dni = e.Persona.Dni,
-                    Cuil = e.Persona.Cuil,
-                    Telefono = e.Persona.Telefono,
-                    Telefono2 = e.Persona.Telefono2,
-                    Email = e.Persona.Email,
-                    Direccion = e.Persona.Direccion,
-                    FechaNacimiento = e.Persona.FechaNacimiento,
-                    EstaEliminado = e.Persona.EstaEliminado,
-                    NumeroCliente = e.NumeroCliente,
-                    FechaAlta = e.FechaAlta,
-                    FechaBaja = e.FechaBaja,
-                    Estado = e.Estado,
-                    EstadoDescripcion = Enum.GetName(typeof(EstadoCliente), e.Estado) ?? "Desconocido"
+                    case "Nombre":
+                        query = query.Where(c => c.Persona.Nombre.Contains(texto));
+                        break;
+
+                    case "Apellido":
+                        query = query.Where(c => c.Persona.Apellido.Contains(texto));
+                        break;
+
+                    case "Dni":
+                        query = query.Where(c => c.Persona.Dni.Contains(texto));
+                        break;
+
+                    case "Telefono":
+                        query = query.Where(c => c.Persona.Telefono.Contains(texto)
+                                               || c.Persona.Telefono2.Contains(texto));
+                        break;
+
+                    case "Email":
+                        query = query.Where(c => c.Persona.Email.Contains(texto));
+                        break;
+
+                    default:
+                        query = query.Where(c =>
+                            c.Persona.Nombre.Contains(texto) ||
+                            c.Persona.Apellido.Contains(texto) ||
+                            c.Persona.Dni.Contains(texto));
+                        break;
+                }
+            }
+
+            // 📅 FECHAS (si querés usarlo con FechaAlta / Baja)
+            var tipoFecha = (TipoFiltroFecha?)filtros.Extra2;
+
+            //if (tipoFecha.HasValue && tipoFecha != TipoFiltroFecha.Ninguno)   VER FILTROS DE FECHA SEGUN CORRESPONDAw
+            //{
+            //    if (tipoFecha == TipoFiltroFecha.Alta)
+            //    {
+            //        if (filtros.FechaDesde.HasValue)
+            //            query = query.Where(c => c.FechaAlta >= filtros.FechaDesde.Value);
+
+            //        if (filtros.FechaHasta.HasValue)
+            //            query = query.Where(c => c.FechaAlta <= filtros.FechaHasta.Value);
+            //    }
+
+            //    if (tipoFecha == TipoFiltroFecha.Baja)
+            //    {
+            //        if (filtros.FechaDesde.HasValue)
+            //            query = query.Where(c => c.FechaBaja.HasValue && c.FechaBaja >= filtros.FechaDesde.Value);
+
+            //        if (filtros.FechaHasta.HasValue)
+            //            query = query.Where(c => c.FechaBaja.HasValue && c.FechaBaja <= filtros.FechaHasta.Value);
+            //    }
+            //}
+
+            // 📊 TOTAL (antes de paginar)
+            var total = query.Count();
+
+            // 📄 PAGINACION
+            var data = query
+                .OrderBy(c => c.PersonaId)
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
+                .Select(c => new ClienteDTO
+                {
+                    PersonaId = c.PersonaId,
+                    Nombre = c.Persona.Nombre,
+                    Apellido = c.Persona.Apellido,
+                    Dni = c.Persona.Dni,
+                    Cuil = c.Persona.Cuil,
+                    Telefono = c.Persona.Telefono,
+                    Telefono2 = c.Persona.Telefono2,
+                    Email = c.Persona.Email,
+                    Direccion = c.Persona.Direccion,
+                    FechaNacimiento = c.Persona.FechaNacimiento,
+                    EstaEliminado = c.Persona.EstaEliminado,
+                    NumeroCliente = c.NumeroCliente,
+                    FechaAlta = c.FechaAlta,
+                    FechaBaja = c.FechaBaja,
+                    Estado = c.Estado,
+                    //EstadoDescripcion = Enum.GetName(typeof(EstadoCliente), c.Estado) ?? "Desconocido"
+                    EstadoDescripcion = ""
                 })
                 .ToList();
 
-            return clientes;
+            return new ResultadoPaginacion<ClienteDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
         }
     }
 }

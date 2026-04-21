@@ -1,4 +1,5 @@
-﻿using Presentacion.FBase;
+﻿using Presentacion.Core.Presentacion.Core.Helpers;
+using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
@@ -37,11 +38,11 @@ namespace Presentacion.Core.Cliente
         {
             base.ResetearGrilla(grilla);
 
-            if (grilla.Columns.Contains("PersonaId"))
-            {
-                grilla.Columns["PersonaId"].Visible = false;
-                grilla.Columns["PersonaId"].Name = "Id";
-            }
+            if (!grilla.Columns.Contains("PersonaId"))
+                return;
+
+            grilla.Columns["PersonaId"].Visible = false;
+            grilla.Columns["PersonaId"].Name = "Id";
 
             grilla.Columns["Nombre"].Visible = true;
             grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -49,8 +50,8 @@ namespace Presentacion.Core.Cliente
             grilla.Columns["Apellido"].Visible = true;
             grilla.Columns["Apellido"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
-            grilla.Columns["DNI"].Visible = true;
-            grilla.Columns["DNI"].Width = 100;
+            grilla.Columns["Dni"].Visible = true;
+            grilla.Columns["Dni"].Width = 100;
 
             grilla.Columns["Email"].Visible = true;
             grilla.Columns["Email"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -71,19 +72,30 @@ namespace Presentacion.Core.Cliente
         {
             base.ActualizarDatos(dgv, filtros);
 
-            if (filtros.VerEliminados)
+            filtros.Extra ??= "ApyNom";
+
+            var resultado = _clienteServicio.ObtenerClientes(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 CLAVE: volver a aplicar formato
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
             {
-                dgv.DataSource = _clienteServicio.ObtenerClientesEliminados(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _clienteServicio.ObtenerClientes(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
 
         #endregion
+
+
 
         #region 🔷 BOTONES BASE
 
@@ -157,7 +169,23 @@ namespace Presentacion.Core.Cliente
         }
 
         #endregion
+        protected override void ConfigurarFiltrosUI()
+        {
+            base.ConfigurarFiltrosUI();
 
+            var opciones = new List<OpcionFiltro>
+    {
+        new OpcionFiltro { Texto = "Nombre", Valor = "ApyNom" },
+        new OpcionFiltro { Texto = "Documento", Valor = "Dni" },
+        new OpcionFiltro { Texto = "Teléfono", Valor = "Telefono" },
+        new OpcionFiltro { Texto = "Email", Valor = "Email" }
+    };
+
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
+
+            // si después querés fechas:
+            // ActivarFiltroFechas("Filtrar por fecha");
+        }
 
         protected override void ConfigurarAccionesPersonalizadas()
         {
