@@ -1,6 +1,7 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Empleado.Rol;
 using Servicios.LogicaNegocio.Empleado.Rol.DTO;
@@ -41,15 +42,25 @@ namespace Presentacion.Core.Empleado.Rol
             EntidadID = entidadID;
             RealizoAlgunaOperacion = false;
 
-            //var empleados = _empleadoServicio.ObtenerEmpleados(string.Empty);                                          ERROR EN CAMBIO DE CONSULTA
-            //CargarComboBox(cbxEmpleado, empleados, "Nombre", "PersonaId");
+            var filtros = new FiltroConsulta
+            {
+                TextoBuscar = string.Empty,
+                VerEliminados = false,
+                Page = 1,
+                PageSize = int.MaxValue // o un número alto si no querés romper memoria
+            };
+
+            var resultado = _empleadoServicio.ObtenerEmpleados(filtros);
+
+            var empleados = resultado.Items;
+            CargarComboBox(cbxEmpleado, empleados, "Nombre", "PersonaId");
             EntidadID = cbxEmpleado.SelectedValue as long?;
 
             if (tipoAsignacionRol == TipoAsignacionRol.Existente)
             {
                 CargarDatos(entidadID);
 
-                //if (entidadID.HasValue && empleados.Any(e => e.PersonaId == entidadID.Value))
+                if (entidadID.HasValue && empleados.Any(e => e.PersonaId == entidadID.Value))
                 {
                     cbxEmpleado.SelectedValue = entidadID.Value;
                     cbxEmpleado.Enabled = false;
@@ -100,31 +111,62 @@ namespace Presentacion.Core.Empleado.Rol
 
         private void ResetearGrillas(DataGridView grillaRolesDisponibles, DataGridView grillaRolesAsignados)
         {
-            grillaRolesDisponibles.Columns["RolId"].Visible = false;
-            grillaRolesDisponibles.Columns["RolId"].Name = "Id";
-
-            grillaRolesDisponibles.Columns["Nombre"].Visible = true;
-            grillaRolesDisponibles.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-
-            grillaRolesDisponibles.Columns["CodigoRol"].Visible = true;
-            grillaRolesDisponibles.Columns["CodigoRol"].Width = 100;
-            grillaRolesDisponibles.Columns["CodigoRol"].HeaderText = "Código";
-
-            grillaRolesDisponibles.Columns["DetalleRol"].Visible = false;
-            if (EntidadID.HasValue)
+            // 🔹 DISPONIBLES
+            if (grillaRolesDisponibles.Columns.Count > 0)
             {
+                if (grillaRolesDisponibles.Columns.Contains("RolId"))
+                {
+                    grillaRolesDisponibles.Columns["RolId"].Visible = false;
+                    grillaRolesDisponibles.Columns["RolId"].Name = "Id";
+                }
 
-                grillaRolesAsignados.Columns["RolId"].Visible = false;
-                grillaRolesAsignados.Columns["RolId"].Name = "Id";
+                if (grillaRolesDisponibles.Columns.Contains("Nombre"))
+                {
+                    grillaRolesDisponibles.Columns["Nombre"].Visible = true;
+                    grillaRolesDisponibles.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                }
 
-                grillaRolesAsignados.Columns["Nombre"].Visible = true;
-                grillaRolesAsignados.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                if (grillaRolesDisponibles.Columns.Contains("CodigoRol"))
+                {
+                    grillaRolesDisponibles.Columns["CodigoRol"].Visible = true;
+                    grillaRolesDisponibles.Columns["CodigoRol"].Width = 100;
+                    grillaRolesDisponibles.Columns["CodigoRol"].HeaderText = "Código";
+                }
 
-                grillaRolesAsignados.Columns["CodigoRol"].Visible = true;
-                grillaRolesAsignados.Columns["CodigoRol"].Width = 100;
-                grillaRolesAsignados.Columns["CodigoRol"].HeaderText = "Código";
+                if (grillaRolesDisponibles.Columns.Contains("DetalleRol"))
+                {
+                    grillaRolesDisponibles.Columns["DetalleRol"].Visible = false;
+                }
+            }
 
-                grillaRolesAsignados.Columns["DetalleRol"].Visible = false;
+            // 🔹 ASIGNADOS
+            if (!EntidadID.HasValue) return;
+
+            if (grillaRolesAsignados.Columns.Count > 0)
+            {
+                if (grillaRolesAsignados.Columns.Contains("RolId"))
+                {
+                    grillaRolesAsignados.Columns["RolId"].Visible = false;
+                    grillaRolesAsignados.Columns["RolId"].Name = "Id";
+                }
+
+                if (grillaRolesAsignados.Columns.Contains("Nombre"))
+                {
+                    grillaRolesAsignados.Columns["Nombre"].Visible = true;
+                    grillaRolesAsignados.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                }
+
+                if (grillaRolesAsignados.Columns.Contains("CodigoRol"))
+                {
+                    grillaRolesAsignados.Columns["CodigoRol"].Visible = true;
+                    grillaRolesAsignados.Columns["CodigoRol"].Width = 100;
+                    grillaRolesAsignados.Columns["CodigoRol"].HeaderText = "Código";
+                }
+
+                if (grillaRolesAsignados.Columns.Contains("DetalleRol"))
+                {
+                    grillaRolesAsignados.Columns["DetalleRol"].Visible = false;
+                }
             }
         }
 
@@ -226,7 +268,17 @@ namespace Presentacion.Core.Empleado.Rol
 
         private void InicializacionGrillas()
         {
-            //_rolesDisponibles = _rolServicio.ObtenerRoles(string.Empty).ToList();
+            var filtros = new FiltroConsulta
+            {
+                TextoBuscar = string.Empty,
+                VerEliminados = false,
+                Page = 1,
+                PageSize = int.MaxValue // solo si lo usás para listas chicas
+            };
+
+            var resultado = _rolServicio.ObtenerRoles(filtros);
+
+            _rolesDisponibles = resultado.Items.ToList();
             if (EntidadID.HasValue)
             {
                 _rolesAsignados = _rolServicio.ObtenerRolesAsignadosAEmpleados(EntidadID.Value).ToList();
