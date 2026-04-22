@@ -154,7 +154,7 @@ public class NotificationGroupBox : GroupBox
         panelItem.BorderStyle = BorderStyle.FixedSingle;
         panelItem.Cursor = Cursors.Hand;
 
-        // Estado Leído/Nuevo
+        // Color inicial según estado (Leída o Nueva)
         panelItem.BackColor = item.Leida ? COLOR_ITEM_FONDO_LEIDO : COLOR_ITEM_FONDO_NUEVO;
 
         panelItem.Paint += (s, e) =>
@@ -169,7 +169,6 @@ public class NotificationGroupBox : GroupBox
             }
             using (SolidBrush brush = new SolidBrush(colorUrgencia))
             {
-                // Barra de color lateral
                 e.Graphics.FillRectangle(brush, 0, 0, 6, panelItem.Height);
             }
         };
@@ -191,10 +190,32 @@ public class NotificationGroupBox : GroupBox
         lblDescripcion.AutoSize = true;
         lblDescripcion.MaximumSize = new Size(panelItem.Width - 20, 0);
 
-        Action<object, EventArgs> clickHandler = (s, e) => OnItemClick(item);
-        panelItem.Click += new EventHandler(clickHandler);
-        lblTitulo.Click += new EventHandler(clickHandler);
-        lblDescripcion.Click += new EventHandler(clickHandler);
+        // ============================================================
+        // LÓGICA DE CLICKS UNIFICADA (Refactorizada)
+        // ============================================================
+
+        MouseEventHandler unifiedClickHandler = (s, e) =>
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                // CLICK IZQUIERDO: Acción principal (Abrir ventana)
+                OnItemClick(item);
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                // CLICK DERECHO: Solo marcar como leída visualmente
+                if (!item.Leida)
+                {
+                    item.Leida = true;
+                    panelItem.BackColor = COLOR_ITEM_FONDO_LEIDO;
+                }
+            }
+        };
+
+        // Asignamos el manejador único al panel y a las etiquetas
+        panelItem.MouseClick += unifiedClickHandler;
+        lblTitulo.MouseClick += unifiedClickHandler;
+        lblDescripcion.MouseClick += unifiedClickHandler;
 
         panelItem.Controls.Add(lblTitulo);
         panelItem.Controls.Add(lblDescripcion);
