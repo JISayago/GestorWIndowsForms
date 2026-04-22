@@ -504,35 +504,32 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             }
         }
 
-        public List<LoteDTO> ObtenerLotesVencidos(DateTime? fechaVencimiento = null)
+        public List<LoteDTO> ObtenerLotesVencidos(int diasHaciaAtras)
         {
-            var context = new GestorContextDBFactory().CreateDbContext(null);
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                // Calculamos la fecha límite: hoy menos la cantidad de días
+                // Si quieres los vencidos hace 5 días, restamos 5 a la fecha actual.
+                DateTime fechaLimite = DateTime.Now.AddDays(-diasHaciaAtras);
 
-            DateTime datae = new DateTime(2025, 4, 20);//BORRAR ES PARA PROBAR NADA MAS
-
-            //Default trae los productos vencidos de hoy, pero se le puede pasar una fecha para traer los vencidos de una fecha
-            var dateTimeVencimiento = fechaVencimiento.HasValue ? fechaVencimiento.Value : datae;
-            //FIXEA EL FILTRO PARA MOSTRAR LOS LOTES A NOTIFICAR, ACTUALMENTE TRAER TODO PARA PROBAR EL FORMULARIO
-
-            List<LoteDTO> lotesVencidos = context.Lotes
-                .Where(x => x.FechaVencimiento > dateTimeVencimiento)
-                .Select(x => new LoteDTO
-                {
-                    Id = x.LoteId,
-                    IdProducto = x.IdProducto,
-                    StockInicial = x.StockIncial,
-                    StockActual = x.StockActual,
-                    NumeroLote = x.NumeroLote,
-                    Descripcion = x.Descripcion,
-                    FechaAlta = x.FechaAlta,
-                    FechaVencimiento = x.FechaVencimiento,
-                    EstaVencido = x.EstaVencido,
-                    EstaActivo = x.EstaActivo,
-                    NombreProducto = x.Producto.Descripcion
-                })
-                .ToList();
-
-            return lotesVencidos;
+                return context.Lotes
+                    .Where(x => x.FechaVencimiento < fechaLimite && x.EstaActivo && !x.EstaEliminado)
+                    .Select(x => new LoteDTO
+                    {
+                        Id = x.LoteId,
+                        IdProducto = x.IdProducto,
+                        StockInicial = x.StockIncial,
+                        StockActual = x.StockActual,
+                        NumeroLote = x.NumeroLote,
+                        Descripcion = x.Descripcion,
+                        FechaAlta = x.FechaAlta,
+                        FechaVencimiento = x.FechaVencimiento,
+                        EstaVencido = x.EstaVencido,
+                        EstaActivo = x.EstaActivo,
+                        NombreProducto = x.Producto.Descripcion
+                    })
+                    .ToList();
+            }
         }
     }
 }

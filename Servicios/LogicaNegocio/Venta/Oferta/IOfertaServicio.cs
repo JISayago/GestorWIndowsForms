@@ -30,6 +30,6 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         ResultadoPaginacion<OfertaDTO> ObtenerOfertas(FiltroConsulta filtros, bool vieneDeVenta);
         public bool ExisteOfertaPorCodigo(string codigo);
 
-        public List<OfertaDTO> ObtenerOfertasVencidas(DateTime? fecha = null);
+        public List<OfertaDTO> ObtenerOfertasVencidas(int cantidadDiasABuscar);
     }
 }

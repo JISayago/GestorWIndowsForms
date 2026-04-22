@@ -128,29 +128,40 @@ public class NotificationGroupBox : GroupBox
 
     public void SetData(List<NotificacionPP> notificaciones, string tituloBase)
     {
-        if (notificaciones == null || notificaciones.Count == 0)
-        {
-            this.Visible = false;
-            return;
-        }
-
+        // Aseguramos que siempre sea visible
         this.Visible = true;
-        _tituloVisual = $"{tituloBase} ({notificaciones.Count})".ToUpper();
+
+        int conteo = notificaciones?.Count ?? 0;
+        _tituloVisual = $"{tituloBase} ({conteo})".ToUpper();
         this.Text = "";
 
         panelItems.Controls.Clear();
 
-        var notificacionesOrdenadas = notificaciones
-            .OrderByDescending(n => n.NivelUrgencia)
-            .ThenByDescending(n => n.FechaNotificacion)
-            .ToList();
-
-        foreach (var item in notificacionesOrdenadas)
+        if (conteo > 0)
         {
-            panelItems.Controls.Add(CrearItem(item));
+            // Si hay datos, los ordenamos y cargamos
+            var notificacionesOrdenadas = notificaciones
+                .OrderByDescending(n => n.NivelUrgencia)
+                .ThenByDescending(n => n.FechaNotificacion)
+                .ToList();
+
+            foreach (var item in notificacionesOrdenadas)
+            {
+                panelItems.Controls.Add(CrearItem(item));
+            }
+
+            // Opcional: Podrías forzar que se abra si llegan notificaciones nuevas
+            // expanded = true; 
+        }
+        else
+        {
+            // CAMBIO CLAVE: Si no hay notificaciones, forzamos el estado contraído
+            expanded = false;
         }
 
         this.Invalidate();
+
+        // AplicarEstado se encarga de ajustar el alto del GroupBox y el texto del botón (▲/▼)
         AplicarEstado();
     }
 

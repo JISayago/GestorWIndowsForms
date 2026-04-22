@@ -23,6 +23,6 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         List<DetalleVentaLoteDTO> DescontarStockLoteFifoLifo(decimal cantidadADescontar, long productoId, bool tieneFechaVencimiento);
         void RestaurarStockLoteFifoLifo(decimal cantidadARestaurar, List<long> loteId, bool tieneFechaVencimiento);
         string GenerarNumeroLote();
-        public List<LoteDTO> ObtenerLotesVencidos(DateTime? fechaVencimiento);
+        public List<LoteDTO> ObtenerLotesVencidos(int cantidadDiasABuscar);
     }
 }

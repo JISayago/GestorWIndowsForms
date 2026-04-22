@@ -1,4 +1,5 @@
-﻿using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
+﻿using Servicios.LogicaNegocio.CuentaCorriente;
+using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.Lote;
 using Servicios.LogicaNegocio.Venta.Oferta;
@@ -14,54 +15,22 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
     {
         private readonly ILoteServicio _loteServicio;
         private readonly IOfertaServicio _ofertaServicio;
+        private readonly ICuentaCorrienteServicio _cuentaCorrienteServicio;
+
+        //USAR CONFIG DEL SISTEMA PARA MOSTRAR O NO CIERTAS NOTIFICACIONES
+
         public PantallaPrincipalServicio()
         {
             //inicializar los servicios necesarios para obtener los productos y ofertas vencidos
             _ofertaServicio = new OfertaServicio();
             _loteServicio = new LoteServicio();
-        }
-        //USAR CONFIG DEL SISTEMA PARA MOSTRAR O NO CIERTAS NOTIFICACIONES
-
-        //crear las notificaciones
-
-
-        //Notificaciones de producto vencido
-        //Deberia verificar los productos que estan vencidos usando el service de lotes (ya que esos porudctos usan fecha vencimiento)
-        //y crear una notificacion para cada uno de ellos con el titulo "Producto Vencido" y la descripcion con el nombre del producto y la fecha de vencimiento.
-
-        //vencimiento oferta
-        //Deberia verificar las ofertas que estan vencidas usando el service de ofertas
-
-
-        //Buscar un disparador de las notificacions (ejemplo cambio de dia) y ademas la posibilidad de recargar el formulario para mostrar las nuevas notificaciones.
-        //cargar el formulario con las notificaciones y mostrarlas en un datagridview o algo similar
-
-        public List<NotificacionPP> DevolverNotifiaciones()
-        {
-            var listaNotificaciones = new List<NotificacionPP>();
-
-            crearNotifiaciones();
-
-            return listaNotificaciones;
+            _cuentaCorrienteServicio = new CuentaCorrienteServicio();
         }
 
-        public List<NotificacionPP> crearNotifiaciones()
-        {
-            return checkearProductosVencidos();
-            //checkearOfertasVencidas();
-
-
-            //crear notificaciones de productos vencidos
-            //crear notificaciones de ofertas vencidas
-
-            //devolver la lista de notificaciones para mostrarlas en el formulario
-
-        }
-
-        public List<NotificacionPP> checkearProductosVencidos(DateTime? fecha = null)
+        public List<NotificacionPP> notifiacionesProductosVencidos(int cantidadDiasABuscar)
         {
             //usar el service de lotes para obtener los productos que estan vencidos y crear una notificacion para cada uno de ellos
-            var productosNotificar = _loteServicio.ObtenerLotesVencidos(fecha);
+            var productosNotificar = _loteServicio.ObtenerLotesVencidos(cantidadDiasABuscar);
 
             return productosNotificar.Select(p => new NotificacionPP
             {
@@ -80,9 +49,9 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             }).ToList();
         }
 
-        public List<NotificacionPP> checkearOfertasVencidas(DateTime? fecha = null)
+        public List<NotificacionPP> notifiacionesOfertasVencidas(int cantidadDiasABuscar)
         {
-            var promocionesNotificar = _ofertaServicio.ObtenerOfertasVencidas();
+            var promocionesNotificar = _ofertaServicio.ObtenerOfertasVencidas(cantidadDiasABuscar);
 
             return promocionesNotificar.Select(p => new NotificacionPP
             {
@@ -95,6 +64,27 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
                     ? (p.FechaFin.Value.Date < DateTime.Now.Date
                         ? Helpers.Sistema.NivelUrgencia.Alta
                         : (p.FechaFin.Value.Date <= DateTime.Now.Date.AddDays(3)
+                            ? Helpers.Sistema.NivelUrgencia.Media
+                            : Helpers.Sistema.NivelUrgencia.Baja))
+                    : Helpers.Sistema.NivelUrgencia.Baja) // Si no tiene fecha de vencimiento, se considera baja urgencia
+            }).ToList();
+        }
+
+        public List<NotificacionPP> notifiacionesCtaCteVencidas(int cantidadDiasABuscar)
+        {
+            var productosNotificar = _cuentaCorrienteServicio.ObtenerCtaCteVencidas(cantidadDiasABuscar);
+
+            return productosNotificar.Select(p => new NotificacionPP
+            {
+                NotificacionId = p.CuentaCorrienteId, //o algun id unico para la notificacion
+                Titulo = $"Nombre Ctate: {p.NombreCuentaCorriente}  ",
+                Descripcion = $"Del Clientes: {p.NombreCliente} con fecha de vencimiento: {p.FechaVencimiento?.ToString("dd/MM/yyyy")}.",
+                FechaNotificacion = DateTime.Now,
+                Leida = false,
+                NivelUrgencia = (int)(p.FechaVencimiento.HasValue
+                    ? (p.FechaVencimiento.Value.Date < DateTime.Now.Date
+                        ? Helpers.Sistema.NivelUrgencia.Alta
+                        : (p.FechaVencimiento.Value.Date <= DateTime.Now.Date.AddDays(3)
                             ? Helpers.Sistema.NivelUrgencia.Media
                             : Helpers.Sistema.NivelUrgencia.Baja))
                     : Helpers.Sistema.NivelUrgencia.Baja) // Si no tiene fecha de vencimiento, se considera baja urgencia

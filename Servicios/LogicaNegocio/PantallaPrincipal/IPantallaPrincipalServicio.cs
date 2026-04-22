@@ -9,7 +9,8 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
 {
     public interface IPantallaPrincipalServicio
     {
-        public List<NotificacionPP> checkearProductosVencidos(DateTime? fecha = null);
-        public List<NotificacionPP> checkearOfertasVencidas(DateTime? fecha = null);
+        List<NotificacionPP> notifiacionesProductosVencidos(int cantidadDiasABuscar);
+        List<NotificacionPP> notifiacionesOfertasVencidas(int cantidadDiasABuscar);
+        List<NotificacionPP> notifiacionesCtaCteVencidas(int cantidadDiasABuscar);
     }
 }

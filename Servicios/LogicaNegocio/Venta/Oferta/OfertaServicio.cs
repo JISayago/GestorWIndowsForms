@@ -885,17 +885,15 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
             return matches;
         }
 
-        public List<OfertaDTO> ObtenerOfertasVencidas(DateTime? fecha = null)
+        public List<OfertaDTO> ObtenerOfertasVencidas(int diasHaciaAtras)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var fechaComparacion = fecha ?? DateTime.Now;
+            DateTime fechaLimite = DateTime.Now.AddDays(-diasHaciaAtras);
 
-            DateTime datae = new DateTime(2025, 4, 20);//BORRAR ES PARA PROBAR NADA MAS
 
             var ofertasVencidas = context.OfertasDescuentos
-                //.Where(o => o.FechaFin != null && o.FechaFin < fechaComparacion)
-                .Where(o => o.FechaFin > datae)
+                .Where(x => x.FechaFin < fechaLimite && x.EstaActiva)//DEBERIA SER SOLO LAS ACTIVAS
                 .Select(o => new OfertaDTO
                 {
                     OfertaDescuentoId = o.OfertaDescuentoId,
