@@ -63,11 +63,37 @@ namespace Presentacion
             MyTimer.Tick += new EventHandler(MyTimer_Tick);
             MyTimer.Start();
 
+            flowLayoutNotificaciones.SizeChanged += FlowLayoutNotificaciones_SizeChanged;
 
             crearNotificaciones1();
             crearNotificaciones2();
 
             //CargarInfo();
+        }
+        private void FlowLayoutNotificaciones_SizeChanged(object sender, EventArgs e)
+        {
+            flowLayoutNotificaciones.SuspendLayout();
+
+            // 1. Desactivamos el scroll horizontal explícitamente antes de recalcular
+            flowLayoutNotificaciones.AutoScroll = false;
+            flowLayoutNotificaciones.HorizontalScroll.Maximum = 0;
+            flowLayoutNotificaciones.HorizontalScroll.Visible = false;
+
+            // 2. Calculamos el ancho restando un margen mayor (35px) 
+            // Esto asegura espacio para la barra vertical sin empujar el borde derecho.
+            int anchoSeguro = flowLayoutNotificaciones.ClientSize.Width - 35;
+
+            foreach (Control control in flowLayoutNotificaciones.Controls)
+            {
+                // Forzamos el ancho y eliminamos márgenes laterales que puedan estorbar
+                control.Width = anchoSeguro;
+                control.Margin = new Padding(control.Margin.Left, control.Margin.Top, 0, control.Margin.Bottom);
+            }
+
+            // 3. Reactivamos el scroll general y refrescamos
+            flowLayoutNotificaciones.AutoScroll = true;
+            flowLayoutNotificaciones.ResumeLayout();
+            flowLayoutNotificaciones.Refresh();
         }
 
         //private void CargarInfo()

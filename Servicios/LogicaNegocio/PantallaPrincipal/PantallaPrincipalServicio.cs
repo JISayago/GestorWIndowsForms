@@ -90,7 +90,14 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
                 Titulo = "Oferta Vencida",
                 Descripcion = $"La oferta {p.Codigo} - {p.Descripcion} venció el {p.FechaFin.Value:dd/MM/yyyy}.",
                 FechaNotificacion = DateTime.Now,
-                Leida = false
+                Leida = false,
+                NivelUrgencia = (int)(p.FechaFin.HasValue
+                    ? (p.FechaFin.Value.Date < DateTime.Now.Date
+                        ? Helpers.Sistema.NivelUrgencia.Alta
+                        : (p.FechaFin.Value.Date <= DateTime.Now.Date.AddDays(3)
+                            ? Helpers.Sistema.NivelUrgencia.Media
+                            : Helpers.Sistema.NivelUrgencia.Baja))
+                    : Helpers.Sistema.NivelUrgencia.Baja) // Si no tiene fecha de vencimiento, se considera baja urgencia
             }).ToList();
         }
     }
