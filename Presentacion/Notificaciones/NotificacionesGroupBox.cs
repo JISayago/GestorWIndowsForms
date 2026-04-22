@@ -23,8 +23,8 @@ public class NotificationGroupBox : GroupBox
 
     // --- Sección: Ítems de Notificación ---
     private readonly Color COLOR_ITEM_FONDO_LEIDO = Color.FromArgb(242, 242, 242); // Gris tenue para leídos
-    private readonly Color COLOR_ITEM_FONDO_NUEVO = Color.White;                   // Blanco para no leídos
-    private readonly Color COLOR_ITEM_BORDE = Color.DarkGray;                     // Color de la línea del borde del ítem
+    private readonly Color COLOR_ITEM_FONDO_NUEVO = Color.White;                    // Blanco para no leídos
+    private readonly Color COLOR_ITEM_BORDE = Color.DarkGray;                      // Color de la línea del borde del ítem
 
     // --- Sección: Textos ---
     private readonly Color COLOR_TEXTO_PRINCIPAL = Color.FromArgb(40, 40, 40);   // Gris muy oscuro (Título ítem)
@@ -54,7 +54,12 @@ public class NotificationGroupBox : GroupBox
         btnToggle.Text = "▲";
         btnToggle.Width = 30;
         btnToggle.Height = 25;
-        btnToggle.Location = new Point(this.Width - 45, 10);
+
+        // CAMBIO SOLICITADO: 
+        // X: this.Width - 50 (se aleja del borde derecho)
+        // Y: 12 (baja el botón para que no toque el borde superior)
+        btnToggle.Location = new Point(this.Width - 50, 12);
+
         btnToggle.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         btnToggle.FlatStyle = FlatStyle.Flat;
 
@@ -78,6 +83,9 @@ public class NotificationGroupBox : GroupBox
 
         this.Resize += (s, e) =>
         {
+            // Mantiene la nueva posición al redimensionar
+            btnToggle.Location = new Point(this.Width - 50, 12);
+
             foreach (Control ctrl in panelItems.Controls)
             {
                 ctrl.Width = panelItems.ClientSize.Width - 5;
@@ -190,20 +198,14 @@ public class NotificationGroupBox : GroupBox
         lblDescripcion.AutoSize = true;
         lblDescripcion.MaximumSize = new Size(panelItem.Width - 20, 0);
 
-        // ============================================================
-        // LÓGICA DE CLICKS UNIFICADA (Refactorizada)
-        // ============================================================
-
         MouseEventHandler unifiedClickHandler = (s, e) =>
         {
             if (e.Button == MouseButtons.Left)
             {
-                // CLICK IZQUIERDO: Acción principal (Abrir ventana)
                 OnItemClick(item);
             }
             else if (e.Button == MouseButtons.Right)
             {
-                // CLICK DERECHO: Solo marcar como leída visualmente
                 if (!item.Leida)
                 {
                     item.Leida = true;
@@ -212,7 +214,6 @@ public class NotificationGroupBox : GroupBox
             }
         };
 
-        // Asignamos el manejador único al panel y a las etiquetas
         panelItem.MouseClick += unifiedClickHandler;
         lblTitulo.MouseClick += unifiedClickHandler;
         lblDescripcion.MouseClick += unifiedClickHandler;
