@@ -4,6 +4,7 @@ using Presentacion.Core.Producto;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto;
 using System;
@@ -46,27 +47,37 @@ namespace Presentacion.Core.Producto
         {
             base.ConfigurarFiltrosUI();
 
+            // 🔹 Filtro principal (columna de búsqueda)
             var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
-                new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
-                new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
-                new OpcionFiltro { Texto = "Código", Valor = "Codigo" },
-                new OpcionFiltro { Texto = "Todos", Valor = "" }
-            };
-            var opciones2 = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Discontinuado", Valor = "Descripcion" },
-                new OpcionFiltro { Texto = "Todos", Valor = "" }
-            };
-
+    {
+        new OpcionFiltro { Texto = "Todos", Valor = "" },
+        new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
+        new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
+        new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
+        new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
+    };
 
             ActivarFiltroCombo(opciones, "Texto", "Valor");
+            cbxFiltroOpcional.SelectedValue = "";
+            var opcionesEstado = new List<OpcionFiltro>
+    {
+        new OpcionFiltro { Texto = "Todos", Valor = "" }
+    };
 
-            ActivarComboOpcional(opciones2, "Texto", "Valor");
+            foreach (EstadoProducto estado in Enum.GetValues(typeof(EstadoProducto)))
+            {
+                opcionesEstado.Add(new OpcionFiltro
+                {
+                    Texto = estado.ToString(),
+                    Valor = ((int)estado).ToString()
+                });
+            }
 
-            // Si querés fechas en el futuro:
-            // ActivarFiltroFechas("Filtrar por fecha");
+            ActivarComboOpcional(opcionesEstado, "Texto", "Valor");
+
+            if (cbxFiltroExtraEstado != null)
+                cbxFiltroExtraEstado.SelectedValue = "";
+
         }
 
         #endregion
