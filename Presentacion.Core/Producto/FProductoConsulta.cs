@@ -1,6 +1,7 @@
 ﻿using PdfSharp;
 using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.Core.Producto;
+using Presentacion.Core.Producto.Lote;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
@@ -326,6 +327,12 @@ namespace Presentacion.Core.Producto
             menu.Items.Add("Eliminar", null, (s, e) =>
             {
                 MessageBox.Show("Eliminar " + id);
+            });
+
+            menu.Items.Add("Detalle del Lote",null,(s,e) =>
+            {
+                var f = new FLoteConsulta(id.Value);
+                f.ShowDialog();
             });
 
             menu.Show(dgvGrilla, pos);
