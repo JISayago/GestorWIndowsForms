@@ -7,6 +7,7 @@ using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Admin;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado.DTO;
+using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -317,6 +318,27 @@ namespace Servicios.LogicaNegocio.Empleado
                 Page = filtros.Page,
                 PageSize = filtros.PageSize
             };
+        }
+
+        public DatosTurnoDTO ObtenerDatosPanelPrincipal(long usuarioId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var datosTurno = context.Empleados
+                .AsNoTracking()
+                .Include(e => e.Sesiones)
+                .Where(e => e.PersonaId == usuarioId)
+                .Select(e => new DatosTurnoDTO
+                {
+                    UsuarioId = e.PersonaId,
+                    UsuarioLogeado = $"{e.Username}",
+                    HoraIngresoUsuario = e.Sesiones
+                        .Where(s => s.FechaLogout == null)
+                        .Select(s => s.FechaLogin.ToString("HH:mm:ss")) // Retorna "14:30:05"
+                        .FirstOrDefault()
+                }).FirstOrDefault();
+        
+            return datosTurno;
         }
     }
 }

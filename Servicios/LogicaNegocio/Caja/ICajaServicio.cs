@@ -24,5 +24,7 @@ namespace Servicios.LogicaNegocio.Caja
 
         public void RegistrarEgreso(decimal monto, string descripcion);
 
+        public void ObtenerCajaAbierta();
+
     }
 }

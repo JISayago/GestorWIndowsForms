@@ -126,7 +126,7 @@ public class NotificationGroupBox : GroupBox
         }
     }
 
-    public void SetData(List<NotificacionPP> notificaciones, string tituloBase)
+    public void SetData(List<NotificacionDTO> notificaciones, string tituloBase)
     {
         // Aseguramos que siempre sea visible
         this.Visible = true;
@@ -165,7 +165,7 @@ public class NotificationGroupBox : GroupBox
         AplicarEstado();
     }
 
-    private Control CrearItem(NotificacionPP item)
+    private Control CrearItem(NotificacionDTO item)
     {
         var panelItem = new Panel();
         panelItem.Width = panelItems.ClientSize.Width - 5;
@@ -237,7 +237,7 @@ public class NotificationGroupBox : GroupBox
         return panelItem;
     }
 
-    private void OnItemClick(NotificacionPP item)
+    private void OnItemClick(NotificacionDTO item)
     {
         MessageBox.Show($"Notificación:\n{item.Titulo}");
     }

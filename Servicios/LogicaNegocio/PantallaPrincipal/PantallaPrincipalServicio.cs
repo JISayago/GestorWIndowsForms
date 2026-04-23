@@ -1,4 +1,6 @@
-﻿using Servicios.LogicaNegocio.CuentaCorriente;
+﻿using Servicios.LogicaNegocio.Caja;
+using Servicios.LogicaNegocio.CuentaCorriente;
+using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.Lote;
@@ -16,6 +18,9 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
         private readonly ILoteServicio _loteServicio;
         private readonly IOfertaServicio _ofertaServicio;
         private readonly ICuentaCorrienteServicio _cuentaCorrienteServicio;
+        private readonly IEmpleadoServicio _empleadoServicio;
+        //private readonly ICajaServicio _cajaServicio;
+        public CajaServicio caja = new CajaServicio();
 
         //USAR CONFIG DEL SISTEMA PARA MOSTRAR O NO CIERTAS NOTIFICACIONES
 
@@ -25,14 +30,16 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             _ofertaServicio = new OfertaServicio();
             _loteServicio = new LoteServicio();
             _cuentaCorrienteServicio = new CuentaCorrienteServicio();
+            _empleadoServicio = new EmpleadoServicio();
+            //_cajaServicio = new CajaServicio();
         }
 
-        public List<NotificacionPP> notifiacionesProductosVencidos(int cantidadDiasABuscar)
+        public List<NotificacionDTO> NotifiacionesProductosVencidos(int cantidadDiasABuscar)
         {
             //usar el service de lotes para obtener los productos que estan vencidos y crear una notificacion para cada uno de ellos
             var productosNotificar = _loteServicio.ObtenerLotesVencidos(cantidadDiasABuscar);
 
-            return productosNotificar.Select(p => new NotificacionPP
+            return productosNotificar.Select(p => new NotificacionDTO
             {
                 NotificacionId = p.Id, //o algun id unico para la notificacion
                 Titulo = $"Producto: {p.NombreProducto}  ",
@@ -49,11 +56,11 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             }).ToList();
         }
 
-        public List<NotificacionPP> notifiacionesOfertasVencidas(int cantidadDiasABuscar)
+        public List<NotificacionDTO> NotifiacionesOfertasVencidas(int cantidadDiasABuscar)
         {
             var promocionesNotificar = _ofertaServicio.ObtenerOfertasVencidas(cantidadDiasABuscar);
 
-            return promocionesNotificar.Select(p => new NotificacionPP
+            return promocionesNotificar.Select(p => new NotificacionDTO
             {
                 NotificacionId = p.OfertaDescuentoId, // o algún ID único para la notificación
                 Titulo = "Oferta Vencida",
@@ -70,11 +77,11 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             }).ToList();
         }
 
-        public List<NotificacionPP> notifiacionesCtaCteVencidas(int cantidadDiasABuscar)
+        public List<NotificacionDTO> NotifiacionesCtaCteVencidas(int cantidadDiasABuscar)
         {
             var productosNotificar = _cuentaCorrienteServicio.ObtenerCtaCteVencidas(cantidadDiasABuscar);
 
-            return productosNotificar.Select(p => new NotificacionPP
+            return productosNotificar.Select(p => new NotificacionDTO
             {
                 NotificacionId = p.CuentaCorrienteId, //o algun id unico para la notificacion
                 Titulo = $"Nombre Ctate: {p.NombreCuentaCorriente}  ",
@@ -89,6 +96,43 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
                             : Helpers.Sistema.NivelUrgencia.Baja))
                     : Helpers.Sistema.NivelUrgencia.Baja) // Si no tiene fecha de vencimiento, se considera baja urgencia
             }).ToList();
+        }
+
+        public DatosTurnoDTO ObtenerDatosTurno(long? cajaId, long usuarioId)
+        {
+            DatosTurnoDTO datosTurno;
+
+            if (!cajaId.HasValue)
+            {
+                datosTurno = new DatosTurnoDTO
+                {
+                    MontoInicial = 0,
+                    Ingresos = 0,
+                    TotalCaja = 0,
+                    CajaAbierta = false
+                };
+            }
+            else
+            {
+                var cajaDTO = caja.ObtenerCajaAbierta(cajaId);
+                datosTurno = new DatosTurnoDTO
+                {
+                    MontoInicial = cajaDTO.SaldoInicial,
+                    Ingresos = cajaDTO.TotalIngresos,
+                    TotalCaja = cajaDTO.BalanceFinal,
+                    CajaAbierta = !cajaDTO.EstaCerrada
+                };
+            }
+
+            // Ahora asignas los datos del usuario que son comunes para ambos casos
+            var datosUsuario = _empleadoServicio.ObtenerDatosPanelPrincipal(usuarioId);
+
+            datosTurno.UsuarioId = datosUsuario.UsuarioId;
+            datosTurno.UsuarioLogeado = datosUsuario.UsuarioLogeado;
+            datosTurno.HoraIngresoUsuario = datosUsuario.HoraIngresoUsuario;
+
+            //aqui se pueden agregar mas datos relacionados al turno, como por ejemplo el usuario que esta logueado, o la caja que esta abierta, etc.
+            return datosTurno;
         }
     }
 }

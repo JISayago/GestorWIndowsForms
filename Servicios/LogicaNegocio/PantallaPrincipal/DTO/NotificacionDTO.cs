@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Servicios.LogicaNegocio.PantallaPrincipal.DTO
 {
-    public class NotificacionPP
+    public class NotificacionDTO
     {
         public long NotificacionId { get; set; }
         public string Titulo { get; set; }
