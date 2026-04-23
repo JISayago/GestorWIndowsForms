@@ -80,7 +80,7 @@ namespace Presentacion.FBase
         private void FBaseConsulta_Load(object sender, EventArgs e)
         {
             ConfigurarFiltrosUI();
-
+            ActualizarTextosLabels();
             ResetearGrilla(dgvGrilla);
 
             ConfigurarAccionesPersonalizadas();
@@ -268,7 +268,32 @@ namespace Presentacion.FBase
             return dtpHasta.Value.Date;
         }
 
+        protected virtual string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Filtrar por:";
+        }
 
+        protected virtual string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Filtro:";
+        }
+
+        protected virtual string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar:";
+        }
+
+        protected virtual void ActualizarTextosLabels()
+        {
+            if (lblCmb1 != null)
+                lblCmb1.Text = ObtenerTextoLabelFiltroOpcional();
+
+            if (lblCmb2 != null)
+                lblCmb2.Text = ObtenerTextoLabelFiltroExtra();
+
+            if (lblBuscar != null)
+                lblBuscar.Text = ObtenerTextoLabelBusqueda();
+        }
         protected virtual object ObtenerFiltroExtraUI()
         {
             if (cbxFiltroOpcional == null || !cbxFiltroOpcional.Enabled) return null;

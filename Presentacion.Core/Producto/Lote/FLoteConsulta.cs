@@ -35,6 +35,7 @@ namespace Presentacion.Core.Producto.Lote
         {
             InitializeComponent();
             productoId = productoLoteIid;
+
         }
         public FLoteConsulta(bool vieneDeCargaLote = true) : this(new LoteServicio(), new ProductoServicio())
         {
@@ -238,7 +239,12 @@ namespace Presentacion.Core.Producto.Lote
 
 
                 }
+                else
+                {
+                    MessageBox.Show("No se ha encontrado un producto para mostrar sus lotes. Se muestran todos los lotes actuales", "Lote de producto no encontrado.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
+            
         }
         protected override void ConfigurarFiltrosUI()
         {
@@ -249,6 +255,7 @@ namespace Presentacion.Core.Producto.Lote
 
             var opciones = new List<OpcionFiltro>
             {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
                 new OpcionFiltro { Texto = "Número Lote", Valor = "NumeroLote" },
                 new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
                 new OpcionFiltro { Texto = "Producto", Valor = "Producto" }
@@ -260,14 +267,30 @@ namespace Presentacion.Core.Producto.Lote
 
             var tiposFecha = new List<OpcionFiltro>
             {
-                new OpcionFiltro { Texto = "Ninguno", Valor = ((int)TipoFiltroFechaLote.Ninguno).ToString() },
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
                 new OpcionFiltro { Texto = "Fecha Alta", Valor = ((int)TipoFiltroFechaLote.Alta).ToString() },
                 new OpcionFiltro { Texto = "Vencimiento", Valor = ((int)TipoFiltroFechaLote.Vencimiento).ToString() }
             };
 
             ActivarComboOpcional(tiposFecha, "Texto", "Valor");
 
-            cbxFiltroOpcional.SelectedValue = "NumeroLote";
+            cbxFiltroOpcional.SelectedValue = "";
+            cbxFiltroExtraEstado.SelectedValue = "";
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar lote por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Tipo de fecha:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar lote:";
         }
         public override void EjecutarClickDerechoFila(long? id, Point pos)
         {

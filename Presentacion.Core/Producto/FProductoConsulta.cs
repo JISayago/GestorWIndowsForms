@@ -83,6 +83,21 @@ namespace Presentacion.Core.Producto
 
         }
 
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar producto por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Filtrar por Estado:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar producto:";
+        }
+
         #endregion
 
         #region 🔵 ACCIONES DINÁMICAS

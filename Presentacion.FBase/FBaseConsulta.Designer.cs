@@ -51,10 +51,10 @@
             cbxEstaEliminado = new CheckBox();
             tableLayoutPanel6 = new TableLayoutPanel();
             tableLayoutPanel7 = new TableLayoutPanel();
-            lblEstado = new Label();
+            lblCmb2 = new Label();
             cbxFiltroExtraEstado = new ComboBox();
             tableLayoutPanel2 = new TableLayoutPanel();
-            lblFiltrarPorColumna = new Label();
+            lblCmb1 = new Label();
             cbxFiltroOpcional = new ComboBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             tableLayoutPanel8 = new TableLayoutPanel();
@@ -322,7 +322,7 @@
             tableLayoutPanel7.ColumnCount = 2;
             tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.6666641F));
-            tableLayoutPanel7.Controls.Add(lblEstado, 0, 0);
+            tableLayoutPanel7.Controls.Add(lblCmb2, 0, 0);
             tableLayoutPanel7.Controls.Add(cbxFiltroExtraEstado, 1, 0);
             tableLayoutPanel7.Location = new Point(3, 43);
             tableLayoutPanel7.Name = "tableLayoutPanel7";
@@ -331,15 +331,15 @@
             tableLayoutPanel7.Size = new Size(700, 26);
             tableLayoutPanel7.TabIndex = 7;
             // 
-            // lblEstado
+            // lblCmb2
             // 
-            lblEstado.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            lblEstado.AutoSize = true;
-            lblEstado.Location = new Point(3, 0);
-            lblEstado.Name = "lblEstado";
-            lblEstado.Size = new Size(42, 26);
-            lblEstado.TabIndex = 9;
-            lblEstado.Text = "Estado";
+            lblCmb2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            lblCmb2.AutoSize = true;
+            lblCmb2.Location = new Point(3, 0);
+            lblCmb2.Name = "lblCmb2";
+            lblCmb2.Size = new Size(42, 26);
+            lblCmb2.TabIndex = 9;
+            lblCmb2.Text = "Estado";
             // 
             // cbxFiltroExtraEstado
             // 
@@ -357,7 +357,7 @@
             tableLayoutPanel2.ColumnCount = 2;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.6666641F));
-            tableLayoutPanel2.Controls.Add(lblFiltrarPorColumna, 0, 0);
+            tableLayoutPanel2.Controls.Add(lblCmb1, 0, 0);
             tableLayoutPanel2.Controls.Add(cbxFiltroOpcional, 1, 0);
             tableLayoutPanel2.Location = new Point(3, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -366,15 +366,15 @@
             tableLayoutPanel2.Size = new Size(700, 26);
             tableLayoutPanel2.TabIndex = 7;
             // 
-            // lblFiltrarPorColumna
+            // lblCmb1
             // 
-            lblFiltrarPorColumna.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            lblFiltrarPorColumna.AutoSize = true;
-            lblFiltrarPorColumna.Location = new Point(3, 0);
-            lblFiltrarPorColumna.Name = "lblFiltrarPorColumna";
-            lblFiltrarPorColumna.Size = new Size(61, 26);
-            lblFiltrarPorColumna.TabIndex = 8;
-            lblFiltrarPorColumna.Text = "Propiedad";
+            lblCmb1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            lblCmb1.AutoSize = true;
+            lblCmb1.Location = new Point(3, 0);
+            lblCmb1.Name = "lblCmb1";
+            lblCmb1.Size = new Size(61, 26);
+            lblCmb1.TabIndex = 8;
+            lblCmb1.Text = "Propiedad";
             // 
             // cbxFiltroOpcional
             // 
@@ -581,10 +581,10 @@
         protected CheckBox cbxEstaEliminado;
         private TableLayoutPanel tableLayoutPanel6;
         private TableLayoutPanel tableLayoutPanel7;
-        protected Label lblEstado;
+        protected Label lblCmb2;
         protected ComboBox cbxFiltroExtraEstado;
         private TableLayoutPanel tableLayoutPanel2;
-        protected Label lblFiltrarPorColumna;
+        protected Label lblCmb1;
         protected ComboBox cbxFiltroOpcional;
         private TableLayoutPanel tableLayoutPanel3;
         private TableLayoutPanel tableLayoutPanel8;
