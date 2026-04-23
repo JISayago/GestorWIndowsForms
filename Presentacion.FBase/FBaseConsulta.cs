@@ -95,9 +95,9 @@ namespace Presentacion.FBase
 
         protected virtual void ConfigurarFiltrosUI()
         {
-            // Todo visible, pero deshabilitado por defecto
             if (chkUsarFecha != null)
                 chkUsarFecha.Enabled = false;
+
             if (chkUsarRango != null)
                 chkUsarRango.Enabled = false;
 
@@ -112,6 +112,20 @@ namespace Presentacion.FBase
 
             if (cbxFiltroExtraEstado != null)
                 cbxFiltroExtraEstado.Enabled = false;
+
+            if (cbxEstaEliminado != null)
+            {
+                cbxEstaEliminado.Visible = UsarFiltroEliminados;
+                cbxEstaEliminado.Enabled = UsarFiltroEliminados;
+                if (UsarFiltroEliminados)
+                    cbxEstaEliminado.Checked = false;
+            }
+
+            if (cbxFiltroOpcional != null)
+            {
+                cbxFiltroOpcional.SelectedIndexChanged -= cbxFiltroOpcional_SelectedIndexChanged;
+                cbxFiltroOpcional.SelectedIndexChanged += cbxFiltroOpcional_SelectedIndexChanged;
+            }
         }
 
         protected void ActivarFiltroFechas(string textoCheck)
@@ -141,7 +155,14 @@ namespace Presentacion.FBase
             cbxFiltroOpcional.ValueMember = value;
             cbxFiltroOpcional.SelectedIndex = -1;
         }
+        protected void ActivarFiltroEliminados(string texto = "Ver eliminados")
+        {
+            if (cbxEstaEliminado == null) return;
 
+            cbxEstaEliminado.Visible = true;
+            cbxEstaEliminado.Enabled = true;
+            cbxEstaEliminado.Text = texto;
+        }
         protected void ActivarComboOpcional(object data, string display, string value)
         {
             if (cbxFiltroExtraEstado != null)
@@ -201,13 +222,13 @@ namespace Presentacion.FBase
 
 
         #region FILTROS
-
+        protected virtual bool UsarFiltroEliminados => true;
         protected virtual FiltroConsulta ObtenerFiltros()
         {
             return new FiltroConsulta
             {
                 TextoBuscar = txtBuscar.Text,
-                VerEliminados = cbxEstaEliminado.Checked,
+                VerEliminados = UsarFiltroEliminados && cbxEstaEliminado.Checked,
                 FechaDesde = ObtenerFechaDesdeUI(),
                 FechaHasta = ObtenerFechaHastaUI(),
                 Extra = ObtenerFiltroExtraUI(),
@@ -460,9 +481,31 @@ namespace Presentacion.FBase
         private void chkUsarRango_CheckedChanged(object sender, EventArgs e)
         {
             if (!chkUsarFecha.Checked)
-        return;
+                return;
 
             dtpHasta.Enabled = chkUsarRango.Checked;
+        }
+
+        private void cbxFiltroOpcional_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ActualizarLabelBusqueda();
+        }
+
+        protected virtual void ActualizarLabelBusqueda()
+        {
+            if (cbxFiltroOpcional == null || lblBuscar == null)
+                return;
+
+            var texto = cbxFiltroOpcional.Text;
+
+            if (string.IsNullOrWhiteSpace(texto) || texto == "Todos")
+            {
+                lblBuscar.Text = "Buscar:";
+            }
+            else
+            {
+                lblBuscar.Text = $"Buscar por: {texto}";
+            }
         }
     }
 }

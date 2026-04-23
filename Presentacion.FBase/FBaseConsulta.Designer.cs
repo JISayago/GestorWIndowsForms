@@ -385,6 +385,7 @@
             cbxFiltroOpcional.Name = "cbxFiltroOpcional";
             cbxFiltroOpcional.Size = new Size(461, 23);
             cbxFiltroOpcional.TabIndex = 0;
+            cbxFiltroOpcional.SelectedIndexChanged += cbxFiltroOpcional_SelectedIndexChanged;
             // 
             // tableLayoutPanel3
             // 
@@ -501,9 +502,9 @@
             lblBuscar.AutoSize = true;
             lblBuscar.Location = new Point(3, 0);
             lblBuscar.Name = "lblBuscar";
-            lblBuscar.Size = new Size(42, 15);
+            lblBuscar.Size = new Size(48, 15);
             lblBuscar.TabIndex = 1;
-            lblBuscar.Text = "Buscar";
+            lblBuscar.Text = "Buscar :";
             lblBuscar.TextAlign = ContentAlignment.BottomLeft;
             // 
             // btnBuscar
@@ -513,7 +514,7 @@
             btnBuscar.Name = "btnBuscar";
             btnBuscar.Size = new Size(284, 58);
             btnBuscar.TabIndex = 1;
-            btnBuscar.Text = "Buscar";
+            btnBuscar.Text = "Aplicar Filtros";
             btnBuscar.UseVisualStyleBackColor = true;
             btnBuscar.Click += btnBuscar_Click;
             // 

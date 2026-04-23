@@ -47,6 +47,8 @@ namespace Presentacion.Core.Producto
         {
             base.ConfigurarFiltrosUI();
 
+            ActivarFiltroEliminados("Mostrar productos eliminados.");
+
             // 🔹 Filtro principal (columna de búsqueda)
             var opciones = new List<OpcionFiltro>
     {
