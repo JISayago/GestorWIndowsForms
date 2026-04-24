@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Servicios.LogicaNegocio.Caja
 {
-    public class CajaServicio
+    public class CajaServicio 
     {
 
         public void AbrirCaja(decimal montoInicial, long empleadoId)
@@ -317,5 +317,29 @@ namespace Servicios.LogicaNegocio.Caja
         }
 
         //PODRIA HACER UNA FUNCION PARA BUSCAR FECHAS ESPECIFICAS,Y REUSAR ESA PARA LOS GRAFICOS FILTRADOS
+
+        public CajaDTO ObtenerCajaAbierta(long? cajaId)
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+            var caja = context.Cajas
+                .Where(c => !c.EstaCerrada && c.CajaId == cajaId)
+                .OrderByDescending(c => c.FechaInicio)
+                .Select(c => new CajaDTO
+                {
+                    CajaId = c.CajaId,
+                    SaldoInicial = c.SaldoInicial,
+                    SaldoActual = c.SaldoActual,
+                    FechaInicio = c.FechaInicio,
+                    FechaFin = c.FechaFin,
+                    TotalIngresos = c.TotalIngresos,
+                    TotalEgresos = c.TotalEgresos,
+                    BalanceFinal = c.BalanceFinal,
+                    EmpleadoApertura = c.EmpleadoApertura,
+                    EmpleadoCierre = c.EmpleadoCierre,
+                    EstaCerrada = c.EstaCerrada,
+                })
+                .FirstOrDefault();
+            return caja;
+        }
     }
 }

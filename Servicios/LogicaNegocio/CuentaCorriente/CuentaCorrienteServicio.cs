@@ -396,5 +396,30 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 DniAutorizados = cuentacorrienteBusqueda.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
             };
         }
+
+        public List<CuentaCorrienteDTO> ObtenerCtaCteVencidas(int cantidadDiasVencimiento)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var fechaLimite = DateTime.Now.AddDays(cantidadDiasVencimiento);
+            
+            var cuentasVencidas = context.CuentaCorriente
+                //.Include(x => x.CuentaCorrienteAutorizado)
+                //.Include(x => x.Movimientos)
+                .Where(x => !x.EstaEliminado && x.FechaVencimiento.HasValue && x.FechaVencimiento.Value <= fechaLimite) //Probar
+                .Select(x => new CuentaCorrienteDTO
+                {
+                    Saldo = x.Saldo,
+                    LimiteDeuda = x.LimiteDeuda,
+                    NombreCuentaCorriente = x.NombreCuentaCorriente,
+                    LimiteDeudaActivo = x.LimiteDeudaActivo,
+                    FechaVencimiento = x.FechaVencimiento,
+                    CuentaCorrienteId = x.CuentaCorrienteId,
+                    NombreCliente = $"{x.Cliente.Persona.Nombre} {x.Cliente.Persona.Apellido}",
+                    //DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
+                })
+                .ToList();
+            return cuentasVencidas;
+        }
     }
 }

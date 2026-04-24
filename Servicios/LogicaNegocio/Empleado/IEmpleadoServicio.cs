@@ -1,6 +1,7 @@
 ﻿using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado.DTO;
+using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace Servicios.LogicaNegocio.Empleado
         EmpleadoDTO ObtenerEmpleadoPorId(long personaId);
         EstadoOperacion Modificar(EmpleadoDTO empleadoDto, long? empleadoId);
         EstadoOperacion Eliminar(long empleadoId);
-        
+        DatosTurnoDTO ObtenerDatosPanelPrincipal(long usuarioId);
+
     }
 }

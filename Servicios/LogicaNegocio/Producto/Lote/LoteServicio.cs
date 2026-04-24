@@ -13,9 +13,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Servicios.LogicaNegocio.Producto.Lote
 {
@@ -502,5 +504,32 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             }
         }
 
+        public List<LoteDTO> ObtenerLotesVencidos(int diasHaciaAtras)
+        {
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                // Calculamos la fecha límite: hoy menos la cantidad de días
+                // Si quieres los vencidos hace 5 días, restamos 5 a la fecha actual.
+                DateTime fechaLimite = DateTime.Now.AddDays(-diasHaciaAtras);
+
+                return context.Lotes
+                    .Where(x => x.FechaVencimiento < fechaLimite && x.EstaActivo && !x.EstaEliminado)
+                    .Select(x => new LoteDTO
+                    {
+                        Id = x.LoteId,
+                        IdProducto = x.IdProducto,
+                        StockInicial = x.StockIncial,
+                        StockActual = x.StockActual,
+                        NumeroLote = x.NumeroLote,
+                        Descripcion = x.Descripcion,
+                        FechaAlta = x.FechaAlta,
+                        FechaVencimiento = x.FechaVencimiento,
+                        EstaVencido = x.EstaVencido,
+                        EstaActivo = x.EstaActivo,
+                        NombreProducto = x.Producto.Descripcion
+                    })
+                    .ToList();
+            }
+        }
     }
 }

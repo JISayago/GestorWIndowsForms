@@ -884,5 +884,32 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
 
             return matches;
         }
+
+        public List<OfertaDTO> ObtenerOfertasVencidas(int diasHaciaAtras)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            DateTime fechaLimite = DateTime.Now.AddDays(-diasHaciaAtras);
+
+
+            var ofertasVencidas = context.OfertasDescuentos
+                .Where(x => x.FechaFin < fechaLimite && x.EstaActiva)//DEBERIA SER SOLO LAS ACTIVAS
+                .Select(o => new OfertaDTO
+                {
+                    OfertaDescuentoId = o.OfertaDescuentoId,
+                    Descripcion = o.Descripcion,
+                    Codigo = o.Codigo,
+                    FechaInicio = o.FechaInicio,
+                    FechaFin = o.FechaFin,
+                    EstaActiva = o.EstaActiva,
+                    esOfertaPorGrupo = o.esOfertaPorGrupo,
+                    IdMarca = o.IdMarca,
+                    IdRubro = o.IdRubro,
+                    IdCategoria = o.IdCategoria,
+                    GrupoNombre = o.GrupoNombre
+                }).ToList();
+
+            return ofertasVencidas;
+        }
     }
 }
