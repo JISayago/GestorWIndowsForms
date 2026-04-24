@@ -227,6 +227,20 @@ namespace Presentacion.Core.Cliente
             cbxFiltroExtraEstado.SelectedValue = "";
         }
 
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar cliente por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Tipo de filtrado:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar cliente:";
+        }
         protected override void ConfigurarAccionesPersonalizadas()
         {
             // BOTON Seleccionar

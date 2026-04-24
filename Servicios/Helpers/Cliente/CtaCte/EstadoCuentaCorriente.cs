@@ -2,8 +2,8 @@
 {
     public enum EstadoCuentaCorriente
     {
-        Activa = 0,
-        Suspendida = 1,
-        Cerrada = 2
+        Activa = 1,
+        Suspendida = 2,
+        Cerrada = 3
     }
 }

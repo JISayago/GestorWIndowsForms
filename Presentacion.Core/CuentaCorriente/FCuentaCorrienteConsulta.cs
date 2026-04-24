@@ -1,6 +1,9 @@
-﻿using Presentacion.FBase;
+﻿using Presentacion.Core.Presentacion.Core.Helpers;
+using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Cliente.CtaCte;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.CuentaCorriente;
 using System.Windows.Forms;
@@ -135,5 +138,53 @@ namespace Presentacion.Core.CuentaCorriente
         }
 
         #endregion
+
+        protected override void ConfigurarFiltrosUI()
+        {
+
+            base.ConfigurarFiltrosUI();
+
+            ActivarFiltroEliminados("Mostrar productos eliminados.");
+
+            var opciones = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Nombre de Cuenta Corriente", Valor = "NombreCuentaCorriente" },
+            };
+
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
+
+            ActivarFiltroFechas("Filtrar por fecha de vencimiento");
+
+            var tiposFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
+                new OpcionFiltro { Texto = "Fecha vencimiento", Valor = "vto" },
+                //new OpcionFiltro { Texto = "Fecha creación", Valor = "creacion" },
+                new OpcionFiltro { Texto = "Activa", Valor = ((int)EstadoCuentaCorriente.Activa).ToString() },
+                new OpcionFiltro { Texto = "Suspendida", Valor = ((int)EstadoCuentaCorriente.Suspendida).ToString() },
+                new OpcionFiltro { Texto = "Cerrada", Valor = ((int)EstadoCuentaCorriente.Cerrada).ToString() },
+            };
+
+            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+
+            cbxFiltroOpcional.SelectedValue = "";
+            cbxFiltroExtraEstado.SelectedValue = "";
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar cuente corriente por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Filtrar por:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar cuenta corriente:";
+        }
     }
 }
