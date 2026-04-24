@@ -251,7 +251,7 @@ namespace Presentacion.Core.Producto.Lote
 
             base.ConfigurarFiltrosUI();
 
-            ActivarFiltroEliminados("Mostrar productos eliminados.");
+            ActivarFiltroEliminados("Mostrar movimientos eliminados.");
 
             var opciones = new List<OpcionFiltro>
             {

@@ -1,6 +1,8 @@
 ﻿using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
+using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Movimiento;
 using System;
@@ -140,22 +142,48 @@ namespace Presentacion.Core.Movimiento
         #endregion
         protected override void ConfigurarFiltrosUI()
         {
+
             base.ConfigurarFiltrosUI();
 
-            // 🔹 Combo opcional → Tipo de movimiento (opcional)
+            ActivarFiltroEliminados("Mostrar productos eliminados.");
+
             var opciones = new List<OpcionFiltro>
-    {
-        new OpcionFiltro { Texto = "Todos", Valor = "0" },
-        new OpcionFiltro { Texto = "Ingreso", Valor = "1" },
-        new OpcionFiltro { Texto = "Egreso", Valor = "2" }
-    };
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Número Movimiento", Valor = "NumeroMovimiento" },
+            };
 
             ActivarFiltroCombo(opciones, "Texto", "Valor");
 
-            cbxFiltroOpcional.SelectedValue = "0";
+            ActivarFiltroFechas("Filtrar por fecha");
 
-            // 📅 Fechas (clave para movimientos)
-            ActivarFiltroFechas("Filtrar por fecha de movimiento");
+            var tiposFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
+                new OpcionFiltro { Texto = "Fecha Movimiento", Valor = "FM"},
+                new OpcionFiltro { Texto = "Ingresos", Valor = ((int)TipoMovimiento.Ingreso).ToString() },
+                new OpcionFiltro { Texto = "Egresos", Valor = ((int)TipoMovimiento.Egreso).ToString() }
+            };
+
+            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+
+            cbxFiltroOpcional.SelectedValue = "";
+            cbxFiltroExtraEstado.SelectedValue = "";
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar movimiento por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Filtrar por:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar Movimiento:";
         }
     }
 }

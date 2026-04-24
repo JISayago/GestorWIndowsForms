@@ -308,49 +308,92 @@ namespace Servicios.LogicaNegocio.Gasto
             // 🔍 TEXTO
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                query = query.Where(g =>
-                    g.Detalle.Contains(filtros.TextoBuscar) ||
-                    g.NumeroGasto.Contains(filtros.TextoBuscar) ||
-                    g.Empleado.Persona.Nombre.Contains(filtros.TextoBuscar) ||
-                    g.Empleado.Persona.Apellido.Contains(filtros.TextoBuscar)
-                );
+                var texto = filtros.TextoBuscar;
+
+                switch (filtros.Extra?.ToString())
+                {
+                    case "NumeroGasto":
+                        query = query.Where(g => g.NumeroGasto.Contains(texto));
+                        break;
+
+                    case "NombreEmpleado":
+                        query = query.Where(g =>
+                            g.Empleado.Persona.Nombre.Contains(texto) ||
+                            g.Empleado.Persona.Apellido.Contains(texto));
+                        break;
+                    default:
+                        query = query.Where(g =>
+                            g.NumeroGasto.Contains(texto) ||
+                            g.Detalle.Contains(texto));
+                        break;
+                }
             }
 
-            // 🔥 ESTADO (viene en Extra)
-            int? estado = null;
+            // 🔴 EXTRA2 → FECHA o ESTADO
+            TipoFiltroFechaGasto? tipoFecha = null;
+            EstadoGasto? estadoFiltro = null;
 
-            if (filtros.Extra != null && filtros.Extra.ToString() != "0")
-                estado = Convert.ToInt32(filtros.Extra);
+            if (filtros.Extra2 != null &&
+                int.TryParse(filtros.Extra2.ToString(), out var valor))
+            {
+                if (Enum.IsDefined(typeof(TipoFiltroFechaGasto), valor))
+                    tipoFecha = (TipoFiltroFechaGasto)valor;
 
-            if (estado.HasValue)
-            {
-                query = query.Where(g => g.EstadoGasto == estado.Value);
-            }
-            else
-            {
-                // comportamiento actual
-                query = query.Where(g => g.EstadoGasto > 0);
+                if (Enum.IsDefined(typeof(EstadoGasto), valor))
+                    estadoFiltro = (EstadoGasto)valor;
             }
 
-            // 📅 FECHAS
-            if (filtros.FechaDesde.HasValue)
+            // 📅 FILTRO FECHA
+            if (tipoFecha.HasValue)
             {
-                query = query.Where(g => g.FechaGasto >= filtros.FechaDesde.Value);
+                if (tipoFecha == TipoFiltroFechaGasto.FechaGasto)
+                {
+                    if (filtros.FechaDesde.HasValue)
+                        query = query.Where(g => g.FechaGasto >= filtros.FechaDesde.Value);
+
+                    if (filtros.FechaHasta.HasValue)
+                    {
+                        var hastaReal = filtros.FechaHasta.Value.AddDays(1);
+                        query = query.Where(g => g.FechaGasto < hastaReal);
+                    }
+                }
+
+                if (tipoFecha == TipoFiltroFechaGasto.FechaRegistro)
+                {
+                    if (filtros.FechaDesde.HasValue)
+                        query = query.Where(g => g.FechaRegistro >= filtros.FechaDesde.Value);
+
+                    if (filtros.FechaHasta.HasValue)
+                    {
+                        var hastaReal = filtros.FechaHasta.Value.AddDays(1);
+                        query = query.Where(g => g.FechaRegistro < hastaReal);
+                    }
+                }
             }
 
-            if (filtros.FechaHasta.HasValue)
+            // 🔴 FILTRO ESTADO
+            if (estadoFiltro.HasValue)
             {
-                var hastaReal = filtros.FechaHasta.Value.AddDays(1);
-                query = query.Where(g => g.FechaGasto < hastaReal);
+                query = query.Where(g => g.EstadoGasto == (int)estadoFiltro.Value);
             }
 
             // 📊 TOTAL
             var total = query.Count();
 
-            // 📌 ORDEN
+            // 🔴 CONTROL PAGINACION
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 📌 ORDEN (tiene sentido usar FechaGasto)
             query = query.OrderByDescending(g => g.FechaGasto);
 
-            // 📄 PAGINACIÓN + PROYECCIÓN
+            // 📄 DATA
             var data = query
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)
@@ -378,6 +421,6 @@ namespace Servicios.LogicaNegocio.Gasto
                 PageSize = filtros.PageSize
             };
         }
-
     }
+
 }

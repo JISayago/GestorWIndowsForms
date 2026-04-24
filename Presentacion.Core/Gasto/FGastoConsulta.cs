@@ -3,6 +3,7 @@ using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers.Gasto;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Gasto;
 using System.Diagnostics;
@@ -246,30 +247,51 @@ namespace Presentacion.Core.Gasto
         #endregion
         protected override void ConfigurarFiltrosUI()
         {
+
             base.ConfigurarFiltrosUI();
 
-            // 🔹 combo de estados
-            var opciones = new List<OpcionFiltro>
-    {
-        new OpcionFiltro { Texto = "Todos", Valor = "0" }
-    };
 
-            foreach (EstadoGasto estado in Enum.GetValues(typeof(EstadoGasto)))
+            var opciones = new List<OpcionFiltro>
             {
-                opciones.Add(new OpcionFiltro
-                {
-                    Texto = estado.ToString(),
-                    Valor = ((int)estado).ToString()
-                });
-            }
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Numero de Gasto", Valor = "NumeroGasto" },
+                new OpcionFiltro { Texto = "Empleado", Valor = "NombreEmpleado" },
+
+            };
 
             ActivarFiltroCombo(opciones, "Texto", "Valor");
 
-            // 👉 valor por defecto
-            cbxFiltroOpcional.SelectedValue = "0";
-
-            // 📅 activar fechas
             ActivarFiltroFechas("Filtrar por fecha");
+
+            var tiposFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
+                new OpcionFiltro { Texto = "Fecha del Gasto Realizado", Valor = ((int)TipoFiltroFechaGasto.FechaGasto).ToString() },
+                new OpcionFiltro { Texto = "Fecha del Registro del Gasto", Valor = ((int)TipoFiltroFechaGasto.FechaRegistro).ToString() },
+                new OpcionFiltro { Texto = "Pagado", Valor = ((int)EstadoGasto.Pagado).ToString() },
+                new OpcionFiltro { Texto = "Pendiente", Valor = ((int)EstadoGasto.Pendiente).ToString() },
+                new OpcionFiltro { Texto = "Anulado", Valor = ((int)EstadoGasto.Pagado).ToString() }
+            };
+
+            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+
+            cbxFiltroOpcional.SelectedValue = "";
+            cbxFiltroExtraEstado.SelectedValue = "";
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar gasto por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Filtrar gasto por:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar gasto:";
         }
         private void FGastoConsulta_Load(object sender, EventArgs e)
         {

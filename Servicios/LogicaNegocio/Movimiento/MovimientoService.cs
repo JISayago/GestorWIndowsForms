@@ -204,30 +204,78 @@ namespace Servicios.LogicaNegocio.Movimiento
             // 🔍 TEXTO
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                query = query.Where(x =>
-                    x.NumeroMovimiento.Contains(filtros.TextoBuscar)
-                );
+                var texto = filtros.TextoBuscar;
+
+                switch (filtros.Extra?.ToString())
+                {
+                    case "NumeroMovimiento":
+                        query = query.Where(x => x.NumeroMovimiento.Contains(texto));
+                        break;
+
+                    default:
+                        query = query.Where(x => x.NumeroMovimiento.Contains(texto));
+                        break;
+                }
             }
 
-            // 📅 FECHAS (movimiento SÍ tiene fecha propia → más simple que productos)
-            if (filtros.FechaDesde.HasValue)
+            // 🔴 EXTRA2 → puede ser FECHA o TIPO MOVIMIENTO
+            TipoMovimiento? tipoMovimiento = null;
+            bool filtrarPorFechaMovimiento = false;
+
+            if (filtros.Extra2 != null)
             {
-                query = query.Where(x => x.FechaMovimiento >= filtros.FechaDesde.Value);
+                var valor = filtros.Extra2.ToString();
+
+                // 📅 filtro fecha
+                if (valor == "FM")
+                {
+                    filtrarPorFechaMovimiento = true;
+                }
+
+                // 🔢 tipo movimiento
+                if (int.TryParse(valor, out var tipo))
+                {
+                    if (Enum.IsDefined(typeof(TipoMovimiento), tipo))
+                        tipoMovimiento = (TipoMovimiento)tipo;
+                }
             }
 
-            if (filtros.FechaHasta.HasValue)
+            // 📅 FILTRO FECHA (solo si eligió "Fecha Movimiento")
+            if (filtrarPorFechaMovimiento)
             {
-                var hastaReal = filtros.FechaHasta.Value.AddDays(1);
-                query = query.Where(x => x.FechaMovimiento < hastaReal);
+                if (filtros.FechaDesde.HasValue)
+                    query = query.Where(x => x.FechaMovimiento >= filtros.FechaDesde.Value);
+
+                if (filtros.FechaHasta.HasValue)
+                {
+                    var hastaReal = filtros.FechaHasta.Value.AddDays(1);
+                    query = query.Where(x => x.FechaMovimiento < hastaReal);
+                }
+            }
+
+            // 🔴 FILTRO TIPO (Ingresos / Egresos)
+            if (tipoMovimiento.HasValue)
+            {
+                query = query.Where(x => x.TipoMovimiento == (int)tipoMovimiento.Value);
             }
 
             // 📊 TOTAL
             var total = query.Count();
 
-            // 📌 ORDEN
+            // 🔴 CONTROL PAGINACION
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 📌 ORDEN (correcto para movimientos)
             query = query.OrderByDescending(x => x.FechaMovimiento);
 
-            // 📄 PAGINACIÓN + PROYECCIÓN
+            // 📄 DATA
             var data = query
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)
