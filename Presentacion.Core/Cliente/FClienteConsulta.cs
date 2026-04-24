@@ -2,6 +2,8 @@
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Cliente;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Cliente;
 using System;
@@ -195,17 +197,34 @@ namespace Presentacion.Core.Cliente
             base.ConfigurarFiltrosUI();
 
             var opciones = new List<OpcionFiltro>
-    {
-        new OpcionFiltro { Texto = "Nombre", Valor = "ApyNom" },
-        new OpcionFiltro { Texto = "Documento", Valor = "Dni" },
-        new OpcionFiltro { Texto = "Teléfono", Valor = "Telefono" },
-        new OpcionFiltro { Texto = "Email", Valor = "Email" }
-    };
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Nombre", Valor = "ApyNom" },
+                new OpcionFiltro { Texto = "Documento", Valor = "Dni" },
+                new OpcionFiltro { Texto = "Teléfono", Valor = "Telefono" },
+                new OpcionFiltro { Texto = "Email", Valor = "Email" }
+            };
 
             ActivarFiltroCombo(opciones, "Texto", "Valor");
 
-            // si después querés fechas:
-            // ActivarFiltroFechas("Filtrar por fecha");
+
+            ActivarFiltroFechas("Filtrar por:");
+
+            var tiposFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
+                new OpcionFiltro { Texto = "Fecha Alta", Valor = ((int)TipoFiltroCliente.FechaAlta).ToString() },
+                new OpcionFiltro { Texto = "Fecha Baja", Valor = ((int)TipoFiltroCliente.FechaBaja).ToString() },
+                new OpcionFiltro { Texto = "Con Cuenta Corriente", Valor =((int)TipoFiltroCliente.ConCtaCte).ToString() },
+                new OpcionFiltro { Texto = "Sin Cuenta Corriente", Valor = ((int)TipoFiltroCliente.SinCtaCte).ToString() },
+                new OpcionFiltro { Texto = "Inhabilitado", Valor = ((int)TipoFiltroCliente.Inhabilitado).ToString() },
+
+            };
+
+            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+
+            cbxFiltroOpcional.SelectedValue = "";
+            cbxFiltroExtraEstado.SelectedValue = "";
         }
 
         protected override void ConfigurarAccionesPersonalizadas()

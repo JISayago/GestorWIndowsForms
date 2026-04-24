@@ -1,7 +1,8 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
-using Servicios.Helpers.CtaCte;
+using Servicios.Helpers.Cliente;
+using Servicios.Helpers.Cliente.CtaCte;
 using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
@@ -202,7 +203,7 @@ namespace Servicios.LogicaNegocio.Cliente
                 .Where(c => c.Persona != null)
                 .AsQueryable();
 
-            // 🔴 ELIMINADOS (centralizado)
+            // 🔴 ELIMINADOS
             query = filtros.VerEliminados
                 ? query.Where(c => c.Persona.EstaEliminado)
                 : query.Where(c => !c.Persona.EstaEliminado);
@@ -214,12 +215,10 @@ namespace Servicios.LogicaNegocio.Cliente
 
                 switch (filtros.Extra?.ToString())
                 {
-                    case "Nombre":
-                        query = query.Where(c => c.Persona.Nombre.Contains(texto));
-                        break;
-
-                    case "Apellido":
-                        query = query.Where(c => c.Persona.Apellido.Contains(texto));
+                    case "ApyNom":
+                        query = query.Where(c =>
+                            c.Persona.Nombre.Contains(texto) ||
+                            c.Persona.Apellido.Contains(texto));
                         break;
 
                     case "Dni":
@@ -227,8 +226,9 @@ namespace Servicios.LogicaNegocio.Cliente
                         break;
 
                     case "Telefono":
-                        query = query.Where(c => c.Persona.Telefono.Contains(texto)
-                                               || c.Persona.Telefono2.Contains(texto));
+                        query = query.Where(c =>
+                            c.Persona.Telefono.Contains(texto) ||
+                            c.Persona.Telefono2.Contains(texto));
                         break;
 
                     case "Email":
@@ -244,34 +244,65 @@ namespace Servicios.LogicaNegocio.Cliente
                 }
             }
 
-            // 📅 FECHAS (si querés usarlo con FechaAlta / Baja)
-            var tipoFecha = (TipoFiltroFecha?)filtros.Extra2;
+            // 🔴 EXTRA2 → TODO (fechas + estados + cuenta corriente)
+            TipoFiltroCliente? tipo = null;
 
-            //if (tipoFecha.HasValue && tipoFecha != TipoFiltroFecha.Ninguno)   VER FILTROS DE FECHA SEGUN CORRESPONDAw
-            //{
-            //    if (tipoFecha == TipoFiltroFecha.Alta)
-            //    {
-            //        if (filtros.FechaDesde.HasValue)
-            //            query = query.Where(c => c.FechaAlta >= filtros.FechaDesde.Value);
+            if (filtros.Extra2 != null &&
+                int.TryParse(filtros.Extra2.ToString(), out var valor))
+            {
+                tipo = (TipoFiltroCliente)valor;
+            }
 
-            //        if (filtros.FechaHasta.HasValue)
-            //            query = query.Where(c => c.FechaAlta <= filtros.FechaHasta.Value);
-            //    }
+            if (tipo.HasValue)
+            {
+                switch (tipo.Value)
+                {
+                    case TipoFiltroCliente.FechaAlta:
+                        if (filtros.FechaDesde.HasValue)
+                            query = query.Where(c => c.FechaAlta >= filtros.FechaDesde.Value);
 
-            //    if (tipoFecha == TipoFiltroFecha.Baja)
-            //    {
-            //        if (filtros.FechaDesde.HasValue)
-            //            query = query.Where(c => c.FechaBaja.HasValue && c.FechaBaja >= filtros.FechaDesde.Value);
+                        if (filtros.FechaHasta.HasValue)
+                            query = query.Where(c => c.FechaAlta <= filtros.FechaHasta.Value);
+                        break;
 
-            //        if (filtros.FechaHasta.HasValue)
-            //            query = query.Where(c => c.FechaBaja.HasValue && c.FechaBaja <= filtros.FechaHasta.Value);
-            //    }
-            //}
+                    case TipoFiltroCliente.FechaBaja:
+                        query = query.Where(c => c.FechaBaja.HasValue);
 
-            // 📊 TOTAL (antes de paginar)
+                        if (filtros.FechaDesde.HasValue)
+                            query = query.Where(c => c.FechaBaja.Value >= filtros.FechaDesde.Value);
+
+                        if (filtros.FechaHasta.HasValue)
+                            query = query.Where(c => c.FechaBaja.Value <= filtros.FechaHasta.Value);
+                        break;
+
+                    case TipoFiltroCliente.ConCtaCte:
+                        query = query.Where(c => c.CuentaCorriente != null);
+                        break;
+
+                    case TipoFiltroCliente.SinCtaCte:
+                        query = query.Where(c => c.CuentaCorriente == null);
+                        break;
+
+                    case TipoFiltroCliente.Inhabilitado:
+                        query = query.Where(c => c.Estado == (int)EstadoCliente.Inhablitado);
+                        break;
+                }
+            }
+
+            // 📊 TOTAL
             var total = query.Count();
 
-            // 📄 PAGINACION
+            // 🔴 PAGINACION SEGURA
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 📄 DATA
             var data = query
                 .OrderBy(c => c.PersonaId)
                 .Skip((filtros.Page - 1) * filtros.PageSize)
@@ -293,8 +324,7 @@ namespace Servicios.LogicaNegocio.Cliente
                     FechaAlta = c.FechaAlta,
                     FechaBaja = c.FechaBaja,
                     Estado = c.Estado,
-                    //EstadoDescripcion = Enum.GetName(typeof(EstadoCliente), c.Estado) ?? "Desconocido"
-                    EstadoDescripcion = ""
+                    EstadoDescripcion = c.Estado.ToString()
                 })
                 .ToList();
 
