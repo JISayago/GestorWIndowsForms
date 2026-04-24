@@ -14,5 +14,6 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
         List<NotificacionDTO> NotifiacionesCtaCteVencidas(int cantidadDiasABuscar);
         DatosTurnoDTO ObtenerDatosTurno(long? cajaId, long usuarioId);
         DatosTurnoDTO ObtenerActualizarDatosCaja(long? cajaId, DatosTurnoDTO datosTurno);
+        void GuardarNotasRapidas(string textoLimpio, string nombreUsuario);
     }
 }

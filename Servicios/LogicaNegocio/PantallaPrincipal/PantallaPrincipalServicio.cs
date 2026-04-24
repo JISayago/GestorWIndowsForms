@@ -1,4 +1,6 @@
-﻿using Servicios.LogicaNegocio.Caja;
+﻿using AccesoDatos.Entidades;
+using Microsoft.EntityFrameworkCore;
+using Servicios.LogicaNegocio.Caja;
 using Servicios.LogicaNegocio.CuentaCorriente;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
@@ -164,6 +166,34 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
                     NotasTurno = datosTurno.NotasTurno
                 };
             }
+        }
+
+        public void GuardarNotasRapidas(string textoLimpio, string nombreUsuario)
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+
+            //var notaExistente = context.NotasRapidas.FirstOrDefault(x => x.NotaId == 1);
+
+            //if (notaExistente != null)
+            //{
+            //    // Actualizamos
+            //    notaExistente.Cuerpo = textoLimpio;
+            //    notaExistente.FechaModificacion = DateTime.Now;
+            //    notaExistente.UsuarioNombre = nombreUsuario;
+            //}
+            //else
+            //{
+            //    // Si por alguna razón no existe (primera vez), la creamos con ID 1
+            //    context.NotasRapidas.Add(new NotaRapida
+            //    {
+            //        NotaId = 1,
+            //        Cuerpo = textoLimpio,
+            //        FechaModificacion = DateTime.Now,
+            //        UsuarioNombre = nombreUsuario
+            //    });
+            //}
+
+            context.SaveChanges();
         }
     }
 }

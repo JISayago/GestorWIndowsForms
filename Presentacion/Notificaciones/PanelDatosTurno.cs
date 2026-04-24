@@ -1,4 +1,5 @@
-﻿using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
+﻿using Servicios.LogicaNegocio.PantallaPrincipal;
+using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,6 +12,7 @@ namespace Presentacion.Notificaciones
     {
         #region Campos y Propiedades
 
+        private IPantallaPrincipalServicio _pantallaPrincipalServicio;
         private FlowLayoutPanel panelSuperior;
         private Panel pNotasContainer;
         private TextBox txtNotas;
@@ -18,6 +20,7 @@ namespace Presentacion.Notificaciones
         private Label lblNotas;
         private System.Windows.Forms.Timer timerReloj;
         private DatosTurnoDTO _datosTurno;
+        private string _textoNotasLimpio = string.Empty;
 
         private Label lblContenidoSesion;
         private Label lblContenidoCaja;
@@ -31,6 +34,7 @@ namespace Presentacion.Notificaciones
 
         public void CargarResumenTurno(Control contenedorPadre, DatosTurnoDTO datosTurno)
         {
+            _pantallaPrincipalServicio = new PantallaPrincipalServicio();
             _datosTurno = datosTurno;
 
             contenedorPadre.BackColor = Color.FromArgb(45, 45, 48);
@@ -241,7 +245,11 @@ namespace Presentacion.Notificaciones
             btnGuardarNotas.Click += (s, e) =>
             {
                 _datosTurno.NotasTurno = txtNotas.Text;
-                MessageBox.Show("Notas guardadas correctamente.");
+
+                //ACA METER FUNCION DEL SERVICE PANTALLAPRINCIPALSERVICE PARA GUARDAR LAS NOTAS EN LA BASE DE DATOS
+                //_pantallaPrincipalServicio.GuardarNotasRapidas(_textoNotasLimpio, _datosTurno.UsuarioLogeado);
+
+                MessageBox.Show("Notas guardada correctamente.");
             };
 
             pNotasContainer.Controls.Add(lblNotas);
