@@ -1,6 +1,8 @@
-﻿using Presentacion.FBase;
+﻿using Presentacion.Core.Presentacion.Core.Helpers;
+using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado.Rol;
 using System;
@@ -164,7 +166,36 @@ namespace Presentacion.Core.Empleado.Rol
         }
 
         #endregion
+        protected override void ConfigurarFiltrosUI()
+        {
 
+            base.ConfigurarFiltrosUI();
+
+            ActivarFiltroEliminados("Mostrar roles eliminados.");
+
+            var opciones = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Nombre", Valor = "Nombre" },
+                new OpcionFiltro { Texto = "Detalle", Valor = "DetalleRol" },
+                new OpcionFiltro { Texto = "Código", Valor = "CodigoRol" }
+            };
+
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
+
+
+            cbxFiltroOpcional.SelectedValue = "";
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar rol por:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar rol:";
+        }
 
     }
 }

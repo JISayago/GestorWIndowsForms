@@ -175,24 +175,56 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
                 .AsNoTracking()
                 .AsQueryable();
 
-            // 🔴 Eliminados
+            // 🔴 ELIMINADOS
             query = filtros.VerEliminados
                 ? query.Where(e => e.EstaEliminado)
                 : query.Where(e => !e.EstaEliminado);
 
-            // 🔍 BÚSQUEDA
+            // 🔍 BUSQUEDA
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                query = query.Where(e => e.Nombre.Contains(filtros.TextoBuscar));
+                var texto = filtros.TextoBuscar;
+
+                switch (filtros.Extra?.ToString())
+                {
+                    case "Nombre":
+                        query = query.Where(e => e.Nombre.Contains(texto));
+                        break;
+
+                    case "DetalleRol":
+                        query = query.Where(e => e.DetalleRol.Contains(texto));
+                        break;
+
+                    case "CodigoRol":
+                        query = query.Where(e => e.CodigoRol.Contains(texto));
+                        break;
+
+                    default: // TODOS
+                        query = query.Where(e =>
+                            e.Nombre.Contains(texto) ||
+                            e.DetalleRol.Contains(texto) ||
+                            e.CodigoRol.Contains(texto));
+                        break;
+                }
             }
 
             // 📊 TOTAL
             var total = query.Count();
 
-            // 📌 ORDEN
-            query = query.OrderBy(e => e.RolId);
+            // 🔴 CONTROL PAGINACION
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+            if (totalPaginas == 0) totalPaginas = 1;
 
-            // 📄 PAGINACIÓN + PROYECCIÓN
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 📌 ORDEN (más lógico que por Id)
+            query = query.OrderBy(e => e.Nombre);
+
+            // 📄 DATA
             var data = query
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)
