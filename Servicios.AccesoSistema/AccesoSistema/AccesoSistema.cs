@@ -1,8 +1,8 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
+using Servicios.Helpers.Empleado;
 using Servicios.Helpers.Sistema;
-using Servicios.Helpers.Sistema.Admin;
 using Servicios.Helpers.Sistema.Extras;
 using Servicios.LogicaNegocio.Empleado;
 using System;
@@ -21,7 +21,7 @@ namespace ServicioAccesoSistema.AccesoSistema
             var empleado = context.Empleados
                 .FirstOrDefault(e => e.Username == username);
             if (empleado == null) return true;
-            if (empleado.Estado == 1) return false;
+            if (empleado.Estado == (int)EstadoEmpleado.Habilitado) return false;
             return true;
         }
 
@@ -137,7 +137,7 @@ namespace ServicioAccesoSistema.AccesoSistema
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             var empleado = context.Empleados
                 .FirstOrDefault(e => e.Username == nombreUsuario);
-            if (empleado == null || empleado.Estado == 1 || pass != "123456789")
+            if (empleado == null || empleado.Estado == (int)EstadoEmpleado.Habilitado || pass != "123456789")
             {
                 return new EstadoOperacion
                 {
