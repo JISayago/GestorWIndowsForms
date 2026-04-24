@@ -38,12 +38,12 @@ namespace Servicios.Helpers.DatosObligatorios
             context.SaveChanges(); // Esto genera el PersonaId
 
             // Crear empleado vinculado a esa persona
-            var empleado = new Empleado
+            var empleado = new AccesoDatos.Entidades.Empleado
             {
                 PersonaId = persona.PersonaId,
                 Legajo = "ADM001",
                 FechaIngreso = DateTime.Today,
-                Estado = 1,
+                Estado = 2,
                 Username = "admin",
                 Pass = HashPass.HashPassword("Admin123")
                 , // Reemplazá esto con un hash si lo vas a encriptar

@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Servicios.Helpers.Gasto
 {
-    public enum EstadoGasto
+    public enum TipoFiltroFechaGasto
     {
-        Pagado = 21,
-        Pendiente = 22,
-        Anulado = 23
+        FechaGasto = 11,
+        FechaRegistro = 12,
     }
 }

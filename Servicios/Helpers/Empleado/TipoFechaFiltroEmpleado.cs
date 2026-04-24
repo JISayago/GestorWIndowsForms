@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicios.Helpers.Gasto
+namespace Servicios.Helpers.Empleado
 {
-    public enum EstadoGasto
+    public enum TipoFechaFiltroEmpleado
     {
-        Pagado = 21,
-        Pendiente = 22,
-        Anulado = 23
+        FechaIngreso = 11,
+        FechaEgreso = 12
     }
 }

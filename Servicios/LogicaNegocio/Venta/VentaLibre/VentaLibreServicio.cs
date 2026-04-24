@@ -5,6 +5,7 @@ using Servicios.Helpers.Movimiento;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Extras;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Helpers.VentaEnum;
 using Servicios.LogicaNegocio.Venta.TipoPago;
 using Servicios.LogicaNegocio.Venta.VentaLibre.DTO;
 using System;
@@ -38,7 +39,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     };
                 }
 
-                if (venta.Estado == 3) // Anulado
+                if (venta.Estado == (int)EstadoVenta.Cancelada) // Anulado
                 {
                     return new EstadoOperacion
                     {
@@ -47,7 +48,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     };
                 }
 
-                venta.Estado = 3;
+                venta.Estado = (int)EstadoVenta.Cancelada;
 
                 var cajaServicio = new Caja.CajaServicio();
                 var cajaId = cajaServicio.ObtenerIdDeEña(context);
@@ -146,7 +147,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 
                 // 🔢 Número comprobante
                 var fecha = DateTime.Today;
-                var prefijo = dto.Estado == 3 ? "CAN" : "VLIB";
+                var prefijo = dto.Estado == (int)EstadoVenta.Cancelada ? "CAN" : "VLIB";
 
                 var cantidadHoy = context.VentasLibres.Count(v =>
                     v.NumeroVenta.StartsWith($"{prefijo}-{fecha:yyyyMMdd}")
@@ -236,40 +237,21 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 .Include(v => v.Cliente).ThenInclude(c => c.Persona)
                 .AsQueryable();
 
-            // 🔴 Eliminados (si aplica en tu entidad)
-            //query = filtros.VerEliminados
-            //    ? query.Where(x => x.EstaEliminado)
-            //    : query.Where(x => !x.EstaEliminado);
-
-            // 🔍 BUSQUEDA (AHORA BIEN HECHA)
+            // 🔍 BUSQUEDA
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
                 var texto = filtros.TextoBuscar.ToLower();
 
                 switch (filtros.Extra?.ToString())
                 {
-                    case "Numero":
+                    case "NumeroVenta":
                         query = query.Where(v => v.NumeroVenta.ToLower().Contains(texto));
                         break;
 
-                    case "Cliente":
+                    case "ClienteNombreCompleto":
                         query = query.Where(v =>
                             v.Cliente != null &&
                             (v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido)
-                                .ToLower()
-                                .Contains(texto));
-                        break;
-
-                    case "Vendedor":
-                        query = query.Where(v =>
-                            (v.Vendedor.Persona.Nombre + " " + v.Vendedor.Persona.Apellido)
-                                .ToLower()
-                                .Contains(texto));
-                        break;
-
-                    case "Empleado":
-                        query = query.Where(v =>
-                            (v.Empleado.Persona.Nombre + " " + v.Empleado.Persona.Apellido)
                                 .ToLower()
                                 .Contains(texto));
                         break;
@@ -286,33 +268,61 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 }
             }
 
-            // 🔵 ESTADO
-            int? estado = null;
+            // 🔴 EXTRA2 → FECHA o ESTADO
+            bool filtrarPorFecha = false;
+            EstadoVenta? estadoFiltro = null;
 
             if (filtros.Extra2 != null)
             {
-                var valor = Convert.ToInt32(filtros.Extra2);
-                if (valor != 0)
-                    estado = valor;
+                var valor = filtros.Extra2.ToString();
+
+                // 📅 FECHA
+                if (valor == "FVL")
+                {
+                    filtrarPorFecha = true;
+                }
+
+                // 🔢 ESTADO
+                if (int.TryParse(valor, out var estado))
+                {
+                    if (Enum.IsDefined(typeof(EstadoVenta), estado))
+                        estadoFiltro = (EstadoVenta)estado;
+                }
             }
 
-            if (estado.HasValue)
-                query = query.Where(v => v.Estado == estado.Value);
-
-            // 📅 FECHAS
-            if (filtros.FechaDesde.HasValue)
-                query = query.Where(v => v.FechaVenta >= filtros.FechaDesde.Value);
-
-            if (filtros.FechaHasta.HasValue)
+            // 📅 FILTRO FECHA
+            if (filtrarPorFecha)
             {
-                var hasta = filtros.FechaHasta.Value.AddDays(1);
-                query = query.Where(v => v.FechaVenta < hasta);
+                if (filtros.FechaDesde.HasValue)
+                    query = query.Where(v => v.FechaVenta >= filtros.FechaDesde.Value);
+
+                if (filtros.FechaHasta.HasValue)
+                {
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
+                    query = query.Where(v => v.FechaVenta < hasta);
+                }
+            }
+
+            // 🔴 FILTRO ESTADO
+            if (estadoFiltro.HasValue)
+            {
+                query = query.Where(v => v.Estado == (int)estadoFiltro.Value);
             }
 
             // 📊 TOTAL
             var total = query.Count();
 
-            // 📦 PAGINACIÓN + DTO
+            // 🔴 CONTROL PAGINACION
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 📦 DATA
             var data = query
                 .OrderByDescending(v => v.FechaVenta)
                 .Skip((filtros.Page - 1) * filtros.PageSize)
@@ -320,7 +330,6 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 .Select(v => new VentaLibreDTO
                 {
                     VentaLibreId = v.VentaLibreId,
-
                     NumeroVenta = v.NumeroVenta,
                     FechaVenta = v.FechaVenta,
 
@@ -338,7 +347,6 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     Total = v.Total,
                     Estado = v.Estado,
                     Detalle = v.Detalle,
-
                     MontoPagado = v.MontoPagado,
                     MontoAdeudado = v.MontoAdeudado
                 })

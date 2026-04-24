@@ -4,6 +4,7 @@ using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.Lote;
 using System;
 using System.Collections.Generic;
@@ -20,19 +21,28 @@ namespace Presentacion.Core.Producto.Lote
     public partial class FLoteConsulta : FBaseConsulta
     {
         private readonly ILoteServicio _LoteServicio;
+        private readonly IProductoServicio _ProductoServicio;
         public long? LoteSeleccionada = null;
         private bool vieneDeCargaLote = true;
+        private long? productoId = null;
+        public FLoteConsulta(ILoteServicio LoteServicio, IProductoServicio ProductoServicio)
+        {
+            _LoteServicio = LoteServicio;
+            _ProductoServicio = ProductoServicio;
+        }
 
-        public FLoteConsulta(bool vieneDeCargaLote = true) : this(new LoteServicio())
+        public FLoteConsulta(long productoLoteIid) : this(new LoteServicio(),new ProductoServicio())
+        {
+            InitializeComponent();
+            productoId = productoLoteIid;
+
+        }
+        public FLoteConsulta(bool vieneDeCargaLote = true) : this(new LoteServicio(), new ProductoServicio())
         {
             InitializeComponent();
             this.vieneDeCargaLote = vieneDeCargaLote;
         }
 
-        public FLoteConsulta(ILoteServicio LoteServicio)
-        {
-            _LoteServicio = LoteServicio;
-        }
 
         #region INIT
 
@@ -219,36 +229,68 @@ namespace Presentacion.Core.Producto.Lote
 
         private void FLoteConsulta_Load(object sender, EventArgs e)
         {
+            if (productoId.HasValue)
+            {
+                var lotes = _LoteServicio.ObtenerLotesDeUnProducto((long)productoId);
+                if (lotes != null && lotes.Any())
+                {
+                    dgvGrilla.DataSource = lotes;
+                    ResetearGrilla(dgvGrilla);
+
+
+                }
+                else
+                {
+                    MessageBox.Show("No se ha encontrado un producto para mostrar sus lotes. Se muestran todos los lotes actuales", "Lote de producto no encontrado.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            
         }
         protected override void ConfigurarFiltrosUI()
         {
+
             base.ConfigurarFiltrosUI();
 
-            // 🔵 combo búsqueda
+            ActivarFiltroEliminados("Mostrar movimientos eliminados.");
+
             var opciones = new List<OpcionFiltro>
-    {
-        new OpcionFiltro { Texto = "Número Lote", Valor = "NumeroLote" },
-        new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
-        new OpcionFiltro { Texto = "Producto", Valor = "Producto" }
-    };
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Número Lote", Valor = "NumeroLote" },
+                new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
+                new OpcionFiltro { Texto = "Producto", Valor = "Producto" }
+            };
 
             ActivarFiltroCombo(opciones, "Texto", "Valor");
 
-            // 🔵 fechas (clave para lotes)
             ActivarFiltroFechas("Filtrar por fecha");
 
-            // 🔵 combo tipo fecha (Alta / Vencimiento)
-    //        var tiposFecha = new List<OpcionFiltro>
-    //{
-    //    new OpcionFiltro { Texto = "Ninguno", Valor = TipoFiltroFecha.Ninguno },
-    //    new OpcionFiltro { Texto = "Fecha Alta", Valor = TipoFiltroFecha.Alta },
-    //    new OpcionFiltro { Texto = "Vencimiento", Valor = TipoFiltroFecha.Vencimiento }
-    //};
+            var tiposFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
+                new OpcionFiltro { Texto = "Fecha Alta", Valor = ((int)TipoFiltroFechaLote.Alta).ToString() },
+                new OpcionFiltro { Texto = "Vencimiento", Valor = ((int)TipoFiltroFechaLote.Vencimiento).ToString() }
+            };
 
-    //        ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
 
-            // 👉 default útil
-            cbxFiltroOpcional.SelectedValue = "NumeroLote";
+            cbxFiltroOpcional.SelectedValue = "";
+            cbxFiltroExtraEstado.SelectedValue = "";
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar lote por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Tipo de fecha:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar lote:";
         }
         public override void EjecutarClickDerechoFila(long? id, Point pos)
         {

@@ -14,7 +14,7 @@ using Servicios.LogicaNegocio.Empleado.DTO;
 using AccesoDatos.Entidades;
 using Presentacion.Core.Empleado;
 using Servicios.Helpers;
-using Servicios.Helpers.Sistema.Admin;
+using Servicios.Helpers.Empleado;
 
 namespace Presentacion.Core.Empleado
 {

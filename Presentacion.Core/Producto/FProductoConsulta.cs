@@ -1,9 +1,11 @@
 ﻿using PdfSharp;
 using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.Core.Producto;
+using Presentacion.Core.Producto.Lote;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto;
 using System;
@@ -46,27 +48,54 @@ namespace Presentacion.Core.Producto
         {
             base.ConfigurarFiltrosUI();
 
-            var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
-                new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
-                new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
-                new OpcionFiltro { Texto = "Código", Valor = "Codigo" },
-                new OpcionFiltro { Texto = "Todos", Valor = "" }
-            };
-            var opciones2 = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Discontinuado", Valor = "Descripcion" },
-                new OpcionFiltro { Texto = "Todos", Valor = "" }
-            };
+            ActivarFiltroEliminados("Mostrar productos eliminados.");
 
+            // 🔹 Filtro principal (columna de búsqueda)
+            var opciones = new List<OpcionFiltro>
+    {
+        new OpcionFiltro { Texto = "Todos", Valor = "" },
+        new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
+        new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
+        new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
+        new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
+    };
 
             ActivarFiltroCombo(opciones, "Texto", "Valor");
+            cbxFiltroOpcional.SelectedValue = "";
+            var opcionesEstado = new List<OpcionFiltro>
+    {
+        new OpcionFiltro { Texto = "Todos", Valor = "" }
+    };
 
-            ActivarComboOpcional(opciones2, "Texto", "Valor");
+            foreach (EstadoProducto estado in Enum.GetValues(typeof(EstadoProducto)))
+            {
+                opcionesEstado.Add(new OpcionFiltro
+                {
+                    Texto = estado.ToString(),
+                    Valor = ((int)estado).ToString()
+                });
+            }
 
-            // Si querés fechas en el futuro:
-            // ActivarFiltroFechas("Filtrar por fecha");
+            ActivarComboOpcional(opcionesEstado, "Texto", "Valor");
+
+            if (cbxFiltroExtraEstado != null)
+                cbxFiltroExtraEstado.SelectedValue = "";
+
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar producto por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Filtrar por Estado:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar producto:";
         }
 
         #endregion
@@ -313,6 +342,12 @@ namespace Presentacion.Core.Producto
             menu.Items.Add("Eliminar", null, (s, e) =>
             {
                 MessageBox.Show("Eliminar " + id);
+            });
+
+            menu.Items.Add("Detalle del Lote",null,(s,e) =>
+            {
+                var f = new FLoteConsulta(id.Value);
+                f.ShowDialog();
             });
 
             menu.Show(dgvGrilla, pos);

@@ -480,13 +480,18 @@ namespace Servicios.LogicaNegocio.Producto
                 }
             }
 
-            // 🔹 TOTAL REAL
+            if (!string.IsNullOrEmpty(filtros.Extra2?.ToString()))
+            {
+                if (int.TryParse(filtros.Extra2.ToString(), out int estado))
+                {
+                    query = query.Where(e => e.Estado == estado);
+                }
+            }
+
             var total = query.Count();
 
-            // 🔴 CALCULAR TOTAL PAGINAS
             var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
 
-            // 🔴 AJUSTAR PAGINA SI SE FUE DE RANGO
             if (totalPaginas == 0) totalPaginas = 1;
 
             if (filtros.Page > totalPaginas)

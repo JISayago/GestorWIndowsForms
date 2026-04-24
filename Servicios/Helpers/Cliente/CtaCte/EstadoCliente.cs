@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicios.Helpers.CtaCte
+namespace Servicios.Helpers.Cliente.CtaCte
 {
     public enum EstadoCliente
     {
-        Inhablitado = 0, //valor por defecto
-        Habilitado = 1, // Activo
+        Inhablitado = 1, //valor por defecto
+        Habilitado = 2, // Activo
     }
 }

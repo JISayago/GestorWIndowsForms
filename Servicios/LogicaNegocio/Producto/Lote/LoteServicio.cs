@@ -92,30 +92,36 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             // 🔍 BUSQUEDA
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                var texto = filtros.TextoBuscar.ToLower();
+                var texto = filtros.TextoBuscar;
 
                 switch (filtros.Extra?.ToString())
                 {
                     case "Producto":
-                        query = query.Where(x => x.Producto.Descripcion.ToLower().Contains(texto));
+                        query = query.Where(x => x.Producto.Descripcion.Contains(texto));
                         break;
 
                     case "Descripcion":
-                        query = query.Where(x => x.Descripcion.ToLower().Contains(texto));
+                        query = query.Where(x => x.Descripcion.Contains(texto));
                         break;
 
                     default: // NumeroLote
-                        query = query.Where(x => x.NumeroLote.ToLower().Contains(texto));
+                        query = query.Where(x => x.NumeroLote.Contains(texto));
                         break;
                 }
             }
 
-            // 📅 FECHAS (acá usamos Extra2 como tipo filtro)
-            var tipoFecha = (TipoFiltroFecha?)filtros.Extra2;
+            // 📅 FECHAS (Extra2)
+            TipoFiltroFechaLote? tipoFecha = null;
 
-            if (tipoFecha.HasValue && tipoFecha != TipoFiltroFecha.Ninguno)
+            if (filtros.Extra2 != null &&
+                int.TryParse(filtros.Extra2.ToString(), out var valor))
             {
-                if (tipoFecha == TipoFiltroFecha.Alta)
+                tipoFecha = (TipoFiltroFechaLote)valor;
+            }
+
+            if (tipoFecha.HasValue && tipoFecha != TipoFiltroFechaLote.Ninguno)
+            {
+                if (tipoFecha == TipoFiltroFechaLote.Alta)
                 {
                     if (filtros.FechaDesde.HasValue)
                         query = query.Where(x => x.FechaAlta >= filtros.FechaDesde.Value);
@@ -124,7 +130,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                         query = query.Where(x => x.FechaAlta <= filtros.FechaHasta.Value);
                 }
 
-                if (tipoFecha == TipoFiltroFecha.Vencimiento)
+                if (tipoFecha == TipoFiltroFechaLote.Vencimiento)
                 {
                     query = query.Where(x => x.FechaVencimiento.HasValue);
 
@@ -139,26 +145,52 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             // 📊 TOTAL
             var total = query.Count();
 
-            // 📦 PAGINACION
-            var data = query
-                .OrderByDescending(x => x.FechaAlta)
-                .Skip((filtros.Page - 1) * filtros.PageSize)
-                .Take(filtros.PageSize)
-                .Select(x => new LoteDTO
-                {
-                    Id = x.LoteId,
-                    IdProducto = x.IdProducto,
-                    StockInicial = x.StockIncial,
-                    StockActual = x.StockActual,
-                    NumeroLote = x.NumeroLote,
-                    Descripcion = x.Descripcion,
-                    FechaAlta = x.FechaAlta,
-                    FechaVencimiento = x.FechaVencimiento,
-                    EstaVencido = x.EstaVencido,
-                    EstaActivo = x.EstaActivo,
-                    NombreProducto = x.Producto.Descripcion
-                })
-                .ToList();
+            // 🔴 CONTROL PAGINACION (CLAVE para que no se rompa)
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            IQueryable<AccesoDatos.Entidades.Lote> queryOrdenado;
+
+            if (tipoFecha == TipoFiltroFechaLote.Alta)
+            {
+                // 🔹 más viejo primero
+                queryOrdenado = query.OrderBy(x => x.FechaAlta);
+            }
+            else if (tipoFecha == TipoFiltroFechaLote.Vencimiento)
+            {
+                // 🔹 más próximo a vencer primero
+                queryOrdenado = query.OrderBy(x => x.FechaVencimiento ?? DateTime.MaxValue);
+            }
+            else
+            {
+                // 🔹 default (lo que vos prefieras)
+                queryOrdenado = query.OrderByDescending(x => x.FechaAlta);
+            }
+            // 📦 DATA
+            var data = queryOrdenado
+            .Skip((filtros.Page - 1) * filtros.PageSize)
+            .Take(filtros.PageSize)
+            .Select(x => new LoteDTO
+            {
+                Id = x.LoteId,
+                IdProducto = x.IdProducto,
+                StockInicial = x.StockIncial,
+                StockActual = x.StockActual,
+                NumeroLote = x.NumeroLote,
+                Descripcion = x.Descripcion,
+                FechaAlta = x.FechaAlta,
+                FechaVencimiento = x.FechaVencimiento,
+                EstaVencido = x.EstaVencido,
+                EstaActivo = x.EstaActivo,
+                NombreProducto = x.Producto.Descripcion
+            })
+            .ToList();
 
             return new ResultadoPaginacion<LoteDTO>
             {

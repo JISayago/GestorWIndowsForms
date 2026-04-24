@@ -1,8 +1,8 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
+using Servicios.Helpers.Empleado;
 using Servicios.Helpers.Sistema;
-using Servicios.Helpers.Sistema.Admin;
 using Servicios.Helpers.Sistema.Extras;
 using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Empleado.Rol.DTO;
@@ -34,7 +34,7 @@ namespace Servicios.LogicaNegocio.Empleado
             }
 
             empleado.Pass = HashPass.HashPassword(pass);
-            empleado.Estado = 1;
+            empleado.Estado = (int)EstadoEmpleado.Habilitado;
             context.SaveChanges();
 
             return new EstadoOperacion

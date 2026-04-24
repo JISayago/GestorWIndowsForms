@@ -1,8 +1,11 @@
 ﻿using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Empleado.Rol;
+using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Empleado;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado;
 using System.Drawing;
@@ -264,6 +267,54 @@ namespace Presentacion.Core.Empleado
         }
 
         #endregion
+        protected override void ConfigurarFiltrosUI()
+        {
 
+            base.ConfigurarFiltrosUI();
+
+            ActivarFiltroEliminados("Mostrar productos eliminados.");
+
+            var opciones = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Nombre", Valor = "" }, 
+                new OpcionFiltro { Texto = "Legajo", Valor = "Legajo" },
+                new OpcionFiltro { Texto = "Nombre de Usuario", Valor = "Usuario" }
+            };
+
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
+
+            ActivarFiltroFechas("Filtrar por fecha");
+
+            var tiposFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
+                new OpcionFiltro { Texto = "Fecha Ingreso", Valor = ((int)TipoFechaFiltroEmpleado.FechaIngreso).ToString() },
+                new OpcionFiltro { Texto = "Fecha Egreso", Valor = ((int)TipoFechaFiltroEmpleado.FechaEgreso).ToString() },
+                new OpcionFiltro { Texto = "Inhabilitado", Valor = ((int)EstadoEmpleado.Inhablitado).ToString() },
+                new OpcionFiltro { Texto = "Habilitado", Valor = ((int)EstadoEmpleado.Habilitado).ToString() },
+                new OpcionFiltro { Texto = "Sin Contraseña", Valor = ((int)EstadoEmpleado.SinPass).ToString() },
+            };
+
+            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+
+            cbxFiltroOpcional.SelectedValue = "";
+            cbxFiltroExtraEstado.SelectedValue = "";
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar empleado por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Filtrar por:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar empleado:";
+        }
     }
 }
