@@ -1,6 +1,6 @@
-﻿using Presentacion.FBase.Helpers;
-using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
+﻿using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,20 +9,34 @@ namespace Presentacion.Notificaciones
 {
     public class PanelDatosTurno : UserControl
     {
+        #region Campos y Propiedades
+
         private FlowLayoutPanel panelSuperior;
         private Panel pNotasContainer;
         private TextBox txtNotas;
         private Button btnGuardarNotas;
         private Label lblNotas;
+        private System.Windows.Forms.Timer timerReloj;
+        private DatosTurnoDTO _datosTurno;
+
+        private Label lblContenidoSesion;
+        private Label lblContenidoCaja;
+
+        // Estado de censura de dinero (Estilo Home Banking)
+        private bool _informacionCensurada = false;
+
+        #endregion
+
+        #region Métodos Públicos (Interfaz de Control)
 
         public void CargarResumenTurno(Control contenedorPadre, DatosTurnoDTO datosTurno)
         {
+            _datosTurno = datosTurno;
+
             contenedorPadre.BackColor = Color.FromArgb(45, 45, 48);
             contenedorPadre.Controls.Clear();
 
-            // =========================
-            // 🔹 PANEL SUPERIOR
-            // =========================
+            // Configuración del FlowLayout Principal
             panelSuperior = new FlowLayoutPanel
             {
                 Dock = DockStyle.Fill,
@@ -33,6 +47,7 @@ namespace Presentacion.Notificaciones
                 BackColor = Color.Transparent
             };
 
+            // Título de la Sección
             Label lblSeccion = new Label
             {
                 Text = "RESUMEN DEL TURNO ACTUAL",
@@ -45,28 +60,142 @@ namespace Presentacion.Notificaciones
             panelSuperior.Controls.Add(lblSeccion);
             panelSuperior.SetFlowBreak(lblSeccion, true);
 
-            //CARGAR LOS VALORES REALES DESDE EL SERVICIO
-            panelSuperior.Controls.Add(CrearTarjeta
-                (
-                "ESTADO DE CAJA",
-                $"Monto Inicial: $ 10.000,00\n" +
-                "Ventas Efec.:   $ 45.200,50\n" +
-                "TOTAL CAJA:     $ 55.200,50",
-                Color.SeaGreen, 420)
-                );
+            // 1. Tarjeta de Caja (Con lógica de censura y botón a la derecha)
+            var tarjetaCaja = CrearTarjetaCaja(_datosTurno);
+            panelSuperior.Controls.Add(tarjetaCaja);
 
-            panelSuperior.Controls.Add(CrearTarjeta
-                (
+            // 2. Tarjeta de Sesión
+            var tarjetaSesion = CrearTarjeta(
                 "SESIÓN ACTIVA",
-                "Usuario:        ADMIN_Jose\n" +
-                "Ingreso:        08:00 AM\n" +
-                "Transcurrido:   08h 48m",
-                Color.DodgerBlue, 420)
-                );
+                ObtenerTextoSesion(),
+                Color.DodgerBlue,
+                420
+            );
 
-            // =========================
-            // 🔹 PANEL NOTAS
-            // =========================
+            // Extraer referencia al label de sesión para el timer
+            lblContenidoSesion = tarjetaSesion.Controls.OfType<Label>().FirstOrDefault(l => l.Top == 40);
+            panelSuperior.Controls.Add(tarjetaSesion);
+
+            // Inicializar Reloj de Tiempo Transcurrido
+            ConfigurarTimerReloj();
+
+            // 3. Panel de Notas (Inferior)
+            ConfigurarPanelNotas();
+
+            contenedorPadre.Controls.Add(panelSuperior);
+            contenedorPadre.Controls.Add(pNotasContainer);
+
+            // Evento de Redimensionamiento
+            contenedorPadre.Resize += (s, e) => AjustarLayout(contenedorPadre);
+            AjustarLayout(contenedorPadre);
+        }
+
+        public void ActualizarSoloTextoCaja(DatosTurnoDTO nuevosDatos)
+        {
+            this._datosTurno = nuevosDatos;
+
+            if (lblContenidoCaja != null && !lblContenidoCaja.IsDisposed)
+            {
+                lblContenidoCaja.Text = ObtenerTextoCaja(nuevosDatos);
+            }
+        }
+
+        #endregion
+
+        #region Fábrica de Controles (UI Factory)
+
+        private Panel CrearTarjetaCaja(DatosTurnoDTO datosTurno)
+        {
+            var tarjeta = CrearTarjeta(
+                "ESTADO DE CAJA",
+                ObtenerTextoCaja(datosTurno),
+                Color.SeaGreen,
+                420
+            );
+
+            // Botón de Ocultar/Mostrar (Ubicado arriba a la derecha)
+            Button btnCensura = new Button
+            {
+                Text = "*",
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Size = new Size(30, 30),
+                Location = new Point(tarjeta.Width - 35, 5),
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand,
+                BackColor = Color.White,
+                ForeColor = Color.Gray,
+                Anchor = AnchorStyles.Top | AnchorStyles.Right
+            };
+
+            btnCensura.FlatAppearance.BorderSize = 0;
+
+            btnCensura.Click += (s, e) =>
+            {
+                _informacionCensurada = !_informacionCensurada;
+                btnCensura.Text = _informacionCensurada ? "👁" : "*";
+                ActualizarSoloTextoCaja(_datosTurno);
+            };
+
+            tarjeta.Controls.Add(btnCensura);
+            btnCensura.BringToFront();
+
+            // Guardamos la referencia para actualizaciones futuras
+            lblContenidoCaja = tarjeta.Controls.OfType<Label>().FirstOrDefault(l => l.Top == 40);
+
+            return tarjeta;
+        }
+
+        private Panel CrearTarjeta(string titulo, string contenido, Color colorIndicador, int ancho)
+        {
+            // Panel Contenedor
+            Panel p = new Panel
+            {
+                Width = ancho,
+                Height = 130,
+                BackColor = Color.White,
+                Margin = new Padding(0, 0, 20, 20)
+            };
+
+            // Indicador Lateral (Color)
+            Panel indicador = new Panel
+            {
+                Dock = DockStyle.Left,
+                Width = 12,
+                BackColor = colorIndicador
+            };
+
+            // Label de Título (Superior)
+            Label lblT = new Label
+            {
+                Text = titulo.ToUpper(),
+                Top = 12,
+                Left = 25,
+                AutoSize = true,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                ForeColor = Color.Gray
+            };
+
+            // Label de Contenido (Valores numéricos)
+            Label lblC = new Label
+            {
+                Text = contenido,
+                Top = 40,
+                Left = 25,
+                Width = ancho - 50,
+                Height = 80,
+                Font = new Font("Consolas", 13f, FontStyle.Bold),
+                ForeColor = Color.FromArgb(40, 40, 40)
+            };
+
+            p.Controls.Add(lblC);
+            p.Controls.Add(lblT);
+            p.Controls.Add(indicador);
+
+            return p;
+        }
+
+        private void ConfigurarPanelNotas()
+        {
             pNotasContainer = new Panel
             {
                 Dock = DockStyle.Bottom,
@@ -94,19 +223,7 @@ namespace Presentacion.Notificaciones
                 ScrollBars = ScrollBars.Vertical,
                 AcceptsReturn = true,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-                Text = "- Falta cambiar el rollo de la impresora.\r\n- Pedido de Juan Pérez pagado."
-            };
-
-            txtNotas.KeyDown += (s, e) =>
-            {
-                if (e.KeyCode == Keys.Enter)
-                {
-                    e.SuppressKeyPress = true;
-                    string nl = Environment.NewLine + "- ";
-                    int pos = txtNotas.SelectionStart;
-                    txtNotas.SelectedText = nl;
-                    txtNotas.SelectionStart = pos + nl.Length;
-                }
+                Text = string.IsNullOrEmpty(_datosTurno.NotasTurno) ? "- " : _datosTurno.NotasTurno
             };
 
             btnGuardarNotas = new Button
@@ -123,85 +240,71 @@ namespace Presentacion.Notificaciones
 
             btnGuardarNotas.Click += (s, e) =>
             {
-                var lineas = txtNotas.Lines
-                    .Select(l => l.Trim())
-                    .Where(l => !string.IsNullOrWhiteSpace(l) && l != "-")
-                    .Select(l => l.StartsWith("-") ? l : "- " + l);
-
-                txtNotas.Text = string.Join(Environment.NewLine, lineas);
-                MessageBox.Show("Notas guardadas.");
-                //GUARDA EN DB LA NOTA PARA QUE EL SIGUIENTE TURNO LA VEA
+                _datosTurno.NotasTurno = txtNotas.Text;
+                MessageBox.Show("Notas guardadas correctamente.");
             };
 
             pNotasContainer.Controls.Add(lblNotas);
             pNotasContainer.Controls.Add(txtNotas);
             pNotasContainer.Controls.Add(btnGuardarNotas);
+        }
 
-            // =========================
-            // 🔹 AGREGAR AL FORM
-            // =========================
-            contenedorPadre.Controls.Add(panelSuperior);
-            contenedorPadre.Controls.Add(pNotasContainer);
+        #endregion
 
-            contenedorPadre.Resize += (s, e) => AjustarLayout(contenedorPadre);
-            AjustarLayout(contenedorPadre);
+        #region Helpers de Formato y Lógica
+
+        private void ConfigurarTimerReloj()
+        {
+            if (timerReloj != null) { timerReloj.Stop(); timerReloj.Dispose(); }
+
+            timerReloj = new System.Windows.Forms.Timer { Interval = 1000 };
+            timerReloj.Tick += (s, e) =>
+            {
+                if (lblContenidoSesion != null && !lblContenidoSesion.IsDisposed)
+                    lblContenidoSesion.Text = ObtenerTextoSesion();
+            };
+            timerReloj.Start();
+        }
+
+        public string ObtenerTextoCaja(DatosTurnoDTO datos)
+        {
+            // Lógica de censura de montos
+            string mInicial = _informacionCensurada ? "****" : datos.MontoInicial.ToString("N2");
+            string mIngresos = _informacionCensurada ? "****" : datos.Ingresos.ToString("N2");
+            string mTotal = _informacionCensurada ? "****" : datos.TotalCaja.ToString("N2");
+
+            return $"Monto Inicial:    $ {mInicial}\n" +
+                   $"Total Ingresos:   $ {mIngresos}\n" +
+                   $"TOTAL CAJA:       $ {mTotal}";
+        }
+
+        private string ObtenerTextoSesion()
+        {
+            if (_datosTurno == null) return "Cargando...";
+
+            TimeSpan transcurrido = DateTime.Now - _datosTurno.HoraIngresoUsuario;
+            string tiempoStr = $"{(int)transcurrido.TotalHours:00}h {transcurrido.Minutes:00}m {transcurrido.Seconds:00}s";
+
+            return $"Usuario:        {_datosTurno.UsuarioLogeado}\n" +
+                   $"Ingreso:        {_datosTurno.HoraIngresoUsuario:HH:mm:ss}\n" +
+                   $"Transcurrido:   {tiempoStr}";
         }
 
         private void AjustarLayout(Control padre)
         {
-            if (pNotasContainer == null) return;
+            if (txtNotas == null) return;
 
-            int ancho = padre.ClientSize.Width - 40;
-
-            // Ajustar ancho del textbox respetando margen izquierdo
-            txtNotas.Width = ancho;
-
-            // Posicionar botón alineado al textbox
+            txtNotas.Width = padre.ClientSize.Width - 40;
             btnGuardarNotas.Top = txtNotas.Bottom + 10;
             btnGuardarNotas.Left = txtNotas.Left + txtNotas.Width - btnGuardarNotas.Width;
         }
 
-        private Panel CrearTarjeta(string titulo, string contenido, Color colorIndicador, int ancho)
+        protected override void Dispose(bool disposing)
         {
-            Panel p = new Panel
-            {
-                Width = ancho,
-                Height = 130,
-                BackColor = Color.White,
-                Margin = new Padding(0, 0, 20, 20)
-            };
-
-            Panel indicador = new Panel
-            {
-                Dock = DockStyle.Left,
-                Width = 12,
-                BackColor = colorIndicador
-            };
-
-            Label lblT = new Label
-            {
-                Text = titulo.ToUpper(),
-                Top = 12,
-                Left = 25,
-                AutoSize = true,
-                Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                ForeColor = Color.Gray
-            };
-
-            Label lblC = new Label
-            {
-                Text = contenido,
-                Top = 40,
-                Left = 25,
-                Width = ancho - 50,
-                Height = 80,
-                Font = new Font("Consolas", 13f, FontStyle.Bold),
-                ForeColor = Color.FromArgb(40, 40, 40)
-            };
-
-            p.Controls.AddRange(new Control[] { lblC, lblT, indicador });
-
-            return p;
+            if (disposing) { timerReloj?.Stop(); timerReloj?.Dispose(); }
+            base.Dispose(disposing);
         }
+
+        #endregion
     }
 }

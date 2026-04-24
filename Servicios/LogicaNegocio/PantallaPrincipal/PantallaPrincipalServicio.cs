@@ -117,6 +117,7 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
                 var cajaDTO = caja.ObtenerCajaAbierta(cajaId);
                 datosTurno = new DatosTurnoDTO
                 {
+                    CajaId = cajaDTO.CajaId,
                     MontoInicial = cajaDTO.SaldoInicial,
                     Ingresos = cajaDTO.TotalIngresos,
                     TotalCaja = cajaDTO.BalanceFinal,
@@ -133,6 +134,36 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
 
             //aqui se pueden agregar mas datos relacionados al turno, como por ejemplo el usuario que esta logueado, o la caja que esta abierta, etc.
             return datosTurno;
+        }
+
+        public DatosTurnoDTO ObtenerActualizarDatosCaja(long? cajaId, DatosTurnoDTO datosTurno)
+        {
+            if (!cajaId.HasValue)
+            {
+                return new DatosTurnoDTO
+                {
+                    MontoInicial = 0,
+                    Ingresos = 0,
+                    TotalCaja = 0,
+                    CajaAbierta = false
+                };
+            }
+            else
+            {
+                var cajaDTO = caja.ObtenerCajaAbierta(cajaId);
+                return new DatosTurnoDTO
+                {
+                    CajaId = cajaDTO.CajaId,
+                    MontoInicial = cajaDTO.SaldoInicial,
+                    Ingresos = cajaDTO.TotalIngresos,
+                    TotalCaja = cajaDTO.BalanceFinal,
+                    CajaAbierta = !cajaDTO.EstaCerrada,
+                    UsuarioId = datosTurno.UsuarioId,
+                    UsuarioLogeado = datosTurno.UsuarioLogeado,
+                    HoraIngresoUsuario = datosTurno.HoraIngresoUsuario,
+                    NotasTurno = datosTurno.NotasTurno
+                };
+            }
         }
     }
 }

@@ -334,7 +334,7 @@ namespace Servicios.LogicaNegocio.Empleado
                     UsuarioLogeado = $"{e.Username}",
                     HoraIngresoUsuario = e.Sesiones
                         .Where(s => s.FechaLogout == null)
-                        .Select(s => s.FechaLogin.ToString("HH:mm:ss")) // Retorna "14:30:05"
+                        .Select(s => s.FechaLogin)
                         .FirstOrDefault()
                 }).FirstOrDefault();
         

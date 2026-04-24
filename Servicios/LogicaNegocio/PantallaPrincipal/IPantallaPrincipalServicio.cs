@@ -13,5 +13,6 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
         List<NotificacionDTO> NotifiacionesOfertasVencidas(int cantidadDiasABuscar);
         List<NotificacionDTO> NotifiacionesCtaCteVencidas(int cantidadDiasABuscar);
         DatosTurnoDTO ObtenerDatosTurno(long? cajaId, long usuarioId);
+        DatosTurnoDTO ObtenerActualizarDatosCaja(long? cajaId, DatosTurnoDTO datosTurno);
     }
 }

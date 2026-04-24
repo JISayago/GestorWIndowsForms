@@ -23,12 +23,17 @@ using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Producto.Lote;
 using Servicios.LogicaNegocio.Sistema;
 using Servicios.LogicaNegocio.Venta.Oferta;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Presentacion
 {
     public partial class VentanaPrincipal : FBase.FBase
     {
+        #region Campos y Propiedades
+
         private readonly UsuarioLogeado _usuarioLogeado;
         private readonly IOfertaServicio _ofertaServicio;
         private readonly IDetallesSistemaServicio _dellesSistema;
@@ -37,10 +42,15 @@ namespace Presentacion
         private readonly ILoteServicio _loteServicio;
         private DateTime _fechaActual = DateTime.Now;
         private DateTime _horaActual = DateTime.Now;
+        private PanelDatosTurno _panelDatosTurno;
+        private DatosTurnoDTO _ultimoEstadoTurno;
+
+        #endregion
+
+        #region Constructores
 
         public VentanaPrincipal() : this(new UsuarioLogeado())
         {
-
         }
 
         public VentanaPrincipal(UsuarioLogeado usuarioLogeado)
@@ -55,78 +65,125 @@ namespace Presentacion
 
             this.Bounds = Screen.PrimaryScreen.WorkingArea;
 
-            // Correcting the issue with Font.Size property  
+            // Formato de nombre de usuario
             var font = new Font(lblNombreUsuario.Font.FontFamily, 12F, FontStyle.Bold);
             lblNombreUsuario.Font = font;
             lblNombreUsuario.ForeColor = Color.DarkGreen;
             lblNombreUsuario.Text = _usuarioLogeado.Username.ToUpper();
         }
 
+        #endregion
+
+        #region Inicialización y Carga (Load)
+
         private void VentanaPrincipal_Load(object sender, EventArgs e)
         {
-            System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
-            MyTimer.Interval = 1000;
-            MyTimer.Tick += new EventHandler(MyTimer_Tick);
-            MyTimer.Start();
+            // 1. Configurar Timers
+            InicializarTimers();
 
+            // 2. Suscribir eventos de Layout
             flowLayoutNotificaciones.SizeChanged += FlowLayoutNotificaciones_SizeChanged;
 
-            //////////////////////////////////////////////////////
-            //Esto deberia estar en una funcion aparte, pero lo dejo aca para probar el diseño del panel de datos
-            var datosTurnos2 = _pantallaPrincipalServicio.ObtenerDatosTurno(DatosSistema.CajaId, DatosSistema.UsuarioId);
+            // 3. Inicializar Panel de Turno y Datos
+            _panelDatosTurno = new PanelDatosTurno();
+            crearPanelDatosAdicionales();
 
-            var datosTurno = new DatosTurnoDTO();
-
-            datosTurno.CajaId = DatosSistema.CajaId;
-            datosTurno.UsuarioId = DatosSistema.UsuarioId;
-
-
-            var pnaeldatos = new PanelDatosTurno();
-            pnaeldatos.CargarResumenTurno(tabPage2, datosTurno);
-
-            var panelConsultasRapidas = new PanelConsultasRapidas();
-            panelConsultasRapidas.CargarConsultasRapidas(tabPage1);
-
-            //////////////////////////////////////////////////////
-
+            // 4. Cargar Notificaciones
             crearNotificacionesLotes();
             crearNotificacionesPromociones();
             crearNotificacionesCuentaCorriente();
-            
-            //CargarInfo();
         }
 
-        private void FlowLayoutNotificaciones_SizeChanged(object sender, EventArgs e)
+        private void InicializarTimers()
         {
-            flowLayoutNotificaciones.SuspendLayout();
+            // Timer Hora Sistema (Reloj superior)
+            System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
+            MyTimer.Interval = 1000;
+            MyTimer.Tick += MyTimer_Tick;
+            MyTimer.Start();
 
-            // 1. Desactivamos el scroll horizontal explícitamente antes de recalcular
-            flowLayoutNotificaciones.AutoScroll = false;
-            flowLayoutNotificaciones.HorizontalScroll.Maximum = 0;
-            flowLayoutNotificaciones.HorizontalScroll.Visible = false;
+            // Timer Datos de Caja (Sincronización cada 20s)
+            System.Windows.Forms.Timer MyTimerDatos = new System.Windows.Forms.Timer();
+            MyTimerDatos.Interval = 20000;
+            MyTimerDatos.Tick += MyTimerDatos_Tick;
+            MyTimerDatos.Start();
+        }
 
-            // 2. Calculamos el ancho restando un margen mayor (35px) 
-            // Esto asegura espacio para la barra vertical sin empujar el borde derecho.
-            int anchoSeguro = flowLayoutNotificaciones.ClientSize.Width - 35;
+        #endregion
 
-            foreach (Control control in flowLayoutNotificaciones.Controls)
+        #region Lógica de Actualización y Datos (Business Logic)
+
+        private void ActualizarInformacionTurno()
+        {
+            // 1. Obtener datos actualizados del servicio
+            var datosNuevos = _pantallaPrincipalServicio.ObtenerActualizarDatosCaja(DatosSistema.CajaId, _ultimoEstadoTurno);
+
+            // 2. Validar cambios (Equals compara los valores del record)
+            if (datosNuevos == null || datosNuevos.Equals(_ultimoEstadoTurno))
             {
-                // Forzamos el ancho y eliminamos márgenes laterales que puedan estorbar
-                control.Width = anchoSeguro;
-                control.Margin = new Padding(control.Margin.Left, control.Margin.Top, 0, control.Margin.Bottom);
+                return;
             }
 
-            // 3. Reactivamos el scroll general y refrescamos
-            flowLayoutNotificaciones.AutoScroll = true;
-            flowLayoutNotificaciones.ResumeLayout();
-            flowLayoutNotificaciones.Refresh();
+            // 3. Si hay cambios, actualizar caché y UI silenciosamente (sin flashear)
+            _ultimoEstadoTurno = datosNuevos;
+            _panelDatosTurno.ActualizarSoloTextoCaja(datosNuevos);
+
+            Console.WriteLine("UI Actualizada: Se detectaron cambios en el turno.");
         }
+
+        private void crearPanelDatosAdicionales()
+        {
+            var panelConsultasRapidas = new PanelConsultasRapidas();
+
+            // Carga inicial de datos
+            var datosTurno = _pantallaPrincipalServicio.ObtenerDatosTurno(DatosSistema.CajaId, DatosSistema.UsuarioId);
+            _ultimoEstadoTurno = datosTurno;
+
+            // Renderizar en tabPage2 usando la instancia global
+            _panelDatosTurno.CargarResumenTurno(tabPage2, datosTurno);
+
+            // Renderizar consultas en tabPage1
+            panelConsultasRapidas.CargarConsultasRapidas(tabPage1);
+        }
+
+        #endregion
+
+        #region Eventos de Timer e Interfaz
 
         private void MyTimer_Tick(object sender, EventArgs e)
         {
             lblFechaValor.Text = DateTime.Now.ToString("dd/MM/yyyy");
             lblHoraValor.Text = DateTime.Now.ToString("HH:mm:ss");
         }
+
+        private void MyTimerDatos_Tick(object sender, EventArgs e)
+        {
+            ActualizarInformacionTurno();
+        }
+
+        private void FlowLayoutNotificaciones_SizeChanged(object sender, EventArgs e)
+        {
+            flowLayoutNotificaciones.SuspendLayout();
+            flowLayoutNotificaciones.AutoScroll = false;
+            flowLayoutNotificaciones.HorizontalScroll.Maximum = 0;
+            flowLayoutNotificaciones.HorizontalScroll.Visible = false;
+
+            int anchoSeguro = flowLayoutNotificaciones.ClientSize.Width - 35;
+
+            foreach (Control control in flowLayoutNotificaciones.Controls)
+            {
+                control.Width = anchoSeguro;
+                control.Margin = new Padding(control.Margin.Left, control.Margin.Top, 0, control.Margin.Bottom);
+            }
+
+            flowLayoutNotificaciones.AutoScroll = true;
+            flowLayoutNotificaciones.ResumeLayout();
+            flowLayoutNotificaciones.Refresh();
+        }
+
+        #endregion
+
+        #region Navegación y Botones
 
         private void btnPanelAdmin_Click(object sender, EventArgs e)
         {
@@ -145,6 +202,7 @@ namespace Presentacion
             var fCaja = new FCaja();
             fCaja.Show();
         }
+
         private void btnContraVenta_Click(object sender, EventArgs e)
         {
             var NroCompr = new FNroComprobanteParaCancelacion(_usuarioLogeado.PersonaId);
@@ -153,67 +211,54 @@ namespace Presentacion
 
         private void llbCerrarSesion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-
             var respuesta = _accesoSistema.CerrarSesion(_usuarioLogeado.PersonaId);
             if (!respuesta.Exitoso)
             {
                 MessageBox.Show(respuesta.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            else
-            {
-                MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            this.Close();
 
+            MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            this.Close();
         }
+
+        #endregion
+
+        #region Generación de Notificaciones
 
         private void crearNotificacionesLotes()
         {
-            var listaLotesNotificar= _pantallaPrincipalServicio.NotifiacionesProductosVencidos(0);
-
             var notiProdVencidos = new NotificationGroupBox();
             notiProdVencidos.Width = flowLayoutNotificaciones.Width - 25;
-
             flowLayoutNotificaciones.Controls.Add(notiProdVencidos);
 
-            //Datos dummys, borrar al implementar el servicio
-            listaLotesNotificar = mockDatosNotificaciones("Lote");
-
+            var listaLotesNotificar = mockDatosNotificaciones("Lote");
             notiProdVencidos.SetData(listaLotesNotificar, "Lotes Vencidos");
         }
 
         private void crearNotificacionesPromociones()
         {
-            var listaOfertasVencidas = _pantallaPrincipalServicio.NotifiacionesOfertasVencidas(7);
-
             var notifOferVencidos = new NotificationGroupBox();
             notifOferVencidos.Width = flowLayoutNotificaciones.Width - 25;
-
             flowLayoutNotificaciones.Controls.Add(notifOferVencidos);
 
-            //Datos dummys, borrar al implementar el servicio
-            listaOfertasVencidas = mockDatosNotificaciones("Oferta");
-
+            var listaOfertasVencidas = mockDatosNotificaciones("Oferta");
             notifOferVencidos.SetData(listaOfertasVencidas, "Ofertas Vencidas");
-            //notifOferVencidos.SetDataGrid(listaOfertasVencidas, "Ofertas Vencidas"); SE MUESTRAN LOS DATOS EN UN DATAGRID
-
         }
 
         private void crearNotificacionesCuentaCorriente()
         {
-            var listaCuentasCorrientes = _pantallaPrincipalServicio.NotifiacionesCtaCteVencidas(0);
-
             var notifCuentasCorrientesVencidas = new NotificationGroupBox();
             notifCuentasCorrientesVencidas.Width = flowLayoutNotificaciones.Width - 25;
-
             flowLayoutNotificaciones.Controls.Add(notifCuentasCorrientesVencidas);
 
-            //Datos dummys, borrar al implementar el servicio
-            listaCuentasCorrientes = mockDatosNotificaciones("CtaCte");
-
+            var listaCuentasCorrientes = mockDatosNotificaciones("CtaCte");
             notifCuentasCorrientesVencidas.SetData(listaCuentasCorrientes, "Cuentas Corrientes Vencidas");
         }
+
+        #endregion
+
+        #region Mocks de Datos (Pruebas)
 
         public List<NotificacionDTO> mockDatosNotificaciones(string tipoDato)
         {
@@ -227,7 +272,7 @@ namespace Presentacion
                 new NotificacionDTO { NotificacionId = 6, Titulo = "Producto: Fideos Tallarín", Descripcion = "Lote: L-505. Vencimiento lejano (Diciembre 2026).", FechaNotificacion = DateTime.Now.AddDays(-2), Leida = true, NivelUrgencia = 3 }
             };
 
-                    var listaOfertasVencidas = new List<NotificacionDTO>
+            var listaOfertasVencidas = new List<NotificacionDTO>
             {
                 new NotificacionDTO { NotificacionId = 101, Titulo = "Oferta Vencida (ALTA)", Descripcion = "La oferta Verano 2026 ya expiró.", FechaNotificacion = DateTime.Now.AddDays(-1), Leida = false, NivelUrgencia = 1 },
                 new NotificacionDTO { NotificacionId = 102, Titulo = "Oferta por Vencer (MEDIA)", Descripcion = "La oferta Fin de Semana vence mañana.", FechaNotificacion = DateTime.Now, Leida = false, NivelUrgencia = 2 },
@@ -236,7 +281,7 @@ namespace Presentacion
                 new NotificacionDTO { NotificacionId = 105, Titulo = "Descuento Empleados", Descripcion = "Actualización de cupos para el mes de Mayo.", FechaNotificacion = DateTime.Now, Leida = false, NivelUrgencia = 3 }
             };
 
-                    var listaCuentasCorrientes = new List<NotificacionDTO>
+            var listaCuentasCorrientes = new List<NotificacionDTO>
             {
                 new NotificacionDTO { NotificacionId = 501, Titulo = "Cta Cte: Distribuidora X", Descripcion = "Saldo muy atrasado. Vencimiento: 15/04/2026.", FechaNotificacion = DateTime.Now.AddDays(-5), Leida = false, NivelUrgencia = 1 },
                 new NotificacionDTO { NotificacionId = 502, Titulo = "Cta Cte: Almacén Y", Descripcion = "Factura por vencer hoy (22/04/2026).", FechaNotificacion = DateTime.Now, Leida = false, NivelUrgencia = 2 },
@@ -255,6 +300,6 @@ namespace Presentacion
             };
         }
 
-
+        #endregion
     }
 }

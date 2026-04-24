@@ -318,7 +318,7 @@ namespace Servicios.LogicaNegocio.Caja
 
         //PODRIA HACER UNA FUNCION PARA BUSCAR FECHAS ESPECIFICAS,Y REUSAR ESA PARA LOS GRAFICOS FILTRADOS
 
-        public CajaDTO ObtenerCajaAbierta(long? cajaId = null)
+        public CajaDTO ObtenerCajaAbierta(long? cajaId)
         {
             var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
             var caja = context.Cajas
