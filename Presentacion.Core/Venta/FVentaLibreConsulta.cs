@@ -2,6 +2,9 @@
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Gasto;
+using Servicios.Helpers.Producto;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Helpers.VentaEnum;
 using Servicios.LogicaNegocio.Venta.VentaLibre;
 using System;
 using System.Collections.Generic;
@@ -79,59 +82,91 @@ namespace Presentacion.Core.Venta
             {
                 grilla.Columns["VentaLibreId"].Visible = false;
                 grilla.Columns["VentaLibreId"].Name = "Id";
+
+            }
+            if (grilla.Columns.Contains("NumeroVenta"))
+            {
+                grilla.Columns["NumeroVenta"].Visible = true;
+                grilla.Columns["NumeroVenta"].HeaderText = "N° Venta";
+                grilla.Columns["NumeroVenta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+            if (grilla.Columns.Contains("FechaVenta"))
+            {
+                grilla.Columns["FechaVenta"].Visible = true;
+                grilla.Columns["FechaVenta"].HeaderText = "Fecha";
+                grilla.Columns["FechaVenta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+            if (grilla.Columns.Contains("ClienteNombreCompleto"))
+            {
+                grilla.Columns["ClienteNombreCompleto"].Visible = true;
+                grilla.Columns["ClienteNombreCompleto"].HeaderText = "Cliente";
+                grilla.Columns["ClienteNombreCompleto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+            if (grilla.Columns.Contains("VendedorNombreCompleto"))
+            { 
+
+                grilla.Columns["VendedorNombreCompleto"].Visible = true;
+                grilla.Columns["VendedorNombreCompleto"].HeaderText = "Vendedor";
+                grilla.Columns["VendedorNombreCompleto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
 
-            grilla.Columns["NumeroVenta"].Visible = true;
-            grilla.Columns["NumeroVenta"].HeaderText = "N° Venta";
-            grilla.Columns["NumeroVenta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            if(grilla.Columns.Contains("Total"))
+            {
+                grilla.Columns["Total"].Visible = true;
+                grilla.Columns["Total"].HeaderText = "Total";
+                grilla.Columns["Total"].DefaultCellStyle.Format = "C2";
+            }
 
-            grilla.Columns["FechaVenta"].Visible = true;
-            grilla.Columns["FechaVenta"].HeaderText = "Fecha";
-            grilla.Columns["FechaVenta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-
-            grilla.Columns["ClienteNombreCompleto"].Visible = true;
-            grilla.Columns["ClienteNombreCompleto"].HeaderText = "Cliente";
-            grilla.Columns["ClienteNombreCompleto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-
-            grilla.Columns["VendedorNombreCompleto"].Visible = true;
-            grilla.Columns["VendedorNombreCompleto"].HeaderText = "Vendedor";
-            grilla.Columns["VendedorNombreCompleto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-
-            grilla.Columns["Total"].Visible = true;
-            grilla.Columns["Total"].HeaderText = "Total";
-            grilla.Columns["Total"].DefaultCellStyle.Format = "C2";
-
-            grilla.Columns["MontoPagado"].Visible = true;
-            grilla.Columns["MontoPagado"].HeaderText = "Pagado";
-            grilla.Columns["MontoPagado"].DefaultCellStyle.Format = "C2";
-
-            grilla.Columns["MontoAdeudado"].Visible = true;
-            grilla.Columns["MontoAdeudado"].HeaderText = "Adeudado";
-            grilla.Columns["MontoAdeudado"].DefaultCellStyle.Format = "C2";
-
-            grilla.Columns["Estado"].Visible = true;
-            grilla.Columns["Estado"].HeaderText = "Estado";
-            grilla.Columns["Estado"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-
-            grilla.Columns["Detalle"].Visible = true;
-            grilla.Columns["Detalle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("MontoPagado"))
+            {
+                grilla.Columns["MontoPagado"].Visible = true;
+                grilla.Columns["MontoPagado"].HeaderText = "Pagado";
+                grilla.Columns["MontoPagado"].DefaultCellStyle.Format = "C2";
+            }
+            if (grilla.Columns.Contains("MontoAdeudado"))
+            {
+                grilla.Columns["MontoAdeudado"].Visible = true;
+                grilla.Columns["MontoAdeudado"].HeaderText = "Adeudado";
+                grilla.Columns["MontoAdeudado"].DefaultCellStyle.Format = "C2";
+            }
+            if (grilla.Columns.Contains("Estado"))
+            {
+                grilla.Columns["Estado"].Visible = true;
+                grilla.Columns["Estado"].HeaderText = "Estado";
+                grilla.Columns["Estado"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+            if (grilla.Columns.Contains("Detalle"))
+            {
+                grilla.Columns["Detalle"].Visible = true;
+                grilla.Columns["Detalle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
         }
 
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
-            int ? estado = null;
 
-            if (filtros.Extra != null && filtros.Extra != "0")
+            // 🔹 llamada unificada
+            var resultado = _ventaLibreServicio.ObtenerVentasLibres(filtros);
+
+            // 🔹 bind
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 clave: reaplicar formato
+            ResetearGrilla(dgv);
+
+            // 🔹 paginación
+            var paginacion = new DatosPaginacion
             {
-                estado = Convert.ToInt32(filtros.Extra);
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
             };
-            dgv.DataSource = _ventaLibreServicio.ObtenerVentasLibresFiltrados(filtros.TextoBuscar,
-                estado,
-                filtros.FechaDesde,
-                filtros.FechaHasta);
 
+            ActualizarPaginacionUI(paginacion);
 
+            // 🔹 estado botones
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
 
         //public override void EjecutarBtnNuevo()
@@ -164,28 +199,53 @@ namespace Presentacion.Core.Venta
 
         private void FVentaLibreConsulta_Load(object sender, EventArgs e)
         {
+        }
+         protected override void ConfigurarFiltrosUI()
+        {
+
+            base.ConfigurarFiltrosUI();
+
+
+            var opciones = new List<OpcionFiltro>
             {
-                var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todos", Valor = "0" }
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Número Venta", Valor = "NumeroVenta" },
+                new OpcionFiltro { Texto = "Cliente", Valor = "ClienteNombreCompleto" },
             };
 
-                foreach (EstadoGasto estado in Enum.GetValues(typeof(EstadoGasto)))
-                {
-                    opciones.Add(new OpcionFiltro
-                    {
-                        Texto = estado.ToString(),
-                        Valor = Convert.ToString((int)estado)
-                    });
-                }
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
 
-                ActivarFiltroCombo("Estado de la Venta:", opciones, "Texto", "Valor");
+            ActivarFiltroFechas("Filtrar por fecha");
 
-                // 👉 seleccionar "Todos" por defecto
-                cbxFiltroOpcional.SelectedValue = Convert.ToString(0);
+            var tiposFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
+                new OpcionFiltro { Texto = "Fecha Venta", Valor = "FVL"},
+                new OpcionFiltro { Texto = "Confirmada", Valor = ((int)EstadoVenta.Confirmada).ToString() },
+                new OpcionFiltro { Texto = "Venta Cancelada", Valor = ((int)EstadoVenta.Cancelada).ToString() },
+                new OpcionFiltro { Texto = "Cancelacion de Venta", Valor = ((int)EstadoVenta.CancelacionVenta).ToString() },
 
-                ActivarFiltroFechas("Filtrar por fecha");
-            }
+            };
+
+            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+
+            cbxFiltroOpcional.SelectedValue = "";
+            cbxFiltroExtraEstado.SelectedValue = "";
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar lote por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Tipo de fecha:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar lote:";
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using AccesoDatos;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
+using Servicios.LogicaNegocio.Venta.VentaLibre.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +19,6 @@ namespace Servicios.LogicaNegocio.Venta
         public List<VentaDTO> ObtenerVentasPorIds(List<long> ventaIds);
         EstadoOperacion CancelacionVentaPorId(long ventaId);
         VentaDTO ObtenerVentaDetalle(long Ventaid);
+        
     }
 }

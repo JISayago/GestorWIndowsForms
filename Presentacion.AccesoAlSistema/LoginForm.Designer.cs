@@ -34,11 +34,12 @@
             txtPass = new TextBox();
             lblUsuario = new Label();
             lblPass = new Label();
+            lnklblRecuperacionContra = new LinkLabel();
             SuspendLayout();
             // 
             // btnIngresar
             // 
-            btnIngresar.Location = new Point(66, 160);
+            btnIngresar.Location = new Point(71, 137);
             btnIngresar.Name = "btnIngresar";
             btnIngresar.Size = new Size(113, 39);
             btnIngresar.TabIndex = 0;
@@ -48,7 +49,7 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(232, 160);
+            btnCancelar.Location = new Point(237, 137);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(113, 39);
             btnCancelar.TabIndex = 1;
@@ -58,7 +59,7 @@
             // 
             // txtUsuario
             // 
-            txtUsuario.Location = new Point(42, 51);
+            txtUsuario.Location = new Point(42, 32);
             txtUsuario.Name = "txtUsuario";
             txtUsuario.Size = new Size(351, 23);
             txtUsuario.TabIndex = 2;
@@ -66,7 +67,7 @@
             // 
             // txtPass
             // 
-            txtPass.Location = new Point(42, 115);
+            txtPass.Location = new Point(42, 96);
             txtPass.Name = "txtPass";
             txtPass.PasswordChar = '*';
             txtPass.Size = new Size(351, 23);
@@ -77,7 +78,7 @@
             // lblUsuario
             // 
             lblUsuario.AutoSize = true;
-            lblUsuario.Location = new Point(43, 27);
+            lblUsuario.Location = new Point(43, 8);
             lblUsuario.Name = "lblUsuario";
             lblUsuario.Size = new Size(47, 15);
             lblUsuario.TabIndex = 4;
@@ -86,18 +87,30 @@
             // lblPass
             // 
             lblPass.AutoSize = true;
-            lblPass.Location = new Point(43, 97);
+            lblPass.Location = new Point(43, 78);
             lblPass.Name = "lblPass";
             lblPass.Size = new Size(67, 15);
             lblPass.TabIndex = 5;
             lblPass.Text = "Contraseña";
             lblPass.Click += lblPass_Click;
             // 
+            // lnklblRecuperacionContra
+            // 
+            lnklblRecuperacionContra.AutoSize = true;
+            lnklblRecuperacionContra.Location = new Point(149, 187);
+            lnklblRecuperacionContra.Name = "lnklblRecuperacionContra";
+            lnklblRecuperacionContra.Size = new Size(123, 15);
+            lnklblRecuperacionContra.TabIndex = 6;
+            lnklblRecuperacionContra.TabStop = true;
+            lnklblRecuperacionContra.Text = "Recuperar Contraseña";
+            lnklblRecuperacionContra.LinkClicked += lnklblRecuperacionContra_LinkClicked;
+            // 
             // LoginForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(422, 211);
+            Controls.Add(lnklblRecuperacionContra);
             Controls.Add(lblPass);
             Controls.Add(lblUsuario);
             Controls.Add(txtPass);
@@ -123,5 +136,6 @@
         private TextBox txtPass;
         private Label lblUsuario;
         private Label lblPass;
+        private LinkLabel lnklblRecuperacionContra;
     }
 }

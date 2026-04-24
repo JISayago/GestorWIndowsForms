@@ -603,6 +603,7 @@
             txtDescuentoEfectivo.ReadOnly = true;
             txtDescuentoEfectivo.Size = new Size(161, 33);
             txtDescuentoEfectivo.TabIndex = 34;
+            txtDescuentoEfectivo.TextChanged += txtDescuentoEfectivo_TextChanged;
             // 
             // lblPorcentajeDescuento
             // 
@@ -746,7 +747,9 @@
             Controls.Add(dgvProductos);
             Controls.Add(tableLayoutPanel6);
             Name = "FVentaLibre";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FVentaLibre";
+            WindowState = FormWindowState.Maximized;
             Load += FVentaLibre_Load;
             tableLayoutPanel6.ResumeLayout(false);
             tableLayoutPanel5.ResumeLayout(false);

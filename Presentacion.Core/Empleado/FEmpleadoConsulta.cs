@@ -1,7 +1,12 @@
-﻿using Presentacion.Core.Empleado.Rol;
+﻿using Presentacion.AccesoAlSistema;
+using Presentacion.Core.Empleado.Rol;
+using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Empleado;
+using Servicios.Helpers.Producto;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado;
 using System.Drawing;
 using System.Windows.Forms;
@@ -11,25 +16,32 @@ namespace Presentacion.Core.Empleado
     public partial class FEmpleadoConsulta : FBaseConsulta
     {
         private readonly IEmpleadoServicio _empleadoServicio;
+        private readonly IUsuarioServicio _usuarioServicio;
 
+        private readonly ICollection<long> _empleadosConUsuariosBloqueados = new List<long>();
         public long? empleadoSeleccionado = null;
         public bool soloSeleccion;
         public bool vieneDeCargaVendedor = false;
+        private bool estaInhabilitado = false;
+        private long logeadoID;
 
-        public FEmpleadoConsulta() : this(new EmpleadoServicio())
+        public FEmpleadoConsulta(long logeadoid) : this(new EmpleadoServicio(), new UsuarioServicio())
         {
             InitializeComponent();
             soloSeleccion = false;
+                logeadoID = logeadoid;
         }
 
-        public FEmpleadoConsulta(IEmpleadoServicio empleadoServicio)
+        public FEmpleadoConsulta(IEmpleadoServicio empleadoServicio, IUsuarioServicio usuarioServicio)
         {
             _empleadoServicio = empleadoServicio;
+            _usuarioServicio = usuarioServicio;
             InitializeComponent();
             soloSeleccion = false;
+            _empleadosConUsuariosBloqueados = _usuarioServicio.ObtenerEmpleadosSinPassIDs();
         }
 
-        public FEmpleadoConsulta(bool _vieneDeCargaVendedor) : this(new EmpleadoServicio())
+        public FEmpleadoConsulta(bool _vieneDeCargaVendedor) : this(new EmpleadoServicio(),new UsuarioServicio())
         {
             InitializeComponent();
 
@@ -54,13 +66,17 @@ namespace Presentacion.Core.Empleado
                 AbrirCrearUsuario,
                 true
             );
-            if (vieneDeCargaVendedor)
             {
-
             AgregarAccion(
                 "Asignar Vendedor",
                 Constantes.Imagenes.ImgNuevo,
                 AsignarVendedor,
+                true
+            );
+            AgregarAccion(
+                "Resetear Contrtaseña",
+                Constantes.Imagenes.ImgNuevo,
+                ResetarContraseniaUsuario,
                 true
             );
             }
@@ -80,6 +96,23 @@ namespace Presentacion.Core.Empleado
 
             var f = new FEmpleadoCrearUsuario(id);
             f.ShowDialog();
+        }
+
+        private void ResetarContraseniaUsuario(long? id)
+        {
+            if (!id.HasValue) return;
+            MessageBox.Show("¿Confirma que desea resetear la contraseña del usuario?", "Confirmar acción", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var adminId = logeadoID;
+            var usuarioDesbloquerID = id.Value;
+            var resp = _usuarioServicio.ResetearContra(adminId, usuarioDesbloquerID);
+            if (resp.Exitoso)
+            {
+                MessageBox.Show($"{resp.Mensaje}");
+            }
+            else
+            {
+                MessageBox.Show($"{resp.Mensaje}");
+            }
         }
         private void AsignarVendedor(long? id)
         {
@@ -102,57 +135,93 @@ namespace Presentacion.Core.Empleado
         {
             base.ResetearGrilla(grilla);
 
+            if (grilla.Columns.Count == 0) return;
+
             if (grilla.Columns.Contains("PersonaId"))
             {
                 grilla.Columns["PersonaId"].Visible = false;
                 grilla.Columns["PersonaId"].Name = "Id";
             }
 
-            grilla.Columns["Legajo"].Visible = true;
-            grilla.Columns["Legajo"].Width = 80;
+            if (grilla.Columns.Contains("Legajo"))
+            {
+                grilla.Columns["Legajo"].Visible = true;
+                grilla.Columns["Legajo"].Width = 80;
+            }
 
-            grilla.Columns["Nombre"].Visible = true;
-            grilla.Columns["Nombre"].Width = 100;
+            if (grilla.Columns.Contains("Nombre"))
+            {
+                grilla.Columns["Nombre"].Visible = true;
+                grilla.Columns["Nombre"].Width = 100;
+            }
 
-            grilla.Columns["Apellido"].Visible = true;
-            grilla.Columns["Apellido"].Width = 100;
+            if (grilla.Columns.Contains("Apellido"))
+            {
+                grilla.Columns["Apellido"].Visible = true;
+                grilla.Columns["Apellido"].Width = 100;
+            }
 
-            grilla.Columns["Username"].Visible = true;
-            grilla.Columns["Username"].HeaderText = "Usuario";
-            grilla.Columns["Username"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("Username"))
+            {
+                grilla.Columns["Username"].Visible = true;
+                grilla.Columns["Username"].HeaderText = "Usuario";
+                grilla.Columns["Username"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
 
-            grilla.Columns["DNI"].Visible = true;
-            grilla.Columns["DNI"].Width = 100;
+            if (grilla.Columns.Contains("DNI"))
+            {
+                grilla.Columns["DNI"].Visible = true;
+                grilla.Columns["DNI"].Width = 100;
+            }
 
-            grilla.Columns["Email"].Visible = true;
-            grilla.Columns["Email"].Width = 130;
+            if (grilla.Columns.Contains("Email"))
+            {
+                grilla.Columns["Email"].Visible = true;
+                grilla.Columns["Email"].Width = 130;
+            }
 
-            grilla.Columns["Telefono"].Visible = true;
-            grilla.Columns["Telefono"].Width = 100;
+            if (grilla.Columns.Contains("Telefono"))
+            {
+                grilla.Columns["Telefono"].Visible = true;
+                grilla.Columns["Telefono"].Width = 100;
+            }
 
-            grilla.Columns["EstadoDescripcion"].Visible = true;
-            grilla.Columns["EstadoDescripcion"].Width = 100;
-            grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+            if (grilla.Columns.Contains("EstadoDescripcion"))
+            {
+                grilla.Columns["EstadoDescripcion"].Visible = true;
+                grilla.Columns["EstadoDescripcion"].Width = 100;
+                grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+            }
         }
 
         #endregion
 
         #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
 
+
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
 
-            if (filtros.VerEliminados)
+            filtros.Extra ??= "ApyNom";
+
+            var resultado = _empleadoServicio.ObtenerEmpleados(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 CLAVE: volver a aplicar formato
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
             {
-                dgv.DataSource = _empleadoServicio.ObtenerEmpleadosEliminados(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _empleadoServicio.ObtenerEmpleados(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
 
         #endregion
@@ -198,6 +267,54 @@ namespace Presentacion.Core.Empleado
         }
 
         #endregion
+        protected override void ConfigurarFiltrosUI()
+        {
 
+            base.ConfigurarFiltrosUI();
+
+            ActivarFiltroEliminados("Mostrar productos eliminados.");
+
+            var opciones = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Nombre", Valor = "" }, 
+                new OpcionFiltro { Texto = "Legajo", Valor = "Legajo" },
+                new OpcionFiltro { Texto = "Nombre de Usuario", Valor = "Usuario" }
+            };
+
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
+
+            ActivarFiltroFechas("Filtrar por fecha");
+
+            var tiposFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
+                new OpcionFiltro { Texto = "Fecha Ingreso", Valor = ((int)TipoFechaFiltroEmpleado.FechaIngreso).ToString() },
+                new OpcionFiltro { Texto = "Fecha Egreso", Valor = ((int)TipoFechaFiltroEmpleado.FechaEgreso).ToString() },
+                new OpcionFiltro { Texto = "Inhabilitado", Valor = ((int)EstadoEmpleado.Inhablitado).ToString() },
+                new OpcionFiltro { Texto = "Habilitado", Valor = ((int)EstadoEmpleado.Habilitado).ToString() },
+                new OpcionFiltro { Texto = "Sin Contraseña", Valor = ((int)EstadoEmpleado.SinPass).ToString() },
+            };
+
+            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+
+            cbxFiltroOpcional.SelectedValue = "";
+            cbxFiltroExtraEstado.SelectedValue = "";
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar empleado por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Filtrar por:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar empleado:";
+        }
     }
 }

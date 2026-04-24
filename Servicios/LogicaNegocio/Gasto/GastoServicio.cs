@@ -1,9 +1,11 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
+using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Gasto;
 using Servicios.Helpers.Movimiento;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Extras;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Gasto.DTO;
 using Servicios.LogicaNegocio.Movimiento;
 using System;
@@ -293,53 +295,108 @@ namespace Servicios.LogicaNegocio.Gasto
             return gastos;
         }
 
-        public List<GastoDTO> ObtenerGastosFiltrados(
-      string textoBuscar = null,
-      int? estadoGasto = null,
-      DateTime? fechaDesde = null,
-      DateTime? fechaHasta = null)
+        public ResultadoPaginacion<GastoDTO> ObtenerGastos(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var query = context.Gastos.AsQueryable();
+            var query = context.Gastos
+                .AsNoTracking()
+                .Include(g => g.Empleado)
+                    .ThenInclude(e => e.Persona)
+                .AsQueryable();
 
-            // 🔍 filtro por texto
-            if (!string.IsNullOrWhiteSpace(textoBuscar))
+            // 🔍 TEXTO
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                query = query.Where(g =>
-                    g.Detalle.Contains(textoBuscar) ||
-                    g.NumeroGasto.Contains(textoBuscar) ||
-                    g.Empleado.Persona.Nombre.Contains(textoBuscar) ||
-                    g.Empleado.Persona.Apellido.Contains(textoBuscar)
-                );
+                var texto = filtros.TextoBuscar;
+
+                switch (filtros.Extra?.ToString())
+                {
+                    case "NumeroGasto":
+                        query = query.Where(g => g.NumeroGasto.Contains(texto));
+                        break;
+
+                    case "NombreEmpleado":
+                        query = query.Where(g =>
+                            g.Empleado.Persona.Nombre.Contains(texto) ||
+                            g.Empleado.Persona.Apellido.Contains(texto));
+                        break;
+                    default:
+                        query = query.Where(g =>
+                            g.NumeroGasto.Contains(texto) ||
+                            g.Detalle.Contains(texto));
+                        break;
+                }
             }
 
-            // 🔥 filtro por estado (enum → int)
-            if (estadoGasto.HasValue)
+            // 🔴 EXTRA2 → FECHA o ESTADO
+            TipoFiltroFechaGasto? tipoFecha = null;
+            EstadoGasto? estadoFiltro = null;
+
+            if (filtros.Extra2 != null &&
+                int.TryParse(filtros.Extra2.ToString(), out var valor))
             {
-                query = query.Where(g => g.EstadoGasto == estadoGasto.Value);
-            }
-            else
-            {
-                // comportamiento por defecto (como ya tenías)
-                query = query.Where(g => g.EstadoGasto > 0);
+                if (Enum.IsDefined(typeof(TipoFiltroFechaGasto), valor))
+                    tipoFecha = (TipoFiltroFechaGasto)valor;
+
+                if (Enum.IsDefined(typeof(EstadoGasto), valor))
+                    estadoFiltro = (EstadoGasto)valor;
             }
 
-            // 📅 filtro por fechas
-            if (fechaDesde.HasValue)
+            // 📅 FILTRO FECHA
+            if (tipoFecha.HasValue)
             {
-                query = query.Where(g => g.FechaGasto >= fechaDesde.Value);
+                if (tipoFecha == TipoFiltroFechaGasto.FechaGasto)
+                {
+                    if (filtros.FechaDesde.HasValue)
+                        query = query.Where(g => g.FechaGasto >= filtros.FechaDesde.Value);
+
+                    if (filtros.FechaHasta.HasValue)
+                    {
+                        var hastaReal = filtros.FechaHasta.Value.AddDays(1);
+                        query = query.Where(g => g.FechaGasto < hastaReal);
+                    }
+                }
+
+                if (tipoFecha == TipoFiltroFechaGasto.FechaRegistro)
+                {
+                    if (filtros.FechaDesde.HasValue)
+                        query = query.Where(g => g.FechaRegistro >= filtros.FechaDesde.Value);
+
+                    if (filtros.FechaHasta.HasValue)
+                    {
+                        var hastaReal = filtros.FechaHasta.Value.AddDays(1);
+                        query = query.Where(g => g.FechaRegistro < hastaReal);
+                    }
+                }
             }
 
-            if (fechaHasta.HasValue)
+            // 🔴 FILTRO ESTADO
+            if (estadoFiltro.HasValue)
             {
-                var hastaReal = fechaHasta.Value.AddDays(1);
-                query = query.Where(g => g.FechaGasto < hastaReal);
+                query = query.Where(g => g.EstadoGasto == (int)estadoFiltro.Value);
             }
 
-            // 📊 resultado
-            var gastos = query
-                .OrderByDescending(g => g.FechaGasto)
+            // 📊 TOTAL
+            var total = query.Count();
+
+            // 🔴 CONTROL PAGINACION
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 📌 ORDEN (tiene sentido usar FechaGasto)
+            query = query.OrderByDescending(g => g.FechaGasto);
+
+            // 📄 DATA
+            var data = query
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
                 .Select(g => new GastoDTO
                 {
                     GastoId = g.GastoId,
@@ -356,8 +413,14 @@ namespace Servicios.LogicaNegocio.Gasto
                 })
                 .ToList();
 
-            return gastos;
+            return new ResultadoPaginacion<GastoDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
         }
-
     }
+
 }

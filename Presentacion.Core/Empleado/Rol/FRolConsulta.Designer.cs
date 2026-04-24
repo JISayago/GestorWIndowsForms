@@ -28,22 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            panel1.SuspendLayout();
             SuspendLayout();
-            // 
-            // panel1
-            // 
-            panel1.Size = new Size(800, 561);
             // 
             // FRolConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 561);
+            ClientSize = new Size(1151, 561);
             Name = "FRolConsulta";
             Text = "FRolConsulta";
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
             ResumeLayout(false);
         }
 

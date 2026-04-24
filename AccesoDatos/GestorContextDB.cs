@@ -37,6 +37,7 @@ namespace AccesoDatos
         public DbSet<Gasto> Gastos { get; set; }
         public DbSet<Lote> Lotes { get; set; }
         public DbSet<DetalleVentaLote> DetalleVentaLotes { get; set; }
+        public DbSet<CodigoRecuperacionPass> CodigosRecuperacionPass { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -1163,6 +1164,38 @@ namespace AccesoDatos
                     .WithMany(p => p.DetalleVentaLote)
                     .HasForeignKey(d => d.IdLote)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<CodigoRecuperacionPass>(entity =>
+            {
+                entity.ToTable("CodigosRecuperacionPass");
+
+                entity.HasKey(e => e.CodigoRecuperacionId);
+
+                entity.Property(e => e.Codigo)
+                    .IsRequired()
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.FechaCreacion)
+                    .IsRequired();
+
+                entity.Property(e => e.FechaExpiracion)
+                    .IsRequired();
+
+                entity.Property(e => e.EstaUsado)
+                    .IsRequired();
+
+                entity.Property(e => e.FechaUso)
+                    .IsRequired(false);
+
+                // 🔹 Relación con Empleado
+                entity.HasOne(e => e.UsuarioAsignado)
+                    .WithMany(e => e.CodigosRecuperacion)
+                    .HasForeignKey(e => e.UsuarioAsignadoId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // 🔹 Índice para búsquedas rápidas por código
+                entity.HasIndex(e => e.Codigo);
             });
         }
     }

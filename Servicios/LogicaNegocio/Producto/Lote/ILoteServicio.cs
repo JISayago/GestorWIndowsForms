@@ -1,5 +1,6 @@
 ﻿using AccesoDatos;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
 using System;
@@ -13,7 +14,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
     public interface ILoteServicio
     {
         EstadoOperacion CrearLote(LoteDTO lote);
-        IEnumerable<LoteDTO> ObtenerLote(string cadenaBuscar);
+        ResultadoPaginacion<LoteDTO> ObtenerLotes(FiltroConsulta filtros);
         EstadoOperacion ModficiarLote(LoteDTO loteDto, long loteId);
         EstadoOperacion EliminarLote(long loteId);
         LoteDTO ObtenerLotePorId(long loteId);
@@ -22,6 +23,6 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         List<DetalleVentaLoteDTO> DescontarStockLoteFifoLifo(decimal cantidadADescontar, long productoId, bool tieneFechaVencimiento);
         void RestaurarStockLoteFifoLifo(decimal cantidadARestaurar, List<long> loteId, bool tieneFechaVencimiento);
         string GenerarNumeroLote();
-
+        public List<LoteDTO> ObtenerLotesVencidos(int cantidadDiasABuscar);
     }
 }

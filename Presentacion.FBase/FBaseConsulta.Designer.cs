@@ -28,10 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            txtBuscar = new TextBox();
-            btnBuscar = new Button();
-            label1 = new Label();
-            panel2 = new Panel();
             dgvGrilla = new DataGridView();
             BarraLateralBotones = new ToolStrip();
             btnNuevo = new ToolStripButton();
@@ -43,69 +39,57 @@
             btnImprimir = new ToolStripButton();
             toolStripSeparator3 = new ToolStripSeparator();
             btnSalir = new ToolStripButton();
-            cbxEstaEliminado = new CheckBox();
             panel1 = new Panel();
-            lblFiltro = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
-            chkUsarFecha = new CheckBox();
-            tableLayoutPanel2 = new TableLayoutPanel();
-            lvlFiltrarPorColumna = new Label();
-            cbxFiltroOpcional = new ComboBox();
-            dtpDesde = new DateTimePicker();
-            dtpHasta = new DateTimePicker();
+            tableLayoutPanel9 = new TableLayoutPanel();
+            tableLayoutPanel10 = new TableLayoutPanel();
+            tableLayoutPanel11 = new TableLayoutPanel();
+            btnSiguiente = new Button();
+            lblPagina = new Label();
+            btnAnterior = new Button();
+            lblTotalRegistros = new Label();
+            cbxEstaEliminado = new CheckBox();
+            tableLayoutPanel6 = new TableLayoutPanel();
+            tableLayoutPanel7 = new TableLayoutPanel();
+            lblCmb2 = new Label();
             cbxFiltroExtraEstado = new ComboBox();
-            pnlFiltrosAvanzados = new Panel();
-            panel2.SuspendLayout();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            lblCmb1 = new Label();
+            cbxFiltroOpcional = new ComboBox();
+            tableLayoutPanel3 = new TableLayoutPanel();
+            tableLayoutPanel8 = new TableLayoutPanel();
+            chkUsarRango = new CheckBox();
+            chkUsarFecha = new CheckBox();
+            dtpHasta = new DateTimePicker();
+            dtpDesde = new DateTimePicker();
+            tableLayoutPanel4 = new TableLayoutPanel();
+            tableLayoutPanel5 = new TableLayoutPanel();
+            txtBuscar = new TextBox();
+            lblBuscar = new Label();
+            btnBuscar = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
             BarraLateralBotones.SuspendLayout();
             panel1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
+            tableLayoutPanel9.SuspendLayout();
+            tableLayoutPanel10.SuspendLayout();
+            tableLayoutPanel11.SuspendLayout();
+            tableLayoutPanel6.SuspendLayout();
+            tableLayoutPanel7.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
+            tableLayoutPanel3.SuspendLayout();
+            tableLayoutPanel8.SuspendLayout();
+            tableLayoutPanel4.SuspendLayout();
+            tableLayoutPanel5.SuspendLayout();
             SuspendLayout();
-            // 
-            // txtBuscar
-            // 
-            txtBuscar.Location = new Point(67, 12);
-            txtBuscar.Name = "txtBuscar";
-            txtBuscar.Size = new Size(254, 23);
-            txtBuscar.TabIndex = 0;
-            // 
-            // btnBuscar
-            // 
-            btnBuscar.Location = new Point(327, 0);
-            btnBuscar.Name = "btnBuscar";
-            btnBuscar.Size = new Size(97, 44);
-            btnBuscar.TabIndex = 1;
-            btnBuscar.Text = "Buscar";
-            btnBuscar.UseVisualStyleBackColor = true;
-            btnBuscar.Click += btnBuscar_Click_1;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(11, 15);
-            label1.Name = "label1";
-            label1.Size = new Size(59, 15);
-            label1.TabIndex = 2;
-            label1.Text = "Busqueda";
-            // 
-            // panel2
-            // 
-            panel2.Controls.Add(label1);
-            panel2.Controls.Add(btnBuscar);
-            panel2.Controls.Add(txtBuscar);
-            panel2.Location = new Point(23, 156);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(447, 50);
-            panel2.TabIndex = 1;
             // 
             // dgvGrilla
             // 
             dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvGrilla.Location = new Point(12, 212);
+            dgvGrilla.Location = new Point(12, 302);
             dgvGrilla.Name = "dgvGrilla";
-            dgvGrilla.Size = new Size(1094, 337);
+            dgvGrilla.Size = new Size(1427, 247);
             dgvGrilla.TabIndex = 2;
             // 
             // BarraLateralBotones
@@ -117,7 +101,7 @@
             BarraLateralBotones.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             BarraLateralBotones.Location = new Point(0, 0);
             BarraLateralBotones.Name = "BarraLateralBotones";
-            BarraLateralBotones.Size = new Size(1118, 27);
+            BarraLateralBotones.Size = new Size(1451, 27);
             BarraLateralBotones.Stretch = true;
             BarraLateralBotones.TabIndex = 0;
             BarraLateralBotones.Text = "toolStrip1";
@@ -185,144 +169,354 @@
             btnSalir.TextImageRelation = TextImageRelation.TextAboveImage;
             btnSalir.Click += btnSalir_Click;
             // 
-            // cbxEstaEliminado
-            // 
-            cbxEstaEliminado.AutoSize = true;
-            cbxEstaEliminado.Location = new Point(586, 175);
-            cbxEstaEliminado.Name = "cbxEstaEliminado";
-            cbxEstaEliminado.Size = new Size(211, 19);
-            cbxEstaEliminado.TabIndex = 3;
-            cbxEstaEliminado.Text = "Mostrar sólo elementos eliminados";
-            cbxEstaEliminado.UseVisualStyleBackColor = true;
-            cbxEstaEliminado.CheckedChanged += cbxEstaEliminado_CheckedChanged;
-            // 
             // panel1
             // 
-            panel1.Controls.Add(lblFiltro);
             panel1.Controls.Add(tableLayoutPanel1);
-            panel1.Controls.Add(pnlFiltrosAvanzados);
-            panel1.Controls.Add(panel2);
-            panel1.Controls.Add(cbxEstaEliminado);
             panel1.Controls.Add(BarraLateralBotones);
             panel1.Controls.Add(dgvGrilla);
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1118, 561);
+            panel1.Size = new Size(1451, 561);
             panel1.TabIndex = 0;
-            // 
-            // lblFiltro
-            // 
-            lblFiltro.AutoSize = true;
-            lblFiltro.Location = new Point(524, 176);
-            lblFiltro.Name = "lblFiltro";
-            lblFiltro.Size = new Size(38, 15);
-            lblFiltro.TabIndex = 4;
-            lblFiltro.Text = "label2";
-            lblFiltro.Visible = false;
             // 
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel1.ColumnCount = 4;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
-            tableLayoutPanel1.Controls.Add(chkUsarFecha, 0, 0);
-            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 3, 0);
-            tableLayoutPanel1.Controls.Add(dtpDesde, 1, 0);
-            tableLayoutPanel1.Controls.Add(dtpHasta, 1, 1);
-            tableLayoutPanel1.Controls.Add(cbxFiltroExtraEstado, 3, 1);
-            tableLayoutPanel1.Location = new Point(26, 42);
+            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel9, 1, 1);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel6, 0, 0);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel3, 0, 1);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel4, 1, 0);
+            tableLayoutPanel1.Location = new Point(12, 47);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 2;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 47.5609741F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 52.4390259F));
-            tableLayoutPanel1.Size = new Size(587, 82);
-            tableLayoutPanel1.TabIndex = 6;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 42.10526F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 42.1052628F));
+            tableLayoutPanel1.Size = new Size(1424, 228);
+            tableLayoutPanel1.TabIndex = 7;
             // 
-            // chkUsarFecha
+            // tableLayoutPanel9
             // 
-            chkUsarFecha.AutoSize = true;
-            chkUsarFecha.Location = new Point(3, 3);
-            chkUsarFecha.Name = "chkUsarFecha";
-            chkUsarFecha.Size = new Size(83, 19);
-            chkUsarFecha.TabIndex = 3;
-            chkUsarFecha.Text = "Usar Fecha";
-            chkUsarFecha.UseVisualStyleBackColor = true;
-            chkUsarFecha.Visible = false;
+            tableLayoutPanel9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel9.ColumnCount = 1;
+            tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel9.Controls.Add(tableLayoutPanel10, 0, 1);
+            tableLayoutPanel9.Controls.Add(cbxEstaEliminado, 0, 0);
+            tableLayoutPanel9.Location = new Point(715, 116);
+            tableLayoutPanel9.Name = "tableLayoutPanel9";
+            tableLayoutPanel9.RowCount = 2;
+            tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel9.Size = new Size(706, 109);
+            tableLayoutPanel9.TabIndex = 7;
+            // 
+            // tableLayoutPanel10
+            // 
+            tableLayoutPanel10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel10.ColumnCount = 2;
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
+            tableLayoutPanel10.Controls.Add(tableLayoutPanel11, 1, 0);
+            tableLayoutPanel10.Controls.Add(lblTotalRegistros, 0, 0);
+            tableLayoutPanel10.Location = new Point(3, 57);
+            tableLayoutPanel10.Name = "tableLayoutPanel10";
+            tableLayoutPanel10.RowCount = 1;
+            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel10.Size = new Size(700, 49);
+            tableLayoutPanel10.TabIndex = 7;
+            // 
+            // tableLayoutPanel11
+            // 
+            tableLayoutPanel11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel11.ColumnCount = 3;
+            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel11.Controls.Add(btnSiguiente, 2, 0);
+            tableLayoutPanel11.Controls.Add(lblPagina, 1, 0);
+            tableLayoutPanel11.Controls.Add(btnAnterior, 0, 0);
+            tableLayoutPanel11.Location = new Point(283, 3);
+            tableLayoutPanel11.Name = "tableLayoutPanel11";
+            tableLayoutPanel11.RowCount = 1;
+            tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel11.Size = new Size(414, 43);
+            tableLayoutPanel11.TabIndex = 7;
+            // 
+            // btnSiguiente
+            // 
+            btnSiguiente.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            btnSiguiente.Location = new Point(313, 3);
+            btnSiguiente.Name = "btnSiguiente";
+            btnSiguiente.Size = new Size(98, 37);
+            btnSiguiente.TabIndex = 7;
+            btnSiguiente.Text = ">";
+            btnSiguiente.UseVisualStyleBackColor = true;
+            btnSiguiente.Click += btnSiguiente_Click;
+            // 
+            // lblPagina
+            // 
+            lblPagina.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            lblPagina.AutoSize = true;
+            lblPagina.Location = new Point(106, 0);
+            lblPagina.Name = "lblPagina";
+            lblPagina.Size = new Size(201, 43);
+            lblPagina.TabIndex = 1;
+            lblPagina.Text = "label2";
+            lblPagina.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnAnterior
+            // 
+            btnAnterior.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            btnAnterior.Location = new Point(3, 3);
+            btnAnterior.Name = "btnAnterior";
+            btnAnterior.Size = new Size(97, 37);
+            btnAnterior.TabIndex = 2;
+            btnAnterior.Text = "<";
+            btnAnterior.UseVisualStyleBackColor = true;
+            btnAnterior.Click += btnAnterior_Click;
+            // 
+            // lblTotalRegistros
+            // 
+            lblTotalRegistros.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            lblTotalRegistros.AutoSize = true;
+            lblTotalRegistros.Location = new Point(3, 0);
+            lblTotalRegistros.Name = "lblTotalRegistros";
+            lblTotalRegistros.Size = new Size(274, 49);
+            lblTotalRegistros.TabIndex = 0;
+            lblTotalRegistros.Text = "label1";
+            lblTotalRegistros.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // cbxEstaEliminado
+            // 
+            cbxEstaEliminado.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            cbxEstaEliminado.AutoSize = true;
+            cbxEstaEliminado.Enabled = false;
+            cbxEstaEliminado.Location = new Point(3, 3);
+            cbxEstaEliminado.Name = "cbxEstaEliminado";
+            cbxEstaEliminado.Size = new Size(211, 48);
+            cbxEstaEliminado.TabIndex = 3;
+            cbxEstaEliminado.Text = "Mostrar sólo elementos eliminados";
+            cbxEstaEliminado.TextAlign = ContentAlignment.MiddleCenter;
+            cbxEstaEliminado.UseVisualStyleBackColor = true;
+            cbxEstaEliminado.CheckedChanged += cbxEstaEliminado_CheckedChanged;
+            // 
+            // tableLayoutPanel6
+            // 
+            tableLayoutPanel6.ColumnCount = 1;
+            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel6.Controls.Add(tableLayoutPanel7, 0, 1);
+            tableLayoutPanel6.Controls.Add(tableLayoutPanel2, 0, 0);
+            tableLayoutPanel6.Location = new Point(3, 3);
+            tableLayoutPanel6.Name = "tableLayoutPanel6";
+            tableLayoutPanel6.RowCount = 2;
+            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel6.Size = new Size(706, 81);
+            tableLayoutPanel6.TabIndex = 7;
+            // 
+            // tableLayoutPanel7
+            // 
+            tableLayoutPanel7.ColumnCount = 2;
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.6666641F));
+            tableLayoutPanel7.Controls.Add(lblCmb2, 0, 0);
+            tableLayoutPanel7.Controls.Add(cbxFiltroExtraEstado, 1, 0);
+            tableLayoutPanel7.Location = new Point(3, 43);
+            tableLayoutPanel7.Name = "tableLayoutPanel7";
+            tableLayoutPanel7.RowCount = 1;
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel7.Size = new Size(700, 26);
+            tableLayoutPanel7.TabIndex = 7;
+            // 
+            // lblCmb2
+            // 
+            lblCmb2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            lblCmb2.AutoSize = true;
+            lblCmb2.Location = new Point(3, 0);
+            lblCmb2.Name = "lblCmb2";
+            lblCmb2.Size = new Size(42, 26);
+            lblCmb2.TabIndex = 9;
+            lblCmb2.Text = "Estado";
+            // 
+            // cbxFiltroExtraEstado
+            // 
+            cbxFiltroExtraEstado.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cbxFiltroExtraEstado.Enabled = false;
+            cbxFiltroExtraEstado.FormattingEnabled = true;
+            cbxFiltroExtraEstado.Location = new Point(236, 3);
+            cbxFiltroExtraEstado.Name = "cbxFiltroExtraEstado";
+            cbxFiltroExtraEstado.Size = new Size(461, 23);
+            cbxFiltroExtraEstado.TabIndex = 5;
             // 
             // tableLayoutPanel2
             // 
             tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel2.ColumnCount = 2;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Controls.Add(lvlFiltrarPorColumna, 0, 0);
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.6666641F));
+            tableLayoutPanel2.Controls.Add(lblCmb1, 0, 0);
             tableLayoutPanel2.Controls.Add(cbxFiltroOpcional, 1, 0);
-            tableLayoutPanel2.Location = new Point(383, 3);
+            tableLayoutPanel2.Location = new Point(3, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Size = new Size(201, 33);
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel2.Size = new Size(700, 26);
             tableLayoutPanel2.TabIndex = 7;
             // 
-            // lvlFiltrarPorColumna
+            // lblCmb1
             // 
-            lvlFiltrarPorColumna.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lvlFiltrarPorColumna.AutoSize = true;
-            lvlFiltrarPorColumna.Location = new Point(39, 0);
-            lvlFiltrarPorColumna.Name = "lvlFiltrarPorColumna";
-            lvlFiltrarPorColumna.Size = new Size(58, 15);
-            lvlFiltrarPorColumna.TabIndex = 8;
-            lvlFiltrarPorColumna.Text = "Filtrar por";
+            lblCmb1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            lblCmb1.AutoSize = true;
+            lblCmb1.Location = new Point(3, 0);
+            lblCmb1.Name = "lblCmb1";
+            lblCmb1.Size = new Size(61, 26);
+            lblCmb1.TabIndex = 8;
+            lblCmb1.Text = "Propiedad";
             // 
             // cbxFiltroOpcional
             // 
             cbxFiltroOpcional.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cbxFiltroOpcional.Enabled = false;
             cbxFiltroOpcional.FormattingEnabled = true;
-            cbxFiltroOpcional.Location = new Point(103, 3);
+            cbxFiltroOpcional.Location = new Point(236, 3);
             cbxFiltroOpcional.Name = "cbxFiltroOpcional";
-            cbxFiltroOpcional.Size = new Size(95, 23);
+            cbxFiltroOpcional.Size = new Size(461, 23);
             cbxFiltroOpcional.TabIndex = 0;
-            cbxFiltroOpcional.Visible = false;
+            cbxFiltroOpcional.SelectedIndexChanged += cbxFiltroOpcional_SelectedIndexChanged;
             // 
-            // dtpDesde
+            // tableLayoutPanel3
             // 
-            dtpDesde.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            dtpDesde.Location = new Point(149, 3);
-            dtpDesde.Name = "dtpDesde";
-            dtpDesde.Size = new Size(140, 23);
-            dtpDesde.TabIndex = 1;
-            dtpDesde.Visible = false;
+            tableLayoutPanel3.ColumnCount = 1;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel3.Controls.Add(tableLayoutPanel8, 0, 0);
+            tableLayoutPanel3.Controls.Add(dtpHasta, 0, 2);
+            tableLayoutPanel3.Controls.Add(dtpDesde, 0, 1);
+            tableLayoutPanel3.Location = new Point(3, 116);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 3;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33333F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel3.Size = new Size(706, 90);
+            tableLayoutPanel3.TabIndex = 7;
+            // 
+            // tableLayoutPanel8
+            // 
+            tableLayoutPanel8.ColumnCount = 2;
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel8.Controls.Add(chkUsarRango, 1, 0);
+            tableLayoutPanel8.Controls.Add(chkUsarFecha, 0, 0);
+            tableLayoutPanel8.Location = new Point(3, 3);
+            tableLayoutPanel8.Name = "tableLayoutPanel8";
+            tableLayoutPanel8.RowCount = 1;
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel8.Size = new Size(700, 24);
+            tableLayoutPanel8.TabIndex = 7;
+            // 
+            // chkUsarRango
+            // 
+            chkUsarRango.AutoSize = true;
+            chkUsarRango.Enabled = false;
+            chkUsarRango.Location = new Point(353, 3);
+            chkUsarRango.Name = "chkUsarRango";
+            chkUsarRango.Size = new Size(86, 18);
+            chkUsarRango.TabIndex = 4;
+            chkUsarRango.Text = "Usar Rango";
+            chkUsarRango.TextAlign = ContentAlignment.TopLeft;
+            chkUsarRango.UseVisualStyleBackColor = true;
+            chkUsarRango.CheckedChanged += chkUsarRango_CheckedChanged;
+            // 
+            // chkUsarFecha
+            // 
+            chkUsarFecha.AutoSize = true;
+            chkUsarFecha.Enabled = false;
+            chkUsarFecha.Location = new Point(3, 3);
+            chkUsarFecha.Name = "chkUsarFecha";
+            chkUsarFecha.Size = new Size(83, 18);
+            chkUsarFecha.TabIndex = 3;
+            chkUsarFecha.Text = "Usar Fecha";
+            chkUsarFecha.TextAlign = ContentAlignment.TopLeft;
+            chkUsarFecha.UseVisualStyleBackColor = true;
+            chkUsarFecha.CheckedChanged += chkUsarFecha_CheckedChanged;
             // 
             // dtpHasta
             // 
             dtpHasta.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            dtpHasta.Location = new Point(149, 42);
+            dtpHasta.Enabled = false;
+            dtpHasta.Location = new Point(3, 63);
             dtpHasta.Name = "dtpHasta";
-            dtpHasta.Size = new Size(140, 23);
+            dtpHasta.Size = new Size(700, 23);
             dtpHasta.TabIndex = 2;
-            dtpHasta.Visible = false;
             // 
-            // cbxFiltroExtraEstado
+            // dtpDesde
             // 
-            cbxFiltroExtraEstado.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            cbxFiltroExtraEstado.FormattingEnabled = true;
-            cbxFiltroExtraEstado.Location = new Point(383, 42);
-            cbxFiltroExtraEstado.Name = "cbxFiltroExtraEstado";
-            cbxFiltroExtraEstado.Size = new Size(201, 23);
-            cbxFiltroExtraEstado.TabIndex = 5;
-            cbxFiltroExtraEstado.Visible = false;
+            dtpDesde.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dtpDesde.Enabled = false;
+            dtpDesde.Location = new Point(3, 33);
+            dtpDesde.Name = "dtpDesde";
+            dtpDesde.Size = new Size(700, 23);
+            dtpDesde.TabIndex = 1;
             // 
-            // pnlFiltrosAvanzados
+            // tableLayoutPanel4
             // 
-            pnlFiltrosAvanzados.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            pnlFiltrosAvanzados.Location = new Point(23, 42);
-            pnlFiltrosAvanzados.Name = "pnlFiltrosAvanzados";
-            pnlFiltrosAvanzados.Size = new Size(1083, 114);
-            pnlFiltrosAvanzados.TabIndex = 4;
+            tableLayoutPanel4.ColumnCount = 2;
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58.82353F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.17647F));
+            tableLayoutPanel4.Controls.Add(tableLayoutPanel5, 0, 0);
+            tableLayoutPanel4.Controls.Add(btnBuscar, 1, 0);
+            tableLayoutPanel4.Location = new Point(715, 3);
+            tableLayoutPanel4.Name = "tableLayoutPanel4";
+            tableLayoutPanel4.RowCount = 1;
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel4.Size = new Size(704, 81);
+            tableLayoutPanel4.TabIndex = 7;
+            // 
+            // tableLayoutPanel5
+            // 
+            tableLayoutPanel5.ColumnCount = 1;
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel5.Controls.Add(txtBuscar, 0, 1);
+            tableLayoutPanel5.Controls.Add(lblBuscar, 0, 0);
+            tableLayoutPanel5.Location = new Point(3, 3);
+            tableLayoutPanel5.Name = "tableLayoutPanel5";
+            tableLayoutPanel5.RowCount = 2;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel5.Size = new Size(408, 75);
+            tableLayoutPanel5.TabIndex = 2;
+            // 
+            // txtBuscar
+            // 
+            txtBuscar.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            txtBuscar.Location = new Point(3, 40);
+            txtBuscar.Name = "txtBuscar";
+            txtBuscar.Size = new Size(402, 23);
+            txtBuscar.TabIndex = 0;
+            // 
+            // lblBuscar
+            // 
+            lblBuscar.AutoSize = true;
+            lblBuscar.Location = new Point(3, 0);
+            lblBuscar.Name = "lblBuscar";
+            lblBuscar.Size = new Size(48, 15);
+            lblBuscar.TabIndex = 1;
+            lblBuscar.Text = "Buscar :";
+            lblBuscar.TextAlign = ContentAlignment.BottomLeft;
+            // 
+            // btnBuscar
+            // 
+            btnBuscar.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            btnBuscar.Location = new Point(417, 11);
+            btnBuscar.Name = "btnBuscar";
+            btnBuscar.Size = new Size(284, 58);
+            btnBuscar.TabIndex = 1;
+            btnBuscar.Text = "Aplicar Filtros";
+            btnBuscar.UseVisualStyleBackColor = true;
+            btnBuscar.Click += btnBuscar_Click;
             // 
             // FBaseConsulta
             // 
@@ -330,33 +524,40 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             AutoSize = true;
-            ClientSize = new Size(1118, 561);
+            ClientSize = new Size(1451, 561);
             Controls.Add(panel1);
             Name = "FBaseConsulta";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FBaseConsulta";
             WindowState = FormWindowState.Maximized;
             Load += FBaseConsulta_Load;
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
             BarraLateralBotones.ResumeLayout(false);
             BarraLateralBotones.PerformLayout();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
-            tableLayoutPanel1.PerformLayout();
+            tableLayoutPanel9.ResumeLayout(false);
+            tableLayoutPanel9.PerformLayout();
+            tableLayoutPanel10.ResumeLayout(false);
+            tableLayoutPanel10.PerformLayout();
+            tableLayoutPanel11.ResumeLayout(false);
+            tableLayoutPanel11.PerformLayout();
+            tableLayoutPanel6.ResumeLayout(false);
+            tableLayoutPanel7.ResumeLayout(false);
+            tableLayoutPanel7.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel2.PerformLayout();
+            tableLayoutPanel3.ResumeLayout(false);
+            tableLayoutPanel8.ResumeLayout(false);
+            tableLayoutPanel8.PerformLayout();
+            tableLayoutPanel4.ResumeLayout(false);
+            tableLayoutPanel5.ResumeLayout(false);
+            tableLayoutPanel5.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
-
-        protected TextBox txtBuscar;
-        protected Button btnBuscar;
-        protected Label label1;
-        protected Panel panel2;
         protected DataGridView dgvGrilla;
         protected ToolStrip BarraLateralBotones;
         protected ToolStripButton btnNuevo;
@@ -368,17 +569,33 @@
         protected ToolStripButton btnImprimir;
         protected ToolStripSeparator toolStripSeparator3;
         protected ToolStripButton btnSalir;
-        protected CheckBox cbxEstaEliminado;
         public Panel panel1;
-        protected Panel pnlFiltrosAvanzados;
-        protected Label lblFiltro;
-        protected CheckBox chkUsarFecha;
+        private TableLayoutPanel tableLayoutPanel1;
+        private TableLayoutPanel tableLayoutPanel9;
+        private TableLayoutPanel tableLayoutPanel10;
+        private TableLayoutPanel tableLayoutPanel11;
+        private Button btnSiguiente;
+        protected Label lblPagina;
+        private Button btnAnterior;
+        protected Label lblTotalRegistros;
+        protected CheckBox cbxEstaEliminado;
+        private TableLayoutPanel tableLayoutPanel6;
+        private TableLayoutPanel tableLayoutPanel7;
+        protected Label lblCmb2;
+        protected ComboBox cbxFiltroExtraEstado;
+        private TableLayoutPanel tableLayoutPanel2;
+        protected Label lblCmb1;
+        protected ComboBox cbxFiltroOpcional;
+        private TableLayoutPanel tableLayoutPanel3;
+        private TableLayoutPanel tableLayoutPanel8;
+        public CheckBox chkUsarRango;
+        public CheckBox chkUsarFecha;
         protected DateTimePicker dtpHasta;
         protected DateTimePicker dtpDesde;
-        protected ComboBox cbxFiltroOpcional;
-        protected ComboBox cbxFiltroExtraEstado;
-        private TableLayoutPanel tableLayoutPanel1;
-        private TableLayoutPanel tableLayoutPanel2;
-        protected Label lvlFiltrarPorColumna;
+        private TableLayoutPanel tableLayoutPanel4;
+        private TableLayoutPanel tableLayoutPanel5;
+        protected TextBox txtBuscar;
+        private Label lblBuscar;
+        protected Button btnBuscar;
     }
 }

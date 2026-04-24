@@ -159,6 +159,43 @@ namespace AccesoDatos.Migrations
                     b.ToTable("Clientes", (string)null);
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.CodigoRecuperacionPass", b =>
+                {
+                    b.Property<long>("CodigoRecuperacionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("CodigoRecuperacionId"));
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<bool>("EstaUsado")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaExpiracion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaUso")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("UsuarioAsignadoId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("CodigoRecuperacionId");
+
+                    b.HasIndex("Codigo");
+
+                    b.HasIndex("UsuarioAsignadoId");
+
+                    b.ToTable("CodigosRecuperacionPass", (string)null);
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.CuentaCorriente", b =>
                 {
                     b.Property<long>("CuentaCorrienteId")
@@ -1219,6 +1256,17 @@ namespace AccesoDatos.Migrations
                     b.Navigation("Persona");
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.CodigoRecuperacionPass", b =>
+                {
+                    b.HasOne("AccesoDatos.Entidades.Empleado", "UsuarioAsignado")
+                        .WithMany("CodigosRecuperacion")
+                        .HasForeignKey("UsuarioAsignadoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UsuarioAsignado");
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.CuentaCorriente", b =>
                 {
                     b.HasOne("AccesoDatos.Entidades.Cliente", "Cliente")
@@ -1518,6 +1566,8 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.Empleado", b =>
                 {
+                    b.Navigation("CodigosRecuperacion");
+
                     b.Navigation("EmpleadoRoles");
 
                     b.Navigation("Sesiones");

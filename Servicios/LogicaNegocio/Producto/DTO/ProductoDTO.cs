@@ -30,6 +30,7 @@ namespace Servicios.LogicaNegocio.Producto.DTO
         public string? Codigo { get; set; } //
         public string? CodigoBarra { get; set; } //
         public bool IvaIncluidoPrecioFinal { get; set; } //accionable { get; set; } //
+        public bool TieneVencimiento { get; set; }
 
         // Relación simplificada
         public string MarcaNombre { get; set; }

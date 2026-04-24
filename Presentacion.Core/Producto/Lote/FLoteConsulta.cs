@@ -2,6 +2,9 @@
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Producto;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.Lote;
 using System;
 using System.Collections.Generic;
@@ -18,19 +21,28 @@ namespace Presentacion.Core.Producto.Lote
     public partial class FLoteConsulta : FBaseConsulta
     {
         private readonly ILoteServicio _LoteServicio;
+        private readonly IProductoServicio _ProductoServicio;
         public long? LoteSeleccionada = null;
         private bool vieneDeCargaLote = true;
+        private long? productoId = null;
+        public FLoteConsulta(ILoteServicio LoteServicio, IProductoServicio ProductoServicio)
+        {
+            _LoteServicio = LoteServicio;
+            _ProductoServicio = ProductoServicio;
+        }
 
-        public FLoteConsulta(bool vieneDeCargaLote = true) : this(new LoteServicio())
+        public FLoteConsulta(long productoLoteIid) : this(new LoteServicio(),new ProductoServicio())
+        {
+            InitializeComponent();
+            productoId = productoLoteIid;
+
+        }
+        public FLoteConsulta(bool vieneDeCargaLote = true) : this(new LoteServicio(), new ProductoServicio())
         {
             InitializeComponent();
             this.vieneDeCargaLote = vieneDeCargaLote;
         }
 
-        public FLoteConsulta(ILoteServicio LoteServicio)
-        {
-            _LoteServicio = LoteServicio;
-        }
 
         #region INIT
 
@@ -81,65 +93,93 @@ namespace Presentacion.Core.Producto.Lote
         {
             base.ResetearGrilla(grilla);
 
-            //if (grilla.Columns.Contains("NumeroLote"))
-            //{
-            grilla.Columns["NumeroLote"].Visible = true;
-            grilla.Columns["NumeroLote"].HeaderText = "Numero Lote";
-            grilla.Columns["NumeroLote"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            //}
+            if (grilla.Columns.Count == 0)
+                return;
 
-            grilla.Columns["NombreProducto"].Visible = true;
-            grilla.Columns["NombreProducto"].HeaderText = "Producto";
-            grilla.Columns["NombreProducto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("LoteId"))
+            {
+                grilla.Columns["LoteId"].Visible = false;
+                grilla.Columns["LoteId"].Name = "Id";
+            }
 
-            grilla.Columns["FechaAlta"].Visible = true;
-            grilla.Columns["FechaAlta"].HeaderText = "Creado";
-            grilla.Columns["FechaAlta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("NumeroLote"))
+            {
+                grilla.Columns["NumeroLote"].Visible = true;
+                grilla.Columns["NumeroLote"].HeaderText = "Número Lote";
+                grilla.Columns["NumeroLote"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
 
-            grilla.Columns["FechaVencimiento"].Visible = true;
-            grilla.Columns["FechaVencimiento"].HeaderText = "Vencimiento";
-            grilla.Columns["FechaVencimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("NombreProducto"))
+            {
+                grilla.Columns["NombreProducto"].Visible = true;
+                grilla.Columns["NombreProducto"].HeaderText = "Producto";
+                grilla.Columns["NombreProducto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
 
-            grilla.Columns["StockInicial"].Visible = true;
-            grilla.Columns["StockInicial"].HeaderText = "Stock Incial";
-            grilla.Columns["StockInicial"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("FechaAlta"))
+            {
+                grilla.Columns["FechaAlta"].Visible = true;
+                grilla.Columns["FechaAlta"].HeaderText = "Creado";
+            }
 
-            grilla.Columns["StockActual"].Visible = true;
-            grilla.Columns["StockActual"].HeaderText = "Stock Actual";
-            grilla.Columns["StockActual"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            if (grilla.Columns.Contains("FechaVencimiento"))
+            {
+                grilla.Columns["FechaVencimiento"].Visible = true;
+                grilla.Columns["FechaVencimiento"].HeaderText = "Vencimiento";
+            }
 
-            grilla.Columns["EstaVencido"].Visible = true;
-            grilla.Columns["EstaVencido"].HeaderText = "Vencido";
-            grilla.Columns["EstaVencido"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            grilla.Columns["EstaVencido"].DefaultCellStyle.NullValue = false;
-            grilla.Columns["EstaVencido"].ReadOnly = true;
+            if (grilla.Columns.Contains("StockInicial"))
+            {
+                grilla.Columns["StockInicial"].Visible = true;
+                grilla.Columns["StockInicial"].HeaderText = "Stock Inicial";
+            }
 
-            grilla.Columns["EstaActivo"].Visible = true;
-            grilla.Columns["EstaActivo"].HeaderText = "Activo";
-            grilla.Columns["EstaActivo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            grilla.Columns["EstaActivo"].DefaultCellStyle.NullValue = false;
-            grilla.Columns["EstaActivo"].ReadOnly = true;
+            if (grilla.Columns.Contains("StockActual"))
+            {
+                grilla.Columns["StockActual"].Visible = true;
+                grilla.Columns["StockActual"].HeaderText = "Stock Actual";
+            }
+
+            if (grilla.Columns.Contains("EstaVencido"))
+            {
+                grilla.Columns["EstaVencido"].Visible = true;
+                grilla.Columns["EstaVencido"].HeaderText = "Vencido";
+                grilla.Columns["EstaVencido"].DefaultCellStyle.NullValue = false;
+                grilla.Columns["EstaVencido"].ReadOnly = true;
+            }
+
+            if (grilla.Columns.Contains("EstaActivo"))
+            {
+                grilla.Columns["EstaActivo"].Visible = true;
+                grilla.Columns["EstaActivo"].HeaderText = "Activo";
+                grilla.Columns["EstaActivo"].DefaultCellStyle.NullValue = false;
+                grilla.Columns["EstaActivo"].ReadOnly = true;
+            }
         }
 
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
-
             string columnaBuscar = filtros.Extra as string ?? "Descripcion";
-            string texto = filtros.TextoBuscar;
 
-            if (filtros.VerEliminados)
+            var resultado = _LoteServicio.ObtenerLotes(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 CLAVE: volver a aplicar formato
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
             {
-                dgv.DataSource = _LoteServicio.ObtenerLotesEliminados(texto, filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _LoteServicio.ObtenerLote(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
-
         #endregion
 
         #region 🧰 BOTONES BASE
@@ -149,7 +189,7 @@ namespace Presentacion.Core.Producto.Lote
             base.EjecutarBtnEliminar();
             if (!puedeEjecutarComando) return;
 
-            var f = new FGestionStockLotes(TipoOperacion.Eliminar, null, entidadID); // deberia pasar tambien el producto? o directamente del service
+            var f = new FGestionStockLotes(TipoOperacion.Eliminar, entidadID); // deberia pasar tambien el producto? o directamente del service
             f.ShowDialog();
 
             Recargar(f.RealizoAlgunaOperacion);
@@ -160,7 +200,7 @@ namespace Presentacion.Core.Producto.Lote
             base.EjecutarBtnModificar();
             if (!puedeEjecutarComando) return;
 
-            var f = new FGestionStockLotes(TipoOperacion.Modificar, null, entidadID); // deberia pasar tambien el producto? o directamente del service
+            var f = new FGestionStockLotes(TipoOperacion.Modificar, entidadID); // deberia pasar tambien el producto? o directamente del service
             f.ShowDialog();
 
             Recargar(f.RealizoAlgunaOperacion);
@@ -189,14 +229,69 @@ namespace Presentacion.Core.Producto.Lote
 
         private void FLoteConsulta_Load(object sender, EventArgs e)
         {
+            if (productoId.HasValue)
+            {
+                var lotes = _LoteServicio.ObtenerLotesDeUnProducto((long)productoId);
+                if (lotes != null && lotes.Any())
+                {
+                    dgvGrilla.DataSource = lotes;
+                    ResetearGrilla(dgvGrilla);
+
+
+                }
+                else
+                {
+                    MessageBox.Show("No se ha encontrado un producto para mostrar sus lotes. Se muestran todos los lotes actuales", "Lote de producto no encontrado.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            
+        }
+        protected override void ConfigurarFiltrosUI()
+        {
+
+            base.ConfigurarFiltrosUI();
+
+            ActivarFiltroEliminados("Mostrar movimientos eliminados.");
+
             var opciones = new List<OpcionFiltro>
             {
-            new OpcionFiltro { Texto = "Numero Lote", Valor = "NumeroLote" },
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Número Lote", Valor = "NumeroLote" },
+                new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
+                new OpcionFiltro { Texto = "Producto", Valor = "Producto" }
             };
 
-            ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
+
+            ActivarFiltroFechas("Filtrar por fecha");
+
+            var tiposFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
+                new OpcionFiltro { Texto = "Fecha Alta", Valor = ((int)TipoFiltroFechaLote.Alta).ToString() },
+                new OpcionFiltro { Texto = "Vencimiento", Valor = ((int)TipoFiltroFechaLote.Vencimiento).ToString() }
+            };
+
+            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+
+            cbxFiltroOpcional.SelectedValue = "";
+            cbxFiltroExtraEstado.SelectedValue = "";
         }
 
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar lote por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Tipo de fecha:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar lote:";
+        }
         public override void EjecutarClickDerechoFila(long? id, Point pos)
         {
             //ejemplo

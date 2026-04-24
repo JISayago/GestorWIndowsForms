@@ -6,6 +6,7 @@ using Servicios.Helpers.Movimiento;
 using Servicios.Helpers.OpcionesPagos;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Extras;
+using Servicios.Helpers.VentaEnum;
 using Servicios.Infraestructura;
 using Servicios.LogicaNegocio.Caja;
 using Servicios.LogicaNegocio.Empleado.DTO;
@@ -57,7 +58,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
             Debug.WriteLine("3 - Generar número venta");
 
             var fecha = DateTime.Today;
-            var prefijo = ventaDto.Estado == 99 ? "CAN" : "VEN";
+            var prefijo = ventaDto.Estado == (int)EstadoVenta.CancelacionVenta ? "CAN" : "VEN";
 
             var cantidadHoy = context.Ventas.Count(v =>
                 v.NumeroVenta.StartsWith($"{prefijo}-{fecha:yyyyMMdd}")
@@ -518,7 +519,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
 
             var query = context.Ventas
                 .Where(v =>
-                    v.Estado != 99 && v.Estado != 10 &&
+                    v.Estado != (int)EstadoVenta.CancelacionVenta && v.Estado != (int)EstadoVenta.Cancelada &&
                     v.Total > 0 &&
                     v.FechaVenta.Date == fecha.Date &&
                     v.NumeroVenta.StartsWith($"VEN-{fecha:yyyyMMdd}")
@@ -574,7 +575,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                 if (ventaOriginal == null)
                     return new EstadoOperacion { Exitoso = false, Mensaje = "La venta no existe." };
 
-                if (ventaOriginal.Estado == 10)
+                if (ventaOriginal.Estado == (int)EstadoVenta.Cancelada)
                     return new EstadoOperacion { Exitoso = false, Mensaje = "La venta ya está cancelada." };
 
                 ventaOriginal.Estado = 10;
@@ -590,7 +591,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                     TotalSinDescuento = ventaOriginal.TotalSinDescuento,
                     Descuento = ventaOriginal.Descuento,
 
-                    Estado = 99,
+                    Estado = (int)EstadoVenta.CancelacionVenta,
                     Detalle = $"Cancelación de venta N° {ventaOriginal.NumeroVenta}",
 
                     Items = ventaOriginal.DetallesVentas.Select(d =>

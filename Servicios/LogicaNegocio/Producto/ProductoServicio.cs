@@ -1,7 +1,9 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Producto.Lote;
 using Servicios.LogicaNegocio.Venta.DTO;
@@ -107,7 +109,6 @@ namespace Servicios.LogicaNegocio.Producto
 
             return dto;
         }
-
 
         public List<DetalleVentaLoteDTO> DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context)
         {
@@ -308,6 +309,7 @@ namespace Servicios.LogicaNegocio.Producto
             var producto = new AccesoDatos.Entidades.Producto{
                 Stock = productoDto.Stock,
                 ControlPorLote = productoDto.ControlPorLote,
+                TieneVencimiento = productoDto.TieneVencimiento,
                 PrecioCosto = productoDto.PrecioCosto,
                 PrecioVenta = productoDto.PrecioVenta,
                 Descripcion = productoDto.Descripcion,
@@ -362,6 +364,7 @@ namespace Servicios.LogicaNegocio.Producto
 
             productoEditar.Stock = productoDto.Stock;
             productoEditar.ControlPorLote = productoDto.ControlPorLote;
+            productoEditar.TieneVencimiento = productoDto.TieneVencimiento;
             productoEditar.PrecioCosto = productoDto.PrecioCosto;
             productoEditar.PrecioVenta = productoDto.PrecioVenta;
             productoEditar.Descripcion = productoDto.Descripcion;
@@ -413,6 +416,7 @@ namespace Servicios.LogicaNegocio.Producto
                      RubroNombre = e.Rubro.Nombre,
                      Stock = Convert.ToDecimal(e.Stock),
                      ControlPorLote = e.ControlPorLote,
+                     TieneVencimiento = e.TieneVencimiento,
                      PrecioCosto = e.PrecioCosto,
                      PrecioVenta = e.PrecioVenta,
                      Descripcion = e.Descripcion,
@@ -433,10 +437,7 @@ namespace Servicios.LogicaNegocio.Producto
             return producto;
         }
 
-        // =============================
-        // PRODUCTOS ACTIVOS (NUEVO CON COLUMNA DINÁMICA)
-        // =============================
-        public IEnumerable<ProductoDTO> ObtenerProductos(string cadenabuscar, string columna)
+        public ResultadoPaginacion<ProductoDTO> ObtenerProductos(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
@@ -445,36 +446,67 @@ namespace Servicios.LogicaNegocio.Producto
                 .Include(e => e.Marca)
                 .Include(e => e.Rubro)
                 .Include(e => e.CategoriasProductos)
-                .Where(e => !e.EstaEliminado);
+                .AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(cadenabuscar))
+            // 🔹 Eliminados
+            query = filtros.VerEliminados
+                ? query.Where(e => e.EstaEliminado)
+                : query.Where(e => !e.EstaEliminado);
+
+            // 🔹 Buscador
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                switch (columna)
+                switch (filtros.Extra?.ToString())
                 {
                     case "MarcaNombre":
-                        query = query.Where(e => e.Marca.Nombre.Contains(cadenabuscar));
+                        query = query.Where(e => e.Marca.Nombre.Contains(filtros.TextoBuscar));
                         break;
 
                     case "RubroNombre":
-                        query = query.Where(e => e.Rubro.Nombre.Contains(cadenabuscar));
+                        query = query.Where(e => e.Rubro.Nombre.Contains(filtros.TextoBuscar));
                         break;
 
                     case "Codigo":
-                        query = query.Where(e => e.Codigo.Contains(cadenabuscar));
+                        query = query.Where(e => e.Codigo.Contains(filtros.TextoBuscar));
                         break;
 
                     case "CodigoBarra":
-                        query = query.Where(e => e.CodigoBarra.Contains(cadenabuscar));
+                        query = query.Where(e => e.CodigoBarra.Contains(filtros.TextoBuscar));
                         break;
 
-                    default: // Descripcion
-                        query = query.Where(e => e.Descripcion.Contains(cadenabuscar));
+                    default:
+                        query = query.Where(e => e.Descripcion.Contains(filtros.TextoBuscar));
                         break;
                 }
             }
 
-            return query
-                .ToList()
+            if (!string.IsNullOrEmpty(filtros.Extra2?.ToString()))
+            {
+                if (int.TryParse(filtros.Extra2.ToString(), out int estado))
+                {
+                    query = query.Where(e => e.Estado == estado);
+                }
+            }
+
+            var total = query.Count();
+
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+
+            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 🔹 ORDEN
+            query = query.OrderBy(e => e.ProductoId);
+
+            // 🔹 PAGINADO
+            var data = query
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
                 .Select(e => new ProductoDTO
                 {
                     ProductoId = e.ProductoId,
@@ -482,7 +514,7 @@ namespace Servicios.LogicaNegocio.Producto
                     IdRubro = e.IdRubro,
                     MarcaNombre = e.Marca.Nombre,
                     RubroNombre = e.Rubro.Nombre,
-                    Stock = Convert.ToDecimal(e.Stock),
+                    Stock = e.Stock,
                     ControlPorLote = e.ControlPorLote,
                     PrecioCosto = e.PrecioCosto,
                     PrecioVenta = e.PrecioVenta,
@@ -500,105 +532,26 @@ namespace Servicios.LogicaNegocio.Producto
                         .ToList()
                 })
                 .ToList();
-        }
 
-
-        // =============================
-        // PRODUCTOS ELIMINADOS (NUEVO CON COLUMNA DINÁMICA)
-        // =============================
-        public IEnumerable<ProductoDTO> ObtenerProductosEliminados(string cadenabuscar, string columna)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var query = context.Productos
-                .AsNoTracking()
-                .Include(e => e.Marca)
-                .Include(e => e.Rubro)
-                .Include(e => e.CategoriasProductos)
-                .Where(e => e.EstaEliminado);
-
-            if (!string.IsNullOrWhiteSpace(cadenabuscar))
+            return new ResultadoPaginacion<ProductoDTO>
             {
-                switch (columna)
-                {
-                    case "MarcaNombre":
-                        query = query.Where(e => e.Marca.Nombre.Contains(cadenabuscar));
-                        break;
-
-                    case "RubroNombre":
-                        query = query.Where(e => e.Rubro.Nombre.Contains(cadenabuscar));
-                        break;
-
-                    case "Codigo":
-                        query = query.Where(e => e.Codigo.Contains(cadenabuscar));
-                        break;
-
-                    case "CodigoBarra":
-                        query = query.Where(e => e.CodigoBarra.Contains(cadenabuscar));
-                        break;
-
-                    default:
-                        query = query.Where(e => e.Descripcion.Contains(cadenabuscar));
-                        break;
-                }
-            }
-
-            return query
-                .ToList()
-                .Select(e => new ProductoDTO
-                {
-                    ProductoId = e.ProductoId,
-                    IdMarca = e.IdMarca,
-                    IdRubro = e.IdRubro,
-                    MarcaNombre = e.Marca.Nombre,
-                    RubroNombre = e.Rubro != null ? e.Rubro.Nombre : "",
-                    Stock = Convert.ToDecimal(e.Stock),
-                    ControlPorLote = e.ControlPorLote,
-                    PrecioCosto = e.PrecioCosto,
-                    PrecioVenta = e.PrecioVenta,
-                    Descripcion = e.Descripcion,
-                    EstaEliminado = e.EstaEliminado,
-                    Estado = e.Estado,
-                    Medida = e.Medida,
-                    UnidadMedida = e.UnidadMedida,
-                    Codigo = e.Codigo,
-                    CodigoBarra = e.CodigoBarra,
-                    IvaIncluidoPrecioFinal = e.IvaIncluidoPrecioFinal,
-                    EsFraccionable = e.EsFraccionable,
-                    CategoriaIds = e.CategoriasProductos
-                        .Select(cp => cp.IdCategoria)
-                        .ToList()
-                })
-                .ToList();
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page, // 🔴 importante devolver la corregida
+                PageSize = filtros.PageSize
+            };
         }
-
-
-        // =============================
-        // OVERLOAD COMPATIBLE (SISTEMA VIEJO)
-        // =============================
-        public IEnumerable<ProductoDTO> ObtenerProductos(string cadenabuscar)
-        {
-            return ObtenerProductos(cadenabuscar, "Descripcion");
-        }
-
-        public IEnumerable<ProductoDTO> ObtenerProductosEliminados(string cadenabuscar)
-        {
-            return ObtenerProductosEliminados(cadenabuscar, "Descripcion");
-        }
-
-
         public IEnumerable<ProductoDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(
-     long? MarcaId = null, long? RubroId = null, long? CategoriaId = null)
+    long? MarcaId = null, long? RubroId = null, long? CategoriaId = null)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            // Partimos de la entidad Productos (solo productos, sin considerar tablas de ofertas)
             var query = context.Productos
                 .AsNoTracking()
                 .Include(p => p.Marca)
                 .Include(p => p.Rubro)
                 .Include(p => p.CategoriasProductos)
-                .Where(p => !p.EstaEliminado); // solo productos activos
+                .Where(p => !p.EstaEliminado);
 
             if (MarcaId.HasValue)
                 query = query.Where(p => p.IdMarca == MarcaId.Value);
@@ -609,8 +562,7 @@ namespace Servicios.LogicaNegocio.Producto
             if (CategoriaId.HasValue)
                 query = query.Where(p => p.CategoriasProductos.Any(cp => cp.IdCategoria == CategoriaId.Value));
 
-            // Proyección directa a DTO
-            var productos = query
+            return query
                 .Select(p => new ProductoDTO
                 {
                     ProductoId = p.ProductoId,
@@ -631,13 +583,11 @@ namespace Servicios.LogicaNegocio.Producto
                     MarcaNombre = p.Marca != null ? p.Marca.Nombre : null,
                     RubroNombre = p.Rubro != null ? p.Rubro.Nombre : null,
                     EsFraccionable = p.EsFraccionable,
-                    CategoriaIds = p.CategoriasProductos != null
-                        ? p.CategoriasProductos.Select(cp => cp.IdCategoria).ToList()
-                        : new List<long>()
+                    CategoriaIds = p.CategoriasProductos
+                        .Select(cp => cp.IdCategoria)
+                        .ToList()
                 })
                 .ToList();
-
-            return productos;
         }
 
         public EstadoOperacion AgregarQuitarStock(MovilizacionStockDTO mStockDTO)

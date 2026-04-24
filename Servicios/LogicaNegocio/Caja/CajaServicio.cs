@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Servicios.LogicaNegocio.Caja
 {
-    public class CajaServicio
+    public class CajaServicio 
     {
 
         public void AbrirCaja(decimal montoInicial, long empleadoId)
@@ -133,6 +133,17 @@ namespace Servicios.LogicaNegocio.Caja
                 .FirstOrDefault();
 
             return saldo;
+        }
+        public CajaDTO EstadoInicioCaja()
+        {
+            var estado = ObtenerEstadoCaja();
+            var saldo = ObtenerSaldoCaja(); 
+            var caja = new CajaDTO
+            {
+                EstaCerrada = !estado, //si no hay caja abierta, entonces esta cerrada
+                SaldoActual = saldo
+            };
+            return caja;
         }
 
         public void RegistrarTransaccion(GestorContextDB context, decimal monto, TipoMovimiento tipo,long cajaId)
@@ -306,5 +317,29 @@ namespace Servicios.LogicaNegocio.Caja
         }
 
         //PODRIA HACER UNA FUNCION PARA BUSCAR FECHAS ESPECIFICAS,Y REUSAR ESA PARA LOS GRAFICOS FILTRADOS
+
+        public CajaDTO ObtenerCajaAbierta(long? cajaId)
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+            var caja = context.Cajas
+                .Where(c => !c.EstaCerrada && c.CajaId == cajaId)
+                .OrderByDescending(c => c.FechaInicio)
+                .Select(c => new CajaDTO
+                {
+                    CajaId = c.CajaId,
+                    SaldoInicial = c.SaldoInicial,
+                    SaldoActual = c.SaldoActual,
+                    FechaInicio = c.FechaInicio,
+                    FechaFin = c.FechaFin,
+                    TotalIngresos = c.TotalIngresos,
+                    TotalEgresos = c.TotalEgresos,
+                    BalanceFinal = c.BalanceFinal,
+                    EmpleadoApertura = c.EmpleadoApertura,
+                    EmpleadoCierre = c.EmpleadoCierre,
+                    EstaCerrada = c.EstaCerrada,
+                })
+                .FirstOrDefault();
+            return caja;
+        }
     }
 }

@@ -8,8 +8,8 @@ namespace Servicios.Helpers.Gasto
 {
     public enum EstadoGasto
     {
-        Pagado = 1,
-        Pendiente = 2,
-        Anulado = 3
+        Pagado = 21,
+        Pendiente = 22,
+        Anulado = 23
     }
 }

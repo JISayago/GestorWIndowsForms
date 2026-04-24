@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Movimiento;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Extras;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Helpers.VentaEnum;
 using Servicios.LogicaNegocio.Venta.TipoPago;
 using Servicios.LogicaNegocio.Venta.VentaLibre.DTO;
 using System;
@@ -37,7 +39,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     };
                 }
 
-                if (venta.Estado == 3) // Anulado
+                if (venta.Estado == (int)EstadoVenta.Cancelada) // Anulado
                 {
                     return new EstadoOperacion
                     {
@@ -46,7 +48,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     };
                 }
 
-                venta.Estado = 3;
+                venta.Estado = (int)EstadoVenta.Cancelada;
 
                 var cajaServicio = new Caja.CajaServicio();
                 var cajaId = cajaServicio.ObtenerIdDeEña(context);
@@ -145,7 +147,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 
                 // 🔢 Número comprobante
                 var fecha = DateTime.Today;
-                var prefijo = dto.Estado == 3 ? "CAN" : "VLIB";
+                var prefijo = dto.Estado == (int)EstadoVenta.Cancelada ? "CAN" : "VLIB";
 
                 var cantidadHoy = context.VentasLibres.Count(v =>
                     v.NumeroVenta.StartsWith($"{prefijo}-{fecha:yyyyMMdd}")
@@ -224,66 +226,110 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
             }
         }
 
-        public IEnumerable<VentaLibreDTO> ObtenerVentasLibres(string cadenaBuscar)
+        public ResultadoPaginacion<VentaLibreDTO> ObtenerVentasLibres(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var query = context.VentasLibres
+                .AsNoTracking()
                 .Include(v => v.Empleado).ThenInclude(e => e.Persona)
                 .Include(v => v.Vendedor).ThenInclude(e => e.Persona)
                 .Include(v => v.Cliente).ThenInclude(c => c.Persona)
                 .AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(cadenaBuscar))
+            // 🔍 BUSQUEDA
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                cadenaBuscar = cadenaBuscar.ToLower();
+                var texto = filtros.TextoBuscar.ToLower();
 
-                switch (cadenaBuscar)//ojo con la columna no es cadena es columna
+                switch (filtros.Extra?.ToString())
                 {
-                    case "Numero":
-                        query = query.Where(v => v.NumeroVenta.ToLower().Contains(cadenaBuscar));
+                    case "NumeroVenta":
+                        query = query.Where(v => v.NumeroVenta.ToLower().Contains(texto));
                         break;
 
-                    case "Cliente":
+                    case "ClienteNombreCompleto":
                         query = query.Where(v =>
                             v.Cliente != null &&
                             (v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido)
                                 .ToLower()
-                                .Contains(cadenaBuscar));
-                        break;
-
-                    case "Vendedor":
-                        query = query.Where(v =>
-                            (v.Vendedor.Persona.Nombre + " " + v.Vendedor.Persona.Apellido)
-                                .ToLower()
-                                .Contains(cadenaBuscar));
-                        break;
-
-                    case "Empleado":
-                        query = query.Where(v =>
-                            (v.Empleado.Persona.Nombre + " " + v.Empleado.Persona.Apellido)
-                                .ToLower()
-                                .Contains(cadenaBuscar));
+                                .Contains(texto));
                         break;
 
                     default:
                         query = query.Where(v =>
-                            v.NumeroVenta.ToLower().Contains(cadenaBuscar) ||
+                            v.NumeroVenta.ToLower().Contains(texto) ||
                             (v.Cliente != null &&
                              (v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido)
                                 .ToLower()
-                                .Contains(cadenaBuscar))
+                                .Contains(texto))
                         );
                         break;
                 }
             }
 
-            var lista = query
+            // 🔴 EXTRA2 → FECHA o ESTADO
+            bool filtrarPorFecha = false;
+            EstadoVenta? estadoFiltro = null;
+
+            if (filtros.Extra2 != null)
+            {
+                var valor = filtros.Extra2.ToString();
+
+                // 📅 FECHA
+                if (valor == "FVL")
+                {
+                    filtrarPorFecha = true;
+                }
+
+                // 🔢 ESTADO
+                if (int.TryParse(valor, out var estado))
+                {
+                    if (Enum.IsDefined(typeof(EstadoVenta), estado))
+                        estadoFiltro = (EstadoVenta)estado;
+                }
+            }
+
+            // 📅 FILTRO FECHA
+            if (filtrarPorFecha)
+            {
+                if (filtros.FechaDesde.HasValue)
+                    query = query.Where(v => v.FechaVenta >= filtros.FechaDesde.Value);
+
+                if (filtros.FechaHasta.HasValue)
+                {
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
+                    query = query.Where(v => v.FechaVenta < hasta);
+                }
+            }
+
+            // 🔴 FILTRO ESTADO
+            if (estadoFiltro.HasValue)
+            {
+                query = query.Where(v => v.Estado == (int)estadoFiltro.Value);
+            }
+
+            // 📊 TOTAL
+            var total = query.Count();
+
+            // 🔴 CONTROL PAGINACION
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 📦 DATA
+            var data = query
                 .OrderByDescending(v => v.FechaVenta)
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
                 .Select(v => new VentaLibreDTO
                 {
                     VentaLibreId = v.VentaLibreId,
-
                     NumeroVenta = v.NumeroVenta,
                     FechaVenta = v.FechaVenta,
 
@@ -301,13 +347,18 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     Total = v.Total,
                     Estado = v.Estado,
                     Detalle = v.Detalle,
-
                     MontoPagado = v.MontoPagado,
                     MontoAdeudado = v.MontoAdeudado
                 })
                 .ToList();
 
-            return lista;
+            return new ResultadoPaginacion<VentaLibreDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
         }
         public List<VentaLibreDTO> ObtenerVentasLibresFiltrados(
     string textoBuscar = null,

@@ -29,13 +29,7 @@
         private void InitializeComponent()
         {
             lblAbrir = new Button();
-            panel1.SuspendLayout();
             SuspendLayout();
-            // 
-            // panel1
-            // 
-            panel1.Controls.Add(lblAbrir);
-            panel1.Controls.SetChildIndex(lblAbrir, 0);
             // 
             // lblAbrir
             // 
@@ -51,14 +45,10 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 561);
+            ClientSize = new Size(1176, 561);
             Name = "FMovimientoConsulta";
             Text = "FMovimientoConsulta";
-            //Load += FMovimientoConsulta_Load;
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion

@@ -1,6 +1,10 @@
-﻿using Presentacion.FBase;
+﻿using Presentacion.Core.Presentacion.Core.Helpers;
+using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Cliente;
+using Servicios.Helpers.Producto;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Cliente;
 using System;
 using System.Windows.Forms;
@@ -36,30 +40,50 @@ namespace Presentacion.Core.Cliente
         {
             base.ResetearGrilla(grilla);
 
+            if (grilla.Columns.Count == 0) return;
+
             if (grilla.Columns.Contains("PersonaId"))
             {
                 grilla.Columns["PersonaId"].Visible = false;
                 grilla.Columns["PersonaId"].Name = "Id";
             }
 
-            grilla.Columns["Nombre"].Visible = true;
-            grilla.Columns["Nombre"].Width = 100;
+            if (grilla.Columns.Contains("Nombre"))
+            {
+                grilla.Columns["Nombre"].Visible = true;
+                grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
 
-            grilla.Columns["Apellido"].Visible = true;
-            grilla.Columns["Apellido"].Width = 100;
+            if (grilla.Columns.Contains("Apellido"))
+            {
+                grilla.Columns["Apellido"].Visible = true;
+                grilla.Columns["Apellido"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
 
-            grilla.Columns["DNI"].Visible = true;
-            grilla.Columns["DNI"].Width = 100;
+            if (grilla.Columns.Contains("Dni"))
+            {
+                grilla.Columns["Dni"].Visible = true;
+                grilla.Columns["Dni"].Width = 100;
+            }
 
-            grilla.Columns["Email"].Visible = true;
-            grilla.Columns["Email"].Width = 130;
+            if (grilla.Columns.Contains("Email"))
+            {
+                grilla.Columns["Email"].Visible = true;
+                grilla.Columns["Email"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
 
-            grilla.Columns["Telefono"].Visible = true;
-            grilla.Columns["Telefono"].Width = 100;
+            if (grilla.Columns.Contains("Telefono"))
+            {
+                grilla.Columns["Telefono"].Visible = true;
+                grilla.Columns["Telefono"].Width = 100;
+            }
 
-            grilla.Columns["EstadoDescripcion"].Visible = true;
-            grilla.Columns["EstadoDescripcion"].Width = 100;
-            grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+            if (grilla.Columns.Contains("EstadoDescripcion"))
+            {
+                grilla.Columns["EstadoDescripcion"].Visible = true;
+                grilla.Columns["EstadoDescripcion"].Width = 100;
+                grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+            }
         }
 
         #endregion
@@ -70,19 +94,31 @@ namespace Presentacion.Core.Cliente
         {
             base.ActualizarDatos(dgv, filtros);
 
-            if (filtros.VerEliminados)
+            filtros.Extra ??= "ApyNom";
+
+            var resultado = _clienteServicio.ObtenerClientes(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 CLAVE: volver a aplicar formato
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
             {
-                dgv.DataSource = _clienteServicio.ObtenerClientesEliminados(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _clienteServicio.ObtenerClientes(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+                
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
 
         #endregion
+
+
 
         #region 🔷 BOTONES BASE
 
@@ -156,8 +192,55 @@ namespace Presentacion.Core.Cliente
         }
 
         #endregion
+        protected override void ConfigurarFiltrosUI()
+        {
+            base.ConfigurarFiltrosUI();
+
+            var opciones = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Nombre", Valor = "ApyNom" },
+                new OpcionFiltro { Texto = "Documento", Valor = "Dni" },
+                new OpcionFiltro { Texto = "Teléfono", Valor = "Telefono" },
+                new OpcionFiltro { Texto = "Email", Valor = "Email" }
+            };
+
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
 
 
+            ActivarFiltroFechas("Filtrar por:");
+
+            var tiposFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
+                new OpcionFiltro { Texto = "Fecha Alta", Valor = ((int)TipoFiltroCliente.FechaAlta).ToString() },
+                new OpcionFiltro { Texto = "Fecha Baja", Valor = ((int)TipoFiltroCliente.FechaBaja).ToString() },
+                new OpcionFiltro { Texto = "Con Cuenta Corriente", Valor =((int)TipoFiltroCliente.ConCtaCte).ToString() },
+                new OpcionFiltro { Texto = "Sin Cuenta Corriente", Valor = ((int)TipoFiltroCliente.SinCtaCte).ToString() },
+                new OpcionFiltro { Texto = "Inhabilitado", Valor = ((int)TipoFiltroCliente.Inhabilitado).ToString() },
+
+            };
+
+            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+
+            cbxFiltroOpcional.SelectedValue = "";
+            cbxFiltroExtraEstado.SelectedValue = "";
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar cliente por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Tipo de filtrado:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar cliente:";
+        }
         protected override void ConfigurarAccionesPersonalizadas()
         {
             // BOTON Seleccionar

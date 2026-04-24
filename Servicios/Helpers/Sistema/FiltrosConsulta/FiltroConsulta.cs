@@ -4,17 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Presentacion.FBase.Helpers
+namespace Servicios.Helpers.Sistema.FiltrosConsulta
 {
     public class FiltroConsulta
     {
         public string TextoBuscar { get; set; }
         public bool VerEliminados { get; set; }
-
         public DateTime? FechaDesde { get; set; }
         public DateTime? FechaHasta { get; set; }
-
-        public object Extra { get; set; } // cualquier cosa extra
-        public object Extra2 { get; set; } // cualquier cosa extra
+        public object Extra { get; set; } // Columna propiedad
+        public object Extra2 { get; set; } // estado enum
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
+        public string OrdenarPor { get; set; }
+        public bool Ascendente { get; set; } = true;
     }
 }

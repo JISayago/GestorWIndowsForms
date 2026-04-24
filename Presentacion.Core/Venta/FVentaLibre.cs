@@ -43,7 +43,7 @@ namespace Presentacion.Core.Venta
         private ClienteDTO _clienteVenta;
         private bool esConsumidorFinal;
         private UsuarioLogeado _usuarioLogeado;
-        private long idVendedor;    
+        private long idVendedor;
         private bool esUsuarioLogeado = false;
         private decimal _totalVenta = 0.00m;
         private decimal _subTotalVenta = 0.00m;
@@ -52,7 +52,7 @@ namespace Presentacion.Core.Venta
         private CuerpoDetalleVenta _cuerpoDetalleVenta;
         private List<FormaPago> tipoDePagosVenta;
         private string descripcionVenta = "";
-        private VentaLibreDTO  _ventaLibreDto;
+        private VentaLibreDTO _ventaLibreDto;
         public FVentaLibre(long UsuarioLogeadoId)
         {
             InitializeComponent();
@@ -220,7 +220,7 @@ namespace Presentacion.Core.Venta
                 {
                     decimal subtotal;
 
-                        subtotal = item.PrecioVenta * item.Cantidad;
+                    subtotal = item.PrecioVenta * item.Cantidad;
 
                     total += subtotal;
                 }
@@ -366,7 +366,7 @@ namespace Presentacion.Core.Venta
                 esConsumidorFinal = false;
                 cbxConsumidorFinal.Checked = false;
 
-                ActualizarCamposInicio(); 
+                ActualizarCamposInicio();
             }
         }
 
@@ -378,7 +378,7 @@ namespace Presentacion.Core.Venta
 
             if (esConsumidorFinal)
             {
-               
+
                 var clienteDefault = _clienteServicio.ObtenerClientePorNumero("0");
 
                 _clienteVenta = new ClienteDTO
@@ -399,29 +399,21 @@ namespace Presentacion.Core.Venta
         }
 
 
-        private bool _suspendCbxDesc = false;
 
         private void cbxDescEfectivo_CheckedChanged(object sender, EventArgs e)
         {
-            if (_suspendCbxDesc) return;
 
-            ValidarCantidadySiEsOferta();
 
             txtDescuentoEfectivo.Enabled = cbxDescEfectivo.Checked;
-        }
+            txtDescuentoEfectivo.ReadOnly = !cbxDescEfectivo.Checked;
 
-        private void ValidarCantidadySiEsOferta()
-        {
-            if (_itemsVenta.Count < 1)
+            if (!cbxDescEfectivo.Checked)
             {
-                _suspendCbxDesc = true;
-                cbxDescEfectivo.Checked = false;
-                _suspendCbxDesc = false;
-                MessageBox.Show("Debe cargar al menos un producto para aplicar un descuento.");
-                return;
+                txtDescuentoEfectivo.Text = string.Empty;
+                CalcularTotal();
             }
-
         }
+
 
         private void btnConfirmarYFPago_Click(object sender, EventArgs e)
         {
@@ -635,7 +627,54 @@ namespace Presentacion.Core.Venta
 
         private void btnLimpiar_Click(object sender, EventArgs e)
         {
-                InicializarYLimpiarCampos();
+            InicializarYLimpiarCampos();
         }
+
+        private void txtDescuentoEfectivo_TextChanged(object sender, EventArgs e)
+        {
+            AplicarDescuentoEfectivo();
+        }
+        private void AplicarDescuentoEfectivo()
+        {
+            if (!decimal.TryParse(txtDescuentoEfectivo.Text, out decimal porcentajeDesc))
+                return;
+
+            if (porcentajeDesc < 0 || porcentajeDesc > 100)
+            {
+                MessageBox.Show("Ingresar un número entre 1 y 100.");
+                if (porcentajeDesc > 100)
+                {
+                    txtDescuentoEfectivo.Text = "100";
+                    porcentajeDesc = 100;
+                }
+                else
+                {
+                    txtDescuentoEfectivo.Text = "0";
+                    porcentajeDesc = 0;
+                }
+                return;
+            }
+
+            // 🔹 total de productos SIN oferta
+            decimal totalSinOferta = _itemsVenta
+                .Where(i => !i.EsOferta)
+                .Sum(i => i.PrecioVenta * i.Cantidad);
+
+            // 🔹 total de productos CON oferta (no se toca)
+            decimal totalConOferta = _itemsVenta
+                .Where(i => i.EsOferta)
+                .Sum(i => i.Subtotal);
+
+            // 🔥 descuento solo sobre los que NO tienen oferta
+            decimal descuento = totalSinOferta * (porcentajeDesc / 100m);
+
+            decimal totalFinal = totalConOferta + (totalSinOferta - descuento);
+
+            _totalVenta = totalFinal;
+
+            txtTotal.Text = totalFinal.ToString("C2");
+        }
+
+
     }
 }

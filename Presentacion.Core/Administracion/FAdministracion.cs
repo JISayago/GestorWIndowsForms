@@ -110,7 +110,7 @@ namespace Presentacion.Core.Administracion
 
         private void lISTADOEMPLEADOSToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var fEmpleado = new FEmpleadoConsulta();
+            var fEmpleado = new FEmpleadoConsulta(_logeadoId);
             fEmpleado.Show();
         }
 
@@ -213,12 +213,12 @@ namespace Presentacion.Core.Administracion
 
         private void FAdministracion_Load(object sender, EventArgs e)
         {
-            grafico1();
-            grafico2();
-            grafico3();
-            grafico4();
-            grafico5();
-            grafico6();
+            //grafico1();
+            //grafico2();
+            //grafico3();                            COMENTADO    RENDIMIENTO
+            //grafico4();
+            //grafico5();
+            //grafico6();
 
             formsPlot6.Plot.Axes.AutoScale();
             formsPlot6.Refresh();

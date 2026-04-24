@@ -55,6 +55,7 @@
             chkIvaIncluido = new CheckBox();
             chkEsFraccionable = new CheckBox();
             chkControlPorLotes = new CheckBox();
+            chkTieneVencimiento = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
@@ -258,7 +259,7 @@
             // chkIvaIncluido
             // 
             chkIvaIncluido.AutoSize = true;
-            chkIvaIncluido.Location = new Point(589, 178);
+            chkIvaIncluido.Location = new Point(589, 176);
             chkIvaIncluido.Name = "chkIvaIncluido";
             chkIvaIncluido.Size = new Size(170, 19);
             chkIvaIncluido.TabIndex = 29;
@@ -268,7 +269,7 @@
             // chkEsFraccionable
             // 
             chkEsFraccionable.AutoSize = true;
-            chkEsFraccionable.Location = new Point(589, 226);
+            chkEsFraccionable.Location = new Point(589, 201);
             chkEsFraccionable.Name = "chkEsFraccionable";
             chkEsFraccionable.Size = new Size(107, 19);
             chkEsFraccionable.TabIndex = 30;
@@ -278,18 +279,29 @@
             // chkControlPorLotes
             // 
             chkControlPorLotes.AutoSize = true;
-            chkControlPorLotes.Location = new Point(589, 275);
+            chkControlPorLotes.Location = new Point(589, 226);
             chkControlPorLotes.Name = "chkControlPorLotes";
             chkControlPorLotes.Size = new Size(160, 19);
             chkControlPorLotes.TabIndex = 31;
             chkControlPorLotes.Text = "Controlar Stock por Lotes";
             chkControlPorLotes.UseVisualStyleBackColor = true;
             // 
+            // chkTieneVencimiento
+            // 
+            chkTieneVencimiento.AutoSize = true;
+            chkTieneVencimiento.Location = new Point(589, 251);
+            chkTieneVencimiento.Name = "chkTieneVencimiento";
+            chkTieneVencimiento.Size = new Size(167, 19);
+            chkTieneVencimiento.TabIndex = 32;
+            chkTieneVencimiento.Text = "Producto con Vencimineto";
+            chkTieneVencimiento.UseVisualStyleBackColor = true;
+            // 
             // FProductoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 341);
+            Controls.Add(chkTieneVencimiento);
             Controls.Add(chkControlPorLotes);
             Controls.Add(chkEsFraccionable);
             Controls.Add(chkIvaIncluido);
@@ -346,6 +358,7 @@
             Controls.SetChildIndex(chkIvaIncluido, 0);
             Controls.SetChildIndex(chkEsFraccionable, 0);
             Controls.SetChildIndex(chkControlPorLotes, 0);
+            Controls.SetChildIndex(chkTieneVencimiento, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -380,5 +393,6 @@
         private CheckBox chkIvaIncluido;
         private CheckBox chkEsFraccionable;
         private CheckBox chkControlPorLotes;
+        private CheckBox chkTieneVencimiento;
     }
 }

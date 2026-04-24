@@ -1,23 +1,26 @@
-﻿using AccesoDatos.Config;
-using AccesoDatos;
+﻿using AccesoDatos;
+using AccesoDatos.Config;
+using AccesoDatos.Entidades;
+using Microsoft.EntityFrameworkCore;
+using Servicios.Helpers.Empleado;
+using Servicios.Helpers.Producto;
+using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado.DTO;
+using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AccesoDatos.Entidades;
-using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using Servicios.Helpers.Sistema;
-using Servicios.Helpers.Sistema.Admin;
 
 namespace Servicios.LogicaNegocio.Empleado
 {
     public class EmpleadoServicio : IEmpleadoServicio
     {
-        
 
+        
         public EstadoOperacion Eliminar(long empleadoId)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -177,59 +180,130 @@ namespace Servicios.LogicaNegocio.Empleado
             return empleado;
         }
 
-        public IEnumerable<EmpleadoDTO> ObtenerEmpleados(string cadenabuscar)
+        public ResultadoPaginacion<EmpleadoDTO> ObtenerEmpleados(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var empleados = context.Empleados
-            .AsNoTracking()
-            .Include(e => e.Persona)
-            .Where(e => e.Persona != null && !e.Persona.EstaEliminado &&
-                (e.Persona.Nombre.Contains(cadenabuscar)
-                || e.Persona.Apellido.Contains(cadenabuscar)
-                || e.Persona.Dni == cadenabuscar
-                || e.Persona.Email == cadenabuscar))
-            .ToList()
-            .Select(e => new EmpleadoDTO
-            {
-                PersonaId = e.PersonaId,
-                Nombre = e.Persona.Nombre,
-                Apellido = e.Persona.Apellido,
-                Dni = e.Persona.Dni,
-                Cuil = e.Persona.Cuil,
-                Telefono = e.Persona.Telefono,
-                Telefono2 = e.Persona.Telefono2,
-                Email = e.Persona.Email,
-                Direccion = e.Persona.Direccion,
-                FechaNacimiento = e.Persona.FechaNacimiento,
-                EstaEliminado = e.Persona.EstaEliminado,
-                Legajo = e.Legajo,
-                FechaIngreso = e.FechaIngreso,
-                FechaEgreso = e.FechaEgreso,
-                Estado = e.Estado,
-                EstadoDescripcion = Enum.GetName(typeof(EstadoEmpleado), e.Estado) ?? "Desconocido",
-                Username = e.Username,
-                Pass = e.Pass,
-                UsuarioEstaHabilitado = e.UsuarioEstaHabilitado
-            })
-            .ToList();
-           
-           
-                   return empleados;
-               }
-
-        public IEnumerable<EmpleadoDTO> ObtenerEmpleadosEliminados(string cadenabuscar)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var empleados = context.Empleados
+            var query = context.Empleados
                 .AsNoTracking()
                 .Include(e => e.Persona)
-                .Where(e => e.Persona != null && e.Persona.EstaEliminado && (e.Persona.Nombre.Contains(cadenabuscar)
-                                || e.Persona.Apellido.Contains(cadenabuscar)
-                                || e.Persona.Dni == (cadenabuscar)
-                                || e.Persona.Email == (cadenabuscar)))
-                .ToList()
+                .Where(e => e.Persona != null)
+                .AsQueryable();
+
+            // 🔴 ELIMINADOS
+            query = filtros.VerEliminados
+                ? query.Where(e => e.Persona.EstaEliminado)
+                : query.Where(e => !e.Persona.EstaEliminado);
+
+            // 🔍 BUSQUEDA
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                var texto = filtros.TextoBuscar;
+
+                switch (filtros.Extra?.ToString())
+                {
+                    case "Nombre":
+                        query = query.Where(e =>
+                            e.Persona.Nombre.Contains(texto) ||
+                            e.Persona.Apellido.Contains(texto));
+                        break;
+
+                    case "Legajo":
+                        query = query.Where(e => e.Legajo.ToString().Contains(texto));
+                        break;
+
+                    case "Username":
+                        query = query.Where(e => e.Username.Contains(texto));
+                        break;
+
+                    default:
+                        query = query.Where(e =>
+                            e.Persona.Nombre.Contains(texto) ||
+                            e.Persona.Apellido.Contains(texto));
+                        break;
+                }
+            }
+
+            // 📅 + 🔴 ESTADOS (Extra2 unificado)
+            TipoFechaFiltroEmpleado? tipoFecha = null;
+            EstadoEmpleado? estadoFiltro = null;
+
+            if (filtros.Extra2 != null &&
+                int.TryParse(filtros.Extra2.ToString(), out var valor))
+            {
+                // Detectar si es fecha o estado
+                if (Enum.IsDefined(typeof(TipoFechaFiltroEmpleado), valor))
+                    tipoFecha = (TipoFechaFiltroEmpleado)valor;
+
+                if (Enum.IsDefined(typeof(EstadoEmpleado), valor))
+                    estadoFiltro = (EstadoEmpleado)valor;
+            }
+
+            // 📅 FILTRO FECHAS
+            if (tipoFecha.HasValue)
+            {
+                if (tipoFecha == TipoFechaFiltroEmpleado.FechaIngreso)
+                {
+                    if (filtros.FechaDesde.HasValue)
+                        query = query.Where(e => e.FechaIngreso >= filtros.FechaDesde.Value);
+
+                    if (filtros.FechaHasta.HasValue)
+                        query = query.Where(e => e.FechaIngreso <= filtros.FechaHasta.Value);
+                }
+
+                if (tipoFecha == TipoFechaFiltroEmpleado.FechaEgreso)
+                {
+                    if (filtros.FechaDesde.HasValue)
+                        query = query.Where(e =>
+                            e.FechaEgreso.HasValue &&
+                            e.FechaEgreso.Value >= filtros.FechaDesde.Value);
+
+                    if (filtros.FechaHasta.HasValue)
+                        query = query.Where(e =>
+                            e.FechaEgreso.HasValue &&
+                            e.FechaEgreso.Value <= filtros.FechaHasta.Value);
+                }
+            }
+
+            // 🔴 FILTRO ESTADO
+            if (estadoFiltro.HasValue)
+            {
+                switch (estadoFiltro.Value)
+                {
+                    case EstadoEmpleado.Habilitado:
+                        query = query.Where(e => e.Estado == (int)EstadoEmpleado.Habilitado);
+                        break;
+
+                    case EstadoEmpleado.Inhablitado:
+                        query = query.Where(e => e.Estado == (int)EstadoEmpleado.Inhablitado);
+                        break;
+
+                    case EstadoEmpleado.SinPass:
+                        query = query.Where(e => string.IsNullOrEmpty(e.Pass));
+                        break;
+                }
+            }
+
+            // 📊 TOTAL
+            var total = query.Count();
+
+            // 🔴 CONTROL PAGINACION
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 🔽 ORDEN
+            query = query.OrderBy(e => e.Persona.Apellido);
+
+            // 📦 DATA
+            var data = query
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
                 .Select(e => new EmpleadoDTO
                 {
                     PersonaId = e.PersonaId,
@@ -247,14 +321,42 @@ namespace Servicios.LogicaNegocio.Empleado
                     FechaIngreso = e.FechaIngreso,
                     FechaEgreso = e.FechaEgreso,
                     Estado = e.Estado,
-                    EstadoDescripcion = Enum.GetName(typeof(EstadoEmpleado), e.Estado) ?? "Desconocido",
+                    //EstadoDescripcion = Enum.GetName(typeof(EstadoEmpleado), e.Estado) ?? "Desconocido",
+                    EstadoDescripcion = "",
                     Username = e.Username,
                     Pass = e.Pass,
                     UsuarioEstaHabilitado = e.UsuarioEstaHabilitado
                 })
                 .ToList();
-                
-                       return empleados;
-                }
+
+            return new ResultadoPaginacion<EmpleadoDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
+        }
+
+        public DatosTurnoDTO ObtenerDatosPanelPrincipal(long usuarioId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var datosTurno = context.Empleados
+                .AsNoTracking()
+                .Include(e => e.Sesiones)
+                .Where(e => e.PersonaId == usuarioId)
+                .Select(e => new DatosTurnoDTO
+                {
+                    UsuarioId = e.PersonaId,
+                    UsuarioLogeado = $"{e.Username}",
+                    HoraIngresoUsuario = e.Sesiones
+                        .Where(s => s.FechaLogout == null)
+                        .Select(s => s.FechaLogin)
+                        .FirstOrDefault()
+                }).FirstOrDefault();
+        
+            return datosTurno;
+        }
     }
 }

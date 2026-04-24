@@ -2,6 +2,9 @@
 using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
+using Servicios.Helpers.Producto;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Helpers.Venta.Oferta;
 using Servicios.LogicaNegocio.Venta.Oferta;
 using System;
 using System.Collections.Generic;
@@ -118,20 +121,6 @@ namespace Presentacion.Core.Oferta
 
         private void FOfertaConsulta_Load(object sender, EventArgs e)
         {
-            cbxEstaEliminado.Text = "Mostrar ofertas inactivas";
-
-            // 🔵 combo columna búsqueda
-            var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro{ Texto="Descripción", Valor="Descripcion"},
-                new OpcionFiltro{ Texto="Código", Valor="Codigo"},
-                new OpcionFiltro{ Texto="Grupo", Valor="GrupoNombre"}
-            };
-
-            ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
-
-            // 🔵 activar rango fechas
-            ActivarFiltroFechas("Filtrar por fecha");
         }
 
         #endregion
@@ -142,12 +131,17 @@ namespace Presentacion.Core.Oferta
         {
             base.ResetearGrilla(grilla);
 
+            if (grilla.Columns.Count == 0)
+                return;
+
+            // 🔹 ID
             if (grilla.Columns.Contains("OfertaDescuentoId"))
             {
                 grilla.Columns["OfertaDescuentoId"].Visible = false;
                 grilla.Columns["OfertaDescuentoId"].Name = "Id";
             }
 
+            // 🔹 Descripción
             if (grilla.Columns.Contains("Descripcion"))
             {
                 grilla.Columns["Descripcion"].Visible = true;
@@ -155,18 +149,21 @@ namespace Presentacion.Core.Oferta
                 grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             }
 
+            // 🔹 Código
             if (grilla.Columns.Contains("Codigo"))
             {
                 grilla.Columns["Codigo"].Visible = true;
                 grilla.Columns["Codigo"].HeaderText = "Código";
             }
 
+            // 🔹 Grupo
             if (grilla.Columns.Contains("GrupoNombre"))
             {
                 grilla.Columns["GrupoNombre"].Visible = true;
                 grilla.Columns["GrupoNombre"].HeaderText = "Grupo";
             }
 
+            // 🔹 Fechas
             if (grilla.Columns.Contains("FechaInicio"))
             {
                 grilla.Columns["FechaInicio"].Visible = true;
@@ -179,23 +176,40 @@ namespace Presentacion.Core.Oferta
                 grilla.Columns["FechaFin"].DefaultCellStyle.Format = "dd/MM/yyyy";
             }
 
+            // 🔹 Estado
             if (grilla.Columns.Contains("EstaActiva"))
             {
+                grilla.Columns["EstaActiva"].Visible = true;
                 grilla.Columns["EstaActiva"].HeaderText = "Estado";
-
-                grilla.CellFormatting += (s, e) =>
-                {
-                    if (e.RowIndex < 0) return;
-                    if (grilla.Columns[e.ColumnIndex].Name != "EstaActiva") return;
-
-                    if (e.Value is bool b)
-                    {
-                        e.Value = b ? "Activa" : "Inactiva";
-                        e.FormattingApplied = true;
-                    }
-                };
+                //grilla.CellFormatting += (s, e) => 
+                //{ 
+                //    if (e.RowIndex < 0) return;
+                //    if (grilla.Columns[e.ColumnIndex].Name != "EstaActiva") return;
+                //    if (e.Value is bool b)
+                //    { e.Value = b ? "Activa" : "Inactiva"; 
+                //        e.FormattingApplied = true; }
+                //};
             }
+
+
+            //    // 🔴 LIMPIAR EVENTO ANTES DE VOLVER A ASIGNAR
+            //    grilla.CellFormatting -= FormatearEstadoOferta;
+            //    grilla.CellFormatting += FormatearEstadoOferta;
         }
+        //private void FormatearEstadoOferta(object sender, DataGridViewCellFormattingEventArgs e)
+        //{
+        //    var grilla = (DataGridView)sender;
+
+        //    if (e.RowIndex < 0) return;
+        //    if (!grilla.Columns.Contains("EstaActiva")) return;
+        //    if (grilla.Columns[e.ColumnIndex].Name != "EstaActiva") return;
+
+        //    if (e.Value is bool b)
+        //    {
+        //        e.Value = b ? "Activa" : "Inactiva";
+        //        e.FormattingApplied = true;
+        //    }
+        //}
 
         #endregion
 
@@ -205,37 +219,82 @@ namespace Presentacion.Core.Oferta
         {
             base.ActualizarDatos(dgv, filtros);
 
-            string columna = filtros.Extra?.ToString() ?? "Descripcion";
+            filtros.Extra ??= "Descripcion";
 
-            if (_vieneDeVenta)
+            var resultado = _ofertaServicio.ObtenerOfertas(filtros, _vieneDeVenta);
+
+            dgv.DataSource = resultado.Items;
+
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
             {
-                if (filtros.VerEliminados)
-                {
-                    dgv.DataSource = _ofertaServicio.ObtenerOfertasInactivasCompuesta(
-                        filtros.TextoBuscar,
-                        columna,
-                        filtros.FechaDesde,
-                        filtros.FechaHasta);
-                }
-                else
-                {
-                    dgv.DataSource = _ofertaServicio.ObtenerOfertasActivasCompuestas(
-                        filtros.TextoBuscar,
-                        columna,
-                        filtros.FechaDesde,
-                        filtros.FechaHasta);
-                }
-            }
-            else
-            {
-                dgv.DataSource = _ofertaServicio.ObtenerOfertasActivasInactivas(
-                    filtros.TextoBuscar,
-                    columna,
-                    filtros.FechaDesde,
-                    filtros.FechaHasta);
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
 
         #endregion
+
+        protected override void ConfigurarFiltrosUI()
+        {
+
+            base.ConfigurarFiltrosUI();
+
+            ActivarFiltroEliminados("Mostrar productos eliminados.");
+
+            var opciones = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Codigo", Valor = "Codigo" },
+                new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
+                new OpcionFiltro { Texto = "Detalle", Valor = "Detalle" },
+                new OpcionFiltro { Texto = "Nombre de Grupo ", Valor = "GrupoNombre" },
+                new OpcionFiltro { Texto = "Marca ", Valor = "NombreMarca" },
+                new OpcionFiltro { Texto = "Rubro", Valor = "NombreRubro" },
+                new OpcionFiltro { Texto = "Categoria", Valor = "NombreCategoria" },
+            };
+
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
+
+            ActivarFiltroFechas("Filtrar por fecha");
+
+            var tiposFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
+                new OpcionFiltro { Texto = "Fecha Inicio", Valor = ((int)TipoFiltroFechaOferta.FechaInicio).ToString() },
+                new OpcionFiltro { Texto = "Fecha Fin", Valor = ((int)TipoFiltroFechaOferta.FechaFin).ToString() },
+                new OpcionFiltro { Texto = "Solo Activas", Valor = ((int)TipoFiltroOferta.Activas).ToString() },
+                new OpcionFiltro { Texto = "Solo Inactivas", Valor = ((int)TipoFiltroOferta.Inactivas).ToString() },
+                new OpcionFiltro { Texto = "Es un solo producto", Valor = ((int)TipoFiltroOferta.EsUnSoloProducto).ToString() },
+                new OpcionFiltro { Texto = "Es combo", Valor = ((int)TipoFiltroOferta.EsCombo).ToString() },
+                new OpcionFiltro { Texto = "Es grupo", Valor = ((int)TipoFiltroOferta.EsGrupo).ToString() },
+            };
+
+            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+
+            cbxFiltroOpcional.SelectedValue = "";
+            cbxFiltroExtraEstado.SelectedValue = "";
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar oferta por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Filtrar por:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar oferta:";
+        }
     }
 }

@@ -1,6 +1,9 @@
-﻿using Presentacion.FBase;
+﻿using Presentacion.Core.Presentacion.Core.Helpers;
+using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Producto;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado.Rol;
 using System;
 using System.Drawing;
@@ -91,6 +94,8 @@ namespace Presentacion.Core.Empleado.Rol
         {
             base.ResetearGrilla(grilla);
 
+            if (grilla.Columns.Count == 0) return;
+
             if (grilla.Columns.Contains("RolId"))
             {
                 grilla.Columns["RolId"].Visible = false;
@@ -119,20 +124,30 @@ namespace Presentacion.Core.Empleado.Rol
             }
         }
 
+
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
 
-            if (filtros.VerEliminados)
+            filtros.Extra ??= "ApyNom";
+
+            var resultado = _rolServicio.ObtenerRoles(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 CLAVE: volver a aplicar formato
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
             {
-                dgv.DataSource = _rolServicio.ObtenerRolesEliminados(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _rolServicio.ObtenerRoles(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
         }
 
         #endregion
@@ -151,7 +166,36 @@ namespace Presentacion.Core.Empleado.Rol
         }
 
         #endregion
+        protected override void ConfigurarFiltrosUI()
+        {
 
+            base.ConfigurarFiltrosUI();
+
+            ActivarFiltroEliminados("Mostrar roles eliminados.");
+
+            var opciones = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Nombre", Valor = "Nombre" },
+                new OpcionFiltro { Texto = "Detalle", Valor = "DetalleRol" },
+                new OpcionFiltro { Texto = "Código", Valor = "CodigoRol" }
+            };
+
+            ActivarFiltroCombo(opciones, "Texto", "Valor");
+
+
+            cbxFiltroOpcional.SelectedValue = "";
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar rol por:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar rol:";
+        }
 
     }
 }
