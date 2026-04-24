@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Admin;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Helpers.Venta.Oferta;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
@@ -311,14 +312,14 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 .Include(o => o.Productos)
                 .AsQueryable();
 
-            // 🔹 SOLO PRODUCTOS (cuando viene de venta)
+            // 🔹 SOLO PRODUCTOS (venta)
             if (vieneDeVenta)
                 query = query.Where(o => !o.esOfertaPorGrupo);
 
             // 🔴 ACTIVAS / INACTIVAS
-            query = filtros.VerEliminados
-                ? query.Where(o => !o.EstaActiva)
-                : query.Where(o => o.EstaActiva);
+            //query = filtros.VerEliminados
+            //    ? query.Where(o => !o.EstaActiva)
+            //    : query.Where(o => o.EstaActiva);
 
             // 🔍 BUSQUEDA
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
@@ -331,29 +332,98 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                         query = query.Where(o => o.Codigo.ToLower().Contains(texto));
                         break;
 
+                    case "Descripcion":
+                        query = query.Where(o => o.Descripcion.ToLower().Contains(texto));
+                        break;
+
                     case "Detalle":
                         query = query.Where(o => o.Detalle.ToLower().Contains(texto));
                         break;
 
-                    default:
-                        query = query.Where(o => o.Descripcion.ToLower().Contains(texto));
+                    case "GrupoNombre":
+                        query = query.Where(o => o.GrupoNombre.ToLower().Contains(texto));
+                        break;
+
+                    case "NombreMarca":
+                        query = query.Where(o => o.Marca.Nombre.ToLower().Contains(texto));
+                        break;
+
+                    case "NombreRubro":
+                        query = query.Where(o => o.Rubro.Nombre.ToLower().Contains(texto));
+                        break;
+
+                    case "NombreCategoria":
+                        query = query.Where(o => o.Categoria.Nombre.ToLower().Contains(texto));
+                        break;
+
+                    default: // TODOS
+                        query = query.Where(o =>
+                            o.Codigo.ToLower().Contains(texto) ||
+                            o.Descripcion.ToLower().Contains(texto) ||
+                            o.Detalle.ToLower().Contains(texto));
                         break;
                 }
             }
 
-            // 📅 FECHAS
-            if (filtros.FechaDesde.HasValue)
-                query = query.Where(o => o.FechaInicio >= filtros.FechaDesde.Value);
+            // 📅 + 🔴 TIPOS (Extra2)
+            var tipo = filtros.Extra2?.ToString();
 
-            if (filtros.FechaHasta.HasValue)
-                query = query.Where(o => o.FechaFin <= filtros.FechaHasta.Value);
+            // 📅 FECHAS
+            if (tipo == ((int)TipoFiltroFechaOferta.FechaInicio).ToString())
+            {
+                if (filtros.FechaDesde.HasValue)
+                    query = query.Where(o => o.FechaInicio >= filtros.FechaDesde.Value);
+
+                if (filtros.FechaHasta.HasValue)
+                    query = query.Where(o => o.FechaInicio <= filtros.FechaHasta.Value);
+            }
+
+            if (tipo == ((int)TipoFiltroFechaOferta.FechaFin).ToString())
+            {
+                if (filtros.FechaDesde.HasValue)
+                    query = query.Where(o => o.FechaFin >= filtros.FechaDesde.Value);
+
+                if (filtros.FechaHasta.HasValue)
+                    query = query.Where(o => o.FechaFin <= filtros.FechaHasta.Value);
+            }
+
+            // 🔴 TIPOS DE OFERTA
+            if (tipo == ((int)TipoFiltroOferta.Activas).ToString())
+                query = query.Where(o => o.EstaActiva);
+
+            if (tipo == ((int)TipoFiltroOferta.Inactivas).ToString())
+                query = query.Where(o => !o.EstaActiva);
+
+            if (tipo == ((int)TipoFiltroOferta.EsUnSoloProducto).ToString())
+                query = query.Where(o => o.EsUnSoloProducto);
+
+            if (tipo == ((int)TipoFiltroOferta.EsCombo).ToString())
+                query = query.Where(o => !o.EsUnSoloProducto && !o.esOfertaPorGrupo);
+
+            if (tipo == ((int)TipoFiltroOferta.EsGrupo).ToString())
+                query = query.Where(o => o.esOfertaPorGrupo);
 
             // 📊 TOTAL
             var total = query.Count();
 
-            // 📦 PAGINACION
+            // 🔴 CONTROL PAGINACION
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 📦 ORDEN INTELIGENTE
+            if (tipo == ((int)TipoFiltroFechaOferta.FechaFin).ToString())
+                query = query.OrderBy(o => o.FechaFin); // vence primero
+            else
+                query = query.OrderByDescending(o => o.FechaInicio); // más nuevas primero
+
+            // 📦 DATA
             var data = query
-                .OrderBy(o => o.FechaFin)
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)
                 .Select(x => new OfertaDTO

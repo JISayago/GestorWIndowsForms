@@ -2,7 +2,9 @@
 using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Helpers.Venta.Oferta;
 using Servicios.LogicaNegocio.Venta.Oferta;
 using System;
 using System.Collections.Generic;
@@ -119,20 +121,6 @@ namespace Presentacion.Core.Oferta
 
         private void FOfertaConsulta_Load(object sender, EventArgs e)
         {
-            cbxEstaEliminado.Text = "Mostrar ofertas inactivas";
-
-            // 🔵 combo columna búsqueda
-            var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro{ Texto="Descripción", Valor="Descripcion"},
-                new OpcionFiltro{ Texto="Código", Valor="Codigo"},
-                new OpcionFiltro{ Texto="Grupo", Valor="GrupoNombre"}
-            };
-
-            //ActivarFiltroCombo("Buscar en:", opciones, "Texto", "Valor");
-
-            // 🔵 activar rango fechas
-            ActivarFiltroFechas("Filtrar por fecha");
         }
 
         #endregion
@@ -255,23 +243,58 @@ namespace Presentacion.Core.Oferta
 
         protected override void ConfigurarFiltrosUI()
         {
+
             base.ConfigurarFiltrosUI();
 
-            // 🔴 texto del check de eliminados (en tu caso "inactivas")
-            cbxEstaEliminado.Text = "Mostrar ofertas inactivas";
+            ActivarFiltroEliminados("Mostrar productos eliminados.");
 
-            // 🔵 combo de búsqueda
             var opciones = new List<OpcionFiltro>
-    {
-        new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
-        new OpcionFiltro { Texto = "Código", Valor = "Codigo" },
-        new OpcionFiltro { Texto = "Grupo", Valor = "GrupoNombre" }
-    };
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Codigo", Valor = "Codigo" },
+                new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
+                new OpcionFiltro { Texto = "Detalle", Valor = "Detalle" },
+                new OpcionFiltro { Texto = "Nombre de Grupo ", Valor = "GrupoNombre" },
+                new OpcionFiltro { Texto = "Marca ", Valor = "NombreMarca" },
+                new OpcionFiltro { Texto = "Rubro", Valor = "NombreRubro" },
+                new OpcionFiltro { Texto = "Categoria", Valor = "NombreCategoria" },
+            };
 
             ActivarFiltroCombo(opciones, "Texto", "Valor");
 
-            // 🔵 fechas
             ActivarFiltroFechas("Filtrar por fecha");
+
+            var tiposFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
+                new OpcionFiltro { Texto = "Fecha Inicio", Valor = ((int)TipoFiltroFechaOferta.FechaInicio).ToString() },
+                new OpcionFiltro { Texto = "Fecha Fin", Valor = ((int)TipoFiltroFechaOferta.FechaFin).ToString() },
+                new OpcionFiltro { Texto = "Solo Activas", Valor = ((int)TipoFiltroOferta.Activas).ToString() },
+                new OpcionFiltro { Texto = "Solo Inactivas", Valor = ((int)TipoFiltroOferta.Inactivas).ToString() },
+                new OpcionFiltro { Texto = "Es un solo producto", Valor = ((int)TipoFiltroOferta.EsUnSoloProducto).ToString() },
+                new OpcionFiltro { Texto = "Es combo", Valor = ((int)TipoFiltroOferta.EsCombo).ToString() },
+                new OpcionFiltro { Texto = "Es grupo", Valor = ((int)TipoFiltroOferta.EsGrupo).ToString() },
+            };
+
+            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+
+            cbxFiltroOpcional.SelectedValue = "";
+            cbxFiltroExtraEstado.SelectedValue = "";
+        }
+
+        protected override string ObtenerTextoLabelFiltroOpcional()
+        {
+            return "Buscar oferta por:";
+        }
+
+        protected override string ObtenerTextoLabelFiltroExtra()
+        {
+            return "Filtrar por:";
+        }
+
+        protected override string ObtenerTextoLabelBusqueda()
+        {
+            return "Buscar oferta:";
         }
     }
 }
