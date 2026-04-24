@@ -110,7 +110,6 @@ namespace Servicios.LogicaNegocio.Producto
             return dto;
         }
 
-
         public List<DetalleVentaLoteDTO> DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context)
         {
             //DEVUELO DETALLEVENTALOTEDTO PORQUE NO PUEDO CREAR DVL EN LOTE SERVICE, TENGO QUE HACERLO EN VENTAINTERNA

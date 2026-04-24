@@ -20,6 +20,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         List<long> ObtenerDnisAutorizados(long? cuentaId);
         CuentaCorrienteDTO ObtenerCuentaCorrientePorClienteId(long clienteId);
         bool PuedeComprar(long cuentaId, decimal monto);
+        List<CuentaCorrienteDTO> ObtenerCtaCteVencidas(int cantidadDiasVencimiento);
 
     }
 }

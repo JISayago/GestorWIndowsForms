@@ -29,5 +29,7 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         public OfertaDTO? ActivarDesactivar(long ofertaId);
         ResultadoPaginacion<OfertaDTO> ObtenerOfertas(FiltroConsulta filtros, bool vieneDeVenta);
         public bool ExisteOfertaPorCodigo(string codigo);
+
+        public List<OfertaDTO> ObtenerOfertasVencidas(int cantidadDiasABuscar);
     }
 }
