@@ -1,4 +1,5 @@
-﻿using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
+﻿using AccesoDatos.Entidades;
+using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,6 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
         DatosTurnoDTO ObtenerDatosTurno(long? cajaId, long usuarioId);
         DatosTurnoDTO ObtenerActualizarDatosCaja(long? cajaId, DatosTurnoDTO datosTurno);
         void GuardarNotasRapidas(string textoLimpio, string nombreUsuario);
+        string? ObtenerNotasRapidas();
     }
 }
