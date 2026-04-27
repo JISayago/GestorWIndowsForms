@@ -33,7 +33,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Presentacion.Core.Administracion
 {
-    public partial class FAdministracion : Form
+    public partial class FAdministracion : FBase.FBase
     {
         private readonly long _logeadoId;
         private readonly CajaServicio _cajaSerivicio;

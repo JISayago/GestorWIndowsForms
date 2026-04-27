@@ -67,6 +67,7 @@
             txtBuscar = new TextBox();
             lblBuscar = new Label();
             btnBuscar = new Button();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
             BarraLateralBotones.SuspendLayout();
             panel1.SuspendLayout();
@@ -531,6 +532,7 @@
             Text = "FBaseConsulta";
             WindowState = FormWindowState.Maximized;
             Load += FBaseConsulta_Load;
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
             BarraLateralBotones.ResumeLayout(false);
             BarraLateralBotones.PerformLayout();
