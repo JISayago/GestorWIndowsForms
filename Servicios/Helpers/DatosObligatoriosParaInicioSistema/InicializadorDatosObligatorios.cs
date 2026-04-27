@@ -1,10 +1,6 @@
 ﻿using AccesoDatos;
-using Servicios.LogicaNegocio.Empleado.DTO;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Servicios.Helpers.DatosObligatorios
 {
@@ -18,24 +14,44 @@ namespace Servicios.Helpers.DatosObligatorios
         {
             Context = new GestorContextDBFactory().CreateDbContext(null);
         }
-        public void InicializadorDatos()
+
+        public void InicializadorDatos(IProgress<(int progreso, string mensaje)> progress = null)
         {
-            InicializarAdmin();
-            InicializarConsumidorFinal();
-            IniciarTiposDePago();
-            RetornarMensajeOfertasActivadasDesactivadasConflictos();
-            seCargo = true;
+            try
+            {
+                progress?.Report((10, "Inicializando usuario administrador..."));
+                InicializarAdmin();
+
+                progress?.Report((30, "Configurando consumidor final..."));
+                InicializarConsumidorFinal();
+
+                progress?.Report((50, "Cargando tipos de pago..."));
+                IniciarTiposDePago();
+
+                progress?.Report((80, "Procesando ofertas..."));
+                mensajes = RetornarMensajeOfertasActivadasDesactivadasConflictos();
+
+                progress?.Report((100, "Finalizando..."));
+
+                seCargo = true;
+            }
+            catch
+            {
+                seCargo = false;
+                throw;
+            }
         }
+
         public List<string> RetornarMensajeOfertasActivadasDesactivadasConflictos()
         {
-            mensajes = OfertasActivarDesactivar.Inicializar(Context);
-            return mensajes;
+            return OfertasActivarDesactivar.Inicializar(Context);
         }
+
         private void InicializarAdmin()
         {
             UsuarioInicial.Inicializar(Context);
-
         }
+
         private void IniciarTiposDePago()
         {
             TipoDePagoInicial.Inicializar(Context);
@@ -44,10 +60,6 @@ namespace Servicios.Helpers.DatosObligatorios
         private void InicializarConsumidorFinal()
         {
             ConsumidorFInal.Inicializar(Context);
-        }
-        private void ActivarDesactivarOfertas()
-        {
-            OfertasActivarDesactivar.Inicializar(Context);
         }
     }
 }
