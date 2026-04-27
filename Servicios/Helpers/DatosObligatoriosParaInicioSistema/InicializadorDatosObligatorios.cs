@@ -1,4 +1,5 @@
 ﻿using AccesoDatos;
+using Servicios.LogicaNegocio.Sistema;
 using System;
 using System.Collections.Generic;
 
@@ -6,13 +7,15 @@ namespace Servicios.Helpers.DatosObligatorios
 {
     public class InicializadorDatosObligatorios
     {
+        private InicializadorDatosObligatoriosServicio _inicializador;
         private GestorContextDB Context;
         public List<string> mensajes = new List<string>();
         public bool seCargo = false;
 
         public InicializadorDatosObligatorios()
         {
-            Context = new GestorContextDBFactory().CreateDbContext(null);
+            _inicializador = new InicializadorDatosObligatoriosServicio();
+            Context = _inicializador.ContextParaInicializar();
         }
 
         public void InicializadorDatos(IProgress<(int progreso, string mensaje)> progress = null)
