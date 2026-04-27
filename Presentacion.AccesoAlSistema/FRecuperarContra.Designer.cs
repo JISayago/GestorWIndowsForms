@@ -101,6 +101,7 @@
             Controls.Add(txtDniLegajo);
             Name = "FRecuperarContra";
             Text = "FRecuperarContra";
+            Load += FRecuperarContra_Load;
             ResumeLayout(false);
             PerformLayout();
         }

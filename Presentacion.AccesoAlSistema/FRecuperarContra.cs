@@ -13,6 +13,8 @@ namespace Presentacion.AccesoAlSistema
 {
     public partial class FRecuperarContra : Form
     {
+        public bool recuperar { get; private set; }
+        public bool esAdmin { get; private set; }
         public string Nro { get; private set; }
         public string Usuario { get; private set; }
         private readonly IUsuarioServicio _usuarioServicio;
@@ -29,12 +31,6 @@ namespace Presentacion.AccesoAlSistema
 
         private void btnRecuperar_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtDniLegajo.Text))
-            {
-                MessageBox.Show("Ingrese un legajo o DNI.");
-                return;
-            }
-
             Nro = txtDniLegajo.Text;
             Usuario = txtUsuario.Text;
             if (string.IsNullOrWhiteSpace(Usuario))
@@ -47,13 +43,17 @@ namespace Presentacion.AccesoAlSistema
                 MessageBox.Show("Ingrese un legajo o DNI.");
                 return;
             }
-            var respuesta = _usuarioServicio.DeshabilitarUsuarioYRecuperarContra(Usuario,Nro);
-            if (!respuesta.Exitoso)
-            {
-                MessageBox.Show(respuesta.Mensaje);
-            }
+            var respuesta = _usuarioServicio.DeshabilitarUsuarioYRecuperarContra(Usuario, Nro);
+            MessageBox.Show(respuesta.Mensaje);
+            recuperar = respuesta.Exitoso;
+            esAdmin = respuesta.EntidadId != 0;
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private void FRecuperarContra_Load(object sender, EventArgs e)
+        {
+            txtUsuario.Focus();
         }
     }
 }
