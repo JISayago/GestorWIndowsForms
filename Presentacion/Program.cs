@@ -11,23 +11,21 @@ using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers;
 using Servicios.Helpers.DatosObligatorios;
 using Servicios.Seguridad;
-
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Presentacion
 {
     internal static class Program
     {
-
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
             bool estadoIniciado = false;
             ApplicationConfiguration.Initialize();
 
-            // Verificar conexión antes de iniciar la app
             if (!PruebaConexion.ProbarConexion())
             {
                 MessageBox.Show(
@@ -39,51 +37,51 @@ namespace Presentacion
                 return;
             }
 
-            // Preparar inicializador y contenedores para resultados
             var inicializadorDatosObligatorios = new InicializadorDatosObligatorios();
             List<string> mensajesOfertas = null;
 
-            // Crear la pantalla de carga (no se muestra aún). El evento Shown arrancará la inicialización.
             var mensajeCarga = "Preparando todo lo necesario...";
-            var minSeconds = 2; // <- cambiá a 10 si querés 10 segundos
 
-            using (var pantallaCarga = new PantallaCargaEspera(Imagenes.GIFCarga, mensajeCarga))
+            using (var pantallaCarga = new PantallaCargaEspera(mensajeCarga))
             {
                 pantallaCarga.Shown += async (s, e) =>
                 {
                     Exception initEx = null;
+
                     try
                     {
-                        var minimoDelay = Task.Delay(TimeSpan.FromSeconds(minSeconds));
-
-                        // Ejecutar la inicialización en hilo de fondo
-                        var initTask = Task.Run(() =>
+                        var progreso = new Progress<(int progreso, string mensaje)>(p =>
                         {
-                            inicializadorDatosObligatorios.InicializadorDatos();
+                            pantallaCarga.SetProgress(p.progreso);
+                            pantallaCarga.SetMensaje(p.mensaje);
                         });
 
-                        // Esperar a que se cumplan ambas: inicialización y tiempo mínimo
-                        await Task.WhenAll(initTask, minimoDelay);
+                        await Task.Run(() =>
+                        {
+                            inicializadorDatosObligatorios.InicializadorDatos(progreso);
+                        });
 
-                        // Recuperar resultados en hilo UI
-                        mensajesOfertas = inicializadorDatosObligatorios.RetornarMensajeOfertasActivadasDesactivadasConflictos();
+                        mensajesOfertas = inicializadorDatosObligatorios.mensajes;
                         estadoIniciado = inicializadorDatosObligatorios.seCargo;
+
+                        pantallaCarga.SetProgress(100);
+                        pantallaCarga.SetMensaje("Listo");
+
+                        await Task.Delay(300);
                     }
                     catch (Exception ex)
                     {
                         initEx = ex;
-                        MessageBox.Show("Error al inicializar datos: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(
+                            "Error al inicializar datos: " + ex.Message,
+                            "Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
                     }
                     finally
                     {
-                        // Cerramos la pantalla de carga siempre (en el hilo UI)
                         pantallaCarga.Close();
-                    }
-
-                    // opcional: si querés loguear excepción aparte, lo podés hacer acá
-                    if (initEx != null)
-                    {
-                        // ya mostramos MessageBox arriba; si necesitás más, lo agregás.
                     }
                 };
 
@@ -93,16 +91,12 @@ namespace Presentacion
             var login = new LoginForm();
             login.ShowDialog();
 
-           
-            // Continuar con login y arranque normal
-          
-
             if (login._usuarioLogeado == null || string.IsNullOrEmpty(login._usuarioLogeado.Username))
             {
                 MessageBox.Show("Error: usuario no válido.");
                 return;
             }
-            // Aquí ya terminó la inicialización (o hubo un error)
+
             if (mensajesOfertas != null && mensajesOfertas.Count > 0)
             {
                 MessageBox.Show(
@@ -114,24 +108,30 @@ namespace Presentacion
                 );
             }
 
-
             Application.ThreadException += (s, e) =>
             {
-                MessageBox.Show($"Excepción no manejada (UI thread):\n{e.Exception}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    $"Excepción no manejada (UI thread):\n{e.Exception}",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             };
 
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
             {
                 var ex = e.ExceptionObject as Exception;
-                MessageBox.Show($"Excepción no manejada (otro thread):\n{ex?.ToString()}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    $"Excepción no manejada (otro thread):\n{ex?.ToString()}",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             };
 
             if (login.PuedeAccederAlSistema)
             {
                 new DatosSistema(login._usuarioLogeado.PersonaId, login._usuarioLogeado.Nombre, login._usuarioLogeado.Apellido);
-
-                //inicializar datosSistemas, cuando tenga el contructor
-
                 Application.Run(new VentanaPrincipal(login._usuarioLogeado));
             }
             else

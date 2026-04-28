@@ -10,13 +10,47 @@ namespace Presentacion.FBase
         public FBase()
         {
             InitializeComponent();
-                _listaControlesObligatorios = new List<ControlDTO>();
+            this.KeyPreview = true;
+
+            _listaControlesObligatorios = new List<ControlDTO>();
             this.components = new System.ComponentModel.Container();
             this.error = new System.Windows.Forms.ErrorProvider(this.components);
+        }
        //     this.BackColor = System.Drawing.ColorTranslator.FromHtml(ColorFondo); Pensado para config
-           
 
 
+
+               protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            this.KeyPreview = true;
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Escape)
+            {
+                EjecutarEscape();
+                return true;
+            }
+
+            if (keyData == Keys.Enter)
+            {
+                EjecutarEnter();
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        protected virtual void EjecutarEscape()
+        {
+            this.Close();
+        }
+
+        protected virtual void EjecutarEnter()
+        {
+            // opcional
         }
         private void FBase_Load(object sender, EventArgs e)
         {
