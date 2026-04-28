@@ -227,7 +227,28 @@ namespace Presentacion.Notificaciones
                 ScrollBars = ScrollBars.Vertical,
                 AcceptsReturn = true,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-                Text = string.IsNullOrEmpty(_datosTurno.NotasTurno) ? "- " : _datosTurno.NotasTurno
+                // Al iniciar, si no hay nada, ponemos el primer guion
+                Text = string.IsNullOrWhiteSpace(_datosTurno.NotasTurno) ? "- " : _datosTurno.NotasTurno
+            };
+
+            // --- EVENTO DE FORMATEO EN VIVO ---
+            txtNotas.KeyDown += (s, e) =>
+            {
+                if (e.KeyCode == Keys.Enter)
+                {
+                    // Evitamos el sonido de "beep" de Windows al presionar Enter
+                    e.SuppressKeyPress = true;
+
+                    // Añadimos una nueva línea y el guion automáticamente
+                    string nuevaLinea = Environment.NewLine + "- ";
+                    int seleccionIndex = txtNotas.SelectionStart;
+
+                    // Insertar el guion en la posición actual del cursor
+                    txtNotas.Text = txtNotas.Text.Insert(seleccionIndex, nuevaLinea);
+
+                    // Reposicionar el cursor al final del nuevo guion
+                    txtNotas.SelectionStart = seleccionIndex + nuevaLinea.Length;
+                }
             };
 
             btnGuardarNotas = new Button
@@ -244,17 +265,34 @@ namespace Presentacion.Notificaciones
 
             btnGuardarNotas.Click += (s, e) =>
             {
-                _datosTurno.NotasTurno = txtNotas.Text;
+                // Limpiamos las líneas: quitamos espacios, y filtramos las que solo sean un "-" o estén vacías
+                var lineasValidas = txtNotas.Lines
+                    .Select(l => l.Trim())
+                    .Where(l => !string.IsNullOrWhiteSpace(l) && l != "-")
+                    .Select(l => l.StartsWith("-") ? l : "- " + l)
+                    .ToList();
 
-                //ACA METER FUNCION DEL SERVICE PANTALLAPRINCIPALSERVICE PARA GUARDAR LAS NOTAS EN LA BASE DE DATOS
-                //_pantallaPrincipalServicio.GuardarNotasRapidas(_textoNotasLimpio, _datosTurno.UsuarioLogeado);
+                string textoLimpio = string.Join(Environment.NewLine, lineasValidas);
 
-                MessageBox.Show("Notas guardada correctamente.");
+                // Actualizamos la UI para que el usuario vea la "limpieza"
+                txtNotas.Text = string.IsNullOrEmpty(textoLimpio) ? "- " : textoLimpio;
+                _datosTurno.NotasTurno = textoLimpio;
+
+                // Guardar en DB
+                _pantallaPrincipalServicio.GuardarNotasRapidas(textoLimpio, _datosTurno.UsuarioLogeado);
+
+                MessageBox.Show("Nota guardada.");
             };
 
             pNotasContainer.Controls.Add(lblNotas);
             pNotasContainer.Controls.Add(txtNotas);
             pNotasContainer.Controls.Add(btnGuardarNotas);
+
+            var notasGuardadas = _pantallaPrincipalServicio.ObtenerNotasRapidas();
+            if(notasGuardadas != null && !string.IsNullOrWhiteSpace(notasGuardadas.ToString()))
+            {
+                txtNotas.Text = notasGuardadas.ToString();
+            }
         }
 
         #endregion
