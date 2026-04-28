@@ -78,15 +78,15 @@ namespace Presentacion.Notificaciones
             // 1. BLOQUEAR RESIZE (Columnas y Filas)
             dgv.AllowUserToResizeRows = false;
             dgv.AllowUserToResizeColumns = false;
-
-            // Bloquear el redimensionamiento de la altura del encabezado (Nombres de columnas)
             dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
 
             // 2. CONFIGURACIÓN DE EDICIÓN Y SELECCIÓN
             dgv.ReadOnly = true;
-            // Cambiamos a CellSelect para que el usuario sepa qué dato está copiando exactamente
             dgv.SelectionMode = DataGridViewSelectionMode.CellSelect;
             dgv.MultiSelect = false;
+
+            // --- SOLUCIÓN 1: Evitar que el Ctrl+C nativo sobrescriba nuestro copiado ---
+            dgv.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
 
             // 3. LÓGICA DE COPIADO AL PORTAPAPELES
             dgv.CellClick += (sender, e) => {
@@ -98,19 +98,43 @@ namespace Presentacion.Notificaciones
 
                     // Definimos qué columnas permiten copiado (ajustado a tus nombres de grilla)
                     bool esColumnaCopiable =
-                        nombreColumna.Equals("Id", StringComparison.OrdinalIgnoreCase) ||      // Para Ventas
-                        nombreColumna.Equals("Codigo", StringComparison.OrdinalIgnoreCase) ||  // Para Productos
-                        nombreColumna.Contains("Comprobante");                                 // Genérico
+                        nombreColumna.Equals("Id", StringComparison.OrdinalIgnoreCase) ||
+                        nombreColumna.Equals("Codigo", StringComparison.OrdinalIgnoreCase) ||
+                        nombreColumna.Contains("Comprobante");
 
                     if (esColumnaCopiable)
                     {
                         var valor = grid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
                         if (valor != null)
                         {
-                            Clipboard.SetText(valor.ToString());
+                            string textoACopiar = valor.ToString();
 
-                            // Opcional: Cambiar brevemente el color de la celda como feedback visual
-                            // o podrías usar un ToolTip.
+                            // LÓGICA DE FORMATEO
+                            if (nombreColumna.Equals("Id", StringComparison.OrdinalIgnoreCase) || nombreColumna.Contains("Comprobante"))
+                            {
+                                string[] partes = textoACopiar.Split('-');
+                                if (partes.Length >= 2)
+                                {
+                                    textoACopiar = partes[1]; // Nos quedamos con "20260427"
+                                }
+                            }
+
+                            // --- SOLUCIÓN 2: Blindar el portapapeles ---
+                            // El portapapeles falla si le pasas un texto vacío o si otro proceso lo está leyendo
+                            if (!string.IsNullOrWhiteSpace(textoACopiar))
+                            {
+                                try
+                                {
+                                    // Intento normal
+                                    Clipboard.SetText(textoACopiar);
+                                }
+                                catch (System.Runtime.InteropServices.ExternalException)
+                                {
+                                    // Si falla porque Windows lo tiene bloqueado, forzamos la inserción con reintentos
+                                    // SetDataObject(datos, mantener_al_cerrar_app, reintentos, delay_ms)
+                                    Clipboard.SetDataObject(textoACopiar, true, 5, 100);
+                                }
+                            }
                         }
                     }
                 }
