@@ -1,4 +1,7 @@
-﻿using Servicios.Helpers.Sistema.FiltrosConsulta;
+﻿using AccesoDatos.Entidades;
+using Presentacion.Core.Movimiento;
+using Presentacion.Core.Producto;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Venta;
 using System;
@@ -17,7 +20,7 @@ namespace Presentacion.Notificaciones
         private DataGridView dgvProds;
         private DataGridView dgvVentas;
 
-        private Button btnPrevProd, btnNextProd;
+        private Button btnPrevProd, btnNextProd, btnVerMas;
         private Label lblPaginaInfo;
         private TextBox txtBuscador;
 
@@ -39,6 +42,7 @@ namespace Presentacion.Notificaciones
             _productoService = new ProductoServicio();
             _ventaService = new VentaServicio();
         }
+
         // ===========================================================================
         // MÉTODO PRINCIPAL: Estructura de Tab 1 en 2 filas (Limpio)
         // ===========================================================================
@@ -71,8 +75,9 @@ namespace Presentacion.Notificaciones
 
         }
 
-        // --- CONFIGURACIÓN PARA BLOQUEAR RESIZE Y PERMITIR COPIADO ---
-
+        // ===========================================================================
+        // CONFIGURACIÓN PARA BLOQUEAR RESIZE Y PERMITIR COPIADO
+        // ===========================================================================
         private void ConfigurarEstiloGrid(DataGridView dgv)
         {
             // 1. BLOQUEAR RESIZE (Columnas y Filas)
@@ -166,6 +171,15 @@ namespace Presentacion.Notificaciones
             // Suscribimos los eventos manualmente para mayor claridad:
             btnPrevVenta.Click += (s, e) => { if (_paginaActualV > 1) { _paginaActualV--; RefrescarVentas(); } };
             btnNextVenta.Click += (s, e) => { if (_paginaActualV < _totalPaginasV) { _paginaActualV++; RefrescarVentas(); } };
+            btnVerMas.Click += (s, e) => {
+                // Aquí podrías abrir un nuevo formulario con una grilla completa o aplicar un filtro más amplio
+                var movimientosVenta = new FMovimientoConsulta();
+                {
+
+                };
+                movimientosVenta.ShowDialog();
+            };
+
 
             p.Controls.Add(dgvVentas);
             p.Controls.Add(lbl);
@@ -203,6 +217,14 @@ namespace Presentacion.Notificaciones
 
             btnPrevProd.Click += (s, e) => { if (_paginaActual > 1) { _paginaActual--; RefrescarProductos(); } };
             btnNextProd.Click += (s, e) => { if (_paginaActual < _totalPaginas) { _paginaActual++; RefrescarProductos(); } };
+            btnVerMas.Click += (s, e) => {
+                // Aquí podrías abrir un nuevo formulario con una grilla completa o aplicar un filtro más amplio
+                var consultaProducto = new FProductoConsulta()
+                {
+
+                };
+                consultaProducto.ShowDialog();
+            };
 
             p.Controls.Add(dgvProds);
             p.Controls.Add(pHeader);
@@ -240,6 +262,7 @@ namespace Presentacion.Notificaciones
             btnNext = new Button { Text = ">", Width = 40, Dock = DockStyle.Left };
             lblInfo = new Label { Text = "Página 1 de 1", AutoSize = true, Dock = DockStyle.Left, Padding = new Padding(10, 12, 0, 0) };
 
+            btnVerMas = new Button { Text = "Ver Más", Width = 80, Dock = DockStyle.Right };
             // Asignamos la acción que se pase por parámetro
             btnPrev.Click += (s, e) => onRefresh();
             btnNext.Click += (s, e) => onRefresh();
@@ -247,6 +270,7 @@ namespace Presentacion.Notificaciones
             pNav.Controls.Add(lblInfo);
             pNav.Controls.Add(btnNext);
             pNav.Controls.Add(btnPrev);
+            pNav.Controls.Add(btnVerMas);
 
             return pNav;
         }
