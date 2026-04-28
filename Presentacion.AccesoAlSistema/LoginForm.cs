@@ -126,6 +126,11 @@ namespace Presentacion.AccesoAlSistema
         {
             var Frec = new FRecuperarContra();
             Frec.ShowDialog();
+
+            if (Frec.recuperar && Frec.esAdmin )
+            {
+                IngresarAlSistema();
+            }
         }
     }
 }
