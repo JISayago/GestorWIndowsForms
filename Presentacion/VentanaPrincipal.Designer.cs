@@ -327,7 +327,7 @@
             tabPage1.Padding = new Padding(3);
             tabPage1.Size = new Size(772, 620);
             tabPage1.TabIndex = 0;
-            tabPage1.Text = "tabPage1";
+            tabPage1.Text = "Acceso Rapido";
             tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
@@ -337,7 +337,7 @@
             tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(772, 620);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "tabPage2";
+            tabPage2.Text = "Info Turno";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // tlpNotificaciones0
