@@ -358,7 +358,7 @@
             // flowLayoutNotificaciones
             // 
             flowLayoutNotificaciones.AutoScroll = true;
-            flowLayoutNotificaciones.BackColor = Color.Salmon;
+            flowLayoutNotificaciones.BackColor = Color.White;
             flowLayoutNotificaciones.Dock = DockStyle.Fill;
             flowLayoutNotificaciones.FlowDirection = FlowDirection.TopDown;
             flowLayoutNotificaciones.Location = new Point(3, 23);

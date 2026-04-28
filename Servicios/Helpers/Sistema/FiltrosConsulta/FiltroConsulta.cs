@@ -18,5 +18,6 @@ namespace Servicios.Helpers.Sistema.FiltrosConsulta
         public int PageSize { get; set; } = 10;
         public string OrdenarPor { get; set; }
         public bool Ascendente { get; set; } = true;
+        public int TotalRegistros { get; set; } //Limitar la cantidad de registros a mostrar
     }
 }
