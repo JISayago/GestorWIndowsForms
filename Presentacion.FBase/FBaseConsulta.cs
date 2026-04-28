@@ -7,7 +7,8 @@ using System.Windows.Forms;
 
 namespace Presentacion.FBase
 {
-    public partial class FBaseConsulta : Form
+    public partial class FBaseConsulta : FBase
+
     {
         protected long? entidadID;
         protected bool puedeEjecutarComando;
@@ -38,8 +39,30 @@ namespace Presentacion.FBase
             dgvGrilla.CellDoubleClick += DgvGrilla_CellDoubleClick;
             dgvGrilla.CellClick += DgvGrilla_CellClick;
             dgvGrilla.MouseDown += DgvGrilla_MouseDown;
+
         }
 
+        protected override void EjecutarEnter()
+        {
+            // 1. Si estás en la grilla → comportamiento distinto
+            if (dgvGrilla.Focused && entidadID.HasValue)
+            {
+                EjecutarDobleClickFila(entidadID);
+                return;
+            }
+
+            // 2. Si estás usando combos desplegados → no romper UX
+            if (ActiveControl is ComboBox cb && cb.DroppedDown)
+                return;
+
+            // 3. Si estás en un textbox multilinea → dejar escribir
+            if (ActiveControl is TextBox tb && tb.Multiline)
+                return;
+
+            // 4. Comportamiento principal → BUSCAR
+            paginaActual = 1;
+            RefrescarGrilla();
+        }
         private void DgvGrilla_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Right) return;

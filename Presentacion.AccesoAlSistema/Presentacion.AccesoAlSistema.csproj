@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Presentacion.FBase\Presentacion.FBase.csproj" />
     <ProjectReference Include="..\Servicios.AccesoSistema\Servicios.AccesoSistema.csproj" />
   </ItemGroup>
 

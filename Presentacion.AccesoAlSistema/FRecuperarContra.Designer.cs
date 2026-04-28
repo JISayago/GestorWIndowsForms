@@ -41,7 +41,7 @@
             txtDniLegajo.Location = new Point(82, 110);
             txtDniLegajo.Name = "txtDniLegajo";
             txtDniLegajo.Size = new Size(241, 23);
-            txtDniLegajo.TabIndex = 0;
+            txtDniLegajo.TabIndex = 4;
             // 
             // lblDniLegajo
             // 
@@ -86,7 +86,7 @@
             txtUsuario.Location = new Point(82, 44);
             txtUsuario.Name = "txtUsuario";
             txtUsuario.Size = new Size(241, 23);
-            txtUsuario.TabIndex = 4;
+            txtUsuario.TabIndex = 0;
             // 
             // FRecuperarContra
             // 
@@ -101,6 +101,7 @@
             Controls.Add(txtDniLegajo);
             Name = "FRecuperarContra";
             Text = "FRecuperarContra";
+            Load += FRecuperarContra_Load;
             ResumeLayout(false);
             PerformLayout();
         }

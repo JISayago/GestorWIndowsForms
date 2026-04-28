@@ -253,7 +253,7 @@ namespace Servicios.LogicaNegocio.Empleado
                     {
                         Exitoso = false,
                         Mensaje = $"Hola {usuario.Username}!. Se notificó a un administrador para la recuperacion de contraseña.",
-                        EntidadId = usuario.PersonaId
+                        EntidadId = 0
                     };
                 }
 
@@ -266,7 +266,7 @@ namespace Servicios.LogicaNegocio.Empleado
                 return new EstadoOperacion
                 {
                     Exitoso = true,
-                    Mensaje = "Usuario deshabilitado correctamente",
+                    Mensaje = $"Hola {usuario.Username}!. Compartimos código de recuperación.",
                     EntidadId = usuario.PersonaId
                 };
             }

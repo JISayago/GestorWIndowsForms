@@ -133,6 +133,20 @@ namespace Presentacion
 
         private void crearPanelDatosAdicionales()
         {
+
+            //// 1. Inicializas la interfaz
+            //var panelConsultas = new PanelConsultasRapidas();
+            //panelConsultas.CargarConsultasRapidas(tabPage1);
+
+            //// 2. Obtienes los datos de tus servicios (simulado)
+            //var ultimasVentas = _ventaServicio.ObtenerUltimas(10);
+            //var stockProductos = _productoServicio.ObtenerTodos();
+
+            //// 3. Llenas las tablas
+            //panelConsultas.ActualizarTablaVentas(ultimasVentas);
+            //panelConsultas.ActualizarTablaProductos(stockProductos);
+
+            ////////////////////////////////
             var panelConsultasRapidas = new PanelConsultasRapidas();
 
             // Carga inicial de datos

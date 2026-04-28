@@ -38,7 +38,7 @@ namespace AccesoDatos
         public DbSet<Lote> Lotes { get; set; }
         public DbSet<DetalleVentaLote> DetalleVentaLotes { get; set; }
         public DbSet<CodigoRecuperacionPass> CodigosRecuperacionPass { get; set; }
-
+        public DbSet<NotaRapida> NotasRapidas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1196,6 +1196,26 @@ namespace AccesoDatos
 
                 // 🔹 Índice para búsquedas rápidas por código
                 entity.HasIndex(e => e.Codigo);
+            });
+
+            modelBuilder.Entity<NotaRapida>(entity =>
+            {
+                entity.ToTable("NotasRapidas");
+                entity.HasKey(e => e.NotaId);
+                entity.Property(e => e.NotaId)
+                    .HasColumnName("id_Nota")
+                    .ValueGeneratedNever(); // Para usar un ID fijo
+                entity.Property(e => e.Cuerpo)
+                    .HasColumnName("cuerpo")
+                    .HasMaxLength(2000)
+                    .IsRequired();
+                entity.Property(e => e.FechaModificacion)
+                    .HasColumnName("fecha_modificacion")
+                    .HasColumnType("datetime")
+                    .IsRequired();
+                entity.Property(e => e.UsuarioNombre)
+                    .HasColumnName("usuario_nombre")
+                    .HasMaxLength(200);
             });
         }
     }
