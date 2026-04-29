@@ -1,4 +1,5 @@
 ﻿using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto.Rubro.DTO;
 using System;
 using System.Collections.Generic;
@@ -21,5 +22,7 @@ namespace Servicios.LogicaNegocio.Producto.Rubro
         EstadoOperacion Modificar(RubroDTO RubroDTO);
 
         EstadoOperacion Eliminar(long RubroId);
+
+        ResultadoPaginacion<RubroDTO> ObtenerRubroPaginado(FiltroConsulta filtros);
     }
 }
