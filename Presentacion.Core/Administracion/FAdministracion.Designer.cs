@@ -34,6 +34,7 @@
             mARCASToolStripMenuItem = new ToolStripMenuItem();
             cATEGORIASToolStripMenuItem = new ToolStripMenuItem();
             rUBROSToolStripMenuItem = new ToolStripMenuItem();
+            lOTESToolStripMenuItem = new ToolStripMenuItem();
             eMPLEADOSToolStripMenuItem = new ToolStripMenuItem();
             lISTADOEMPLEADOSToolStripMenuItem = new ToolStripMenuItem();
             rOLESToolStripMenuItem = new ToolStripMenuItem();
@@ -47,6 +48,7 @@
             cONFIGURACIONToolStripMenuItem = new ToolStripMenuItem();
             tIPOPAGOToolStripMenuItem = new ToolStripMenuItem();
             ventaLibreToolStripMenuItem = new ToolStripMenuItem();
+            consultaVentaLibreToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanel1 = new TableLayoutPanel();
             btnGasto = new Button();
             btnVolver = new Button();
@@ -82,8 +84,7 @@
             formsPlot5 = new ScottPlot.WinForms.FormsPlot();
             dgvGrilla = new DataGridView();
             sqlCommand1 = new Microsoft.Data.SqlClient.SqlCommand();
-            lOTESToolStripMenuItem = new ToolStripMenuItem();
-            consultaVentaLibreToolStripMenuItem = new ToolStripMenuItem();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             tlpBaseFiltrado.SuspendLayout();
@@ -123,30 +124,37 @@
             // sTOCKToolStripMenuItem
             // 
             sTOCKToolStripMenuItem.Name = "sTOCKToolStripMenuItem";
-            sTOCKToolStripMenuItem.Size = new Size(180, 22);
+            sTOCKToolStripMenuItem.Size = new Size(143, 22);
             sTOCKToolStripMenuItem.Text = "STOCK";
             sTOCKToolStripMenuItem.Click += sTOCKToolStripMenuItem_Click;
             // 
             // mARCASToolStripMenuItem
             // 
             mARCASToolStripMenuItem.Name = "mARCASToolStripMenuItem";
-            mARCASToolStripMenuItem.Size = new Size(180, 22);
+            mARCASToolStripMenuItem.Size = new Size(143, 22);
             mARCASToolStripMenuItem.Text = "MARCAS";
             mARCASToolStripMenuItem.Click += mARCASToolStripMenuItem_Click;
             // 
             // cATEGORIASToolStripMenuItem
             // 
             cATEGORIASToolStripMenuItem.Name = "cATEGORIASToolStripMenuItem";
-            cATEGORIASToolStripMenuItem.Size = new Size(180, 22);
+            cATEGORIASToolStripMenuItem.Size = new Size(143, 22);
             cATEGORIASToolStripMenuItem.Text = "CATEGORIAS";
             cATEGORIASToolStripMenuItem.Click += cATEGORIASToolStripMenuItem_Click;
             // 
             // rUBROSToolStripMenuItem
             // 
             rUBROSToolStripMenuItem.Name = "rUBROSToolStripMenuItem";
-            rUBROSToolStripMenuItem.Size = new Size(180, 22);
+            rUBROSToolStripMenuItem.Size = new Size(143, 22);
             rUBROSToolStripMenuItem.Text = "RUBROS";
             rUBROSToolStripMenuItem.Click += rUBROSToolStripMenuItem_Click;
+            // 
+            // lOTESToolStripMenuItem
+            // 
+            lOTESToolStripMenuItem.Name = "lOTESToolStripMenuItem";
+            lOTESToolStripMenuItem.Size = new Size(143, 22);
+            lOTESToolStripMenuItem.Text = "LOTES";
+            lOTESToolStripMenuItem.Click += lOTESToolStripMenuItem_Click;
             // 
             // eMPLEADOSToolStripMenuItem
             // 
@@ -228,16 +236,23 @@
             // tIPOPAGOToolStripMenuItem
             // 
             tIPOPAGOToolStripMenuItem.Name = "tIPOPAGOToolStripMenuItem";
-            tIPOPAGOToolStripMenuItem.Size = new Size(180, 22);
+            tIPOPAGOToolStripMenuItem.Size = new Size(176, 22);
             tIPOPAGOToolStripMenuItem.Text = "TIPO PAGO??";
             tIPOPAGOToolStripMenuItem.Click += tIPOPAGOToolStripMenuItem_Click;
             // 
             // ventaLibreToolStripMenuItem
             // 
             ventaLibreToolStripMenuItem.Name = "ventaLibreToolStripMenuItem";
-            ventaLibreToolStripMenuItem.Size = new Size(180, 22);
+            ventaLibreToolStripMenuItem.Size = new Size(176, 22);
             ventaLibreToolStripMenuItem.Text = "VentaLibre";
             ventaLibreToolStripMenuItem.Click += ventaLibreToolStripMenuItem_Click;
+            // 
+            // consultaVentaLibreToolStripMenuItem
+            // 
+            consultaVentaLibreToolStripMenuItem.Name = "consultaVentaLibreToolStripMenuItem";
+            consultaVentaLibreToolStripMenuItem.Size = new Size(176, 22);
+            consultaVentaLibreToolStripMenuItem.Text = "ConsultaVentaLibre";
+            consultaVentaLibreToolStripMenuItem.Click += consultaVentaLibreToolStripMenuItem_Click;
             // 
             // tableLayoutPanel1
             // 
@@ -452,7 +467,7 @@
             // 
             // tlpBaseNivel1
             // 
-            tlpBaseNivel1.BackColor = SystemColors.MenuHighlight;
+            tlpBaseNivel1.BackColor = SystemColors.ButtonFace;
             tlpBaseNivel1.ColumnCount = 1;
             tlpBaseNivel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tlpBaseNivel1.Controls.Add(tlpArribaNivel2, 0, 0);
@@ -468,7 +483,7 @@
             // 
             // tlpArribaNivel2
             // 
-            tlpArribaNivel2.BackColor = Color.FromArgb(192, 255, 192);
+            tlpArribaNivel2.BackColor = SystemColors.ButtonFace;
             tlpArribaNivel2.ColumnCount = 1;
             tlpArribaNivel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tlpArribaNivel2.Controls.Add(tabControlGraficoArriba, 0, 0);
@@ -535,7 +550,7 @@
             // 
             // tlpBajoNivel2
             // 
-            tlpBajoNivel2.BackColor = Color.RosyBrown;
+            tlpBajoNivel2.BackColor = SystemColors.ButtonFace;
             tlpBajoNivel2.ColumnCount = 1;
             tlpBajoNivel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 99.99999F));
             tlpBajoNivel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
@@ -573,7 +588,7 @@
             // 
             // tlpBajoNivel3
             // 
-            tlpBajoNivel3.BackColor = Color.IndianRed;
+            tlpBajoNivel3.BackColor = SystemColors.ButtonFace;
             tlpBajoNivel3.ColumnCount = 2;
             tlpBajoNivel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tlpBajoNivel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -598,6 +613,7 @@
             // 
             // formsPlot3
             // 
+            formsPlot3.BackColor = SystemColors.ButtonFace;
             formsPlot3.DisplayScale = 1F;
             formsPlot3.Dock = DockStyle.Fill;
             formsPlot3.Location = new Point(3, 3);
@@ -666,20 +682,6 @@
             sqlCommand1.CommandTimeout = 30;
             sqlCommand1.EnableOptimizedParameterBinding = false;
             // 
-            // lOTESToolStripMenuItem
-            // 
-            lOTESToolStripMenuItem.Name = "lOTESToolStripMenuItem";
-            lOTESToolStripMenuItem.Size = new Size(180, 22);
-            lOTESToolStripMenuItem.Text = "LOTES";
-            lOTESToolStripMenuItem.Click += lOTESToolStripMenuItem_Click;
-            // 
-            // consultaVentaLibreToolStripMenuItem
-            // 
-            consultaVentaLibreToolStripMenuItem.Name = "consultaVentaLibreToolStripMenuItem";
-            consultaVentaLibreToolStripMenuItem.Size = new Size(180, 22);
-            consultaVentaLibreToolStripMenuItem.Text = "ConsultaVentaLibre";
-            consultaVentaLibreToolStripMenuItem.Click += consultaVentaLibreToolStripMenuItem_Click;
-            // 
             // FAdministracion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -688,11 +690,11 @@
             Controls.Add(pnlInfoInicial);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(menuStrip1);
-            MaximizeBox = false;
             Name = "FAdministracion";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Panel Administración";
             Load += FAdministracion_Load;
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
