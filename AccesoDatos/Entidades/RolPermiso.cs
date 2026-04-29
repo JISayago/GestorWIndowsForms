@@ -9,8 +9,6 @@ namespace AccesoDatos.Entidades
 {
     public class RolPermiso
     {
-        [Key]
-        public long RolPermisoId { get; set; }
         public long IdRol { get; set; }
         public long IdPermiso { get; set; }
 
