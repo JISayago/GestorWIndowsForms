@@ -10,7 +10,7 @@ namespace AccesoDatos.Entidades
     public class Permiso
     {
         [Key]
-        public int PermisoId { get; set; }
+        public long PermisoId { get; set; }
         public string Codigo { get; set; }
         public string Descripcion { get; set; } = string.Empty;
 
