@@ -1,4 +1,5 @@
-﻿using Servicios.Helpers.Gasto;
+﻿using Presentacion.FBase;
+using Servicios.Helpers.Gasto;
 using Servicios.LogicaNegocio.Gasto;
 using Servicios.LogicaNegocio.Gasto.DTO;
 using System;
@@ -13,7 +14,7 @@ using System.Windows.Forms;
 
 namespace Presentacion.Core.Gasto
 {
-    public partial class FGastoABM : Form
+    public partial class FGastoABM : FBaseABM
     {
         private readonly IGastoServicio _gastoServicio;
         private bool _esPagoPendiente;
@@ -24,6 +25,10 @@ namespace Presentacion.Core.Gasto
             InitializeComponent();
             _gastoServicio = new GastoServicio();
             _logeadoId = logeadoId;
+
+            AgregarControlesObligatorios(txtCategoriaGasto, "Categoria Gasto");
+            AgregarControlesObligatorios(txtDetalle, "Detalle");
+            AgregarControlesObligatorios(txtMontoPago, "Monto Pago");
         }
 
         private void btnRegistrarGasto_Click(object sender, EventArgs e)
