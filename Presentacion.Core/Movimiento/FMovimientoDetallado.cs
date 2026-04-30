@@ -75,27 +75,28 @@ namespace TuProyecto.Presentacion
         {
             try
             {
-                // Llamamos a tu función del service
-                // (Asumo que tienes una instancia de tu servicio o es estática)
                 var servicio = new MovimientoServicio();
+
+                // NOTA: Asegúrate de llamar al método unificado o de saber de antemano qué método llamar.
+                // Si el método que trae TODO (Ventas o Gastos) se llama ObtenerDatosParaMovimientoConsultaGasto, úsalo aquí.
                 var datos = servicio.ObtenerDatosParaMovimientoConsulta(_movimientoId);
 
                 if (datos == null)
                 {
-                    MessageBox.Show("No se encontró información del movimiento.");
+                    MessageBox.Show("No se encontró información del movimiento.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     this.Close();
                     return;
                 }
 
-                // Paso 1: Llenar el panel general
+                // 1. Llenar el panel general fijo (el de arriba)
                 _panelGeneral.CargarDatos(datos);
 
-                // Paso 2: Determinar qué panel inyectar en el contenedor dinámico
+                // 2. Determinar qué panel inyectar abajo
                 CargarPanelSegunEntidad(datos);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar datos: " + ex.Message);
+                MessageBox.Show("Error al cargar datos: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -103,27 +104,63 @@ namespace TuProyecto.Presentacion
         {
             _pnlContenedorDinamico.Controls.Clear();
 
-            // Usamos el TipoEntidad para decidir
-            // Reemplaza 'TipoEntidadMovimiento' por tu Enum real
-            if (datos.TipoEntidad == 1) // Supongamos que 1 es Venta
+            // Si TipoEntidad es nulo, mostramos un mensaje
+            if (!datos.TipoEntidad.HasValue)
             {
-                var panelVenta = new PanelMovimientoVenta();
-                panelVenta.Dock = DockStyle.Fill;
-                panelVenta.CargarDatos(datos.Venta); // Le pasamos el DTO de venta
+                MostrarAvisoSinDetalle("Este movimiento no tiene una entidad específica asociada.");
+                return;
+            }
 
-                _pnlContenedorDinamico.Controls.Add(panelVenta);
-            }
-            else
+            // Dependiendo de tu lógica de Enums, evalúas el tipo
+            // Supongamos que 1 es Venta y 2 es Gasto (Ajusta los números según tu base de datos)
+            switch (datos.TipoEntidad.Value)
             {
-                // Si en el futuro agregas Compras, pondrías otro 'else if' aquí
-                Label lblAviso = new Label
-                {
-                    Text = "Información detallada no disponible para este tipo de entidad.",
-                    AutoSize = true,
-                    Location = new Point(20, 20)
-                };
-                _pnlContenedorDinamico.Controls.Add(lblAviso);
+                case 1: // VENTA
+                    if (datos.Venta != null)
+                    {
+                        var panelVenta = new PanelMovimientoVenta();
+                        _pnlContenedorDinamico.Controls.Add(panelVenta);
+                        panelVenta.CargarDatos(datos.Venta);
+                    }
+                    else
+                    {
+                        MostrarAvisoSinDetalle("El movimiento está marcado como Venta, pero los detalles no se encontraron.");
+                    }
+                    break;
+
+                case 5: // GASTO
+                    if (datos.Gasto != null)
+                    {
+                        var panelGasto = new PanelMovimientoGasto();
+                        // El Dock.Fill ya está en el constructor del panel, pero lo reforzamos aquí
+                        panelGasto.Dock = DockStyle.Fill;
+                        _pnlContenedorDinamico.Controls.Add(panelGasto);
+                        panelGasto.CargarDatos(datos.Gasto); // Inyectamos el DTO del Gasto
+                    }
+                    else
+                    {
+                        MostrarAvisoSinDetalle("El movimiento está marcado como Gasto, pero los detalles no se encontraron.");
+                    }
+                    break;
+
+                default:
+                    MostrarAvisoSinDetalle($"Tipo de entidad desconocida o no soportada (Código: {datos.TipoEntidad.Value}).");
+                    break;
             }
+        }
+
+        // Método auxiliar para no repetir código visual de advertencia
+        private void MostrarAvisoSinDetalle(string mensaje)
+        {
+            Label lblAviso = new Label
+            {
+                Text = mensaje,
+                AutoSize = true,
+                Location = new Point(20, 20),
+                Font = new Font("Segoe UI", 11, FontStyle.Italic),
+                ForeColor = Color.Gray
+            };
+            _pnlContenedorDinamico.Controls.Add(lblAviso);
         }
     }
 }

@@ -18,5 +18,6 @@ namespace Servicios.LogicaNegocio.Movimiento
         void CrearMovimientoGasto(long gastoId, decimal monto, TipoMovimientoDetalle detalleTipo, GestorContextDB context);
         MovimientoDTO ObtenerMovimientoPorId(long movimientoId);
         ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros);
+        MovimientoHelperDTO ObtenerDatosParaMovimientoConsulta(long movimientoId);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Servicios.LogicaNegocio.Venta.DTO;
+﻿using Servicios.LogicaNegocio.Gasto.DTO;
+using Servicios.LogicaNegocio.Venta.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace Servicios.LogicaNegocio.Movimiento.DTO
         // Información adicional para el movimiento, dependiendo del tipo de movimiento y entidad relacionada
 
         public VentaDTO Venta { get; set; }
+        public GastoDTO Gasto { get; set; }
 
     }
 }
