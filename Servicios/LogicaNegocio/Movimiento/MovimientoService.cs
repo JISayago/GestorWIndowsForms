@@ -301,40 +301,61 @@ namespace Servicios.LogicaNegocio.Movimiento
                 PageSize = filtros.PageSize
             };
         }
-        public (EmpleadoDTO empleado, VentaDTO venta, MovimientoDTO movimiento, List<ProductoDTO> productos) CargarDatosMovimiento(long movimientoId)
+        public MovimientoHelperDTO ObtenerDatosParaMovimientoConsulta(long movimientoId)
         {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+
             var movimientoService = new MovimientoServicio();
-            var ventaService = new VentaServicio();
-            var empleadoService = new EmpleadoServicio();
-            var productoServicio = new ProductoServicio();
 
-            var movimiento = movimientoService.ObtenerMovimientoPorId(movimientoId);
-
-            VentaDTO venta = null;
-            EmpleadoDTO empleado = null;
-            List<ProductoDTO> productos = new List<ProductoDTO>();
-
-            // verificar si el movimiento corresponde a una venta
-            if (movimiento != null &&
-                movimiento.TipoEntidad == (int)TipoEntidadMovimiento.Venta &&
-                movimiento.EntidadId.HasValue)
+            var movimiento = context.Movimientos
+            .AsNoTracking()
+            .Where(m => m.MovimientoId == movimientoId)
+            .Select(m => new MovimientoHelperDTO
             {
-                venta = ventaService.ObtenerVentaDetalle(movimiento.EntidadId.Value);
+                MovimientoId = m.MovimientoId,
+                NumeroMovimiento = m.NumeroMovimiento,
+                Monto = m.Monto,
+                TipoMovimiento = m.TipoMovimiento,
+                TipoMovimientoDetalle = m.TipoMovimientoDetalle,
+                FechaMovimiento = m.FechaMovimiento,
+                EstaEliminado = m.EstaEliminado,
+                EntidadId = m.EntidadId,
+                TipoEntidad = m.TipoEntidad,
 
-                if (venta != null)
-                {
-                    empleado = empleadoService.ObtenerEmpleadoPorId(venta.IdEmpleado);
+                Venta = m.TipoEntidad == (int)TipoEntidadMovimiento.Venta
+                    ? context.Ventas
+                        .Where(v => v.VentaId == m.EntidadId)
+                        .Select(v => new VentaDTO
+                        {
+                            VentaId = v.VentaId,
+                            NumeroVenta = v.NumeroVenta,
+                            FechaVenta = v.FechaVenta,
+                            Total = v.Total,
+                            TotalSinDescuento = v.TotalSinDescuento,
+                            Descuento = v.Descuento,
+                            IdCliente = v.IdCliente,
+                            Estado = v.Estado,
+                            Detalle = v.Detalle,
 
-                    if (venta.Items != null && venta.Items.Any())
-                    {
-                        productos = venta.Items
-                            .Select(item => productoServicio.ObtenerProductoPorId(item.ItemId))
-                            .ToList();
-                    }
-                }
-            }
+                            Items = v.DetallesVentas.Select(i => new ItemVentaDTO
+                            {
+                                ItemId = i.DetalleVentaId,
+                                Cantidad = i.Cantidad,
+                                // Mapeamos los precios según tus entidades de DetallesVenta
+                                PrecioVenta = i.PrecioUnitarioOriginal,
+                                PrecioOferta = i.PrecioUnitarioFinal,
+                                Descripcion = i.Descripcion,
+                                EsOferta = i.EsOferta,
+                                EsOfertaPorGrupo = i.EsOfertaPorGrupo
+                                // Nota: Si 'Medida' o 'UnidadMedida' están en Producto, 
+                                // deberías acceder via i.Producto.Medida si tienes el Include o la relación.
+                            }).ToList()
+                        }).FirstOrDefault()
+                    : null
+            })
+            .FirstOrDefault();
 
-            return (empleado: empleado, venta: venta, movimiento: movimiento, productos: productos);
+            return movimiento;
         }
     }
 }

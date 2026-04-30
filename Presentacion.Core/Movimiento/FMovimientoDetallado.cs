@@ -1,87 +1,129 @@
-﻿using AccesoDatos.Entidades;
-using Servicios.LogicaNegocio.Cliente;
-using Servicios.LogicaNegocio.Empleado;
-using Servicios.LogicaNegocio.Movimiento;
+﻿using Servicios.LogicaNegocio.Movimiento;
 using Servicios.LogicaNegocio.Movimiento.DTO;
-using Servicios.LogicaNegocio.Venta;
-using Servicios.LogicaNegocio.Venta.DTO;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Presentacion.Core.Movimiento;
+using TuProyecto.Presentacion.Paneles; // Asegúrate de apuntar a la carpeta de tus paneles
 
-namespace Presentacion.Core.Movimiento
+namespace TuProyecto.Presentacion
 {
     public partial class FMovimientoDetallado : Form
     {
-        public long entidadID;
-        public long? venta;
+        private readonly long _movimientoId;
 
-        public FMovimientoDetallado(long? entidadId)
+        // Controles de interfaz
+        private PanelMovimientoGeneral _panelGeneral;
+        private Panel _pnlContenedorDinamico;
+        private Button _btnCerrar;
+
+        public FMovimientoDetallado(long movimientoId)
         {
-            entidadID = (long)entidadId;
+            _movimientoId = movimientoId;
+            //InitializeComponent(); // Estándar de WinForms
+            CrearInterfazGrafica();
+        }
 
-            var movimientoService = new MovimientoServicio();
-            
-            InitializeComponent();
+        private void CrearInterfazGrafica()
+        {
+            // Tamaño amplio para que las columnas de la grilla respiren
+            this.Size = new Size(1100, 850);
+            this.MinimumSize = new Size(900, 700);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.Text = "Consulta Detallada de Movimiento";
+            this.BackColor = Color.White;
 
-            //var info = movimientoService.CargarDatosMovimiento(entidadID);
+            // 1. Panel Superior
+            _panelGeneral = new PanelMovimientoGeneral();
+            _panelGeneral.Dock = DockStyle.Top;
 
-            //lblMontoMovimiento.Text = info.movimiento.Monto.ToString() + "$";
-            //lblNumeroMovimiento.Text = info.movimiento.NumeroMovimiento;
-            //lblTipoMovimiento.Text = info.movimiento.TipoMovimiento == 1 ? "Ingreso" : "Egreso";
-            //lblFechaMovimiento.Text = info.movimiento.FechaMovimiento.ToString();
-
-            //txtDetalle.Text = info.venta.Detalle;
-
-            //lblNombreEmpleado.Text = info.empleado.Nombre;
-
-            dgvProductos.ReadOnly = true;
-            dgvProductos.AutoGenerateColumns = false;
-            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn()
+            // 2. Panel Inferior (Botones)
+            Panel pnlBotonera = new Panel { Dock = DockStyle.Bottom, Height = 70, BackColor = Color.FromArgb(245, 245, 245) };
+            _btnCerrar = new Button
             {
-                DataPropertyName = "codigo",
-                HeaderText = "Codigo",
-            });
+                Text = "Cerrar Detalle",
+                Size = new Size(150, 40),
+                Location = new Point(pnlBotonera.Width - 170, 15),
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.White,
+                Cursor = Cursors.Hand
+            };
+            pnlBotonera.Controls.Add(_btnCerrar);
 
-            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn()
+            // 3. Contenedor Central
+            _pnlContenedorDinamico = new Panel();
+            _pnlContenedorDinamico.Dock = DockStyle.Fill;
+            // Agregamos una línea divisoria visual (opcional)
+            _pnlContenedorDinamico.Padding = new Padding(5, 10, 5, 5);
+
+            // Agregamos en orden inverso de importancia para el Docking
+            this.Controls.Add(_pnlContenedorDinamico);
+            this.Controls.Add(_panelGeneral);
+            this.Controls.Add(pnlBotonera);
+
+            _btnCerrar.Click += (s, e) => this.Close();
+            this.Load += FrmDetalleMovimiento_Load;
+        }
+
+        private void FrmDetalleMovimiento_Load(object sender, EventArgs e)
+        {
+            CargarInformacion();
+        }
+
+        private void CargarInformacion()
+        {
+            try
             {
-                DataPropertyName = "descripcion",
-                HeaderText = "Nombre del producto",
-            });
+                // Llamamos a tu función del service
+                // (Asumo que tienes una instancia de tu servicio o es estática)
+                var servicio = new MovimientoServicio();
+                var datos = servicio.ObtenerDatosParaMovimientoConsulta(_movimientoId);
 
-            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn()
+                if (datos == null)
+                {
+                    MessageBox.Show("No se encontró información del movimiento.");
+                    this.Close();
+                    return;
+                }
+
+                // Paso 1: Llenar el panel general
+                _panelGeneral.CargarDatos(datos);
+
+                // Paso 2: Determinar qué panel inyectar en el contenedor dinámico
+                CargarPanelSegunEntidad(datos);
+            }
+            catch (Exception ex)
             {
-                DataPropertyName = "PrecioCosto",
-                HeaderText = "Precio C",
-            });
+                MessageBox.Show("Error al cargar datos: " + ex.Message);
+            }
+        }
 
-            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn()
+        private void CargarPanelSegunEntidad(MovimientoHelperDTO datos)
+        {
+            _pnlContenedorDinamico.Controls.Clear();
+
+            // Usamos el TipoEntidad para decidir
+            // Reemplaza 'TipoEntidadMovimiento' por tu Enum real
+            if (datos.TipoEntidad == 1) // Supongamos que 1 es Venta
             {
-                DataPropertyName = "PrecioVenta",
-                HeaderText = "Precio V",
-            });
+                var panelVenta = new PanelMovimientoVenta();
+                panelVenta.Dock = DockStyle.Fill;
+                panelVenta.CargarDatos(datos.Venta); // Le pasamos el DTO de venta
 
-            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn()
+                _pnlContenedorDinamico.Controls.Add(panelVenta);
+            }
+            else
             {
-                DataPropertyName = "MarcaNombre",
-                HeaderText = "Marca",
-            });
-
-            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn()
-            {
-                DataPropertyName = "RubroNombre",
-                HeaderText = "Rubro",
-            });
-
-            //dgvProductos.DataSource = info.productos;
-
-            //AGREGAR CANTIDAD DE PRODUCTOS VENDIDOS EN LA GRILLA
+                // Si en el futuro agregas Compras, pondrías otro 'else if' aquí
+                Label lblAviso = new Label
+                {
+                    Text = "Información detallada no disponible para este tipo de entidad.",
+                    AutoSize = true,
+                    Location = new Point(20, 20)
+                };
+                _pnlContenedorDinamico.Controls.Add(lblAviso);
+            }
         }
     }
 }

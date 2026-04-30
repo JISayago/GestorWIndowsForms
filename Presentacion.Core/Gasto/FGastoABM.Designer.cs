@@ -44,7 +44,7 @@
             // 
             // txtCategoriaGasto
             // 
-            txtCategoriaGasto.Location = new Point(149, 35);
+            txtCategoriaGasto.Location = new Point(164, 165);
             txtCategoriaGasto.Name = "txtCategoriaGasto";
             txtCategoriaGasto.Size = new Size(100, 23);
             txtCategoriaGasto.TabIndex = 0;
@@ -66,11 +66,11 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(55, 38);
+            label1.Location = new Point(70, 168);
             label1.Name = "label1";
-            label1.Size = new Size(88, 15);
+            label1.Size = new Size(91, 15);
             label1.TabIndex = 3;
-            label1.Text = "categoria gasto";
+            label1.Text = "Categoria Gasto";
             // 
             // label2
             // 
@@ -84,7 +84,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(100, 134);
+            label3.Location = new Point(106, 129);
             label3.Name = "label3";
             label3.Size = new Size(43, 15);
             label3.TabIndex = 5;
@@ -92,9 +92,9 @@
             // 
             // btnRegistrarGasto
             // 
-            btnRegistrarGasto.Location = new Point(138, 207);
+            btnRegistrarGasto.Location = new Point(138, 218);
             btnRegistrarGasto.Name = "btnRegistrarGasto";
-            btnRegistrarGasto.Size = new Size(126, 51);
+            btnRegistrarGasto.Size = new Size(126, 40);
             btnRegistrarGasto.TabIndex = 6;
             btnRegistrarGasto.Text = "Registrar Gasto";
             btnRegistrarGasto.UseVisualStyleBackColor = true;
@@ -102,9 +102,9 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(302, 207);
+            btnCancelar.Location = new Point(302, 218);
             btnCancelar.Name = "btnCancelar";
-            btnCancelar.Size = new Size(126, 51);
+            btnCancelar.Size = new Size(126, 40);
             btnCancelar.TabIndex = 7;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
@@ -112,9 +112,9 @@
             // 
             // btnPagoPendiente
             // 
-            btnPagoPendiente.Location = new Point(469, 207);
+            btnPagoPendiente.Location = new Point(469, 218);
             btnPagoPendiente.Name = "btnPagoPendiente";
-            btnPagoPendiente.Size = new Size(126, 51);
+            btnPagoPendiente.Size = new Size(126, 40);
             btnPagoPendiente.TabIndex = 8;
             btnPagoPendiente.Text = "Pago Pendiente";
             btnPagoPendiente.UseVisualStyleBackColor = true;
@@ -122,7 +122,7 @@
             // 
             // dtpDiaGasto
             // 
-            dtpDiaGasto.Location = new Point(469, 128);
+            dtpDiaGasto.Location = new Point(447, 152);
             dtpDiaGasto.Name = "dtpDiaGasto";
             dtpDiaGasto.Size = new Size(200, 23);
             dtpDiaGasto.TabIndex = 9;
@@ -130,7 +130,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(368, 134);
+            label4.Location = new Point(447, 126);
             label4.Name = "label4";
             label4.Size = new Size(76, 15);
             label4.TabIndex = 10;
