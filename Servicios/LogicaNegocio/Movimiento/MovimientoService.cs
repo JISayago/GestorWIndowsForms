@@ -6,6 +6,7 @@ using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.Helpers.VentaEnum;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using Servicios.LogicaNegocio.Cliente.DTO;
+using Servicios.LogicaNegocio.CuentaCorriente.DTO;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Gasto.DTO;
@@ -471,7 +472,30 @@ namespace Servicios.LogicaNegocio.Movimiento
                                 EstadoGasto = g.EstadoGasto,
                                 Detalle = g.Detalle ?? "Sin Detalle"
                             }).FirstOrDefault()
-                        : null
+                        : null,
+
+                    // --- 4. MAPEO CONDICIONAL PARA CUENTA CORRIENTE ---
+                    CuentaCorriente = m.TipoEntidad == (int)TipoEntidadMovimiento.CuentaCorriente && m.EntidadId.HasValue
+                    ? context.CuentaCorriente
+                        .Where(cc => cc.CuentaCorrienteId == m.EntidadId.Value)
+                        .Select(cc => new CuentaCorrienteDTO
+                        {
+                        CuentaCorrienteId = cc.CuentaCorrienteId,
+                        NombreCuentaCorriente = cc.NombreCuentaCorriente,
+                        Saldo = cc.Saldo,
+                        LimiteDeuda = cc.LimiteDeuda,
+                        EstaEliminado = cc.EstaEliminado,
+                        LimiteDeudaActivo = cc.LimiteDeudaActivo,
+                        FechaVencimiento = cc.FechaVencimiento,
+                        EstadoCuentaCorriente = cc.EstadoCuentaCorriente,
+                        ClienteId = cc.ClienteId,
+                        // Navegación hacia el nombre del cliente
+                        NombreCliente = cc.Cliente.Persona.Nombre + " " + cc.Cliente.Persona.Apellido,
+                        // Mapeo de DNI autorizados (asumiendo relación o lista)
+                        DniAutorizados = cc.CuentaCorrienteAutorizado.Select(a => a.Dni).ToList()
+                        }).FirstOrDefault()
+                       : null
+
                 })
                 .FirstOrDefault();
 

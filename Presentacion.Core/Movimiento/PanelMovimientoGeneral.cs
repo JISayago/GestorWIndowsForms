@@ -25,33 +25,42 @@ namespace TuProyecto.Presentacion.Paneles
         private void CrearControlesVisuales()
         {
             this.Height = 120;
-            this.Padding = new Padding(20);
+            this.Padding = new Padding(20, 10, 20, 10);
             this.BackColor = Color.FromArgb(240, 242, 245);
-            this.BorderStyle = BorderStyle.None;
 
-            lblNumero = new Label { Location = new Point(20, 15), AutoSize = true, Font = new Font("Segoe UI", 12, FontStyle.Bold) };
-            lblMonto = new Label { AutoSize = true, Font = new Font("Segoe UI", 15, FontStyle.Bold), ForeColor = Color.MidnightBlue };
-            lblEstado = new Label { AutoSize = true, Font = new Font("Segoe UI", 11, FontStyle.Bold) };
-            lblFecha = new Label { Location = new Point(20, 50), AutoSize = true, Font = new Font("Segoe UI", 10) };
-            lblTipoMovimiento = new Label { Location = new Point(20, 80), AutoSize = true, Font = new Font("Segoe UI", 9) };
-
-            this.SizeChanged += (s, e) => {
-                // Margen derecho deseado
-                int margenDerecho = 25;
-
-                // Posicionamos el Estado (Verde) primero a la derecha
-                lblEstado.Location = new Point(this.Width - lblEstado.Width - margenDerecho, 18);
-
-                // Posicionamos el Monto (Azul) a la izquierda del Estado
-                // Le damos un espacio extra (por ejemplo 150px) para que no se choquen
-                lblMonto.Location = new Point(lblEstado.Left - lblMonto.Width - 40, 15);
+            // Tabla invisible para organizar Izquierda y Derecha
+            TableLayoutPanel tblHeader = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 2,
+                BackColor = Color.Transparent
             };
+            tblHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70f)); // Texto
+            tblHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30f)); // Monto/Estado
 
-            // Asegúrate de que lblEstado tenga el anclaje correcto para evitar saltos raros
-            lblEstado.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblMonto.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            // Contenedor Izquierdo
+            Panel pnlIzquierdo = new Panel { Dock = DockStyle.Fill };
+            lblNumero = new Label { Text = "Movimiento N°:", Location = new Point(0, 5), AutoSize = true, Font = new Font("Segoe UI", 12, FontStyle.Bold) };
+            lblFecha = new Label { Location = new Point(0, 40), AutoSize = true, Font = new Font("Segoe UI", 10) };
+            lblTipoMovimiento = new Label { Location = new Point(0, 70), AutoSize = true, Font = new Font("Segoe UI", 9) };
+            pnlIzquierdo.Controls.AddRange(new Control[] { lblNumero, lblFecha, lblTipoMovimiento });
 
-            this.Controls.AddRange(new Control[] { lblNumero, lblMonto, lblEstado, lblFecha, lblTipoMovimiento });
+            // Contenedor Derecho (Alineado a la derecha)
+            FlowLayoutPanel pnlDerecho = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.TopDown,
+                WrapContents = false,
+                RightToLeft = RightToLeft.Yes // Esto empuja todo a la derecha
+            };
+            lblMonto = new Label { AutoSize = true, Font = new Font("Segoe UI", 16, FontStyle.Bold), ForeColor = Color.MidnightBlue };
+            lblEstado = new Label { AutoSize = true, Font = new Font("Segoe UI", 11, FontStyle.Bold), Margin = new Padding(0, 5, 0, 0) };
+            pnlDerecho.Controls.AddRange(new Control[] { lblMonto, lblEstado });
+
+            tblHeader.Controls.Add(pnlIzquierdo, 0, 0);
+            tblHeader.Controls.Add(pnlDerecho, 1, 0);
+
+            this.Controls.Add(tblHeader);
         }
 
         public void CargarDatos(MovimientoHelperDTO mov)

@@ -26,14 +26,13 @@ namespace TuProyecto.Presentacion
 
         private void CrearInterfazGrafica()
         {
-            // Tamaño amplio para que las columnas de la grilla respiren
-            this.Size = new Size(1100, 850);
+            this.Size = new Size(1000, 800);
             this.MinimumSize = new Size(900, 700);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "Consulta Detallada de Movimiento";
             this.BackColor = Color.White;
 
-            // 1. Panel Superior
+            // 1. Panel Superior (General)
             _panelGeneral = new PanelMovimientoGeneral();
             _panelGeneral.Dock = DockStyle.Top;
 
@@ -43,24 +42,22 @@ namespace TuProyecto.Presentacion
             {
                 Text = "Cerrar Detalle",
                 Size = new Size(150, 40),
-                Location = new Point(pnlBotonera.Width - 170, 15),
                 Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
                 FlatStyle = FlatStyle.Flat,
-                BackColor = Color.White,
-                Cursor = Cursors.Hand
+                BackColor = Color.White
             };
+            // Posición fija inicial, el Anchor lo mantendrá ahí
+            _btnCerrar.Location = new Point(pnlBotonera.Width - 170, 15);
             pnlBotonera.Controls.Add(_btnCerrar);
 
-            // 3. Contenedor Central
+            // 3. Contenedor Central (Dinamico) - SE AGREGA AL FINAL
             _pnlContenedorDinamico = new Panel();
             _pnlContenedorDinamico.Dock = DockStyle.Fill;
-            // Agregamos una línea divisoria visual (opcional)
-            _pnlContenedorDinamico.Padding = new Padding(5, 10, 5, 5);
 
-            // Agregamos en orden inverso de importancia para el Docking
-            this.Controls.Add(_pnlContenedorDinamico);
-            this.Controls.Add(_panelGeneral);
-            this.Controls.Add(pnlBotonera);
+            // IMPORTANTE: El orden de agregado para que el Dock.Fill funcione bien
+            this.Controls.Add(_pnlContenedorDinamico); // El que llena el espacio
+            this.Controls.Add(_panelGeneral);          // El que va arriba
+            this.Controls.Add(pnlBotonera);           // El que va abajo
 
             _btnCerrar.Click += (s, e) => this.Close();
             this.Load += FrmDetalleMovimiento_Load;
@@ -115,7 +112,7 @@ namespace TuProyecto.Presentacion
             // Supongamos que 1 es Venta y 2 es Gasto (Ajusta los números según tu base de datos)
             switch (datos.TipoEntidad.Value)
             {
-                case 1: // VENTA
+                case 1: // VENTA - AJUSTA EL NÚMERO SEGÚN TU ENUM
                     if (datos.Venta != null)
                     {
                         var panelVenta = new PanelMovimientoVenta();
@@ -125,6 +122,19 @@ namespace TuProyecto.Presentacion
                     else
                     {
                         MostrarAvisoSinDetalle("El movimiento está marcado como Venta, pero los detalles no se encontraron.");
+                    }
+                    break;
+
+                case 2: // CTACTEs
+                    if (datos.CuentaCorriente != null)
+                    {
+                        var panelCC = new PanelMovimientoCuentaCorriente();
+                        _pnlContenedorDinamico.Controls.Add(panelCC);
+                        panelCC.CargarDatos(datos.CuentaCorriente);
+                    }
+                    else
+                    {
+                        MostrarAvisoSinDetalle("Movimiento de Cuenta Corriente sin datos asociados.");
                     }
                     break;
 

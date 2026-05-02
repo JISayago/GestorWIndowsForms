@@ -22,55 +22,78 @@ namespace TuProyecto.Presentacion.Paneles
         private void CrearControlesVisuales()
         {
             this.Dock = DockStyle.Fill;
-            this.Padding = new Padding(20);
+            this.Padding = new Padding(25);
             this.BackColor = Color.White;
 
-            // Encabezado
-            lblNumeroGasto = new Label { Location = new Point(20, 20), AutoSize = true, Font = new Font("Segoe UI", 14, FontStyle.Bold) };
-
-            lblMontoTotal = new Label
+            // --- HEADER (Tabla para evitar que se corte el monto) ---
+            TableLayoutPanel tblGastoHeader = new TableLayoutPanel
             {
-                AutoSize = true,
-                Font = new Font("Segoe UI", 14, FontStyle.Bold),
-                ForeColor = Color.DarkRed, // Rojo oscuro para los gastos
-                Anchor = AnchorStyles.Top | AnchorStyles.Right
+                Dock = DockStyle.Top,
+                Height = 50,
+                ColumnCount = 2
             };
+            tblGastoHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60f));
+            tblGastoHeader.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40f));
 
-            // Contenedor interno para organizar mejor los datos sin importar el tamaño de la ventana
-            Panel pnlDatos = new Panel
+            lblNumeroGasto = new Label { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 13, FontStyle.Bold), TextAlign = ContentAlignment.MiddleLeft };
+            lblMontoTotal = new Label { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 13, FontStyle.Bold), ForeColor = Color.DarkRed, TextAlign = ContentAlignment.MiddleRight };
+
+            tblGastoHeader.Controls.Add(lblNumeroGasto, 0, 0);
+            tblGastoHeader.Controls.Add(lblMontoTotal, 1, 0);
+
+            // --- CUADRO DE DETALLES (Ficha gris) ---
+            Panel pnlFicha = new Panel
             {
-                Location = new Point(20, 70),
-                Size = new Size(800, 300),
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-                BackColor = Color.FromArgb(248, 249, 250),
+                Dock = DockStyle.Top,
+                Height = 320, // Aumentamos un poquito para que entre todo bien
+                Margin = new Padding(0, 20, 0, 0),
+                Padding = new Padding(20),
+                BackColor = Color.FromArgb(252, 252, 252),
                 BorderStyle = BorderStyle.FixedSingle
             };
 
-            lblEmpleado = new Label { Location = new Point(15, 15), AutoSize = true, Font = new Font("Segoe UI", 11) };
-            lblFechas = new Label { Location = new Point(15, 55), AutoSize = true, Font = new Font("Segoe UI", 11) };
-            lblCategoriaEstado = new Label { Location = new Point(15, 95), AutoSize = true, Font = new Font("Segoe UI", 11) };
-            lblMontoPagado = new Label { Location = new Point(15, 135), AutoSize = true, Font = new Font("Segoe UI", 11, FontStyle.Bold) };
+            // Inicialización de los labels que faltaban
+            lblEmpleado = new Label { Location = new Point(20, 25), AutoSize = true, Font = new Font("Segoe UI", 10, FontStyle.Bold) };
+            lblFechas = new Label { Location = new Point(20, 60), AutoSize = true, Font = new Font("Segoe UI", 10) };
+            lblCategoriaEstado = new Label { Location = new Point(20, 95), AutoSize = true, Font = new Font("Segoe UI", 10) };
+
+            lblMontoPagado = new Label
+            {
+                Location = new Point(20, 135),
+                AutoSize = true,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                ForeColor = Color.FromArgb(40, 40, 40)
+            };
+
+            Label lblTituloDetalle = new Label
+            {
+                Text = "Detalles adicionales:",
+                Location = new Point(20, 185),
+                AutoSize = true,
+                Font = new Font("Segoe UI", 9, FontStyle.Underline)
+            };
 
             lblDetalle = new Label
             {
-                Location = new Point(15, 185),
-                Size = new Size(760, 100),
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(64, 64, 64)
+                Location = new Point(20, 210),
+                Size = new Size(700, 80),
+                Font = new Font("Segoe UI", 10, FontStyle.Italic),
+                ForeColor = Color.DimGray
             };
 
-            // Evento para reposicionar el monto a la derecha
-            this.SizeChanged += (s, e) => {
-                lblMontoTotal.Location = new Point(this.Width - lblMontoTotal.Width - 25, 20);
-                pnlDatos.Width = this.Width - 40; // Mantiene el margen
-                lblDetalle.Width = pnlDatos.Width - 30; // Ajusta el texto del detalle
-            };
+            // Agregamos los controles al panel de la ficha
+            pnlFicha.Controls.AddRange(new Control[] {
+                lblEmpleado,
+                lblFechas,
+                lblCategoriaEstado,
+                lblMontoPagado,
+                lblTituloDetalle,
+                lblDetalle
+            });
 
-            pnlDatos.Controls.AddRange(new Control[] { lblEmpleado, lblFechas, lblCategoriaEstado, lblMontoPagado, lblDetalle });
-
-            this.Controls.Add(lblNumeroGasto);
-            this.Controls.Add(lblMontoTotal);
-            this.Controls.Add(pnlDatos);
+            // Agregamos todo al UserControl (El orden importa para el Dock)
+            this.Controls.Add(pnlFicha);
+            this.Controls.Add(tblGastoHeader);
         }
 
         public void CargarDatos(GastoDTO gasto)
