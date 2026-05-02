@@ -313,7 +313,9 @@ namespace Presentacion.Core.Producto
             if (TipoOperacion == TipoOperacion.Nuevo ) //Nombre default auto generado cuando cargar un lote nuevo
             {
                 chkLoteEstaActivo.Checked = true;
-                //txtNombreLote.Text = $"{NombreProducto}-{DateTime.Now: yyyyMMddHHmmss}".ToUpper();
+
+
+
                 txtNumeroLote.Text = NumeroLote;
             }
         }

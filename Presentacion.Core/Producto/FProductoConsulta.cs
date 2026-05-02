@@ -148,7 +148,7 @@ namespace Presentacion.Core.Producto
                 var fLotes = new FGestionStockLotes(TipoOperacion.Nuevo, id.Value);
                 fLotes.ShowDialog();
 
-                if (fLotes.RealizoOperacion)
+               // if (fLotes.RealizoOperacion)
                     RefrescarGrilla();
             }
             else
@@ -182,6 +182,7 @@ namespace Presentacion.Core.Producto
         {
             base.ResetearGrilla(grilla);
 
+            grilla.ReadOnly = true;
             if (grilla.Columns.Contains("ProductoId"))
             {
                 grilla.Columns["ProductoId"].Visible = false;
@@ -321,6 +322,7 @@ namespace Presentacion.Core.Producto
 
             if (f.RealizoAlgunaOperacion)
                 RefrescarGrilla();
+                
         }
 
         #endregion
