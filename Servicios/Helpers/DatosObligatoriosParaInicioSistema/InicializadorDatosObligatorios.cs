@@ -1,5 +1,8 @@
 ﻿using AccesoDatos;
+using AccesoDatos.Entidades;
+using Servicios.Helpers.DatosObligatoriosParaInicioSistema;
 using Servicios.LogicaNegocio.Sistema;
+using Servicios.Seguridad;
 using System;
 using System.Collections.Generic;
 
@@ -22,7 +25,13 @@ namespace Servicios.Helpers.DatosObligatorios
         {
             try
             {
-                progress?.Report((10, "Inicializando usuario administrador..."));
+                progress?.Report((5, "Inicializando permisos del sistema..."));
+                InicializarPermisos();
+
+                progress?.Report((10, "Configurando roles..."));
+                InicializarRoles();
+
+                progress?.Report((15, "Inicializando usuario administrador..."));
                 InicializarAdmin();
 
                 progress?.Report((30, "Configurando consumidor final..."));
@@ -54,7 +63,6 @@ namespace Servicios.Helpers.DatosObligatorios
         {
             UsuarioInicial.Inicializar(Context);
         }
-
         private void IniciarTiposDePago()
         {
             TipoDePagoInicial.Inicializar(Context);
@@ -63,6 +71,16 @@ namespace Servicios.Helpers.DatosObligatorios
         private void InicializarConsumidorFinal()
         {
             ConsumidorFInal.Inicializar(Context);
+        }
+
+        private void InicializarPermisos()
+        {
+            PermisosIni.Inicializar(Context);
+        }
+
+        private void InicializarRoles()
+        {
+           RolesIni.Inicializar(Context);
         }
     }
 }
