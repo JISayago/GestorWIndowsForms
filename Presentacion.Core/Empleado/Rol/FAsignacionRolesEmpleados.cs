@@ -1,19 +1,11 @@
-﻿using AccesoDatos.Entidades;
+﻿using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
-using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Empleado.Rol;
 using Servicios.LogicaNegocio.Empleado.Rol.DTO;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Presentacion.Core.Empleado.Rol
@@ -185,7 +177,7 @@ namespace Presentacion.Core.Empleado.Rol
             MessageBoxIcon.Question);
             if (respuesta == DialogResult.Yes)
             {
-              
+
                 _rolesDisponibles.Remove(rolDisponibleSeleccionado);
                 _rolesAsignados.Add(rolDisponibleSeleccionado);
                 ActualizarGrillas();
