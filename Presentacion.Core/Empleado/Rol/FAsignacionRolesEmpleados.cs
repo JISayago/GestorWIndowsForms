@@ -27,9 +27,14 @@ namespace Presentacion.Core.Empleado.Rol
         private readonly IRolServicio _rolServicio;
         private readonly IEmpleadoServicio _empleadoServicio;
 
-        private List<RolDTO> _rolesDisponibles;
-        private List<RolDTO> _rolesAsignados;
-        private List<RolDTO> _rolesControl;
+        private BindingList<RolDTO> _rolesDisponibles;
+        private BindingList<RolDTO> _rolesAsignados;
+        private BindingList<RolDTO> _rolesControl;
+
+        private readonly BindingSource _bsRolesDisponibles = new BindingSource();
+        private readonly BindingSource _bsRolesAsignados = new BindingSource();
+
+        private bool _cargandoEmpleado;
         public FAsignacionRolesEmpleados()
         {
             InitializeComponent();
@@ -38,37 +43,46 @@ namespace Presentacion.Core.Empleado.Rol
         {
             _rolServicio = new RolServicio();
             _empleadoServicio = new EmpleadoServicio();
+
             TipoAsignacionRol = tipoAsignacionRol;
             EntidadID = entidadID;
             RealizoAlgunaOperacion = false;
+
+            ConfigurarGrillas();
 
             var filtros = new FiltroConsulta
             {
                 TextoBuscar = string.Empty,
                 VerEliminados = false,
                 Page = 1,
-                PageSize = int.MaxValue // o un número alto si no querés romper memoria
+                PageSize = int.MaxValue
             };
 
             var resultado = _empleadoServicio.ObtenerEmpleados(filtros);
+            var empleados = resultado.Items.ToList();
 
-            var empleados = resultado.Items;
+            _cargandoEmpleado = true;
             CargarComboBox(cbxEmpleado, empleados, "Nombre", "PersonaId");
-            EntidadID = cbxEmpleado.SelectedValue as long?;
+            _cargandoEmpleado = false;
 
-            if (tipoAsignacionRol == TipoAsignacionRol.Existente)
+            if (tipoAsignacionRol == TipoAsignacionRol.Existente && entidadID.HasValue)
             {
-                CargarDatos(entidadID);
-
-                if (entidadID.HasValue && empleados.Any(e => e.PersonaId == entidadID.Value))
-                {
-                    cbxEmpleado.SelectedValue = entidadID.Value;
-                    cbxEmpleado.Enabled = false;
-                }
+                cbxEmpleado.SelectedValue = entidadID.Value;
+                cbxEmpleado.Enabled = false;
+                EntidadID = entidadID;
             }
+
+            InicializacionGrillas();
         }
 
+        private void ConfigurarGrillas()
+        {
+            dgvRolesDisponibles.AutoGenerateColumns = true;
+            dgvRolesAsignados.AutoGenerateColumns = true;
 
+            dgvRolesDisponibles.DataSource = _bsRolesDisponibles;
+            dgvRolesAsignados.DataSource = _bsRolesAsignados;
+        }
         private void CargarDatos(long? entidadId)
         {
             if (!entidadId.HasValue)
@@ -172,55 +186,74 @@ namespace Presentacion.Core.Empleado.Rol
 
         private void btnAsignarRol_Click(object sender, EventArgs e)
         {
-            var empleado = _empleadoServicio.ObtenerEmpleadoPorId((long)EntidadID);
-            var rolDisponibleSeleccionado = ObtenerRolDeGrilla(dgvRolesDisponibles);
-            if (rolDisponibleSeleccionado == null)
+            if (!EntidadID.HasValue)
             {
-                MessageBox.Show("Por favor seleccione un rol disponible para asignar.", "Atención!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("No hay empleado seleccionado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            var respuesta = MessageBox.Show($"¿Esta seguro que desea asignar el rol {rolDisponibleSeleccionado.Nombre.ToUpper()} del empleado {empleado.Nombre} {empleado.Apellido} (usuario: {empleado.Username})?",
-            "Confirmar acción",
-            MessageBoxButtons.YesNo,
-            MessageBoxIcon.Question);
-            if (respuesta == DialogResult.Yes)
+
+            var empleado = _empleadoServicio.ObtenerEmpleadoPorId(EntidadID.Value);
+            var rolDisponibleSeleccionado = ObtenerRolDeGrilla(dgvRolesDisponibles);
+
+            if (rolDisponibleSeleccionado == null)
             {
-              
-                _rolesDisponibles.Remove(rolDisponibleSeleccionado);
-                _rolesAsignados.Add(rolDisponibleSeleccionado);
-                ActualizarGrillas();
-                ResetearGrillas(dgvRolesDisponibles, dgvRolesAsignados);
+                MessageBox.Show("Por favor seleccione un rol disponible para asignar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
             }
+
+            var respuesta = MessageBox.Show(
+                $"¿Está seguro que desea asignar el rol {rolDisponibleSeleccionado.Nombre.ToUpper()} del empleado {empleado.Nombre} {empleado.Apellido} (usuario: {empleado.Username})?",
+                "Confirmar acción",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (respuesta != DialogResult.Yes) return;
+
+            _rolesDisponibles.Remove(rolDisponibleSeleccionado);
+            _rolesAsignados.Add(rolDisponibleSeleccionado);
+
+            _bsRolesDisponibles.ResetBindings(false);
+            _bsRolesAsignados.ResetBindings(false);
         }
 
-        private RolDTO ObtenerRolDeGrilla(DataGridView grillaRoles)
+        private RolDTO ObtenerRolDeGrilla(DataGridView grilla)
         {
-            if (grillaRoles.CurrentRow != null && grillaRoles.CurrentRow.DataBoundItem is RolDTO rol)
-                return rol;
+            if (grilla.SelectedRows.Count == 0)
+                return null;
 
-            return null;
+            return grilla.SelectedRows[0].DataBoundItem as RolDTO;
         }
 
         private void btnQuitarRol_Click(object sender, EventArgs e)
         {
-            var rolQuitableSeleccionado = ObtenerRolDeGrilla(dgvRolesAsignados);
-            var empleado = _empleadoServicio.ObtenerEmpleadoPorId((long)EntidadID);
-            if (rolQuitableSeleccionado == null)
+            if (!EntidadID.HasValue)
             {
-                MessageBox.Show("Por favor seleccione un rol disponible para quitar.", "Atención!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("No hay empleado seleccionado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            var respuesta = MessageBox.Show($"¿Esta seguro que desea quitar el rol {rolQuitableSeleccionado.Nombre.ToUpper()} del empleado {empleado.Nombre} {empleado.Apellido} (usuario: {empleado.Username})?",
-            "Confirmar acción",
-            MessageBoxButtons.YesNo,
-            MessageBoxIcon.Question);
-            if (respuesta == DialogResult.Yes)
+
+            var empleado = _empleadoServicio.ObtenerEmpleadoPorId(EntidadID.Value);
+            var rolQuitableSeleccionado = ObtenerRolDeGrilla(dgvRolesAsignados);
+
+            if (rolQuitableSeleccionado == null)
             {
-                _rolesAsignados.Remove(rolQuitableSeleccionado);
-                _rolesDisponibles.Add(rolQuitableSeleccionado);
-                ActualizarGrillas();
-                ResetearGrillas(dgvRolesDisponibles, dgvRolesAsignados);
+                MessageBox.Show("Por favor seleccione un rol asignado para quitar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
             }
+
+            var respuesta = MessageBox.Show(
+                $"¿Está seguro que desea quitar el rol {rolQuitableSeleccionado.Nombre.ToUpper()} del empleado {empleado.Nombre} {empleado.Apellido} (usuario: {empleado.Username})?",
+                "Confirmar acción",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (respuesta != DialogResult.Yes) return;
+
+            _rolesAsignados.Remove(rolQuitableSeleccionado);
+            _rolesDisponibles.Add(rolQuitableSeleccionado);
+
+            _bsRolesDisponibles.ResetBindings(false);
+            _bsRolesAsignados.ResetBindings(false);
         }
 
         private void btnActualizarRoles_Click(object sender, EventArgs e)
@@ -237,7 +270,7 @@ namespace Presentacion.Core.Empleado.Rol
             {
                 if (EntidadID.HasValue)
                 {
-                    var response = _rolServicio.ActualizarRolesDeEmpleado(_rolesAsignados, (long)EntidadID, fechaAsignacionRol);
+                    var response = _rolServicio.ActualizarRolesDeEmpleado(_rolesAsignados.ToList(), (long)EntidadID, fechaAsignacionRol);
                     if (response.Exitoso)
                     {
                         RealizoAlgunaOperacion = true;
@@ -260,9 +293,20 @@ namespace Presentacion.Core.Empleado.Rol
 
         }
 
+        //private void cbxEmpleado_SelectionChangeCommitted(object sender, EventArgs e)
+        //{
+        //    if (_cargandoEmpleado) return;
+        //    if (cbxEmpleado.SelectedValue == null) return;
+
+        //    EntidadID = Convert.ToInt64(cbxEmpleado.SelectedValue);
+        //    InicializacionGrillas();
+        //}
         private void cbxEmpleado_SelectedIndexChanged(object sender, EventArgs e)
         {
-            EntidadID = cbxEmpleado.SelectedValue as long?;
+            if (_cargandoEmpleado) return;
+            if (cbxEmpleado.SelectedValue == null) return;
+
+            EntidadID = Convert.ToInt64(cbxEmpleado.SelectedValue);
             InicializacionGrillas();
         }
 
@@ -273,28 +317,71 @@ namespace Presentacion.Core.Empleado.Rol
                 TextoBuscar = string.Empty,
                 VerEliminados = false,
                 Page = 1,
-                PageSize = int.MaxValue // solo si lo usás para listas chicas
+                PageSize = int.MaxValue
             };
 
-            var resultado = _rolServicio.ObtenerRoles(filtros);
+            var todosLosRoles = _rolServicio.ObtenerRoles(filtros).Items.ToList();
 
-            _rolesDisponibles = resultado.Items.ToList();
+            var rolesAsignados = new List<RolDTO>();
+
             if (EntidadID.HasValue)
             {
-                _rolesAsignados = _rolServicio.ObtenerRolesAsignadosAEmpleados(EntidadID.Value).ToList();
-                _rolesDisponibles.RemoveAll(rd => _rolesAsignados.Any(ra => ra.RolId == rd.RolId));
-                _rolesControl = _rolesAsignados
-                .Select(r => new RolDTO
+                rolesAsignados = _rolServicio.ObtenerRolesAsignadosAEmpleados(EntidadID.Value).ToList();
+            }
+
+            var idsAsignados = new HashSet<long>(rolesAsignados.Select(r => r.RolId));
+
+            _rolesAsignados = new BindingList<RolDTO>(rolesAsignados);
+            _rolesDisponibles = new BindingList<RolDTO>(
+                todosLosRoles.Where(r => !idsAsignados.Contains(r.RolId)).ToList()
+            );
+
+            _rolesControl = new BindingList<RolDTO>(
+                rolesAsignados.Select(r => new RolDTO
                 {
                     RolId = r.RolId,
                     Nombre = r.Nombre,
                     CodigoRol = r.CodigoRol,
                     DetalleRol = r.DetalleRol
-                })
-                .ToList();
+                }).ToList()
+            );
+
+            _bsRolesDisponibles.DataSource = _rolesDisponibles;
+            _bsRolesAsignados.DataSource = _rolesAsignados;
+
+            _bsRolesDisponibles.ResetBindings(false);
+            _bsRolesAsignados.ResetBindings(false);
+
+            AjustarColumnas();
+        }
+        private void AjustarColumnas()
+        {
+            AjustarGrilla(dgvRolesDisponibles);
+            AjustarGrilla(dgvRolesAsignados);
+        }
+
+        private void AjustarGrilla(DataGridView grid)
+        {
+            if (grid.Columns.Contains(nameof(RolDTO.RolId)))
+            {
+                grid.Columns[nameof(RolDTO.RolId)].Visible = false;
             }
-            ActualizarGrillas();
-            ResetearGrillas(dgvRolesDisponibles, dgvRolesAsignados);
+
+            if (grid.Columns.Contains(nameof(RolDTO.Nombre)))
+            {
+                grid.Columns[nameof(RolDTO.Nombre)].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
+
+            if (grid.Columns.Contains(nameof(RolDTO.CodigoRol)))
+            {
+                grid.Columns[nameof(RolDTO.CodigoRol)].Width = 100;
+                grid.Columns[nameof(RolDTO.CodigoRol)].HeaderText = "Código";
+            }
+
+            if (grid.Columns.Contains(nameof(RolDTO.DetalleRol)))
+            {
+                grid.Columns[nameof(RolDTO.DetalleRol)].Visible = false;
+            }
         }
     }
 }
