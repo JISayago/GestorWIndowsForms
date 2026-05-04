@@ -41,8 +41,32 @@ namespace Presentacion.Core.Producto
             TipoOperacion = tipoOperacion;
 
             dtpFechaVencimiento.Format = DateTimePickerFormat.Short;
-            
-            if(tipoOperacion == TipoOperacion.Nuevo)
+
+            AgregarControlesObligatorios(nudStockInicial, "Stock Inicial");
+            AgregarControlesObligatorios(nudStockActual, "Stock Actual");
+            AgregarControlesObligatorios(txtNumeroLote, "Numero Lote");
+            AgregarControlesObligatorios(txtDescripcionLote, "Descripcion");
+            if (chkFechaVencimiento.Checked)
+            {
+                AgregarControlesObligatorios(dtpFechaVencimiento, "Fecha Vencimiento");
+            }
+            //IdProducto = productoDTO.ProductoId,
+            //    StockInicial = nudStockInicial.Value,
+            //    StockActual = nudStockActual.Value,
+            //    NumeroLote = txtNumeroLote.Text,
+            //    Descripcion = txtDescripcionLote.Text,
+            //    FechaAlta = DateTime.Now, //cambiar por datetime , asi se puede filtrar el mas viejo con la hora incluida
+            //    FechaVencimiento = chkFechaVencimiento.Checked ? dtpFechaVencimiento.Value : null,
+            //    EstaVencido = false,
+            //    EstaActivo = true
+
+            if (tipoOperacion == TipoOperacion.Eliminar)
+            {
+                DesactivarControles(this);
+                chkLoteEstaActivo.Enabled = false;
+            }
+
+            if (tipoOperacion == TipoOperacion.Nuevo)
             {
                 productoDTO = _productoServicio.ObtenerProductoPorId(entidadId.Value);
 
@@ -78,6 +102,8 @@ namespace Presentacion.Core.Producto
                     dtpFechaVencimiento.CustomFormat = " ";
                 }
             }
+
+
         }
 
         #region 🔵 EVENTOS
@@ -287,7 +313,9 @@ namespace Presentacion.Core.Producto
             if (TipoOperacion == TipoOperacion.Nuevo ) //Nombre default auto generado cuando cargar un lote nuevo
             {
                 chkLoteEstaActivo.Checked = true;
-                //txtNombreLote.Text = $"{NombreProducto}-{DateTime.Now: yyyyMMddHHmmss}".ToUpper();
+
+
+
                 txtNumeroLote.Text = NumeroLote;
             }
         }

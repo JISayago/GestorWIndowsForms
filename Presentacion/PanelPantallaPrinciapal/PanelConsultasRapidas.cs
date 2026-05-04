@@ -32,7 +32,7 @@ namespace Presentacion.Notificaciones
         // Estado de la paginación Ventas
         private int _paginaActualV = 1;
         private int _totalPaginasV = 1;
-        private const int _pageSizeV = 10;
+        private const int _pageSizeV = 12;
 
         private Button btnPrevVenta, btnNextVenta;
         private Label lblPaginaInfoVenta;
@@ -157,7 +157,7 @@ namespace Presentacion.Notificaciones
             dgvVentas = ConfigurarGridSimple();
             dgvVentas.Columns.Add("Id", "Comprobante");
             dgvVentas.Columns.Add("Fecha", "Fecha/Hora");
-            dgvVentas.Columns.Add("Cliente", "Cliente");
+            dgvVentas.Columns.Add("Detalle", "Detalle");
             dgvVentas.Columns.Add("Total", "Total $");
 
             // Footter para VENTAS
@@ -237,7 +237,7 @@ namespace Presentacion.Notificaciones
         // ===========================================================================
         private DataGridView ConfigurarGridSimple()
         {
-            return new DataGridView
+            var dgv = new DataGridView
             {
                 Dock = DockStyle.Fill,
                 BackgroundColor = SystemColors.Window,
@@ -247,8 +247,17 @@ namespace Presentacion.Notificaciones
                 AllowUserToAddRows = false,
                 ReadOnly = true,
                 RowHeadersVisible = false,
-                ColumnHeadersHeight = 30
+                ColumnHeadersHeight = 35, // Un poco más alto para el encabezado
+                EnableHeadersVisualStyles = false // Permite personalizar mejor el estilo
             };
+
+            // --- EL CAMBIO CLAVE AQUÍ ---
+            dgv.RowTemplate.Height = 28; // Cambia 35 por el valor que prefieras (ej. 40 o 45)
+
+            // Alineación vertical centrada para que el texto no quede arriba
+            dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+
+            return dgv;
         }
 
         // ===========================================================================
@@ -346,7 +355,7 @@ namespace Presentacion.Notificaciones
                 PageSize = _pageSizeV, // Usamos la constante de 10
                 TextoBuscar = "",
                 VerEliminados = false,
-                TotalRegistros = 20 // Limitar a 20 registros para la consulta rápida
+                TotalRegistros = 24 // Limitar a 20 registros para la consulta rápida
             };
 
             var resultado = _ventaService.ObtenerVentas(filtroVentas);

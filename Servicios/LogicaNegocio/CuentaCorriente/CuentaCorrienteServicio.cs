@@ -2,6 +2,7 @@
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Cliente.CtaCte;
+using Servicios.Helpers.Movimiento;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
@@ -352,7 +353,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             long ctacteId = cuenta.CuentaCorrienteId;
 
-          // _movimientoServicio.CrearMovimientoCtaCte(monto, cajaId, ctacteId, TipoMovimientoDetalle.CuentaCorriente, context);
+            _movimientoServicio.CrearMovimientoCtaCte(monto, cajaId, ctacteId, TipoMovimientoDetalle.CuentaCorriente, context);
 
             context.SaveChanges();
 

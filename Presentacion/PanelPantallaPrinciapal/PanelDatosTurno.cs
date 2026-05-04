@@ -37,7 +37,7 @@ namespace Presentacion.Notificaciones
             _pantallaPrincipalServicio = new PantallaPrincipalServicio();
             _datosTurno = datosTurno;
 
-            contenedorPadre.BackColor = Color.FromArgb(45, 45, 48);
+            contenedorPadre.BackColor = SystemColors.ButtonFace;
             contenedorPadre.Controls.Clear();
 
             // Configuración del FlowLayout Principal
@@ -55,7 +55,10 @@ namespace Presentacion.Notificaciones
             Label lblSeccion = new Label
             {
                 Text = "RESUMEN DEL TURNO ACTUAL",
-                ForeColor = Color.White,
+
+                // CAMBIO: De Color.White a un gris muy oscuro
+                ForeColor = Color.FromArgb(40, 40, 40),
+
                 Font = new Font("Segoe UI", 16, FontStyle.Bold),
                 Margin = new Padding(0, 0, 0, 20),
                 AutoSize = true
@@ -210,7 +213,10 @@ namespace Presentacion.Notificaciones
             lblNotas = new Label
             {
                 Text = "NOTAS PARA EL SIGUIENTE TURNO",
-                ForeColor = Color.LightGray,
+
+                // CAMBIO: De Color.LightGray a DimGray (gris medio-oscuro)
+                ForeColor = Color.DimGray,
+
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 Top = 10,
                 Left = 20,
@@ -228,7 +234,9 @@ namespace Presentacion.Notificaciones
                 AcceptsReturn = true,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
                 // Al iniciar, si no hay nada, ponemos el primer guion
-                Text = string.IsNullOrWhiteSpace(_datosTurno.NotasTurno) ? "- " : _datosTurno.NotasTurno
+                Text = string.IsNullOrWhiteSpace(_datosTurno.NotasTurno) ? "- " : _datosTurno.NotasTurno,
+                BorderStyle = BorderStyle.FixedSingle,
+                BackColor = Color.White
             };
 
             // --- EVENTO DE FORMATEO EN VIVO ---

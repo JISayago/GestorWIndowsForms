@@ -19,6 +19,6 @@ namespace Servicios.LogicaNegocio.CuentaCorriente.DTO
         public long ClienteId { get; set; } // Lista de ID de cliente asociado
         public string NombreCliente { get; set; } // Nombre del cliente asociado
         public List<long> DniAutorizados { get; set; } // Lista de DNI autorizados
-        public List<long> MovimientoCuentaCorrienteIds { get; set; } // Lista de IDs de movimientos asociados
+        public List<long> MovimientoCuentaCorrienteIds { get; set; } // Lista de IDs de movimientos asociados //nose xq esta esto aca deberia borrarlo
     }
 }

@@ -6,8 +6,10 @@ using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.Helpers.VentaEnum;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using Servicios.LogicaNegocio.Cliente.DTO;
+using Servicios.LogicaNegocio.CuentaCorriente.DTO;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Empleado.DTO;
+using Servicios.LogicaNegocio.Gasto.DTO;
 using Servicios.LogicaNegocio.Movimiento.DTO;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
@@ -301,40 +303,203 @@ namespace Servicios.LogicaNegocio.Movimiento
                 PageSize = filtros.PageSize
             };
         }
-        public (EmpleadoDTO empleado, VentaDTO venta, MovimientoDTO movimiento, List<ProductoDTO> productos) CargarDatosMovimiento(long movimientoId)
+        public MovimientoHelperDTO ObtenerDatosParaMovimientoConsultaVenta(long movimientoId)
         {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+
             var movimientoService = new MovimientoServicio();
-            var ventaService = new VentaServicio();
-            var empleadoService = new EmpleadoServicio();
-            var productoServicio = new ProductoServicio();
 
-            var movimiento = movimientoService.ObtenerMovimientoPorId(movimientoId);
-
-            VentaDTO venta = null;
-            EmpleadoDTO empleado = null;
-            List<ProductoDTO> productos = new List<ProductoDTO>();
-
-            // verificar si el movimiento corresponde a una venta
-            if (movimiento != null &&
-                movimiento.TipoEntidad == (int)TipoEntidadMovimiento.Venta &&
-                movimiento.EntidadId.HasValue)
+            var movimiento = context.Movimientos
+            .AsNoTracking()
+            .Where(m => m.MovimientoId == movimientoId)
+            .Select(m => new MovimientoHelperDTO
             {
-                venta = ventaService.ObtenerVentaDetalle(movimiento.EntidadId.Value);
+                MovimientoId = m.MovimientoId,
+                NumeroMovimiento = m.NumeroMovimiento,
+                Monto = m.Monto,
+                TipoMovimiento = m.TipoMovimiento,
+                TipoMovimientoDetalle = m.TipoMovimientoDetalle,
+                FechaMovimiento = m.FechaMovimiento,
+                EstaEliminado = m.EstaEliminado,
+                EntidadId = m.EntidadId,
+                TipoEntidad = m.TipoEntidad,
 
-                if (venta != null)
+                Venta = m.TipoEntidad == (int)TipoEntidadMovimiento.Venta
+                    ? context.Ventas
+                        .Where(v => v.VentaId == m.EntidadId)
+                        .Select(v => new VentaDTO
+                        {
+                            VentaId = v.VentaId,
+                            NumeroVenta = v.NumeroVenta,
+                            FechaVenta = v.FechaVenta,
+                            Total = v.Total,
+                            TotalSinDescuento = v.TotalSinDescuento,
+                            Descuento = v.Descuento,
+                            IdCliente = v.IdCliente,
+                            Estado = v.Estado,
+                            Detalle = v.Detalle,
+
+                            Items = v.DetallesVentas.Select(i => new ItemVentaDTO
+                            {
+                                ItemId = i.DetalleVentaId,
+                                Cantidad = i.Cantidad,
+                                // Mapeamos los precios según tus entidades de DetallesVenta
+                                PrecioVenta = i.PrecioUnitarioOriginal,
+                                PrecioOferta = i.PrecioUnitarioFinal,
+                                Descripcion = i.Descripcion,
+                                EsOferta = i.EsOferta,
+                                EsOfertaPorGrupo = i.EsOfertaPorGrupo
+                                // Nota: Si 'Medida' o 'UnidadMedida' están en Producto, 
+                                // deberías acceder via i.Producto.Medida si tienes el Include o la relación.
+                            }).ToList()
+                        }).FirstOrDefault()
+                    : null
+            })
+            .FirstOrDefault();
+
+            return movimiento;
+        }
+
+        public MovimientoHelperDTO ObtenerDatosParaMovimientoConsultaGasto(long movimientoId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var movimiento = context.Movimientos
+                .AsNoTracking()
+                .Where(m => m.MovimientoId == movimientoId)
+                .Select(m => new MovimientoHelperDTO
                 {
-                    empleado = empleadoService.ObtenerEmpleadoPorId(venta.IdEmpleado);
+                    MovimientoId = m.MovimientoId,
+                    NumeroMovimiento = m.NumeroMovimiento,
+                    Monto = m.Monto,
+                    TipoMovimiento = m.TipoMovimiento,
+                    TipoMovimientoDetalle = m.TipoMovimientoDetalle,
+                    FechaMovimiento = m.FechaMovimiento,
+                    EstaEliminado = m.EstaEliminado,
+                    EntidadId = m.EntidadId,
+                    TipoEntidad = m.TipoEntidad,
 
-                    if (venta.Items != null && venta.Items.Any())
-                    {
-                        productos = venta.Items
-                            .Select(item => productoServicio.ObtenerProductoPorId(item.ItemId))
-                            .ToList();
-                    }
-                }
-            }
+                    // Mapeo dinámico según el DTO proporcionado
+                    Gasto = m.TipoEntidad == (int)TipoEntidadMovimiento.Gasto && m.EntidadId.HasValue
+                        ? context.Gastos
+                            .Where(g => g.GastoId == m.EntidadId.Value)
+                            .Select(g => new GastoDTO
+                            {
+                                GastoId = g.GastoId,
+                                NumeroGasto = g.NumeroGasto, // Nueva propiedad
+                                IdEmpleado = g.IdEmpleado,
+                                NombreEmpleado = $"{g.Empleado.Persona.Nombre} {g.Empleado.Persona.Apellido}" ?? "NO NAME",
+                                CategoriaGasto = g.CategoriaGasto,
+                                FechaGasto = g.FechaGasto,
+                                FechaRegistro = g.FechaRegistro,
+                                MontoTotal = g.MontoTotal, // Cambio de g.mon a g.MontoTotal
+                                MontoPagado = g.MontoPagado,
+                                EstadoGasto = g.EstadoGasto,
+                                Detalle = g.Detalle ?? "Sin Detalle"
+                            }).FirstOrDefault()
+                        : null
+                })
+                .FirstOrDefault();
 
-            return (empleado: empleado, venta: venta, movimiento: movimiento, productos: productos);
+            return movimiento;
+        }
+
+        public MovimientoHelperDTO ObtenerDatosParaMovimientoConsulta(long movimientoId)
+        {
+            // Usamos 'using' para asegurar que la conexión se libere correctamente
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var movimiento = context.Movimientos
+                .AsNoTracking()
+                .Where(m => m.MovimientoId == movimientoId)
+                .Select(m => new MovimientoHelperDTO
+                {
+                    // --- 1. PROPIEDADES BASE DEL MOVIMIENTO ---
+                    MovimientoId = m.MovimientoId,
+                    NumeroMovimiento = m.NumeroMovimiento,
+                    Monto = m.Monto,
+                    TipoMovimiento = m.TipoMovimiento,
+                    TipoMovimientoDetalle = m.TipoMovimientoDetalle,
+                    FechaMovimiento = m.FechaMovimiento,
+                    EstaEliminado = m.EstaEliminado,
+                    EntidadId = m.EntidadId,
+                    TipoEntidad = m.TipoEntidad,
+
+                    // --- 2. MAPEO CONDICIONAL PARA VENTA ---
+                    Venta = m.TipoEntidad == (int)TipoEntidadMovimiento.Venta && m.EntidadId.HasValue
+                        ? context.Ventas
+                            .Where(v => v.VentaId == m.EntidadId.Value)
+                            .Select(v => new VentaDTO
+                            {
+                                VentaId = v.VentaId,
+                                NumeroVenta = v.NumeroVenta,
+                                FechaVenta = v.FechaVenta,
+                                Total = v.Total,
+                                TotalSinDescuento = v.TotalSinDescuento,
+                                Descuento = v.Descuento,
+                                IdCliente = v.IdCliente,
+                                Estado = v.Estado,
+                                Detalle = v.Detalle,
+                                Items = v.DetallesVentas.Select(i => new ItemVentaDTO
+                                {
+                                    ItemId = i.DetalleVentaId,
+                                    Cantidad = i.Cantidad,
+                                    PrecioVenta = i.PrecioUnitarioOriginal,
+                                    PrecioOferta = i.PrecioUnitarioFinal,
+                                    Descripcion = i.Descripcion,
+                                    EsOferta = i.EsOferta,
+                                    EsOfertaPorGrupo = i.EsOfertaPorGrupo
+                                }).ToList()
+                            }).FirstOrDefault()
+                        : null,
+
+                    // --- 3. MAPEO CONDICIONAL PARA GASTO ---
+                    Gasto = m.TipoEntidad == (int)TipoEntidadMovimiento.Gasto && m.EntidadId.HasValue
+                        ? context.Gastos
+                            .Where(g => g.GastoId == m.EntidadId.Value)
+                            .Select(g => new GastoDTO
+                            {
+                                GastoId = g.GastoId,
+                                NumeroGasto = g.NumeroGasto,
+                                IdEmpleado = g.IdEmpleado,
+                                // Concatenación segura para EF Core
+                                NombreEmpleado = g.Empleado.Persona.Nombre + " " + g.Empleado.Persona.Apellido ?? "NO NAME",
+                                CategoriaGasto = g.CategoriaGasto,
+                                FechaGasto = g.FechaGasto,
+                                FechaRegistro = g.FechaRegistro,
+                                MontoTotal = g.MontoTotal,
+                                MontoPagado = g.MontoPagado,
+                                EstadoGasto = g.EstadoGasto,
+                                Detalle = g.Detalle ?? "Sin Detalle"
+                            }).FirstOrDefault()
+                        : null,
+
+                    // --- 4. MAPEO CONDICIONAL PARA CUENTA CORRIENTE ---
+                    CuentaCorriente = m.TipoEntidad == (int)TipoEntidadMovimiento.CuentaCorriente && m.EntidadId.HasValue
+                    ? context.CuentaCorriente
+                        .Where(cc => cc.CuentaCorrienteId == m.EntidadId.Value)
+                        .Select(cc => new CuentaCorrienteDTO
+                        {
+                        CuentaCorrienteId = cc.CuentaCorrienteId,
+                        NombreCuentaCorriente = cc.NombreCuentaCorriente,
+                        Saldo = cc.Saldo,
+                        LimiteDeuda = cc.LimiteDeuda,
+                        EstaEliminado = cc.EstaEliminado,
+                        LimiteDeudaActivo = cc.LimiteDeudaActivo,
+                        FechaVencimiento = cc.FechaVencimiento,
+                        EstadoCuentaCorriente = cc.EstadoCuentaCorriente,
+                        ClienteId = cc.ClienteId,
+                        // Navegación hacia el nombre del cliente
+                        NombreCliente = cc.Cliente.Persona.Nombre + " " + cc.Cliente.Persona.Apellido,
+                        // Mapeo de DNI autorizados (asumiendo relación o lista)
+                        DniAutorizados = cc.CuentaCorrienteAutorizado.Select(a => a.Dni).ToList()
+                        }).FirstOrDefault()
+                       : null
+
+                })
+                .FirstOrDefault();
+
+            return movimiento;
         }
     }
 }

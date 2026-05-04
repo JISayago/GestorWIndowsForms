@@ -114,7 +114,7 @@ namespace Presentacion.Core.CuentaCorriente
             txtLimiteDeuda.Enabled = cuentacorriente.LimiteDeudaActivo;
             cmbClientes.DisplayMember = "NombreCompleto"; // lo que se muestra
             cmbClientes.ValueMember = "PersonaId";
-            cmbClientes.DataSource = clienteDeCuentaCorriente;                                                                           
+            //cmbClientes.DataSource = clienteDeCuentaCorriente;                                                                           
             cmbClientes.Enabled = false; // No se puede cambiar el cliente asociado en la modificación
 
             dgvDni.DataSource = cuentacorriente.DniAutorizados.Select(x => new { DNI = x }).ToList();

@@ -33,6 +33,8 @@ namespace Presentacion.Core.Producto.Rubro
         {
             base.ResetearGrilla(grilla);
 
+            if (grilla.Columns.Count == 0) return;
+
             if (grilla.Columns.Contains("RubroId"))
             {
                 grilla.Columns["RubroId"].Visible = false;
@@ -48,18 +50,28 @@ namespace Presentacion.Core.Producto.Rubro
         {
             base.ActualizarDatos(dgv, filtros);
 
-            if (filtros.VerEliminados)
-            {
-                dgv.DataSource = _rubroServicio.ObtenerRubroEliminado(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _rubroServicio.ObtenerRubro(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
-        }
+            filtros.Extra ??= "";
 
+            var resultado = _rubroServicio.ObtenerRubroPaginado(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            // 🔴 CLAVE: volver a aplicar formato
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
+            {
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.VerEliminados;
+        }
+        
         public override void EjecutarBtnNuevo()
         {
             var form = new FRubroABM(TipoOperacion.Nuevo);

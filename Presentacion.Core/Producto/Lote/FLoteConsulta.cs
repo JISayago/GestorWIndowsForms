@@ -92,6 +92,8 @@ namespace Presentacion.Core.Producto.Lote
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
+            
+            grilla.ReadOnly = true;
 
             if (grilla.Columns.Count == 0)
                 return;
@@ -192,7 +194,8 @@ namespace Presentacion.Core.Producto.Lote
             var f = new FGestionStockLotes(TipoOperacion.Eliminar, entidadID); // deberia pasar tambien el producto? o directamente del service
             f.ShowDialog();
 
-            Recargar(f.RealizoAlgunaOperacion);
+            if (f.RealizoAlgunaOperacion)
+                RefrescarGrilla();
         }
 
         public override void EjecutarBtnModificar()
@@ -203,15 +206,16 @@ namespace Presentacion.Core.Producto.Lote
             var f = new FGestionStockLotes(TipoOperacion.Modificar, entidadID); // deberia pasar tambien el producto? o directamente del service
             f.ShowDialog();
 
-            Recargar(f.RealizoAlgunaOperacion);
+            if (f.RealizoAlgunaOperacion)
+                RefrescarGrilla();
         }
 
         public override void EjecutarBtnNuevo()
         {
             var f = new FProductoConsulta(); //Abrimos Producto Consulta, de ahi arranca el ciclo para alta lote
             f.ShowDialog();
-
-            //Recargar(f.RealizoAlgunaOperacion);
+            
+            RefrescarGrilla();
         }
 
         private void Recargar(bool realizoOperacion)

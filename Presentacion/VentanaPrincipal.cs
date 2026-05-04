@@ -337,5 +337,10 @@ namespace Presentacion
         }
 
         #endregion
+
+        private void tlpNotificaciones0_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
