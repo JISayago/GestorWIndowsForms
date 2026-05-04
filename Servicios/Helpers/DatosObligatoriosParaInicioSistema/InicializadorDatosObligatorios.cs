@@ -78,6 +78,5 @@ namespace Servicios.Helpers.DatosObligatorios
         {
            RolesIni.Inicializar(Context);
         }
-        private void CargarUltimas
     }
 }
