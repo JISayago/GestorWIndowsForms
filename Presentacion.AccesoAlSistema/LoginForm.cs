@@ -1,5 +1,6 @@
 ﻿using Presentacion.FBase;
 using ServicioAccesoSistema.AccesoSistema;
+using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Empleado;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace Presentacion.AccesoAlSistema
         private string username;
 
 
-        public LoginForm() : this(new AccesoSistema(), new EmpleadoServicio())
+        public LoginForm() : this(new AccesoSistema(), new EmpleadoServicio(), new UsuarioServicio())
         {
             InitializeComponent();
         }
@@ -111,6 +112,8 @@ namespace Presentacion.AccesoAlSistema
                     Permisos = permisos,
                     EsSuperAdmin = esSAdmin
                 };
+                
+                AuthHelper.UsuarioActual = _usuarioLogeado;
 
                 PuedeAccederAlSistema = true;
             }

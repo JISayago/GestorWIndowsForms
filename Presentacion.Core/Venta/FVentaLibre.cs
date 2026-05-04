@@ -42,6 +42,7 @@ namespace Presentacion.Core.Venta
         private long idCliente;
         private ClienteDTO _clienteVenta;
         private bool esConsumidorFinal;
+        //private Servicios.Helpers.Sistema.UsuarioLogeado _usuarioLogeado;
         private UsuarioLogeado _usuarioLogeado;
         private long idVendedor;
         private bool esUsuarioLogeado = false;

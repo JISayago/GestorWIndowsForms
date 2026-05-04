@@ -16,6 +16,7 @@ using Presentacion.Core.Venta;
 using Presentacion.FBase.Helpers;
 using Presentacion.Notificaciones;
 using ServicioAccesoSistema.AccesoSistema;
+using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Caja.DTO;
 using Servicios.LogicaNegocio.PantallaPrincipal;
 using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
@@ -201,6 +202,11 @@ namespace Presentacion
 
         private void btnPanelAdmin_Click(object sender, EventArgs e)
         {
+            if (!AuthHelper.Tiene("Admin.Acceso"))
+            {
+                MessageBox.Show("Acceso disponible sólo para Administradores");
+                return;
+            }
             var administracion = new FAdministracion(_usuarioLogeado.PersonaId);
             administracion.Show();
         }
