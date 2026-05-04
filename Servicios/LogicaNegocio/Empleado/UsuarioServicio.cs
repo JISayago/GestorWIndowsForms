@@ -16,6 +16,37 @@ namespace Servicios.LogicaNegocio.Empleado
 {
     public class UsuarioServicio : IUsuarioServicio
     {
+        public HashSet<string> ObtenerPermisosPorUsuario(long usuarioId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var roles = context.EmpleadoRoles
+                .Where(ur => ur.IdEmpleado == usuarioId)
+                .Select(ur => ur.Rol)
+                .ToList();
+
+            // 🔥 Detectar SADMIN
+            if (roles.Any(r => r.CodigoRol == "SADMIN"))
+            {
+                return new HashSet<string>(); // no importa, bypass
+            }
+
+            var permisos = context.EmpleadoRoles
+                .Where(ur => ur.IdEmpleado == usuarioId)
+                .SelectMany(ur => ur.Rol.RolesPermisos)
+                .Select(rp => rp.Permiso.Codigo)
+                .ToHashSet();
+
+            return permisos;
+        }
+
+        public bool EsSuperAdmin(long usuarioId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            return context.EmpleadoRoles
+                .Any(ur => ur.IdEmpleado == usuarioId && ur.Rol.CodigoRol == "SADMIN");
+        }
         public EstadoOperacion ActualziarPassPrimerIngreso(long usuarioId, string pass)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);

@@ -12,5 +12,9 @@ namespace Presentacion.AccesoAlSistema
         public string Nombre { get; set; }
         public string Apellido { get; set; }
         public string Username { get; set; }
+
+        public bool EsSuperAdmin { get; set; }
+
+        public HashSet<string> Permisos { get; set; } = new();
     }
 }

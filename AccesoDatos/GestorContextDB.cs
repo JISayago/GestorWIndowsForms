@@ -39,6 +39,8 @@ namespace AccesoDatos
         public DbSet<DetalleVentaLote> DetalleVentaLotes { get; set; }
         public DbSet<CodigoRecuperacionPass> CodigosRecuperacionPass { get; set; }
         public DbSet<NotaRapida> NotasRapidas { get; set; }
+        public DbSet<Permiso> Permisos { get; set; }
+        public DbSet<RolPermiso> RolesPermisos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1216,6 +1218,52 @@ namespace AccesoDatos
                 entity.Property(e => e.UsuarioNombre)
                     .HasColumnName("usuario_nombre")
                     .HasMaxLength(200);
+            });
+
+            modelBuilder.Entity<Permiso>(entity =>
+            {
+                entity.ToTable("Permisos");
+
+                entity.HasKey(e => e.PermisoId);
+
+                entity.Property(e => e.PermisoId)
+                    .HasColumnName("id_permiso");
+
+                entity.Property(e => e.Codigo)
+                    .HasColumnName("codigo")
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(e => e.Descripcion)
+                    .HasColumnName("descripcion")
+                    .HasMaxLength(200);
+
+                // 🔥 IMPORTANTE
+                entity.HasIndex(e => e.Codigo)
+                    .IsUnique();
+            });
+
+            modelBuilder.Entity<RolPermiso>(entity =>
+            {
+                entity.ToTable("Roles_Permisos");
+
+                entity.HasKey(e => new { e.IdRol, e.IdPermiso });
+
+                entity.Property(e => e.IdRol)
+                    .HasColumnName("id_rol");
+
+                entity.Property(e => e.IdPermiso)
+                    .HasColumnName("id_permiso");
+
+                entity.HasOne(e => e.Rol)
+                    .WithMany(r => r.RolesPermisos)
+                    .HasForeignKey(e => e.IdRol)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Permiso)
+                    .WithMany()
+                    .HasForeignKey(e => e.IdPermiso)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

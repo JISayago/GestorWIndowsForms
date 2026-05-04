@@ -1,4 +1,5 @@
-﻿using Presentacion.Core.Presentacion.Core.Helpers;
+﻿using Presentacion.Core.Empleado.Rol.Permisos;
+using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
@@ -50,6 +51,20 @@ namespace Presentacion.Core.Empleado.Rol
                 {
                     var f = new FAsignacionRolesEmpleados(TipoAsignacionRol.Nuevo);
                     f.ShowDialog();
+                },
+                false // no requiere fila seleccionada
+            );
+
+            AgregarAccion(
+                "Asignar Tareas",
+                SystemIcons.Shield.ToBitmap(),
+                (id) =>
+                {
+            if (entidadID.HasValue)
+                    {
+                    var f = new FAsignacionPermisosRol(entidadID);
+                    f.ShowDialog();
+                    }
                 },
                 false // no requiere fila seleccionada
             );

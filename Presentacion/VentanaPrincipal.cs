@@ -1,3 +1,4 @@
+using AccesoDatos.Entidades;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Administracion;
 using Presentacion.Core.Articulo.Marca;
@@ -16,6 +17,7 @@ using Presentacion.Core.Venta;
 using Presentacion.FBase.Helpers;
 using Presentacion.Notificaciones;
 using ServicioAccesoSistema.AccesoSistema;
+using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Caja.DTO;
 using Servicios.LogicaNegocio.PantallaPrincipal;
 using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
@@ -201,24 +203,44 @@ namespace Presentacion
 
         private void btnPanelAdmin_Click(object sender, EventArgs e)
         {
+            if (!AuthHelper.Tiene("Admin.Acceso"))
+            {
+                MessageBox.Show("Acceso disponible sólo para Administradores");
+                return;
+            }
             var administracion = new FAdministracion(_usuarioLogeado.PersonaId);
             administracion.Show();
         }
 
         private void btnVenta_Click(object sender, EventArgs e)
         {
+            if (!AuthHelper.Tiene("Ventas.Crear"))
+            {
+                MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                return;
+            }
             var FVenta = new FVenta(_usuarioLogeado.PersonaId);
             FVenta.Show();
         }
 
         private void btnCaja_Click(object sender, EventArgs e)
         {
+            if (!AuthHelper.Tiene("Caja.Ver"))
+            {
+                MessageBox.Show("No Cuenta con las credenciales necesarias para acceder a la caja");
+                return;
+            }
             var fCaja = new FCaja();
             fCaja.Show();
         }
 
         private void btnContraVenta_Click(object sender, EventArgs e)
         {
+            if (!AuthHelper.Tiene("Ventas.Contrasiento"))
+            {
+                MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                return;
+            }
             var NroCompr = new FNroComprobanteParaCancelacion(_usuarioLogeado.PersonaId);
             NroCompr.Show();
         }
@@ -233,7 +255,7 @@ namespace Presentacion
             }
 
             MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            this.Close();
+            Application.Restart();
         }
 
         #endregion

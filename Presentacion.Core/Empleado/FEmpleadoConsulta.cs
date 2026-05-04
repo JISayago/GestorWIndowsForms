@@ -86,7 +86,7 @@ namespace Presentacion.Core.Empleado
         {
             if (!id.HasValue) return;
 
-            var f = new FAsignacionRolesEmpleados(TipoAsignacionRol.Existente, id);
+            var f = new FAsignacionRolesEmpleados(TipoAsignacionRol.Existente, (long)id);
             f.ShowDialog();
         }
 

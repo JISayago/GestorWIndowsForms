@@ -1,5 +1,6 @@
 ﻿using Presentacion.FBase;
 using ServicioAccesoSistema.AccesoSistema;
+using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Empleado;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace Presentacion.AccesoAlSistema
     {
         private readonly IAccesoSistema _accesoSistema;
         private readonly IEmpleadoServicio _empleadoServicio;
+        private readonly IUsuarioServicio _usuarioServicio;
         public UsuarioLogeado _usuarioLogeado { get; protected set; }
         public bool PuedeAccederAlSistema { get; protected set; }
 
@@ -25,14 +27,15 @@ namespace Presentacion.AccesoAlSistema
         private string username;
 
 
-        public LoginForm() : this(new AccesoSistema(), new EmpleadoServicio())
+        public LoginForm() : this(new AccesoSistema(), new EmpleadoServicio(), new UsuarioServicio())
         {
             InitializeComponent();
         }
-        public LoginForm(IAccesoSistema accesoSistema, IEmpleadoServicio empleadoServicio)
+        public LoginForm(IAccesoSistema accesoSistema, IEmpleadoServicio empleadoServicio, IUsuarioServicio usuarioServicio)
         {
             _accesoSistema = accesoSistema;
             _empleadoServicio = empleadoServicio;
+            _usuarioServicio = usuarioServicio;
         }
 
         private void btnIngresar_Click(object sender, EventArgs e)
@@ -78,6 +81,7 @@ namespace Presentacion.AccesoAlSistema
                     form.ShowDialog();
                     return;
                 }
+                var permisos = _usuarioServicio.ObtenerPermisosPorUsuario((long)estadoUsuario.EntidadId);
             }
 
             // 🔹 2. Login normal
@@ -95,16 +99,21 @@ namespace Presentacion.AccesoAlSistema
 
             if (uLogeado.PersonaId != null)
             {
+                var permisos = _usuarioServicio.ObtenerPermisosPorUsuario((long)response.EntidadId);
+
+                var esSAdmin = _usuarioServicio.EsSuperAdmin((long)response.EntidadId);
+
                 _usuarioLogeado = new UsuarioLogeado
                 {
                     PersonaId = uLogeado.PersonaId,
                     Nombre = uLogeado.Nombre,
                     Apellido = uLogeado.Apellido,
-                    Username = uLogeado.Username
+                    Username = uLogeado.Username,
+                    Permisos = permisos,
+                    EsSuperAdmin = esSAdmin
                 };
-
-                MessageBox.Show(response.Mensaje,
-                    "Ingreso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
+                AuthHelper.UsuarioActual = _usuarioLogeado;
 
                 PuedeAccederAlSistema = true;
             }

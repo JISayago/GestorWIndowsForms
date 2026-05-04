@@ -105,6 +105,7 @@ namespace ServicioAccesoSistema.AccesoSistema
             };
         }
 
+      
         public EstadoOperacion CerrarSesion(long usuarioId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -220,7 +221,7 @@ namespace ServicioAccesoSistema.AccesoSistema
                 {
                     Exitoso = true,
                     Mensaje = $"Código de recuperación: {codigo}. Válido por 5 minutos .",
-                    EntidadId = empleado.PersonaId // forzamos estado en vez de id
+                    EntidadId = empleado.PersonaId 
                 };
             }
 
