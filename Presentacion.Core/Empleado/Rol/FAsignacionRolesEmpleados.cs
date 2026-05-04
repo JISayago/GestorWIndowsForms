@@ -2,9 +2,11 @@
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Empleado.Rol;
 using Servicios.LogicaNegocio.Empleado.Rol.DTO;
+using Servicios.LogicaNegocio.Empleado.Rol.Tareas;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +28,7 @@ namespace Presentacion.Core.Empleado.Rol
 
         private readonly IRolServicio _rolServicio;
         private readonly IEmpleadoServicio _empleadoServicio;
+        private readonly IPermisoServicio _permisoServicio;
 
         private BindingList<RolDTO> _rolesDisponibles;
         private BindingList<RolDTO> _rolesAsignados;
@@ -43,6 +46,7 @@ namespace Presentacion.Core.Empleado.Rol
         {
             _rolServicio = new RolServicio();
             _empleadoServicio = new EmpleadoServicio();
+            _permisoServicio = new PermisoServicio();
 
             TipoAsignacionRol = tipoAsignacionRol;
             EntidadID = entidadID;
@@ -201,6 +205,23 @@ namespace Presentacion.Core.Empleado.Rol
                 return;
             }
 
+            // 🔥 1. Validación por rol SADMIN
+            bool esRolSAdmin = rolDisponibleSeleccionado.CodigoRol == "SADMIN";
+
+            // 🔥 2. Validación por permisos del rol (Admin.*)
+            var permisosDelRol = _permisoServicio.ObtenerPermisosAsignadosARol(rolDisponibleSeleccionado.RolId);
+
+            bool tienePermisoAdmin = permisosDelRol
+                .Any(p => p.Codigo.StartsWith("Admin."));
+
+            // 🔥 Validación final
+            if ((esRolSAdmin || tienePermisoAdmin) && !AuthHelper.UsuarioActual.EsSuperAdmin)
+            {
+                MessageBox.Show("Solo un Super Administrador puede asignar roles con permisos de administración",
+                    "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             var respuesta = MessageBox.Show(
                 $"¿Está seguro que desea asignar el rol {rolDisponibleSeleccionado.Nombre.ToUpper()} del empleado {empleado.Nombre} {empleado.Apellido} (usuario: {empleado.Username})?",
                 "Confirmar acción",
@@ -259,38 +280,53 @@ namespace Presentacion.Core.Empleado.Rol
         private void btnActualizarRoles_Click(object sender, EventArgs e)
         {
             bool sonIguales = _rolesControl.Select(r => r.RolId).OrderBy(id => id)
-     .SequenceEqual(_rolesAsignados.Select(r => r.RolId).OrderBy(id => id));
+                .SequenceEqual(_rolesAsignados.Select(r => r.RolId).OrderBy(id => id));
+
             var fechaAsignacionRol = DateTime.Now;
+
             if (sonIguales)
             {
-                MessageBox.Show("Al no haber cambios, no se han realizado cambios en los roles asignados.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Al no haber cambios, no se han realizado cambios en los roles asignados.",
+                    "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            else
+
+            // 🔥 Validación pedida
+            bool contieneSAdmin = _rolesAsignados
+                .Any(r => r.CodigoRol == "SADMIN");
+
+            if (contieneSAdmin && !AuthHelper.UsuarioActual.EsSuperAdmin)
             {
-                if (EntidadID.HasValue)
+                MessageBox.Show("Solo un Super Administrador puede asignar el rol SADMIN",
+                    "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (EntidadID.HasValue)
+            {
+                var response = _rolServicio.ActualizarRolesDeEmpleado(
+                    _rolesAsignados.ToList(),
+                    (long)EntidadID,
+                    fechaAsignacionRol
+                );
+
+                if (response.Exitoso)
                 {
-                    var response = _rolServicio.ActualizarRolesDeEmpleado(_rolesAsignados.ToList(), (long)EntidadID, fechaAsignacionRol);
-                    if (response.Exitoso)
-                    {
-                        RealizoAlgunaOperacion = true;
-                        MessageBox.Show(response.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        this.Close();
-                    }
-                    else
-                    {
-                        MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
+                    RealizoAlgunaOperacion = true;
+                    MessageBox.Show(response.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
                 }
                 else
                 {
-                    MessageBox.Show("Surgió un problema al obtener el empleado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }
-
-
+            else
+            {
+                MessageBox.Show("Surgió un problema al obtener el empleado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
         }
 
         //private void cbxEmpleado_SelectionChangeCommitted(object sender, EventArgs e)

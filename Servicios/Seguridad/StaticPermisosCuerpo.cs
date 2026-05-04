@@ -61,10 +61,12 @@ namespace Servicios.Seguridad
         new() { Codigo = "Roles.Ver", Descripcion = "Ver roles" },
         new() { Codigo = "Roles.ABM", Descripcion = "Gestionar roles" },
         new() { Codigo = "Roles.Asignar", Descripcion = "Asignar roles" },
+        new() { Codigo = "Roles.Admin", Descripcion = "Asignar rol ADMIN" },
 
         // ========================
         // PERMISOS
         // ========================
+        new() { Codigo = "Permisos.SAdmin", Descripcion = "Gestionar permisos del sistema" },
         new() { Codigo = "Permisos.Gestion", Descripcion = "Gestionar permisos del sistema" },
 
         // ========================

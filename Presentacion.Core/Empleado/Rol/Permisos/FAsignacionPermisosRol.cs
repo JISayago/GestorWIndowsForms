@@ -1,6 +1,7 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using Servicios.LogicaNegocio.Empleado.Rol;
@@ -181,11 +182,29 @@ namespace Presentacion.Core.Empleado.Rol.Permisos
                 return;
             }
 
+            bool contieneAdmin = _permisosAsignados
+                .Any(p => p.Codigo.StartsWith("Admin."));
+
+            if (contieneAdmin && !AuthHelper.UsuarioActual.EsSuperAdmin)
+            {
+                MessageBox.Show("Solo un Super Administrador puede asignar permisos de administración",
+                    "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                // 🔥 rollback
+                _permisosAsignados.Clear();
+
+                foreach (var p in _permisosControl)
+                {
+                    _permisosAsignados.Add(p);
+                }
+
+                return;
+            }
+
             _permisoServicio.ActualizarPermisosDeRol(_permisosAsignados.ToList(), RolId.Value);
 
             MessageBox.Show("Permisos actualizados correctamente");
         }
-
         private PermisoDTO ObtenerDeGrilla(DataGridView grilla)
         {
             if (grilla.SelectedRows.Count == 0)
