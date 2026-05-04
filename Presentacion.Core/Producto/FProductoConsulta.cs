@@ -52,20 +52,20 @@ namespace Presentacion.Core.Producto
 
             // 🔹 Filtro principal (columna de búsqueda)
             var opciones = new List<OpcionFiltro>
-    {
-        new OpcionFiltro { Texto = "Todos", Valor = "" },
-        new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
-        new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
-        new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
-        new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
-    };
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
+                new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
+                new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
+                new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
+            };
 
             ActivarFiltroCombo(opciones, "Texto", "Valor");
             cbxFiltroOpcional.SelectedValue = "";
             var opcionesEstado = new List<OpcionFiltro>
-    {
-        new OpcionFiltro { Texto = "Todos", Valor = "" }
-    };
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" }
+            };
 
             foreach (EstadoProducto estado in Enum.GetValues(typeof(EstadoProducto)))
             {
@@ -135,6 +135,12 @@ namespace Presentacion.Core.Producto
                     nombreProducto = celda.Value.ToString();
             }
 
+            if(dgvGrilla.CurrentRow == null)
+            {
+                MessageBox.Show("Seleccione un producto.");
+                return;
+            }
+
             var controlPorLotes = dgvGrilla.CurrentRow.Cells["ControlPorLote"];
 
             if ((bool)controlPorLotes.Value)
@@ -142,7 +148,7 @@ namespace Presentacion.Core.Producto
                 var fLotes = new FGestionStockLotes(TipoOperacion.Nuevo, id.Value);
                 fLotes.ShowDialog();
 
-                if (fLotes.RealizoOperacion)
+               // if (fLotes.RealizoOperacion)
                     RefrescarGrilla();
             }
             else
@@ -176,6 +182,7 @@ namespace Presentacion.Core.Producto
         {
             base.ResetearGrilla(grilla);
 
+            grilla.ReadOnly = true;
             if (grilla.Columns.Contains("ProductoId"))
             {
                 grilla.Columns["ProductoId"].Visible = false;
@@ -315,6 +322,7 @@ namespace Presentacion.Core.Producto
 
             if (f.RealizoAlgunaOperacion)
                 RefrescarGrilla();
+                
         }
 
         #endregion

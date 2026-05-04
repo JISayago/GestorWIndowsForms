@@ -8,6 +8,7 @@ using Servicios.LogicaNegocio.Movimiento;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using TuProyecto.Presentacion;
 
 namespace Presentacion.Core.Movimiento
 {
@@ -52,7 +53,7 @@ namespace Presentacion.Core.Movimiento
                 {
                     if (!id.HasValue) return;
 
-                    var f = new FMovimientoDetallado(id);
+                    var f = new FMovimientoDetallado(id.Value);
                     f.ShowDialog();
                 },
                 true
@@ -135,7 +136,7 @@ namespace Presentacion.Core.Movimiento
         {
             if (!entidadID.HasValue) return;
 
-            var f = new FMovimientoDetallado(entidadID);
+            var f = new FMovimientoDetallado(entidadID.Value);
             f.ShowDialog();
         }
 

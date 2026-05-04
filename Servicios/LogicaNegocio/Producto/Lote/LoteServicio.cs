@@ -499,10 +499,27 @@ namespace Servicios.LogicaNegocio.Producto.Lote
 
         public string GenerarNumeroLote()
         {
-            var context = new GestorContextDBFactory().CreateDbContext(null);
-            string numeroLoteGenerado;
-            // Generar un número de lote único utilizando un prefijo y un contador incremental
-            return numeroLoteGenerado = $"LOTE-{context.Lotes.Count() + 1:0000}";
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            // 1. Buscamos el número más alto que exista actualmente
+            // Traemos solo los strings para no cargar toda la entidad en memoria
+            var maxNumero = context.Lotes
+                .AsNoTracking()
+                .Select(l => l.NumeroLote)
+                .AsEnumerable() // Pasamos a memoria para poder manipular el string con seguridad
+                .Select(n => {
+                    // Quitamos el prefijo "LOTE-" y tratamos de convertir el resto a número
+                    int.TryParse(n.Replace("LOTE-", ""), out int num);
+                    return num;
+                })
+                .DefaultIfEmpty(0) // Si la tabla está vacía, empezamos en 0
+                .Max();
+
+            // 2. El siguiente es el máximo + 1
+            int siguienteNumero = maxNumero + 1;
+
+            // 3. Formateamos con ceros a la izquierda (ej: LOTE-0005)
+            return $"LOTE-{siguienteNumero:0000}";
         }
 
         public AccesoDatos.Entidades.Lote ObtenerLoteFefoLifo(long productoId, bool tieneFechaVencimiento, GestorContextDB context)

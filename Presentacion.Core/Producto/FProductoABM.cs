@@ -50,11 +50,20 @@ namespace Presentacion.Core.Producto
             {
                 DesactivarControles(this);
             }
-            /*
+            
+            
             AgregarControlesObligatorios(txtProducto, "Producto");
-            AgregarControlesObligatorios(txtStock, "Stock");
+            AgregarControlesObligatorios(txtEstado, "Estado");
+            AgregarControlesObligatorios(txtMedida, "Medida");
+            AgregarControlesObligatorios(txtUnidadMedida, "Unidad Medida");
+            //AgregarControlesObligatorios(txtStock, "Stock");
+            AgregarControlesObligatorios(txtPrecioCosto, "Precio Costo");
+            AgregarControlesObligatorios(txtPrecioVenta, "Precio Venta");
+            AgregarControlesObligatorios(txtCodigo, "Codigo");
+            AgregarControlesObligatorios(txtCodigoBarra, "Codigo Barra");
             AgregarControlesObligatorios(cmbMarca, "Marca");
-            */
+            AgregarControlesObligatorios(cmbRubro, "Rubro");
+
             var marcas = _MarcaServicio.ObtenerMarca("").ToList();
 
             cmbMarca.DisplayMember = "Nombre"; // lo que se muestra
