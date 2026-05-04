@@ -255,7 +255,7 @@ namespace Presentacion
             }
 
             MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            this.Close();
+            Application.Restart();
         }
 
         #endregion
