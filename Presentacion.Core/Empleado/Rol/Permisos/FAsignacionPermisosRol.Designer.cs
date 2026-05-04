@@ -29,93 +29,97 @@
         private void InitializeComponent()
         {
             btnActualizar = new Button();
-            btnQuitar = new Button();
-            btnAsignar = new Button();
-            dgvAsignados = new DataGridView();
-            dgvDisponibles = new DataGridView();
-            cbxRoles = new ComboBox();
-            ((System.ComponentModel.ISupportInitialize)dgvAsignados).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dgvDisponibles).BeginInit();
+            btnQuitarPersmisos = new Button();
+            btnAsignarPermisos = new Button();
+            dgvPermisosAsignadas = new DataGridView();
+            dgvPermisosDisponibles = new DataGridView();
+            cbxRol = new ComboBox();
+            ((System.ComponentModel.ISupportInitialize)dgvPermisosAsignadas).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvPermisosDisponibles).BeginInit();
             SuspendLayout();
             // 
             // btnActualizar
             // 
-            btnActualizar.Location = new Point(266, 390);
+            btnActualizar.Location = new Point(394, 337);
             btnActualizar.Name = "btnActualizar";
             btnActualizar.Size = new Size(264, 48);
             btnActualizar.TabIndex = 11;
             btnActualizar.Text = "Actualizar";
             btnActualizar.UseVisualStyleBackColor = true;
+            btnActualizar.Click += btnActualizar_Click;
             // 
-            // btnQuitar
+            // btnQuitarPersmisos
             // 
-            btnQuitar.Location = new Point(354, 215);
-            btnQuitar.Name = "btnQuitar";
-            btnQuitar.Size = new Size(94, 101);
-            btnQuitar.TabIndex = 10;
-            btnQuitar.Text = "Quitar  <";
-            btnQuitar.UseVisualStyleBackColor = true;
+            btnQuitarPersmisos.Location = new Point(481, 213);
+            btnQuitarPersmisos.Name = "btnQuitarPersmisos";
+            btnQuitarPersmisos.Size = new Size(94, 101);
+            btnQuitarPersmisos.TabIndex = 10;
+            btnQuitarPersmisos.Text = "Quitar  <";
+            btnQuitarPersmisos.UseVisualStyleBackColor = true;
+            btnQuitarPersmisos.Click += btnQuitar_Click;
             // 
-            // btnAsignar
+            // btnAsignarPermisos
             // 
-            btnAsignar.Location = new Point(354, 110);
-            btnAsignar.Name = "btnAsignar";
-            btnAsignar.Size = new Size(94, 101);
-            btnAsignar.TabIndex = 9;
-            btnAsignar.Text = "Asignar  >";
-            btnAsignar.UseVisualStyleBackColor = true;
+            btnAsignarPermisos.Location = new Point(481, 89);
+            btnAsignarPermisos.Name = "btnAsignarPermisos";
+            btnAsignarPermisos.Size = new Size(94, 101);
+            btnAsignarPermisos.TabIndex = 9;
+            btnAsignarPermisos.Text = "Asignar  >";
+            btnAsignarPermisos.UseVisualStyleBackColor = true;
+            btnAsignarPermisos.Click += btnAsignar_Click;
             // 
-            // dgvAsignados
+            // dgvPermisosAsignadas
             // 
-            dgvAsignados.BackgroundColor = SystemColors.Control;
-            dgvAsignados.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvAsignados.Location = new Point(460, 78);
-            dgvAsignados.Name = "dgvAsignados";
-            dgvAsignados.Size = new Size(295, 271);
-            dgvAsignados.TabIndex = 8;
+            dgvPermisosAsignadas.BackgroundColor = SystemColors.Control;
+            dgvPermisosAsignadas.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvPermisosAsignadas.Location = new Point(593, 60);
+            dgvPermisosAsignadas.Name = "dgvPermisosAsignadas";
+            dgvPermisosAsignadas.Size = new Size(447, 271);
+            dgvPermisosAsignadas.TabIndex = 8;
             // 
-            // dgvDisponibles
+            // dgvPermisosDisponibles
             // 
-            dgvDisponibles.BackgroundColor = SystemColors.Control;
-            dgvDisponibles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDisponibles.Location = new Point(46, 78);
-            dgvDisponibles.Name = "dgvDisponibles";
-            dgvDisponibles.Size = new Size(295, 271);
-            dgvDisponibles.TabIndex = 7;
+            dgvPermisosDisponibles.BackgroundColor = SystemColors.Control;
+            dgvPermisosDisponibles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvPermisosDisponibles.Location = new Point(16, 60);
+            dgvPermisosDisponibles.Name = "dgvPermisosDisponibles";
+            dgvPermisosDisponibles.Size = new Size(447, 271);
+            dgvPermisosDisponibles.TabIndex = 7;
             // 
-            // cbxRoles
+            // cbxRol
             // 
-            cbxRoles.FormattingEnabled = true;
-            cbxRoles.Location = new Point(226, 12);
-            cbxRoles.Name = "cbxRoles";
-            cbxRoles.Size = new Size(315, 23);
-            cbxRoles.TabIndex = 6;
+            cbxRol.FormattingEnabled = true;
+            cbxRol.Location = new Point(363, 31);
+            cbxRol.Name = "cbxRol";
+            cbxRol.Size = new Size(315, 23);
+            cbxRol.TabIndex = 6;
+            cbxRol.SelectedIndexChanged += cbxRol_SelectedIndexChanged;
             // 
             // FAsignacionPermisosRol
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1055, 414);
             Controls.Add(btnActualizar);
-            Controls.Add(btnQuitar);
-            Controls.Add(btnAsignar);
-            Controls.Add(dgvAsignados);
-            Controls.Add(dgvDisponibles);
-            Controls.Add(cbxRoles);
+            Controls.Add(btnQuitarPersmisos);
+            Controls.Add(btnAsignarPermisos);
+            Controls.Add(dgvPermisosAsignadas);
+            Controls.Add(dgvPermisosDisponibles);
+            Controls.Add(cbxRol);
             Name = "FAsignacionPermisosRol";
             Text = "FAsignacionPermisosRol";
-            ((System.ComponentModel.ISupportInitialize)dgvAsignados).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dgvDisponibles).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvPermisosAsignadas).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvPermisosDisponibles).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
         private Button btnActualizar;
-        private Button btnQuitar;
-        private Button btnAsignar;
-        private DataGridView dgvAsignados;
-        private DataGridView dgvDisponibles;
-        private ComboBox cbxRoles;
+        private Button btnQuitarPersmisos;
+        private Button btnAsignarPermisos;
+        private DataGridView dgvPermisosAsignadas;
+        private DataGridView dgvPermisosDisponibles;
+        private ComboBox cbxRol;
     }
 }
