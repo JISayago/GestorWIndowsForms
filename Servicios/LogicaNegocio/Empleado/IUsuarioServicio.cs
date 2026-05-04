@@ -19,5 +19,7 @@ namespace Servicios.LogicaNegocio.Empleado
         UsuarioDTO ObtenerUsuarioPorId(long usuarioId);
         UsuarioDTO GeneracionNombreUsuario(string nombre, string apellido, long empleadoId);
         EstadoOperacion ValidarCodigoRecuperacion(long usuarioId, string CodigoRecuperacion);
+        HashSet<string> ObtenerPermisosPorUsuario(long usuarioId);
+        bool EsSuperAdmin(long usuarioId);
     }
 }

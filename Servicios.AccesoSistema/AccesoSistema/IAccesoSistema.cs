@@ -16,5 +16,6 @@ namespace ServicioAccesoSistema.AccesoSistema
         bool VerificarSiUsuarioEstaBloqueado(string nombreUsuario);
         EstadoOperacion PrimerIngreso(string nombreUsuario, string pass);
         EstadoOperacion ValidarEstadoUsuario(string username);
+        
     }
 }
