@@ -1,3 +1,4 @@
+using AccesoDatos.Entidades;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Administracion;
 using Presentacion.Core.Articulo.Marca;
@@ -213,18 +214,33 @@ namespace Presentacion
 
         private void btnVenta_Click(object sender, EventArgs e)
         {
+            if (!AuthHelper.Tiene("Ventas.Crear"))
+            {
+                MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                return;
+            }
             var FVenta = new FVenta(_usuarioLogeado.PersonaId);
             FVenta.Show();
         }
 
         private void btnCaja_Click(object sender, EventArgs e)
         {
+            if (!AuthHelper.Tiene("Caja.Ver"))
+            {
+                MessageBox.Show("No Cuenta con las credenciales necesarias para acceder a la caja");
+                return;
+            }
             var fCaja = new FCaja();
             fCaja.Show();
         }
 
         private void btnContraVenta_Click(object sender, EventArgs e)
         {
+            if (!AuthHelper.Tiene("Ventas.Contrasiento"))
+            {
+                MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                return;
+            }
             var NroCompr = new FNroComprobanteParaCancelacion(_usuarioLogeado.PersonaId);
             NroCompr.Show();
         }

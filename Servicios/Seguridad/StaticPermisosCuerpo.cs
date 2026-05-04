@@ -86,6 +86,7 @@ namespace Servicios.Seguridad
         // ========================
         // CAJA
         // ========================
+        new() { Codigo = "Caja.Ver", Descripcion = "Ver estado de caja" },
         new() { Codigo = "Caja.Abrir", Descripcion = "Abrir caja" },
         new() { Codigo = "Caja.Cerrar", Descripcion = "Cerrar caja" },
         new() { Codigo = "Caja.VerMovimientos", Descripcion = "Ver movimientos de caja" },
