@@ -20,20 +20,16 @@ namespace Servicios.Helpers.DatosObligatorios
             _inicializador = new InicializadorDatosObligatoriosServicio();
             Context = _inicializador.ContextParaInicializar();
         }
-
+        public void InicializarBaseMinima()
+        {
+            InicializarPermisos();
+            InicializarRoles();
+            InicializarAdmin();
+        }
         public void InicializadorDatos(IProgress<(int progreso, string mensaje)> progress = null)
         {
             try
             {
-                progress?.Report((5, "Inicializando permisos del sistema..."));
-                InicializarPermisos();
-
-                progress?.Report((10, "Configurando roles..."));
-                InicializarRoles();
-
-                progress?.Report((15, "Inicializando usuario administrador..."));
-                InicializarAdmin();
-
                 progress?.Report((30, "Configurando consumidor final..."));
                 InicializarConsumidorFinal();
 
@@ -82,5 +78,6 @@ namespace Servicios.Helpers.DatosObligatorios
         {
            RolesIni.Inicializar(Context);
         }
+        private void CargarUltimas
     }
 }

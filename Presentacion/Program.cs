@@ -36,7 +36,23 @@ namespace Presentacion
                 );
                 return;
             }
+            var inicializador = new InicializadorDatosObligatorios();
+            inicializador.InicializarBaseMinima();
 
+            var login = new LoginForm();
+            login.ShowDialog();
+
+            if (!login.PuedeAccederAlSistema)
+            {
+                Application.Exit();
+                return;
+            }
+
+            if (login._usuarioLogeado == null || string.IsNullOrEmpty(login._usuarioLogeado.Username))
+            {
+                MessageBox.Show("Error: usuario no válido.");
+                return;
+            }
             var inicializadorDatosObligatorios = new InicializadorDatosObligatorios();
             List<string> mensajesOfertas = null;
 
@@ -88,14 +104,7 @@ namespace Presentacion
                 Application.Run(pantallaCarga);
             }
 
-            var login = new LoginForm();
-            login.ShowDialog();
-
-            if (login._usuarioLogeado == null || string.IsNullOrEmpty(login._usuarioLogeado.Username))
-            {
-                MessageBox.Show("Error: usuario no válido.");
-                return;
-            }
+        
 
             if (mensajesOfertas != null && mensajesOfertas.Count > 0)
             {
