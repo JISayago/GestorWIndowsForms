@@ -22,9 +22,9 @@ namespace Servicios.Helpers.DatosObligatorios
         }
         public void InicializarBaseMinima()
         {
+            InicializarAdmin();
             InicializarPermisos();
             InicializarRoles();
-            InicializarAdmin();
         }
         public void InicializadorDatos(IProgress<(int progreso, string mensaje)> progress = null)
         {
