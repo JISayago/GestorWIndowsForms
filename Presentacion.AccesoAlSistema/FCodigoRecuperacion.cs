@@ -1,46 +1,52 @@
 ﻿using Servicios.LogicaNegocio.Empleado;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Presentacion.AccesoAlSistema
 {
     public partial class FCodigoRecuperacion : Form
     {
-        private long _usuarioId;
         private readonly IUsuarioServicio _usuarioServicio;
-        public FCodigoRecuperacion(long usuarioId)
+
+        public FCodigoRecuperacion()
         {
             InitializeComponent();
-            _usuarioId = usuarioId;
             _usuarioServicio = new UsuarioServicio();
         }
 
         private void btnConfirmar_Click(object sender, EventArgs e)
         {
-            var resp = _usuarioServicio.ValidarCodigoRecuperacion(_usuarioId, txtCodigoRecuperacion.Text);
-            if (resp.Exitoso)
+            var username = txtUsuario.Text.Trim();
+            var codigo = txtCodigoRecuperacion.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(codigo))
             {
-                MessageBox.Show(resp.Mensaje);
-                var f = new ActualizarPass(_usuarioId);
-                f.ShowDialog();
-                this.Close();
+                MessageBox.Show("Debe ingresar usuario y código.",
+                    "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-            else
+
+            var resp = _usuarioServicio.ValidarCodigoRecuperacion(username, codigo);
+
+            if (!resp.Exitoso)
             {
-                MessageBox.Show(resp.Mensaje);
+                MessageBox.Show(resp.Mensaje,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
+
+            MessageBox.Show(resp.Mensaje,
+                "Correcto", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            var f = new ActualizarPass((long)resp.EntidadId);
+            f.ShowDialog();
+
+            Close();
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

@@ -35,11 +35,14 @@
             lblUsuario = new Label();
             lblPass = new Label();
             lnklblRecuperacionContra = new LinkLabel();
+            lnklblCodigoRec = new LinkLabel();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
             // btnIngresar
             // 
-            btnIngresar.Location = new Point(71, 137);
+            btnIngresar.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnIngresar.Location = new Point(135, 144);
             btnIngresar.Name = "btnIngresar";
             btnIngresar.Size = new Size(113, 39);
             btnIngresar.TabIndex = 0;
@@ -49,7 +52,8 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(237, 137);
+            btnCancelar.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnCancelar.Location = new Point(297, 144);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(113, 39);
             btnCancelar.TabIndex = 1;
@@ -59,18 +63,20 @@
             // 
             // txtUsuario
             // 
-            txtUsuario.Location = new Point(42, 32);
+            txtUsuario.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtUsuario.Location = new Point(170, 31);
             txtUsuario.Name = "txtUsuario";
-            txtUsuario.Size = new Size(351, 23);
+            txtUsuario.Size = new Size(297, 33);
             txtUsuario.TabIndex = 2;
             txtUsuario.Text = "Admin";
             // 
             // txtPass
             // 
-            txtPass.Location = new Point(42, 96);
+            txtPass.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtPass.Location = new Point(170, 82);
             txtPass.Name = "txtPass";
             txtPass.PasswordChar = '*';
-            txtPass.Size = new Size(351, 23);
+            txtPass.Size = new Size(297, 33);
             txtPass.TabIndex = 3;
             txtPass.Text = "Admin123";
             txtPass.UseSystemPasswordChar = true;
@@ -78,38 +84,56 @@
             // lblUsuario
             // 
             lblUsuario.AutoSize = true;
-            lblUsuario.Location = new Point(43, 8);
+            lblUsuario.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblUsuario.Location = new Point(75, 43);
             lblUsuario.Name = "lblUsuario";
-            lblUsuario.Size = new Size(47, 15);
+            lblUsuario.Size = new Size(81, 25);
             lblUsuario.TabIndex = 4;
             lblUsuario.Text = "Usuario";
             // 
             // lblPass
             // 
             lblPass.AutoSize = true;
-            lblPass.Location = new Point(43, 78);
+            lblPass.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblPass.Location = new Point(48, 88);
             lblPass.Name = "lblPass";
-            lblPass.Size = new Size(67, 15);
+            lblPass.Size = new Size(113, 25);
             lblPass.TabIndex = 5;
             lblPass.Text = "Contraseña";
             lblPass.Click += lblPass_Click;
             // 
             // lnklblRecuperacionContra
             // 
+            lnklblRecuperacionContra.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             lnklblRecuperacionContra.AutoSize = true;
-            lnklblRecuperacionContra.Location = new Point(149, 187);
+            lnklblRecuperacionContra.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lnklblRecuperacionContra.Location = new Point(411, 207);
             lnklblRecuperacionContra.Name = "lnklblRecuperacionContra";
-            lnklblRecuperacionContra.Size = new Size(123, 15);
+            lnklblRecuperacionContra.Size = new Size(121, 13);
             lnklblRecuperacionContra.TabIndex = 6;
             lnklblRecuperacionContra.TabStop = true;
             lnklblRecuperacionContra.Text = "Recuperar Contraseña";
             lnklblRecuperacionContra.LinkClicked += lnklblRecuperacionContra_LinkClicked;
             // 
+            // lnklblCodigoRec
+            // 
+            lnklblCodigoRec.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            lnklblCodigoRec.AutoSize = true;
+            lnklblCodigoRec.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lnklblCodigoRec.Location = new Point(12, 207);
+            lnklblCodigoRec.Name = "lnklblCodigoRec";
+            lnklblCodigoRec.Size = new Size(174, 13);
+            lnklblCodigoRec.TabIndex = 7;
+            lnklblCodigoRec.TabStop = true;
+            lnklblCodigoRec.Text = "Ingresar código de recuperación";
+            lnklblCodigoRec.LinkClicked += lnklblCodigoRec_LinkClicked;
+            // 
             // LoginForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(422, 211);
+            ClientSize = new Size(546, 231);
+            Controls.Add(lnklblCodigoRec);
             Controls.Add(lnklblRecuperacionContra);
             Controls.Add(lblPass);
             Controls.Add(lblUsuario);
@@ -117,13 +141,10 @@
             Controls.Add(txtUsuario);
             Controls.Add(btnCancelar);
             Controls.Add(btnIngresar);
-            MaximizeBox = false;
-            MaximumSize = new Size(438, 250);
-            MinimizeBox = false;
-            MinimumSize = new Size(438, 250);
             Name = "LoginForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Ingreso al Sistema";
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -137,5 +158,6 @@
         private Label lblUsuario;
         private Label lblPass;
         private LinkLabel lnklblRecuperacionContra;
+        private LinkLabel lnklblCodigoRec;
     }
 }
