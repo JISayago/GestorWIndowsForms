@@ -3,7 +3,9 @@ using Presentacion.Core.Movimiento;
 using Presentacion.Core.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto;
+using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Venta;
+using Servicios.LogicaNegocio.Venta.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -288,24 +290,24 @@ namespace Presentacion.Notificaciones
         // METODO PARA CARGAR VENTAS Y PRODUCTOS
         // ===========================================================================
         // Método para cargar Ventas
-        public void ActualizarTablaVentas(IEnumerable<dynamic> listaVentas)
+        public void ActualizarTablaVentas(IEnumerable<VentaDTO> listaVentas)
         {
             dgvVentas.Rows.Clear(); // Limpiamos datos viejos
             foreach (var v in listaVentas)
             {
                 // El orden debe coincidir con las columnas: Id, Fecha, Cliente, Total
-                dgvVentas.Rows.Add(v.Id, v.Fecha.ToString("G"), v.Cliente, v.Total.ToString("C2"));
+                dgvVentas.Rows.Add(v.NumeroVenta, v.FechaVenta.ToString("G"), v.Detalle, v.Total.ToString("C2"));
             }
         }
 
         // Método para cargar Productos
-        public void ActualizarTablaProductos(IEnumerable<dynamic> listaProds)
+        public void ActualizarTablaProductos(IEnumerable<ProductoDTO> listaProds)
         {
             dgvProds.Rows.Clear();
             foreach (var p in listaProds)
             {
                 // El orden debe coincidir con: Codigo, Nombre, Precio, Stock
-                dgvProds.Rows.Add(p.Codigo, p.Nombre, p.Precio.ToString("C2"), p.Stock);
+                dgvProds.Rows.Add(p.Codigo, p.Descripcion, p.PrecioVenta.ToString("C2"), p.Stock);
             }
         }
 
