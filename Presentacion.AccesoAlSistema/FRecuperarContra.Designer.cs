@@ -38,25 +38,27 @@
             // 
             // txtDniLegajo
             // 
-            txtDniLegajo.Location = new Point(82, 110);
+            txtDniLegajo.Font = new Font("Segoe UI", 12F);
+            txtDniLegajo.Location = new Point(121, 95);
             txtDniLegajo.Name = "txtDniLegajo";
-            txtDniLegajo.Size = new Size(241, 23);
+            txtDniLegajo.Size = new Size(241, 29);
             txtDniLegajo.TabIndex = 4;
             // 
             // lblDniLegajo
             // 
             lblDniLegajo.AutoSize = true;
-            lblDniLegajo.Location = new Point(82, 92);
+            lblDniLegajo.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblDniLegajo.Location = new Point(12, 98);
             lblDniLegajo.Name = "lblDniLegajo";
-            lblDniLegajo.Size = new Size(71, 15);
+            lblDniLegajo.Size = new Size(103, 21);
             lblDniLegajo.TabIndex = 1;
             lblDniLegajo.Text = "Dni / Legajo";
             // 
             // btnRecuperar
             // 
-            btnRecuperar.Location = new Point(94, 152);
+            btnRecuperar.Location = new Point(82, 143);
             btnRecuperar.Name = "btnRecuperar";
-            btnRecuperar.Size = new Size(75, 23);
+            btnRecuperar.Size = new Size(84, 40);
             btnRecuperar.TabIndex = 2;
             btnRecuperar.Text = "Recuperar";
             btnRecuperar.UseVisualStyleBackColor = true;
@@ -64,9 +66,9 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(233, 152);
+            btnCancelar.Location = new Point(256, 143);
             btnCancelar.Name = "btnCancelar";
-            btnCancelar.Size = new Size(75, 23);
+            btnCancelar.Size = new Size(81, 40);
             btnCancelar.TabIndex = 3;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
@@ -75,17 +77,19 @@
             // lblUsuario
             // 
             lblUsuario.AutoSize = true;
-            lblUsuario.Location = new Point(82, 26);
+            lblUsuario.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblUsuario.Location = new Point(46, 53);
             lblUsuario.Name = "lblUsuario";
-            lblUsuario.Size = new Size(47, 15);
+            lblUsuario.Size = new Size(69, 21);
             lblUsuario.TabIndex = 5;
             lblUsuario.Text = "Usuario";
             // 
             // txtUsuario
             // 
-            txtUsuario.Location = new Point(82, 44);
+            txtUsuario.Font = new Font("Segoe UI", 12F);
+            txtUsuario.Location = new Point(121, 50);
             txtUsuario.Name = "txtUsuario";
-            txtUsuario.Size = new Size(241, 23);
+            txtUsuario.Size = new Size(241, 29);
             txtUsuario.TabIndex = 0;
             // 
             // FRecuperarContra
@@ -100,6 +104,7 @@
             Controls.Add(lblDniLegajo);
             Controls.Add(txtDniLegajo);
             Name = "FRecuperarContra";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FRecuperarContra";
             Load += FRecuperarContra_Load;
             ResumeLayout(false);
