@@ -34,29 +34,33 @@
             btnCancelar = new Button();
             txtUsuario = new TextBox();
             label1 = new Label();
+            lblTitulo = new Label();
             SuspendLayout();
             // 
             // lblCodigo
             // 
             lblCodigo.AutoSize = true;
-            lblCodigo.Location = new Point(38, 88);
+            lblCodigo.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblCodigo.Location = new Point(76, 137);
             lblCodigo.Name = "lblCodigo";
-            lblCodigo.Size = new Size(137, 15);
+            lblCodigo.Size = new Size(77, 25);
             lblCodigo.TabIndex = 0;
-            lblCodigo.Text = "Código de Recuperación";
+            lblCodigo.Text = "Código";
             // 
             // txtCodigoRecuperacion
             // 
-            txtCodigoRecuperacion.Location = new Point(38, 106);
+            txtCodigoRecuperacion.Font = new Font("Segoe UI", 14.25F);
+            txtCodigoRecuperacion.Location = new Point(180, 129);
             txtCodigoRecuperacion.Name = "txtCodigoRecuperacion";
-            txtCodigoRecuperacion.Size = new Size(249, 23);
+            txtCodigoRecuperacion.Size = new Size(249, 33);
             txtCodigoRecuperacion.TabIndex = 1;
             // 
             // btnConfirmar
             // 
-            btnConfirmar.Location = new Point(212, 154);
+            btnConfirmar.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnConfirmar.Location = new Point(76, 190);
             btnConfirmar.Name = "btnConfirmar";
-            btnConfirmar.Size = new Size(75, 23);
+            btnConfirmar.Size = new Size(113, 39);
             btnConfirmar.TabIndex = 2;
             btnConfirmar.Text = "Confirmar";
             btnConfirmar.UseVisualStyleBackColor = true;
@@ -64,9 +68,10 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(38, 154);
+            btnCancelar.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnCancelar.Location = new Point(307, 190);
             btnCancelar.Name = "btnCancelar";
-            btnCancelar.Size = new Size(75, 23);
+            btnCancelar.Size = new Size(122, 39);
             btnCancelar.TabIndex = 3;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
@@ -74,33 +79,48 @@
             // 
             // txtUsuario
             // 
-            txtUsuario.Location = new Point(38, 44);
+            txtUsuario.Font = new Font("Segoe UI", 14.25F);
+            txtUsuario.Location = new Point(180, 69);
             txtUsuario.Name = "txtUsuario";
-            txtUsuario.Size = new Size(249, 23);
+            txtUsuario.Size = new Size(249, 33);
             txtUsuario.TabIndex = 5;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(38, 26);
+            label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.Location = new Point(76, 77);
             label1.Name = "label1";
-            label1.Size = new Size(47, 15);
+            label1.Size = new Size(81, 25);
             label1.TabIndex = 4;
             label1.Text = "Usuario";
+            // 
+            // lblTitulo
+            // 
+            lblTitulo.AutoSize = true;
+            lblTitulo.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTitulo.Location = new Point(130, 9);
+            lblTitulo.Name = "lblTitulo";
+            lblTitulo.Size = new Size(252, 30);
+            lblTitulo.TabIndex = 6;
+            lblTitulo.Text = "Código de Recuperación";
             // 
             // FCodigoRecuperacion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(342, 203);
+            ClientSize = new Size(519, 257);
+            Controls.Add(lblTitulo);
             Controls.Add(txtUsuario);
             Controls.Add(label1);
             Controls.Add(btnCancelar);
             Controls.Add(btnConfirmar);
             Controls.Add(txtCodigoRecuperacion);
             Controls.Add(lblCodigo);
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "FCodigoRecuperacion";
-            StartPosition = FormStartPosition.CenterParent;
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FCodigoRecuperacion";
             ResumeLayout(false);
             PerformLayout();
@@ -114,5 +134,6 @@
         private Button btnCancelar;
         private TextBox txtUsuario;
         private Label label1;
+        private Label lblTitulo;
     }
 }
