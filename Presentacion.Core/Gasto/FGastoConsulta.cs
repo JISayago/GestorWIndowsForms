@@ -275,7 +275,7 @@ namespace Presentacion.Core.Gasto
 
             ActivarComboOpcional(tiposFecha, "Texto", "Valor");
 
-            cbxFiltroOpcional.SelectedValue = "";
+            cbx1.SelectedValue = "";
             cbxFiltroExtraEstado.SelectedValue = "";
         }
 

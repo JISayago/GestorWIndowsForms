@@ -199,7 +199,7 @@ namespace Presentacion.Core.Empleado.Rol
             ActivarFiltroCombo(opciones, "Texto", "Valor");
 
 
-            cbxFiltroOpcional.SelectedValue = "";
+            cbx1.SelectedValue = "";
         }
 
         protected override string ObtenerTextoLabelFiltroOpcional()

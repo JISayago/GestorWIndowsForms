@@ -106,7 +106,7 @@ namespace Presentacion.Core.Oferta
         {
             var f = base.ObtenerFiltros();
 
-            if (cbxFiltroOpcional?.SelectedItem is OpcionFiltro op)
+            if (cbx1?.SelectedItem is OpcionFiltro op)
                 f.Extra = op.Valor;
 
             if (chkUsarFecha != null && chkUsarFecha.Checked)
@@ -278,7 +278,7 @@ namespace Presentacion.Core.Oferta
 
             ActivarComboOpcional(tiposFecha, "Texto", "Valor");
 
-            cbxFiltroOpcional.SelectedValue = "";
+            cbx1.SelectedValue = "";
             cbxFiltroExtraEstado.SelectedValue = "";
         }
 

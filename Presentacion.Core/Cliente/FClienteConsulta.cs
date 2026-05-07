@@ -223,7 +223,7 @@ namespace Presentacion.Core.Cliente
 
             ActivarComboOpcional(tiposFecha, "Texto", "Valor");
 
-            cbxFiltroOpcional.SelectedValue = "";
+            cbx1.SelectedValue = "";
             cbxFiltroExtraEstado.SelectedValue = "";
         }
 

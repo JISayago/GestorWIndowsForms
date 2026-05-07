@@ -168,7 +168,7 @@ namespace Presentacion.Core.Movimiento
 
             ActivarComboOpcional(tiposFecha, "Texto", "Valor");
 
-            cbxFiltroOpcional.SelectedValue = "";
+            cbx1.SelectedValue = "";
             cbxFiltroExtraEstado.SelectedValue = "";
         }
 

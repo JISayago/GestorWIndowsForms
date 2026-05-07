@@ -61,7 +61,7 @@ namespace Presentacion.Core.Producto
             };
 
             ActivarFiltroCombo(opciones, "Texto", "Valor");
-            cbxFiltroOpcional.SelectedValue = "";
+            cbx1.SelectedValue = "";
             var opcionesEstado = new List<OpcionFiltro>
             {
                 new OpcionFiltro { Texto = "Todos", Valor = "" }
@@ -276,12 +276,12 @@ namespace Presentacion.Core.Producto
             return new FiltroConsulta
             {
                 TextoBuscar = txtBuscar.Text,
-                VerEliminados = cbxEstaEliminado.Checked,
+                VerEliminados = chkBool1.Checked,
 
                 FechaDesde = ObtenerFechaDesdeUI(),
                 FechaHasta = ObtenerFechaHastaUI(),
 
-                Extra = cbxFiltroOpcional?.SelectedValue,
+                Extra = cbx1?.SelectedValue,
                 Extra2 = cbxFiltroExtraEstado?.SelectedValue,
 
                 Page = paginaActual,
