@@ -66,6 +66,7 @@ namespace Servicios.LogicaNegocio.Empleado
 
             empleado.Pass = HashPass.HashPassword(pass);
             empleado.Estado = (int)EstadoEmpleado.Habilitado;
+            empleado.UsuarioEstaHabilitado = true;
             context.SaveChanges();
 
             return new EstadoOperacion
@@ -298,7 +299,7 @@ namespace Servicios.LogicaNegocio.Empleado
                 {
                     Exitoso = true,
                     Mensaje = $"Hola {usuario.Username}!. Compartimos código de recuperación.",
-                    EntidadId = usuario.PersonaId
+                    EntidadId = usuario.PersonaId,
                 };
             }
         }
@@ -386,8 +387,9 @@ namespace Servicios.LogicaNegocio.Empleado
                 return new EstadoOperacion
                 {
                     Exitoso = true,
-                    Mensaje = $"Código de recuperación para el usuario {usuario.Username}: {codigo}. Válido por 5 minutos.",
-                    EntidadId = usuario.PersonaId
+                    Mensaje = $"Código de recuperación para el usuario {usuario.Username}: Codigo: {codigo}. Válido por 5 minutos.",
+                    EntidadId = usuario.PersonaId,
+                    DatoExtra = codigo
                 };
             }
         }

@@ -68,7 +68,6 @@
             txtUsuario.Name = "txtUsuario";
             txtUsuario.Size = new Size(297, 33);
             txtUsuario.TabIndex = 2;
-            txtUsuario.Text = "Admin";
             // 
             // txtPass
             // 
@@ -78,7 +77,6 @@
             txtPass.PasswordChar = '*';
             txtPass.Size = new Size(297, 33);
             txtPass.TabIndex = 3;
-            txtPass.Text = "Admin123";
             txtPass.UseSystemPasswordChar = true;
             // 
             // lblUsuario

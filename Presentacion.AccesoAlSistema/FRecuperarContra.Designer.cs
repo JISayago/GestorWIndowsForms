@@ -42,7 +42,7 @@
             txtDniLegajo.Location = new Point(121, 95);
             txtDniLegajo.Name = "txtDniLegajo";
             txtDniLegajo.Size = new Size(241, 29);
-            txtDniLegajo.TabIndex = 4;
+            txtDniLegajo.TabIndex = 1;
             // 
             // lblDniLegajo
             // 

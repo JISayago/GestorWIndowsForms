@@ -11,5 +11,7 @@ namespace Servicios.Helpers.Sistema
         public bool Exitoso { get; set; }   
         public string Mensaje { get; set; }
         public long? EntidadId { get; set; }  
+
+        public string DatoExtra { get; set; } = string.Empty;
     }
 }

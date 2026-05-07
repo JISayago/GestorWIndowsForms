@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,6 +19,7 @@ namespace Presentacion.AccesoAlSistema
         public string Nro { get; private set; }
         public string Usuario { get; private set; }
         private readonly IUsuarioServicio _usuarioServicio;
+
         public FRecuperarContra()
         {
             InitializeComponent();

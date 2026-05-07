@@ -83,7 +83,7 @@
             txtUsuario.Location = new Point(180, 69);
             txtUsuario.Name = "txtUsuario";
             txtUsuario.Size = new Size(249, 33);
-            txtUsuario.TabIndex = 5;
+            txtUsuario.TabIndex = 0;
             // 
             // label1
             // 

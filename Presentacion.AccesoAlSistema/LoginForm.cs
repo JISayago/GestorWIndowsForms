@@ -123,7 +123,22 @@ namespace Presentacion.AccesoAlSistema
 
             if (Frec.recuperar && Frec.esAdmin)
             {
-                IngresarAlSistema();
+                var estadoUsuario = _accesoSistema.ValidarEstadoUsuario(Frec.Usuario);
+
+                if (estadoUsuario.Exitoso)
+                {
+                    if (estadoUsuario.Mensaje.Contains("recuperación"))
+                    {
+                        MessageBox.Show(estadoUsuario.Mensaje,
+                            "Recuperación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        var X = estadoUsuario.DatoExtra;
+                        
+                        var form = new FCodigoRecuperacion(estadoUsuario.DatoExtra);
+                        form.ShowDialog();
+                        return;
+                    }
+
+                }
             }
         }
 

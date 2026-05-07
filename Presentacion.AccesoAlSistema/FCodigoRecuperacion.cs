@@ -1,4 +1,5 @@
-﻿using Servicios.LogicaNegocio.Empleado;
+﻿using Microsoft.Identity.Client;
+using Servicios.LogicaNegocio.Empleado;
 using System;
 using System.Windows.Forms;
 
@@ -7,11 +8,18 @@ namespace Presentacion.AccesoAlSistema
     public partial class FCodigoRecuperacion : Form
     {
         private readonly IUsuarioServicio _usuarioServicio;
+        public string _cod { get; private set; } = string.Empty;
 
         public FCodigoRecuperacion()
         {
             InitializeComponent();
             _usuarioServicio = new UsuarioServicio();
+        }
+
+        public FCodigoRecuperacion(string cod) : this()
+        {
+            _cod = cod;
+            txtCodigoRecuperacion.Text = _cod;
         }
 
         private void btnConfirmar_Click(object sender, EventArgs e)
