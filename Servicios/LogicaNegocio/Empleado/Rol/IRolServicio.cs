@@ -13,7 +13,7 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
     public  interface IRolServicio
     {
         IEnumerable<RolDTO> ObtenerRolesAsignadosAEmpleados(long empleadoId);
-        ResultadoPaginacion<RolDTO> ObtenerRoles(FiltroConsulta filtros);
+        //ResultadoPaginacion<RolDTO> ObtenerRoles(FiltroConsulta filtros);
         EstadoOperacion ActualizarRolesDeEmpleado(List<RolDTO> rolesAsignados, long empleadoId, DateTime fechaAsignacion);
         EstadoOperacion Insertar(RolDTO rolDto);
         RolDTO ObtenerRolPorId(long rolId);

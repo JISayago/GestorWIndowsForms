@@ -50,19 +50,19 @@ namespace Presentacion.Core.CuentaCorriente
 
             dtpFechaVencimiento.MinDate = DateTime.Now;
 
-            var filtros = new FiltroConsulta
-            {
-                TextoBuscar = "",
-                VerEliminados = false,
-                Page = 1,
-                PageSize = 1000 // o un número alto para traer todos
-            };
+            //var filtros = new FiltroConsulta
+            //{
+            //    TextoBuscar = "",
+            //    VerEliminados = false,
+            //    Page = 1,
+            //    PageSize = 1000 // o un número alto para traer todos
+            //};
 
-            var clientes = _clienteServicio.ObtenerClientes(filtros).Items;
+            //var clientes = _clienteServicio.ObtenerClientes(filtros).Items;
 
             cmbClientes.DisplayMember = "NombreCompleto"; // lo que se muestra
             cmbClientes.ValueMember = "PersonaId";
-            cmbClientes.DataSource = clientes;
+            //cmbClientes.DataSource = clientes;
 
             cmbClientes.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             cmbClientes.AutoCompleteSource = AutoCompleteSource.ListItems;
@@ -93,17 +93,17 @@ namespace Presentacion.Core.CuentaCorriente
             }
 
             var cuentacorriente = _cuentacorrienteServicio.ObtenerCuentaCorrientePorId(entidadId.Value);
-            var filtros = new FiltroConsulta
-            {
-                TextoBuscar = cuentacorriente.ClienteId.ToString(),
-                VerEliminados = false,
-                Page = 1,
-                PageSize = 1
-            };
+            //var filtros = new FiltroConsulta
+            //{
+            //    TextoBuscar = cuentacorriente.ClienteId.ToString(),
+            //    VerEliminados = false,
+            //    Page = 1,
+            //    PageSize = 1
+            //};
 
-            var resultado = _clienteServicio.ObtenerClientes(filtros);
+            //var resultado = _clienteServicio.ObtenerClientes(filtros);
 
-            var clienteDeCuentaCorriente = resultado.Items.FirstOrDefault();
+            //var clienteDeCuentaCorriente = resultado.Items.FirstOrDefault();
             // Datos Personales
 
             txtNombreCC.Text = cuentacorriente.NombreCuentaCorriente;

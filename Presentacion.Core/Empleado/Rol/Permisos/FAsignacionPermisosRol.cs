@@ -45,18 +45,18 @@ namespace Presentacion.Core.Empleado.Rol.Permisos
 
             ConfigurarGrillas();
 
-            var filtros = new FiltroConsulta
-            {
-                TextoBuscar = "",
-                VerEliminados = false,
-                Page = 1,
-                PageSize = int.MaxValue
-            };
+            //var filtros = new FiltroConsulta
+            //{
+            //    TextoBuscar = "",
+            //    VerEliminados = false,
+            //    Page = 1,
+            //    PageSize = int.MaxValue
+            //};
 
-            var roles = _rolServicio.ObtenerRoles(filtros).Items.ToList();
+            //var roles = _rolServicio.ObtenerRoles(filtros).Items.ToList();
 
             _cargandoRol = true;
-            CargarComboBox(cbxRol, roles, "Nombre", "RolId");
+            //CargarComboBox(cbxRol, roles, "Nombre", "RolId");
             _cargandoRol = false;
             if (rolId.HasValue)
             {
@@ -97,15 +97,15 @@ namespace Presentacion.Core.Empleado.Rol.Permisos
 
         private void InicializacionGrillas()
         {
-            var filtros = new FiltroConsulta
-            {
-                TextoBuscar = "",
-                VerEliminados = false,
-                Page = 1,
-                PageSize = int.MaxValue
-            };
+            //var filtros = new FiltroConsulta
+            //{
+            //    TextoBuscar = "",
+            //    VerEliminados = false,
+            //    Page = 1,
+            //    PageSize = int.MaxValue
+            //};
 
-            var todosPermisos = _permisoServicio.ObtenerPermisos(filtros);
+            //var todosPermisos = _permisoServicio.ObtenerPermisos(filtros);
 
             var permisosAsignados = new List<PermisoDTO>();
 
@@ -120,9 +120,9 @@ namespace Presentacion.Core.Empleado.Rol.Permisos
 
             _permisosAsignados = new BindingList<PermisoDTO>(permisosAsignados);
 
-            _permisosDisponibles = new BindingList<PermisoDTO>(
-                todosPermisos.Where(t => !idsAsignados.Contains(t.PermisoId)).ToList()
-            );
+            //_permisosDisponibles = new BindingList<PermisoDTO>(
+            //    todosPermisos.Where(t => !idsAsignados.Contains(t.PermisoId)).ToList()
+            //);
 
             _permisosControl = new BindingList<PermisoDTO>(
                 permisosAsignados.Select(t => new PermisoDTO

@@ -159,29 +159,29 @@ namespace Presentacion.Core.Producto.Lote
             }
         }
 
-        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        {
-            base.ActualizarDatos(dgv, filtros);
-            string columnaBuscar = filtros.Extra as string ?? "Descripcion";
+        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        //{
+        //    base.ActualizarDatos(dgv, filtros);
+        //    string columnaBuscar = filtros.Extra as string ?? "Descripcion";
 
-            var resultado = _LoteServicio.ObtenerLotes(filtros);
+        //    var resultado = _LoteServicio.ObtenerLotes(filtros);
 
-            dgv.DataSource = resultado.Items;
+        //    dgv.DataSource = resultado.Items;
 
-            // 🔴 CLAVE: volver a aplicar formato
-            ResetearGrilla(dgv);
+        //    // 🔴 CLAVE: volver a aplicar formato
+        //    ResetearGrilla(dgv);
 
-            var paginacion = new DatosPaginacion
-            {
-                PaginaActual = resultado.Page,
-                PageSize = resultado.PageSize,
-                CantidadRegistros = resultado.TotalRegistros,
-            };
+        //    var paginacion = new DatosPaginacion
+        //    {
+        //        PaginaActual = resultado.Page,
+        //        PageSize = resultado.PageSize,
+        //        CantidadRegistros = resultado.TotalRegistros,
+        //    };
 
-            ActualizarPaginacionUI(paginacion);
+        //    ActualizarPaginacionUI(paginacion);
 
-            BarraLateralBotones.Enabled = !filtros.VerEliminados;
-        }
+        //    BarraLateralBotones.Enabled = !filtros.VerEliminados;
+        //}
         #endregion
 
         #region 🧰 BOTONES BASE
@@ -250,52 +250,52 @@ namespace Presentacion.Core.Producto.Lote
             }
             
         }
-        protected override void ConfigurarFiltrosUI()
-        {
+        //protected override void ConfigurarFiltrosUI()
+        //{
 
-            base.ConfigurarFiltrosUI();
+        //    base.ConfigurarFiltrosUI();
 
-            ActivarFiltroEliminados("Mostrar movimientos eliminados.");
+        //    ActivarFiltroEliminados("Mostrar movimientos eliminados.");
 
-            var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todos", Valor = "" },
-                new OpcionFiltro { Texto = "Número Lote", Valor = "NumeroLote" },
-                new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
-                new OpcionFiltro { Texto = "Producto", Valor = "Producto" }
-            };
+        //    var opciones = new List<OpcionFiltro>
+        //    {
+        //        new OpcionFiltro { Texto = "Todos", Valor = "" },
+        //        new OpcionFiltro { Texto = "Número Lote", Valor = "NumeroLote" },
+        //        new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
+        //        new OpcionFiltro { Texto = "Producto", Valor = "Producto" }
+        //    };
 
-            ActivarFiltroCombo(opciones, "Texto", "Valor");
+        //    ActivarFiltroCombo(opciones, "Texto", "Valor");
 
-            ActivarFiltroFechas("Filtrar por fecha");
+        //    ActivarFiltroFechas("Filtrar por fecha");
 
-            var tiposFecha = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todas", Valor = "" },
-                new OpcionFiltro { Texto = "Fecha Alta", Valor = ((int)TipoFiltroFechaLote.Alta).ToString() },
-                new OpcionFiltro { Texto = "Vencimiento", Valor = ((int)TipoFiltroFechaLote.Vencimiento).ToString() }
-            };
+        //    var tiposFecha = new List<OpcionFiltro>
+        //    {
+        //        new OpcionFiltro { Texto = "Todas", Valor = "" },
+        //        new OpcionFiltro { Texto = "Fecha Alta", Valor = ((int)TipoFiltroFechaLote.Alta).ToString() },
+        //        new OpcionFiltro { Texto = "Vencimiento", Valor = ((int)TipoFiltroFechaLote.Vencimiento).ToString() }
+        //    };
 
-            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+        //    ActivarComboOpcional(tiposFecha, "Texto", "Valor");
 
-            cbx1.SelectedValue = "";
-            cbxFiltroExtraEstado.SelectedValue = "";
-        }
+        //    cbx1.SelectedValue = "";
+        //    cbxFiltroExtraEstado.SelectedValue = "";
+        //}
 
-        protected override string ObtenerTextoLabelFiltroOpcional()
-        {
-            return "Buscar lote por:";
-        }
+        //protected override string ObtenerTextoLabelFiltroOpcional()
+        //{
+        //    return "Buscar lote por:";
+        //}
 
-        protected override string ObtenerTextoLabelFiltroExtra()
-        {
-            return "Tipo de fecha:";
-        }
+        //protected override string ObtenerTextoLabelFiltroExtra()
+        //{
+        //    return "Tipo de fecha:";
+        //}
 
-        protected override string ObtenerTextoLabelBusqueda()
-        {
-            return "Buscar lote:";
-        }
+        //protected override string ObtenerTextoLabelBusqueda()
+        //{
+        //    return "Buscar lote:";
+        //}
         public override void EjecutarClickDerechoFila(long? id, Point pos)
         {
             //ejemplo

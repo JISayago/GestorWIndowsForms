@@ -83,21 +83,21 @@ namespace Presentacion.Core.Articulo.Marca
             }
         }
 
-        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        {
-            base.ActualizarDatos(dgv, filtros);
+        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        //{
+        //    base.ActualizarDatos(dgv, filtros);
 
-            if (filtros.VerEliminados)
-            {
-                dgv.DataSource = _marcaServicio.ObtenerMarcaEliminada(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _marcaServicio.ObtenerMarca(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
-        }
+        //    if (filtros.VerEliminados)
+        //    {
+        //        dgv.DataSource = _marcaServicio.ObtenerMarcaEliminada(filtros.TextoBuscar);
+        //        BarraLateralBotones.Enabled = false;
+        //    }
+        //    else
+        //    {
+        //        dgv.DataSource = _marcaServicio.ObtenerMarca(filtros.TextoBuscar);
+        //        BarraLateralBotones.Enabled = true;
+        //    }
+        //}
 
         #endregion
 

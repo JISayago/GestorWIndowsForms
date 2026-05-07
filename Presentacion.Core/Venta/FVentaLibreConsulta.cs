@@ -142,32 +142,32 @@ namespace Presentacion.Core.Venta
             }
         }
 
-        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        {
-            base.ActualizarDatos(dgv, filtros);
+        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        //{
+        //    base.ActualizarDatos(dgv, filtros);
 
-            // 🔹 llamada unificada
-            var resultado = _ventaLibreServicio.ObtenerVentasLibres(filtros);
+        //    // 🔹 llamada unificada
+        //    var resultado = _ventaLibreServicio.ObtenerVentasLibres(filtros);
 
-            // 🔹 bind
-            dgv.DataSource = resultado.Items;
+        //    // 🔹 bind
+        //    dgv.DataSource = resultado.Items;
 
-            // 🔴 clave: reaplicar formato
-            ResetearGrilla(dgv);
+        //    // 🔴 clave: reaplicar formato
+        //    ResetearGrilla(dgv);
 
-            // 🔹 paginación
-            var paginacion = new DatosPaginacion
-            {
-                PaginaActual = resultado.Page,
-                PageSize = resultado.PageSize,
-                CantidadRegistros = resultado.TotalRegistros,
-            };
+        //    // 🔹 paginación
+        //    var paginacion = new DatosPaginacion
+        //    {
+        //        PaginaActual = resultado.Page,
+        //        PageSize = resultado.PageSize,
+        //        CantidadRegistros = resultado.TotalRegistros,
+        //    };
 
-            ActualizarPaginacionUI(paginacion);
+        //    ActualizarPaginacionUI(paginacion);
 
-            // 🔹 estado botones
-            BarraLateralBotones.Enabled = !filtros.VerEliminados;
-        }
+        //    // 🔹 estado botones
+        //    BarraLateralBotones.Enabled = !filtros.VerEliminados;
+        //}
 
         //public override void EjecutarBtnNuevo()
         //{
@@ -200,52 +200,52 @@ namespace Presentacion.Core.Venta
         private void FVentaLibreConsulta_Load(object sender, EventArgs e)
         {
         }
-         protected override void ConfigurarFiltrosUI()
-        {
+        // protected override void ConfigurarFiltrosUI()
+        //{
 
-            base.ConfigurarFiltrosUI();
+        //    base.ConfigurarFiltrosUI();
 
 
-            var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todos", Valor = "" },
-                new OpcionFiltro { Texto = "Número Venta", Valor = "NumeroVenta" },
-                new OpcionFiltro { Texto = "Cliente", Valor = "ClienteNombreCompleto" },
-            };
+        //    var opciones = new List<OpcionFiltro>
+        //    {
+        //        new OpcionFiltro { Texto = "Todos", Valor = "" },
+        //        new OpcionFiltro { Texto = "Número Venta", Valor = "NumeroVenta" },
+        //        new OpcionFiltro { Texto = "Cliente", Valor = "ClienteNombreCompleto" },
+        //    };
 
-            ActivarFiltroCombo(opciones, "Texto", "Valor");
+        //    ActivarFiltroCombo(opciones, "Texto", "Valor");
 
-            ActivarFiltroFechas("Filtrar por fecha");
+        //    ActivarFiltroFechas("Filtrar por fecha");
 
-            var tiposFecha = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todas", Valor = "" },
-                new OpcionFiltro { Texto = "Fecha Venta", Valor = "FVL"},
-                new OpcionFiltro { Texto = "Confirmada", Valor = ((int)EstadoVenta.Confirmada).ToString() },
-                new OpcionFiltro { Texto = "Venta Cancelada", Valor = ((int)EstadoVenta.Cancelada).ToString() },
-                new OpcionFiltro { Texto = "Cancelacion de Venta", Valor = ((int)EstadoVenta.CancelacionVenta).ToString() },
+        //    var tiposFecha = new List<OpcionFiltro>
+        //    {
+        //        new OpcionFiltro { Texto = "Todas", Valor = "" },
+        //        new OpcionFiltro { Texto = "Fecha Venta", Valor = "FVL"},
+        //        new OpcionFiltro { Texto = "Confirmada", Valor = ((int)EstadoVenta.Confirmada).ToString() },
+        //        new OpcionFiltro { Texto = "Venta Cancelada", Valor = ((int)EstadoVenta.Cancelada).ToString() },
+        //        new OpcionFiltro { Texto = "Cancelacion de Venta", Valor = ((int)EstadoVenta.CancelacionVenta).ToString() },
 
-            };
+        //    };
 
-            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+        //    ActivarComboOpcional(tiposFecha, "Texto", "Valor");
 
-            cbx1.SelectedValue = "";
-            cbxFiltroExtraEstado.SelectedValue = "";
-        }
+        //    cbx1.SelectedValue = "";
+        //    cbxFiltroExtraEstado.SelectedValue = "";
+        //}
 
-        protected override string ObtenerTextoLabelFiltroOpcional()
-        {
-            return "Buscar lote por:";
-        }
+        //protected override string ObtenerTextoLabelFiltroOpcional()
+        //{
+        //    return "Buscar lote por:";
+        //}
 
-        protected override string ObtenerTextoLabelFiltroExtra()
-        {
-            return "Tipo de fecha:";
-        }
+        //protected override string ObtenerTextoLabelFiltroExtra()
+        //{
+        //    return "Tipo de fecha:";
+        //}
 
-        protected override string ObtenerTextoLabelBusqueda()
-        {
-            return "Buscar lote:";
-        }
+        //protected override string ObtenerTextoLabelBusqueda()
+        //{
+        //    return "Buscar lote:";
+        //}
     }
 }

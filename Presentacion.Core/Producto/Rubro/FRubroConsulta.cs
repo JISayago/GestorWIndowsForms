@@ -46,31 +46,31 @@ namespace Presentacion.Core.Producto.Rubro
             grilla.Columns["Nombre"].HeaderText = "Rubro";
         }
 
-        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        {
-            base.ActualizarDatos(dgv, filtros);
+        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        //{
+        //    base.ActualizarDatos(dgv, filtros);
 
-            filtros.Extra ??= "";
+        //    filtros.Extra ??= "";
 
-            var resultado = _rubroServicio.ObtenerRubroPaginado(filtros);
+        //    var resultado = _rubroServicio.ObtenerRubroPaginado(filtros);
 
-            dgv.DataSource = resultado.Items;
+        //    dgv.DataSource = resultado.Items;
 
-            // 🔴 CLAVE: volver a aplicar formato
-            ResetearGrilla(dgv);
+        //    // 🔴 CLAVE: volver a aplicar formato
+        //    ResetearGrilla(dgv);
 
-            var paginacion = new DatosPaginacion
-            {
-                PaginaActual = resultado.Page,
-                PageSize = resultado.PageSize,
-                CantidadRegistros = resultado.TotalRegistros,
+        //    var paginacion = new DatosPaginacion
+        //    {
+        //        PaginaActual = resultado.Page,
+        //        PageSize = resultado.PageSize,
+        //        CantidadRegistros = resultado.TotalRegistros,
 
-            };
+        //    };
 
-            ActualizarPaginacionUI(paginacion);
+        //    ActualizarPaginacionUI(paginacion);
 
-            BarraLateralBotones.Enabled = !filtros.VerEliminados;
-        }
+        //    BarraLateralBotones.Enabled = !filtros.VerEliminados;
+        //}
         
         public override void EjecutarBtnNuevo()
         {

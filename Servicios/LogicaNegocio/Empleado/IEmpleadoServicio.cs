@@ -12,7 +12,7 @@ namespace Servicios.LogicaNegocio.Empleado
 {
     public interface IEmpleadoServicio
     {
-        ResultadoPaginacion<EmpleadoDTO> ObtenerEmpleados(FiltroConsulta filtros);
+        //ResultadoPaginacion<EmpleadoDTO> ObtenerEmpleados(FiltroConsulta filtros);
         EstadoOperacion Insertar(EmpleadoDTO empleadoDto);
         EmpleadoDTO ObtenerEmpleadoPorId(long personaId);
         EstadoOperacion Modificar(EmpleadoDTO empleadoDto, long? empleadoId);

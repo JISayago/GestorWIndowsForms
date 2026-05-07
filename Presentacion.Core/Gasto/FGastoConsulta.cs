@@ -188,25 +188,25 @@ namespace Presentacion.Core.Gasto
 
         #region 🔥 ACTUALIZAR DATOS (NUEVO)
 
-        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        {
-            base.ActualizarDatos(dgv, filtros);
+        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        //{
+        //    base.ActualizarDatos(dgv, filtros);
 
-            var resultado = _gastoServicio.ObtenerGastos(filtros);
+        //    var resultado = _gastoServicio.ObtenerGastos(filtros);
 
-            dgv.DataSource = resultado.Items;
+        //    dgv.DataSource = resultado.Items;
 
-            ResetearGrilla(dgv);
+        //    ResetearGrilla(dgv);
 
-            var paginacion = new DatosPaginacion
-            {
-                PaginaActual = resultado.Page,
-                PageSize = resultado.PageSize,
-                CantidadRegistros = resultado.TotalRegistros,
-            };
+        //    var paginacion = new DatosPaginacion
+        //    {
+        //        PaginaActual = resultado.Page,
+        //        PageSize = resultado.PageSize,
+        //        CantidadRegistros = resultado.TotalRegistros,
+        //    };
 
-            ActualizarPaginacionUI(paginacion);
-        }
+        //    ActualizarPaginacionUI(paginacion);
+        //}
 
         #endregion
 
@@ -245,54 +245,54 @@ namespace Presentacion.Core.Gasto
         }
 
         #endregion
-        protected override void ConfigurarFiltrosUI()
-        {
+        //protected override void ConfigurarFiltrosUI()
+        //{
 
-            base.ConfigurarFiltrosUI();
+        //    base.ConfigurarFiltrosUI();
 
 
-            var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todos", Valor = "" },
-                new OpcionFiltro { Texto = "Numero de Gasto", Valor = "NumeroGasto" },
-                new OpcionFiltro { Texto = "Empleado", Valor = "NombreEmpleado" },
+        //    var opciones = new List<OpcionFiltro>
+        //    {
+        //        new OpcionFiltro { Texto = "Todos", Valor = "" },
+        //        new OpcionFiltro { Texto = "Numero de Gasto", Valor = "NumeroGasto" },
+        //        new OpcionFiltro { Texto = "Empleado", Valor = "NombreEmpleado" },
 
-            };
+        //    };
 
-            ActivarFiltroCombo(opciones, "Texto", "Valor");
+        //    ActivarFiltroCombo(opciones, "Texto", "Valor");
 
-            ActivarFiltroFechas("Filtrar por fecha");
+        //    ActivarFiltroFechas("Filtrar por fecha");
 
-            var tiposFecha = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todas", Valor = "" },
-                new OpcionFiltro { Texto = "Fecha del Gasto Realizado", Valor = ((int)TipoFiltroFechaGasto.FechaGasto).ToString() },
-                new OpcionFiltro { Texto = "Fecha del Registro del Gasto", Valor = ((int)TipoFiltroFechaGasto.FechaRegistro).ToString() },
-                new OpcionFiltro { Texto = "Pagado", Valor = ((int)EstadoGasto.Pagado).ToString() },
-                new OpcionFiltro { Texto = "Pendiente", Valor = ((int)EstadoGasto.Pendiente).ToString() },
-                new OpcionFiltro { Texto = "Anulado", Valor = ((int)EstadoGasto.Pagado).ToString() }
-            };
+        //    var tiposFecha = new List<OpcionFiltro>
+        //    {
+        //        new OpcionFiltro { Texto = "Todas", Valor = "" },
+        //        new OpcionFiltro { Texto = "Fecha del Gasto Realizado", Valor = ((int)TipoFiltroFechaGasto.FechaGasto).ToString() },
+        //        new OpcionFiltro { Texto = "Fecha del Registro del Gasto", Valor = ((int)TipoFiltroFechaGasto.FechaRegistro).ToString() },
+        //        new OpcionFiltro { Texto = "Pagado", Valor = ((int)EstadoGasto.Pagado).ToString() },
+        //        new OpcionFiltro { Texto = "Pendiente", Valor = ((int)EstadoGasto.Pendiente).ToString() },
+        //        new OpcionFiltro { Texto = "Anulado", Valor = ((int)EstadoGasto.Pagado).ToString() }
+        //    };
 
-            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+        //    ActivarComboOpcional(tiposFecha, "Texto", "Valor");
 
-            cbx1.SelectedValue = "";
-            cbxFiltroExtraEstado.SelectedValue = "";
-        }
+        //    cbx1.SelectedValue = "";
+        //    cbxFiltroExtraEstado.SelectedValue = "";
+        //}
 
-        protected override string ObtenerTextoLabelFiltroOpcional()
-        {
-            return "Buscar gasto por:";
-        }
+        //protected override string ObtenerTextoLabelFiltroOpcional()
+        //{
+        //    return "Buscar gasto por:";
+        //}
 
-        protected override string ObtenerTextoLabelFiltroExtra()
-        {
-            return "Filtrar gasto por:";
-        }
+        //protected override string ObtenerTextoLabelFiltroExtra()
+        //{
+        //    return "Filtrar gasto por:";
+        //}
 
-        protected override string ObtenerTextoLabelBusqueda()
-        {
-            return "Buscar gasto:";
-        }
+        //protected override string ObtenerTextoLabelBusqueda()
+        //{
+        //    return "Buscar gasto:";
+        //}
         private void FGastoConsulta_Load(object sender, EventArgs e)
         {
         }

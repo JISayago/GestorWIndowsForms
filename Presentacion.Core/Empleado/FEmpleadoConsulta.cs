@@ -199,30 +199,30 @@ namespace Presentacion.Core.Empleado
         #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
 
 
-        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        {
-            base.ActualizarDatos(dgv, filtros);
+        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        //{
+        //    base.ActualizarDatos(dgv, filtros);
 
-            filtros.Extra ??= "ApyNom";
+        //    filtros.Extra ??= "ApyNom";
 
-            var resultado = _empleadoServicio.ObtenerEmpleados(filtros);
+        //    var resultado = _empleadoServicio.ObtenerEmpleados(filtros);
 
-            dgv.DataSource = resultado.Items;
+        //    dgv.DataSource = resultado.Items;
 
-            // 🔴 CLAVE: volver a aplicar formato
-            ResetearGrilla(dgv);
+        //    // 🔴 CLAVE: volver a aplicar formato
+        //    ResetearGrilla(dgv);
 
-            var paginacion = new DatosPaginacion
-            {
-                PaginaActual = resultado.Page,
-                PageSize = resultado.PageSize,
-                CantidadRegistros = resultado.TotalRegistros,
-            };
+        //    var paginacion = new DatosPaginacion
+        //    {
+        //        PaginaActual = resultado.Page,
+        //        PageSize = resultado.PageSize,
+        //        CantidadRegistros = resultado.TotalRegistros,
+        //    };
 
-            ActualizarPaginacionUI(paginacion);
+        //    ActualizarPaginacionUI(paginacion);
 
-            BarraLateralBotones.Enabled = !filtros.VerEliminados;
-        }
+        //    BarraLateralBotones.Enabled = !filtros.VerEliminados;
+        //}
 
         #endregion
 
@@ -267,54 +267,54 @@ namespace Presentacion.Core.Empleado
         }
 
         #endregion
-        protected override void ConfigurarFiltrosUI()
-        {
+        //protected override void ConfigurarFiltrosUI()
+        //{
 
-            base.ConfigurarFiltrosUI();
+        //    base.ConfigurarFiltrosUI();
 
-            ActivarFiltroEliminados("Mostrar productos eliminados.");
+        //    ActivarFiltroEliminados("Mostrar productos eliminados.");
 
-            var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todos", Valor = "" },
-                new OpcionFiltro { Texto = "Nombre", Valor = "" }, 
-                new OpcionFiltro { Texto = "Legajo", Valor = "Legajo" },
-                new OpcionFiltro { Texto = "Nombre de Usuario", Valor = "Usuario" }
-            };
+        //    var opciones = new List<OpcionFiltro>
+        //    {
+        //        new OpcionFiltro { Texto = "Todos", Valor = "" },
+        //        new OpcionFiltro { Texto = "Nombre", Valor = "" }, 
+        //        new OpcionFiltro { Texto = "Legajo", Valor = "Legajo" },
+        //        new OpcionFiltro { Texto = "Nombre de Usuario", Valor = "Usuario" }
+        //    };
 
-            ActivarFiltroCombo(opciones, "Texto", "Valor");
+        //    ActivarFiltroCombo(opciones, "Texto", "Valor");
 
-            ActivarFiltroFechas("Filtrar por fecha");
+        //    ActivarFiltroFechas("Filtrar por fecha");
 
-            var tiposFecha = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todas", Valor = "" },
-                new OpcionFiltro { Texto = "Fecha Ingreso", Valor = ((int)TipoFechaFiltroEmpleado.FechaIngreso).ToString() },
-                new OpcionFiltro { Texto = "Fecha Egreso", Valor = ((int)TipoFechaFiltroEmpleado.FechaEgreso).ToString() },
-                new OpcionFiltro { Texto = "Inhabilitado", Valor = ((int)EstadoEmpleado.Inhablitado).ToString() },
-                new OpcionFiltro { Texto = "Habilitado", Valor = ((int)EstadoEmpleado.Habilitado).ToString() },
-                new OpcionFiltro { Texto = "Sin Contraseña", Valor = ((int)EstadoEmpleado.SinPass).ToString() },
-            };
+        //    var tiposFecha = new List<OpcionFiltro>
+        //    {
+        //        new OpcionFiltro { Texto = "Todas", Valor = "" },
+        //        new OpcionFiltro { Texto = "Fecha Ingreso", Valor = ((int)TipoFechaFiltroEmpleado.FechaIngreso).ToString() },
+        //        new OpcionFiltro { Texto = "Fecha Egreso", Valor = ((int)TipoFechaFiltroEmpleado.FechaEgreso).ToString() },
+        //        new OpcionFiltro { Texto = "Inhabilitado", Valor = ((int)EstadoEmpleado.Inhablitado).ToString() },
+        //        new OpcionFiltro { Texto = "Habilitado", Valor = ((int)EstadoEmpleado.Habilitado).ToString() },
+        //        new OpcionFiltro { Texto = "Sin Contraseña", Valor = ((int)EstadoEmpleado.SinPass).ToString() },
+        //    };
 
-            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+        //    ActivarComboOpcional(tiposFecha, "Texto", "Valor");
 
-            cbx1.SelectedValue = "";
-            cbxFiltroExtraEstado.SelectedValue = "";
-        }
+        //    cbx1.SelectedValue = "";
+        //    cbxFiltroExtraEstado.SelectedValue = "";
+        //}
 
-        protected override string ObtenerTextoLabelFiltroOpcional()
-        {
-            return "Buscar empleado por:";
-        }
+        //protected override string ObtenerTextoLabelFiltroOpcional()
+        //{
+        //    return "Buscar empleado por:";
+        //}
 
-        protected override string ObtenerTextoLabelFiltroExtra()
-        {
-            return "Filtrar por:";
-        }
+        //protected override string ObtenerTextoLabelFiltroExtra()
+        //{
+        //    return "Filtrar por:";
+        //}
 
-        protected override string ObtenerTextoLabelBusqueda()
-        {
-            return "Buscar empleado:";
-        }
+        //protected override string ObtenerTextoLabelBusqueda()
+        //{
+        //    return "Buscar empleado:";
+        //}
     }
 }

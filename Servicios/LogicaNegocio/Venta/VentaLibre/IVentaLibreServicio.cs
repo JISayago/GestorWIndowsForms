@@ -16,7 +16,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
         EstadoOperacion NuevaVentaLibre(VentaLibreDTO ventaLibreDto);
         EstadoOperacion AnularVentaLibre(long ventaLibreId);
 
-        ResultadoPaginacion<VentaLibreDTO> ObtenerVentasLibres(FiltroConsulta filtros);
+        //ResultadoPaginacion<VentaLibreDTO> ObtenerVentasLibres(FiltroConsulta filtros);
         List<VentaLibreDTO> ObtenerVentasLibresFiltrados(
     string textoBuscar = null,
     int? estado = null,

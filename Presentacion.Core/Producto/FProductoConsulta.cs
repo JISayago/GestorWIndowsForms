@@ -44,59 +44,59 @@ namespace Presentacion.Core.Producto
 
         #region 🔧 CONFIG FILTROS
 
-        protected override void ConfigurarFiltrosUI()
-        {
-            base.ConfigurarFiltrosUI();
+        //protected override void ConfigurarFiltrosUI()
+        //{
+        //    base.ConfigurarFiltrosUI();
 
-            ActivarFiltroEliminados("Mostrar productos eliminados.");
+        //    ActivarFiltroEliminados("Mostrar productos eliminados.");
 
-            // 🔹 Filtro principal (columna de búsqueda)
-            var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todos", Valor = "" },
-                new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
-                new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
-                new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
-                new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
-            };
+        //    // 🔹 Filtro principal (columna de búsqueda)
+        //    var opciones = new List<OpcionFiltro>
+        //    {
+        //        new OpcionFiltro { Texto = "Todos", Valor = "" },
+        //        new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
+        //        new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
+        //        new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
+        //        new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
+        //    };
 
-            ActivarFiltroCombo(opciones, "Texto", "Valor");
-            cbx1.SelectedValue = "";
-            var opcionesEstado = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todos", Valor = "" }
-            };
+        //    ActivarFiltroCombo(opciones, "Texto", "Valor");
+        //    cbx1.SelectedValue = "";
+        //    var opcionesEstado = new List<OpcionFiltro>
+        //    {
+        //        new OpcionFiltro { Texto = "Todos", Valor = "" }
+        //    };
 
-            foreach (EstadoProducto estado in Enum.GetValues(typeof(EstadoProducto)))
-            {
-                opcionesEstado.Add(new OpcionFiltro
-                {
-                    Texto = estado.ToString(),
-                    Valor = ((int)estado).ToString()
-                });
-            }
+        //    foreach (EstadoProducto estado in Enum.GetValues(typeof(EstadoProducto)))
+        //    {
+        //        opcionesEstado.Add(new OpcionFiltro
+        //        {
+        //            Texto = estado.ToString(),
+        //            Valor = ((int)estado).ToString()
+        //        });
+        //    }
 
-            ActivarComboOpcional(opcionesEstado, "Texto", "Valor");
+        //    ActivarComboOpcional(opcionesEstado, "Texto", "Valor");
 
-            if (cbxFiltroExtraEstado != null)
-                cbxFiltroExtraEstado.SelectedValue = "";
+        //    if (cbxFiltroExtraEstado != null)
+        //        cbxFiltroExtraEstado.SelectedValue = "";
 
-        }
+        //}
 
-        protected override string ObtenerTextoLabelFiltroOpcional()
-        {
-            return "Buscar producto por:";
-        }
+        //protected override string ObtenerTextoLabelFiltroOpcional()
+        //{
+        //    return "Buscar producto por:";
+        //}
 
-        protected override string ObtenerTextoLabelFiltroExtra()
-        {
-            return "Filtrar por Estado:";
-        }
+        //protected override string ObtenerTextoLabelFiltroExtra()
+        //{
+        //    return "Filtrar por Estado:";
+        //}
 
-        protected override string ObtenerTextoLabelBusqueda()
-        {
-            return "Buscar producto:";
-        }
+        //protected override string ObtenerTextoLabelBusqueda()
+        //{
+        //    return "Buscar producto:";
+        //}
 
         #endregion
 
@@ -247,47 +247,47 @@ namespace Presentacion.Core.Producto
 
         #region 🔥 DATOS
 
-        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        {
-            base.ActualizarDatos(dgv, filtros);
+        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        //{
+        //    base.ActualizarDatos(dgv, filtros);
 
-            filtros.Extra ??= "Descripcion";
+        //    filtros.Extra ??= "Descripcion";
 
-            var resultado = _ProductoServicio.ObtenerProductos(filtros);
+        //    var resultado = _ProductoServicio.ObtenerProductos(filtros);
 
-            dgv.DataSource = resultado.Items;
+        //    dgv.DataSource = resultado.Items;
 
-            ResetearGrilla(dgv);
+        //    ResetearGrilla(dgv);
 
-            var paginacion = new DatosPaginacion
-            {
-                PaginaActual = resultado.Page,
-                PageSize = resultado.PageSize,
-                CantidadRegistros = resultado.TotalRegistros
-            };
+        //    var paginacion = new DatosPaginacion
+        //    {
+        //        PaginaActual = resultado.Page,
+        //        PageSize = resultado.PageSize,
+        //        CantidadRegistros = resultado.TotalRegistros
+        //    };
 
-            ActualizarPaginacionUI(paginacion);
+        //    ActualizarPaginacionUI(paginacion);
 
-            BarraLateralBotones.Enabled = !filtros.VerEliminados;
-        }
+        //    BarraLateralBotones.Enabled = !filtros.VerEliminados;
+        //}
         #endregion
-        protected override FiltroConsulta ObtenerFiltros()
-        {
-            return new FiltroConsulta
-            {
-                TextoBuscar = txtBuscar.Text,
-                VerEliminados = chkBool1.Checked,
+        //protected override FiltroConsulta ObtenerFiltros()
+        //{
+        //    return new FiltroConsulta
+        //    {
+        //        TextoBuscar = txtBuscar.Text,
+        //        VerEliminados = chkBool1.Checked,
 
-                FechaDesde = ObtenerFechaDesdeUI(),
-                FechaHasta = ObtenerFechaHastaUI(),
+        //        FechaDesde = ObtenerFechaDesdeUI(),
+        //        FechaHasta = ObtenerFechaHastaUI(),
 
-                Extra = cbx1?.SelectedValue,
-                Extra2 = cbxFiltroExtraEstado?.SelectedValue,
+        //        Extra = cbx1?.SelectedValue,
+        //        Extra2 = cbxFiltroExtraEstado?.SelectedValue,
 
-                Page = paginaActual,
-                PageSize = pageSize
-            };
-        }
+        //        Page = paginaActual,
+        //        PageSize = pageSize
+        //    };
+        //}
 
         #region 🔷 BOTONES BASE
 

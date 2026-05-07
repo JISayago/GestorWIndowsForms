@@ -27,7 +27,7 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         public List<OfertaDTO> ObtenerOfertasActivasInactivas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
 
         public OfertaDTO? ActivarDesactivar(long ofertaId);
-        ResultadoPaginacion<OfertaDTO> ObtenerOfertas(FiltroConsulta filtros, bool vieneDeVenta);
+        //ResultadoPaginacion<OfertaDTO> ObtenerOfertas(FiltroConsulta filtros, bool vieneDeVenta);
         public bool ExisteOfertaPorCodigo(string codigo);
 
         public List<OfertaDTO> ObtenerOfertasVencidas(int cantidadDiasABuscar);

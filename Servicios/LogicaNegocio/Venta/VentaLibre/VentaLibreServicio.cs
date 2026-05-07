@@ -226,140 +226,140 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
             }
         }
 
-        public ResultadoPaginacion<VentaLibreDTO> ObtenerVentasLibres(FiltroConsulta filtros)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
+        //public ResultadoPaginacion<VentaLibreDTO> ObtenerVentasLibres(FiltroConsulta filtros)
+        //{
+        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var query = context.VentasLibres
-                .AsNoTracking()
-                .Include(v => v.Empleado).ThenInclude(e => e.Persona)
-                .Include(v => v.Vendedor).ThenInclude(e => e.Persona)
-                .Include(v => v.Cliente).ThenInclude(c => c.Persona)
-                .AsQueryable();
+        //    var query = context.VentasLibres
+        //        .AsNoTracking()
+        //        .Include(v => v.Empleado).ThenInclude(e => e.Persona)
+        //        .Include(v => v.Vendedor).ThenInclude(e => e.Persona)
+        //        .Include(v => v.Cliente).ThenInclude(c => c.Persona)
+        //        .AsQueryable();
 
-            // 🔍 BUSQUEDA
-            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
-            {
-                var texto = filtros.TextoBuscar.ToLower();
+        //    // 🔍 BUSQUEDA
+        //    if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+        //    {
+        //        var texto = filtros.TextoBuscar.ToLower();
 
-                switch (filtros.Extra?.ToString())
-                {
-                    case "NumeroVenta":
-                        query = query.Where(v => v.NumeroVenta.ToLower().Contains(texto));
-                        break;
+        //        switch (filtros.Extra?.ToString())
+        //        {
+        //            case "NumeroVenta":
+        //                query = query.Where(v => v.NumeroVenta.ToLower().Contains(texto));
+        //                break;
 
-                    case "ClienteNombreCompleto":
-                        query = query.Where(v =>
-                            v.Cliente != null &&
-                            (v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido)
-                                .ToLower()
-                                .Contains(texto));
-                        break;
+        //            case "ClienteNombreCompleto":
+        //                query = query.Where(v =>
+        //                    v.Cliente != null &&
+        //                    (v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido)
+        //                        .ToLower()
+        //                        .Contains(texto));
+        //                break;
 
-                    default:
-                        query = query.Where(v =>
-                            v.NumeroVenta.ToLower().Contains(texto) ||
-                            (v.Cliente != null &&
-                             (v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido)
-                                .ToLower()
-                                .Contains(texto))
-                        );
-                        break;
-                }
-            }
+        //            default:
+        //                query = query.Where(v =>
+        //                    v.NumeroVenta.ToLower().Contains(texto) ||
+        //                    (v.Cliente != null &&
+        //                     (v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido)
+        //                        .ToLower()
+        //                        .Contains(texto))
+        //                );
+        //                break;
+        //        }
+        //    }
 
-            // 🔴 EXTRA2 → FECHA o ESTADO
-            bool filtrarPorFecha = false;
-            EstadoVenta? estadoFiltro = null;
+        //    // 🔴 EXTRA2 → FECHA o ESTADO
+        //    bool filtrarPorFecha = false;
+        //    EstadoVenta? estadoFiltro = null;
 
-            if (filtros.Extra2 != null)
-            {
-                var valor = filtros.Extra2.ToString();
+        //    if (filtros.Extra2 != null)
+        //    {
+        //        var valor = filtros.Extra2.ToString();
 
-                // 📅 FECHA
-                if (valor == "FVL")
-                {
-                    filtrarPorFecha = true;
-                }
+        //        // 📅 FECHA
+        //        if (valor == "FVL")
+        //        {
+        //            filtrarPorFecha = true;
+        //        }
 
-                // 🔢 ESTADO
-                if (int.TryParse(valor, out var estado))
-                {
-                    if (Enum.IsDefined(typeof(EstadoVenta), estado))
-                        estadoFiltro = (EstadoVenta)estado;
-                }
-            }
+        //        // 🔢 ESTADO
+        //        if (int.TryParse(valor, out var estado))
+        //        {
+        //            if (Enum.IsDefined(typeof(EstadoVenta), estado))
+        //                estadoFiltro = (EstadoVenta)estado;
+        //        }
+        //    }
 
-            // 📅 FILTRO FECHA
-            if (filtrarPorFecha)
-            {
-                if (filtros.FechaDesde.HasValue)
-                    query = query.Where(v => v.FechaVenta >= filtros.FechaDesde.Value);
+        //    // 📅 FILTRO FECHA
+        //    if (filtrarPorFecha)
+        //    {
+        //        if (filtros.FechaDesde.HasValue)
+        //            query = query.Where(v => v.FechaVenta >= filtros.FechaDesde.Value);
 
-                if (filtros.FechaHasta.HasValue)
-                {
-                    var hasta = filtros.FechaHasta.Value.AddDays(1);
-                    query = query.Where(v => v.FechaVenta < hasta);
-                }
-            }
+        //        if (filtros.FechaHasta.HasValue)
+        //        {
+        //            var hasta = filtros.FechaHasta.Value.AddDays(1);
+        //            query = query.Where(v => v.FechaVenta < hasta);
+        //        }
+        //    }
 
-            // 🔴 FILTRO ESTADO
-            if (estadoFiltro.HasValue)
-            {
-                query = query.Where(v => v.Estado == (int)estadoFiltro.Value);
-            }
+        //    // 🔴 FILTRO ESTADO
+        //    if (estadoFiltro.HasValue)
+        //    {
+        //        query = query.Where(v => v.Estado == (int)estadoFiltro.Value);
+        //    }
 
-            // 📊 TOTAL
-            var total = query.Count();
+        //    // 📊 TOTAL
+        //    var total = query.Count();
 
-            // 🔴 CONTROL PAGINACION
-            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
-            if (totalPaginas == 0) totalPaginas = 1;
+        //    // 🔴 CONTROL PAGINACION
+        //    var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+        //    if (totalPaginas == 0) totalPaginas = 1;
 
-            if (filtros.Page > totalPaginas)
-                filtros.Page = totalPaginas;
+        //    if (filtros.Page > totalPaginas)
+        //        filtros.Page = totalPaginas;
 
-            if (filtros.Page < 1)
-                filtros.Page = 1;
+        //    if (filtros.Page < 1)
+        //        filtros.Page = 1;
 
-            // 📦 DATA
-            var data = query
-                .OrderByDescending(v => v.FechaVenta)
-                .Skip((filtros.Page - 1) * filtros.PageSize)
-                .Take(filtros.PageSize)
-                .Select(v => new VentaLibreDTO
-                {
-                    VentaLibreId = v.VentaLibreId,
-                    NumeroVenta = v.NumeroVenta,
-                    FechaVenta = v.FechaVenta,
+        //    // 📦 DATA
+        //    var data = query
+        //        .OrderByDescending(v => v.FechaVenta)
+        //        .Skip((filtros.Page - 1) * filtros.PageSize)
+        //        .Take(filtros.PageSize)
+        //        .Select(v => new VentaLibreDTO
+        //        {
+        //            VentaLibreId = v.VentaLibreId,
+        //            NumeroVenta = v.NumeroVenta,
+        //            FechaVenta = v.FechaVenta,
 
-                    IdEmpleado = v.IdEmpleado,
-                    EmpleadoNombreCompleto = v.Empleado.Persona.Nombre + " " + v.Empleado.Persona.Apellido,
+        //            IdEmpleado = v.IdEmpleado,
+        //            EmpleadoNombreCompleto = v.Empleado.Persona.Nombre + " " + v.Empleado.Persona.Apellido,
 
-                    IdVendedor = v.IdVendedor,
-                    VendedorNombreCompleto = v.Vendedor.Persona.Nombre + " " + v.Vendedor.Persona.Apellido,
+        //            IdVendedor = v.IdVendedor,
+        //            VendedorNombreCompleto = v.Vendedor.Persona.Nombre + " " + v.Vendedor.Persona.Apellido,
 
-                    IdCliente = v.IdCliente,
-                    ClienteNombreCompleto = v.Cliente != null
-                        ? v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido
-                        : "Consumidor Final",
+        //            IdCliente = v.IdCliente,
+        //            ClienteNombreCompleto = v.Cliente != null
+        //                ? v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido
+        //                : "Consumidor Final",
 
-                    Total = v.Total,
-                    Estado = v.Estado,
-                    Detalle = v.Detalle,
-                    MontoPagado = v.MontoPagado,
-                    MontoAdeudado = v.MontoAdeudado
-                })
-                .ToList();
+        //            Total = v.Total,
+        //            Estado = v.Estado,
+        //            Detalle = v.Detalle,
+        //            MontoPagado = v.MontoPagado,
+        //            MontoAdeudado = v.MontoAdeudado
+        //        })
+        //        .ToList();
 
-            return new ResultadoPaginacion<VentaLibreDTO>
-            {
-                Items = data,
-                TotalRegistros = total,
-                Page = filtros.Page,
-                PageSize = filtros.PageSize
-            };
-        }
+        //    return new ResultadoPaginacion<VentaLibreDTO>
+        //    {
+        //        Items = data,
+        //        TotalRegistros = total,
+        //        Page = filtros.Page,
+        //        PageSize = filtros.PageSize
+        //    };
+        //}
         public List<VentaLibreDTO> ObtenerVentasLibresFiltrados(
     string textoBuscar = null,
     int? estado = null,

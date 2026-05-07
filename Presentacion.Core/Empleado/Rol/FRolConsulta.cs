@@ -140,30 +140,30 @@ namespace Presentacion.Core.Empleado.Rol
         }
 
 
-        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        {
-            base.ActualizarDatos(dgv, filtros);
+        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        //{
+        //    base.ActualizarDatos(dgv, filtros);
 
-            filtros.Extra ??= "ApyNom";
+        //    filtros.Extra ??= "ApyNom";
 
-            var resultado = _rolServicio.ObtenerRoles(filtros);
+        //    var resultado = _rolServicio.ObtenerRoles(filtros);
 
-            dgv.DataSource = resultado.Items;
+        //    dgv.DataSource = resultado.Items;
 
-            // 🔴 CLAVE: volver a aplicar formato
-            ResetearGrilla(dgv);
+        //    // 🔴 CLAVE: volver a aplicar formato
+        //    ResetearGrilla(dgv);
 
-            var paginacion = new DatosPaginacion
-            {
-                PaginaActual = resultado.Page,
-                PageSize = resultado.PageSize,
-                CantidadRegistros = resultado.TotalRegistros,
-            };
+        //    var paginacion = new DatosPaginacion
+        //    {
+        //        PaginaActual = resultado.Page,
+        //        PageSize = resultado.PageSize,
+        //        CantidadRegistros = resultado.TotalRegistros,
+        //    };
 
-            ActualizarPaginacionUI(paginacion);
+        //    ActualizarPaginacionUI(paginacion);
 
-            BarraLateralBotones.Enabled = !filtros.VerEliminados;
-        }
+        //    BarraLateralBotones.Enabled = !filtros.VerEliminados;
+        //}
 
         #endregion
 
@@ -181,36 +181,36 @@ namespace Presentacion.Core.Empleado.Rol
         }
 
         #endregion
-        protected override void ConfigurarFiltrosUI()
-        {
+        //protected override void ConfigurarFiltrosUI()
+        //{
 
-            base.ConfigurarFiltrosUI();
+        //    base.ConfigurarFiltrosUI();
 
-            ActivarFiltroEliminados("Mostrar roles eliminados.");
+        //    ActivarFiltroEliminados("Mostrar roles eliminados.");
 
-            var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todos", Valor = "" },
-                new OpcionFiltro { Texto = "Nombre", Valor = "Nombre" },
-                new OpcionFiltro { Texto = "Detalle", Valor = "DetalleRol" },
-                new OpcionFiltro { Texto = "Código", Valor = "CodigoRol" }
-            };
+        //    var opciones = new List<OpcionFiltro>
+        //    {
+        //        new OpcionFiltro { Texto = "Todos", Valor = "" },
+        //        new OpcionFiltro { Texto = "Nombre", Valor = "Nombre" },
+        //        new OpcionFiltro { Texto = "Detalle", Valor = "DetalleRol" },
+        //        new OpcionFiltro { Texto = "Código", Valor = "CodigoRol" }
+        //    };
 
-            ActivarFiltroCombo(opciones, "Texto", "Valor");
+        //    ActivarFiltroCombo(opciones, "Texto", "Valor");
 
 
-            cbx1.SelectedValue = "";
-        }
+        //    cbx1.SelectedValue = "";
+        //}
 
-        protected override string ObtenerTextoLabelFiltroOpcional()
-        {
-            return "Buscar rol por:";
-        }
+        //protected override string ObtenerTextoLabelFiltroOpcional()
+        //{
+        //    return "Buscar rol por:";
+        //}
 
-        protected override string ObtenerTextoLabelBusqueda()
-        {
-            return "Buscar rol:";
-        }
+        //protected override string ObtenerTextoLabelBusqueda()
+        //{
+        //    return "Buscar rol:";
+        //}
 
     }
 }

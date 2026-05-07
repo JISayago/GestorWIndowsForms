@@ -102,21 +102,21 @@ namespace Presentacion.Core.Oferta
 
         #region 🔵 FILTROS NUEVOS (combo + fechas)
 
-        protected override FiltroConsulta ObtenerFiltros()
-        {
-            var f = base.ObtenerFiltros();
+        //protected override FiltroConsulta ObtenerFiltros()
+        //{
+        //    var f = base.ObtenerFiltros();
 
-            if (cbx1?.SelectedItem is OpcionFiltro op)
-                f.Extra = op.Valor;
+        //    if (cbx1?.SelectedItem is OpcionFiltro op)
+        //        f.Extra = op.Valor;
 
-            if (chkUsarFecha != null && chkUsarFecha.Checked)
-            {
-                f.FechaDesde = dtpDesde.Value.Date;
-                f.FechaHasta = dtpHasta.Value.Date;
-            }
+        //    if (chkUsarFecha != null && chkUsarFecha.Checked)
+        //    {
+        //        f.FechaDesde = dtpDesde.Value.Date;
+        //        f.FechaHasta = dtpHasta.Value.Date;
+        //    }
 
-            return f;
-        }
+        //    return f;
+        //}
 
 
         private void FOfertaConsulta_Load(object sender, EventArgs e)
@@ -213,88 +213,88 @@ namespace Presentacion.Core.Oferta
 
         #endregion
 
-        #region 🔥 ACTUALIZAR DATOS CON FILTROS
+        //#region 🔥 ACTUALIZAR DATOS CON FILTROS
 
-        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        {
-            base.ActualizarDatos(dgv, filtros);
+        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        //{
+        //    base.ActualizarDatos(dgv, filtros);
 
-            filtros.Extra ??= "Descripcion";
+        //    filtros.Extra ??= "Descripcion";
 
-            var resultado = _ofertaServicio.ObtenerOfertas(filtros, _vieneDeVenta);
+        //    var resultado = _ofertaServicio.ObtenerOfertas(filtros, _vieneDeVenta);
 
-            dgv.DataSource = resultado.Items;
+        //    dgv.DataSource = resultado.Items;
 
-            ResetearGrilla(dgv);
+        //    ResetearGrilla(dgv);
 
-            var paginacion = new DatosPaginacion
-            {
-                PaginaActual = resultado.Page,
-                PageSize = resultado.PageSize,
-                CantidadRegistros = resultado.TotalRegistros,
-            };
+        //    var paginacion = new DatosPaginacion
+        //    {
+        //        PaginaActual = resultado.Page,
+        //        PageSize = resultado.PageSize,
+        //        CantidadRegistros = resultado.TotalRegistros,
+        //    };
 
-            ActualizarPaginacionUI(paginacion);
+        //    ActualizarPaginacionUI(paginacion);
 
-            BarraLateralBotones.Enabled = !filtros.VerEliminados;
-        }
+        //    BarraLateralBotones.Enabled = !filtros.VerEliminados;
+        //}
 
-        #endregion
+        //#endregion
 
-        protected override void ConfigurarFiltrosUI()
-        {
+        //protected override void ConfigurarFiltrosUI()
+        //{
 
-            base.ConfigurarFiltrosUI();
+        //    base.ConfigurarFiltrosUI();
 
-            ActivarFiltroEliminados("Mostrar productos eliminados.");
+        //    ActivarFiltroEliminados("Mostrar productos eliminados.");
 
-            var opciones = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todos", Valor = "" },
-                new OpcionFiltro { Texto = "Codigo", Valor = "Codigo" },
-                new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
-                new OpcionFiltro { Texto = "Detalle", Valor = "Detalle" },
-                new OpcionFiltro { Texto = "Nombre de Grupo ", Valor = "GrupoNombre" },
-                new OpcionFiltro { Texto = "Marca ", Valor = "NombreMarca" },
-                new OpcionFiltro { Texto = "Rubro", Valor = "NombreRubro" },
-                new OpcionFiltro { Texto = "Categoria", Valor = "NombreCategoria" },
-            };
+        //    var opciones = new List<OpcionFiltro>
+        //    {
+        //        new OpcionFiltro { Texto = "Todos", Valor = "" },
+        //        new OpcionFiltro { Texto = "Codigo", Valor = "Codigo" },
+        //        new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
+        //        new OpcionFiltro { Texto = "Detalle", Valor = "Detalle" },
+        //        new OpcionFiltro { Texto = "Nombre de Grupo ", Valor = "GrupoNombre" },
+        //        new OpcionFiltro { Texto = "Marca ", Valor = "NombreMarca" },
+        //        new OpcionFiltro { Texto = "Rubro", Valor = "NombreRubro" },
+        //        new OpcionFiltro { Texto = "Categoria", Valor = "NombreCategoria" },
+        //    };
 
-            ActivarFiltroCombo(opciones, "Texto", "Valor");
+        //    ActivarFiltroCombo(opciones, "Texto", "Valor");
 
-            ActivarFiltroFechas("Filtrar por fecha");
+        //    ActivarFiltroFechas("Filtrar por fecha");
 
-            var tiposFecha = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todas", Valor = "" },
-                new OpcionFiltro { Texto = "Fecha Inicio", Valor = ((int)TipoFiltroFechaOferta.FechaInicio).ToString() },
-                new OpcionFiltro { Texto = "Fecha Fin", Valor = ((int)TipoFiltroFechaOferta.FechaFin).ToString() },
-                new OpcionFiltro { Texto = "Solo Activas", Valor = ((int)TipoFiltroOferta.Activas).ToString() },
-                new OpcionFiltro { Texto = "Solo Inactivas", Valor = ((int)TipoFiltroOferta.Inactivas).ToString() },
-                new OpcionFiltro { Texto = "Es un solo producto", Valor = ((int)TipoFiltroOferta.EsUnSoloProducto).ToString() },
-                new OpcionFiltro { Texto = "Es combo", Valor = ((int)TipoFiltroOferta.EsCombo).ToString() },
-                new OpcionFiltro { Texto = "Es grupo", Valor = ((int)TipoFiltroOferta.EsGrupo).ToString() },
-            };
+        //    var tiposFecha = new List<OpcionFiltro>
+        //    {
+        //        new OpcionFiltro { Texto = "Todas", Valor = "" },
+        //        new OpcionFiltro { Texto = "Fecha Inicio", Valor = ((int)TipoFiltroFechaOferta.FechaInicio).ToString() },
+        //        new OpcionFiltro { Texto = "Fecha Fin", Valor = ((int)TipoFiltroFechaOferta.FechaFin).ToString() },
+        //        new OpcionFiltro { Texto = "Solo Activas", Valor = ((int)TipoFiltroOferta.Activas).ToString() },
+        //        new OpcionFiltro { Texto = "Solo Inactivas", Valor = ((int)TipoFiltroOferta.Inactivas).ToString() },
+        //        new OpcionFiltro { Texto = "Es un solo producto", Valor = ((int)TipoFiltroOferta.EsUnSoloProducto).ToString() },
+        //        new OpcionFiltro { Texto = "Es combo", Valor = ((int)TipoFiltroOferta.EsCombo).ToString() },
+        //        new OpcionFiltro { Texto = "Es grupo", Valor = ((int)TipoFiltroOferta.EsGrupo).ToString() },
+        //    };
 
-            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+        //    ActivarComboOpcional(tiposFecha, "Texto", "Valor");
 
-            cbx1.SelectedValue = "";
-            cbxFiltroExtraEstado.SelectedValue = "";
-        }
+        //    cbx1.SelectedValue = "";
+        //    cbxFiltroExtraEstado.SelectedValue = "";
+        //}
 
-        protected override string ObtenerTextoLabelFiltroOpcional()
-        {
-            return "Buscar oferta por:";
-        }
+        //protected override string ObtenerTextoLabelFiltroOpcional()
+        //{
+        //    return "Buscar oferta por:";
+        //}
 
-        protected override string ObtenerTextoLabelFiltroExtra()
-        {
-            return "Filtrar por:";
-        }
+        //protected override string ObtenerTextoLabelFiltroExtra()
+        //{
+        //    return "Filtrar por:";
+        //}
 
-        protected override string ObtenerTextoLabelBusqueda()
-        {
-            return "Buscar oferta:";
-        }
+        //protected override string ObtenerTextoLabelBusqueda()
+        //{
+        //    return "Buscar oferta:";
+        //}
     }
 }

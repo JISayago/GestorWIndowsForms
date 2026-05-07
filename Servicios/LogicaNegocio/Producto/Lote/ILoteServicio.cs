@@ -14,7 +14,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
     public interface ILoteServicio
     {
         EstadoOperacion CrearLote(LoteDTO lote);
-        ResultadoPaginacion<LoteDTO> ObtenerLotes(FiltroConsulta filtros);
+        //ResultadoPaginacion<LoteDTO> ObtenerLotes(FiltroConsulta filtros);
         EstadoOperacion ModficiarLote(LoteDTO loteDto, long loteId);
         EstadoOperacion EliminarLote(long loteId);
         LoteDTO ObtenerLotePorId(long loteId);

@@ -52,21 +52,21 @@ namespace Presentacion.Core.Categoria
 
         #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
 
-        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        {
-            base.ActualizarDatos(dgv, filtros);
+        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        //{
+        //    base.ActualizarDatos(dgv, filtros);
 
-            if (filtros.VerEliminados)
-            {
-                dgv.DataSource = _CategoriaServicio.ObtenerCategoriaEliminada(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = false;
-            }
-            else
-            {
-                dgv.DataSource = _CategoriaServicio.ObtenerCategoria(filtros.TextoBuscar);
-                BarraLateralBotones.Enabled = true;
-            }
-        }
+        //    if (filtros.VerEliminados)
+        //    {
+        //        dgv.DataSource = _CategoriaServicio.ObtenerCategoriaEliminada(filtros.TextoBuscar);
+        //        BarraLateralBotones.Enabled = false;
+        //    }
+        //    else
+        //    {
+        //        dgv.DataSource = _CategoriaServicio.ObtenerCategoria(filtros.TextoBuscar);
+        //        BarraLateralBotones.Enabled = true;
+        //    }
+        //}
 
         #endregion
 

@@ -19,7 +19,7 @@ namespace Servicios.LogicaNegocio.Venta
         public List<VentaDTO> ObtenerVentasPorIds(List<long> ventaIds);
         EstadoOperacion CancelacionVentaPorId(long ventaId);
         VentaDTO ObtenerVentaDetalle(long Ventaid);
-        ResultadoPaginacion<VentaDTO> ObtenerVentas(FiltroConsulta filtros);
+        //ResultadoPaginacion<VentaDTO> ObtenerVentas(FiltroConsulta filtros);
 
 
     }

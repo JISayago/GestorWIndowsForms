@@ -400,99 +400,99 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
             };
         }
 
-        public ResultadoPaginacion<VentaDTO> ObtenerVentas(FiltroConsulta filtros)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
+        //public ResultadoPaginacion<VentaDTO> ObtenerVentas(FiltroConsulta filtros)
+        //{
+        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var query = context.Ventas
-                .AsNoTracking()
-                .AsQueryable();
+        //    var query = context.Ventas
+        //        .AsNoTracking()
+        //        .AsQueryable();
 
-            // 1. 🔹 Filtro de Eliminados
-            //query = filtros.VerEliminados
-            //    ? query.Where(v => v.EstaEliminado)
-            //    : query.Where(v => !v.EstaEliminado);
+        //    // 1. 🔹 Filtro de Eliminados
+        //    //query = filtros.VerEliminados
+        //    //    ? query.Where(v => v.EstaEliminado)
+        //    //    : query.Where(v => !v.EstaEliminado);
 
-            // 2. 🔹 Filtro por Fechas (Nuevos campos)
-            if (filtros.FechaDesde.HasValue)
-            {
-                query = query.Where(v => v.FechaVenta >= filtros.FechaDesde.Value);
-            }
-            if (filtros.FechaHasta.HasValue)
-            {
-                // Se suele usar .Date.AddDays(1) para incluir todo el día de la fecha final
-                var fechaLimite = filtros.FechaHasta.Value.Date.AddDays(1);
-                query = query.Where(v => v.FechaVenta < fechaLimite);
-            }
+        //    // 2. 🔹 Filtro por Fechas (Nuevos campos)
+        //    if (filtros.FechaDesde.HasValue)
+        //    {
+        //        query = query.Where(v => v.FechaVenta >= filtros.FechaDesde.Value);
+        //    }
+        //    if (filtros.FechaHasta.HasValue)
+        //    {
+        //        // Se suele usar .Date.AddDays(1) para incluir todo el día de la fecha final
+        //        var fechaLimite = filtros.FechaHasta.Value.Date.AddDays(1);
+        //        query = query.Where(v => v.FechaVenta < fechaLimite);
+        //    }
 
-            // 3. 🔹 Buscador
-            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
-            {
-                string busqueda = filtros.TextoBuscar.ToLower();
-                // Implementación de switch según la columna seleccionada en 'Extra'
-                query = filtros.Extra?.ToString() switch
-                {
-                    "NumeroVenta" => query.Where(v => v.NumeroVenta.Contains(busqueda)),
-                    "Cliente" => query.Where(v => v.IdCliente.ToString().Contains(busqueda)), // O v.Cliente.Nombre si tienes Include
-                    _ => query.Where(v => v.NumeroVenta.Contains(busqueda))
-                };
-            }
+        //    // 3. 🔹 Buscador
+        //    if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+        //    {
+        //        string busqueda = filtros.TextoBuscar.ToLower();
+        //        // Implementación de switch según la columna seleccionada en 'Extra'
+        //        query = filtros.Extra?.ToString() switch
+        //        {
+        //            "NumeroVenta" => query.Where(v => v.NumeroVenta.Contains(busqueda)),
+        //            "Cliente" => query.Where(v => v.IdCliente.ToString().Contains(busqueda)), // O v.Cliente.Nombre si tienes Include
+        //            _ => query.Where(v => v.NumeroVenta.Contains(busqueda))
+        //        };
+        //    }
 
-            // 4. 🔹 Filtro por Estado (Extra2)
-            if (filtros.Extra2 != null && int.TryParse(filtros.Extra2.ToString(), out int estado))
-            {
-                query = query.Where(v => v.Estado == estado);
-            }
+        //    // 4. 🔹 Filtro por Estado (Extra2)
+        //    if (filtros.Extra2 != null && int.TryParse(filtros.Extra2.ToString(), out int estado))
+        //    {
+        //        query = query.Where(v => v.Estado == estado);
+        //    }
 
-            // 5. 🔹 Orden (Importante: Ordenar antes de aplicar el límite total)
-            // Usamos el campo de fecha descendente por defecto para traer las "últimas"
-            query = query.OrderByDescending(v => v.FechaVenta);
+        //    // 5. 🔹 Orden (Importante: Ordenar antes de aplicar el límite total)
+        //    // Usamos el campo de fecha descendente por defecto para traer las "últimas"
+        //    query = query.OrderByDescending(v => v.FechaVenta);
 
-            // 6. 🔹 APLICAR LÍMITE TOTAL (Tu nueva propiedad TotalRegistros)
-            // Si TotalRegistros es 20, la consulta se limitará a las últimas 20 ventas que cumplan los filtros.
-            if (filtros.TotalRegistros > 0)
-            {
-                query = query.Take(filtros.TotalRegistros);
-            }
+        //    // 6. 🔹 APLICAR LÍMITE TOTAL (Tu nueva propiedad TotalRegistros)
+        //    // Si TotalRegistros es 20, la consulta se limitará a las últimas 20 ventas que cumplan los filtros.
+        //    if (filtros.TotalRegistros > 0)
+        //    {
+        //        query = query.Take(filtros.TotalRegistros);
+        //    }
 
-            // 7. 🔹 Cálculo de Paginación sobre el conjunto ya limitado
-            var totalEncontrados = query.Count();
-            var totalPaginas = (int)Math.Ceiling((double)totalEncontrados / filtros.PageSize);
+        //    // 7. 🔹 Cálculo de Paginación sobre el conjunto ya limitado
+        //    var totalEncontrados = query.Count();
+        //    var totalPaginas = (int)Math.Ceiling((double)totalEncontrados / filtros.PageSize);
 
-            if (totalPaginas == 0) totalPaginas = 1;
+        //    if (totalPaginas == 0) totalPaginas = 1;
 
-            // Ajustar página actual si se sale de rango
-            if (filtros.Page > totalPaginas) filtros.Page = totalPaginas;
-            if (filtros.Page < 1) filtros.Page = 1;
+        //    // Ajustar página actual si se sale de rango
+        //    if (filtros.Page > totalPaginas) filtros.Page = totalPaginas;
+        //    if (filtros.Page < 1) filtros.Page = 1;
 
-            // 8. 🔹 Proyección y Paginado Final
-            var data = query
-                .Skip((filtros.Page - 1) * filtros.PageSize)
-                .Take(filtros.PageSize)
-                .Select(v => new VentaDTO
-                {
-                    VentaId = v.VentaId,
-                    NumeroVenta = v.NumeroVenta,
-                    IdEmpleado = v.IdEmpleado,
-                    IdVendedor = v.IdVendedor,
-                    IdCliente = v.IdCliente,
-                    FechaVenta = v.FechaVenta,
-                    Total = v.Total,
-                    TotalSinDescuento = v.TotalSinDescuento,
-                    Descuento = v.Descuento,
-                    Estado = v.Estado,
-                    Detalle = v.Detalle
-                })
-                .ToList();
+        //    // 8. 🔹 Proyección y Paginado Final
+        //    var data = query
+        //        .Skip((filtros.Page - 1) * filtros.PageSize)
+        //        .Take(filtros.PageSize)
+        //        .Select(v => new VentaDTO
+        //        {
+        //            VentaId = v.VentaId,
+        //            NumeroVenta = v.NumeroVenta,
+        //            IdEmpleado = v.IdEmpleado,
+        //            IdVendedor = v.IdVendedor,
+        //            IdCliente = v.IdCliente,
+        //            FechaVenta = v.FechaVenta,
+        //            Total = v.Total,
+        //            TotalSinDescuento = v.TotalSinDescuento,
+        //            Descuento = v.Descuento,
+        //            Estado = v.Estado,
+        //            Detalle = v.Detalle
+        //        })
+        //        .ToList();
 
-            return new ResultadoPaginacion<VentaDTO>
-            {
-                Items = data,
-                TotalRegistros = totalEncontrados, // Devolverá máximo el valor de filtros.TotalRegistros
-                Page = filtros.Page,
-                PageSize = filtros.PageSize
-            };
-        }
+        //    return new ResultadoPaginacion<VentaDTO>
+        //    {
+        //        Items = data,
+        //        TotalRegistros = totalEncontrados, // Devolverá máximo el valor de filtros.TotalRegistros
+        //        Page = filtros.Page,
+        //        PageSize = filtros.PageSize
+        //    };
+        //}
         public VentaDTO ObtenerVentaDetalle(long ventaId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
