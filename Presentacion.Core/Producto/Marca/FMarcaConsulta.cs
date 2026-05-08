@@ -1,9 +1,11 @@
-﻿using Presentacion.FBase;
+﻿using Presentacion.Core.Presentacion.Core.Helpers;
+using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -12,18 +14,24 @@ namespace Presentacion.Core.Articulo.Marca
     public partial class FMarcaConsulta : FBaseConsulta
     {
         private readonly IMarcaServicio _marcaServicio;
+
         public long? marcaSeleccionada = null;
+
         private bool vieneDeCargaMarca = true;
 
-        public FMarcaConsulta(bool vieneDeCargaMarca = true) : this(new MarcaServicio())
+        public FMarcaConsulta(bool vieneDeCargaMarca = true)
+            : this(new MarcaServicio())
         {
             InitializeComponent();
+
             this.vieneDeCargaMarca = vieneDeCargaMarca;
         }
 
         public FMarcaConsulta(IMarcaServicio marcaServicio)
         {
             _marcaServicio = marcaServicio;
+
+            InitializeComponent();
         }
 
         #region INIT
@@ -31,6 +39,7 @@ namespace Presentacion.Core.Articulo.Marca
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
             ConfigurarFormulario();
         }
 
@@ -41,29 +50,30 @@ namespace Presentacion.Core.Articulo.Marca
 
         #endregion
 
-        #region 🔥 ACCIONES PERSONALIZADAS DINAMICAS
+        #region 🔥 ACCIONES PERSONALIZADAS
 
         protected override void ConfigurarAccionesPersonalizadas()
         {
             if (vieneDeCargaMarca)
             {
-
-            // Seleccion ID marca
-            AgregarAccion(
-                "Seleccionar Marca",
-                SystemIcons.Information.ToBitmap(),
-                SeleccionMarca,
-                false
-            );
+                AgregarAccion(
+                    "Seleccionar Marca",
+                    SystemIcons.Information.ToBitmap(),
+                    SeleccionMarca,
+                    true
+                );
             }
         }
 
         private void SeleccionMarca(long? id)
         {
-            if (!id.HasValue) return;
+            if (!id.HasValue)
+                return;
 
-            marcaSeleccionada = entidadID;
+            marcaSeleccionada = id;
+
             DialogResult = DialogResult.OK;
+
             Close();
         }
 
@@ -75,74 +85,145 @@ namespace Presentacion.Core.Articulo.Marca
         {
             base.ResetearGrilla(grilla);
 
+            if (grilla.Columns.Count == 0)
+                return;
+
+            if (grilla.Columns.Contains("MarcaId"))
+            {
+                grilla.Columns["MarcaId"].Visible = false;
+                grilla.Columns["MarcaId"].Name = "Id";
+            }
+
             if (grilla.Columns.Contains("Nombre"))
             {
                 grilla.Columns["Nombre"].Visible = true;
                 grilla.Columns["Nombre"].HeaderText = "Marca";
                 grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             }
+
+            if (grilla.Columns.Contains("Descripcion"))
+            {
+                grilla.Columns["Descripcion"].Visible = true;
+                grilla.Columns["Descripcion"].HeaderText = "Descripción";
+                grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
+
+            if (grilla.Columns.Contains("EstadoDescripcion"))
+            {
+                grilla.Columns["EstadoDescripcion"].Visible = true;
+                grilla.Columns["EstadoDescripcion"].Width = 120;
+                grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+            }
         }
 
-        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        //{
-        //    base.ActualizarDatos(dgv, filtros);
+        #endregion
 
-        //    if (filtros.VerEliminados)
-        //    {
-        //        dgv.DataSource = _marcaServicio.ObtenerMarcaEliminada(filtros.TextoBuscar);
-        //        BarraLateralBotones.Enabled = false;
-        //    }
-        //    else
-        //    {
-        //        dgv.DataSource = _marcaServicio.ObtenerMarca(filtros.TextoBuscar);
-        //        BarraLateralBotones.Enabled = true;
-        //    }
-        //}
+        #region 🔥 ACTUALIZAR DATOS
+
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        {
+            base.ActualizarDatos(dgv, filtros);
+
+            filtros.Filtro1 ??= "";
+
+            var resultado = _marcaServicio.ObtenerMarcas(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
+            {
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.Bool1;
+        }
 
         #endregion
 
         #region 🧰 BOTONES BASE
 
-        public override void EjecutarBtnEliminar()
+        public override void EjecutarBtnNuevo()
         {
-            base.EjecutarBtnEliminar();
-            if (!puedeEjecutarComando) return;
+            var f = new FMarcaABM(TipoOperacion.Nuevo);
 
-            var f = new FMarcaABM(TipoOperacion.Eliminar, entidadID);
             f.ShowDialog();
 
-            ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
 
         public override void EjecutarBtnModificar()
         {
             base.EjecutarBtnModificar();
-            if (!puedeEjecutarComando) return;
+
+            if (!puedeEjecutarComando)
+                return;
 
             var f = new FMarcaABM(TipoOperacion.Modificar, entidadID);
+
             f.ShowDialog();
 
-            ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
 
-        public override void EjecutarBtnNuevo()
+        public override void EjecutarBtnEliminar()
         {
-            var f = new FMarcaABM(TipoOperacion.Nuevo);
+            base.EjecutarBtnEliminar();
+
+            if (!puedeEjecutarComando)
+                return;
+
+            var f = new FMarcaABM(TipoOperacion.Eliminar, entidadID);
+
             f.ShowDialog();
 
-            ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
+            if (f.RealizoAlgunaOperacion)
+                Recargar();
         }
 
-        private void ActualizarSegunOperacion(bool realizoOperacion)
+        private void Recargar()
         {
-            //if (realizoOperacion)
-            //    btnActualizar_Click_Base();
+            RefrescarGrilla();
         }
 
         #endregion
 
-        #region 🎯 SELECCIONAR
+        #region 🔎 FILTROS
 
+        protected override void ConfigurarFiltrosUI()
+        {
+            base.ConfigurarFiltrosUI();
+
+            var opciones = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Nombre", Valor = "Nombre" },
+                new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" }
+            };
+
+            ActivarCombo(
+                cbx1,
+                lblcbx1,
+                opciones,
+                "Texto",
+                "Valor",
+                "Buscar marca por:"
+            );
+
+            ActivarCheck(
+                chkBool1,
+                "Ver eliminados"
+            );
+
+            cbx1.SelectedValue = "";
+        }
 
         #endregion
     }

@@ -1,6 +1,7 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
@@ -64,7 +65,18 @@ namespace Presentacion.Core.Producto
             AgregarControlesObligatorios(cmbMarca, "Marca");
             AgregarControlesObligatorios(cmbRubro, "Rubro");
 
-            var marcas = _MarcaServicio.ObtenerMarca("").ToList();
+            var filtrosMarca = new FiltroConsulta
+            {
+                TextoBuscar = "",
+                Page = 1,
+                PageSize = int.MaxValue,
+                Bool1 = false // no eliminados
+            };
+
+            var marcas = _MarcaServicio
+                .ObtenerMarcas(filtrosMarca)
+                .Items
+                .ToList();
 
             cmbMarca.DisplayMember = "Nombre"; // lo que se muestra
             cmbMarca.ValueMember = "Id";

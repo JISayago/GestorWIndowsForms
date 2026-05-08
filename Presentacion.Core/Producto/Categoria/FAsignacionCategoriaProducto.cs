@@ -1,5 +1,6 @@
 ﻿using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Articulo.Categoria;
 using Servicios.LogicaNegocio.Articulo.Categoria.DTO;
 using Servicios.LogicaNegocio.Empleado;
@@ -52,9 +53,21 @@ namespace Presentacion.Core.Producto.Categoria
 
         private void InicializacionGrillas()
         {
-            _categoriasDisponibles = _categoriaServicio.ObtenerCategoria(string.Empty).ToList();
+            var filtros = new FiltroConsulta
+            {
+                TextoBuscar = string.Empty,
+                Bool1 = false, // no eliminados
+                Page = 1,
+                PageSize = 1000
+            };
+
+            _categoriasDisponibles = _categoriaServicio
+                .ObtenerCategorias(filtros)
+                .Items
+                .ToList();
 
             ActualizarGrillas(EntidadID);
+
             ResetearGrillas(dvgCategoriasProducto);
         }
 

@@ -6,6 +6,7 @@ using Servicios.Helpers.Cliente.CtaCte;
 using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.CuentaCorriente;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace Presentacion.Core.CuentaCorriente
@@ -63,37 +64,31 @@ namespace Presentacion.Core.CuentaCorriente
 
         #endregion
 
-        #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
+        #region 🔥 ACTUALIZAR DATOS
 
-        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        //{
-        //    base.ActualizarDatos(dgv, filtros);
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        {
+            base.ActualizarDatos(dgv, filtros);
 
-        //    // 🔹 valor por defecto de búsqueda (ajustalo a tu modelo)
-        //    filtros.Extra ??= "Nombre";
+            filtros.Filtro1 ??= "NombreCuentaCorriente";
 
-        //    // 🔹 llamada única al servicio (nuevo esquema)
-        //    var resultado = _cuentacorrienteServicio.ObtenerCuentaCorrientes(filtros);
+            var resultado = _cuentacorrienteServicio.ObtenerCuentaCorrientes(filtros);
 
-        //    // 🔹 bind
-        //    dgv.DataSource = resultado.Items;
+            dgv.DataSource = resultado.Items;
 
-        //    // 🔴 CLAVE: reaplicar columnas
-        //    ResetearGrilla(dgv);
+            ResetearGrilla(dgv);
 
-        //    // 🔹 paginación
-        //    var paginacion = new DatosPaginacion
-        //    {
-        //        PaginaActual = resultado.Page,
-        //        PageSize = resultado.PageSize,
-        //        CantidadRegistros = resultado.TotalRegistros,
-        //    };
+            var paginacion = new DatosPaginacion
+            {
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros,
+            };
 
-        //    ActualizarPaginacionUI(paginacion);
+            ActualizarPaginacionUI(paginacion);
 
-        //    // 🔹 estado botones
-        //    BarraLateralBotones.Enabled = !filtros.VerEliminados;
-        //}
+            BarraLateralBotones.Enabled = !filtros.Bool1;
+        }
 
         #endregion
 
@@ -111,6 +106,7 @@ namespace Presentacion.Core.CuentaCorriente
         public override void EjecutarBtnModificar()
         {
             base.EjecutarBtnModificar();
+
             if (!puedeEjecutarComando) return;
 
             var f = new FCuentaCorrienteABM(TipoOperacion.Modificar, entidadID);
@@ -123,6 +119,7 @@ namespace Presentacion.Core.CuentaCorriente
         public override void EjecutarBtnEliminar()
         {
             base.EjecutarBtnEliminar();
+
             if (!puedeEjecutarComando) return;
 
             var f = new FCuentaCorrienteABM(TipoOperacion.Eliminar, entidadID);
@@ -134,57 +131,94 @@ namespace Presentacion.Core.CuentaCorriente
 
         private void Recargar()
         {
-         //   btnActualizar_Click_Base();
+            RefrescarGrilla();
         }
 
         #endregion
 
-        //protected override void ConfigurarFiltrosUI()
-        //{
+        #region 🔷 FILTROS
 
-        //    base.ConfigurarFiltrosUI();
+        protected override void ConfigurarFiltrosUI()
+        {
+            base.ConfigurarFiltrosUI();
 
-        //    ActivarFiltroEliminados("Mostrar productos eliminados.");
+            ActivarCheck(
+                chkBool1,
+                "Mostrar cuentas eliminadas"
+            );
 
-        //    var opciones = new List<OpcionFiltro>
-        //    {
-        //        new OpcionFiltro { Texto = "Todos", Valor = "" },
-        //        new OpcionFiltro { Texto = "Nombre de Cuenta Corriente", Valor = "NombreCuentaCorriente" },
-        //    };
+            var opcionesBusqueda = new List<OpcionFiltro>
+            {
+                new OpcionFiltro
+                {
+                    Texto = "Todos",
+                    Valor = ""
+                },
 
-        //    ActivarFiltroCombo(opciones, "Texto", "Valor");
+                new OpcionFiltro
+                {
+                    Texto = "Nombre Cuenta Corriente",
+                    Valor = "NombreCuentaCorriente"
+                }
+            };
 
-        //    ActivarFiltroFechas("Filtrar por fecha de vencimiento");
+            ActivarCombo(
+                cbx1,
+                lblcbx1,
+                opcionesBusqueda,
+                "Texto",
+                "Valor",
+                "Buscar cuenta por:"
+            );
 
-        //    var tiposFecha = new List<OpcionFiltro>
-        //    {
-        //        new OpcionFiltro { Texto = "Todas", Valor = "" },
-        //        new OpcionFiltro { Texto = "Fecha vencimiento", Valor = "vto" },
-        //        //new OpcionFiltro { Texto = "Fecha creación", Valor = "creacion" },
-        //        new OpcionFiltro { Texto = "Activa", Valor = ((int)EstadoCuentaCorriente.Activa).ToString() },
-        //        new OpcionFiltro { Texto = "Suspendida", Valor = ((int)EstadoCuentaCorriente.Suspendida).ToString() },
-        //        new OpcionFiltro { Texto = "Cerrada", Valor = ((int)EstadoCuentaCorriente.Cerrada).ToString() },
-        //    };
+            ActivarFiltroFechas("Usar filtro de fechas");
 
-        //    ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+            var opcionesEstado = new List<OpcionFiltro>
+            {
+                new OpcionFiltro
+                {
+                    Texto = "Todos",
+                    Valor = ""
+                },
 
-        //    cbx1.SelectedValue = "";
-        //    cbxFiltroExtraEstado.SelectedValue = "";
-        //}
+                new OpcionFiltro
+                {
+                    Texto = "Fecha vencimiento",
+                    Valor = "vto"
+                },
 
-        //protected override string ObtenerTextoLabelFiltroOpcional()
-        //{
-        //    return "Buscar cuente corriente por:";
-        //}
+                new OpcionFiltro
+                {
+                    Texto = "Activa",
+                    Valor = ((int)EstadoCuentaCorriente.Activa).ToString()
+                },
 
-        //protected override string ObtenerTextoLabelFiltroExtra()
-        //{
-        //    return "Filtrar por:";
-        //}
+                new OpcionFiltro
+                {
+                    Texto = "Suspendida",
+                    Valor = ((int)EstadoCuentaCorriente.Suspendida).ToString()
+                },
 
-        //protected override string ObtenerTextoLabelBusqueda()
-        //{
-        //    return "Buscar cuenta corriente:";
-        //}
+                new OpcionFiltro
+                {
+                    Texto = "Cerrada",
+                    Valor = ((int)EstadoCuentaCorriente.Cerrada).ToString()
+                }
+            };
+
+            ActivarCombo(
+                cbx2,
+                lblcbx2,
+                opcionesEstado,
+                "Texto",
+                "Valor",
+                "Filtrar por:"
+            );
+
+            cbx1.SelectedValue = "";
+            cbx2.SelectedValue = "";
+        }
+
+        #endregion
     }
 }

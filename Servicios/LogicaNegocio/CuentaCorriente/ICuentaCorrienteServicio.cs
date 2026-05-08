@@ -12,7 +12,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 {
     public interface ICuentaCorrienteServicio
     {
-        //ResultadoPaginacion<CuentaCorrienteDTO> ObtenerCuentaCorrientes(FiltroConsulta filtros);
+        ResultadoPaginacion<CuentaCorrienteDTO> ObtenerCuentaCorrientes(FiltroConsulta filtros);
         CuentaCorrienteDTO ObtenerCuentaCorrientePorId(long cuentacorrienteId);
         EstadoOperacion Insertar(CuentaCorrienteDTO cuentacorrienteDto);
         EstadoOperacion Modificar(CuentaCorrienteDTO cuentacorrienteDto, long? cuentacorrienteId);
