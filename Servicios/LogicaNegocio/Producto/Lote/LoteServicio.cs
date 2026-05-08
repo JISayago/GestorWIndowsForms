@@ -75,132 +75,148 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             };
         }
 
-        //public ResultadoPaginacion<LoteDTO> ObtenerLotes(FiltroConsulta filtros)
-        //{
-        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
+        public ResultadoPaginacion<LoteDTO> ObtenerLotes(FiltroConsulta filtros)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-        //    var query = context.Lotes
-        //        .AsNoTracking()
-        //        .Include(l => l.Producto)
-        //        .AsQueryable();
+            var query = context.Lotes
+                .AsNoTracking()
+                .Include(x => x.Producto)
+                .AsQueryable();
 
-        //    // 🔴 Eliminados
-        //    query = filtros.VerEliminados
-        //        ? query.Where(x => x.EstaEliminado)
-        //        : query.Where(x => !x.EstaEliminado);
+            // 🔴 ELIMINADOS
+            query = filtros.Bool1
+                ? query.Where(x => x.EstaEliminado)
+                : query.Where(x => !x.EstaEliminado);
 
-        //    // 🔍 BUSQUEDA
-        //    if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
-        //    {
-        //        var texto = filtros.TextoBuscar;
+            // 🔍 BUSQUEDA
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                var texto = filtros.TextoBuscar.Trim();
 
-        //        switch (filtros.Extra?.ToString())
-        //        {
-        //            case "Producto":
-        //                query = query.Where(x => x.Producto.Descripcion.Contains(texto));
-        //                break;
+                switch (filtros.Filtro1?.ToString())
+                {
+                    case "Producto":
+                        query = query.Where(x =>
+                            x.Producto.Descripcion.Contains(texto));
+                        break;
 
-        //            case "Descripcion":
-        //                query = query.Where(x => x.Descripcion.Contains(texto));
-        //                break;
+                    case "NumeroLote":
+                        query = query.Where(x =>
+                            x.NumeroLote.Contains(texto));
+                        break;
 
-        //            default: // NumeroLote
-        //                query = query.Where(x => x.NumeroLote.Contains(texto));
-        //                break;
-        //        }
-        //    }
+                    default:
+                        query = query.Where(x =>
+                            x.NumeroLote.Contains(texto) ||
+                            x.Producto.Descripcion.Contains(texto));
+                        break;
+                }
+            }
 
-        //    // 📅 FECHAS (Extra2)
-        //    TipoFiltroFechaLote? tipoFecha = null;
+            // 📅 TIPO FECHA
+            var tipoFecha = filtros.Filtro2?.ToString() ?? "Alta";
 
-        //    if (filtros.Extra2 != null &&
-        //        int.TryParse(filtros.Extra2.ToString(), out var valor))
-        //    {
-        //        tipoFecha = (TipoFiltroFechaLote)valor;
-        //    }
+            // 📅 FILTRO FECHAS
+            if (tipoFecha == "Alta")
+            {
+                if (filtros.FechaDesde.HasValue)
+                {
+                    query = query.Where(x =>
+                        x.FechaAlta >= filtros.FechaDesde.Value);
+                }
 
-        //    if (tipoFecha.HasValue && tipoFecha != TipoFiltroFechaLote.Ninguno)
-        //    {
-        //        if (tipoFecha == TipoFiltroFechaLote.Alta)
-        //        {
-        //            if (filtros.FechaDesde.HasValue)
-        //                query = query.Where(x => x.FechaAlta >= filtros.FechaDesde.Value);
+                if (filtros.FechaHasta.HasValue)
+                {
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
 
-        //            if (filtros.FechaHasta.HasValue)
-        //                query = query.Where(x => x.FechaAlta <= filtros.FechaHasta.Value);
-        //        }
+                    query = query.Where(x =>
+                        x.FechaAlta < hasta);
+                }
+            }
 
-        //        if (tipoFecha == TipoFiltroFechaLote.Vencimiento)
-        //        {
-        //            query = query.Where(x => x.FechaVencimiento.HasValue);
+            if (tipoFecha == "Vencimiento")
+            {
+                query = query.Where(x =>
+                    x.FechaVencimiento.HasValue);
 
-        //            if (filtros.FechaDesde.HasValue)
-        //                query = query.Where(x => x.FechaVencimiento.Value >= filtros.FechaDesde.Value);
+                if (filtros.FechaDesde.HasValue)
+                {
+                    query = query.Where(x =>
+                        x.FechaVencimiento.Value >= filtros.FechaDesde.Value);
+                }
 
-        //            if (filtros.FechaHasta.HasValue)
-        //                query = query.Where(x => x.FechaVencimiento.Value <= filtros.FechaHasta.Value);
-        //        }
-        //    }
+                if (filtros.FechaHasta.HasValue)
+                {
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
 
-        //    // 📊 TOTAL
-        //    var total = query.Count();
+                    query = query.Where(x =>
+                        x.FechaVencimiento.Value < hasta);
+                }
+            }
 
-        //    // 🔴 CONTROL PAGINACION (CLAVE para que no se rompa)
-        //    var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
-        //    if (totalPaginas == 0) totalPaginas = 1;
+            // 📊 TOTAL
+            var total = query.Count();
 
-        //    if (filtros.Page > totalPaginas)
-        //        filtros.Page = totalPaginas;
+            // 🔴 CONTROL PAGINACION
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
 
-        //    if (filtros.Page < 1)
-        //        filtros.Page = 1;
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
 
-        //    IQueryable<AccesoDatos.Entidades.Lote> queryOrdenado;
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
 
-        //    if (tipoFecha == TipoFiltroFechaLote.Alta)
-        //    {
-        //        // 🔹 más viejo primero
-        //        queryOrdenado = query.OrderBy(x => x.FechaAlta);
-        //    }
-        //    else if (tipoFecha == TipoFiltroFechaLote.Vencimiento)
-        //    {
-        //        // 🔹 más próximo a vencer primero
-        //        queryOrdenado = query.OrderBy(x => x.FechaVencimiento ?? DateTime.MaxValue);
-        //    }
-        //    else
-        //    {
-        //        // 🔹 default (lo que vos prefieras)
-        //        queryOrdenado = query.OrderByDescending(x => x.FechaAlta);
-        //    }
-        //    // 📦 DATA
-        //    var data = queryOrdenado
-        //    .Skip((filtros.Page - 1) * filtros.PageSize)
-        //    .Take(filtros.PageSize)
-        //    .Select(x => new LoteDTO
-        //    {
-        //        Id = x.LoteId,
-        //        IdProducto = x.IdProducto,
-        //        StockInicial = x.StockIncial,
-        //        StockActual = x.StockActual,
-        //        NumeroLote = x.NumeroLote,
-        //        Descripcion = x.Descripcion,
-        //        FechaAlta = x.FechaAlta,
-        //        FechaVencimiento = x.FechaVencimiento,
-        //        EstaVencido = x.EstaVencido,
-        //        EstaActivo = x.EstaActivo,
-        //        NombreProducto = x.Producto.Descripcion
-        //    })
-        //    .ToList();
+            if (filtros.Page < 1)
+                filtros.Page = 1;
 
-        //    return new ResultadoPaginacion<LoteDTO>
-        //    {
-        //        Items = data,
-        //        TotalRegistros = total,
-        //        Page = filtros.Page,
-        //        PageSize = filtros.PageSize
-        //    };
-        //}
+            // 📌 ORDEN
+            IQueryable<AccesoDatos.Entidades.Lote> queryOrdenado;
 
+            if (tipoFecha == "Vencimiento")
+            {
+                queryOrdenado = query
+                    .OrderBy(x => x.FechaVencimiento ?? DateTime.MaxValue);
+            }
+            else
+            {
+                queryOrdenado = query
+                    .OrderByDescending(x => x.FechaAlta);
+            }
+
+            // 📦 DATA
+            var data = queryOrdenado
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
+                .Select(x => new LoteDTO
+                {
+                    Id = x.LoteId,
+                    IdProducto = x.IdProducto,
+
+                    NumeroLote = x.NumeroLote,
+                    Descripcion = x.Descripcion,
+
+                    FechaAlta = x.FechaAlta,
+                    FechaVencimiento = x.FechaVencimiento,
+
+                    StockInicial = x.StockIncial,
+                    StockActual = x.StockActual,
+
+                    EstaVencido = x.EstaVencido,
+                    EstaActivo = x.EstaActivo,
+
+                    NombreProducto = x.Producto.Descripcion
+                })
+                .ToList();
+
+            return new ResultadoPaginacion<LoteDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
+        }
         public EstadoOperacion ModficiarLote(LoteDTO loteDto, long loteId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
