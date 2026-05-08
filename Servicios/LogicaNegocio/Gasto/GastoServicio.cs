@@ -259,168 +259,218 @@ namespace Servicios.LogicaNegocio.Gasto
         }
 
 
-        public List<GastoDTO> ObtenerGastos(int? estadoGasto = null)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var query = context.Gastos.AsQueryable();
-
-            if (estadoGasto.HasValue)
-            {
-                query = query.Where(g => g.EstadoGasto == estadoGasto.Value);
-            }
-            else
-            {
-                query = query.Where(g => g.EstadoGasto > 0);
-            }
-
-                var gastos = query
-                    .OrderByDescending(g => g.FechaGasto)
-                    .Select(g => new GastoDTO
-                    {
-                        GastoId = g.GastoId,
-                        NumeroGasto = g.NumeroGasto,
-                        IdEmpleado = g.IdEmpleado,
-                        NombreEmpleado = g.Empleado.Persona.Nombre + " " + g.Empleado.Persona.Apellido,
-                        CategoriaGasto = g.CategoriaGasto,
-                        FechaGasto = g.FechaGasto,
-                        FechaRegistro = g.FechaRegistro,
-                        MontoTotal = g.MontoTotal,
-                        MontoPagado = g.MontoPagado,
-                        EstadoGasto = g.EstadoGasto,
-                        Detalle = g.Detalle
-                    })
-                    .ToList();
-
-            return gastos;
-        }
-
-        //public ResultadoPaginacion<GastoDTO> ObtenerGastos(FiltroConsulta filtros)
+        //public List<GastoDTO> ObtenerGastos(int? estadoGasto = null)
         //{
         //    using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-        //    var query = context.Gastos
-        //        .AsNoTracking()
-        //        .Include(g => g.Empleado)
-        //            .ThenInclude(e => e.Persona)
-        //        .AsQueryable();
+        //    var query = context.Gastos.AsQueryable();
 
-        //    // 🔍 TEXTO
-        //    if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+        //    if (estadoGasto.HasValue)
         //    {
-        //        var texto = filtros.TextoBuscar;
-
-        //        switch (filtros.Extra?.ToString())
-        //        {
-        //            case "NumeroGasto":
-        //                query = query.Where(g => g.NumeroGasto.Contains(texto));
-        //                break;
-
-        //            case "NombreEmpleado":
-        //                query = query.Where(g =>
-        //                    g.Empleado.Persona.Nombre.Contains(texto) ||
-        //                    g.Empleado.Persona.Apellido.Contains(texto));
-        //                break;
-        //            default:
-        //                query = query.Where(g =>
-        //                    g.NumeroGasto.Contains(texto) ||
-        //                    g.Detalle.Contains(texto));
-        //                break;
-        //        }
+        //        query = query.Where(g => g.EstadoGasto == estadoGasto.Value);
+        //    }
+        //    else
+        //    {
+        //        query = query.Where(g => g.EstadoGasto > 0);
         //    }
 
-        //    // 🔴 EXTRA2 → FECHA o ESTADO
-        //    TipoFiltroFechaGasto? tipoFecha = null;
-        //    EstadoGasto? estadoFiltro = null;
-
-        //    if (filtros.Extra2 != null &&
-        //        int.TryParse(filtros.Extra2.ToString(), out var valor))
-        //    {
-        //        if (Enum.IsDefined(typeof(TipoFiltroFechaGasto), valor))
-        //            tipoFecha = (TipoFiltroFechaGasto)valor;
-
-        //        if (Enum.IsDefined(typeof(EstadoGasto), valor))
-        //            estadoFiltro = (EstadoGasto)valor;
-        //    }
-
-        //    // 📅 FILTRO FECHA
-        //    if (tipoFecha.HasValue)
-        //    {
-        //        if (tipoFecha == TipoFiltroFechaGasto.FechaGasto)
-        //        {
-        //            if (filtros.FechaDesde.HasValue)
-        //                query = query.Where(g => g.FechaGasto >= filtros.FechaDesde.Value);
-
-        //            if (filtros.FechaHasta.HasValue)
+        //        var gastos = query
+        //            .OrderByDescending(g => g.FechaGasto)
+        //            .Select(g => new GastoDTO
         //            {
-        //                var hastaReal = filtros.FechaHasta.Value.AddDays(1);
-        //                query = query.Where(g => g.FechaGasto < hastaReal);
-        //            }
-        //        }
+        //                GastoId = g.GastoId,
+        //                NumeroGasto = g.NumeroGasto,
+        //                IdEmpleado = g.IdEmpleado,
+        //                NombreEmpleado = g.Empleado.Persona.Nombre + " " + g.Empleado.Persona.Apellido,
+        //                CategoriaGasto = g.CategoriaGasto,
+        //                FechaGasto = g.FechaGasto,
+        //                FechaRegistro = g.FechaRegistro,
+        //                MontoTotal = g.MontoTotal,
+        //                MontoPagado = g.MontoPagado,
+        //                EstadoGasto = g.EstadoGasto,
+        //                Detalle = g.Detalle
+        //            })
+        //            .ToList();
 
-        //        if (tipoFecha == TipoFiltroFechaGasto.FechaRegistro)
-        //        {
-        //            if (filtros.FechaDesde.HasValue)
-        //                query = query.Where(g => g.FechaRegistro >= filtros.FechaDesde.Value);
-
-        //            if (filtros.FechaHasta.HasValue)
-        //            {
-        //                var hastaReal = filtros.FechaHasta.Value.AddDays(1);
-        //                query = query.Where(g => g.FechaRegistro < hastaReal);
-        //            }
-        //        }
-        //    }
-
-        //    // 🔴 FILTRO ESTADO
-        //    if (estadoFiltro.HasValue)
-        //    {
-        //        query = query.Where(g => g.EstadoGasto == (int)estadoFiltro.Value);
-        //    }
-
-        //    // 📊 TOTAL
-        //    var total = query.Count();
-
-        //    // 🔴 CONTROL PAGINACION
-        //    var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
-        //    if (totalPaginas == 0) totalPaginas = 1;
-
-        //    if (filtros.Page > totalPaginas)
-        //        filtros.Page = totalPaginas;
-
-        //    if (filtros.Page < 1)
-        //        filtros.Page = 1;
-
-        //    // 📌 ORDEN (tiene sentido usar FechaGasto)
-        //    query = query.OrderByDescending(g => g.FechaGasto);
-
-        //    // 📄 DATA
-        //    var data = query
-        //        .Skip((filtros.Page - 1) * filtros.PageSize)
-        //        .Take(filtros.PageSize)
-        //        .Select(g => new GastoDTO
-        //        {
-        //            GastoId = g.GastoId,
-        //            NumeroGasto = g.NumeroGasto,
-        //            IdEmpleado = g.IdEmpleado,
-        //            NombreEmpleado = g.Empleado.Persona.Nombre + " " + g.Empleado.Persona.Apellido,
-        //            CategoriaGasto = g.CategoriaGasto,
-        //            FechaGasto = g.FechaGasto,
-        //            FechaRegistro = g.FechaRegistro,
-        //            MontoTotal = g.MontoTotal,
-        //            MontoPagado = g.MontoPagado,
-        //            EstadoGasto = g.EstadoGasto,
-        //            Detalle = g.Detalle
-        //        })
-        //        .ToList();
-
-        //    return new ResultadoPaginacion<GastoDTO>
-        //    {
-        //        Items = data,
-        //        TotalRegistros = total,
-        //        Page = filtros.Page,
-        //        PageSize = filtros.PageSize
-        //    };
+        //    return gastos;
         //}
+
+        public ResultadoPaginacion<GastoDTO> ObtenerGastos(FiltroConsulta filtros)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var query = context.Gastos
+                .AsNoTracking()
+                .Include(g => g.Empleado)
+                    .ThenInclude(e => e.Persona)
+                .AsQueryable();
+
+            #region 🔍 BUSQUEDA
+
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                var texto = filtros.TextoBuscar.Trim();
+
+                switch (filtros.Filtro1?.ToString())
+                {
+                    case "NumeroGasto":
+
+                        query = query.Where(g =>
+                            g.NumeroGasto.Contains(texto));
+
+                        break;
+
+                    case "NombreEmpleado":
+
+                        query = query.Where(g =>
+                            g.Empleado.Persona.Nombre.Contains(texto) ||
+                            g.Empleado.Persona.Apellido.Contains(texto));
+
+                        break;
+
+                    //case "CategoriaGasto":
+
+                    //    query = query.Where(g =>
+                    //        g.CategoriaGasto.Contains(texto));
+
+                    //    break;
+
+                    default:
+
+                        query = query.Where(g =>
+                            g.NumeroGasto.Contains(texto) ||
+                            g.Detalle.Contains(texto));
+
+                        break;
+                }
+            }
+
+            #endregion
+
+            #region 📅 FILTRO FECHA / ESTADO
+
+            TipoFiltroFechaGasto? tipoFecha = null;
+            EstadoGasto? estado = null;
+
+            if (filtros.Filtro2 != null &&
+                int.TryParse(filtros.Filtro2.ToString(), out var valor))
+            {
+                if (Enum.IsDefined(typeof(TipoFiltroFechaGasto), valor))
+                    tipoFecha = (TipoFiltroFechaGasto)valor;
+
+                if (Enum.IsDefined(typeof(EstadoGasto), valor))
+                    estado = (EstadoGasto)valor;
+            }
+
+            // 📅 FECHA GASTO
+            if (tipoFecha == TipoFiltroFechaGasto.FechaGasto)
+            {
+                if (filtros.FechaDesde.HasValue)
+                {
+                    query = query.Where(g =>
+                        g.FechaGasto >= filtros.FechaDesde.Value);
+                }
+
+                if (filtros.FechaHasta.HasValue)
+                {
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
+
+                    query = query.Where(g =>
+                        g.FechaGasto < hasta);
+                }
+            }
+
+            // 📅 FECHA REGISTRO
+            if (tipoFecha == TipoFiltroFechaGasto.FechaRegistro)
+            {
+                if (filtros.FechaDesde.HasValue)
+                {
+                    query = query.Where(g =>
+                        g.FechaRegistro >= filtros.FechaDesde.Value);
+                }
+
+                if (filtros.FechaHasta.HasValue)
+                {
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
+
+                    query = query.Where(g =>
+                        g.FechaRegistro < hasta);
+                }
+            }
+
+            // 🔴 ESTADO
+            if (estado.HasValue)
+            {
+                query = query.Where(g =>
+                    g.EstadoGasto == (int)estado.Value);
+            }
+
+            #endregion
+
+            #region 📊 PAGINACION
+
+            var total = query.Count();
+
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            #endregion
+
+            #region 📌 ORDEN
+
+            query = query
+                .OrderByDescending(g => g.FechaGasto);
+
+            #endregion
+
+            #region 📄 DATA
+
+            var data = query
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
+                .Select(g => new GastoDTO
+                {
+                    GastoId = g.GastoId,
+                    NumeroGasto = g.NumeroGasto,
+
+                    IdEmpleado = g.IdEmpleado,
+
+                    NombreEmpleado =
+                        g.Empleado.Persona.Nombre + " " +
+                        g.Empleado.Persona.Apellido,
+
+                    CategoriaGasto = g.CategoriaGasto,
+
+                    FechaGasto = g.FechaGasto,
+                    FechaRegistro = g.FechaRegistro,
+
+                    MontoTotal = g.MontoTotal,
+                    MontoPagado = g.MontoPagado,
+
+                    EstadoGasto = g.EstadoGasto,
+
+                    Detalle = g.Detalle
+                })
+                .ToList();
+
+            #endregion
+
+            return new ResultadoPaginacion<GastoDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
+        }
     }
 
 }

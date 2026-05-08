@@ -37,7 +37,6 @@
             ClientSize = new Size(1161, 561);
             Name = "FGastoConsulta";
             Text = "FGastoConsulta";
-            Load += FGastoConsulta_Load;
             ResumeLayout(false);
         }
 

@@ -314,70 +314,104 @@ namespace Presentacion.Notificaciones
         // ===========================================================================
         private void RefrescarProductos()
         {
-            // 1. Preparamos el filtro según lo que espera tu Service
-            //var filtro = new FiltroConsulta
-            //{
-            //    TextoBuscar = txtBuscador.Text,
-            //    Page = _paginaActual,
-            //    PageSize = _pageSize,
-            //    VerEliminados = false
-            //};
+            // 🔎 FILTRO
+            var filtro = new FiltroConsulta
+            {
+                TextoBuscar = txtBuscador.Text,
 
-            //// 2. Llamada a tu service (Suponiendo que tienes una instancia de tu clase de servicio)
-            //var resultado = _productoService.ObtenerProductos(filtro);
+                Page = _paginaActual,
+                PageSize = _pageSize,
 
-            // 3. Limpiar y Cargar Grilla
+                // 🔹 nuevos filtros
+                Filtro1 = "Descripcion",
+                Filtro2 = null,
+                Filtro3 = null,
+
+                Bool1 = false,
+                Bool2 = false,
+
+                FechaDesde = null,
+                FechaHasta = null
+            };
+
+            // 📦 SERVICE
+            var resultado = _productoService.ObtenerProductos(filtro);
+
+            // 🧹 LIMPIAR
             dgvProds.Rows.Clear();
-            //foreach (var p in resultado.Items)
-            //{
-            //    dgvProds.Rows.Add(
-            //        p.Codigo,
-            //        p.Descripcion,
-            //        p.PrecioVenta.ToString("C2"),
-            //        p.Stock
-            //    );
-            //}
 
-            // 4. Actualizar UI de paginación
-            //_totalPaginas = resultado.TotalPaginas;
-            //_paginaActual = resultado.Page; // Usamos la corregida por el service
+            // 📄 CARGAR
+            foreach (var p in resultado.Items)
+            {
+                dgvProds.Rows.Add(
+                    p.Codigo,
+                    p.Descripcion,
+                    p.PrecioVenta.ToString("C2"),
+                    p.Stock
+                );
+            }
 
-            lblPaginaInfo.Text = $"Página {_paginaActual} de {_totalPaginas}";
-            btnPrevProd.Enabled = _paginaActual > 1;
-            btnNextProd.Enabled = _paginaActual < _totalPaginas;
+            // 📊 PAGINACION
+            _totalPaginas = resultado.TotalPaginas;
+            _paginaActual = resultado.Page;
+
+            lblPaginaInfo.Text =
+                $"Página {_paginaActual} de {_totalPaginas}";
+
+            btnPrevProd.Enabled =
+                _paginaActual > 1;
+
+            btnNextProd.Enabled =
+                _paginaActual < _totalPaginas;
         }
 
         public void RefrescarVentas()
         {
-            //var filtroVentas = new FiltroConsulta
-            //{
-            //    Page = _paginaActualV,
-            //    PageSize = _pageSizeV, // Usamos la constante de 10
-            //    TextoBuscar = "",
-            //    VerEliminados = false,
-            //    TotalRegistros = 24 // Limitar a 20 registros para la consulta rápida
-            //};
+            var filtroVentas = new FiltroConsulta
+            {
+                Page = _paginaActualV,
+                PageSize = _pageSizeV,
 
-            //var resultado = _ventaService.ObtenerVentas(filtroVentas);
+                TextoBuscar = "",
 
-            //dgvVentas.Rows.Clear();
-            //foreach (var v in resultado.Items)
-            //{
-            //    dgvVentas.Rows.Add(
-            //        v.NumeroVenta,
-            //        v.FechaVenta.ToString("g"),
-            //        v.Detalle,
-            //        v.Total.ToString("C2")
-            //    );
-            //}
+                // 🔹 nuevos filtros
+                Filtro1 = null,
+                Filtro2 = null,
+                Filtro3 = null,
 
-            //// 4. ACTUALIZAR UI DE VENTAS (Cuidado aquí de no usar lblPaginaInfo de productos)
-            //_totalPaginasV = resultado.TotalPaginas;
-            //_paginaActualV = resultado.Page;
+                Bool1 = false,
+                Bool2 = false,
 
-            //lblPaginaInfoVenta.Text = $"Página {_paginaActualV} de {_totalPaginasV}";
-            //btnPrevVenta.Enabled = _paginaActualV > 1;
-            //btnNextVenta.Enabled = _paginaActualV < _totalPaginasV;
+                FechaDesde = null,
+                FechaHasta = null
+            };
+
+            var resultado = _ventaService.ObtenerVentas(filtroVentas);
+
+            dgvVentas.Rows.Clear();
+
+            foreach (var v in resultado.Items)
+            {
+                dgvVentas.Rows.Add(
+                    v.NumeroVenta,
+                    v.FechaVenta.ToString("g"),
+                    v.Detalle,
+                    v.Total.ToString("C2")
+                );
+            }
+
+            // 🔹 PAGINACION
+            _totalPaginasV = resultado.TotalPaginas;
+            _paginaActualV = resultado.Page;
+
+            lblPaginaInfoVenta.Text =
+                $"Página {_paginaActualV} de {_totalPaginasV}";
+
+            btnPrevVenta.Enabled =
+                _paginaActualV > 1;
+
+            btnNextVenta.Enabled =
+                _paginaActualV < _totalPaginasV;
         }
     }
 }
