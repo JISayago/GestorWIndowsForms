@@ -17,7 +17,7 @@ namespace Servicios.LogicaNegocio.Movimiento
         void CrearMovimientoCtaCte(decimal total, long cajaId, long ctacteId, TipoMovimientoDetalle detalleTipo, GestorContextDB context);
         void CrearMovimientoGasto(long gastoId, decimal monto, TipoMovimientoDetalle detalleTipo, GestorContextDB context);
         MovimientoDTO ObtenerMovimientoPorId(long movimientoId);
-        //ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros);
+        ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros);
         MovimientoHelperDTO ObtenerDatosParaMovimientoConsulta(long movimientoId);
     }
 }

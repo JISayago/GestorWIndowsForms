@@ -190,119 +190,115 @@ namespace Servicios.LogicaNegocio.Movimiento
                 throw;
             }
         }
-        //public ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros)
-        //{
-        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
+        public ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-        //    var query = context.Movimientos
-        //        .AsNoTracking()
-        //        .AsQueryable();
+            var query = context.Movimientos
+                .AsNoTracking()
+                .AsQueryable();
 
-        //    // 🔴 Eliminados
-        //    query = filtros.VerEliminados
-        //        ? query.Where(x => x.EstaEliminado)
-        //        : query.Where(x => !x.EstaEliminado);
+            // 🔴 ELIMINADOS
+            query = filtros.Bool1
+                ? query.Where(x => x.EstaEliminado)
+                : query.Where(x => !x.EstaEliminado);
 
-        //    // 🔍 TEXTO
-        //    if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
-        //    {
-        //        var texto = filtros.TextoBuscar;
+            // 🔍 BUSQUEDA
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                var texto = filtros.TextoBuscar.Trim();
 
-        //        switch (filtros.Extra?.ToString())
-        //        {
-        //            case "NumeroMovimiento":
-        //                query = query.Where(x => x.NumeroMovimiento.Contains(texto));
-        //                break;
+                switch (filtros.Filtro1?.ToString())
+                {
+                    case "NumeroMovimiento":
+                        query = query.Where(x =>
+                            x.NumeroMovimiento.Contains(texto));
+                        break;
 
-        //            default:
-        //                query = query.Where(x => x.NumeroMovimiento.Contains(texto));
-        //                break;
-        //        }
-        //    }
+                    default:
+                        query = query.Where(x =>
+                            x.NumeroMovimiento.Contains(texto));
+                        break;
+                }
+            }
 
-        //    // 🔴 EXTRA2 → puede ser FECHA o TIPO MOVIMIENTO
-        //    TipoMovimiento? tipoMovimiento = null;
-        //    bool filtrarPorFechaMovimiento = false;
+            // 🔴 FILTRO TIPO MOVIMIENTO
+            TipoMovimiento? tipoMovimiento = null;
 
-        //    if (filtros.Extra2 != null)
-        //    {
-        //        var valor = filtros.Extra2.ToString();
+            if (filtros.Filtro2 != null
+                && int.TryParse(filtros.Filtro2.ToString(), out var tipo))
+            {
+                if (Enum.IsDefined(typeof(TipoMovimiento), tipo))
+                {
+                    tipoMovimiento = (TipoMovimiento)tipo;
+                }
+            }
 
-        //        // 📅 filtro fecha
-        //        if (valor == "FM")
-        //        {
-        //            filtrarPorFechaMovimiento = true;
-        //        }
+            if (tipoMovimiento.HasValue)
+            {
+                query = query.Where(x =>
+                    x.TipoMovimiento == (int)tipoMovimiento.Value);
+            }
 
-        //        // 🔢 tipo movimiento
-        //        if (int.TryParse(valor, out var tipo))
-        //        {
-        //            if (Enum.IsDefined(typeof(TipoMovimiento), tipo))
-        //                tipoMovimiento = (TipoMovimiento)tipo;
-        //        }
-        //    }
+            // 📅 FILTRO FECHAS
+            if (filtros.FechaDesde.HasValue)
+            {
+                query = query.Where(x =>
+                    x.FechaMovimiento >= filtros.FechaDesde.Value);
+            }
 
-        //    // 📅 FILTRO FECHA (solo si eligió "Fecha Movimiento")
-        //    if (filtrarPorFechaMovimiento)
-        //    {
-        //        if (filtros.FechaDesde.HasValue)
-        //            query = query.Where(x => x.FechaMovimiento >= filtros.FechaDesde.Value);
+            if (filtros.FechaHasta.HasValue)
+            {
+                var hasta = filtros.FechaHasta.Value.AddDays(1);
 
-        //        if (filtros.FechaHasta.HasValue)
-        //        {
-        //            var hastaReal = filtros.FechaHasta.Value.AddDays(1);
-        //            query = query.Where(x => x.FechaMovimiento < hastaReal);
-        //        }
-        //    }
+                query = query.Where(x =>
+                    x.FechaMovimiento < hasta);
+            }
 
-        //    // 🔴 FILTRO TIPO (Ingresos / Egresos)
-        //    if (tipoMovimiento.HasValue)
-        //    {
-        //        query = query.Where(x => x.TipoMovimiento == (int)tipoMovimiento.Value);
-        //    }
+            // 📊 TOTAL
+            var total = query.Count();
 
-        //    // 📊 TOTAL
-        //    var total = query.Count();
+            // 🔴 CONTROL PAGINACION
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
 
-        //    // 🔴 CONTROL PAGINACION
-        //    var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
-        //    if (totalPaginas == 0) totalPaginas = 1;
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
 
-        //    if (filtros.Page > totalPaginas)
-        //        filtros.Page = totalPaginas;
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
 
-        //    if (filtros.Page < 1)
-        //        filtros.Page = 1;
+            if (filtros.Page < 1)
+                filtros.Page = 1;
 
-        //    // 📌 ORDEN (correcto para movimientos)
-        //    query = query.OrderByDescending(x => x.FechaMovimiento);
+            // 📌 ORDEN
+            query = query.OrderByDescending(x => x.FechaMovimiento);
 
-        //    // 📄 DATA
-        //    var data = query
-        //        .Skip((filtros.Page - 1) * filtros.PageSize)
-        //        .Take(filtros.PageSize)
-        //        .Select(x => new MovimientoDTO
-        //        {
-        //            MovimientoId = x.MovimientoId,
-        //            NumeroMovimiento = x.NumeroMovimiento,
-        //            TipoMovimiento = x.TipoMovimiento,
-        //            TipoMovimientoDetalle = x.TipoMovimientoDetalle,
-        //            Monto = x.Monto,
-        //            FechaMovimiento = x.FechaMovimiento,
-        //            EstaEliminado = x.EstaEliminado,
-        //            EntidadId = x.EntidadId,
-        //            TipoEntidad = x.TipoEntidad
-        //        })
-        //        .ToList();
+            // 📄 DATA
+            var data = query
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
+                .Select(x => new MovimientoDTO
+                {
+                    MovimientoId = x.MovimientoId,
+                    NumeroMovimiento = x.NumeroMovimiento,
+                    TipoMovimiento = x.TipoMovimiento,
+                    TipoMovimientoDetalle = x.TipoMovimientoDetalle,
+                    Monto = x.Monto,
+                    FechaMovimiento = x.FechaMovimiento,
+                    EstaEliminado = x.EstaEliminado,
+                    EntidadId = x.EntidadId,
+                    TipoEntidad = x.TipoEntidad
+                })
+                .ToList();
 
-        //    return new ResultadoPaginacion<MovimientoDTO>
-        //    {
-        //        Items = data,
-        //        TotalRegistros = total,
-        //        Page = filtros.Page,
-        //        PageSize = filtros.PageSize
-        //    };
-        //}
+            return new ResultadoPaginacion<MovimientoDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
+        }
         public MovimientoHelperDTO ObtenerDatosParaMovimientoConsultaVenta(long movimientoId)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);

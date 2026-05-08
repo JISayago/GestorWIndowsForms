@@ -2,10 +2,10 @@
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Movimiento;
-using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Movimiento;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using TuProyecto.Presentacion;
@@ -31,6 +31,7 @@ namespace Presentacion.Core.Movimiento
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
             ConfigurarFormulario();
         }
 
@@ -41,19 +42,70 @@ namespace Presentacion.Core.Movimiento
 
         #endregion
 
-        #region 🔥 ACCIONES EXTRA (opcional futuro)
+        #region FILTROS
+
+        protected override bool UsarFiltroEliminados => false;
+
+        protected override void ConfigurarFiltrosUI()
+        {
+            base.ConfigurarFiltrosUI();
+
+            var opcionesBusqueda = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Número Movimiento", Valor = "NumeroMovimiento" },
+            };
+
+            ActivarCombo(
+                cbx1,
+                lblcbx1,
+                opcionesBusqueda,
+                "Texto",
+                "Valor",
+                "Buscar por"
+            );
+
+            var opcionesTipo = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Ingresos", Valor = ((int)TipoMovimiento.Ingreso).ToString() },
+                new OpcionFiltro { Texto = "Egresos", Valor = ((int)TipoMovimiento.Egreso).ToString() }
+            };
+
+            ActivarCombo(
+                cbx2,
+                lblcbx2,
+                opcionesTipo,
+                "Texto",
+                "Valor",
+                "Tipo Movimiento"
+            );
+
+            ActivarFiltroFechas("Filtrar por fecha");
+        }
+
+        protected override void ActualizarTextosLabels()
+        {
+            base.ActualizarTextosLabels();
+
+        }
+
+        #endregion
+
+        #region ACCIONES EXTRA
 
         protected override void ConfigurarAccionesPersonalizadas()
         {
-            // abrir detalle desde botón dinámico (opcional)
             AgregarAccion(
                 "Ver Detalle",
                 SystemIcons.Information.ToBitmap(),
                 (id) =>
                 {
-                    if (!id.HasValue) return;
+                    if (!id.HasValue)
+                        return;
 
                     var f = new FMovimientoDetallado(id.Value);
+
                     f.ShowDialog();
                 },
                 true
@@ -62,7 +114,31 @@ namespace Presentacion.Core.Movimiento
 
         #endregion
 
-        #region 🧱 GRILLA
+        #region DATOS
+
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        {
+            base.ActualizarDatos(dgv, filtros);
+
+            var resultado = _movimientoServicio.ObtenerMovimientos(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
+            {
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros
+            };
+
+            ActualizarPaginacionUI(paginacion);
+        }
+
+        #endregion
+
+        #region GRILLA
 
         public override void ResetearGrilla(DataGridView grilla)
         {
@@ -71,14 +147,12 @@ namespace Presentacion.Core.Movimiento
             if (grilla.Columns.Count == 0)
                 return;
 
-            // 🔹 ID
             if (grilla.Columns.Contains("MovimientoId"))
             {
                 grilla.Columns["MovimientoId"].Visible = false;
                 grilla.Columns["MovimientoId"].Name = "Id";
             }
 
-            // 🔹 Número
             if (grilla.Columns.Contains("NumeroMovimiento"))
             {
                 grilla.Columns["NumeroMovimiento"].Visible = true;
@@ -86,105 +160,51 @@ namespace Presentacion.Core.Movimiento
                 grilla.Columns["NumeroMovimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             }
 
-            // 🔹 Fecha
             if (grilla.Columns.Contains("FechaMovimiento"))
             {
                 grilla.Columns["FechaMovimiento"].Visible = true;
                 grilla.Columns["FechaMovimiento"].HeaderText = "Fecha";
+                grilla.Columns["FechaMovimiento"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
                 grilla.Columns["FechaMovimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                grilla.Columns["FechaMovimiento"].DefaultCellStyle.Format = "dd/MM/yyyy";
+            }
+
+            if (grilla.Columns.Contains("TipoMovimiento"))
+            {
+                grilla.Columns["TipoMovimiento"].Visible = true;
+                grilla.Columns["TipoMovimiento"].HeaderText = "Tipo";
+                grilla.Columns["TipoMovimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
+
+            if (grilla.Columns.Contains("Detalle"))
+            {
+                grilla.Columns["Detalle"].Visible = true;
+                grilla.Columns["Detalle"].HeaderText = "Detalle";
+                grilla.Columns["Detalle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
+
+            if (grilla.Columns.Contains("Monto"))
+            {
+                grilla.Columns["Monto"].Visible = true;
+                grilla.Columns["Monto"].HeaderText = "Monto";
+                grilla.Columns["Monto"].DefaultCellStyle.Format = "C2";
+                grilla.Columns["Monto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             }
         }
-        #endregion
-        #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
 
         #endregion
 
-
-        #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
-
-
-        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        //{
-        //    base.ActualizarDatos(dgv, filtros);
-
-        //    var resultado = _movimientoServicio.ObtenerMovimientos(filtros);
-
-        //    dgv.DataSource = resultado.Items;
-
-        //    // 🔴 CLAVE: volver a aplicar formato
-        //    ResetearGrilla(dgv);
-
-        //    var paginacion = new DatosPaginacion
-        //    {
-        //        PaginaActual = resultado.Page,
-        //        PageSize = resultado.PageSize,
-        //        CantidadRegistros = resultado.TotalRegistros,
-        //    };
-
-        //    ActualizarPaginacionUI(paginacion);
-
-        //    BarraLateralBotones.Enabled = !filtros.VerEliminados;
-        //}
-
-
-        #endregion
-
-        #region BOTON ABRIR DETALLE (label viejo)
+        #region EVENTOS
 
         private void lblAbrir_Click(object sender, EventArgs e)
         {
-            if (!entidadID.HasValue) return;
+            if (!entidadID.HasValue)
+                return;
 
             var f = new FMovimientoDetallado(entidadID.Value);
+
             f.ShowDialog();
         }
 
         #endregion
-        //protected override void ConfigurarFiltrosUI()
-        //{
-
-        //    base.ConfigurarFiltrosUI();
-
-        //    ActivarFiltroEliminados("Mostrar productos eliminados.");
-
-        //    var opciones = new List<OpcionFiltro>
-        //    {
-        //        new OpcionFiltro { Texto = "Todos", Valor = "" },
-        //        new OpcionFiltro { Texto = "Número Movimiento", Valor = "NumeroMovimiento" },
-        //    };
-
-        //    ActivarFiltroCombo(opciones, "Texto", "Valor");
-
-        //    ActivarFiltroFechas("Filtrar por fecha");
-
-        //    var tiposFecha = new List<OpcionFiltro>
-        //    {
-        //        new OpcionFiltro { Texto = "Todas", Valor = "" },
-        //        new OpcionFiltro { Texto = "Fecha Movimiento", Valor = "FM"},
-        //        new OpcionFiltro { Texto = "Ingresos", Valor = ((int)TipoMovimiento.Ingreso).ToString() },
-        //        new OpcionFiltro { Texto = "Egresos", Valor = ((int)TipoMovimiento.Egreso).ToString() }
-        //    };
-
-        //    ActivarComboOpcional(tiposFecha, "Texto", "Valor");
-
-        //    cbx1.SelectedValue = "";
-        //    cbxFiltroExtraEstado.SelectedValue = "";
-        //}
-
-        //protected override string ObtenerTextoLabelFiltroOpcional()
-        //{
-        //    return "Buscar movimiento por:";
-        //}
-
-        //protected override string ObtenerTextoLabelFiltroExtra()
-        //{
-        //    return "Filtrar por:";
-        //}
-
-        //protected override string ObtenerTextoLabelBusqueda()
-        //{
-        //    return "Buscar Movimiento:";
-        //}
     }
 }
