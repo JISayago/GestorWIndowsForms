@@ -240,11 +240,12 @@
             chkBool2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             chkBool2.AutoSize = true;
             chkBool2.Enabled = false;
+            chkBool2.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             chkBool2.Location = new Point(353, 3);
             chkBool2.Name = "chkBool2";
-            chkBool2.Size = new Size(74, 31);
+            chkBool2.Size = new Size(80, 31);
             chkBool2.TabIndex = 4;
-            chkBool2.Text = "cbxBool1";
+            chkBool2.Text = "cbxBool2";
             chkBool2.TextAlign = ContentAlignment.MiddleCenter;
             chkBool2.UseVisualStyleBackColor = true;
             // 
@@ -253,9 +254,10 @@
             chkBool1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             chkBool1.AutoSize = true;
             chkBool1.Enabled = false;
+            chkBool1.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             chkBool1.Location = new Point(3, 3);
             chkBool1.Name = "chkBool1";
-            chkBool1.Size = new Size(74, 31);
+            chkBool1.Size = new Size(80, 31);
             chkBool1.TabIndex = 3;
             chkBool1.Text = "cbxBool1";
             chkBool1.TextAlign = ContentAlignment.MiddleCenter;
@@ -297,6 +299,7 @@
             // btnSiguiente
             // 
             btnSiguiente.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            btnSiguiente.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnSiguiente.Location = new Point(313, 3);
             btnSiguiente.Name = "btnSiguiente";
             btnSiguiente.Size = new Size(98, 25);
@@ -309,6 +312,7 @@
             // 
             lblPagina.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lblPagina.AutoSize = true;
+            lblPagina.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblPagina.Location = new Point(106, 0);
             lblPagina.Name = "lblPagina";
             lblPagina.Size = new Size(201, 31);
@@ -319,6 +323,7 @@
             // btnAnterior
             // 
             btnAnterior.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            btnAnterior.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnAnterior.Location = new Point(3, 3);
             btnAnterior.Name = "btnAnterior";
             btnAnterior.Size = new Size(97, 25);
@@ -331,6 +336,7 @@
             // 
             lblTotalRegistros.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lblTotalRegistros.AutoSize = true;
+            lblTotalRegistros.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblTotalRegistros.Location = new Point(3, 0);
             lblTotalRegistros.Name = "lblTotalRegistros";
             lblTotalRegistros.Size = new Size(274, 37);
@@ -372,9 +378,10 @@
             // 
             lblcbx3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             lblcbx3.AutoSize = true;
+            lblcbx3.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblcbx3.Location = new Point(3, 0);
             lblcbx3.Name = "lblcbx3";
-            lblcbx3.Size = new Size(31, 26);
+            lblcbx3.Size = new Size(40, 26);
             lblcbx3.TabIndex = 9;
             lblcbx3.Text = "cbx3";
             // 
@@ -406,9 +413,10 @@
             // 
             lblcbx2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             lblcbx2.AutoSize = true;
+            lblcbx2.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblcbx2.Location = new Point(3, 0);
             lblcbx2.Name = "lblcbx2";
-            lblcbx2.Size = new Size(31, 26);
+            lblcbx2.Size = new Size(40, 26);
             lblcbx2.TabIndex = 9;
             lblcbx2.Text = "cbx2";
             // 
@@ -441,9 +449,10 @@
             // 
             lblcbx1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             lblcbx1.AutoSize = true;
+            lblcbx1.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblcbx1.Location = new Point(3, 0);
             lblcbx1.Name = "lblcbx1";
-            lblcbx1.Size = new Size(31, 26);
+            lblcbx1.Size = new Size(40, 26);
             lblcbx1.TabIndex = 8;
             lblcbx1.Text = "cbx1";
             // 
@@ -492,9 +501,10 @@
             // 
             chkUsarRango.AutoSize = true;
             chkUsarRango.Enabled = false;
+            chkUsarRango.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             chkUsarRango.Location = new Point(353, 3);
             chkUsarRango.Name = "chkUsarRango";
-            chkUsarRango.Size = new Size(86, 18);
+            chkUsarRango.Size = new Size(96, 18);
             chkUsarRango.TabIndex = 4;
             chkUsarRango.Text = "Usar Rango";
             chkUsarRango.TextAlign = ContentAlignment.TopLeft;
@@ -505,9 +515,10 @@
             // 
             chkUsarFecha.AutoSize = true;
             chkUsarFecha.Enabled = false;
+            chkUsarFecha.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             chkUsarFecha.Location = new Point(3, 3);
             chkUsarFecha.Name = "chkUsarFecha";
-            chkUsarFecha.Size = new Size(83, 18);
+            chkUsarFecha.Size = new Size(91, 18);
             chkUsarFecha.TabIndex = 3;
             chkUsarFecha.Text = "Usar Fecha";
             chkUsarFecha.TextAlign = ContentAlignment.TopLeft;
@@ -563,17 +574,20 @@
             // txtBuscar
             // 
             txtBuscar.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            txtBuscar.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtBuscar.Location = new Point(3, 37);
             txtBuscar.Name = "txtBuscar";
-            txtBuscar.Size = new Size(402, 23);
+            txtBuscar.Size = new Size(402, 33);
             txtBuscar.TabIndex = 0;
             // 
             // lblBuscar
             // 
             lblBuscar.AutoSize = true;
+            lblBuscar.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblBuscar.ImageAlign = ContentAlignment.BottomCenter;
             lblBuscar.Location = new Point(3, 0);
             lblBuscar.Name = "lblBuscar";
-            lblBuscar.Size = new Size(48, 15);
+            lblBuscar.Size = new Size(68, 21);
             lblBuscar.TabIndex = 1;
             lblBuscar.Text = "Buscar :";
             lblBuscar.TextAlign = ContentAlignment.BottomLeft;
@@ -581,10 +595,10 @@
             // btnBuscar
             // 
             btnBuscar.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            btnBuscar.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnBuscar.Location = new Point(417, 3);
+            btnBuscar.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnBuscar.Location = new Point(417, 14);
             btnBuscar.Name = "btnBuscar";
-            btnBuscar.Size = new Size(284, 68);
+            btnBuscar.Size = new Size(284, 46);
             btnBuscar.TabIndex = 1;
             btnBuscar.Text = "Aplicar Filtros";
             btnBuscar.UseVisualStyleBackColor = true;
