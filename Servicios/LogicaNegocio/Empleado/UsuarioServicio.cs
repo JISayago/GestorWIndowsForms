@@ -66,6 +66,7 @@ namespace Servicios.LogicaNegocio.Empleado
 
             empleado.Pass = HashPass.HashPassword(pass);
             empleado.Estado = (int)EstadoEmpleado.Habilitado;
+            empleado.UsuarioEstaHabilitado = true;
             context.SaveChanges();
 
             return new EstadoOperacion
@@ -298,7 +299,7 @@ namespace Servicios.LogicaNegocio.Empleado
                 {
                     Exitoso = true,
                     Mensaje = $"Hola {usuario.Username}!. Compartimos código de recuperación.",
-                    EntidadId = usuario.PersonaId
+                    EntidadId = usuario.PersonaId,
                 };
             }
         }
@@ -386,8 +387,9 @@ namespace Servicios.LogicaNegocio.Empleado
                 return new EstadoOperacion
                 {
                     Exitoso = true,
-                    Mensaje = $"Código de recuperación para el usuario {usuario.Username}: {codigo}. Válido por 5 minutos.",
-                    EntidadId = usuario.PersonaId
+                    Mensaje = $"Código de recuperación para el usuario {usuario.Username}: Codigo: {codigo}. Válido por 5 minutos.",
+                    EntidadId = usuario.PersonaId,
+                    DatoExtra = codigo
                 };
             }
         }
@@ -397,11 +399,26 @@ namespace Servicios.LogicaNegocio.Empleado
             return random.Next((int)Math.Pow(10, longitud - 1), (int)Math.Pow(10, longitud)).ToString();
         }
 
-        public EstadoOperacion ValidarCodigoRecuperacion(long usuarioId, string codigoRecuperacion)
+        public EstadoOperacion ValidarCodigoRecuperacion(string username, string codigoRecuperacion)
         {
             using (var context = new GestorContextDBFactory().CreateDbContext(null))
             {
-                // 🔹 1. Traer el último código generado para el usuario
+                // 🔹 1. Buscar usuario por username
+                var usuario = context.Empleados
+                    .FirstOrDefault(x => x.Username == username);
+
+                if (usuario == null)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "El usuario no existe"
+                    };
+                }
+
+                var usuarioId = usuario.PersonaId;
+
+                // 🔹 2. Traer el último código generado para el usuario
                 var codigo = context.Set<CodigoRecuperacionPass>()
                     .Where(c => c.UsuarioAsignadoId == usuarioId)
                     .OrderByDescending(c => c.FechaCreacion)
@@ -416,7 +433,7 @@ namespace Servicios.LogicaNegocio.Empleado
                     };
                 }
 
-                // 🔹 2. Validar si ya fue usado
+                // 🔹 3. Validar si ya fue usado
                 if (codigo.EstaUsado)
                 {
                     return new EstadoOperacion
@@ -426,7 +443,7 @@ namespace Servicios.LogicaNegocio.Empleado
                     };
                 }
 
-                // 🔹 3. Validar expiración
+                // 🔹 4. Validar expiración
                 if (DateTime.Now > codigo.FechaExpiracion)
                 {
                     return new EstadoOperacion
@@ -436,7 +453,7 @@ namespace Servicios.LogicaNegocio.Empleado
                     };
                 }
 
-                // 🔹 4. Validar que coincida el código
+                // 🔹 5. Validar que coincida el código
                 if (codigo.Codigo != codigoRecuperacion)
                 {
                     return new EstadoOperacion
@@ -446,18 +463,12 @@ namespace Servicios.LogicaNegocio.Empleado
                     };
                 }
 
-                // 🔹 5. Marcar como usado
+                // 🔹 6. Marcar como usado
                 codigo.EstaUsado = true;
                 codigo.FechaUso = DateTime.Now;
 
-                // 🔹 6. Cambiar estado del usuario (habilitado para nueva pass)
-                var usuario = context.Empleados
-                    .FirstOrDefault(x => x.PersonaId == usuarioId);
-
-                if (usuario != null)
-                {
-                    usuario.Estado = (int)EstadoEmpleado.Inhablitado;
-                }
+                // 🔹 7. Cambiar estado del usuario (igual que antes)
+                usuario.Estado = (int)EstadoEmpleado.Inhablitado;
 
                 context.SaveChanges();
 
