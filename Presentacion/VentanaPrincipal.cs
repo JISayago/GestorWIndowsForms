@@ -1,4 +1,4 @@
-using AccesoDatos.Entidades;
+Ôªøusing AccesoDatos.Entidades;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Administracion;
 using Presentacion.Core.Articulo.Marca;
@@ -17,6 +17,7 @@ using Presentacion.Core.Venta;
 using Presentacion.FBase.Helpers;
 using Presentacion.Notificaciones;
 using ServicioAccesoSistema.AccesoSistema;
+using Servicios.Helpers.DatosObligatoriosParaInicioSistema;
 using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Caja.DTO;
 using Servicios.LogicaNegocio.PantallaPrincipal;
@@ -24,6 +25,7 @@ using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Producto.Lote;
 using Servicios.LogicaNegocio.Sistema;
+using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta;
 using System;
 using System.Collections.Generic;
@@ -47,23 +49,29 @@ namespace Presentacion
         private PanelDatosTurno _panelDatosTurno;
         private DatosTurnoDTO _ultimoEstadoTurno;
 
+        private readonly ElementoDePanelesPantallaPrincipal _datosIniciales;
+        private readonly List<ProductoDTO> _productosIniciales;
+        private readonly List<VentaDTO> _ventasIniciales;
         #endregion
 
         #region Constructores
 
-        public VentanaPrincipal() : this(new UsuarioLogeado())
-        {
-        }
-
-        public VentanaPrincipal(UsuarioLogeado usuarioLogeado)
+        public VentanaPrincipal( UsuarioLogeado usuarioLogeado, ElementoDePanelesPantallaPrincipal datosIniciales, List<ProductoDTO> productosIniciales, List<VentaDTO> ventasIniciales)
         {
             InitializeComponent();
+
             _ofertaServicio = new OfertaServicio();
             _dellesSistema = new DetallesSistemaServicio();
             _accesoSistema = new AccesoSistema();
             _pantallaPrincipalServicio = new PantallaPrincipalServicio();
             _loteServicio = new LoteServicio();
+
             _usuarioLogeado = usuarioLogeado;
+
+            // üî• NUEVO
+            _datosIniciales = datosIniciales;
+            _productosIniciales = productosIniciales ?? new List<ProductoDTO>();
+            _ventasIniciales = ventasIniciales ?? new List<VentaDTO>();
 
             this.Bounds = Screen.PrimaryScreen.WorkingArea;
 
@@ -76,7 +84,7 @@ namespace Presentacion
 
         #endregion
 
-        #region InicializaciÛn y Carga (Load)
+        #region Inicializaci√≥n y Carga (Load)
 
         private void VentanaPrincipal_Load(object sender, EventArgs e)
         {
@@ -104,7 +112,7 @@ namespace Presentacion
             MyTimer.Tick += MyTimer_Tick;
             MyTimer.Start();
 
-            // Timer Datos de Caja (SincronizaciÛn cada 20s)
+            // Timer Datos de Caja (Sincronizaci√≥n cada 20s)
             System.Windows.Forms.Timer MyTimerDatos = new System.Windows.Forms.Timer();
             MyTimerDatos.Interval = 20000;
             MyTimerDatos.Tick += MyTimerDatos_Tick;
@@ -113,7 +121,7 @@ namespace Presentacion
 
         #endregion
 
-        #region LÛgica de ActualizaciÛn y Datos (Business Logic)
+        #region L√≥gica de Actualizaci√≥n y Datos (Business Logic)
 
         private void ActualizarInformacionTurno()
         {
@@ -126,40 +134,65 @@ namespace Presentacion
                 return;
             }
 
-            // 3. Si hay cambios, actualizar cachÈ y UI silenciosamente (sin flashear)
+            // 3. Si hay cambios, actualizar cach√© y UI silenciosamente (sin flashear)
             _ultimoEstadoTurno = datosNuevos;
             _panelDatosTurno.ActualizarSoloTextoCaja(datosNuevos);
 
             Console.WriteLine("UI Actualizada: Se detectaron cambios en el turno.");
         }
 
+        //private void crearPanelDatosAdicionales()
+        //{
+
+        //    //// 1. Inicializas la interfaz
+        //    //var panelConsultas = new PanelConsultasRapidas();
+        //    //panelConsultas.CargarConsultasRapidas(tabPage1);
+
+        //    //// 2. Obtienes los datos de tus servicios (simulado)
+        //    //var ultimasVentas = _ventaServicio.ObtenerUltimas(10);
+        //    //var stockProductos = _productoServicio.ObtenerTodos();
+
+        //    //// 3. Llenas las tablas
+        //    //panelConsultas.ActualizarTablaVentas(ultimasVentas);
+        //    //panelConsultas.ActualizarTablaProductos(stockProductos);
+
+        //    //////////////////////////////////
+        //    //var panelConsultasRapidas = new PanelConsultasRapidas();
+
+        //    //// Carga inicial de datos
+        //    //var datosTurno = _pantallaPrincipalServicio.ObtenerDatosTurno(DatosSistema.CajaId, DatosSistema.UsuarioId);
+        //    //_ultimoEstadoTurno = datosTurno;
+
+        //    //// Renderizar en tabPage2 usando la instancia global
+        //    //_panelDatosTurno.CargarResumenTurno(tabPage2, datosTurno);
+
+        //    //// Renderizar consultas en tabPage1
+        //    //panelConsultasRapidas.CargarConsultasRapidas(tabPage1);
+        //}
         private void crearPanelDatosAdicionales()
         {
-
-            //// 1. Inicializas la interfaz
-            //var panelConsultas = new PanelConsultasRapidas();
-            //panelConsultas.CargarConsultasRapidas(tabPage1);
-
-            //// 2. Obtienes los datos de tus servicios (simulado)
-            //var ultimasVentas = _ventaServicio.ObtenerUltimas(10);
-            //var stockProductos = _productoServicio.ObtenerTodos();
-
-            //// 3. Llenas las tablas
-            //panelConsultas.ActualizarTablaVentas(ultimasVentas);
-            //panelConsultas.ActualizarTablaProductos(stockProductos);
-
-            ////////////////////////////////
             var panelConsultasRapidas = new PanelConsultasRapidas();
 
-            // Carga inicial de datos
-            var datosTurno = _pantallaPrincipalServicio.ObtenerDatosTurno(DatosSistema.CajaId, DatosSistema.UsuarioId);
-            _ultimoEstadoTurno = datosTurno;
+            // üî• 1. DATOS DE TURNO (desde inicializador, NO DB)
+            if (_datosIniciales != null)
+            {
+                _ultimoEstadoTurno = _datosIniciales.DatosTurno;
+                _panelDatosTurno.CargarResumenTurno(tabPage2, _datosIniciales.DatosTurno);
+            }
 
-            // Renderizar en tabPage2 usando la instancia global
-            _panelDatosTurno.CargarResumenTurno(tabPage2, datosTurno);
-
-            // Renderizar consultas en tabPage1
+            // üî• 2. CREAR UI
             panelConsultasRapidas.CargarConsultasRapidas(tabPage1);
+
+            // üî• 3. CARGAR GRILLAS (sin DB)
+            if (_productosIniciales != null && _productosIniciales.Count > 0)
+            {
+                panelConsultasRapidas.ActualizarTablaProductos(_productosIniciales);
+            }
+
+            if (_ventasIniciales != null && _ventasIniciales.Count > 0)
+            {
+                panelConsultasRapidas.ActualizarTablaVentas(_ventasIniciales);
+            }
         }
 
         #endregion
@@ -199,13 +232,13 @@ namespace Presentacion
 
         #endregion
 
-        #region NavegaciÛn y Botones
+        #region Navegaci√≥n y Botones
 
         private void btnPanelAdmin_Click(object sender, EventArgs e)
         {
             if (!AuthHelper.Tiene("Admin.Acceso"))
             {
-                MessageBox.Show("Acceso disponible sÛlo para Administradores");
+                MessageBox.Show("Acceso disponible s√≥lo para Administradores");
                 return;
             }
             var administracion = new FAdministracion(_usuarioLogeado.PersonaId);
@@ -254,13 +287,13 @@ namespace Presentacion
                 return;
             }
 
-            MessageBox.Show(respuesta.Mensaje, "InformaciÛn", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(respuesta.Mensaje, "Informaci√≥n", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Application.Restart();
         }
 
         #endregion
 
-        #region GeneraciÛn de Notificaciones
+        #region Generaci√≥n de Notificaciones
 
         private void crearNotificacionesLotes()
         {
@@ -300,31 +333,31 @@ namespace Presentacion
         {
             var listaLotesNotificar = new List<NotificacionDTO>
             {
-                new NotificacionDTO { NotificacionId = 1, Titulo = "Producto: Leche Entera (URGENTE)", Descripcion = "Lote: L-001 venciÛ hace 2 dÌas (20/04/2026).", FechaNotificacion = DateTime.Now.AddMinutes(-60), Leida = false, NivelUrgencia = 1 },
-                new NotificacionDTO { NotificacionId = 2, Titulo = "Producto: Yogurt Frutilla (PR”XIMO)", Descripcion = "Lote: L-002 vence en 2 dÌas (24/04/2026).", FechaNotificacion = DateTime.Now.AddMinutes(-30), Leida = false, NivelUrgencia = 2 },
-                new NotificacionDTO { NotificacionId = 3, Titulo = "Producto: Arroz (AL DÕA)", Descripcion = "Lote: L-003 vence en 15 dÌas (07/05/2026).", FechaNotificacion = DateTime.Now, Leida = false, NivelUrgencia = 3 },
-                new NotificacionDTO { NotificacionId = 4, Titulo = "Producto: Queso Crema", Descripcion = "Lote: L-009 VENCIDO. Retirar de gÛndola inmediatamente.", FechaNotificacion = DateTime.Now.AddDays(-1), Leida = false, NivelUrgencia = 1 },
-                new NotificacionDTO { NotificacionId = 5, Titulo = "Producto: Manteca 200g", Descripcion = "Lote: L-102 vence maÒana. Considerar liquidaciÛn.", FechaNotificacion = DateTime.Now.AddHours(-5), Leida = true, NivelUrgencia = 2 },
-                new NotificacionDTO { NotificacionId = 6, Titulo = "Producto: Fideos TallarÌn", Descripcion = "Lote: L-505. Vencimiento lejano (Diciembre 2026).", FechaNotificacion = DateTime.Now.AddDays(-2), Leida = true, NivelUrgencia = 3 }
+                new NotificacionDTO { NotificacionId = 1, Titulo = "Producto: Leche Entera (URGENTE)", Descripcion = "Lote: L-001 venci√≥ hace 2 d√≠as (20/04/2026).", FechaNotificacion = DateTime.Now.AddMinutes(-60), Leida = false, NivelUrgencia = 1 },
+                new NotificacionDTO { NotificacionId = 2, Titulo = "Producto: Yogurt Frutilla (PR√ìXIMO)", Descripcion = "Lote: L-002 vence en 2 d√≠as (24/04/2026).", FechaNotificacion = DateTime.Now.AddMinutes(-30), Leida = false, NivelUrgencia = 2 },
+                new NotificacionDTO { NotificacionId = 3, Titulo = "Producto: Arroz (AL D√çA)", Descripcion = "Lote: L-003 vence en 15 d√≠as (07/05/2026).", FechaNotificacion = DateTime.Now, Leida = false, NivelUrgencia = 3 },
+                new NotificacionDTO { NotificacionId = 4, Titulo = "Producto: Queso Crema", Descripcion = "Lote: L-009 VENCIDO. Retirar de g√≥ndola inmediatamente.", FechaNotificacion = DateTime.Now.AddDays(-1), Leida = false, NivelUrgencia = 1 },
+                new NotificacionDTO { NotificacionId = 5, Titulo = "Producto: Manteca 200g", Descripcion = "Lote: L-102 vence ma√±ana. Considerar liquidaci√≥n.", FechaNotificacion = DateTime.Now.AddHours(-5), Leida = true, NivelUrgencia = 2 },
+                new NotificacionDTO { NotificacionId = 6, Titulo = "Producto: Fideos Tallar√≠n", Descripcion = "Lote: L-505. Vencimiento lejano (Diciembre 2026).", FechaNotificacion = DateTime.Now.AddDays(-2), Leida = true, NivelUrgencia = 3 }
             };
 
             var listaOfertasVencidas = new List<NotificacionDTO>
             {
-                new NotificacionDTO { NotificacionId = 101, Titulo = "Oferta Vencida (ALTA)", Descripcion = "La oferta Verano 2026 ya expirÛ.", FechaNotificacion = DateTime.Now.AddDays(-1), Leida = false, NivelUrgencia = 1 },
-                new NotificacionDTO { NotificacionId = 102, Titulo = "Oferta por Vencer (MEDIA)", Descripcion = "La oferta Fin de Semana vence maÒana.", FechaNotificacion = DateTime.Now, Leida = false, NivelUrgencia = 2 },
-                new NotificacionDTO { NotificacionId = 103, Titulo = "Oferta Vigente (BAJA)", Descripcion = "La oferta Mensual vence en 20 dÌas.", FechaNotificacion = DateTime.Now.AddHours(-2), Leida = true, NivelUrgencia = 3 },
-                new NotificacionDTO { NotificacionId = 104, Titulo = "LiquidaciÛn de Stock: Bebidas", Descripcion = "FinalizÛ el tiempo de la promo 4x3 en gaseosas.", FechaNotificacion = DateTime.Now.AddDays(-3), Leida = false, NivelUrgencia = 1 },
-                new NotificacionDTO { NotificacionId = 105, Titulo = "Descuento Empleados", Descripcion = "ActualizaciÛn de cupos para el mes de Mayo.", FechaNotificacion = DateTime.Now, Leida = false, NivelUrgencia = 3 }
+                new NotificacionDTO { NotificacionId = 101, Titulo = "Oferta Vencida (ALTA)", Descripcion = "La oferta Verano 2026 ya expir√≥.", FechaNotificacion = DateTime.Now.AddDays(-1), Leida = false, NivelUrgencia = 1 },
+                new NotificacionDTO { NotificacionId = 102, Titulo = "Oferta por Vencer (MEDIA)", Descripcion = "La oferta Fin de Semana vence ma√±ana.", FechaNotificacion = DateTime.Now, Leida = false, NivelUrgencia = 2 },
+                new NotificacionDTO { NotificacionId = 103, Titulo = "Oferta Vigente (BAJA)", Descripcion = "La oferta Mensual vence en 20 d√≠as.", FechaNotificacion = DateTime.Now.AddHours(-2), Leida = true, NivelUrgencia = 3 },
+                new NotificacionDTO { NotificacionId = 104, Titulo = "Liquidaci√≥n de Stock: Bebidas", Descripcion = "Finaliz√≥ el tiempo de la promo 4x3 en gaseosas.", FechaNotificacion = DateTime.Now.AddDays(-3), Leida = false, NivelUrgencia = 1 },
+                new NotificacionDTO { NotificacionId = 105, Titulo = "Descuento Empleados", Descripcion = "Actualizaci√≥n de cupos para el mes de Mayo.", FechaNotificacion = DateTime.Now, Leida = false, NivelUrgencia = 3 }
             };
 
             var listaCuentasCorrientes = new List<NotificacionDTO>
             {
                 new NotificacionDTO { NotificacionId = 501, Titulo = "Cta Cte: Distribuidora X", Descripcion = "Saldo muy atrasado. Vencimiento: 15/04/2026.", FechaNotificacion = DateTime.Now.AddDays(-5), Leida = false, NivelUrgencia = 1 },
-                new NotificacionDTO { NotificacionId = 502, Titulo = "Cta Cte: AlmacÈn Y", Descripcion = "Factura por vencer hoy (22/04/2026).", FechaNotificacion = DateTime.Now, Leida = false, NivelUrgencia = 2 },
-                new NotificacionDTO { NotificacionId = 503, Titulo = "Cta Cte: Kiosco Z", Descripcion = "Vencimiento programado para la prÛxima semana.", FechaNotificacion = DateTime.Now.AddDays(-1), Leida = false, NivelUrgencia = 3 },
-                new NotificacionDTO { NotificacionId = 504, Titulo = "Cta Cte: Supermercado 'El Sol'", Descripcion = "Deuda prejudicial. El cliente ha superado el lÌmite de crÈdito permitido.", FechaNotificacion = DateTime.Now.AddDays(-7), Leida = false, NivelUrgencia = 1 },
-                new NotificacionDTO { NotificacionId = 505, Titulo = "Cta Cte: CarnicerÌa Don Pepe", Descripcion = "Pago parcial recibido. Resta abonar el 50% de la factura actual.", FechaNotificacion = DateTime.Now.AddHours(-10), Leida = true, NivelUrgencia = 2 },
-                new NotificacionDTO { NotificacionId = 506, Titulo = "Cta Cte: Minimarket Centro", Descripcion = "Aviso de cortesÌa: Su factura vence en 10 dÌas.", FechaNotificacion = DateTime.Now.AddDays(-2), Leida = false, NivelUrgencia = 3 }
+                new NotificacionDTO { NotificacionId = 502, Titulo = "Cta Cte: Almac√©n Y", Descripcion = "Factura por vencer hoy (22/04/2026).", FechaNotificacion = DateTime.Now, Leida = false, NivelUrgencia = 2 },
+                new NotificacionDTO { NotificacionId = 503, Titulo = "Cta Cte: Kiosco Z", Descripcion = "Vencimiento programado para la pr√≥xima semana.", FechaNotificacion = DateTime.Now.AddDays(-1), Leida = false, NivelUrgencia = 3 },
+                new NotificacionDTO { NotificacionId = 504, Titulo = "Cta Cte: Supermercado 'El Sol'", Descripcion = "Deuda prejudicial. El cliente ha superado el l√≠mite de cr√©dito permitido.", FechaNotificacion = DateTime.Now.AddDays(-7), Leida = false, NivelUrgencia = 1 },
+                new NotificacionDTO { NotificacionId = 505, Titulo = "Cta Cte: Carnicer√≠a Don Pepe", Descripcion = "Pago parcial recibido. Resta abonar el 50% de la factura actual.", FechaNotificacion = DateTime.Now.AddHours(-10), Leida = true, NivelUrgencia = 2 },
+                new NotificacionDTO { NotificacionId = 506, Titulo = "Cta Cte: Minimarket Centro", Descripcion = "Aviso de cortes√≠a: Su factura vence en 10 d√≠as.", FechaNotificacion = DateTime.Now.AddDays(-2), Leida = false, NivelUrgencia = 3 }
             };
 
             return tipoDato switch

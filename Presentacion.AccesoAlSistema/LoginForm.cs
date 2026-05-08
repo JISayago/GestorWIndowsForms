@@ -45,17 +45,17 @@ namespace Presentacion.AccesoAlSistema
 
         private void IngresarAlSistema()
         {
-            if (string.IsNullOrEmpty(txtUsuario.Text) || string.IsNullOrEmpty(txtPass.Text))
+            if (string.IsNullOrWhiteSpace(txtUsuario.Text) || string.IsNullOrWhiteSpace(txtPass.Text))
             {
                 MessageBox.Show("Por favor el usuario y la contraseña son obligatorios",
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            username = txtUsuario.Text;
-            pass = txtPass.Text;
+            var username = txtUsuario.Text.Trim();
+            var pass = txtPass.Text;
 
-            // 🔹 1. Validar estado del usuario
+
             var estadoUsuario = _accesoSistema.ValidarEstadoUsuario(username);
 
             if (estadoUsuario.Exitoso)
@@ -70,21 +70,9 @@ namespace Presentacion.AccesoAlSistema
                     form.ShowDialog();
                     return;
                 }
-                // mejorar el filtro de accion no puede ser solo con un string.contains, se puede agregar un campo de tipo enum o algo similar para identificar la accion a realizar
-                // 🔸 Recuperación de contraseña
-                if (estadoUsuario.Mensaje.Contains("recuperación"))
-                {
-                    MessageBox.Show(estadoUsuario.Mensaje,
-                        "Recuperación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                    var form = new FCodigoRecuperacion((long)estadoUsuario.EntidadId);
-                    form.ShowDialog();
-                    return;
-                }
                 var permisos = _usuarioServicio.ObtenerPermisosPorUsuario((long)estadoUsuario.EntidadId);
             }
-
-            // 🔹 2. Login normal
             var response = _accesoSistema.LogeoAlSistema(username, pass);
 
             if (!response.Exitoso)
@@ -94,13 +82,11 @@ namespace Presentacion.AccesoAlSistema
                 return;
             }
 
-            // 🔹 3. Obtener usuario logueado
             var uLogeado = _empleadoServicio.ObtenerEmpleadoPorId((long)response.EntidadId);
 
             if (uLogeado.PersonaId != null)
             {
                 var permisos = _usuarioServicio.ObtenerPermisosPorUsuario((long)response.EntidadId);
-
                 var esSAdmin = _usuarioServicio.EsSuperAdmin((long)response.EntidadId);
 
                 _usuarioLogeado = new UsuarioLogeado
@@ -112,13 +98,12 @@ namespace Presentacion.AccesoAlSistema
                     Permisos = permisos,
                     EsSuperAdmin = esSAdmin
                 };
-                
-                AuthHelper.UsuarioActual = _usuarioLogeado;
 
+                AuthHelper.UsuarioActual = _usuarioLogeado;
                 PuedeAccederAlSistema = true;
             }
 
-            this.Close();
+            Close();
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -136,10 +121,31 @@ namespace Presentacion.AccesoAlSistema
             var Frec = new FRecuperarContra();
             Frec.ShowDialog();
 
-            if (Frec.recuperar && Frec.esAdmin )
+            if (Frec.recuperar && Frec.esAdmin)
             {
-                IngresarAlSistema();
+                var estadoUsuario = _accesoSistema.ValidarEstadoUsuario(Frec.Usuario);
+
+                if (estadoUsuario.Exitoso)
+                {
+                    if (estadoUsuario.Mensaje.Contains("recuperación"))
+                    {
+                        MessageBox.Show(estadoUsuario.Mensaje,
+                            "Recuperación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        var X = estadoUsuario.DatoExtra;
+                        
+                        var form = new FCodigoRecuperacion(estadoUsuario.DatoExtra);
+                        form.ShowDialog();
+                        return;
+                    }
+
+                }
             }
+        }
+
+        private void lnklblCodigoRec_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            using var f = new FCodigoRecuperacion();
+            f.ShowDialog();
         }
     }
 }

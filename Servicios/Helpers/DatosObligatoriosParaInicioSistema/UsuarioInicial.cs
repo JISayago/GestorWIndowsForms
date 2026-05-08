@@ -62,7 +62,8 @@ namespace Servicios.Helpers.DatosObligatorios
                 rol = new Rol
                 {
                     CodigoRol = "SADMIN",
-                    Nombre = "Super Administrador"
+                    Nombre = "Super Administrador",
+                    DetalleRol = "Control Total"
                 };
 
                 context.Roles.Add(rol);
