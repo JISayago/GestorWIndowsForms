@@ -86,7 +86,18 @@ namespace Presentacion.Core.Producto
             cmbMarca.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbMarca.DropDownStyle = ComboBoxStyle.DropDown;
 
-            var rubros = _RubroServicio.ObtenerRubro("").ToList();
+            var filtrosRubros = new FiltroConsulta
+            {
+                TextoBuscar = string.Empty,
+                Bool1 = false, // no eliminados
+                Page = 1,
+                PageSize = 1000
+            };
+
+            var rubros = _RubroServicio
+                .ObtenerRubros(filtrosRubros)
+                .Items
+                .ToList();
 
             cmbRubro.DisplayMember = "Nombre"; // lo que se muestra
             cmbRubro.ValueMember = "Id";
