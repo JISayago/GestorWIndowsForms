@@ -437,110 +437,180 @@ namespace Servicios.LogicaNegocio.Producto
             return producto;
         }
 
-        //public ResultadoPaginacion<ProductoDTO> ObtenerProductos(FiltroConsulta filtros)
-        //{
-        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
+        public ResultadoPaginacion<ProductoDTO> ObtenerProductos(FiltroConsulta filtros)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-        //    var query = context.Productos
-        //        .AsNoTracking()
-        //        .Include(e => e.Marca)
-        //        .Include(e => e.Rubro)
-        //        .Include(e => e.CategoriasProductos)
-        //        .AsQueryable();
+            var query = context.Productos
+                .AsNoTracking()
+                .Include(e => e.Marca)
+                .Include(e => e.Rubro)
+                .Include(e => e.CategoriasProductos)
+                .AsQueryable();
 
-        //    // 🔹 Eliminados
-        //    query = filtros.VerEliminados
-        //        ? query.Where(e => e.EstaEliminado)
-        //        : query.Where(e => !e.EstaEliminado);
+            // 🔹 ELIMINADOS
+            query = filtros.Bool1
+                ? query.Where(e => e.EstaEliminado)
+                : query.Where(e => !e.EstaEliminado);
 
-        //    // 🔹 Buscador
-        //    if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
-        //    {
-        //        switch (filtros.Extra?.ToString())
-        //        {
-        //            case "MarcaNombre":
-        //                query = query.Where(e => e.Marca.Nombre.Contains(filtros.TextoBuscar));
-        //                break;
+            // 🔹 BUSQUEDA TEXTO
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                var texto = filtros.TextoBuscar.Trim();
 
-        //            case "RubroNombre":
-        //                query = query.Where(e => e.Rubro.Nombre.Contains(filtros.TextoBuscar));
-        //                break;
+                switch (filtros.Filtro1?.ToString())
+                {
+                    case "MarcaNombre":
 
-        //            case "Codigo":
-        //                query = query.Where(e => e.Codigo.Contains(filtros.TextoBuscar));
-        //                break;
+                        query = query.Where(e =>
+                            e.Marca != null &&
+                            e.Marca.Nombre.Contains(texto));
 
-        //            case "CodigoBarra":
-        //                query = query.Where(e => e.CodigoBarra.Contains(filtros.TextoBuscar));
-        //                break;
+                        break;
 
-        //            default:
-        //                query = query.Where(e => e.Descripcion.Contains(filtros.TextoBuscar));
-        //                break;
-        //        }
-        //    }
+                    case "RubroNombre":
 
-        //    if (!string.IsNullOrEmpty(filtros.Extra2?.ToString()))
-        //    {
-        //        if (int.TryParse(filtros.Extra2.ToString(), out int estado))
-        //        {
-        //            query = query.Where(e => e.Estado == estado);
-        //        }
-        //    }
+                        query = query.Where(e =>
+                            e.Rubro != null &&
+                            e.Rubro.Nombre.Contains(texto));
 
-        //    var total = query.Count();
+                        break;
 
-        //    var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+                    case "Codigo":
 
-        //    if (totalPaginas == 0) totalPaginas = 1;
+                        query = query.Where(e =>
+                            e.Codigo.Contains(texto));
 
-        //    if (filtros.Page > totalPaginas)
-        //        filtros.Page = totalPaginas;
+                        break;
 
-        //    if (filtros.Page < 1)
-        //        filtros.Page = 1;
+                    case "CodigoBarra":
 
-        //    // 🔹 ORDEN
-        //    query = query.OrderBy(e => e.ProductoId);
+                        query = query.Where(e =>
+                            e.CodigoBarra.Contains(texto));
 
-        //    // 🔹 PAGINADO
-        //    var data = query
-        //        .Skip((filtros.Page - 1) * filtros.PageSize)
-        //        .Take(filtros.PageSize)
-        //        .Select(e => new ProductoDTO
-        //        {
-        //            ProductoId = e.ProductoId,
-        //            IdMarca = e.IdMarca,
-        //            IdRubro = e.IdRubro,
-        //            MarcaNombre = e.Marca.Nombre,
-        //            RubroNombre = e.Rubro.Nombre,
-        //            Stock = e.Stock,
-        //            ControlPorLote = e.ControlPorLote,
-        //            PrecioCosto = e.PrecioCosto,
-        //            PrecioVenta = e.PrecioVenta,
-        //            Descripcion = e.Descripcion,
-        //            EstaEliminado = e.EstaEliminado,
-        //            Estado = e.Estado,
-        //            Medida = e.Medida,
-        //            UnidadMedida = e.UnidadMedida,
-        //            Codigo = e.Codigo,
-        //            CodigoBarra = e.CodigoBarra,
-        //            IvaIncluidoPrecioFinal = e.IvaIncluidoPrecioFinal,
-        //            EsFraccionable = e.EsFraccionable,
-        //            CategoriaIds = e.CategoriasProductos
-        //                .Select(cp => cp.IdCategoria)
-        //                .ToList()
-        //        })
-        //        .ToList();
+                        break;
 
-        //    return new ResultadoPaginacion<ProductoDTO>
-        //    {
-        //        Items = data,
-        //        TotalRegistros = total,
-        //        Page = filtros.Page, // 🔴 importante devolver la corregida
-        //        PageSize = filtros.PageSize
-        //    };
-        //}
+                    case "Descripcion":
+
+                        query = query.Where(e =>
+                            e.Descripcion.Contains(texto));
+
+                        break;
+
+                    default:
+
+                        query = query.Where(e =>
+                            e.Descripcion.Contains(texto) ||
+
+                            (e.Marca != null &&
+                             e.Marca.Nombre.Contains(texto)) ||
+
+                            (e.Rubro != null &&
+                             e.Rubro.Nombre.Contains(texto)) ||
+
+                            e.Codigo.Contains(texto) ||
+
+                            e.CodigoBarra.Contains(texto));
+
+                        break;
+                }
+            }
+
+            // 🔹 FILTRO ESTADO
+            if (!string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
+            {
+                if (int.TryParse(filtros.Filtro2.ToString(), out int estado))
+                {
+                    query = query.Where(e => e.Estado == estado);
+                }
+            }
+
+            // 🔹 FILTRO MARCA
+            if (!string.IsNullOrWhiteSpace(filtros.Filtro3?.ToString()))
+            {
+                if (long.TryParse(filtros.Filtro3.ToString(), out long marcaId))
+                {
+                    query = query.Where(e => e.IdMarca == marcaId);
+                }
+            }
+
+            // 🔹 TOTAL
+            var total = query.Count();
+
+            // 🔹 PAGINACION SEGURA
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+
+            if (totalPaginas == 0)
+                totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 🔹 ORDEN
+            query = query.OrderBy(e => e.Descripcion);
+
+            // 🔹 DATA
+            var data = query
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
+                .Select(e => new ProductoDTO
+                {
+                    ProductoId = e.ProductoId,
+
+                    IdMarca = e.IdMarca,
+                    IdRubro = e.IdRubro,
+
+                    MarcaNombre = e.Marca != null
+                        ? e.Marca.Nombre
+                        : string.Empty,
+
+                    RubroNombre = e.Rubro != null
+                        ? e.Rubro.Nombre
+                        : string.Empty,
+
+                    Stock = e.Stock,
+
+                    ControlPorLote = e.ControlPorLote,
+
+                    PrecioCosto = e.PrecioCosto,
+
+                    PrecioVenta = e.PrecioVenta,
+
+                    Descripcion = e.Descripcion,
+
+                    EstaEliminado = e.EstaEliminado,
+
+                    Estado = e.Estado,
+
+                    Medida = e.Medida,
+
+                    UnidadMedida = e.UnidadMedida,
+
+                    Codigo = e.Codigo,
+
+                    CodigoBarra = e.CodigoBarra,
+
+                    IvaIncluidoPrecioFinal = e.IvaIncluidoPrecioFinal,
+
+                    EsFraccionable = e.EsFraccionable,
+
+                    CategoriaIds = e.CategoriasProductos
+                        .Select(cp => cp.IdCategoria)
+                        .ToList()
+                })
+                .ToList();
+
+            return new ResultadoPaginacion<ProductoDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
+        }
         public IEnumerable<ProductoDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(
     long? MarcaId = null, long? RubroId = null, long? CategoriaId = null)
         {

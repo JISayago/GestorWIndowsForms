@@ -167,84 +167,102 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
 
             return rolesAsignados;
         }
-        //public ResultadoPaginacion<RolDTO> ObtenerRoles(FiltroConsulta filtros)
-        //{
-        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
+        public ResultadoPaginacion<RolDTO> ObtenerRoles(FiltroConsulta filtros)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-        //    var query = context.Roles
-        //        .AsNoTracking()
-        //        .AsQueryable();
+            var query = context.Roles
+                .AsNoTracking()
+                .AsQueryable();
 
-        //    // 🔴 ELIMINADOS
-        //    query = filtros.VerEliminados
-        //        ? query.Where(e => e.EstaEliminado)
-        //        : query.Where(e => !e.EstaEliminado);
+            // 🔴 ELIMINADOS
+            query = filtros.Bool1
+                ? query.Where(x => x.EstaEliminado)
+                : query.Where(x => !x.EstaEliminado);
 
-        //    // 🔍 BUSQUEDA
-        //    if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
-        //    {
-        //        var texto = filtros.TextoBuscar;
+            // 🔍 BUSQUEDA
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                var texto = filtros.TextoBuscar.Trim();
 
-        //        switch (filtros.Extra?.ToString())
-        //        {
-        //            case "Nombre":
-        //                query = query.Where(e => e.Nombre.Contains(texto));
-        //                break;
+                switch (filtros.Filtro1?.ToString())
+                {
+                    case "Nombre":
 
-        //            case "DetalleRol":
-        //                query = query.Where(e => e.DetalleRol.Contains(texto));
-        //                break;
+                        query = query.Where(x =>
+                            x.Nombre.Contains(texto));
 
-        //            case "CodigoRol":
-        //                query = query.Where(e => e.CodigoRol.Contains(texto));
-        //                break;
+                        break;
 
-        //            default: // TODOS
-        //                query = query.Where(e =>
-        //                    e.Nombre.Contains(texto) ||
-        //                    e.DetalleRol.Contains(texto) ||
-        //                    e.CodigoRol.Contains(texto));
-        //                break;
-        //        }
-        //    }
+                    case "DetalleRol":
 
-        //    // 📊 TOTAL
-        //    var total = query.Count();
+                        query = query.Where(x =>
+                            x.DetalleRol.Contains(texto));
 
-        //    // 🔴 CONTROL PAGINACION
-        //    var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
-        //    if (totalPaginas == 0) totalPaginas = 1;
+                        break;
 
-        //    if (filtros.Page > totalPaginas)
-        //        filtros.Page = totalPaginas;
+                    case "CodigoRol":
 
-        //    if (filtros.Page < 1)
-        //        filtros.Page = 1;
+                        query = query.Where(x =>
+                            x.CodigoRol.Contains(texto));
 
-        //    // 📌 ORDEN (más lógico que por Id)
-        //    query = query.OrderBy(e => e.Nombre);
+                        break;
 
-        //    // 📄 DATA
-        //    var data = query
-        //        .Skip((filtros.Page - 1) * filtros.PageSize)
-        //        .Take(filtros.PageSize)
-        //        .Select(e => new RolDTO
-        //        {
-        //            RolId = e.RolId,
-        //            Nombre = e.Nombre,
-        //            CodigoRol = e.CodigoRol,
-        //            DetalleRol = e.DetalleRol
-        //        })
-        //        .ToList();
+                    default:
 
-        //    return new ResultadoPaginacion<RolDTO>
-        //    {
-        //        Items = data,
-        //        TotalRegistros = total,
-        //        Page = filtros.Page,
-        //        PageSize = filtros.PageSize
-        //    };
-        //}
+                        query = query.Where(x =>
+                            x.Nombre.Contains(texto)
+                            ||
+                            x.DetalleRol.Contains(texto)
+                            ||
+                            x.CodigoRol.Contains(texto));
+
+                        break;
+                }
+            }
+
+            // 📊 TOTAL
+            var total = query.Count();
+
+            // 🔴 CONTROL PAGINACION
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 🔽 ORDEN
+            query = query.OrderBy(x => x.Nombre);
+
+            // 📄 DATA
+            var data = query
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
+                .Select(x => new RolDTO
+                {
+                    RolId = x.RolId,
+
+                    Nombre = x.Nombre,
+
+                    CodigoRol = x.CodigoRol,
+
+                    DetalleRol = x.DetalleRol
+                })
+                .ToList();
+
+            return new ResultadoPaginacion<RolDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
+        }
         public RolDTO ObtenerRolPorId(long rolId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);

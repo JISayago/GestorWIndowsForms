@@ -3,10 +3,10 @@ using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
-using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Empleado.Rol;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -15,32 +15,42 @@ namespace Presentacion.Core.Empleado.Rol
     public partial class FRolConsulta : FBaseConsulta
     {
         private readonly IRolServicio _rolServicio;
+
         public long? rolSeleccionado = null;
+
         public bool soloSeleccion;
 
         public FRolConsulta() : this(new RolServicio())
         {
             InitializeComponent();
+
             soloSeleccion = false;
         }
 
         public FRolConsulta(IRolServicio rolServicio)
         {
             _rolServicio = rolServicio;
+
+            InitializeComponent();
+
             soloSeleccion = false;
         }
 
         public FRolConsulta(bool soloSeleccion)
         {
             InitializeComponent();
+
             this.soloSeleccion = soloSeleccion;
+
             _rolServicio = new RolServicio();
 
             if (soloSeleccion)
+            {
                 MessageBox.Show("Seleccione el rol con doble click");
+            }
         }
 
-        #region 🔥 ACCIONES DINAMICAS (si querés migrar botones al lateral nuevo)
+        #region 🔥 ACCIONES DINAMICAS
 
         protected override void ConfigurarAccionesPersonalizadas()
         {
@@ -50,66 +60,121 @@ namespace Presentacion.Core.Empleado.Rol
                 (id) =>
                 {
                     var f = new FAsignacionRolesEmpleados(TipoAsignacionRol.Nuevo);
+
                     f.ShowDialog();
                 },
-                false // no requiere fila seleccionada
+                false
             );
 
             AgregarAccion(
-                "Asignar Tareas",
+                "Asignar Permisos",
                 SystemIcons.Shield.ToBitmap(),
-                (id) =>
-                {
-            if (entidadID.HasValue)
-                    {
-                    var f = new FAsignacionPermisosRol(entidadID);
-                    f.ShowDialog();
-                    }
-                },
-                false // no requiere fila seleccionada
+                AbrirAsignacionPermisos,
+                true
             );
         }
 
-        #endregion
-
-        #region BOTONES BASE
-
-        public override void EjecutarBtnNuevo()
+        private void AbrirAsignacionPermisos(long? id)
         {
-            var f = new FRolABM(TipoOperacion.Nuevo);
+            if (!id.HasValue)
+            {
+                MessageBox.Show("Seleccione un rol.");
+                return;
+            }
+
+            var f = new FAsignacionPermisosRol(id);
+
             f.ShowDialog();
-            ActualizarGrillaBase();
-        }
-
-        public override void EjecutarBtnModificar()
-        {
-            base.EjecutarBtnModificar();
-            if (!puedeEjecutarComando) return;
-
-            var f = new FRolABM(TipoOperacion.Modificar, entidadID);
-            f.ShowDialog();
-            ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
-        }
-
-        public override void EjecutarBtnEliminar()
-        {
-            base.EjecutarBtnEliminar();
-            if (!puedeEjecutarComando) return;
-
-            var f = new FRolABM(TipoOperacion.Eliminar, entidadID);
-            f.ShowDialog();
-            ActualizarSegunOperacion(f.RealizoAlgunaOperacion);
         }
 
         #endregion
 
-        #region GRILLA
+        #region 🔷 FILTROS
+
+        protected override void ConfigurarFiltrosUI()
+        {
+            base.ConfigurarFiltrosUI();
+
+            var opciones = new List<OpcionFiltro>
+            {
+                new OpcionFiltro
+                {
+                    Texto = "Todos",
+                    Valor = ""
+                },
+
+                new OpcionFiltro
+                {
+                    Texto = "Nombre",
+                    Valor = "Nombre"
+                },
+
+                new OpcionFiltro
+                {
+                    Texto = "Detalle",
+                    Valor = "DetalleRol"
+                },
+
+                new OpcionFiltro
+                {
+                    Texto = "Código",
+                    Valor = "CodigoRol"
+                }
+            };
+
+            ActivarCombo(
+                cbx1,
+                lblcbx1,
+                opciones,
+                "Texto",
+                "Valor",
+                "Buscar rol por"
+            );
+
+            ActivarCheck(
+                chkBool1,
+                "Ver eliminados"
+            );
+
+            cbx1.SelectedValue = "";
+        }
+
+        #endregion
+
+        #region 🔥 DATOS
+
+        public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
+        {
+            base.ActualizarDatos(dgv, filtros);
+
+            var resultado = _rolServicio.ObtenerRoles(filtros);
+
+            dgv.DataSource = resultado.Items;
+
+            ResetearGrilla(dgv);
+
+            var paginacion = new DatosPaginacion
+            {
+                PaginaActual = resultado.Page,
+                PageSize = resultado.PageSize,
+                CantidadRegistros = resultado.TotalRegistros
+            };
+
+            ActualizarPaginacionUI(paginacion);
+
+            BarraLateralBotones.Enabled = !filtros.Bool1;
+        }
+
+        #endregion
+
+        #region 🔷 GRILLA
 
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
 
-            if (grilla.Columns.Count == 0) return;
+            if (grilla.Columns.Count == 0)
+                return;
 
             if (grilla.Columns.Contains("RolId"))
             {
@@ -121,14 +186,14 @@ namespace Presentacion.Core.Empleado.Rol
             {
                 grilla.Columns["Nombre"].Visible = true;
                 grilla.Columns["Nombre"].HeaderText = "Rol";
-                grilla.Columns["Nombre"].Width = 120;
+                grilla.Columns["Nombre"].Width = 180;
             }
 
             if (grilla.Columns.Contains("CodigoRol"))
             {
                 grilla.Columns["CodigoRol"].Visible = true;
-                grilla.Columns["CodigoRol"].Width = 120;
                 grilla.Columns["CodigoRol"].HeaderText = "Código";
+                grilla.Columns["CodigoRol"].Width = 140;
             }
 
             if (grilla.Columns.Contains("DetalleRol"))
@@ -139,78 +204,75 @@ namespace Presentacion.Core.Empleado.Rol
             }
         }
 
+        #endregion
 
-        //public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
-        //{
-        //    base.ActualizarDatos(dgv, filtros);
+        #region 🔷 BOTONES BASE
 
-        //    filtros.Extra ??= "ApyNom";
+        public override void EjecutarBtnNuevo()
+        {
+            var f = new FRolABM(TipoOperacion.Nuevo);
 
-        //    var resultado = _rolServicio.ObtenerRoles(filtros);
+            f.ShowDialog();
 
-        //    dgv.DataSource = resultado.Items;
+            if (f.RealizoAlgunaOperacion)
+            {
+                RefrescarGrilla();
+            }
+        }
 
-        //    // 🔴 CLAVE: volver a aplicar formato
-        //    ResetearGrilla(dgv);
+        public override void EjecutarBtnModificar()
+        {
+            base.EjecutarBtnModificar();
 
-        //    var paginacion = new DatosPaginacion
-        //    {
-        //        PaginaActual = resultado.Page,
-        //        PageSize = resultado.PageSize,
-        //        CantidadRegistros = resultado.TotalRegistros,
-        //    };
+            if (!puedeEjecutarComando)
+                return;
 
-        //    ActualizarPaginacionUI(paginacion);
+            var f = new FRolABM(TipoOperacion.Modificar, entidadID);
 
-        //    BarraLateralBotones.Enabled = !filtros.VerEliminados;
-        //}
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+            {
+                RefrescarGrilla();
+            }
+        }
+
+        public override void EjecutarBtnEliminar()
+        {
+            base.EjecutarBtnEliminar();
+
+            if (!puedeEjecutarComando)
+                return;
+
+            var f = new FRolABM(TipoOperacion.Eliminar, entidadID);
+
+            f.ShowDialog();
+
+            if (f.RealizoAlgunaOperacion)
+            {
+                RefrescarGrilla();
+            }
+        }
 
         #endregion
 
-        #region REFRESH
+        #region 🔷 DOBLE CLICK
 
-        private void ActualizarSegunOperacion(bool realizoOperacion)
+        public override void EjecutarDobleClickFila(long? id)
         {
-            if (realizoOperacion)
-                ActualizarGrillaBase();
-        }
+            if (!soloSeleccion)
+                return;
 
-        private void ActualizarGrillaBase()
-        {
-            //ActualizarDatos(dgvGrilla, txtBuscar?.Text ?? "", cbxEstaEliminado, BarraLateralBotones);
+            if (!id.HasValue)
+                return;
+
+            rolSeleccionado = id;
+
+            DialogResult = DialogResult.OK;
+
+            Close();
         }
 
         #endregion
-        //protected override void ConfigurarFiltrosUI()
-        //{
-
-        //    base.ConfigurarFiltrosUI();
-
-        //    ActivarFiltroEliminados("Mostrar roles eliminados.");
-
-        //    var opciones = new List<OpcionFiltro>
-        //    {
-        //        new OpcionFiltro { Texto = "Todos", Valor = "" },
-        //        new OpcionFiltro { Texto = "Nombre", Valor = "Nombre" },
-        //        new OpcionFiltro { Texto = "Detalle", Valor = "DetalleRol" },
-        //        new OpcionFiltro { Texto = "Código", Valor = "CodigoRol" }
-        //    };
-
-        //    ActivarFiltroCombo(opciones, "Texto", "Valor");
-
-
-        //    cbx1.SelectedValue = "";
-        //}
-
-        //protected override string ObtenerTextoLabelFiltroOpcional()
-        //{
-        //    return "Buscar rol por:";
-        //}
-
-        //protected override string ObtenerTextoLabelBusqueda()
-        //{
-        //    return "Buscar rol:";
-        //}
-
     }
 }
