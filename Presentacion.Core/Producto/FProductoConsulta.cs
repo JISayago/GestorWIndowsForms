@@ -263,79 +263,127 @@ namespace Presentacion.Core.Producto
 
             grilla.ReadOnly = true;
 
+            grilla.AutoSizeColumnsMode =
+                DataGridViewAutoSizeColumnsMode.Fill;
+
             if (grilla.Columns.Contains("ProductoId"))
             {
                 grilla.Columns["ProductoId"].Visible = false;
                 grilla.Columns["ProductoId"].Name = "Id";
             }
 
+            // PRODUCTO
             if (grilla.Columns.Contains("Descripcion"))
             {
-                grilla.Columns["Descripcion"].Visible = true;
-                grilla.Columns["Descripcion"].HeaderText = "Producto";
-                grilla.Columns["Descripcion"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.Fill;
+                var col = grilla.Columns["Descripcion"];
+
+                col.Visible = true;
+                col.HeaderText = "Producto";
+
+                col.FillWeight = 220;
+                col.MinimumWidth = 220;
             }
 
+            // MARCA
             if (grilla.Columns.Contains("MarcaNombre"))
             {
-                grilla.Columns["MarcaNombre"].Visible = true;
-                grilla.Columns["MarcaNombre"].HeaderText = "Marca";
-                grilla.Columns["MarcaNombre"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.AllCells;
+                var col = grilla.Columns["MarcaNombre"];
+
+                col.Visible = true;
+                col.HeaderText = "Marca";
+
+                col.FillWeight = 110;
+                col.MinimumWidth = 100;
             }
 
+            // RUBRO
             if (grilla.Columns.Contains("RubroNombre"))
             {
-                grilla.Columns["RubroNombre"].Visible = true;
-                grilla.Columns["RubroNombre"].HeaderText = "Rubro";
-                grilla.Columns["RubroNombre"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.AllCells;
+                var col = grilla.Columns["RubroNombre"];
+
+                col.Visible = true;
+                col.HeaderText = "Rubro";
+
+                col.FillWeight = 110;
+                col.MinimumWidth = 100;
             }
 
+            // COSTO
             if (grilla.Columns.Contains("PrecioCosto"))
             {
-                grilla.Columns["PrecioCosto"].Visible = true;
-                grilla.Columns["PrecioCosto"].HeaderText = "Costo";
-                grilla.Columns["PrecioCosto"].DefaultCellStyle.Format = "C2";
+                var col = grilla.Columns["PrecioCosto"];
+
+                col.Visible = true;
+                col.HeaderText = "Precio Costo";
+
+                col.DefaultCellStyle.Format = "C2";
+
+                col.FillWeight = 80;
+                col.MinimumWidth = 80;
             }
 
+            // VENTA
             if (grilla.Columns.Contains("PrecioVenta"))
             {
-                grilla.Columns["PrecioVenta"].Visible = true;
-                grilla.Columns["PrecioVenta"].HeaderText = "Venta";
-                grilla.Columns["PrecioVenta"].DefaultCellStyle.Format = "C2";
+                var col = grilla.Columns["PrecioVenta"];
+
+                col.Visible = true;
+                col.HeaderText = "Precio Venta";
+
+                col.DefaultCellStyle.Format = "C2";
+
+                col.FillWeight = 80;
+                col.MinimumWidth = 80;
             }
 
+            // STOCK
             if (grilla.Columns.Contains("Stock"))
             {
-                grilla.Columns["Stock"].Visible = true;
-                grilla.Columns["Stock"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.AllCells;
+                var col = grilla.Columns["Stock"];
+
+                col.Visible = true;
+
+                col.FillWeight = 45;
+                col.MinimumWidth = 55;
             }
 
+            // ESTADO
             if (grilla.Columns.Contains("Estado"))
             {
-                grilla.Columns["Estado"].Visible = true;
-                grilla.Columns["Estado"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.AllCells;
+                grilla.Columns["Estado"].Visible = false;
             }
 
+            if (grilla.Columns.Contains("EstadoDescripcion"))
+            {
+                var col = grilla.Columns["EstadoDescripcion"];
+
+                col.Visible = true;
+                col.HeaderText = "Estado";
+
+                col.FillWeight = 70;
+                col.MinimumWidth = 80;
+            }
+
+            // CONTROL POR LOTE
             if (grilla.Columns.Contains("ControlPorLote"))
             {
-                grilla.Columns["ControlPorLote"].Visible = true;
-                grilla.Columns["ControlPorLote"].HeaderText =
-                    "Control por Lote";
+                grilla.Columns["ControlPorLote"].Visible = false;
+            }
 
-                grilla.Columns["ControlPorLote"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.AllCells;
+            if (grilla.Columns.Contains("ControlLoteDescripcion"))
+            {
+                var col = grilla.Columns["ControlLoteDescripcion"];
 
-                grilla.Columns["ControlPorLote"].DefaultCellStyle.NullValue = false;
+                col.Visible = true;
 
-                grilla.Columns["ControlPorLote"].ReadOnly = true;
+                col.HeaderText = "Ctrl. Lote";
+
+                col.FillWeight = 95;
+                col.MinimumWidth = 95;
+
+                col.ReadOnly = true;
             }
         }
-
         #endregion
 
         #region BOTONES BASE

@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             dgvGrilla = new DataGridView();
             BarraLateralBotones = new ToolStrip();
             btnNuevo = new ToolStripButton();
@@ -97,7 +99,23 @@
             // dgvGrilla
             // 
             dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.Control;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            dgvGrilla.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ActiveCaptionText;
+            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            dgvGrilla.DefaultCellStyle = dataGridViewCellStyle4;
             dgvGrilla.Location = new Point(12, 302);
             dgvGrilla.Name = "dgvGrilla";
             dgvGrilla.Size = new Size(1427, 247);
@@ -381,10 +399,10 @@
             // 
             lblcbx3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             lblcbx3.AutoSize = true;
-            lblcbx3.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblcbx3.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblcbx3.Location = new Point(3, 0);
             lblcbx3.Name = "lblcbx3";
-            lblcbx3.Size = new Size(40, 26);
+            lblcbx3.Size = new Size(46, 26);
             lblcbx3.TabIndex = 9;
             lblcbx3.Text = "cbx3";
             // 
@@ -416,10 +434,10 @@
             // 
             lblcbx2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             lblcbx2.AutoSize = true;
-            lblcbx2.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblcbx2.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblcbx2.Location = new Point(3, 0);
             lblcbx2.Name = "lblcbx2";
-            lblcbx2.Size = new Size(40, 26);
+            lblcbx2.Size = new Size(46, 26);
             lblcbx2.TabIndex = 9;
             lblcbx2.Text = "cbx2";
             // 
@@ -452,10 +470,10 @@
             // 
             lblcbx1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             lblcbx1.AutoSize = true;
-            lblcbx1.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblcbx1.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblcbx1.Location = new Point(3, 0);
             lblcbx1.Name = "lblcbx1";
-            lblcbx1.Size = new Size(40, 26);
+            lblcbx1.Size = new Size(46, 26);
             lblcbx1.TabIndex = 8;
             lblcbx1.Text = "cbx1";
             // 
@@ -616,10 +634,11 @@
             // txtBuscar
             // 
             txtBuscar.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            txtBuscar.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtBuscar.BorderStyle = BorderStyle.FixedSingle;
+            txtBuscar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtBuscar.Location = new Point(3, 37);
             txtBuscar.Name = "txtBuscar";
-            txtBuscar.Size = new Size(402, 33);
+            txtBuscar.Size = new Size(402, 29);
             txtBuscar.TabIndex = 0;
             // 
             // lblBuscar
