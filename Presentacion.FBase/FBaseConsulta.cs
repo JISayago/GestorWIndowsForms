@@ -657,5 +657,79 @@ namespace Presentacion.FBase
         {
 
         }
+
+        private void btnLimpiar_Click(object sender, EventArgs e)
+        {
+            LimpiarFiltros();
+
+            paginaActual = 1;
+
+            RefrescarGrilla();
+        }
+
+        protected virtual void LimpiarFiltros()
+        {
+            LimpiarTexto();
+            LimpiarCombos();
+            LimpiarChecks();
+            LimpiarFechas();
+
+            ActualizarLabelBusqueda();
+
+            LimpiarFiltrosCustom();
+        }
+
+        protected virtual void LimpiarFiltrosCustom()
+        {
+            // para override en hijos
+        }
+
+        private void LimpiarTexto()
+        {
+            if (txtBuscar != null)
+                txtBuscar.Text = string.Empty;
+        }
+
+        private void LimpiarCombos()
+        {
+            LimpiarCombo(cbx1);
+            LimpiarCombo(cbx2);
+            LimpiarCombo(cbx3);
+        }
+
+        private void LimpiarCombo(ComboBox combo)
+        {
+            if (combo == null || !combo.Enabled)
+                return;
+
+            combo.SelectedIndex = -1;
+
+            if (combo.Items.Count > 0)
+                combo.SelectedIndex = 0;
+        }
+
+        private void LimpiarChecks()
+        {
+            if (chkBool1 != null && chkBool1.Enabled)
+                chkBool1.Checked = false;
+
+            if (chkBool2 != null && chkBool2.Enabled)
+                chkBool2.Checked = false;
+        }
+
+        private void LimpiarFechas()
+        {
+            if (chkUsarFecha != null)
+                chkUsarFecha.Checked = false;
+
+            if (chkUsarRango != null)
+                chkUsarRango.Checked = false;
+
+            if (dtpDesde != null)
+                dtpDesde.Value = DateTime.Now;
+
+            if (dtpHasta != null)
+                dtpHasta.Value = DateTime.Now;
+        }
     }
 }

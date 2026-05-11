@@ -140,13 +140,13 @@ namespace Presentacion.Core.Producto
        => "Buscar producto:";
 
         protected override string TextoLblCbx1
-            => "Filtro por Propiedad";
+            => "Filtrar por Propiedad";
 
         protected override string TextoLblCbx2
-            => "Estado";
+            => "Filtrar por Estado";
 
         protected override string TextoLblCbx3
-            => "Tipo";
+            => "Filtrar por Marca";
         #region ACCIONES DINAMICAS
 
         protected override void ConfigurarAccionesPersonalizadas()

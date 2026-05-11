@@ -8,7 +8,7 @@ namespace Servicios.Helpers.Producto
 {
     public enum EstadoProducto
     {
-        Normal = 1,
+        Activo = 1,
         Vencido = 2,
         Discontinuado = 3,
         SinStock = 4

@@ -68,10 +68,12 @@
             dtpHasta = new DateTimePicker();
             dtpDesde = new DateTimePicker();
             tableLayoutPanel4 = new TableLayoutPanel();
+            tableLayoutPanel14 = new TableLayoutPanel();
+            btnLimpiar = new Button();
+            btnBuscar = new Button();
             tableLayoutPanel5 = new TableLayoutPanel();
             txtBuscar = new TextBox();
             lblBuscar = new Label();
-            btnBuscar = new Button();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
             BarraLateralBotones.SuspendLayout();
@@ -88,6 +90,7 @@
             tableLayoutPanel3.SuspendLayout();
             tableLayoutPanel8.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
+            tableLayoutPanel14.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
             SuspendLayout();
             // 
@@ -548,14 +551,53 @@
             tableLayoutPanel4.ColumnCount = 2;
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58.82353F));
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.17647F));
+            tableLayoutPanel4.Controls.Add(tableLayoutPanel14, 1, 0);
             tableLayoutPanel4.Controls.Add(tableLayoutPanel5, 0, 0);
-            tableLayoutPanel4.Controls.Add(btnBuscar, 1, 0);
             tableLayoutPanel4.Location = new Point(3, 139);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 1;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel4.Size = new Size(704, 74);
             tableLayoutPanel4.TabIndex = 7;
+            // 
+            // tableLayoutPanel14
+            // 
+            tableLayoutPanel14.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel14.ColumnCount = 1;
+            tableLayoutPanel14.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel14.Controls.Add(btnLimpiar, 0, 1);
+            tableLayoutPanel14.Controls.Add(btnBuscar, 0, 0);
+            tableLayoutPanel14.Location = new Point(417, 3);
+            tableLayoutPanel14.Name = "tableLayoutPanel14";
+            tableLayoutPanel14.RowCount = 2;
+            tableLayoutPanel14.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel14.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel14.Size = new Size(284, 68);
+            tableLayoutPanel14.TabIndex = 8;
+            // 
+            // btnLimpiar
+            // 
+            btnLimpiar.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            btnLimpiar.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnLimpiar.Location = new Point(3, 37);
+            btnLimpiar.Name = "btnLimpiar";
+            btnLimpiar.Size = new Size(278, 28);
+            btnLimpiar.TabIndex = 2;
+            btnLimpiar.Text = "Limpiar Filtros";
+            btnLimpiar.UseVisualStyleBackColor = true;
+            btnLimpiar.Click += btnLimpiar_Click;
+            // 
+            // btnBuscar
+            // 
+            btnBuscar.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            btnBuscar.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnBuscar.Location = new Point(3, 3);
+            btnBuscar.Name = "btnBuscar";
+            btnBuscar.Size = new Size(278, 28);
+            btnBuscar.TabIndex = 1;
+            btnBuscar.Text = "Aplicar Filtros";
+            btnBuscar.UseVisualStyleBackColor = true;
+            btnBuscar.Click += btnBuscar_Click;
             // 
             // tableLayoutPanel5
             // 
@@ -591,18 +633,6 @@
             lblBuscar.TabIndex = 1;
             lblBuscar.Text = "Buscar :";
             lblBuscar.TextAlign = ContentAlignment.BottomLeft;
-            // 
-            // btnBuscar
-            // 
-            btnBuscar.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            btnBuscar.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnBuscar.Location = new Point(417, 14);
-            btnBuscar.Name = "btnBuscar";
-            btnBuscar.Size = new Size(284, 46);
-            btnBuscar.TabIndex = 1;
-            btnBuscar.Text = "Aplicar Filtros";
-            btnBuscar.UseVisualStyleBackColor = true;
-            btnBuscar.Click += btnBuscar_Click;
             // 
             // FBaseConsulta
             // 
@@ -642,6 +672,7 @@
             tableLayoutPanel8.ResumeLayout(false);
             tableLayoutPanel8.PerformLayout();
             tableLayoutPanel4.ResumeLayout(false);
+            tableLayoutPanel14.ResumeLayout(false);
             tableLayoutPanel5.ResumeLayout(false);
             tableLayoutPanel5.PerformLayout();
             ResumeLayout(false);
@@ -694,5 +725,7 @@
         protected ComboBox comboBox1;
         protected ComboBox cbx3;
         protected ComboBox cbx2;
+        private TableLayoutPanel tableLayoutPanel14;
+        protected Button btnLimpiar;
     }
 }

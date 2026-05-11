@@ -517,7 +517,11 @@ namespace Servicios.LogicaNegocio.Producto
             }
 
             // 🔹 FILTRO ESTADO
-            if (!string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
+            if (string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
+            {
+                query = query.Where(e => e.Estado == (int)EstadoProducto.Activo);
+            }
+            else
             {
                 if (int.TryParse(filtros.Filtro2.ToString(), out int estado))
                 {
