@@ -27,6 +27,7 @@ namespace Presentacion.Core.Producto
 
         private bool vieneDeCargaProducto = false;
 
+
         public FProductoConsulta() : this(new ProductoServicio())
         {
             InitializeComponent();
@@ -135,7 +136,17 @@ namespace Presentacion.Core.Producto
         }
 
         #endregion
+        protected override string TextoLblBuscar
+       => "Buscar producto:";
 
+        protected override string TextoLblCbx1
+            => "Filtro por Propiedad";
+
+        protected override string TextoLblCbx2
+            => "Estado";
+
+        protected override string TextoLblCbx3
+            => "Tipo";
         #region ACCIONES DINAMICAS
 
         protected override void ConfigurarAccionesPersonalizadas()

@@ -20,6 +20,14 @@ namespace Presentacion.FBase
 
         public List<AccionGrid> AccionesPersonalizadas = new List<AccionGrid>();
 
+        protected virtual string TextoLblBuscar => "Buscar:";
+
+        protected virtual string TextoLblCbx1 => "Filtro 1";
+
+        protected virtual string TextoLblCbx2 => "Filtro 2";
+
+        protected virtual string TextoLblCbx3 => "Filtro 3";
+
         public FBaseConsulta()
         {
             InitializeComponent();
@@ -204,12 +212,12 @@ namespace Presentacion.FBase
 
         protected virtual void ActualizarTextosLabels()
         {
-            ActualizarLabelCombo(lblcbx1, "Filtro 1");
-            ActualizarLabelCombo(lblcbx2, "Filtro 2");
-            ActualizarLabelCombo(lblcbx3, "Filtro 3");
+            ActualizarLabelCombo(lblcbx1, TextoLblCbx1);
+            ActualizarLabelCombo(lblcbx2, TextoLblCbx2);
+            ActualizarLabelCombo(lblcbx3, TextoLblCbx3);
 
             if (lblBuscar != null)
-                lblBuscar.Text = "Buscar:";
+                lblBuscar.Text = TextoLblBuscar;
         }
 
         private void ActualizarLabelCombo(Label label, string texto)
