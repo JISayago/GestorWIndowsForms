@@ -44,7 +44,7 @@ namespace Presentacion.Core.Movimiento
 
         #region FILTROS
 
-        protected override bool UsarFiltroEliminados => false;
+        protected override bool UsarCheck1 => false;
 
         protected override void ConfigurarFiltrosUI()
         {

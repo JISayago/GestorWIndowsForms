@@ -18,6 +18,8 @@ namespace Presentacion.FBase
         protected int pageSize = 10;
         protected int totalPaginas = 1;
 
+        protected bool _actualizandoFiltros;
+
         public List<AccionGrid> AccionesPersonalizadas = new List<AccionGrid>();
 
         protected virtual string TextoLblBuscar => "Buscar:";
@@ -92,7 +94,9 @@ namespace Presentacion.FBase
 
         #region CONFIG FILTROS UI
 
-        protected virtual bool UsarFiltroEliminados => true;
+        protected virtual bool UsarCheck1 => true;
+        protected virtual bool UsarCheck2 => true;
+
 
         protected virtual void ConfigurarFiltrosUI()
         {
@@ -107,9 +111,13 @@ namespace Presentacion.FBase
 
             AsociarEventosCombos();
 
-            if (UsarFiltroEliminados)
+            if (UsarCheck1)
             {
-                ActivarCheck(chkBool1, "Ver eliminados");
+                ActivarCheck(chkBool1, "Filtro Check 1");
+            }
+            if (UsarCheck2)
+            {
+                ActivarCheck(chkBool2, "Filtro Check 2");
             }
         }
 
@@ -584,12 +592,36 @@ namespace Presentacion.FBase
 
             RefrescarGrilla();
         }
-
-        private void cbxEstaEliminado_CheckedChanged(object sender, EventArgs e)
+        private void chkBool2_CheckedChanged(object sender, EventArgs e)
         {
+            if (_actualizandoFiltros)
+                return;
+
             paginaActual = 1;
 
+            AccionCheck2();
+
+            //RefrescarGrilla();
+        }
+        private void chkBool1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_actualizandoFiltros)
+                return;
+
+            paginaActual = 1;
+
+            AccionCheck1();
+
+            //RefrescarGrilla();
+        }
+        protected virtual void AccionCheck1()
+        {
             RefrescarGrilla();
+        }
+        protected virtual void AccionCheck2()
+        {
+            RefrescarGrilla();
+
         }
 
         private void chkUsarFecha_CheckedChanged(object sender, EventArgs e)
@@ -731,5 +763,7 @@ namespace Presentacion.FBase
             if (dtpHasta != null)
                 dtpHasta.Value = DateTime.Now;
         }
+
+       
     }
 }

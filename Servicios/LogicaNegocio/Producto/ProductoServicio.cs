@@ -449,9 +449,21 @@ namespace Servicios.LogicaNegocio.Producto
                 .AsQueryable();
 
             // 🔹 ELIMINADOS
-            query = filtros.Bool1
-                ? query.Where(e => e.EstaEliminado)
-                : query.Where(e => !e.EstaEliminado);
+            // TODOS
+            if (filtros.Bool2)
+            {
+                // no filtra nada
+            }
+            // SOLO ELIMINADOS
+            else if (filtros.Bool1)
+            {
+                query = query.Where(e => e.EstaEliminado);
+            }
+            // SOLO ACTIVOS / NO ELIMINADOS
+            else
+            {
+                query = query.Where(e => !e.EstaEliminado);
+            }
 
             // 🔹 BUSQUEDA TEXTO
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
@@ -517,15 +529,18 @@ namespace Servicios.LogicaNegocio.Producto
             }
 
             // 🔹 FILTRO ESTADO
-            if (string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
+            if (!filtros.Bool1 && !filtros.Bool2)
             {
-                query = query.Where(e => e.Estado == (int)EstadoProducto.Activo);
-            }
-            else
-            {
-                if (int.TryParse(filtros.Filtro2.ToString(), out int estado))
+                if (string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
                 {
-                    query = query.Where(e => e.Estado == estado);
+                    query = query.Where(e => e.Estado == (int)EstadoProducto.Activo);
+                }
+                else
+                {
+                    if (int.TryParse(filtros.Filtro2.ToString(), out int estado))
+                    {
+                        query = query.Where(e => e.Estado == estado);
+                    }
                 }
             }
 

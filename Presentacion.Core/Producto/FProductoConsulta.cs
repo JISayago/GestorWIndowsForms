@@ -133,6 +133,7 @@ namespace Presentacion.Core.Producto
             cbx3.SelectedValue = "";
 
             ActivarCheck(chkBool1, "Ver eliminados");
+            ActivarCheck(chkBool2, "Mostrar Todos los Productos");
         }
 
         #endregion
@@ -210,6 +211,56 @@ namespace Presentacion.Core.Producto
                 if (fStock.RealizoOperacion)
                     RefrescarGrilla();
             }
+        }
+        protected override void AccionCheck2()
+        {
+            if (chkBool2.Checked)
+            {
+                _actualizandoFiltros = true;
+                chkBool1.Checked = false;
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosParaTodos();
+            }
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
+        }
+        protected override void AccionCheck1()
+        {
+            if (chkBool1.Checked)
+            {
+                _actualizandoFiltros = true;
+                chkBool2.Checked = false;
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosParaTodos();
+            }
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
+        }
+
+        private void LimpiarFiltrosParaTodos()
+        {
+            _actualizandoFiltros = true;
+
+            txtBuscar.Clear();
+
+            if (cbx1.Enabled)
+                cbx1.SelectedIndex = 0;
+
+            if (cbx2.Enabled)
+                cbx2.SelectedIndex = 0;
+
+            if (cbx3.Enabled)
+                cbx3.SelectedIndex = 0;
+
+            chkUsarFecha.Checked = false;
+
+            _actualizandoFiltros = false;
         }
 
         private void SeleccionProducto(long? id)

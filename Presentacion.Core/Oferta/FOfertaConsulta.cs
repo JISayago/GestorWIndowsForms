@@ -31,7 +31,7 @@ public partial class FOfertaConsulta : FBaseConsulta
 
     #region CONFIG FILTROS
 
-    protected override bool UsarFiltroEliminados => false;
+    protected override bool UsarCheck1 => false;
 
     protected override void ConfigurarFiltrosUI()
     {
