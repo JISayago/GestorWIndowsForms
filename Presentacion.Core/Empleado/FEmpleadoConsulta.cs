@@ -165,51 +165,19 @@ namespace Presentacion.Core.Empleado
         {
             base.ConfigurarFiltrosUI();
 
-            // =========================================================
-            // CHECK ELIMINADOS
-            // =========================================================
-
-            ActivarCheck(
-                chkBool1,
-                "Ver eliminados"
-            );
-
+         
             // =========================================================
             // COMBO BUSQUEDA
             // =========================================================
 
             var opcionesBusqueda = new List<OpcionFiltro>
-            {
-                new OpcionFiltro
-                {
-                    Texto = "Todos",
-                    Valor = ""
-                },
-
-                new OpcionFiltro
-                {
-                    Texto = "Nombre",
-                    Valor = "ApyNom"
-                },
-
-                new OpcionFiltro
-                {
-                    Texto = "Legajo",
-                    Valor = "Legajo"
-                },
-
-                new OpcionFiltro
-                {
-                    Texto = "Nombre Usuario",
-                    Valor = "Usuario"
-                },
-
-                new OpcionFiltro
-                {
-                    Texto = "Documento",
-                    Valor = "Dni"
-                }
-            };
+    {
+        new OpcionFiltro { Texto = "Todos", Valor = "" },
+        new OpcionFiltro { Texto = "Nombre", Valor = "ApyNom" },
+        new OpcionFiltro { Texto = "Legajo", Valor = "Legajo" },
+        new OpcionFiltro { Texto = "Nombre Usuario", Valor = "Usuario" },
+        new OpcionFiltro { Texto = "Documento", Valor = "Dni" }
+    };
 
             ActivarCombo(
                 cbx1,
@@ -221,63 +189,75 @@ namespace Presentacion.Core.Empleado
             );
 
             // =========================================================
-            // FECHAS
+            // FECHAS (checkbox + rango)
             // =========================================================
 
-            ActivarFiltroFechas(
-                "Filtrar por fecha"
-            );
+            ActivarFiltroFechas("Filtrar por fecha");
 
             // =========================================================
-            // COMBO FILTROS
+            // COMBO ESTADO (cbx2)
             // =========================================================
 
-            var tiposFiltro = new List<OpcionFiltro>
-            {
-                new OpcionFiltro
-                {
-                    Texto = "Todos",
-                    Valor = ""
-                },
+            var estados = new List<OpcionFiltro>
+    {
+        new OpcionFiltro { Texto = "Todos", Valor = "" },
 
-                new OpcionFiltro
-                {
-                    Texto = "Fecha Ingreso",
-                    Valor = ((int)TipoFechaFiltroEmpleado.FechaIngreso).ToString()
-                },
+        new OpcionFiltro
+        {
+            Texto = "Habilitado",
+            Valor = ((int)EstadoEmpleado.Habilitado).ToString()
+        },
 
-                new OpcionFiltro
-                {
-                    Texto = "Fecha Egreso",
-                    Valor = ((int)TipoFechaFiltroEmpleado.FechaEgreso).ToString()
-                },
+        new OpcionFiltro
+        {
+            Texto = "Inhabilitado",
+            Valor = ((int)EstadoEmpleado.Inhablitado).ToString()
+        },
 
-                new OpcionFiltro
-                {
-                    Texto = "Inhabilitado",
-                    Valor = ((int)EstadoEmpleado.Inhablitado).ToString()
-                },
-
-                new OpcionFiltro
-                {
-                    Texto = "Habilitado",
-                    Valor = ((int)EstadoEmpleado.Habilitado).ToString()
-                },
-
-                new OpcionFiltro
-                {
-                    Texto = "Sin Contraseña",
-                    Valor = ((int)EstadoEmpleado.SinPass).ToString()
-                }
-            };
+        new OpcionFiltro
+        {
+            Texto = "Sin Contraseña",
+            Valor = ((int)EstadoEmpleado.SinPass).ToString()
+        }
+    };
 
             ActivarCombo(
                 cbx2,
                 lblcbx2,
-                tiposFiltro,
+                estados,
                 "Texto",
                 "Valor",
-                "Filtrar por:"
+                "Estado"
+            );
+
+            // =========================================================
+            // COMBO TIPO FECHA (cbx3)
+            // =========================================================
+
+            var tiposFecha = new List<OpcionFiltro>
+    {
+        new OpcionFiltro { Texto = "Todos", Valor = "" },
+
+        new OpcionFiltro
+        {
+            Texto = "Fecha Ingreso",
+            Valor = "Ingreso"
+        },
+
+        new OpcionFiltro
+        {
+            Texto = "Fecha Egreso",
+            Valor = "Egreso"
+        }
+    };
+
+            ActivarCombo(
+                cbx3,
+                lblcbx3,
+                tiposFecha,
+                "Texto",
+                "Valor",
+                "Tipo Fecha"
             );
 
             // =========================================================
@@ -285,9 +265,23 @@ namespace Presentacion.Core.Empleado
             // =========================================================
 
             cbx1.SelectedValue = "";
-
             cbx2.SelectedValue = "";
+            cbx3.SelectedValue = "";
+            ActivarCheck(chkBool1, "Ver eliminados");
+            ActivarCheck(chkBool2, "Ver todos");
         }
+
+        protected override string TextoLblBuscar
+    => "Buscar Empleado:";
+
+        protected override string TextoLblCbx1
+            => "Filtrar por Propiedad";
+
+        protected override string TextoLblCbx2
+            => "Filtrar por Estado";
+
+        protected override string TextoLblCbx3
+            => "Filtrar por Fecha";
 
         protected override FiltroConsulta ObtenerFiltros()
         {
@@ -300,6 +294,81 @@ namespace Presentacion.Core.Empleado
             }
 
             return filtros;
+        }
+
+        protected override void AccionCheck2()
+        {
+            // VER TODOS
+
+            if (chkBool2.Checked)
+            {
+                _actualizandoFiltros = true;
+
+                chkBool1.Checked = false; // no tiene sentido combinar
+
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosModoGlobal();
+            }
+
+            RefrescarGrilla();
+        }
+
+        protected override void AccionCheck1()
+        {
+            // VER ELIMINADOS
+
+            if (chkBool1.Checked)
+            {
+                _actualizandoFiltros = true;
+
+                chkBool2.Checked = false;
+
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosModoEliminados();
+            }
+
+            RefrescarGrilla();
+        }
+        private void LimpiarFiltrosModoGlobal()
+        {
+            _actualizandoFiltros = true;
+
+            txtBuscar.Clear();
+
+            if (cbx1.Enabled)
+                cbx1.SelectedIndex = 0;
+
+            if (cbx2.Enabled)
+                cbx2.SelectedIndex = 0;
+
+            if (cbx3.Enabled)
+                cbx3.SelectedIndex = 0;
+
+            chkUsarFecha.Checked = false;
+
+            _actualizandoFiltros = false;
+        }
+
+        private void LimpiarFiltrosModoEliminados()
+        {
+            _actualizandoFiltros = true;
+
+            txtBuscar.Clear();
+
+            if (cbx1.Enabled)
+                cbx1.SelectedIndex = 0;
+
+            if (cbx2.Enabled)
+                cbx2.SelectedIndex = 0;
+
+            if (cbx3.Enabled)
+                cbx3.SelectedIndex = 0;
+
+            chkUsarFecha.Checked = false;
+
+            _actualizandoFiltros = false;
         }
 
         protected override bool EsModoSoloLectura(FiltroConsulta filtro)
