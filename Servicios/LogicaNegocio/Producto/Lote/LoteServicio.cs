@@ -84,10 +84,11 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 .Include(x => x.Producto)
                 .AsQueryable();
 
-            // 🔴 ELIMINADOS
-            query = filtros.Bool1
-                ? query.Where(x => x.EstaEliminado)
-                : query.Where(x => !x.EstaEliminado);
+            // 🔴 HISTORICO / ELIMINADOS
+            if (!filtros.Bool2)
+            {
+                query = query.Where(x => !x.EstaEliminado);
+            }
 
             // 🔍 BUSQUEDA
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
@@ -97,25 +98,91 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 switch (filtros.Filtro1?.ToString())
                 {
                     case "Producto":
+
                         query = query.Where(x =>
                             x.Producto.Descripcion.Contains(texto));
+
                         break;
 
                     case "NumeroLote":
+
                         query = query.Where(x =>
                             x.NumeroLote.Contains(texto));
+
                         break;
 
                     default:
+
                         query = query.Where(x =>
                             x.NumeroLote.Contains(texto) ||
                             x.Producto.Descripcion.Contains(texto));
+
+                        break;
+                }
+            }
+
+            // 📌 FILTRO ESTADO
+            if (!filtros.Bool2)
+            {
+                switch (filtros.Filtro2?.ToString())
+                {
+                    case "Activo":
+
+                        query = query.Where(x =>
+                            x.EstaActivo);
+
+                        break;
+
+                    case "Desactivado":
+
+                        query = query.Where(x =>
+                            !x.EstaActivo);
+
+                        break;
+
+                    case "Vencido":
+
+                        query = query.Where(x =>
+                            x.EstaVencido);
+
+                        break;
+
+                    case "Valido":
+
+                        query = query.Where(x =>
+                            !x.EstaVencido);
+
+                        break;
+
+                    default:
+
+                        // 🔹 DEFAULT
+                        // Solo activos y válidos
+
+                        if (filtros.Bool1)
+                        {
+                            // Mostrar vencidos
+
+                            query = query.Where(x =>
+                                x.EstaVencido);
+                        }
+                        else
+                        {
+                            // Solo activos y válidos
+
+                            query = query.Where(x =>
+                                x.EstaActivo &&
+                                !x.EstaVencido);
+                        }
+
                         break;
                 }
             }
 
             // 📅 TIPO FECHA
-            var tipoFecha = filtros.Filtro2?.ToString() ?? "Alta";
+            var tipoFecha = string.IsNullOrWhiteSpace(filtros.Filtro3?.ToString())
+                ? "Alta"
+                : filtros.Filtro3.ToString();
 
             // 📅 FILTRO FECHAS
             if (tipoFecha == "Alta")
@@ -181,7 +248,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             else
             {
                 queryOrdenado = query
-                    .OrderByDescending(x => x.FechaAlta);
+                    .OrderBy(x => x.FechaAlta);
             }
 
             // 📦 DATA

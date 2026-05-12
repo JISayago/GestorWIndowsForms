@@ -65,13 +65,26 @@ namespace Presentacion.Core.Producto.Lote
 
         #endregion
 
-        #region CONFIG FILTROS
 
+
+        protected override string TextoLblBuscar
+      => "Buscar Lote:";
+
+        protected override string TextoLblCbx1
+            => "Filtrar por Propiedad";
+
+        protected override string TextoLblCbx2
+            => "Filtrar por Estado";
+
+        protected override string TextoLblCbx3
+            => "Filtrar por Fecha";
+        #region ACCIONES DINAMICAS
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
 
-            ActivarCheck(chkBool1, "Ver eliminados");
+            ActivarCheck(chkBool1, "Mostrar Vencidos");
+            ActivarCheck(chkBool2, "Mostrar Todos los Lotes (histórico)");
 
             ActivarFiltroFechas("Filtrar por fecha");
 
@@ -90,16 +103,34 @@ namespace Presentacion.Core.Producto.Lote
                 "Valor",
                 "Buscar por"
             );
-
-            var tiposFecha = new List<OpcionFiltro>
+            var estado = new List<OpcionFiltro>
             {
-                new OpcionFiltro { Texto = "Fecha Alta", Valor = "Alta" },
-                new OpcionFiltro { Texto = "Fecha Vencimiento", Valor = "Vencimiento" }
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Activo", Valor = "Activo" },
+                new OpcionFiltro { Texto = "Desactivado", Valor = "Desactivado" },
+                new OpcionFiltro { Texto = "Vencido", Valor = "Vencido" },
+                new OpcionFiltro { Texto = "Válido", Valor = "Valido" }
             };
 
             ActivarCombo(
                 cbx2,
                 lblcbx2,
+                estado,
+                "Texto",
+                "Valor",
+                "Estado Lote"
+            );
+
+            var tiposFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Fecha Alta", Valor = "Alta" },
+                new OpcionFiltro { Texto = "Fecha Vencimiento", Valor = "Vencimiento" }
+            };
+
+            ActivarCombo(
+                cbx3,
+                lblcbx3,
                 tiposFecha,
                 "Texto",
                 "Valor",
@@ -107,9 +138,67 @@ namespace Presentacion.Core.Producto.Lote
             );
 
             cbx1.SelectedValue = "";
-            cbx2.SelectedValue = "Alta";
+            cbx2.SelectedValue = "";
+            cbx3.SelectedValue = "";
+        }
+        protected override void AccionCheck2()
+        {
+            if (chkBool2.Checked)
+            {
+                _actualizandoFiltros = true;
+
+                chkBool1.Checked = false;
+
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosEspeciales();
+            }
+
+            paginaActual = 1;
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
+        }
+        protected override void AccionCheck1()
+        {
+            if (chkBool1.Checked)
+            {
+                _actualizandoFiltros = true;
+
+                chkBool2.Checked = false;
+
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosEspeciales();
+            }
+
+            paginaActual = 1;
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
         }
 
+        private void LimpiarFiltrosEspeciales()
+        {
+            _actualizandoFiltros = true;
+
+            txtBuscar.Clear();
+
+            if (cbx1.Enabled)
+                cbx1.SelectedIndex = 0;
+
+            if (cbx2.Enabled)
+                cbx2.SelectedIndex = 0;
+
+            if (cbx3.Enabled)
+                cbx3.SelectedIndex = 0;
+
+            chkUsarFecha.Checked = false;
+
+            _actualizandoFiltros = false;
+        }
         #endregion
 
         #region ACCIONES PERSONALIZADAS
@@ -196,69 +285,148 @@ namespace Presentacion.Core.Producto.Lote
             if (grilla.Columns.Count == 0)
                 return;
 
-            if (grilla.Columns.Contains("LoteId"))
+            grilla.AutoSizeColumnsMode =
+                DataGridViewAutoSizeColumnsMode.Fill;
+
+            // ID
+            if (grilla.Columns.Contains("Id"))
             {
-                grilla.Columns["LoteId"].Visible = false;
-                grilla.Columns["LoteId"].Name = "Id";
+                grilla.Columns["Id"].Visible = false;
             }
 
+            // ID PRODUCTO
+            if (grilla.Columns.Contains("IdProducto"))
+            {
+                grilla.Columns["IdProducto"].Visible = false;
+            }
+
+            // NUMERO LOTE
             if (grilla.Columns.Contains("NumeroLote"))
             {
-                grilla.Columns["NumeroLote"].Visible = true;
-                grilla.Columns["NumeroLote"].HeaderText = "Número Lote";
-                grilla.Columns["NumeroLote"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.Fill;
+                var col = grilla.Columns["NumeroLote"];
+
+                col.Visible = true;
+                col.HeaderText = "Número Lote";
+
+                col.FillWeight = 120;
+                col.MinimumWidth = 120;
             }
 
+            // PRODUCTO
             if (grilla.Columns.Contains("NombreProducto"))
             {
-                grilla.Columns["NombreProducto"].Visible = true;
-                grilla.Columns["NombreProducto"].HeaderText = "Producto";
-                grilla.Columns["NombreProducto"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.Fill;
+                var col = grilla.Columns["NombreProducto"];
+
+                col.Visible = true;
+                col.HeaderText = "Producto";
+
+                col.FillWeight = 220;
+                col.MinimumWidth = 220;
             }
 
+            // DESCRIPCION
+            if (grilla.Columns.Contains("Descripcion"))
+            {
+                var col = grilla.Columns["Descripcion"];
+
+                col.Visible = true;
+                col.HeaderText = "Descripción";
+
+                col.FillWeight = 180;
+                col.MinimumWidth = 180;
+            }
+
+            // FECHA ALTA
             if (grilla.Columns.Contains("FechaAlta"))
             {
-                grilla.Columns["FechaAlta"].Visible = true;
-                grilla.Columns["FechaAlta"].HeaderText = "Creado";
-                grilla.Columns["FechaAlta"].DefaultCellStyle.Format = "dd/MM/yyyy";
+                var col = grilla.Columns["FechaAlta"];
+
+                col.Visible = true;
+                col.HeaderText = "Fecha Alta";
+
+                col.DefaultCellStyle.Format = "dd/MM/yyyy";
+
+                col.FillWeight = 90;
+                col.MinimumWidth = 90;
             }
 
+            // FECHA VENCIMIENTO
             if (grilla.Columns.Contains("FechaVencimiento"))
             {
-                grilla.Columns["FechaVencimiento"].Visible = true;
-                grilla.Columns["FechaVencimiento"].HeaderText = "Vencimiento";
-                grilla.Columns["FechaVencimiento"].DefaultCellStyle.Format = "dd/MM/yyyy";
+                var col = grilla.Columns["FechaVencimiento"];
+
+                col.Visible = true;
+                col.HeaderText = "Fecha Vencimiento";
+
+                col.DefaultCellStyle.Format = "dd/MM/yyyy";
+
+                col.FillWeight = 110;
+                col.MinimumWidth = 110;
             }
 
+            // ESTADO VENCIMIENTO DESCRIPCION
+            if (grilla.Columns.Contains("EstaVencidoDescripcion"))
+            {
+                var col = grilla.Columns["EstaVencidoDescripcion"];
+
+                col.Visible = true;
+                col.HeaderText = "Estado Vencimiento";
+
+                col.FillWeight = 150;
+                col.MinimumWidth = 150;
+            }
+
+            // ESTADO ACTIVO DESCRIPCION
+            if (grilla.Columns.Contains("EstaActivoDescripcion"))
+            {
+                var col = grilla.Columns["EstaActivoDescripcion"];
+
+                col.Visible = true;
+                col.HeaderText = "Estado";
+
+                col.FillWeight = 100;
+                col.MinimumWidth = 100;
+            }
+
+            // STOCK INICIAL
             if (grilla.Columns.Contains("StockInicial"))
             {
-                grilla.Columns["StockInicial"].Visible = true;
-                grilla.Columns["StockInicial"].HeaderText = "Stock Inicial";
+                var col = grilla.Columns["StockInicial"];
+
+                col.Visible = true;
+                col.HeaderText = "Stock Inicial";
+
+                col.DefaultCellStyle.Format = "N2";
+
+                col.FillWeight = 90;
+                col.MinimumWidth = 90;
             }
 
+            // STOCK ACTUAL
             if (grilla.Columns.Contains("StockActual"))
             {
-                grilla.Columns["StockActual"].Visible = true;
-                grilla.Columns["StockActual"].HeaderText = "Stock Actual";
+                var col = grilla.Columns["StockActual"];
+
+                col.Visible = true;
+                col.HeaderText = "Stock Actual";
+
+                col.DefaultCellStyle.Format = "N2";
+
+                col.FillWeight = 90;
+                col.MinimumWidth = 90;
             }
 
+            // CAMPOS BOOLEANOS CRUDOS
             if (grilla.Columns.Contains("EstaVencido"))
             {
-                grilla.Columns["EstaVencido"].Visible = true;
-                grilla.Columns["EstaVencido"].HeaderText = "Vencido";
-                grilla.Columns["EstaVencido"].ReadOnly = true;
+                grilla.Columns["EstaVencido"].Visible = false;
             }
 
             if (grilla.Columns.Contains("EstaActivo"))
             {
-                grilla.Columns["EstaActivo"].Visible = true;
-                grilla.Columns["EstaActivo"].HeaderText = "Activo";
-                grilla.Columns["EstaActivo"].ReadOnly = true;
+                grilla.Columns["EstaActivo"].Visible = false;
             }
         }
-
         #endregion
 
         #region BOTONES BASE
