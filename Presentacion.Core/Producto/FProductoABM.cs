@@ -24,6 +24,7 @@ namespace Presentacion.Core.Producto
         private readonly IRubroServicio _RubroServicio;
         protected long? EntidadID;
         private List<long> _categoriasSeleccionadas = new List<long>();
+        private bool _cargandoDatos = false;
 
         public override void FBaseABM_Load(object sender, EventArgs e)
         {
@@ -41,6 +42,8 @@ namespace Presentacion.Core.Producto
             _RubroServicio = new RubroServicio();
             EntidadID = entidadId;
 
+            _cargandoDatos = true; // Indicador para evitar eventos durante la carga de datos
+
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
             {
                 CargarDatos(entidadId);
@@ -50,8 +53,8 @@ namespace Presentacion.Core.Producto
             {
                 DesactivarControles(this);
             }
-            
-            
+
+
             AgregarControlesObligatorios(txtProducto, "Producto");
             AgregarControlesObligatorios(txtEstado, "Estado");
             AgregarControlesObligatorios(txtMedida, "Medida");
@@ -85,6 +88,7 @@ namespace Presentacion.Core.Producto
             cmbRubro.DropDownStyle = ComboBoxStyle.DropDown;
 
             EntidadID = entidadId;
+            _cargandoDatos = false; // Fin de la carga de datos
         }
 
         public override void Inicializador(long? entidadId)
@@ -154,7 +158,7 @@ namespace Presentacion.Core.Producto
                 return false;
             }
 
-            
+
             var ProductoNueva = new ProductoDTO
             {
                 Descripcion = txtProducto.Text,
@@ -298,5 +302,17 @@ namespace Presentacion.Core.Producto
             }
         }
 
+        private void chkControlPorLotes_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_cargandoDatos) return; // Evitar ejecutar lógica durante la carga de datos
+
+            if (TipoOperacion == TipoOperacion.Modificar)
+            {
+                var resultado = MessageBox.Show("¿Desea confirmar la operación?",
+                                         "Confirmación",
+                                         MessageBoxButtons.OKCancel,
+                                         MessageBoxIcon.Question);
+            }
+        }
     }
 }
