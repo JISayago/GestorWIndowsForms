@@ -70,7 +70,17 @@ namespace Presentacion.Core.Categoria
                 grilla.Columns["EstadoDescripcion"].Width = 120;
             }
         }
+        protected override string TextoLblBuscar
+  => "Buscar Categoria:";
 
+        protected override string TextoLblCbx1
+            => "Filtrar por Nombre";
+
+        protected override string TextoLblCbx2
+            => "Filtrar por";
+
+        protected override string TextoLblCbx3
+            => "Filtrar por";
         #endregion
 
         #region 🔥 ACTUALIZAR DATOS
@@ -190,9 +200,7 @@ namespace Presentacion.Core.Categoria
 
             var opciones = new List<OpcionFiltro>
             {
-                new OpcionFiltro { Texto = "Todos", Valor = "" },
                 new OpcionFiltro { Texto = "Nombre", Valor = "Nombre" },
-                new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" }
             };
 
             ActivarCombo(
@@ -209,7 +217,7 @@ namespace Presentacion.Core.Categoria
                 "Ver eliminadas"
             );
 
-            cbx1.SelectedValue = "";
+            cbx1.SelectedValue = "Nombre";
         }
 
         #endregion

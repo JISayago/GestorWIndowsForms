@@ -45,11 +45,6 @@ namespace Presentacion.Core.Producto.Rubro
             {
                 new OpcionFiltro
                 {
-                    Texto = "Todos",
-                    Valor = ""
-                },
-                new OpcionFiltro
-                {
                     Texto = "Nombre",
                     Valor = "Nombre"
                 }
@@ -64,9 +59,20 @@ namespace Presentacion.Core.Producto.Rubro
                 "Buscar por"
             );
 
-            cbx1.SelectedValue = "";
+            cbx1.SelectedValue = "Nombre";
+            ActivarCheck(chkBool1, "Ver eliminados");
         }
+        protected override string TextoLblBuscar
+    => "Buscar Rubro:";
 
+        protected override string TextoLblCbx1
+            => "Filtrar por Nombre";
+
+        protected override string TextoLblCbx2
+            => "Filtrar por";
+
+        protected override string TextoLblCbx3
+            => "Filtrar por";
         #endregion
 
         #region 🔷 GRILLA
