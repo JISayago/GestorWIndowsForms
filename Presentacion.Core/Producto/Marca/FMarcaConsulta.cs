@@ -101,19 +101,6 @@ namespace Presentacion.Core.Articulo.Marca
                 grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             }
 
-            if (grilla.Columns.Contains("Descripcion"))
-            {
-                grilla.Columns["Descripcion"].Visible = true;
-                grilla.Columns["Descripcion"].HeaderText = "Descripción";
-                grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            }
-
-            if (grilla.Columns.Contains("EstadoDescripcion"))
-            {
-                grilla.Columns["EstadoDescripcion"].Visible = true;
-                grilla.Columns["EstadoDescripcion"].Width = 120;
-                grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
-            }
         }
 
         #endregion
@@ -203,9 +190,7 @@ namespace Presentacion.Core.Articulo.Marca
 
             var opciones = new List<OpcionFiltro>
             {
-                new OpcionFiltro { Texto = "Todos", Valor = "" },
                 new OpcionFiltro { Texto = "Nombre", Valor = "Nombre" },
-                new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" }
             };
 
             ActivarCombo(
@@ -222,8 +207,22 @@ namespace Presentacion.Core.Articulo.Marca
                 "Ver eliminados"
             );
 
-            cbx1.SelectedValue = "";
+            cbx1.SelectedValue = "Nombre";
+
+            ActivarCheck(chkBool1, "Ver eliminadas");
         }
+
+        protected override string TextoLblBuscar
+      => "Buscar Marca:";
+
+        protected override string TextoLblCbx1
+            => "Filtrar por Nombre";
+
+        protected override string TextoLblCbx2
+            => "Filtrar por";
+
+        protected override string TextoLblCbx3
+            => "Filtrar por";
 
         #endregion
     }

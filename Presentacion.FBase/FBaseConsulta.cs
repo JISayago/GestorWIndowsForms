@@ -94,8 +94,8 @@ namespace Presentacion.FBase
 
         #region CONFIG FILTROS UI
 
-        protected virtual bool UsarCheck1 => true;
-        protected virtual bool UsarCheck2 => true;
+        protected virtual bool UsarCheck1 => false;
+        protected virtual bool UsarCheck2 => false;
 
 
         protected virtual void ConfigurarFiltrosUI()
