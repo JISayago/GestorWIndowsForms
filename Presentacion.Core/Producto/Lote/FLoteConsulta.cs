@@ -124,7 +124,9 @@ namespace Presentacion.Core.Producto.Lote
             var tiposFecha = new List<OpcionFiltro>
             {
                 new OpcionFiltro { Texto = "Todos", Valor = "" },
+            
                 new OpcionFiltro { Texto = "Fecha Alta", Valor = "Alta" },
+            
                 new OpcionFiltro { Texto = "Fecha Vencimiento", Valor = "Vencimiento" }
             };
 

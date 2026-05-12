@@ -161,15 +161,11 @@ namespace Servicios.LogicaNegocio.Producto.Lote
 
                         if (filtros.Bool1)
                         {
-                            // Mostrar vencidos
-
                             query = query.Where(x =>
                                 x.EstaVencido);
                         }
                         else
                         {
-                            // Solo activos y válidos
-
                             query = query.Where(x =>
                                 x.EstaActivo &&
                                 !x.EstaVencido);
@@ -242,13 +238,17 @@ namespace Servicios.LogicaNegocio.Producto.Lote
 
             if (tipoFecha == "Vencimiento")
             {
+                // Más próximos a vencer primero
+
                 queryOrdenado = query
                     .OrderBy(x => x.FechaVencimiento ?? DateTime.MaxValue);
             }
             else
             {
+                // Más recientes primero
+
                 queryOrdenado = query
-                    .OrderBy(x => x.FechaAlta);
+                    .OrderByDescending(x => x.FechaAlta);
             }
 
             // 📦 DATA
