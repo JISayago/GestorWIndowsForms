@@ -153,6 +153,8 @@ namespace Presentacion.Core.Producto
                     MessageBoxIcon.Error);
                 return false;
             }
+
+            
             var ProductoNueva = new ProductoDTO
             {
                 Descripcion = txtProducto.Text,
@@ -295,5 +297,6 @@ namespace Presentacion.Core.Producto
                 //txtCategoria.Text = string.Join(",", _categoriasSeleccionadas);
             }
         }
+
     }
 }
