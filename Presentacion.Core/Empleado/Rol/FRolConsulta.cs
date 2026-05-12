@@ -90,7 +90,17 @@ namespace Presentacion.Core.Empleado.Rol
         #endregion
 
         #region 🔷 FILTROS
+        protected override string TextoLblBuscar
+     => "Buscar Rol:";
 
+        protected override string TextoLblCbx1
+            => "Filtrar por Propiedad";
+
+        protected override string TextoLblCbx2
+            => "Filtrar por";
+
+        protected override string TextoLblCbx3
+            => "Filtrar por";
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
