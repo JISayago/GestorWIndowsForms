@@ -44,7 +44,8 @@ namespace Presentacion.Core.Movimiento
 
         #region FILTROS
 
-        protected override bool UsarCheck1 => false;
+        protected override bool UsarCheck1 => true;
+        protected override bool UsarCheck2 => true;
 
         protected override void ConfigurarFiltrosUI()
         {
@@ -78,12 +79,98 @@ namespace Presentacion.Core.Movimiento
                 opcionesTipo,
                 "Texto",
                 "Valor",
-                "Tipo Movimiento"
+                "Movimiento"
             );
 
+            var opcionesTipoMovimiento = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                new OpcionFiltro { Texto = "Cancelación", Valor = ((int)TipoMovimientoDetalle.Cancelacion).ToString()},
+                new OpcionFiltro { Texto = "Cuenta Corriente", Valor = ((int)TipoMovimientoDetalle.CuentaCorriente).ToString()  },
+                new OpcionFiltro { Texto = "Stock", Valor = ((int)TipoMovimientoDetalle.Stock).ToString() },    
+                new OpcionFiltro { Texto = "Venta", Valor = ((int)TipoMovimientoDetalle.Venta).ToString() },
+                new OpcionFiltro { Texto = "Compra", Valor = ((int)TipoMovimientoDetalle.Compra).ToString() },
+                new OpcionFiltro { Texto = "Servicios", Valor = ((int)TipoMovimientoDetalle.Servicios).ToString() },
+                new OpcionFiltro { Texto = "Venta Libre", Valor = ((int)TipoMovimientoDetalle.VentaLibre).ToString() }
+            };
+            ActivarCombo(
+             cbx3,
+             lblcbx3,
+             opcionesTipoMovimiento,
+             "Texto",
+             "Valor",
+             "Tipo"
+         );
+
             ActivarFiltroFechas("Filtrar por fecha");
+            ActivarCheck(chkBool1, "Ver eliminados");
+            ActivarCheck(chkBool2, "Ver todos (históricos)");
+            cbx1.SelectedValue = "";
+            cbx2.SelectedValue = "";
+            cbx3.SelectedValue = "";
+        }
+        protected override string TextoLblBuscar
+     => "Buscar Movimientos:";
+
+        protected override string TextoLblCbx1
+            => "Filtrar por Propiedad";
+
+        protected override string TextoLblCbx2
+            => "Filtrar por Movimiento";
+
+        protected override string TextoLblCbx3
+            => "Filtrar por Tipo Movimiento";
+
+        protected override void AccionCheck2()
+        {
+            if (chkBool2.Checked)
+            {
+                _actualizandoFiltros = true;
+                chkBool1.Checked = false;
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosParaTodos();
+            }
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
+        }
+        protected override void AccionCheck1()
+        {
+            if (chkBool1.Checked)
+            {
+                _actualizandoFiltros = true;
+                chkBool2.Checked = false;
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosParaTodos();
+            }
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
         }
 
+        private void LimpiarFiltrosParaTodos()
+        {
+            _actualizandoFiltros = true;
+
+            txtBuscar.Clear();
+
+            if (cbx1.Enabled)
+                cbx1.SelectedIndex = 0;
+
+            if (cbx2.Enabled)
+                cbx2.SelectedIndex = 0;
+
+            if (cbx3.Enabled)
+                cbx3.SelectedIndex = 0;
+
+            chkUsarFecha.Checked = false;
+
+            _actualizandoFiltros = false;
+        }
         protected override void ActualizarTextosLabels()
         {
             base.ActualizarTextosLabels();
@@ -144,51 +231,118 @@ namespace Presentacion.Core.Movimiento
         {
             base.ResetearGrilla(grilla);
 
+            grilla.ReadOnly = true;
+
             if (grilla.Columns.Count == 0)
                 return;
 
+            // IMPORTANTE: usar Fill real
+            grilla.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            // =========================================
+            // ID (OCULTO)
+            // =========================================
             if (grilla.Columns.Contains("MovimientoId"))
             {
                 grilla.Columns["MovimientoId"].Visible = false;
                 grilla.Columns["MovimientoId"].Name = "Id";
             }
 
+            // =========================================
+            // NUMERO (GRANDE)
+            // =========================================
             if (grilla.Columns.Contains("NumeroMovimiento"))
             {
-                grilla.Columns["NumeroMovimiento"].Visible = true;
-                grilla.Columns["NumeroMovimiento"].HeaderText = "Número";
-                grilla.Columns["NumeroMovimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                var col = grilla.Columns["NumeroMovimiento"];
+
+                col.Visible = true;
+                col.HeaderText = "Número";
+
+                col.FillWeight = 300;   // 🔥 grande
+                col.MinimumWidth = 180;
             }
 
+            // =========================================
+            // FECHA (MEDIO)
+            // =========================================
             if (grilla.Columns.Contains("FechaMovimiento"))
             {
-                grilla.Columns["FechaMovimiento"].Visible = true;
-                grilla.Columns["FechaMovimiento"].HeaderText = "Fecha";
-                grilla.Columns["FechaMovimiento"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
-                grilla.Columns["FechaMovimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                var col = grilla.Columns["FechaMovimiento"];
+
+                col.Visible = true;
+                col.HeaderText = "Fecha";
+
+                col.DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+
+                col.FillWeight = 150;
+                col.MinimumWidth = 130;
+            }
+
+            // =========================================
+            // MOVIMIENTO (CHICO)
+            // =========================================
+            if (grilla.Columns.Contains("TipoMovimientoDescripcion"))
+            {
+                var col = grilla.Columns["TipoMovimientoDescripcion"];
+
+                col.Visible = true;
+                col.HeaderText = "Movimiento";
+
+                col.FillWeight = 100;
+                col.MinimumWidth = 90;
             }
 
             if (grilla.Columns.Contains("TipoMovimiento"))
             {
-                grilla.Columns["TipoMovimiento"].Visible = true;
-                grilla.Columns["TipoMovimiento"].HeaderText = "Tipo";
-                grilla.Columns["TipoMovimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                grilla.Columns["TipoMovimiento"].Visible = false;
             }
 
-            if (grilla.Columns.Contains("Detalle"))
+            // =========================================
+            // TIPO DETALLE (MEDIO)
+            // =========================================
+            if (grilla.Columns.Contains("TipoMovimientoDetalleDescripcion"))
             {
-                grilla.Columns["Detalle"].Visible = true;
-                grilla.Columns["Detalle"].HeaderText = "Detalle";
-                grilla.Columns["Detalle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                var col = grilla.Columns["TipoMovimientoDetalleDescripcion"];
+
+                col.Visible = true;
+                col.HeaderText = "Tipo";
+
+                col.FillWeight = 100;
+                col.MinimumWidth = 120;
             }
 
+            if (grilla.Columns.Contains("TipoMovimientoDetalle"))
+            {
+                grilla.Columns["TipoMovimientoDetalle"].Visible = false;
+            }
+
+            // =========================================
+            // MONTO (GRANDE)
+            // =========================================
             if (grilla.Columns.Contains("Monto"))
             {
-                grilla.Columns["Monto"].Visible = true;
-                grilla.Columns["Monto"].HeaderText = "Monto";
-                grilla.Columns["Monto"].DefaultCellStyle.Format = "C2";
-                grilla.Columns["Monto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                var col = grilla.Columns["Monto"];
+
+                col.Visible = true;
+                col.HeaderText = "Monto";
+
+                col.DefaultCellStyle.Format = "C2";
+
+                col.FillWeight = 150;   // 🔥 grande
+                col.MinimumWidth = 150;
             }
+
+            // =========================================
+            // OCULTOS
+            // =========================================
+            if (grilla.Columns.Contains("EntidadId"))
+                grilla.Columns["EntidadId"].Visible = false;
+
+            if (grilla.Columns.Contains("TipoEntidad"))
+                grilla.Columns["TipoEntidad"].Visible = false;
+
+            if (grilla.Columns.Contains("EstaEliminado"))
+                grilla.Columns["EstaEliminado"].Visible = false;
         }
 
         #endregion
