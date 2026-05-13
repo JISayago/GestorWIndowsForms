@@ -27,10 +27,10 @@ namespace Presentacion.Core.CuentaCorriente
         }
 
         #region 🔷 GRILLA
-
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
+
 
             if (grilla.Columns.Count == 0) return;
 
@@ -138,14 +138,23 @@ namespace Presentacion.Core.CuentaCorriente
 
         #region 🔷 FILTROS
 
+        protected override string TextoLblBuscar
+   => "Buscar Cuenta Corriente:";
+
+        protected override string TextoLblCbx1
+            => "Filtrar por Propiedad";
+
+        protected override string TextoLblCbx2
+            => "Filtrar por Estado";
+
+        protected override string TextoLblCbx3
+            => "Filtrar por Fecha";
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
 
-            ActivarCheck(
-                chkBool1,
-                "Mostrar cuentas eliminadas"
-            );
+            ActivarCheck(chkBool1, "Mostrar Eliminados");
+            ActivarCheck(chkBool2, "Mostrar todas las Cuentas Corrientes (histórico)");
 
             var opcionesBusqueda = new List<OpcionFiltro>
             {
@@ -183,12 +192,6 @@ namespace Presentacion.Core.CuentaCorriente
 
                 new OpcionFiltro
                 {
-                    Texto = "Fecha vencimiento",
-                    Valor = "vto"
-                },
-
-                new OpcionFiltro
-                {
                     Texto = "Activa",
                     Valor = ((int)EstadoCuentaCorriente.Activa).ToString()
                 },
@@ -215,8 +218,83 @@ namespace Presentacion.Core.CuentaCorriente
                 "Filtrar por:"
             );
 
+            var tipoFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro
+                {
+                    Texto = "Fecha de vencimiento",
+                    Valor = "vto"
+                }
+            };
+            ActivarCombo(
+                cbx3,
+                lblcbx3,
+                tipoFecha,
+                "Texto",
+                "Valor",
+                "Filtrar por:"
+            );
             cbx1.SelectedValue = "";
             cbx2.SelectedValue = "";
+            cbx3.SelectedValue = "vto";
+        }
+        protected override void AccionCheck2()
+        {
+            if (chkBool2.Checked)
+            {
+                _actualizandoFiltros = true;
+
+                chkBool1.Checked = false;
+
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosEspeciales();
+            }
+
+            paginaActual = 1;
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
+        }
+        protected override void AccionCheck1()
+        {
+            if (chkBool1.Checked)
+            {
+                _actualizandoFiltros = true;
+
+                chkBool2.Checked = false;
+
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosEspeciales();
+            }
+
+            paginaActual = 1;
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
+        }
+
+        private void LimpiarFiltrosEspeciales()
+        {
+            _actualizandoFiltros = true;
+
+            txtBuscar.Clear();
+
+            if (cbx1.Enabled)
+                cbx1.SelectedIndex = 0;
+
+            if (cbx2.Enabled)
+                cbx2.SelectedIndex = 0;
+
+            if (cbx3.Enabled)
+                cbx3.SelectedIndex = 0;
+
+            chkUsarFecha.Checked = false;
+
+            _actualizandoFiltros = false;
         }
 
         #endregion

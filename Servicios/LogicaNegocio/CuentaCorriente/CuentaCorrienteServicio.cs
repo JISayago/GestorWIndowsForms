@@ -183,71 +183,94 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 .Include(x => x.CuentaCorrienteAutorizado)
                 .AsQueryable();
 
-            // 🔴 ELIMINADOS
-            query = filtros.Bool1
-                ? query.Where(x => x.EstaEliminado)
-                : query.Where(x => !x.EstaEliminado);
+            // =========================================================
+            // 🧠 CORE (DEFAULT / ELIMINADOS / HISTORICO)
+            // =========================================================
 
+            bool hayFiltroEstado =
+                filtros.Filtro2 != null &&
+                !string.IsNullOrWhiteSpace(filtros.Filtro2.ToString());
+
+            if (filtros.Bool2)
+            {
+                // 👉 HISTÓRICO → no filtramos nada
+            }
+            else if (filtros.Bool1)
+            {
+                // 👉 SOLO eliminados
+                query = query.Where(x => x.EstaEliminado);
+            }
+            else if (!hayFiltroEstado)
+            {
+                // 👉 DEFAULT
+                query = query.Where(x =>
+                    !x.EstaEliminado &&
+                    x.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Activa);
+            }
+            else
+            {
+                // 👉 hay filtro → solo excluir eliminados
+                query = query.Where(x => !x.EstaEliminado);
+            }
+
+            // =========================================================
             // 🔍 BUSQUEDA
+            // =========================================================
+
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                var texto = filtros.TextoBuscar;
+                var texto = filtros.TextoBuscar.Trim();
 
-                switch (filtros.Filtro1?.ToString())
-                {
-                    case "NombreCuentaCorriente":
-
-                        query = query.Where(x =>
-                            x.NombreCuentaCorriente.Contains(texto));
-
-                        break;
-
-                    default:
-
-                        query = query.Where(x =>
-                            x.NombreCuentaCorriente.Contains(texto));
-
-                        break;
-                }
+                query = query.Where(x =>
+                    x.NombreCuentaCorriente.Contains(texto));
             }
 
-            // 🔴 FILTRO 2 (ESTADO / FECHA)
-            var filtro2 = filtros.Filtro2?.ToString();
+            // =========================================================
+            // 📌 ESTADO (cbx2)
+            // =========================================================
 
-            if (!string.IsNullOrWhiteSpace(filtro2))
+            if (filtros.Filtro2 != null &&
+                int.TryParse(filtros.Filtro2.ToString(), out var estado))
             {
-                // 📅 FECHA VENCIMIENTO
-                if (filtro2 == "vto")
-                {
-                    if (filtros.FechaDesde.HasValue)
-                    {
-                        query = query.Where(x =>
-                            x.FechaVencimiento.HasValue &&
-                            x.FechaVencimiento.Value >= filtros.FechaDesde.Value);
-                    }
+                query = query.Where(x =>
+                    (int)x.EstadoCuentaCorriente == estado);
+            }
 
-                    if (filtros.FechaHasta.HasValue)
-                    {
-                        query = query.Where(x =>
-                            x.FechaVencimiento.HasValue &&
-                            x.FechaVencimiento.Value <= filtros.FechaHasta.Value);
-                    }
-                }
-                else
+            // =========================================================
+            // 📅 FECHAS (cbx3)
+            // =========================================================
+
+            var filtroFecha = filtros.Filtro3?.ToString();
+
+            if (filtroFecha == "vto")
+            {
+                if (filtros.FechaDesde.HasValue)
                 {
-                    // 🔴 ESTADO
-                    if (int.TryParse(filtro2, out var estado))
-                    {
-                        query = query.Where(x =>
-                            (int)x.EstadoCuentaCorriente == estado);
-                    }
+                    query = query.Where(x =>
+                        x.FechaVencimiento.HasValue &&
+                        x.FechaVencimiento.Value >= filtros.FechaDesde.Value);
+                }
+
+                if (filtros.FechaHasta.HasValue)
+                {
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
+
+                    query = query.Where(x =>
+                        x.FechaVencimiento.HasValue &&
+                        x.FechaVencimiento.Value < hasta);
                 }
             }
 
+            // =========================================================
             // 📊 TOTAL
+            // =========================================================
+
             var total = query.Count();
 
-            // 🔴 PAGINACION SEGURA
+            // =========================================================
+            // 🔴 PAGINACION
+            // =========================================================
+
             var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
 
             if (totalPaginas == 0)
@@ -259,17 +282,16 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             if (filtros.Page < 1)
                 filtros.Page = 1;
 
-            // 🔽 ORDEN
-            if (filtro2 == "vto")
-            {
-                query = query.OrderBy(x => x.FechaVencimiento);
-            }
-            else
-            {
-                query = query.OrderBy(x => x.CuentaCorrienteId);
-            }
+            // =========================================================
+            // 📌 ORDEN (CLAVE)
+            // =========================================================
 
+            query = query.OrderBy(x => x.FechaVencimiento ?? DateTime.MaxValue);
+
+            // =========================================================
             // 📄 DATA
+            // =========================================================
+
             var data = query
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)
@@ -277,17 +299,11 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 .Select(x => new CuentaCorrienteDTO
                 {
                     CuentaCorrienteId = x.CuentaCorrienteId,
-
                     NombreCuentaCorriente = x.NombreCuentaCorriente,
-
                     Saldo = x.Saldo,
-
                     LimiteDeuda = x.LimiteDeuda,
-
                     LimiteDeudaActivo = x.LimiteDeudaActivo,
-
                     FechaVencimiento = x.FechaVencimiento,
-
                     EstadoCuentaCorriente = x.EstadoCuentaCorriente,
 
                     DniAutorizados = x.CuentaCorrienteAutorizado
@@ -299,11 +315,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             return new ResultadoPaginacion<CuentaCorrienteDTO>
             {
                 Items = data,
-
                 TotalRegistros = total,
-
                 Page = filtros.Page,
-
                 PageSize = filtros.PageSize
             };
         }    // =====================
