@@ -24,11 +24,22 @@ namespace Presentacion.Core.Venta
         }
 
         #region 🔷 FILTROS
+        protected override string TextoLblBuscar
+      => "Buscar Venta:";
 
+        protected override string TextoLblCbx1
+            => "Filtrar por Propiedad";
+
+        protected override string TextoLblCbx2
+            => "Filtrar por Estado";
+
+        protected override string TextoLblCbx3
+            => "Filtrar por Fecha";
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
-
+            ActivarCheck(chkBool1, "Mostrar ventas canceladas");
+            ActivarCheck(chkBool2, "Mostrar todas las Ventas Libres (histórico)");
             var opcionesBusqueda = new List<OpcionFiltro>
             {
                 new OpcionFiltro
@@ -59,18 +70,14 @@ namespace Presentacion.Core.Venta
 
             ActivarFiltroFechas("Usar filtro por fecha");
 
-            var filtrosEstadoFecha = new List<OpcionFiltro>
+            var filtrosEstado = new List<OpcionFiltro>
             {
                 new OpcionFiltro
                 {
                     Texto = "Todos",
                     Valor = ""
                 },
-                new OpcionFiltro
-                {
-                    Texto = "Fecha Venta",
-                    Valor = "FVL"
-                },
+             
                 new OpcionFiltro
                 {
                     Texto = "Confirmada",
@@ -87,20 +94,93 @@ namespace Presentacion.Core.Venta
                     Valor = ((int)EstadoVenta.CancelacionVenta).ToString()
                 }
             };
-
             ActivarCombo(
                 cbx2,
                 lblcbx2,
-                filtrosEstadoFecha,
+                filtrosEstado,
                 "Texto",
                 "Valor",
                 "Filtrar por"
             );
+            var filtrosFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro
+                {
+                    Texto = "Fecha Venta",
+                    Valor = "FVL"
+                },
+            };
 
+            ActivarCombo(
+                cbx3,
+                lblcbx3,
+                filtrosFecha,
+                "Texto",
+                "Valor",
+                "Filtrar por"
+            );
             cbx1.SelectedValue = "";
             cbx2.SelectedValue = "";
+            cbx3.SelectedValue = "FVL";
+        }
+        protected override void AccionCheck2()
+        {
+            if (chkBool2.Checked)
+            {
+                _actualizandoFiltros = true;
+
+                chkBool1.Checked = false;
+
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosEspeciales();
+            }
+
+            paginaActual = 1;
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
+        }
+        protected override void AccionCheck1()
+        {
+            if (chkBool1.Checked)
+            {
+                _actualizandoFiltros = true;
+
+                chkBool2.Checked = false;
+
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosEspeciales();
+            }
+
+            paginaActual = 1;
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
         }
 
+        private void LimpiarFiltrosEspeciales()
+        {
+            _actualizandoFiltros = true;
+
+            txtBuscar.Clear();
+
+            if (cbx1.Enabled)
+                cbx1.SelectedIndex = 0;
+
+            if (cbx2.Enabled)
+                cbx2.SelectedIndex = 0;
+
+            if (cbx3.Enabled)
+                cbx3.SelectedIndex = 0;
+
+            chkUsarFecha.Checked = false;
+
+            _actualizandoFiltros = false;
+        }
         #endregion
 
         #region 🔷 ACCIONES PERSONALIZADAS

@@ -231,15 +231,38 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 
             var query = context.VentasLibres
                 .AsNoTracking()
-                .Include(v => v.Empleado)
-                    .ThenInclude(e => e.Persona)
-                .Include(v => v.Vendedor)
-                    .ThenInclude(e => e.Persona)
-                .Include(v => v.Cliente)
-                    .ThenInclude(c => c.Persona)
+                .Include(v => v.Empleado).ThenInclude(e => e.Persona)
+                .Include(v => v.Vendedor).ThenInclude(e => e.Persona)
+                .Include(v => v.Cliente).ThenInclude(c => c.Persona)
                 .AsQueryable();
 
+            // =========================================================
+            // 🧠 CORE: ELIMINADOS + HISTORICO
+            // =========================================================
+
+            if (filtros.Bool2)
+            {
+                // 👉 HISTÓRICO → trae TODO (no filtra nada)
+            }
+            else if (filtros.Bool1)
+            {
+                // 👉 SOLO ELIMINADAS
+                query = query.Where(v => v.Estado == (int)EstadoVenta.Cancelada);
+            }
+            else
+            {
+                // 👉 DEFAULT → NO eliminadas + último mes
+                var desde = DateTime.Now.AddMonths(-1);
+
+                query = query.Where(v =>
+                    v.Estado != (int)EstadoVenta.Cancelada &&
+                    v.FechaVenta >= desde);
+            }
+
+            // =========================================================
             // 🔍 BUSQUEDA
+            // =========================================================
+
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
                 var texto = filtros.TextoBuscar.Trim().ToLower();
@@ -277,35 +300,49 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 }
             }
 
-            // 📅 FILTRO FECHA
-            if (filtros.FechaDesde.HasValue)
-            {
-                query = query.Where(v =>
-                    v.FechaVenta.Date >= filtros.FechaDesde.Value.Date);
-            }
+            // =========================================================
+            // 🔴 FILTRO ESTADO (cbx2)
+            // =========================================================
 
-            if (filtros.FechaHasta.HasValue)
-            {
-                var fechaHasta = filtros.FechaHasta.Value.Date.AddDays(1);
-
-                query = query.Where(v =>
-                    v.FechaVenta < fechaHasta);
-            }
-
-            // 🔴 FILTRO ESTADO
             if (filtros.Filtro2 != null &&
                 int.TryParse(filtros.Filtro2.ToString(), out var estado))
             {
-                if (Enum.IsDefined(typeof(EstadoVenta), estado))
+                query = query.Where(v => v.Estado == estado);
+            }
+
+            // =========================================================
+            // 📅 FILTRO FECHA (cbx3 + picker)
+            // =========================================================
+
+            bool usaFechas = filtros.FechaDesde.HasValue || filtros.FechaHasta.HasValue;
+
+            if (usaFechas && filtros.Filtro3?.ToString() == "FVL")
+            {
+                if (filtros.FechaDesde.HasValue)
                 {
-                    query = query.Where(v => v.Estado == estado);
+                    query = query.Where(v =>
+                        v.FechaVenta >= filtros.FechaDesde.Value);
+                }
+
+                if (filtros.FechaHasta.HasValue)
+                {
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
+
+                    query = query.Where(v =>
+                        v.FechaVenta < hasta);
                 }
             }
 
+            // =========================================================
             // 📊 TOTAL
+            // =========================================================
+
             var total = query.Count();
 
-            // 🔴 CONTROL PAGINACION
+            // =========================================================
+            // 🔴 PAGINACION
+            // =========================================================
+
             var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
 
             if (totalPaginas <= 0)
@@ -317,7 +354,10 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
             if (filtros.Page < 1)
                 filtros.Page = 1;
 
+            // =========================================================
             // 📦 DATA
+            // =========================================================
+
             var data = query
                 .OrderByDescending(v => v.FechaVenta)
                 .Skip((filtros.Page - 1) * filtros.PageSize)
@@ -331,19 +371,16 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     FechaVenta = v.FechaVenta,
 
                     IdEmpleado = v.IdEmpleado,
-
                     EmpleadoNombreCompleto =
                         v.Empleado.Persona.Nombre + " " +
                         v.Empleado.Persona.Apellido,
 
                     IdVendedor = v.IdVendedor,
-
                     VendedorNombreCompleto =
                         v.Vendedor.Persona.Nombre + " " +
                         v.Vendedor.Persona.Apellido,
 
                     IdCliente = v.IdCliente,
-
                     ClienteNombreCompleto = v.Cliente != null
                         ? v.Cliente.Persona.Nombre + " " +
                           v.Cliente.Persona.Apellido
@@ -356,10 +393,13 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     Detalle = v.Detalle,
 
                     MontoPagado = v.MontoPagado,
-
                     MontoAdeudado = v.MontoAdeudado
                 })
                 .ToList();
+
+            // =========================================================
+            // 📄 RESULTADO
+            // =========================================================
 
             return new ResultadoPaginacion<VentaLibreDTO>
             {
