@@ -1,4 +1,5 @@
 ﻿using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,7 @@ namespace Servicios.LogicaNegocio.Articulo.Marca
 {
     public interface IMarcaServicio
     {
-        IEnumerable<MarcaDTO> ObtenerMarca(string cadenaBuscar);
-
-        IEnumerable<MarcaDTO> ObtenerMarcaEliminada(string cadenaBuscar);
-
+        ResultadoPaginacion<MarcaDTO> ObtenerMarcas(FiltroConsulta filtros);
         MarcaDTO ObtenerPorId(long marca);
 
         EstadoOperacion Insertar(MarcaDTO marcaDTO);

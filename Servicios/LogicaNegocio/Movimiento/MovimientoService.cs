@@ -198,75 +198,112 @@ namespace Servicios.LogicaNegocio.Movimiento
                 .AsNoTracking()
                 .AsQueryable();
 
-            // 🔴 Eliminados
-            query = filtros.VerEliminados
-                ? query.Where(x => x.EstaEliminado)
-                : query.Where(x => !x.EstaEliminado);
+            // =========================================================
+            // 🔴 HISTORICO / ELIMINADOS
+            // =========================================================
 
-            // 🔍 TEXTO
+            if (filtros.Bool2)
+            {
+                // VER TODOS → no filtra eliminados ni fechas por defecto
+            }
+            else if (filtros.Bool1)
+            {
+                // SOLO ELIMINADOS
+                query = query.Where(x => x.EstaEliminado);
+            }
+            else
+            {
+                // NORMAL
+                query = query.Where(x => !x.EstaEliminado);
+            }
+
+            // =========================================================
+            // 🔍 BUSQUEDA
+            // =========================================================
+
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                var texto = filtros.TextoBuscar;
+                var texto = filtros.TextoBuscar.Trim();
 
-                switch (filtros.Extra?.ToString())
-                {
-                    case "NumeroMovimiento":
-                        query = query.Where(x => x.NumeroMovimiento.Contains(texto));
-                        break;
-
-                    default:
-                        query = query.Where(x => x.NumeroMovimiento.Contains(texto));
-                        break;
-                }
+                query = query.Where(x =>
+                    x.NumeroMovimiento.Contains(texto));
             }
 
-            // 🔴 EXTRA2 → puede ser FECHA o TIPO MOVIMIENTO
-            TipoMovimiento? tipoMovimiento = null;
-            bool filtrarPorFechaMovimiento = false;
+            // =========================================================
+            // 📌 TIPO MOVIMIENTO (cbx2)
+            // =========================================================
 
-            if (filtros.Extra2 != null)
+            if (!string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
             {
-                var valor = filtros.Extra2.ToString();
-
-                // 📅 filtro fecha
-                if (valor == "FM")
-                {
-                    filtrarPorFechaMovimiento = true;
-                }
-
-                // 🔢 tipo movimiento
-                if (int.TryParse(valor, out var tipo))
+                if (int.TryParse(filtros.Filtro2.ToString(), out int tipo))
                 {
                     if (Enum.IsDefined(typeof(TipoMovimiento), tipo))
-                        tipoMovimiento = (TipoMovimiento)tipo;
+                    {
+                        query = query.Where(x =>
+                            x.TipoMovimiento == tipo);
+                    }
                 }
             }
 
-            // 📅 FILTRO FECHA (solo si eligió "Fecha Movimiento")
-            if (filtrarPorFechaMovimiento)
+            // =========================================================
+            // 📌 TIPO MOVIMIENTO / DETALLE (cbx2)
+            // =========================================================
+
+            var filtroTipo = filtros.Filtro2?.ToString();
+
+            if (!string.IsNullOrWhiteSpace(filtroTipo))
+            {
+                if (filtroTipo.StartsWith("TM_"))
+                {
+                    var valor = int.Parse(filtroTipo.Replace("TM_", ""));
+
+                    query = query.Where(x => x.TipoMovimiento == valor);
+                }
+                else if (filtroTipo.StartsWith("TMD_"))
+                {
+                    var valor = int.Parse(filtroTipo.Replace("TMD_", ""));
+
+                    query = query.Where(x => x.TipoMovimientoDetalle == valor);
+                }
+            }
+
+            // =========================================================
+            // 📅 FILTRO POR FECHA (cbx3)
+            // =========================================================
+
+            var filtroFecha = filtros.Filtro3?.ToString();
+
+            if (filtroFecha == "FECHA")
             {
                 if (filtros.FechaDesde.HasValue)
-                    query = query.Where(x => x.FechaMovimiento >= filtros.FechaDesde.Value);
+                {
+                    query = query.Where(x =>
+                        x.FechaMovimiento >= filtros.FechaDesde.Value);
+                }
 
                 if (filtros.FechaHasta.HasValue)
                 {
-                    var hastaReal = filtros.FechaHasta.Value.AddDays(1);
-                    query = query.Where(x => x.FechaMovimiento < hastaReal);
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
+
+                    query = query.Where(x =>
+                        x.FechaMovimiento < hasta);
                 }
             }
 
-            // 🔴 FILTRO TIPO (Ingresos / Egresos)
-            if (tipoMovimiento.HasValue)
-            {
-                query = query.Where(x => x.TipoMovimiento == (int)tipoMovimiento.Value);
-            }
-
+            // =========================================================
             // 📊 TOTAL
+            // =========================================================
+
             var total = query.Count();
 
-            // 🔴 CONTROL PAGINACION
+            // =========================================================
+            // 📄 PAGINACION
+            // =========================================================
+
             var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
-            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
 
             if (filtros.Page > totalPaginas)
                 filtros.Page = totalPaginas;
@@ -274,10 +311,16 @@ namespace Servicios.LogicaNegocio.Movimiento
             if (filtros.Page < 1)
                 filtros.Page = 1;
 
-            // 📌 ORDEN (correcto para movimientos)
+            // =========================================================
+            // 📌 ORDEN
+            // =========================================================
+
             query = query.OrderByDescending(x => x.FechaMovimiento);
 
-            // 📄 DATA
+            // =========================================================
+            // 📦 DATA
+            // =========================================================
+
             var data = query
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)

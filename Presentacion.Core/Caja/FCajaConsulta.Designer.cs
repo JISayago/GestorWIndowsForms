@@ -90,7 +90,7 @@
             btnFiltrar.TabIndex = 5;
             btnFiltrar.Text = "Filtrar";
             btnFiltrar.UseVisualStyleBackColor = true;
-            btnFiltrar.Click += btnFiltrar_Click;
+            //btnFiltrar.Click += btnFiltrar_Click;
             // 
             // btnClear
             // 
@@ -100,7 +100,7 @@
             btnClear.TabIndex = 6;
             btnClear.Text = "Todas";
             btnClear.UseVisualStyleBackColor = true;
-            btnClear.Click += btnClear_Click;
+            //btnClear.Click += btnClear_Click;
             // 
             // button1
             // 
@@ -110,7 +110,7 @@
             button1.TabIndex = 7;
             button1.Text = "Ultimas 7";
             button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            //button1.Click += button1_Click;
             // 
             // FCajaConsulta
             // 

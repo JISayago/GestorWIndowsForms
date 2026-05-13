@@ -316,20 +316,33 @@ namespace Presentacion.Notificaciones
         // ===========================================================================
         private void RefrescarProductos()
         {
-            // 1. Preparamos el filtro según lo que espera tu Service
+            // 🔎 FILTRO
             var filtro = new FiltroConsulta
             {
                 TextoBuscar = txtBuscador.Text,
+
                 Page = _paginaActual,
                 PageSize = _pageSize,
-                VerEliminados = false
+
+                // 🔹 nuevos filtros
+                Filtro1 = "Descripcion",
+                Filtro2 = null,
+                Filtro3 = null,
+
+                Bool1 = false,
+                Bool2 = false,
+
+                FechaDesde = null,
+                FechaHasta = null
             };
 
-            // 2. Llamada a tu service (Suponiendo que tienes una instancia de tu clase de servicio)
+            // 📦 SERVICE
             var resultado = _productoService.ObtenerProductos(filtro);
 
-            // 3. Limpiar y Cargar Grilla
+            // 🧹 LIMPIAR
             dgvProds.Rows.Clear();
+
+            // 📄 CARGAR
             foreach (var p in resultado.Items)
             {
                 dgvProds.Rows.Add(
@@ -340,13 +353,18 @@ namespace Presentacion.Notificaciones
                 );
             }
 
-            // 4. Actualizar UI de paginación
+            // 📊 PAGINACION
             _totalPaginas = resultado.TotalPaginas;
-            _paginaActual = resultado.Page; // Usamos la corregida por el service
+            _paginaActual = resultado.Page;
 
-            lblPaginaInfo.Text = $"Página {_paginaActual} de {_totalPaginas}";
-            btnPrevProd.Enabled = _paginaActual > 1;
-            btnNextProd.Enabled = _paginaActual < _totalPaginas;
+            lblPaginaInfo.Text =
+                $"Página {_paginaActual} de {_totalPaginas}";
+
+            btnPrevProd.Enabled =
+                _paginaActual > 1;
+
+            btnNextProd.Enabled =
+                _paginaActual < _totalPaginas;
         }
 
         public void RefrescarVentas()
@@ -354,15 +372,26 @@ namespace Presentacion.Notificaciones
             var filtroVentas = new FiltroConsulta
             {
                 Page = _paginaActualV,
-                PageSize = _pageSizeV, // Usamos la constante de 10
+                PageSize = _pageSizeV,
+
                 TextoBuscar = "",
-                VerEliminados = false,
-                TotalRegistros = 24 // Limitar a 20 registros para la consulta rápida
+
+                // 🔹 nuevos filtros
+                Filtro1 = null,
+                Filtro2 = null,
+                Filtro3 = null,
+
+                Bool1 = false,
+                Bool2 = false,
+
+                FechaDesde = null,
+                FechaHasta = null
             };
 
             var resultado = _ventaService.ObtenerVentas(filtroVentas);
 
             dgvVentas.Rows.Clear();
+
             foreach (var v in resultado.Items)
             {
                 dgvVentas.Rows.Add(
@@ -373,13 +402,18 @@ namespace Presentacion.Notificaciones
                 );
             }
 
-            // 4. ACTUALIZAR UI DE VENTAS (Cuidado aquí de no usar lblPaginaInfo de productos)
+            // 🔹 PAGINACION
             _totalPaginasV = resultado.TotalPaginas;
             _paginaActualV = resultado.Page;
 
-            lblPaginaInfoVenta.Text = $"Página {_paginaActualV} de {_totalPaginasV}";
-            btnPrevVenta.Enabled = _paginaActualV > 1;
-            btnNextVenta.Enabled = _paginaActualV < _totalPaginasV;
+            lblPaginaInfoVenta.Text =
+                $"Página {_paginaActualV} de {_totalPaginasV}";
+
+            btnPrevVenta.Enabled =
+                _paginaActualV > 1;
+
+            btnNextVenta.Enabled =
+                _paginaActualV < _totalPaginasV;
         }
     }
 }

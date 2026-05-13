@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Servicios.Helpers.Producto
+namespace Servicios.Helpers.Cliente
 {
-    public enum EstadoProducto
+    public enum EstadoCliente
     {
         Activo = 1,
-        Vencido = 2,
-        Discontinuado = 3,
-        SinStock = 4
+        Baja = 2,
+        Inhabilitado = 3
     }
 }

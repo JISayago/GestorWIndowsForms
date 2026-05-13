@@ -102,42 +102,47 @@ namespace Servicios.LogicaNegocio.Producto.Rubro
             };
         }
 
-        public IEnumerable<RubroDTO> ObtenerRubro(string cadenaBuscar)
+        public ResultadoPaginacion<RubroDTO> ObtenerRubros(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            return context.Rubros
-                .Where(x => !x.EstaEliminado && x.Nombre.Contains(cadenaBuscar))
-                .Select(x => new RubroDTO
-                {
-                    Id = x.RubroId,
-                    Nombre = x.Nombre
-                })
-                .ToList();
-        }
-
-        public ResultadoPaginacion<RubroDTO> ObtenerRubroPaginado(FiltroConsulta filtros)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            // 1. Creamos la consulta base (IQueryable) sin ejecutarla aún
             var query = context.Rubros
                 .AsNoTracking()
-                .Where(x => !x.EstaEliminado)
                 .AsQueryable();
 
-            // 2. Aplicamos filtros de búsqueda si existen
+            // 🔴 ELIMINADOS
+            query = filtros.Bool1
+                ? query.Where(x => x.EstaEliminado)
+                : query.Where(x => !x.EstaEliminado);
+
+            // 🔍 BUSQUEDA
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                query = query.Where(x => x.Nombre.Contains(filtros.TextoBuscar));
+                var texto = filtros.TextoBuscar.Trim();
+
+                switch (filtros.Filtro1?.ToString())
+                {
+                    case "Nombre":
+                        query = query.Where(x =>
+                            x.Nombre.Contains(texto));
+                        break;
+
+                    default:
+                        query = query.Where(x =>
+                            x.Nombre.Contains(texto));
+                        break;
+                }
             }
 
-            // 3. Contamos el total de registros antes de paginar
+            // 📊 TOTAL
             var total = query.Count();
 
-            // 4. Lógica de PAGINACIÓN SEGURA (Cálculo de páginas y límites)
-            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
-            if (totalPaginas == 0) totalPaginas = 1;
+            // 🔴 PAGINACION SEGURA
+            var totalPaginas =
+                (int)Math.Ceiling((double)total / filtros.PageSize);
+
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
 
             if (filtros.Page > totalPaginas)
                 filtros.Page = totalPaginas;
@@ -145,19 +150,21 @@ namespace Servicios.LogicaNegocio.Producto.Rubro
             if (filtros.Page < 1)
                 filtros.Page = 1;
 
-            // 5. Ejecutamos la consulta con Skip y Take
+            // 🔽 ORDEN
+            query = query.OrderBy(x => x.Nombre);
+
+            // 📄 DATA
             var data = query
-                .OrderBy(x => x.Nombre) // Es importante ordenar para que la paginación sea consistente
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)
                 .Select(x => new RubroDTO
                 {
                     Id = x.RubroId,
-                    Nombre = x.Nombre
+                    Nombre = x.Nombre,
+                    EstaEliminado = x.EstaEliminado
                 })
                 .ToList();
 
-            // 6. Retornamos el objeto con la estructura de paginación
             return new ResultadoPaginacion<RubroDTO>
             {
                 Items = data,
@@ -165,20 +172,6 @@ namespace Servicios.LogicaNegocio.Producto.Rubro
                 Page = filtros.Page,
                 PageSize = filtros.PageSize
             };
-        }
-
-        public IEnumerable<RubroDTO> ObtenerRubroEliminado(string cadenaBuscar)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            return context.Rubros
-                .Where(x => x.EstaEliminado && x.Nombre.Contains(cadenaBuscar))
-                .Select(x => new RubroDTO
-                {
-                    Id = x.RubroId,
-                    Nombre = x.Nombre
-                })
-                .ToList();
         }
 
         public RubroDTO ObtenerPorId(long rubro)

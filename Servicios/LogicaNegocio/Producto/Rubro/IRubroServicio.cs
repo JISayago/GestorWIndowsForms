@@ -11,10 +11,7 @@ namespace Servicios.LogicaNegocio.Producto.Rubro
 {
     public interface IRubroServicio
     {
-        IEnumerable<RubroDTO> ObtenerRubro(string cadenaBuscar);
-
-        IEnumerable<RubroDTO> ObtenerRubroEliminado(string cadenaBuscar);
-
+        ResultadoPaginacion<RubroDTO> ObtenerRubros(FiltroConsulta filtros);
         RubroDTO ObtenerPorId(long Rubro);
 
         EstadoOperacion Insertar(RubroDTO RubroDTO);
@@ -23,6 +20,5 @@ namespace Servicios.LogicaNegocio.Producto.Rubro
 
         EstadoOperacion Eliminar(long RubroId);
 
-        ResultadoPaginacion<RubroDTO> ObtenerRubroPaginado(FiltroConsulta filtros);
     }
 }

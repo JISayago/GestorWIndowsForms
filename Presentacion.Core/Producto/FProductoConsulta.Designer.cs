@@ -32,7 +32,7 @@
             // 
             // cbxEstaEliminado
             // 
-            cbxEstaEliminado.Location = new Point(666, 90);
+            chkBool1.Location = new Point(666, 90);
             // 
             // panel1
             // 

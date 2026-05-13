@@ -1,6 +1,7 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Cliente;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.CuentaCorriente;
@@ -52,10 +53,19 @@ namespace Presentacion.Core.CuentaCorriente
 
             var filtros = new FiltroConsulta
             {
-                TextoBuscar = "",
-                VerEliminados = false,
+                TextoBuscar = null,        // sin búsqueda
+                Filtro1 = null,            // sin filtro por propiedad
+                Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(), // 🔴 clave
+
+                Bool1 = false,             // no eliminados
+                Bool2 = false,             // no histórico → aplica lógica default
+
+                FechaDesde = null,
+                FechaHasta = null,
+                Filtro3 = null,
+
                 Page = 1,
-                PageSize = 1000 // o un número alto para traer todos
+                PageSize = 50 // o el tamaño que uses normalmente
             };
 
             var clientes = _clienteServicio.ObtenerClientes(filtros).Items;
@@ -95,10 +105,19 @@ namespace Presentacion.Core.CuentaCorriente
             var cuentacorriente = _cuentacorrienteServicio.ObtenerCuentaCorrientePorId(entidadId.Value);
             var filtros = new FiltroConsulta
             {
-                TextoBuscar = cuentacorriente.ClienteId.ToString(),
-                VerEliminados = false,
+                TextoBuscar = null,        // sin búsqueda
+                Filtro1 = null,            // sin filtro por propiedad
+                Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(), // 🔴 clave
+
+                Bool1 = false,             // no eliminados
+                Bool2 = false,             // no histórico → aplica lógica default
+
+                FechaDesde = null,
+                FechaHasta = null,
+                Filtro3 = null,
+
                 Page = 1,
-                PageSize = 1
+                PageSize = 50 // o el tamaño que uses normalmente
             };
 
             var resultado = _clienteServicio.ObtenerClientes(filtros);
@@ -114,7 +133,7 @@ namespace Presentacion.Core.CuentaCorriente
             txtLimiteDeuda.Enabled = cuentacorriente.LimiteDeudaActivo;
             cmbClientes.DisplayMember = "NombreCompleto"; // lo que se muestra
             cmbClientes.ValueMember = "PersonaId";
-            //cmbClientes.DataSource = clienteDeCuentaCorriente;                                                                           
+            cmbClientes.DataSource = clienteDeCuentaCorriente;
             cmbClientes.Enabled = false; // No se puede cambiar el cliente asociado en la modificación
 
             dgvDni.DataSource = cuentacorriente.DniAutorizados.Select(x => new { DNI = x }).ToList();

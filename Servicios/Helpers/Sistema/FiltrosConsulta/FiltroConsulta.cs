@@ -9,15 +9,27 @@ namespace Servicios.Helpers.Sistema.FiltrosConsulta
     public class FiltroConsulta
     {
         public string TextoBuscar { get; set; }
-        public bool VerEliminados { get; set; }
+
         public DateTime? FechaDesde { get; set; }
         public DateTime? FechaHasta { get; set; }
-        public object Extra { get; set; } // Columna propiedad
-        public object Extra2 { get; set; } // estado enum
+
+        // Combos
+        public object Filtro1 { get; set; }
+        public object Filtro2 { get; set; }
+        public object Filtro3 { get; set; }
+
+        // Checks
+        public bool Bool1 { get; set; }
+        public bool Bool2 { get; set; }
+
+        // Paginado
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 10;
+
+        // Ordenamiento
         public string OrdenarPor { get; set; }
         public bool Ascendente { get; set; } = true;
-        public int TotalRegistros { get; set; } //Limitar la cantidad de registros a mostrar
+
+        public int TotalRegistros { get; set; }
     }
 }

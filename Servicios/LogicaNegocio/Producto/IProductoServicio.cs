@@ -14,9 +14,7 @@ namespace Servicios.LogicaNegocio.Producto
 {
     public interface IProductoServicio
     {
-        public ResultadoPaginacion<ProductoDTO> ObtenerProductos(FiltroConsulta filtros);
-        //IEnumerable<ProductoDTO> ObtenerProductos(string cadenabuscar, string columa);
-        //IEnumerable<ProductoDTO> ObtenerProductosEliminados(string cadenabuscar, string columa);
+        ResultadoPaginacion<ProductoDTO> ObtenerProductos(FiltroConsulta filtros);
         ProductoDTO ObtenerProductoPorId(long productoId);
         ProductosEnOfertaDescuentosDTO ControlarProductoEstaEnOfertaPorId(long productoId);
 
