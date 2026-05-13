@@ -246,39 +246,35 @@ namespace Servicios.LogicaNegocio.Movimiento
             }
 
             // =========================================================
-            // 📌 TIPO MOVIMIENTO DETALLE (cbx3)
+            // 📌 TIPO MOVIMIENTO / DETALLE (cbx2)
             // =========================================================
 
-            if (!string.IsNullOrWhiteSpace(filtros.Filtro3?.ToString()))
+            var filtroTipo = filtros.Filtro2?.ToString();
+
+            if (!string.IsNullOrWhiteSpace(filtroTipo))
             {
-                if (int.TryParse(filtros.Filtro3.ToString(), out int tipoDetalle))
+                if (filtroTipo.StartsWith("TM_"))
                 {
-                    if (Enum.IsDefined(typeof(TipoMovimientoDetalle), tipoDetalle))
-                    {
-                        query = query.Where(x =>
-                            x.TipoMovimientoDetalle == tipoDetalle);
-                    }
+                    var valor = int.Parse(filtroTipo.Replace("TM_", ""));
+
+                    query = query.Where(x => x.TipoMovimiento == valor);
+                }
+                else if (filtroTipo.StartsWith("TMD_"))
+                {
+                    var valor = int.Parse(filtroTipo.Replace("TMD_", ""));
+
+                    query = query.Where(x => x.TipoMovimientoDetalle == valor);
                 }
             }
 
             // =========================================================
-            // 📅 FECHAS
+            // 📅 FILTRO POR FECHA (cbx3)
             // =========================================================
 
-            // 👉 Si NO está en histórico, aplicar filtro por defecto (últimos 2 meses)
-            if (!filtros.Bool2 &&
-                !filtros.FechaDesde.HasValue &&
-                !filtros.FechaHasta.HasValue)
-            {
-                var desdeDefault = DateTime.Now.AddMonths(-2);
+            var filtroFecha = filtros.Filtro3?.ToString();
 
-                query = query.Where(x =>
-                    x.FechaMovimiento >= desdeDefault);
-            }
-            else
+            if (filtroFecha == "FECHA")
             {
-                // 👉 Filtros manuales
-
                 if (filtros.FechaDesde.HasValue)
                 {
                     query = query.Where(x =>

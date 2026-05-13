@@ -146,11 +146,18 @@ namespace Presentacion.Core.Gasto
             }
 
             // 🔹 Categoría
+            // 🔹 Categoría (DESCRIPCIÓN)
+            if (grilla.Columns.Contains("CategoriaGastoDescripcion"))
+            {
+                grilla.Columns["CategoriaGastoDescripcion"].Visible = true;
+                grilla.Columns["CategoriaGastoDescripcion"].HeaderText = "Categoría";
+                grilla.Columns["CategoriaGastoDescripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
+            // 🔸 Ocultar el int
             if (grilla.Columns.Contains("CategoriaGasto"))
             {
-                grilla.Columns["CategoriaGasto"].Visible = true;
-                grilla.Columns["CategoriaGasto"].HeaderText = "Categoría";
-                grilla.Columns["CategoriaGasto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                grilla.Columns["CategoriaGasto"].Visible = false;
             }
 
             // 🔹 Montos
@@ -169,13 +176,20 @@ namespace Presentacion.Core.Gasto
             }
 
             // 🔹 Estado
-            if (grilla.Columns.Contains("EstadoGasto"))
+           
+
+            if (grilla.Columns.Contains("EstadoGastoDescripcion"))
             {
-                grilla.Columns["EstadoGasto"].Visible = true;
-                grilla.Columns["EstadoGasto"].HeaderText = "Estado";
-                grilla.Columns["EstadoGasto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                grilla.Columns["EstadoGastoDescripcion"].Visible = true;
+                grilla.Columns["EstadoGastoDescripcion"].HeaderText = "Estado";
+                grilla.Columns["EstadoGastoDescripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
 
+            // 🔸 Ocultar el int
+            if (grilla.Columns.Contains("EstadoGasto"))
+            {
+                grilla.Columns["EstadoGasto"].Visible = false;
+            }
             // 🔹 Detalle
             if (grilla.Columns.Contains("Detalle"))
             {
@@ -246,14 +260,27 @@ namespace Presentacion.Core.Gasto
 
         #endregion
         #region 🔷 FILTROS
+        protected override string TextoLblBuscar
+    => "Buscar Gasto:";
 
+        protected override string TextoLblCbx1
+            => "Filtrar por Propiedad";
+
+        protected override string TextoLblCbx2
+            => "Filtrar por Estado";
+
+        protected override string TextoLblCbx3
+            => "Filtrar por Fecha";
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
-
+            ActivarCheck(chkBool1, "Mostrar Anulados");
+            ActivarCheck(chkBool2, "Mostrar todos los Gastos (histórico)");
+            ActivarFiltroFechas("Filtrar por fecha");
             // 🔎 Buscar por
             var filtrosBusqueda = new List<OpcionFiltro>
     {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
         new OpcionFiltro { Texto = "Número Gasto", Valor = "NumeroGasto" },
         new OpcionFiltro { Texto = "Empleado", Valor = "NombreEmpleado" },
         new OpcionFiltro { Texto = "Categoría", Valor = "CategoriaGasto" }
@@ -271,11 +298,11 @@ namespace Presentacion.Core.Gasto
             cbx1.SelectedIndex = 0;
 
             // 📅 Fechas
-            ActivarFiltroFechas("Filtrar por fecha");
 
-            var filtrosFechaEstado = new List<OpcionFiltro>
-    {
-        new OpcionFiltro
+            var filtrosFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
+                 new OpcionFiltro
         {
             Texto = "Fecha del gasto",
             Valor = ((int)TipoFiltroFechaGasto.FechaGasto).ToString()
@@ -283,9 +310,14 @@ namespace Presentacion.Core.Gasto
 
         new OpcionFiltro
         {
+
             Texto = "Fecha registro",
             Valor = ((int)TipoFiltroFechaGasto.FechaRegistro).ToString()
         },
+            };
+            var filtrosEstado = new List<OpcionFiltro>
+    {
+       new OpcionFiltro { Texto = "Todos", Valor = "" },
 
         new OpcionFiltro
         {
@@ -309,15 +341,82 @@ namespace Presentacion.Core.Gasto
             ActivarCombo(
                 cbx2,
                 lblcbx2,
-                filtrosFechaEstado,
+                filtrosEstado,
                 "Texto",
                 "Valor",
-                "Estado / Fecha"
+                "Estado"
             );
+            ActivarCombo(
+                cbx3,
+                lblcbx3,
+                filtrosFecha,
+                "Texto",
+                "Valor",
+                "Fecha"
+            );
+            cbx1.SelectedValue = "";
+            cbx2.SelectedValue = "";
+            cbx3.SelectedValue = "";
 
-            cbx2.SelectedIndex = -1;
+        }
+        protected override void AccionCheck2()
+        {
+            if (chkBool2.Checked)
+            {
+                _actualizandoFiltros = true;
+
+                chkBool1.Checked = false;
+
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosEspeciales();
+            }
+
+            paginaActual = 1;
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
+        }
+        protected override void AccionCheck1()
+        {
+            if (chkBool1.Checked)
+            {
+                _actualizandoFiltros = true;
+
+                chkBool2.Checked = false;
+
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosEspeciales();
+            }
+
+            paginaActual = 1;
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
         }
 
+        private void LimpiarFiltrosEspeciales()
+        {
+            _actualizandoFiltros = true;
+
+            txtBuscar.Clear();
+
+            if (cbx1.Enabled)
+                cbx1.SelectedIndex = 0;
+
+            if (cbx2.Enabled)
+                cbx2.SelectedIndex = 0;
+
+            if (cbx3.Enabled)
+                cbx3.SelectedIndex = 0;
+
+            chkUsarFecha.Checked = false;
+
+            _actualizandoFiltros = false;
+        }
         #endregion
 
         #region 🔥 FILTROS

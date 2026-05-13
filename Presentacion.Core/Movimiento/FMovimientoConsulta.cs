@@ -66,42 +66,48 @@ namespace Presentacion.Core.Movimiento
                 "Buscar por"
             );
 
-            var opcionesTipo = new List<OpcionFiltro>
-            {
-                new OpcionFiltro { Texto = "Todos", Valor = "" },
-                new OpcionFiltro { Texto = "Ingresos", Valor = ((int)TipoMovimiento.Ingreso).ToString() },
-                new OpcionFiltro { Texto = "Egresos", Valor = ((int)TipoMovimiento.Egreso).ToString() }
-            };
-
+                         var opcionesTipoMovimiento = new List<OpcionFiltro>
+             {
+                 new OpcionFiltro { Texto = "Todos", Valor = "" },
+             
+                 // 🔹 TipoMovimiento (nivel general)
+                 new OpcionFiltro { Texto = "Ingresos", Valor = "TM_" + ((int)TipoMovimiento.Ingreso) },
+                 new OpcionFiltro { Texto = "Egresos", Valor = "TM_" + ((int)TipoMovimiento.Egreso) },
+             
+                 // 🔹 TipoMovimientoDetalle
+                 new OpcionFiltro { Texto = "Cancelación", Valor = "TMD_" + ((int)TipoMovimientoDetalle.Cancelacion) },
+                 new OpcionFiltro { Texto = "Cuenta Corriente", Valor = "TMD_" + ((int)TipoMovimientoDetalle.CuentaCorriente) },
+                 new OpcionFiltro { Texto = "Stock", Valor = "TMD_" + ((int)TipoMovimientoDetalle.Stock) },
+                 new OpcionFiltro { Texto = "Venta", Valor = "TMD_" + ((int)TipoMovimientoDetalle.Venta) },
+                 new OpcionFiltro { Texto = "Compra", Valor = "TMD_" + ((int)TipoMovimientoDetalle.Compra) },
+                 new OpcionFiltro { Texto = "Servicios", Valor = "TMD_" + ((int)TipoMovimientoDetalle.Servicios) },
+                 new OpcionFiltro { Texto = "Venta Libre", Valor = "TMD_" + ((int)TipoMovimientoDetalle.VentaLibre) },
+             
+                 // 📅 Fecha
+             };
+             
             ActivarCombo(
                 cbx2,
                 lblcbx2,
-                opcionesTipo,
+                opcionesTipoMovimiento,
                 "Texto",
                 "Valor",
-                "Movimiento"
+                "Tipo Movimiento"
             );
-
-            var opcionesTipoMovimiento = new List<OpcionFiltro>
+            var opcionFecha = new List<OpcionFiltro>
             {
-                new OpcionFiltro { Texto = "Todos", Valor = "" },
-                new OpcionFiltro { Texto = "Cancelación", Valor = ((int)TipoMovimientoDetalle.Cancelacion).ToString()},
-                new OpcionFiltro { Texto = "Cuenta Corriente", Valor = ((int)TipoMovimientoDetalle.CuentaCorriente).ToString()  },
-                new OpcionFiltro { Texto = "Stock", Valor = ((int)TipoMovimientoDetalle.Stock).ToString() },    
-                new OpcionFiltro { Texto = "Venta", Valor = ((int)TipoMovimientoDetalle.Venta).ToString() },
-                new OpcionFiltro { Texto = "Compra", Valor = ((int)TipoMovimientoDetalle.Compra).ToString() },
-                new OpcionFiltro { Texto = "Servicios", Valor = ((int)TipoMovimientoDetalle.Servicios).ToString() },
-                new OpcionFiltro { Texto = "Venta Libre", Valor = ((int)TipoMovimientoDetalle.VentaLibre).ToString() }
+
+             new OpcionFiltro { Texto = "Todos", Valor = "" },
+             new OpcionFiltro { Texto = "Fecha Movimiento", Valor = "FECHA" },
             };
             ActivarCombo(
-             cbx3,
-             lblcbx3,
-             opcionesTipoMovimiento,
-             "Texto",
-             "Valor",
-             "Tipo"
-         );
-
+                cbx3,
+                lblcbx3,
+                opcionFecha,
+                "Texto",
+                "Valor",
+                "Fecha"
+            );
             ActivarFiltroFechas("Filtrar por fecha");
             ActivarCheck(chkBool1, "Ver eliminados");
             ActivarCheck(chkBool2, "Ver todos (históricos)");
@@ -119,7 +125,7 @@ namespace Presentacion.Core.Movimiento
             => "Filtrar por Movimiento";
 
         protected override string TextoLblCbx3
-            => "Filtrar por Tipo Movimiento";
+            => "Filtrar por Fecha";
 
         protected override void AccionCheck2()
         {

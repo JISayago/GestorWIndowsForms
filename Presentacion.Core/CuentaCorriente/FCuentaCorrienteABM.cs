@@ -1,6 +1,7 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Cliente;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.CuentaCorriente;
@@ -50,19 +51,28 @@ namespace Presentacion.Core.CuentaCorriente
 
             dtpFechaVencimiento.MinDate = DateTime.Now;
 
-            //var filtros = new FiltroConsulta
-            //{
-            //    TextoBuscar = "",
-            //    VerEliminados = false,
-            //    Page = 1,
-            //    PageSize = 1000 // o un número alto para traer todos
-            //};
+            var filtros = new FiltroConsulta
+            {
+                TextoBuscar = null,        // sin búsqueda
+                Filtro1 = null,            // sin filtro por propiedad
+                Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(), // 🔴 clave
 
-            //var clientes = _clienteServicio.ObtenerClientes(filtros).Items;
+                Bool1 = false,             // no eliminados
+                Bool2 = false,             // no histórico → aplica lógica default
+
+                FechaDesde = null,
+                FechaHasta = null,
+                Filtro3 = null,
+
+                Page = 1,
+                PageSize = 50 // o el tamaño que uses normalmente
+            };
+
+            var clientes = _clienteServicio.ObtenerClientes(filtros).Items;
 
             cmbClientes.DisplayMember = "NombreCompleto"; // lo que se muestra
             cmbClientes.ValueMember = "PersonaId";
-            //cmbClientes.DataSource = clientes;
+            cmbClientes.DataSource = clientes;
 
             cmbClientes.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             cmbClientes.AutoCompleteSource = AutoCompleteSource.ListItems;
@@ -93,17 +103,26 @@ namespace Presentacion.Core.CuentaCorriente
             }
 
             var cuentacorriente = _cuentacorrienteServicio.ObtenerCuentaCorrientePorId(entidadId.Value);
-            //var filtros = new FiltroConsulta
-            //{
-            //    TextoBuscar = cuentacorriente.ClienteId.ToString(),
-            //    VerEliminados = false,
-            //    Page = 1,
-            //    PageSize = 1
-            //};
+            var filtros = new FiltroConsulta
+            {
+                TextoBuscar = null,        // sin búsqueda
+                Filtro1 = null,            // sin filtro por propiedad
+                Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(), // 🔴 clave
 
-            //var resultado = _clienteServicio.ObtenerClientes(filtros);
+                Bool1 = false,             // no eliminados
+                Bool2 = false,             // no histórico → aplica lógica default
 
-            //var clienteDeCuentaCorriente = resultado.Items.FirstOrDefault();
+                FechaDesde = null,
+                FechaHasta = null,
+                Filtro3 = null,
+
+                Page = 1,
+                PageSize = 50 // o el tamaño que uses normalmente
+            };
+
+            var resultado = _clienteServicio.ObtenerClientes(filtros);
+
+            var clienteDeCuentaCorriente = resultado.Items.FirstOrDefault();
             // Datos Personales
 
             txtNombreCC.Text = cuentacorriente.NombreCuentaCorriente;
@@ -114,7 +133,7 @@ namespace Presentacion.Core.CuentaCorriente
             txtLimiteDeuda.Enabled = cuentacorriente.LimiteDeudaActivo;
             cmbClientes.DisplayMember = "NombreCompleto"; // lo que se muestra
             cmbClientes.ValueMember = "PersonaId";
-            //cmbClientes.DataSource = clienteDeCuentaCorriente;                                                                           
+            cmbClientes.DataSource = clienteDeCuentaCorriente;
             cmbClientes.Enabled = false; // No se puede cambiar el cliente asociado en la modificación
 
             dgvDni.DataSource = cuentacorriente.DniAutorizados.Select(x => new { DNI = x }).ToList();
