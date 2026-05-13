@@ -21,7 +21,9 @@ namespace Servicios.LogicaNegocio.Caja.DTO
         public decimal BalanceFinal { get; set; } //dejo el balance? ya tengo saldoActual, balancefinal podria ser el calculo entre ingresos y egresos, sin contal saldo inicial, nose si tiene mucho sentido
 
         public long EmpleadoApertura { get; set; }
+        public string NombreEmpleadoApertura { get; set; } // para mostrar el nombre del empleado que abrió la caja en la consulta de cajas
         public long? EmpleadoCierre { get; set; }
+        public string NombreEmpleadoCierre { get; set; } // para mostrar el nombre del empleado que cerró la caja en la consulta de cajas
 
         public bool EstaCerrada { get; set; }
 

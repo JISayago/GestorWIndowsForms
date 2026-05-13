@@ -54,19 +54,19 @@ namespace Presentacion.Core.Empleado.Rol
 
             ConfigurarGrillas();
 
-            var filtros = new FiltroConsulta
-            {
-                TextoBuscar = string.Empty,
-                VerEliminados = false,
-                Page = 1,
-                PageSize = int.MaxValue
-            };
+            //var filtros = new FiltroConsulta
+            //{
+            //    TextoBuscar = string.Empty,
+            //    VerEliminados = false,
+            //    Page = 1,
+            //    PageSize = int.MaxValue
+            //};
 
-            var resultado = _empleadoServicio.ObtenerEmpleados(filtros);
-            var empleados = resultado.Items.ToList();
+            //var resultado = _empleadoServicio.ObtenerEmpleados(filtros);
+            //var empleados = resultado.Items.ToList();
 
             _cargandoEmpleado = true;
-            CargarComboBox(cbxEmpleado, empleados, "Nombre", "PersonaId");
+            //CargarComboBox(cbxEmpleado, empleados, "Nombre", "PersonaId");
             _cargandoEmpleado = false;
 
             if (tipoAsignacionRol == TipoAsignacionRol.Existente && entidadID.HasValue)
@@ -348,15 +348,15 @@ namespace Presentacion.Core.Empleado.Rol
 
         private void InicializacionGrillas()
         {
-            var filtros = new FiltroConsulta
-            {
-                TextoBuscar = string.Empty,
-                VerEliminados = false,
-                Page = 1,
-                PageSize = int.MaxValue
-            };
+            //var filtros = new FiltroConsulta
+            //{
+            //    TextoBuscar = string.Empty,
+            //    VerEliminados = false,
+            //    Page = 1,
+            //    PageSize = int.MaxValue
+            //};
 
-            var todosLosRoles = _rolServicio.ObtenerRoles(filtros).Items.ToList();
+            //var todosLosRoles = _rolServicio.ObtenerRoles(filtros).Items.ToList();
 
             var rolesAsignados = new List<RolDTO>();
 
@@ -368,9 +368,9 @@ namespace Presentacion.Core.Empleado.Rol
             var idsAsignados = new HashSet<long>(rolesAsignados.Select(r => r.RolId));
 
             _rolesAsignados = new BindingList<RolDTO>(rolesAsignados);
-            _rolesDisponibles = new BindingList<RolDTO>(
-                todosLosRoles.Where(r => !idsAsignados.Contains(r.RolId)).ToList()
-            );
+            //_rolesDisponibles = new BindingList<RolDTO>(
+            //    todosLosRoles.Where(r => !idsAsignados.Contains(r.RolId)).ToList()
+            //);
 
             _rolesControl = new BindingList<RolDTO>(
                 rolesAsignados.Select(r => new RolDTO

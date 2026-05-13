@@ -53,22 +53,28 @@ public class DatosPantallaPrincipal
         {
             Page = 1,
             PageSize = 10,
-            TextoBuscar = "",
-            VerEliminados = false
+
+            TextoBuscar = string.Empty,
+
+            Bool1 = false // no eliminados
         };
 
         var resultadoProductos = _productoServicio.ObtenerProductos(filtroProductos);
-        Productos = resultadoProductos.Items.ToList<ProductoDTO>();
+
+        Productos = resultadoProductos.Items.ToList();
 
         var filtroVentas = new FiltroConsulta
         {
             Page = 1,
             PageSize = 12,
-            TextoBuscar = "",
-            VerEliminados = false
+
+            TextoBuscar = string.Empty,
+
+            Bool1 = false // no eliminados
         };
 
         var resultadoVentas = _ventaServicio.ObtenerVentas(filtroVentas);
-        Ventas = resultadoVentas.Items.ToList<VentaDTO>();
+
+        Ventas = resultadoVentas.Items.ToList();
     }
 }

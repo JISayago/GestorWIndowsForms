@@ -259,41 +259,41 @@ namespace Servicios.LogicaNegocio.Gasto
         }
 
 
-        public List<GastoDTO> ObtenerGastos(int? estadoGasto = null)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
+        //public List<GastoDTO> ObtenerGastos(int? estadoGasto = null)
+        //{
+        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var query = context.Gastos.AsQueryable();
+        //    var query = context.Gastos.AsQueryable();
 
-            if (estadoGasto.HasValue)
-            {
-                query = query.Where(g => g.EstadoGasto == estadoGasto.Value);
-            }
-            else
-            {
-                query = query.Where(g => g.EstadoGasto > 0);
-            }
+        //    if (estadoGasto.HasValue)
+        //    {
+        //        query = query.Where(g => g.EstadoGasto == estadoGasto.Value);
+        //    }
+        //    else
+        //    {
+        //        query = query.Where(g => g.EstadoGasto > 0);
+        //    }
 
-                var gastos = query
-                    .OrderByDescending(g => g.FechaGasto)
-                    .Select(g => new GastoDTO
-                    {
-                        GastoId = g.GastoId,
-                        NumeroGasto = g.NumeroGasto,
-                        IdEmpleado = g.IdEmpleado,
-                        NombreEmpleado = g.Empleado.Persona.Nombre + " " + g.Empleado.Persona.Apellido,
-                        CategoriaGasto = g.CategoriaGasto,
-                        FechaGasto = g.FechaGasto,
-                        FechaRegistro = g.FechaRegistro,
-                        MontoTotal = g.MontoTotal,
-                        MontoPagado = g.MontoPagado,
-                        EstadoGasto = g.EstadoGasto,
-                        Detalle = g.Detalle
-                    })
-                    .ToList();
+        //        var gastos = query
+        //            .OrderByDescending(g => g.FechaGasto)
+        //            .Select(g => new GastoDTO
+        //            {
+        //                GastoId = g.GastoId,
+        //                NumeroGasto = g.NumeroGasto,
+        //                IdEmpleado = g.IdEmpleado,
+        //                NombreEmpleado = g.Empleado.Persona.Nombre + " " + g.Empleado.Persona.Apellido,
+        //                CategoriaGasto = g.CategoriaGasto,
+        //                FechaGasto = g.FechaGasto,
+        //                FechaRegistro = g.FechaRegistro,
+        //                MontoTotal = g.MontoTotal,
+        //                MontoPagado = g.MontoPagado,
+        //                EstadoGasto = g.EstadoGasto,
+        //                Detalle = g.Detalle
+        //            })
+        //            .ToList();
 
-            return gastos;
-        }
+        //    return gastos;
+        //}
 
         public ResultadoPaginacion<GastoDTO> ObtenerGastos(FiltroConsulta filtros)
         {
@@ -305,12 +305,38 @@ namespace Servicios.LogicaNegocio.Gasto
                     .ThenInclude(e => e.Persona)
                 .AsQueryable();
 
-            // 🔍 TEXTO
+            // =========================================================
+            // 🧠 CORE: ANULADOS + HISTORICO
+            // =========================================================
+
+            if (filtros.Bool2)
+            {
+                // 👉 HISTÓRICO → no filtramos nada
+            }
+            else if (filtros.Bool1)
+            {
+                // 👉 SOLO ANULADOS
+                query = query.Where(g => g.EstadoGasto == (int)EstadoGasto.Anulado);
+            }
+            else
+            {
+                // 👉 DEFAULT → NO anulados + último mes
+                var desde = DateTime.Now.AddMonths(-1);
+
+                query = query.Where(g =>
+                    g.EstadoGasto != (int)EstadoGasto.Anulado &&
+                    g.FechaGasto >= desde);
+            }
+
+            // =========================================================
+            // 🔍 BUSQUEDA
+            // =========================================================
+
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                var texto = filtros.TextoBuscar;
+                var texto = filtros.TextoBuscar.Trim();
 
-                switch (filtros.Extra?.ToString())
+                switch (filtros.Filtro1?.ToString())
                 {
                     case "NumeroGasto":
                         query = query.Where(g => g.NumeroGasto.Contains(texto));
@@ -321,6 +347,29 @@ namespace Servicios.LogicaNegocio.Gasto
                             g.Empleado.Persona.Nombre.Contains(texto) ||
                             g.Empleado.Persona.Apellido.Contains(texto));
                         break;
+                    case "CategoriaGasto":
+
+                        var textoBusqueda = texto.ToLower();
+
+                        var categorias = Enum
+                            .GetValues(typeof(CategoriaGasto))
+                            .Cast<CategoriaGasto>()
+                            .Where(c => c.ToString().ToLower().Contains(textoBusqueda))
+                            .Select(c => (int)c)
+                            .ToList();
+
+                        if (categorias.Any())
+                        {
+                            query = query.Where(g => categorias.Contains(g.CategoriaGasto));
+                        }
+                        else
+                        {
+                            // 👉 no matchea nada
+                            query = query.Where(g => false);
+                        }
+
+                        break;
+
                     default:
                         query = query.Where(g =>
                             g.NumeroGasto.Contains(texto) ||
@@ -329,60 +378,69 @@ namespace Servicios.LogicaNegocio.Gasto
                 }
             }
 
-            // 🔴 EXTRA2 → FECHA o ESTADO
-            TipoFiltroFechaGasto? tipoFecha = null;
-            EstadoGasto? estadoFiltro = null;
+            // =========================================================
+            // 🔴 FILTRO ESTADO (cbx2)
+            // =========================================================
 
-            if (filtros.Extra2 != null &&
-                int.TryParse(filtros.Extra2.ToString(), out var valor))
+            if (filtros.Filtro2 != null &&
+                int.TryParse(filtros.Filtro2.ToString(), out var estado))
             {
-                if (Enum.IsDefined(typeof(TipoFiltroFechaGasto), valor))
-                    tipoFecha = (TipoFiltroFechaGasto)valor;
-
-                if (Enum.IsDefined(typeof(EstadoGasto), valor))
-                    estadoFiltro = (EstadoGasto)valor;
+                query = query.Where(g => g.EstadoGasto == estado);
             }
 
-            // 📅 FILTRO FECHA
-            if (tipoFecha.HasValue)
+            // =========================================================
+            // 📅 FILTRO FECHA (cbx3)
+            // =========================================================
+
+            bool usaFechas = filtros.FechaDesde.HasValue || filtros.FechaHasta.HasValue;
+
+            if (usaFechas && filtros.Filtro3 != null &&
+                int.TryParse(filtros.Filtro3.ToString(), out var tipoFecha))
             {
-                if (tipoFecha == TipoFiltroFechaGasto.FechaGasto)
+                switch ((TipoFiltroFechaGasto)tipoFecha)
                 {
-                    if (filtros.FechaDesde.HasValue)
-                        query = query.Where(g => g.FechaGasto >= filtros.FechaDesde.Value);
+                    case TipoFiltroFechaGasto.FechaGasto:
 
-                    if (filtros.FechaHasta.HasValue)
-                    {
-                        var hastaReal = filtros.FechaHasta.Value.AddDays(1);
-                        query = query.Where(g => g.FechaGasto < hastaReal);
-                    }
-                }
+                        if (filtros.FechaDesde.HasValue)
+                            query = query.Where(g => g.FechaGasto >= filtros.FechaDesde.Value);
 
-                if (tipoFecha == TipoFiltroFechaGasto.FechaRegistro)
-                {
-                    if (filtros.FechaDesde.HasValue)
-                        query = query.Where(g => g.FechaRegistro >= filtros.FechaDesde.Value);
+                        if (filtros.FechaHasta.HasValue)
+                        {
+                            var hasta = filtros.FechaHasta.Value.AddDays(1);
+                            query = query.Where(g => g.FechaGasto < hasta);
+                        }
 
-                    if (filtros.FechaHasta.HasValue)
-                    {
-                        var hastaReal = filtros.FechaHasta.Value.AddDays(1);
-                        query = query.Where(g => g.FechaRegistro < hastaReal);
-                    }
+                        break;
+
+                    case TipoFiltroFechaGasto.FechaRegistro:
+
+                        if (filtros.FechaDesde.HasValue)
+                            query = query.Where(g => g.FechaRegistro >= filtros.FechaDesde.Value);
+
+                        if (filtros.FechaHasta.HasValue)
+                        {
+                            var hasta = filtros.FechaHasta.Value.AddDays(1);
+                            query = query.Where(g => g.FechaRegistro < hasta);
+                        }
+
+                        break;
                 }
             }
 
-            // 🔴 FILTRO ESTADO
-            if (estadoFiltro.HasValue)
-            {
-                query = query.Where(g => g.EstadoGasto == (int)estadoFiltro.Value);
-            }
-
+            // =========================================================
             // 📊 TOTAL
+            // =========================================================
+
             var total = query.Count();
 
-            // 🔴 CONTROL PAGINACION
+            // =========================================================
+            // 🔴 PAGINACION
+            // =========================================================
+
             var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
-            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
 
             if (filtros.Page > totalPaginas)
                 filtros.Page = totalPaginas;
@@ -390,10 +448,16 @@ namespace Servicios.LogicaNegocio.Gasto
             if (filtros.Page < 1)
                 filtros.Page = 1;
 
-            // 📌 ORDEN (tiene sentido usar FechaGasto)
+            // =========================================================
+            // 📌 ORDEN
+            // =========================================================
+
             query = query.OrderByDescending(g => g.FechaGasto);
 
+            // =========================================================
             // 📄 DATA
+            // =========================================================
+
             var data = query
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)
@@ -401,17 +465,30 @@ namespace Servicios.LogicaNegocio.Gasto
                 {
                     GastoId = g.GastoId,
                     NumeroGasto = g.NumeroGasto,
+
                     IdEmpleado = g.IdEmpleado,
-                    NombreEmpleado = g.Empleado.Persona.Nombre + " " + g.Empleado.Persona.Apellido,
+
+                    NombreEmpleado =
+                        g.Empleado.Persona.Nombre + " " +
+                        g.Empleado.Persona.Apellido,
+
                     CategoriaGasto = g.CategoriaGasto,
+
                     FechaGasto = g.FechaGasto,
                     FechaRegistro = g.FechaRegistro,
+
                     MontoTotal = g.MontoTotal,
                     MontoPagado = g.MontoPagado,
+
                     EstadoGasto = g.EstadoGasto,
+
                     Detalle = g.Detalle
                 })
                 .ToList();
+
+            // =========================================================
+            // 📄 RESULTADO
+            // =========================================================
 
             return new ResultadoPaginacion<GastoDTO>
             {

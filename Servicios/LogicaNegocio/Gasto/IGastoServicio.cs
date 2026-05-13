@@ -15,7 +15,7 @@ namespace Servicios.LogicaNegocio.Gasto
     {
         EstadoOperacion NuevoGasto(GastoDTO gastoDto);
         GastoDTO ObtenerGastoPorId(long gastoId);
-        List<GastoDTO> ObtenerGastos(int? estadoGasto);
+        //List<GastoDTO> ObtenerGastos(int? estadoGasto);
         ResultadoPaginacion<GastoDTO> ObtenerGastos(FiltroConsulta filtros);
         EstadoOperacion AnularGasto(long gastoId);
         EstadoOperacion ConfirmarPago(long gastoId);

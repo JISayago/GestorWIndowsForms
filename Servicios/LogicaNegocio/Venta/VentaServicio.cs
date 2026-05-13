@@ -408,87 +408,136 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                 .AsNoTracking()
                 .AsQueryable();
 
-            // 1. 🔹 Filtro de Eliminados
-            //query = filtros.VerEliminados
-            //    ? query.Where(v => v.EstaEliminado)
-            //    : query.Where(v => !v.EstaEliminado);
+            #region 🔍 BUSQUEDA
 
-            // 2. 🔹 Filtro por Fechas (Nuevos campos)
-            if (filtros.FechaDesde.HasValue)
-            {
-                query = query.Where(v => v.FechaVenta >= filtros.FechaDesde.Value);
-            }
-            if (filtros.FechaHasta.HasValue)
-            {
-                // Se suele usar .Date.AddDays(1) para incluir todo el día de la fecha final
-                var fechaLimite = filtros.FechaHasta.Value.Date.AddDays(1);
-                query = query.Where(v => v.FechaVenta < fechaLimite);
-            }
-
-            // 3. 🔹 Buscador
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                string busqueda = filtros.TextoBuscar.ToLower();
-                // Implementación de switch según la columna seleccionada en 'Extra'
-                query = filtros.Extra?.ToString() switch
+                var texto = filtros.TextoBuscar.Trim();
+
+                switch (filtros.Filtro1?.ToString())
                 {
-                    "NumeroVenta" => query.Where(v => v.NumeroVenta.Contains(busqueda)),
-                    "Cliente" => query.Where(v => v.IdCliente.ToString().Contains(busqueda)), // O v.Cliente.Nombre si tienes Include
-                    _ => query.Where(v => v.NumeroVenta.Contains(busqueda))
-                };
+                    case "NumeroVenta":
+
+                        query = query.Where(v =>
+                            v.NumeroVenta.Contains(texto));
+
+                        break;
+
+                    case "Cliente":
+
+                        query = query.Where(v =>
+                            v.IdCliente.ToString().Contains(texto));
+
+                        break;
+
+                    default:
+
+                        query = query.Where(v =>
+                            v.NumeroVenta.Contains(texto));
+
+                        break;
+                }
             }
 
-            // 4. 🔹 Filtro por Estado (Extra2)
-            if (filtros.Extra2 != null && int.TryParse(filtros.Extra2.ToString(), out int estado))
+            #endregion
+
+            #region 📅 FECHAS
+
+            if (filtros.FechaDesde.HasValue)
             {
-                query = query.Where(v => v.Estado == estado);
+                query = query.Where(v =>
+                    v.FechaVenta >= filtros.FechaDesde.Value);
             }
 
-            // 5. 🔹 Orden (Importante: Ordenar antes de aplicar el límite total)
-            // Usamos el campo de fecha descendente por defecto para traer las "últimas"
-            query = query.OrderByDescending(v => v.FechaVenta);
+            if (filtros.FechaHasta.HasValue)
+            {
+                var fechaLimite =
+                    filtros.FechaHasta.Value.Date.AddDays(1);
 
-            // 6. 🔹 APLICAR LÍMITE TOTAL (Tu nueva propiedad TotalRegistros)
-            // Si TotalRegistros es 20, la consulta se limitará a las últimas 20 ventas que cumplan los filtros.
+                query = query.Where(v =>
+                    v.FechaVenta < fechaLimite);
+            }
+
+            #endregion
+
+            #region 🔴 ESTADO
+
+            if (filtros.Filtro2 != null &&
+                int.TryParse(filtros.Filtro2.ToString(), out int estado))
+            {
+                query = query.Where(v =>
+                    v.Estado == estado);
+            }
+
+            #endregion
+
+            #region 📌 ORDEN
+
+            query = query
+                .OrderByDescending(v => v.FechaVenta);
+
+            #endregion
+
+            #region 🔴 LIMITE TOTAL
+
             if (filtros.TotalRegistros > 0)
             {
                 query = query.Take(filtros.TotalRegistros);
             }
 
-            // 7. 🔹 Cálculo de Paginación sobre el conjunto ya limitado
+            #endregion
+
+            #region 📊 PAGINACION
+
             var totalEncontrados = query.Count();
-            var totalPaginas = (int)Math.Ceiling((double)totalEncontrados / filtros.PageSize);
 
-            if (totalPaginas == 0) totalPaginas = 1;
+            var totalPaginas =
+                (int)Math.Ceiling((double)totalEncontrados / filtros.PageSize);
 
-            // Ajustar página actual si se sale de rango
-            if (filtros.Page > totalPaginas) filtros.Page = totalPaginas;
-            if (filtros.Page < 1) filtros.Page = 1;
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
 
-            // 8. 🔹 Proyección y Paginado Final
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            #endregion
+
+            #region 📄 DATA
+
             var data = query
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)
                 .Select(v => new VentaDTO
                 {
                     VentaId = v.VentaId,
+
                     NumeroVenta = v.NumeroVenta,
+
                     IdEmpleado = v.IdEmpleado,
                     IdVendedor = v.IdVendedor,
                     IdCliente = v.IdCliente,
+
                     FechaVenta = v.FechaVenta,
+
                     Total = v.Total,
                     TotalSinDescuento = v.TotalSinDescuento,
                     Descuento = v.Descuento,
+
                     Estado = v.Estado,
+
                     Detalle = v.Detalle
                 })
                 .ToList();
 
+            #endregion
+
             return new ResultadoPaginacion<VentaDTO>
             {
                 Items = data,
-                TotalRegistros = totalEncontrados, // Devolverá máximo el valor de filtros.TotalRegistros
+                TotalRegistros = totalEncontrados,
                 Page = filtros.Page,
                 PageSize = filtros.PageSize
             };

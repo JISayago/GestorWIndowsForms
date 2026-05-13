@@ -37,7 +37,7 @@
             ClientSize = new Size(1482, 450);
             Name = "FLoteConsulta";
             Text = "FLoteConsulta";
-            Load += FLoteConsulta_Load;
+            //Load += FLoteConsulta_Load;
             ResumeLayout(false);
         }
 

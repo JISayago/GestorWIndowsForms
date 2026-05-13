@@ -1,4 +1,5 @@
 ﻿using Microsoft.Identity.Client;
+using Servicios.Helpers.Producto;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using Servicios.LogicaNegocio.Producto.Rubro.DTO;
 using System;
@@ -20,11 +21,25 @@ namespace Servicios.LogicaNegocio.Producto.DTO
 
         public decimal Stock { get; set; } 
         public bool ControlPorLote { get; set; }
+
+        public string ControlLoteDescripcion =>
+      ControlPorLote
+          ? "Control Activo"
+          : "Desactivado";
         public decimal PrecioCosto { get; set; }
         public decimal PrecioVenta { get; set; }
         public string Descripcion { get; set; }
         public bool EstaEliminado { get; set; }
         public int Estado { get; set; }
+        public string EstadoDescripcion =>
+     Estado switch
+     {
+         (int)EstadoProducto.Activo => "Activo",
+         (int)EstadoProducto.Vencido => "Vencido",
+         (int)EstadoProducto.Discontinuado => "Discontinuado",
+         (int)EstadoProducto.SinStock => "Sin Stock",
+         _ => "Desconocido"
+     };
         public string Medida { get; set; }
         public string UnidadMedida { get; set; }
         public string? Codigo { get; set; } //

@@ -12,6 +12,8 @@ namespace Servicios.Helpers.Cliente
         FechaBaja = 2,
         ConCtaCte = 3,
         SinCtaCte = 4,
-        Inhabilitado = 5
+        Inhabilitado = 5,
+        Activo = 6, 
+        Baja = 7
     }
 }

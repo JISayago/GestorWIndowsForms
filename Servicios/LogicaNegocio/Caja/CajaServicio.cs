@@ -1,6 +1,8 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
+using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Caja.DTO;
 using System;
 using System.Collections.Generic;
@@ -10,9 +12,8 @@ using System.Threading.Tasks;
 
 namespace Servicios.LogicaNegocio.Caja
 {
-    public class CajaServicio 
+    public class CajaServicio : ICajaServicio
     {
-
         public void AbrirCaja(decimal montoInicial, long empleadoId)
         {
             var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
@@ -162,7 +163,7 @@ namespace Servicios.LogicaNegocio.Caja
             context.Cajas.Update(caja);
 
         }
-
+            
         public void ActualizarSaldoCaja(AccesoDatos.Entidades.Caja caja, TipoMovimiento tipo, decimal monto)
         {
             //TipoDeTransaccion podria es un enum en vez de string, fixear
@@ -181,12 +182,147 @@ namespace Servicios.LogicaNegocio.Caja
             }
             caja.SaldoActual = caja.SaldoInicial + (caja.TotalIngresos - caja.TotalEgresos);
         }
-        public List<CajaDTO> ObetenerTodasLasCajas() //se usa para Caja Consulta, podria paginarse si hay muchas cajas.
+        public ResultadoPaginacion<CajaDTO> ObtenerCajas(FiltroConsulta filtros)
         {
-            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            var cajas = context.Cajas
-                .Select(c => new CajaDTO
+            var query = context.Cajas
+                .AsNoTracking()
+                .AsQueryable();
+
+            // =========================================================
+            // 📌 ESTADO (cbx1)
+            // =========================================================
+
+            switch (filtros.Filtro1?.ToString())
+            {
+                case "Abierta":
+                    query = query.Where(c => !c.EstaCerrada);
+                    break;
+
+                case "Cerrada":
+                    query = query.Where(c => c.EstaCerrada);
+                    break;
+            }
+
+            // =========================================================
+            // 📅 FECHAS (lógica completa)
+            // =========================================================
+
+            if (filtros.FechaDesde.HasValue || filtros.FechaHasta.HasValue)
+            {
+                // 👉 filtro manual del usuario
+                if (filtros.FechaDesde.HasValue)
+                {
+                    query = query.Where(c =>
+                        c.FechaInicio >= filtros.FechaDesde.Value);
+                }
+
+                if (filtros.FechaHasta.HasValue)
+                {
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
+
+                    query = query.Where(c =>
+                        c.FechaInicio < hasta);
+                }
+            }
+            else if (!filtros.Bool2)
+            {
+                // 👉 default: último mes
+                var desde = DateTime.Now.AddMonths(-1);
+
+                query = query.Where(c =>
+                    c.FechaInicio >= desde);
+            }
+            // 👉 si Bool2 = histórico → no filtro fechas
+
+            // =========================================================
+            // 📊 TOTAL
+            // =========================================================
+
+            var total = query.Count();
+
+            // =========================================================
+            // 🔴 PAGINACIÓN
+            // =========================================================
+
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // =========================================================
+            // 📌 ORDEN
+            // =========================================================
+
+            query = query.OrderByDescending(c => c.FechaInicio);
+
+            // =========================================================
+            // 📦 TRAER DATA BASE (SIN EMPLEADOS)
+            // =========================================================
+
+            var cajas = query
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
+                .Select(c => new
+                {
+                    c.CajaId,
+                    c.SaldoInicial,
+                    c.SaldoActual,
+                    c.FechaInicio,
+                    c.FechaFin,
+                    c.TotalIngresos,
+                    c.TotalEgresos,
+                    c.BalanceFinal,
+                    c.EmpleadoApertura,
+                    c.EmpleadoCierre,
+                    c.EstaCerrada
+                })
+                .ToList();
+
+            // =========================================================
+            // 🔥 TRAER EMPLEADOS (UNA SOLA QUERY)
+            // =========================================================
+
+            var empleadosIds = cajas
+                .SelectMany(c => new long?[] { c.EmpleadoApertura, c.EmpleadoCierre })
+                .Where(id => id.HasValue)
+                .Select(id => id.Value)
+                .Distinct()
+                .ToList();
+
+            var empleados = context.Empleados
+                .Where(e => empleadosIds.Contains(e.PersonaId))
+                .Select(e => new
+                {
+                    e.PersonaId,
+                    e.Username
+                })
+                .ToList()
+                .ToDictionary(e => e.PersonaId, e => e.Username);
+
+            // =========================================================
+            // 🧠 MAPEAR A DTO
+            // =========================================================
+
+            var data = cajas.Select(c =>
+            {
+                empleados.TryGetValue(c.EmpleadoApertura, out var nombreApertura);
+
+                string nombreCierre = null;
+
+                if (c.EmpleadoCierre.HasValue)
+                {
+                    empleados.TryGetValue(c.EmpleadoCierre.Value, out nombreCierre);
+                }
+
+                return new CajaDTO
                 {
                     CajaId = c.CajaId,
                     SaldoInicial = c.SaldoInicial,
@@ -196,13 +332,28 @@ namespace Servicios.LogicaNegocio.Caja
                     TotalIngresos = c.TotalIngresos,
                     TotalEgresos = c.TotalEgresos,
                     BalanceFinal = c.BalanceFinal,
+
                     EmpleadoApertura = c.EmpleadoApertura,
                     EmpleadoCierre = c.EmpleadoCierre,
-                    EstaCerrada = c.EstaCerrada,
-                    //MovimientoIds = c.Movimientos.Select(m => m.MovimientoId).ToList()
-                }).ToList();
 
-            return cajas;
+                    NombreEmpleadoApertura = nombreApertura ?? "",
+                    NombreEmpleadoCierre = nombreCierre ?? "",
+
+                    EstaCerrada = c.EstaCerrada
+                };
+            }).ToList();
+
+            // =========================================================
+            // 📄 RESULTADO
+            // =========================================================
+
+            return new ResultadoPaginacion<CajaDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
         }
 
         public List<CajaDTO> ObtenerUltimasXCajas(int cantidadDeCajas)
@@ -341,5 +492,7 @@ namespace Servicios.LogicaNegocio.Caja
                 .FirstOrDefault();
             return caja;
         }
+
+      
     }
 }
