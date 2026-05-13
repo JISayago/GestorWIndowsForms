@@ -304,14 +304,32 @@ namespace Presentacion.Core.Producto
 
         private void chkControlPorLotes_CheckedChanged(object sender, EventArgs e)
         {
-            if (_cargandoDatos) return; // Evitar ejecutar lógica durante la carga de datos
+            if (_cargandoDatos) return;
 
             if (TipoOperacion == TipoOperacion.Modificar)
             {
-                var resultado = MessageBox.Show("¿Desea confirmar la operación?",
-                                         "Confirmación",
-                                         MessageBoxButtons.OKCancel,
-                                         MessageBoxIcon.Question);
+                var checkbox = (CheckBox)sender;
+                string accion = checkbox.Checked ? "activar" : "desactivar";
+                string mensaje = checkbox.Checked
+                    ? "Al activar el control por lotes, se reiniciara el stock actual del producto. ¿Desea continuar?"
+                    : "Al desactivar el control por lotes, se reiniciara el stock del producto y se deben deshabilitar los lotes asociados. ¿Desea continuar?";
+
+                var mensajeConfirmacion = MessageBox.Show(mensaje, "Confirmación", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
+                if (mensajeConfirmacion == DialogResult.OK)
+                {
+                    // Si acepta, ejecutamos la lógica
+                    txtStock.Enabled = !checkbox.Checked;
+                    txtStock.Text = "0";
+                }
+                else
+                {
+                    _cargandoDatos = true; // Apagamos los eventos temporalmente
+
+                    checkbox.Checked = !checkbox.Checked; // Revertimos el cambio
+
+                    _cargandoDatos = false; // Prendemos los eventos de nuevo
+                }
             }
         }
     }

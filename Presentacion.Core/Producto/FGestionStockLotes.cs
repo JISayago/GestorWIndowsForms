@@ -79,9 +79,10 @@ namespace Presentacion.Core.Producto
                 if (productoDTO.TieneVencimiento)
                 {
                     chkFechaVencimiento.Checked = true;
+                    chkFechaVencimiento.Enabled = false;
                 }
             }
-            else 
+            else
             {
                 loteDTO = _loteSevicio.ObtenerLotePorId(entidadId.Value);
                 productoDTO = _productoServicio.ObtenerProductoPorId(loteDTO.IdProducto);
@@ -193,7 +194,7 @@ namespace Presentacion.Core.Producto
                 return false;
             }
 
-            if(nudStockActual.Value > nudStockInicial.Value)
+            if (nudStockActual.Value > nudStockInicial.Value)
             {
                 MessageBox.Show(@"El Stock Actual no puede ser mayor al Stock Inicial.", @"Atención", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -305,12 +306,12 @@ namespace Presentacion.Core.Producto
             return true;
 
         }
-        
+
         #endregion
 
         private void FGestionStockLotes_Load(object sender, EventArgs e)
         {
-            if (TipoOperacion == TipoOperacion.Nuevo ) //Nombre default auto generado cuando cargar un lote nuevo
+            if (TipoOperacion == TipoOperacion.Nuevo) //Nombre default auto generado cuando cargar un lote nuevo
             {
                 chkLoteEstaActivo.Checked = true;
 
@@ -318,6 +319,15 @@ namespace Presentacion.Core.Producto
 
                 txtNumeroLote.Text = NumeroLote;
             }
+        }
+
+        private void nudStockInicial_ValueChanged(object sender, EventArgs e)
+        {
+            // El máximo de Stock Actual ahora es el valor de Stock Inicial
+            nudStockActual.Maximum = nudStockInicial.Value;
+
+            // Opcional: Si al bajar el inicial, el actual queda por encima, 
+            // el control NumericUpDown lo bajará automáticamente al nuevo máximo.
         }
     }
 }
