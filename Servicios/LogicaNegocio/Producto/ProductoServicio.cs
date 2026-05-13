@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Servicios.LogicaNegocio.Producto
@@ -344,6 +345,8 @@ namespace Servicios.LogicaNegocio.Producto
 
         public EstadoOperacion Modificar(ProductoDTO productoDto, long? productoId)
         {
+            bool? controlPorLoteActivadoDescativado = null;
+
             var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var productoEditar = context.Productos
@@ -362,7 +365,31 @@ namespace Servicios.LogicaNegocio.Producto
 
             //bool productoDuplicado ??
 
-            productoEditar.Stock = productoDto.Stock;
+            productoEditar.Stock = productoDto.Stock;            
+
+            //Verificamos si se intenta desactivar el control por lote y el producto tiene lotes asociados, en ese caso no permitimos la modificación
+            if (productoEditar.ControlPorLote && !productoDto.ControlPorLote)
+            {
+                var tieneLotes = context.Lotes.Any(l => l.IdProducto == productoEditar.ProductoId && l.EstaActivo);
+                if (tieneLotes)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "No se puede desactivar el control por lote porque el producto tiene lotes asociados, deshabilite los lotes asociados al producto."
+                    };
+                }
+
+                productoEditar.Stock = 0; //llevamos a 0 el stock del producto
+            }
+
+            //Verificamos si se intenta activar el control por lote 
+            if (!productoEditar.ControlPorLote && productoDto.ControlPorLote)
+            {
+                productoEditar.Stock = 0; //llevamos a 0 el stock del producto
+            }
+
+
             productoEditar.ControlPorLote = productoDto.ControlPorLote;
             productoEditar.TieneVencimiento = productoDto.TieneVencimiento;
             productoEditar.PrecioCosto = productoDto.PrecioCosto;
@@ -386,7 +413,8 @@ namespace Servicios.LogicaNegocio.Producto
                     IdProducto = productoEditar.ProductoId,
                     IdCategoria = categoriaId
                 });
-            };
+            }
+            ;
 
             context.SaveChanges();
 

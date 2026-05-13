@@ -25,6 +25,7 @@ namespace Presentacion.Core.Producto
         private readonly IRubroServicio _RubroServicio;
         protected long? EntidadID;
         private List<long> _categoriasSeleccionadas = new List<long>();
+        private bool _cargandoDatos = false;
 
         public override void FBaseABM_Load(object sender, EventArgs e)
         {
@@ -42,6 +43,8 @@ namespace Presentacion.Core.Producto
             _RubroServicio = new RubroServicio();
             EntidadID = entidadId;
 
+            _cargandoDatos = true; // Indicador para evitar eventos durante la carga de datos
+
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
             {
                 CargarDatos(entidadId);
@@ -51,8 +54,8 @@ namespace Presentacion.Core.Producto
             {
                 DesactivarControles(this);
             }
-            
-            
+
+
             AgregarControlesObligatorios(txtProducto, "Producto");
             AgregarControlesObligatorios(txtEstado, "Estado");
             AgregarControlesObligatorios(txtMedida, "Medida");
@@ -108,6 +111,7 @@ namespace Presentacion.Core.Producto
             cmbRubro.DropDownStyle = ComboBoxStyle.DropDown;
 
             EntidadID = entidadId;
+            _cargandoDatos = false; // Fin de la carga de datos
         }
 
         public override void Inicializador(long? entidadId)
@@ -176,6 +180,8 @@ namespace Presentacion.Core.Producto
                     MessageBoxIcon.Error);
                 return false;
             }
+
+
             var ProductoNueva = new ProductoDTO
             {
                 Descripcion = txtProducto.Text,
@@ -316,6 +322,37 @@ namespace Presentacion.Core.Producto
 
                 // Si querés mostrarlas en una textbox invisible o label:
                 //txtCategoria.Text = string.Join(",", _categoriasSeleccionadas);
+            }
+        }
+
+        private void chkControlPorLotes_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_cargandoDatos) return;
+
+            if (TipoOperacion == TipoOperacion.Modificar)
+            {
+                var checkbox = (CheckBox)sender;
+                string accion = checkbox.Checked ? "activar" : "desactivar";
+                string mensaje = checkbox.Checked
+                    ? "Al activar el control por lotes, se reiniciara el stock actual del producto. ¿Desea continuar?"
+                    : "Al desactivar el control por lotes, se reiniciara el stock del producto y se deben deshabilitar los lotes asociados. ¿Desea continuar?";
+
+                var mensajeConfirmacion = MessageBox.Show(mensaje, "Confirmación", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
+                if (mensajeConfirmacion == DialogResult.OK)
+                {
+                    // Si acepta, ejecutamos la lógica
+                    txtStock.Enabled = !checkbox.Checked;
+                    txtStock.Text = "0";
+                }
+                else
+                {
+                    _cargandoDatos = true; // Apagamos los eventos temporalmente
+
+                    checkbox.Checked = !checkbox.Checked; // Revertimos el cambio
+
+                    _cargandoDatos = false; // Prendemos los eventos de nuevo
+                }
             }
         }
     }

@@ -161,6 +161,7 @@
             nudStockInicial.Name = "nudStockInicial";
             nudStockInicial.Size = new Size(120, 23);
             nudStockInicial.TabIndex = 17;
+            nudStockInicial.ValueChanged += nudStockInicial_ValueChanged;
             // 
             // nudStockActual
             // 

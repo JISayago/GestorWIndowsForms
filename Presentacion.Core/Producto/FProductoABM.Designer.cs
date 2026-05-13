@@ -285,6 +285,7 @@
             chkControlPorLotes.TabIndex = 31;
             chkControlPorLotes.Text = "Controlar Stock por Lotes";
             chkControlPorLotes.UseVisualStyleBackColor = true;
+            chkControlPorLotes.CheckedChanged += chkControlPorLotes_CheckedChanged;
             // 
             // chkTieneVencimiento
             // 
