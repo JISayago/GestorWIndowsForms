@@ -204,17 +204,33 @@ namespace Servicios.LogicaNegocio.Cliente
                 .AsQueryable();
 
             // =========================================================
-            // ELIMINADOS
-            // Bool1 = Ver eliminados
+            // 🧠 CORE: ESTADO + ELIMINADOS
             // =========================================================
 
-            query = filtros.Bool1
-                ? query.Where(c => c.Persona.EstaEliminado)
-                : query.Where(c => !c.Persona.EstaEliminado);
+            bool hayFiltroEstado =
+     filtros.Filtro2 != null &&
+     !string.IsNullOrWhiteSpace(filtros.Filtro2.ToString());
+
+            // 👉 HISTÓRICO
+            if (filtros.Bool2)
+            {
+                // no filtrar nada
+            }
+            // 👉 ELIMINADOS
+            else if (filtros.Bool1)
+            {
+                query = query.Where(c => c.Persona.EstaEliminado);
+            }
+            // 👉 DEFAULT SOLO SI NO HAY FILTRO EXPLÍCITO
+            else if (!hayFiltroEstado)
+            {
+                query = query.Where(c =>
+                    !c.Persona.EstaEliminado &&
+                    c.Estado == (int)Helpers.Cliente.EstadoCliente.Activo);
+            }
 
             // =========================================================
-            // BUSQUEDA
-            // Filtro1 = tipo búsqueda
+            // 🔍 BUSQUEDA
             // =========================================================
 
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
@@ -224,133 +240,123 @@ namespace Servicios.LogicaNegocio.Cliente
                 switch (filtros.Filtro1?.ToString())
                 {
                     case "ApyNom":
-
                         query = query.Where(c =>
                             c.Persona.Nombre.Contains(texto) ||
                             c.Persona.Apellido.Contains(texto));
-
                         break;
 
                     case "Dni":
-
                         query = query.Where(c =>
                             c.Persona.Dni.Contains(texto));
-
                         break;
 
                     case "Telefono":
-
                         query = query.Where(c =>
                             c.Persona.Telefono.Contains(texto) ||
                             c.Persona.Telefono2.Contains(texto));
-
                         break;
 
                     case "Email":
-
                         query = query.Where(c =>
                             c.Persona.Email.Contains(texto));
-
                         break;
 
                     default:
-
                         query = query.Where(c =>
                             c.Persona.Nombre.Contains(texto) ||
                             c.Persona.Apellido.Contains(texto) ||
                             c.Persona.Dni.Contains(texto));
-
                         break;
                 }
             }
 
             // =========================================================
-            // FILTRO EXTRA
-            // Filtro2 = TipoFiltroCliente
+            // 📌 FILTRO EXTRA (cbx2)
             // =========================================================
 
-            TipoFiltroCliente? tipoFiltro = null;
-
             if (filtros.Filtro2 != null &&
-                int.TryParse(filtros.Filtro2.ToString(), out var valorFiltro))
+                int.TryParse(filtros.Filtro2.ToString(), out var tipoFiltro))
             {
-                tipoFiltro = (TipoFiltroCliente)valorFiltro;
+                switch ((TipoFiltroCliente)tipoFiltro)
+                {
+                    case TipoFiltroCliente.Activo:
+                        query = query.Where(c =>
+                            c.Estado == (int)Helpers.Cliente.EstadoCliente.Activo &&
+                            !c.Persona.EstaEliminado);
+                        break;
+
+                    case TipoFiltroCliente.Baja:
+                        query = query.Where(c =>
+                          c.Estado == (int)Helpers.Cliente.EstadoCliente.Baja);
+                        break;
+
+                    case TipoFiltroCliente.Inhabilitado:
+                        query = query.Where(c =>
+                            c.Estado == (int)Helpers.Cliente.EstadoCliente.Inhabilitado);
+                        break;
+
+                    case TipoFiltroCliente.ConCtaCte:
+                        query = query.Where(c => c.CuentaCorriente != null);
+                        break;
+
+                    case TipoFiltroCliente.SinCtaCte:
+                        query = query.Where(c => c.CuentaCorriente == null);
+                        break;
+                }
             }
 
-            if (tipoFiltro.HasValue)
+            // =========================================================
+            // 📅 FECHAS
+            // =========================================================
+
+            bool usaFechasManual = filtros.FechaDesde.HasValue || filtros.FechaHasta.HasValue;
+
+            if (usaFechasManual && filtros.Filtro3 != null &&
+                int.TryParse(filtros.Filtro3.ToString(), out var tipoFecha))
             {
-                switch (tipoFiltro.Value)
+                switch ((TipoFiltroCliente)tipoFecha)
                 {
                     case TipoFiltroCliente.FechaAlta:
 
                         if (filtros.FechaDesde.HasValue)
-                        {
-                            query = query.Where(c =>
-                                c.FechaAlta >= filtros.FechaDesde.Value);
-                        }
+                            query = query.Where(c => c.FechaAlta >= filtros.FechaDesde.Value);
 
                         if (filtros.FechaHasta.HasValue)
                         {
-                            query = query.Where(c =>
-                                c.FechaAlta <= filtros.FechaHasta.Value);
+                            var hasta = filtros.FechaHasta.Value.AddDays(1);
+                            query = query.Where(c => c.FechaAlta < hasta);
                         }
 
                         break;
 
                     case TipoFiltroCliente.FechaBaja:
 
-                        query = query.Where(c =>
-                            c.FechaBaja.HasValue);
+                        query = query.Where(c => c.FechaBaja.HasValue);
 
                         if (filtros.FechaDesde.HasValue)
-                        {
-                            query = query.Where(c =>
-                                c.FechaBaja.Value >= filtros.FechaDesde.Value);
-                        }
+                            query = query.Where(c => c.FechaBaja.Value >= filtros.FechaDesde.Value);
 
                         if (filtros.FechaHasta.HasValue)
                         {
-                            query = query.Where(c =>
-                                c.FechaBaja.Value <= filtros.FechaHasta.Value);
+                            var hasta = filtros.FechaHasta.Value.AddDays(1);
+                            query = query.Where(c => c.FechaBaja.Value < hasta);
                         }
-
-                        break;
-
-                    case TipoFiltroCliente.ConCtaCte:
-
-                        query = query.Where(c =>
-                            c.CuentaCorriente != null);
-
-                        break;
-
-                    case TipoFiltroCliente.SinCtaCte:
-
-                        query = query.Where(c =>
-                            c.CuentaCorriente == null);
-
-                        break;
-
-                    case TipoFiltroCliente.Inhabilitado:
-
-                        query = query.Where(c =>
-                            c.Estado == (int)EstadoCliente.Inhablitado);
 
                         break;
                 }
             }
 
             // =========================================================
-            // TOTAL
+            // 📊 TOTAL
             // =========================================================
 
             var total = query.Count();
 
             // =========================================================
-            // PAGINACION
+            // 🔴 PAGINACION
             // =========================================================
 
-            var totalPaginas =
-                (int)Math.Ceiling((double)total / filtros.PageSize);
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
 
             if (totalPaginas <= 0)
                 totalPaginas = 1;
@@ -362,7 +368,7 @@ namespace Servicios.LogicaNegocio.Cliente
                 filtros.Page = 1;
 
             // =========================================================
-            // DATA
+            // 📦 DATA
             // =========================================================
 
             var data = query
@@ -383,7 +389,6 @@ namespace Servicios.LogicaNegocio.Cliente
                     Telefono2 = c.Persona.Telefono2,
 
                     Email = c.Persona.Email,
-
                     Direccion = c.Persona.Direccion,
 
                     FechaNacimiento = c.Persona.FechaNacimiento,
@@ -395,24 +400,15 @@ namespace Servicios.LogicaNegocio.Cliente
                     FechaAlta = c.FechaAlta,
                     FechaBaja = c.FechaBaja,
 
-                    Estado = c.Estado,
-
-                    EstadoDescripcion = c.Estado.ToString()
+                    Estado = c.Estado
                 })
                 .ToList();
-
-            // =========================================================
-            // RESULTADO
-            // =========================================================
 
             return new ResultadoPaginacion<ClienteDTO>
             {
                 Items = data,
-
                 TotalRegistros = total,
-
                 Page = filtros.Page,
-
                 PageSize = filtros.PageSize
             };
         }

@@ -49,7 +49,17 @@ namespace Presentacion.Core.Cliente
         #endregion
 
         #region CONFIG FILTROS
+        protected override string TextoLblBuscar
+    => "Buscar Cliente:";
 
+        protected override string TextoLblCbx1
+            => "Filtrar por Propiedad";
+
+        protected override string TextoLblCbx2
+            => "Filtrar por Estado";
+
+        protected override string TextoLblCbx3
+            => "Filtrar por Fecha";
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
@@ -57,7 +67,8 @@ namespace Presentacion.Core.Cliente
             // =========================
             // COMBO BUSQUEDA
             // =========================
-
+            ActivarCheck(chkBool1, "Mostrar Eliminados");
+            ActivarCheck(chkBool2, "Mostrar Todos los Clientes");
             var opcionesBusqueda = new List<OpcionFiltro>
             {
                 new OpcionFiltro { Texto = "Todos", Valor = "" },
@@ -86,7 +97,50 @@ namespace Presentacion.Core.Cliente
             // COMBO TIPO FILTRO
             // =========================
 
-            var tiposFiltro = new List<OpcionFiltro>
+            var estado = new List<OpcionFiltro>
+             {
+                 new OpcionFiltro { Texto = "Todas", Valor = "" },
+             
+                 new OpcionFiltro
+                 {
+                     Texto = "Activos",
+                     Valor = ((int)TipoFiltroCliente.Activo).ToString()
+                 },
+                 new OpcionFiltro
+                 {
+                     Texto = "Baja",
+                     Valor = ((int)TipoFiltroCliente.Baja).ToString()
+                 },
+             
+                 new OpcionFiltro
+                 {
+                     Texto = "Inhabilitado",
+                     Valor = ((int)TipoFiltroCliente.Inhabilitado).ToString()
+                 },
+             
+                 new OpcionFiltro
+                 {
+                     Texto = "Con Cuenta Corriente",
+                     Valor = ((int)TipoFiltroCliente.ConCtaCte).ToString()
+                 },
+             
+                 new OpcionFiltro
+                 {
+                     Texto = "Sin Cuenta Corriente",
+                     Valor = ((int)TipoFiltroCliente.SinCtaCte).ToString()
+                 }
+             };
+
+            ActivarCombo(
+                cbx2,
+                lblcbx2,
+                estado,
+                "Texto",
+                "Valor",
+                "Tipo de filtrado:"
+            );
+
+            var fechaFiltro = new List<OpcionFiltro>
             {
                 new OpcionFiltro { Texto = "Todas", Valor = "" },
 
@@ -101,33 +155,14 @@ namespace Presentacion.Core.Cliente
                     Texto = "Fecha Baja",
                     Valor = ((int)TipoFiltroCliente.FechaBaja).ToString()
                 },
-
-                new OpcionFiltro
-                {
-                    Texto = "Con Cuenta Corriente",
-                    Valor = ((int)TipoFiltroCliente.ConCtaCte).ToString()
-                },
-
-                new OpcionFiltro
-                {
-                    Texto = "Sin Cuenta Corriente",
-                    Valor = ((int)TipoFiltroCliente.SinCtaCte).ToString()
-                },
-
-                new OpcionFiltro
-                {
-                    Texto = "Inhabilitado",
-                    Valor = ((int)TipoFiltroCliente.Inhabilitado).ToString()
-                }
             };
-
-            ActivarCombo(
-                cbx2,
-                lblcbx2,
-                tiposFiltro,
+             ActivarCombo(
+                cbx3,
+                lblcbx3,
+                fechaFiltro,
                 "Texto",
                 "Valor",
-                "Tipo de filtrado:"
+                "Tipo de Fecha:"
             );
 
             // =========================
@@ -141,12 +176,69 @@ namespace Presentacion.Core.Cliente
             // =========================
 
             cbx1.SelectedValue = "";
-
             cbx2.SelectedValue = "";
+            cbx3.SelectedValue = "";
         }
 
         #endregion
+        protected override void AccionCheck2()
+        {
+            if (chkBool2.Checked)
+            {
+                _actualizandoFiltros = true;
 
+                chkBool1.Checked = false;
+
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosEspeciales();
+            }
+
+            paginaActual = 1;
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
+        }
+        protected override void AccionCheck1()
+        {
+            if (chkBool1.Checked)
+            {
+                _actualizandoFiltros = true;
+
+                chkBool2.Checked = false;
+
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosEspeciales();
+            }
+
+            paginaActual = 1;
+
+            var filtros = ObtenerFiltros();
+
+            ActualizarDatos(dgvGrilla, filtros);
+        }
+
+        private void LimpiarFiltrosEspeciales()
+        {
+            _actualizandoFiltros = true;
+
+            txtBuscar.Clear();
+
+            if (cbx1.Enabled)
+                cbx1.SelectedIndex = 0;
+
+            if (cbx2.Enabled)
+                cbx2.SelectedIndex = 0;
+
+            if (cbx3.Enabled)
+                cbx3.SelectedIndex = 0;
+
+            chkUsarFecha.Checked = false;
+
+            _actualizandoFiltros = false;
+        }
         #region FILTROS
 
         protected override FiltroConsulta ObtenerFiltros()
@@ -207,50 +299,90 @@ namespace Presentacion.Core.Cliente
             if (grilla.Columns.Count == 0)
                 return;
 
+            grilla.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            // =========================
+            // ID (oculto + alias)
+            // =========================
             if (grilla.Columns.Contains("PersonaId"))
             {
                 grilla.Columns["PersonaId"].Visible = false;
                 grilla.Columns["PersonaId"].Name = "Id";
             }
 
+            // =========================
+            // NOMBRE
+            // =========================
             if (grilla.Columns.Contains("Nombre"))
             {
-                grilla.Columns["Nombre"].Visible = true;
-                grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                var col = grilla.Columns["Nombre"];
+                col.Visible = true;
+                col.FillWeight = 120;
+                col.MinimumWidth = 120;
             }
 
+            // =========================
+            // APELLIDO
+            // =========================
             if (grilla.Columns.Contains("Apellido"))
             {
-                grilla.Columns["Apellido"].Visible = true;
-                grilla.Columns["Apellido"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                var col = grilla.Columns["Apellido"];
+                col.Visible = true;
+                col.FillWeight = 120;
+                col.MinimumWidth = 120;
             }
 
+            // =========================
+            // DNI
+            // =========================
             if (grilla.Columns.Contains("Dni"))
             {
-                grilla.Columns["Dni"].Visible = true;
-                grilla.Columns["Dni"].Width = 100;
+                var col = grilla.Columns["Dni"];
+                col.Visible = true;
+                col.Width = 110;
             }
 
+            // =========================
+            // EMAIL
+            // =========================
             if (grilla.Columns.Contains("Email"))
             {
-                grilla.Columns["Email"].Visible = true;
-                grilla.Columns["Email"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                var col = grilla.Columns["Email"];
+                col.Visible = true;
+                col.FillWeight = 160;
+                col.MinimumWidth = 150;
             }
 
+            // =========================
+            // TELÉFONO
+            // =========================
             if (grilla.Columns.Contains("Telefono"))
             {
-                grilla.Columns["Telefono"].Visible = true;
-                grilla.Columns["Telefono"].Width = 100;
+                var col = grilla.Columns["Telefono"];
+                col.Visible = true;
+                col.Width = 110;
             }
 
+            // =========================
+            // ESTADO (DESCRIPCIÓN)
+            // =========================
             if (grilla.Columns.Contains("EstadoDescripcion"))
             {
-                grilla.Columns["EstadoDescripcion"].Visible = true;
-                grilla.Columns["EstadoDescripcion"].Width = 100;
-                grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+                var col = grilla.Columns["EstadoDescripcion"];
+                col.Visible = true;
+                col.HeaderText = "Estado";
+                col.Width = 110;
             }
-        }
 
+            // =========================
+            // OCULTAR CAMPOS CRUDOS
+            // =========================
+            if (grilla.Columns.Contains("Estado"))
+                grilla.Columns["Estado"].Visible = false;
+
+            if (grilla.Columns.Contains("EstaEliminado"))
+                grilla.Columns["EstaEliminado"].Visible = false;
+        }
         #endregion
 
         #region BOTONES BASE
