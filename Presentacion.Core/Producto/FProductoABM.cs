@@ -154,6 +154,7 @@ namespace Presentacion.Core.Producto
                 txtMedida.Text = Producto.Medida;
                 txtUnidadMedida.Text = Producto.UnidadMedida;
                 txtStock.Text = Producto.Stock.ToString();
+                txtStock.Enabled = false; // Si el producto tiene control por lote, deshabilitamos el campo de stock
                 txtPrecioCosto.Text = Producto.PrecioCosto.ToString();
                 txtPrecioVenta.Text = Producto.PrecioVenta.ToString();
                 txtCodigo.Text = Producto.Codigo;
