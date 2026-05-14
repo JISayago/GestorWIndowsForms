@@ -132,7 +132,7 @@ namespace Servicios.LogicaNegocio.Producto
                     
                 }
             }
-            
+            ModificarEstadoStockProductos();
             return detallesLotesUsados;
         }
      
@@ -163,6 +163,8 @@ namespace Servicios.LogicaNegocio.Producto
             producto.Stock -= item.Cantidad;
 
             context.Productos.Update(producto);
+
+            ModificarEstadoStockProductos();
 
             return detallesLotesUsados;
         }
@@ -196,6 +198,8 @@ namespace Servicios.LogicaNegocio.Producto
 
                 context.Productos.Update(producto);
             }
+
+            ModificarEstadoStockProductos();
         }
         public void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context, long ventdaId)
         {
@@ -214,7 +218,10 @@ namespace Servicios.LogicaNegocio.Producto
                     RestaurarStockProducto(item, context, ventdaId);
                 }
             }
+
+            ModificarEstadoStockProductos();
         }
+
         private void RestaurarStockProducto(ItemVentaDTO item, GestorContextDB context, long ventaId)
         {
             var producto = context.Productos
@@ -247,6 +254,8 @@ namespace Servicios.LogicaNegocio.Producto
             producto.Stock += item.Cantidad;
 
             context.Productos.Update(producto);
+
+            ModificarEstadoStockProductos();
         }
 
         /* private void DescontarStockOferta(ItemVentaDTO item, GestorContextDB context)
@@ -413,10 +422,11 @@ namespace Servicios.LogicaNegocio.Producto
                     IdProducto = productoEditar.ProductoId,
                     IdCategoria = categoriaId
                 });
-            }
-            ;
+            };
 
             context.SaveChanges();
+
+            ModificarEstadoStockProductos();
 
             return new EstadoOperacion
             {
@@ -774,6 +784,8 @@ namespace Servicios.LogicaNegocio.Producto
 
             context.SaveChanges();
 
+            ModificarEstadoStockProductos();
+
             // registrar movimiento
 
             return new EstadoOperacion
@@ -784,6 +796,34 @@ namespace Servicios.LogicaNegocio.Producto
                     : "Stock descontado correctamente.",
                 EntidadId = producto.ProductoId
             };
+        }
+
+        public void ModificarEstadoStockProductos()
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            // Traemos los productos activos o sin stock que no estén eliminados
+            var productos = context.Productos
+                .Where(p => !p.EstaEliminado &&
+                           (p.Estado == (int)EstadoProducto.Activo || p.Estado == (int)EstadoProducto.SinStock))
+                .ToList();
+
+            foreach (var p in productos)
+            {
+                // CASO A: Tiene stock pero figura como "Sin Stock" -> Corregir a Activo
+                if (p.Stock > 0 && p.Estado == (int)EstadoProducto.SinStock)
+                {
+                    p.Estado = (int)EstadoProducto.Activo;
+                }
+
+                // CASO B: No tiene stock pero figura como "Activo" -> Corregir a Sin Stock
+                else if (p.Stock <= 0 && p.Estado == (int)EstadoProducto.Activo)
+                {
+                    p.Estado = (int)EstadoProducto.SinStock;
+                }
+            }
+
+            context.SaveChanges();
         }
     }
 }

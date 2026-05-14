@@ -26,5 +26,6 @@ namespace Servicios.LogicaNegocio.Producto
         IEnumerable<ProductoDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(long? MarcaId = null, long? RubroId = null, long? CategoriaId = null);
         List<DetalleVentaLoteDTO> DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context);
         void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context, long ventdaId);
+        void ModificarEstadoStockProductos();
     }
 }

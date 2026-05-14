@@ -57,7 +57,6 @@ namespace Presentacion.Core.Producto
 
 
             AgregarControlesObligatorios(txtProducto, "Producto");
-            AgregarControlesObligatorios(txtEstado, "Estado");
             AgregarControlesObligatorios(txtMedida, "Medida");
             AgregarControlesObligatorios(txtUnidadMedida, "Unidad Medida");
             //AgregarControlesObligatorios(txtStock, "Stock");
@@ -150,7 +149,8 @@ namespace Presentacion.Core.Producto
             if (Producto != null)
             {
                 txtProducto.Text = Producto.Descripcion;
-                txtEstado.Text = Producto.Estado.ToString();
+                chkbProductoDiscontinuado.Checked = Producto.Estado == 3; // Si el estado es 3, marcamos como discontinuado
+                //txtEstado.Text = Producto.Estado.ToString();
                 txtMedida.Text = Producto.Medida;
                 txtUnidadMedida.Text = Producto.UnidadMedida;
                 txtStock.Text = Producto.Stock.ToString();
@@ -188,7 +188,7 @@ namespace Presentacion.Core.Producto
                 Stock = decimal.Parse(txtStock.Text),
                 PrecioCosto = decimal.Parse(txtPrecioCosto.Text),
                 PrecioVenta = decimal.Parse(txtPrecioVenta.Text),
-                Estado = int.Parse(txtEstado.Text),
+                Estado = chkbProductoDiscontinuado.Checked ? 3 : 1, // Si el producto está marcado como discontinuado, asignamos el estado 3, de lo contrario, 1 (activo)
                 Medida = txtMedida.Text,
                 UnidadMedida = txtUnidadMedida.Text,
                 Codigo = txtCodigo.Text,
@@ -274,7 +274,7 @@ namespace Presentacion.Core.Producto
                     Stock = decimal.Parse(txtStock.Text),
                     PrecioCosto = decimal.Parse(txtPrecioCosto.Text),
                     PrecioVenta = decimal.Parse(txtPrecioVenta.Text),
-                    Estado = int.Parse(txtEstado.Text),
+                    Estado = chkbProductoDiscontinuado.Checked ? 3 : 1,
                     Medida = txtMedida.Text,
                     UnidadMedida = txtUnidadMedida.Text,
                     Codigo = txtCodigo.Text,
