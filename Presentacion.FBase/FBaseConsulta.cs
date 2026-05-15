@@ -4,6 +4,8 @@ using Servicios.Helpers.Sistema.FiltrosConsulta;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Presentacion.FBase
@@ -239,11 +241,29 @@ namespace Presentacion.FBase
 
         #region FILTROS
 
-        protected virtual FiltroConsulta ObtenerFiltros()
+protected virtual string NormalizarTextoBusqueda(string texto)
+    {
+        if (string.IsNullOrWhiteSpace(texto))
+            return string.Empty;
+
+        texto = texto.Trim().ToLowerInvariant().Normalize(NormalizationForm.FormD);
+
+        var sb = new StringBuilder();
+
+        foreach (var c in texto)
+        {
+            var categoria = CharUnicodeInfo.GetUnicodeCategory(c);
+            if (categoria != UnicodeCategory.NonSpacingMark)
+                sb.Append(c);
+        }
+
+        return sb.ToString().Normalize(NormalizationForm.FormC);
+    }
+    protected virtual FiltroConsulta ObtenerFiltros()
         {
             return new FiltroConsulta
             {
-                TextoBuscar = txtBuscar.Text,
+                TextoBuscar = NormalizarTextoBusqueda(txtBuscar.Text),
 
                 FechaDesde = ObtenerFechaDesdeUI(),
                 FechaHasta = ObtenerFechaHastaUI(),
