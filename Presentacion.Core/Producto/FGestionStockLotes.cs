@@ -218,6 +218,8 @@ namespace Presentacion.Core.Producto
 
             if (response.Exitoso)
             {
+                _productoServicio.ModificarEstadoStockProductos();
+
                 MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                    MessageBoxIcon.Information);
                 return true;
@@ -243,6 +245,8 @@ namespace Presentacion.Core.Producto
                 var response = _loteSevicio.EliminarLote((long)EntidadID);
                 if (response.Exitoso)
                 {
+                    _productoServicio.ModificarEstadoStockProductos();
+
                     MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                        MessageBoxIcon.Information);
                     return true;
@@ -291,6 +295,8 @@ namespace Presentacion.Core.Producto
 
                 if (response.Exitoso)
                 {
+                    _productoServicio.ModificarEstadoStockProductos();
+
                     MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
                     return true;

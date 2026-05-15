@@ -37,8 +37,6 @@
             txtPrecioVenta = new TextBox();
             lblStock = new Label();
             txtStock = new TextBox();
-            lblEstado = new Label();
-            txtEstado = new TextBox();
             lblCategoria = new Label();
             lblMedida = new Label();
             lblUnidadMedida = new Label();
@@ -56,6 +54,7 @@
             chkEsFraccionable = new CheckBox();
             chkControlPorLotes = new CheckBox();
             chkTieneVencimiento = new CheckBox();
+            chkbProductoDiscontinuado = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
@@ -132,22 +131,6 @@
             txtStock.Size = new Size(100, 23);
             txtStock.TabIndex = 11;
             // 
-            // lblEstado
-            // 
-            lblEstado.AutoSize = true;
-            lblEstado.Location = new Point(415, 282);
-            lblEstado.Name = "lblEstado";
-            lblEstado.Size = new Size(42, 15);
-            lblEstado.TabIndex = 12;
-            lblEstado.Text = "Estado";
-            // 
-            // txtEstado
-            // 
-            txtEstado.Location = new Point(463, 276);
-            txtEstado.Name = "txtEstado";
-            txtEstado.Size = new Size(100, 23);
-            txtEstado.TabIndex = 13;
-            // 
             // lblCategoria
             // 
             lblCategoria.AutoSize = true;
@@ -160,7 +143,7 @@
             // lblMedida
             // 
             lblMedida.AutoSize = true;
-            lblMedida.Location = new Point(24, 181);
+            lblMedida.Location = new Point(39, 181);
             lblMedida.Name = "lblMedida";
             lblMedida.Size = new Size(47, 15);
             lblMedida.TabIndex = 16;
@@ -259,7 +242,7 @@
             // chkIvaIncluido
             // 
             chkIvaIncluido.AutoSize = true;
-            chkIvaIncluido.Location = new Point(589, 176);
+            chkIvaIncluido.Location = new Point(589, 157);
             chkIvaIncluido.Name = "chkIvaIncluido";
             chkIvaIncluido.Size = new Size(170, 19);
             chkIvaIncluido.TabIndex = 29;
@@ -269,7 +252,7 @@
             // chkEsFraccionable
             // 
             chkEsFraccionable.AutoSize = true;
-            chkEsFraccionable.Location = new Point(589, 201);
+            chkEsFraccionable.Location = new Point(589, 182);
             chkEsFraccionable.Name = "chkEsFraccionable";
             chkEsFraccionable.Size = new Size(107, 19);
             chkEsFraccionable.TabIndex = 30;
@@ -279,7 +262,7 @@
             // chkControlPorLotes
             // 
             chkControlPorLotes.AutoSize = true;
-            chkControlPorLotes.Location = new Point(589, 226);
+            chkControlPorLotes.Location = new Point(589, 207);
             chkControlPorLotes.Name = "chkControlPorLotes";
             chkControlPorLotes.Size = new Size(160, 19);
             chkControlPorLotes.TabIndex = 31;
@@ -290,18 +273,29 @@
             // chkTieneVencimiento
             // 
             chkTieneVencimiento.AutoSize = true;
-            chkTieneVencimiento.Location = new Point(589, 251);
+            chkTieneVencimiento.Location = new Point(589, 232);
             chkTieneVencimiento.Name = "chkTieneVencimiento";
             chkTieneVencimiento.Size = new Size(167, 19);
             chkTieneVencimiento.TabIndex = 32;
             chkTieneVencimiento.Text = "Producto con Vencimineto";
             chkTieneVencimiento.UseVisualStyleBackColor = true;
             // 
+            // chkbProductoDiscontinuado
+            // 
+            chkbProductoDiscontinuado.AutoSize = true;
+            chkbProductoDiscontinuado.Location = new Point(589, 282);
+            chkbProductoDiscontinuado.Name = "chkbProductoDiscontinuado";
+            chkbProductoDiscontinuado.Size = new Size(155, 19);
+            chkbProductoDiscontinuado.TabIndex = 33;
+            chkbProductoDiscontinuado.Text = "Producto Discontinuado";
+            chkbProductoDiscontinuado.UseVisualStyleBackColor = true;
+            // 
             // FProductoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 341);
+            Controls.Add(chkbProductoDiscontinuado);
             Controls.Add(chkTieneVencimiento);
             Controls.Add(chkControlPorLotes);
             Controls.Add(chkEsFraccionable);
@@ -319,8 +313,6 @@
             Controls.Add(lblUnidadMedida);
             Controls.Add(lblMedida);
             Controls.Add(lblCategoria);
-            Controls.Add(txtEstado);
-            Controls.Add(lblEstado);
             Controls.Add(txtStock);
             Controls.Add(lblStock);
             Controls.Add(txtPrecioVenta);
@@ -341,8 +333,6 @@
             Controls.SetChildIndex(txtPrecioVenta, 0);
             Controls.SetChildIndex(lblStock, 0);
             Controls.SetChildIndex(txtStock, 0);
-            Controls.SetChildIndex(lblEstado, 0);
-            Controls.SetChildIndex(txtEstado, 0);
             Controls.SetChildIndex(lblCategoria, 0);
             Controls.SetChildIndex(lblMedida, 0);
             Controls.SetChildIndex(lblUnidadMedida, 0);
@@ -360,6 +350,7 @@
             Controls.SetChildIndex(chkEsFraccionable, 0);
             Controls.SetChildIndex(chkControlPorLotes, 0);
             Controls.SetChildIndex(chkTieneVencimiento, 0);
+            Controls.SetChildIndex(chkbProductoDiscontinuado, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -376,8 +367,6 @@
         private TextBox txtPrecioVenta;
         private Label lblStock;
         private TextBox txtStock;
-        private Label lblEstado;
-        private TextBox txtEstado;
         private Label lblCategoria;
         private Label lblMedida;
         private Label lblUnidadMedida;
@@ -395,5 +384,6 @@
         private CheckBox chkEsFraccionable;
         private CheckBox chkControlPorLotes;
         private CheckBox chkTieneVencimiento;
+        private CheckBox chkbProductoDiscontinuado;
     }
 }

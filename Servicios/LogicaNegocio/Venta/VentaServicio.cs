@@ -300,6 +300,8 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
 
             Debug.WriteLine("26 - SaveChanges final OK");
 
+            //_productoServicio.ModificarEstadoStockProductos();
+
             return venta;
         }
         catch (Exception ex)
@@ -332,6 +334,8 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                 Debug.WriteLine("E - Antes Commit");
 
                 transaction.Commit();
+
+                _productoServicio.ModificarEstadoStockProductos();
 
                 Debug.WriteLine("F - Commit realizado");
                 GeneracionComprobanteVenta(context, venta);
@@ -787,6 +791,8 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
 
                 context.SaveChanges();
                 transaction.Commit();
+
+                _productoServicio.ModificarEstadoStockProductos();
 
                 return new EstadoOperacion
                 {
