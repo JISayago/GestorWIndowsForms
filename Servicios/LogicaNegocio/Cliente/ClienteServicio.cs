@@ -196,7 +196,7 @@ namespace Servicios.LogicaNegocio.Cliente
         public ResultadoPaginacion<ClienteDTO> ObtenerClientes(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.Cliente
                 .AsNoTracking()
                 .Include(c => c.Persona)
@@ -241,31 +241,31 @@ namespace Servicios.LogicaNegocio.Cliente
                 {
                     case "ApyNom":
                         query = query.Where(c =>
-                            c.Persona.Nombre.Contains(texto) ||
-                            c.Persona.Apellido.Contains(texto));
+                            EF.Functions.Collate(c.Persona.Nombre, collation).Contains(texto) ||
+                            EF.Functions.Collate(c.Persona.Apellido, collation).Contains(texto));
                         break;
 
                     case "Dni":
                         query = query.Where(c =>
-                            c.Persona.Dni.Contains(texto));
+                            EF.Functions.Collate(c.Persona.Dni, collation).Contains(texto));
                         break;
 
                     case "Telefono":
                         query = query.Where(c =>
-                            c.Persona.Telefono.Contains(texto) ||
-                            c.Persona.Telefono2.Contains(texto));
+                            EF.Functions.Collate(c.Persona.Telefono, collation).Contains(texto) ||
+                            EF.Functions.Collate(c.Persona.Telefono2, collation).Contains(texto));
                         break;
 
                     case "Email":
                         query = query.Where(c =>
-                            c.Persona.Email.Contains(texto));
+                            EF.Functions.Collate(c.Persona.Email, collation).Contains(texto));
                         break;
 
                     default:
                         query = query.Where(c =>
-                            c.Persona.Nombre.Contains(texto) ||
-                            c.Persona.Apellido.Contains(texto) ||
-                            c.Persona.Dni.Contains(texto));
+                            EF.Functions.Collate(c.Persona.Nombre, collation).Contains(texto) ||
+                            EF.Functions.Collate(c.Persona.Apellido, collation).Contains(texto) ||
+                            EF.Functions.Collate(c.Persona.Dni, collation).Contains(texto));
                         break;
                 }
             }
