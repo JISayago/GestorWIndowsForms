@@ -99,7 +99,6 @@ namespace Presentacion.Core.Caja
                 LimpiarFiltros();
             }
 
-            ActualizarDatos(dgvGrilla, ObtenerFiltros());
         }
 
         protected override void AccionCheck1()
@@ -113,7 +112,6 @@ namespace Presentacion.Core.Caja
                 LimpiarFiltros();
             }
 
-            ActualizarDatos(dgvGrilla, ObtenerFiltros());
         }
 
         private void LimpiarFiltros()
