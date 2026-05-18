@@ -120,7 +120,7 @@ namespace Servicios.LogicaNegocio.Articulo.Categoria
         public ResultadoPaginacion<CategoriaDTO> ObtenerCategorias(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.Categorias
                 .AsNoTracking()
                 .AsQueryable();
@@ -136,7 +136,8 @@ namespace Servicios.LogicaNegocio.Articulo.Categoria
                 var texto = filtros.TextoBuscar.Trim();
 
                 query = query.Where(x =>
-                    x.Nombre.Contains(texto));
+                    EF.Functions.Collate(x.Nombre, collation)
+                        .Contains(texto));
             }
 
             // 📊 TOTAL

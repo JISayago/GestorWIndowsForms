@@ -105,7 +105,7 @@ namespace Servicios.LogicaNegocio.Producto.Rubro
         public ResultadoPaginacion<RubroDTO> ObtenerRubros(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.Rubros
                 .AsNoTracking()
                 .AsQueryable();
@@ -124,12 +124,16 @@ namespace Servicios.LogicaNegocio.Producto.Rubro
                 {
                     case "Nombre":
                         query = query.Where(x =>
-                            x.Nombre.Contains(texto));
+                            x.Nombre != null &&
+                            EF.Functions.Collate(x.Nombre, collation)
+                                .Contains(texto));
                         break;
 
                     default:
                         query = query.Where(x =>
-                            x.Nombre.Contains(texto));
+                            x.Nombre != null &&
+                            EF.Functions.Collate(x.Nombre, collation)
+                                .Contains(texto));
                         break;
                 }
             }
