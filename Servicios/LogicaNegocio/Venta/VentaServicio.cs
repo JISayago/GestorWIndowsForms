@@ -42,8 +42,8 @@ namespace Servicios.LogicaNegocio.Venta
         }
 
 
-public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto, TipoMovimientoDetalle movimientoDetalle, long? ventdaIdOriginalParaCancerlar = null)
-    {
+        public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto, TipoMovimientoDetalle movimientoDetalle, long? ventdaIdOriginalParaCancerlar = null)
+        {
         Debug.WriteLine("1 - Inicio CrearVentaInterna");
 
         try
@@ -103,13 +103,13 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
 
             var movimientoServicio = new Movimiento.MovimientoServicio();
                 movimientoServicio.CrearMovimientoVenta(
-           venta.VentaId,
-           venta.Total,
-           venta.Estado,
-           movimientoDetalle,
-           TipoEntidadMovimiento.Venta,
-           context
-       );
+                   venta.VentaId,
+                   venta.Total,
+                   venta.Estado,
+                   movimientoDetalle,
+                   TipoEntidadMovimiento.Venta,
+                   context
+                        );
 
                 Debug.WriteLine("9 - Movimiento creado");
 
@@ -266,22 +266,22 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
 
                 Debug.WriteLine("24 - Procesar pagos");
 
-            if (ventaDto.TiposDePagoSeleccionado != null &&
-                ventaDto.TiposDePagoSeleccionado.Any())
-            {
-                var servicioTP = new TipoPagoServicio();
-
-                var pagos = ventaDto.TiposDePagoSeleccionado.Select(p => new VentaPagoDetalle
+                if (ventaDto.TiposDePagoSeleccionado != null &&
+                    ventaDto.TiposDePagoSeleccionado.Any())
                 {
-                    IdVenta = venta.VentaId,
-                    IdTipoPago = servicioTP
-                        .ObtenerTipoPagoPorNumero(context, Convert.ToInt32(p.TipoDePago.Value))
-                        .TipoPagoId,
-                    Monto = p.Monto
-                }).ToList();
+                    var servicioTP = new TipoPagoServicio();
 
-                context.VentaPagosDetalles.AddRange(pagos);
-            }
+                    var pagos = ventaDto.TiposDePagoSeleccionado.Select(p => new VentaPagoDetalle
+                    {
+                        IdVenta = venta.VentaId,
+                        IdTipoPago = servicioTP
+                            .ObtenerTipoPagoPorNumero(context, Convert.ToInt32(p.TipoDePago.Value))
+                            .TipoPagoId,
+                        Monto = p.Monto
+                    }).ToList();
+
+                    context.VentaPagosDetalles.AddRange(pagos);
+                }
 
                 var cambios = context.ChangeTracker.Entries()
                .Select(e => new
@@ -546,6 +546,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                 PageSize = filtros.PageSize
             };
         }
+
         public VentaDTO ObtenerVentaDetalle(long ventaId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -707,6 +708,7 @@ public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, Ve
                 })
                 .ToList();
         }
+
         public EstadoOperacion CancelacionVentaPorId(long ventaId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);

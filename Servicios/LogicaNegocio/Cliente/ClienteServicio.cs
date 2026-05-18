@@ -66,7 +66,7 @@ namespace Servicios.LogicaNegocio.Cliente
                 FechaAlta = DateTime.Now,
                 NumeroCliente = string.IsNullOrEmpty(clienteDto.NumeroCliente) ? $"{DateTime.Now:ddMMyyyyHHmmssfff}{persona.PersonaId}" : "0",
                 //CuentaCorriente = clienteDto != null ? context.CuentaCorriente.Find(clienteDto.CuentaCorrienteId) : null,
-                Estado = 0
+                Estado = 1
             };
 
             context.Cliente.Add(cliente);
