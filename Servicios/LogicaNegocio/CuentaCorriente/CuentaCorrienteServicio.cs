@@ -304,7 +304,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     LimiteDeuda = x.LimiteDeuda,
                     LimiteDeudaActivo = x.LimiteDeudaActivo,
                     FechaVencimiento = x.FechaVencimiento,
-                    EstadoCuentaCorriente = x.EstadoCuentaCorriente,
+                    EstadoCtaCte = x.EstadoCuentaCorriente,
 
                     DniAutorizados = x.CuentaCorrienteAutorizado
                         .Select(a => a.Dni)
@@ -319,112 +319,85 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 Page = filtros.Page,
                 PageSize = filtros.PageSize
             };
-        }    // =====================
-        // LOGICA DE NEGOCIO
-        // =====================
-        public bool DniAutorizado(long cuentaId, string dni)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-            var cuenta = context.CuentaCorriente
-                .Where(c => c.CuentaCorrienteId == cuentaId && !c.EstaEliminado)
-                .Select(c => new { c.CuentaCorrienteAutorizado })
-                .FirstOrDefault();
-
-            return cuenta != null && cuenta.CuentaCorrienteAutorizado.Any(a => a.Dni == Convert.ToInt64(dni));
         }
+
+        // ===============================================================// 
+        // LOGICA DE NEGOCIO                                              // 
+        // ===============================================================// 
 
         public bool PuedeComprar(long cuentaId, decimal monto)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId && !c.EstaEliminado);
+
             if (cuenta == null) return false;
 
-            if (cuenta.EstadoCuentaCorriente != (int)EstadoCuentaCorriente.Activa) return false;
-            if (cuenta.LimiteDeudaActivo && (cuenta.Saldo - monto) < -cuenta.LimiteDeuda) return false; //todas las ctacte al crear estan activas
-            if (cuenta.FechaVencimiento.HasValue && cuenta.FechaVencimiento.Value < DateTime.Now) return false;
+            // Si el administrador la cerró manualmente por otra razón, no puede comprar nada
+            if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Cerrada) return false;
+
+            decimal saldoProyectado = cuenta.Saldo - monto;
+            bool estaVencidaPorFecha = cuenta.FechaVencimiento.HasValue && cuenta.FechaVencimiento.Value < DateTime.Now;
+
+            // 🌟 REGLA CLAVE: Si está vencida por fecha, solo puede comprar si se mantiene en terreno positivo (gasta su propia plata)
+            if (estaVencidaPorFecha)
+            {
+                // Si el saldo proyectado baja de 0 (quiere pedir fiado estando vencido), se rechaza
+                if (saldoProyectado < 0) return false;
+            }
+
+            // Validación del límite de deuda (solo aplica si entra o está en saldo negativo)
+            if (cuenta.LimiteDeudaActivo && saldoProyectado < 0)
+            {
+                if (Math.Abs(saldoProyectado) > cuenta.LimiteDeuda)
+                    return false;
+            }
 
             return true;
         }
 
-        public decimal SaldoDisponible(long cuentaId)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId);
-            if (cuenta == null) return 0;
-
-            if (cuenta.LimiteDeudaActivo)
-            {
-                return cuenta.Saldo + cuenta.LimiteDeuda;
-            }
-
-            return cuenta.Saldo;
-        }
-
-        /*
-        public decimal SaldoDisponible(long cuentaId)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-            var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId);
-            if (cuenta == null) return 0;
-
-            return cuenta.LimiteDeudaActivo ? cuenta.Saldo + cuenta.LimiteDeuda : decimal.MaxValue;
-        }*/
-
-        //Restar saldo de la cuenta corriente
         public EstadoOperacion RegistrarCompra(long cuentaId, decimal monto, long cajaId, string descripcion = "Compra")
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId);
+
             if (cuenta == null) throw new Exception("Cuenta corriente no encontrada");
 
-            /*if (!DniAutorizado(cuentaId, dniCliente))
-                throw new Exception("DNI no autorizado");
-            */
-
             if (!PuedeComprar(cuentaId, monto))
-                throw new Exception("No puede realizar la compra");
+                return new EstadoOperacion { Exitoso = false, Mensaje = "No puede realizar la compra (cuenta vencida, inactiva o sin límite)." };
 
             cuenta.Saldo -= monto;
 
-            long ctacteId = cuenta.CuentaCorrienteId;
+            //EVALUAMOS EL ESTADO DE ESTA CUENTA ACÁ (por si la compra la dejó vencida/en deuda)
+            VerificarYActualizarEstadoInstancia(cuenta);
 
-            _movimientoServicio.CrearMovimientoCtaCte(monto, cajaId, ctacteId, TipoMovimientoDetalle.CuentaCorriente, context);
+            _movimientoServicio.CrearMovimientoCtaCte(monto, cajaId, cuenta.CuentaCorrienteId, TipoMovimientoDetalle.CuentaCorriente, false, context);
 
-            context.SaveChanges();
+            context.SaveChanges(); // Guarda el saldo, el movimiento y el nuevo estado TODO JUNTO.
 
             return new EstadoOperacion { Exitoso = true, Mensaje = "Compra registrada correctamente" };
         }
 
-        //Sumar saldo a la cuenta corriente, paga deuda de una ctacte, NO ESTA SIENDO INPLEMENTADO!!!!!!!!!!!!!
-        public EstadoOperacion RegistrarPago(long cuentaId, decimal monto, string descripcion = "Pago")
+        public EstadoOperacion RegistrarPago(long cuentaId, decimal monto, long cajaId, string descripcion = "Pago")
         {
+            if (monto <= 0) return new EstadoOperacion { Exitoso = false, Mensaje = "El monto debe ser mayor a cero." };
+
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId);
+
             if (cuenta == null) throw new Exception("Cuenta corriente no encontrada");
 
             cuenta.Saldo += monto;
 
-            // Registrar movimiento
-            //cuenta.Movimientos ??= new List<AccesoDatos.Entidades.Movimiento>();
-            //cuenta.Movimientos.Add(new AccesoDatos.Entidades.Movimiento
-            //{
-            //    //Fecha = DateTime.Now,
-            //    //Monto = monto,
-            //    //Descripcion = descripcion,
-            //    //TipoMovimientoCCorriente = 1,
-            //    //CuentaCorrienteId = cuenta.CuentaCorrienteId
-            //});
+            //EVALUAMOS EL ESTADO DE ESTA CUENTA ACÁ (si pagó la deuda, se reactiva sola)
+            VerificarYActualizarEstadoInstancia(cuenta);
 
-            
+            _movimientoServicio.CrearMovimientoCtaCte(monto, cajaId, cuenta.CuentaCorrienteId, TipoMovimientoDetalle.CuentaCorriente, true, context);
 
-            context.SaveChanges();
+            context.SaveChanges(); // Guarda todo en una sola transacción limpia
 
             return new EstadoOperacion { Exitoso = true, Mensaje = "Pago registrado correctamente" };
         }
 
-
-        //agregar get dnis autorizados con ctacteID
         public List<long> ObtenerDnisAutorizados(long? cuentaId)
         {
 
@@ -438,26 +411,26 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             return cuenta.CuentaCorrienteAutorizado.Select(a => a.Dni).ToList();
         }
 
-        //obtener cuenta corriente por clienteID
-
         public CuentaCorrienteDTO ObtenerCuentaCorrientePorClienteId(long clienteId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-            var cuentacorrienteBusqueda = context.CuentaCorriente
-                .Include(x => x.CuentaCorrienteAutorizado)
-               // .Include(x => x.Movimientos)
-                .FirstOrDefault(x => x.ClienteId == clienteId && !x.EstaEliminado);
-            if (cuentacorrienteBusqueda == null)
-                throw new Exception("No se encontró la cuentacorriente.");
+            var x = context.CuentaCorriente
+                .Include(c => c.CuentaCorrienteAutorizado)
+                .FirstOrDefault(c => c.ClienteId == clienteId && !c.EstaEliminado);
+
+            if (x == null)
+                throw new Exception("No se encontró la cuenta corriente para este cliente.");
+
             return new CuentaCorrienteDTO
             {
-                Saldo = cuentacorrienteBusqueda.Saldo,
-                LimiteDeuda = cuentacorrienteBusqueda.LimiteDeuda,
-                NombreCuentaCorriente = cuentacorrienteBusqueda.NombreCuentaCorriente,
-                LimiteDeudaActivo = cuentacorrienteBusqueda.LimiteDeudaActivo,
-                FechaVencimiento = cuentacorrienteBusqueda.FechaVencimiento,
-                CuentaCorrienteId = cuentacorrienteBusqueda.CuentaCorrienteId,
-                DniAutorizados = cuentacorrienteBusqueda.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
+                CuentaCorrienteId = x.CuentaCorrienteId,
+                NombreCuentaCorriente = x.NombreCuentaCorriente,
+                Saldo = x.Saldo,
+                LimiteDeuda = x.LimiteDeuda,
+                LimiteDeudaActivo = x.LimiteDeudaActivo,
+                FechaVencimiento = x.FechaVencimiento,
+                EstadoCtaCte = x.EstadoCuentaCorriente,
+                DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
             };
         }
 
@@ -480,10 +453,65 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     FechaVencimiento = x.FechaVencimiento,
                     CuentaCorrienteId = x.CuentaCorrienteId,
                     NombreCliente = $"{x.Cliente.Persona.Nombre} {x.Cliente.Persona.Apellido}",
-                    //DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
+                    DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
                 })
                 .ToList();
             return cuentasVencidas;
         }
+
+        private void VerificarYActualizarEstadoInstancia(AccesoDatos.Entidades.CuentaCorriente cuenta)
+        {
+            // Si la cuenta está cerrada manualmente, no tocamos el estado de forma automática
+            if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Cerrada) return;
+
+            bool estaVencidaPorFecha = cuenta.FechaVencimiento.HasValue && cuenta.FechaVencimiento.Value < DateTime.Now;
+
+            // Está suspendida SOLOTE si la fecha expiró Y además nos debe plata
+            if (estaVencidaPorFecha && cuenta.Saldo < 0)
+            {
+                cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Suspendida;
+            }
+            // Si no venció, o si venció pero tiene saldo a favor (saldo >= 0), comercialmente está Activa
+            else
+            {
+                cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Activa;
+            }
+        }
+
+
+        /*
+        ==========================================================================================
+        ARCHITECTURE NOTE: ARQUITECTURA Y REGLAS DE NEGOCIO - MÓDULO CUENTA CORRIENTE
+        ==========================================================================================
+
+        Este servicio gestiona el crédito y los saldos de los clientes utilizando un modelo 
+        CONTABLE DE SALDO NEGATIVO. A continuación se detallan los pilares de la lógica:
+
+        1. COMPORTAMIENTO DEL SALDO (Modelo Contable)
+           - Saldo = 0 : Cuenta al día, sin deuda y sin saldo a favor.
+           - Saldo < 0 : El cliente LE DEBE plata al negocio (Ej: Saldo -500 significa debe $500).
+           - Saldo > 0 : El cliente tiene plata A FAVOR / PREPAGO (Ej: Saldo 200 significa $200 a favor).
+
+        2. LÍMITE DE DEUDA (LimiteDeuda)
+           - Funciona como un tope hacia abajo en terreno negativo. 
+           - Si el límite está activo y es de $1000, el saldo nunca podrá ser menor a -$1000.
+           - Se evalúa mediante valor absoluto (Math.Abs) sobre el saldo proyectado de la compra.
+
+        3. POLÍTICA CRÍTICA DE VENCIMIENTO (FechaVencimiento vs Estado)
+           - El vencimiento por fecha NO bloquea la cuenta por completo; solo congela el CRÉDITO.
+           - Escenario Deuda Vencida: Si la fecha expiró y el saldo es negativo (Saldo < 0), la cuenta
+             pasa a estado 'Suspendida' y se bloquea cualquier intento de generar nueva deuda.
+           - Escenario Prepago Vencido: Si la fecha expiró pero el cliente tiene saldo positivo (Saldo > 0),
+             la cuenta opera como 'Activa'. Se le permite comprar SÓLO hasta consumir su propio dinero, 
+             impidiendo que el saldo proyectado caiga por debajo de cero.
+
+        4. GESTIÓN DE CONTEXTOS (DbContext) Y FLUJO DE ESTADOS
+           - Las operaciones de escritura (RegistrarCompra / RegistrarPago) manejan su propio ciclo 
+             de vida con 'using context'.
+           - Para evitar deadlocks y conexiones paralelas, las mutaciones de estado ('Activa'/'Suspendida')
+             de la cuenta afectada se calculan EN MEMORIA antes de enviar el .SaveChanges() final,
+             garantizando atomicidad en la base de datos.
+        ==========================================================================================
+        */
     }
 }

@@ -92,7 +92,7 @@ namespace Servicios.LogicaNegocio.Movimiento
             }
         }
 
-        public void CrearMovimientoCtaCte(decimal total, long cajaId, long cuentaCorrienteId, TipoMovimientoDetalle detalleTipo, GestorContextDB context = null)
+        public void CrearMovimientoCtaCte(decimal total, long cajaId, long cuentaCorrienteId, TipoMovimientoDetalle detalleTipo, bool esPago, GestorContextDB context = null)
         {
             //el return del id lo puse para caja pero al fnal no se usa, podria no devolver nada
 
@@ -106,7 +106,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                 var movimiento = new AccesoDatos.Entidades.Movimiento
                 {
                     NumeroMovimiento = $"MOV{total}CTACTE",
-                    TipoMovimiento = (int)TipoMovimiento.Ingreso,// tiene los dos ingeso y egreso?
+                    TipoMovimiento = esPago ? (int)TipoMovimiento.Ingreso : (int)TipoMovimiento.Egreso, //Ingreso es pago de ctacte, Egreso es compra con ctacte
                     TipoMovimientoDetalle = (int)detalleTipo,
                     Monto = total,
                     FechaMovimiento = DateTime.Now,
@@ -530,7 +530,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                         EstaEliminado = cc.EstaEliminado,
                         LimiteDeudaActivo = cc.LimiteDeudaActivo,
                         FechaVencimiento = cc.FechaVencimiento,
-                        EstadoCuentaCorriente = cc.EstadoCuentaCorriente,
+                        EstadoCtaCte = cc.EstadoCuentaCorriente,
                         ClienteId = cc.ClienteId,
                         // Navegación hacia el nombre del cliente
                         NombreCliente = cc.Cliente.Persona.Nombre + " " + cc.Cliente.Persona.Apellido,

@@ -38,13 +38,14 @@
             txtLimiteDeuda = new TextBox();
             txtSaldo = new TextBox();
             dtpFechaVencimiento = new DateTimePicker();
-            dgvDni = new DataGridView();
-            DNI = new DataGridViewTextBoxColumn();
             lblDni = new Label();
             lblCliente = new Label();
             cmbClientes = new ComboBox();
+            lstDnis = new ListBox();
+            txtNuevoDni = new TextBox();
+            btnAgregarDni = new Button();
+            btnEliminarDni = new Button();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dgvDni).BeginInit();
             SuspendLayout();
             // 
             // lblccorriente
@@ -131,25 +132,10 @@
             dtpFechaVencimiento.Size = new Size(200, 23);
             dtpFechaVencimiento.TabIndex = 11;
             // 
-            // dgvDni
-            // 
-            dgvDni.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDni.Columns.AddRange(new DataGridViewColumn[] { DNI });
-            dgvDni.Location = new Point(184, 240);
-            dgvDni.Name = "dgvDni";
-            dgvDni.Size = new Size(409, 174);
-            dgvDni.TabIndex = 12;
-            // 
-            // DNI
-            // 
-            DNI.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            DNI.HeaderText = "Dni";
-            DNI.Name = "DNI";
-            // 
             // lblDni
             // 
             lblDni.AutoSize = true;
-            lblDni.Location = new Point(272, 222);
+            lblDni.Location = new Point(50, 230);
             lblDni.Name = "lblDni";
             lblDni.Size = new Size(243, 15);
             lblDni.TabIndex = 13;
@@ -172,15 +158,54 @@
             cmbClientes.Size = new Size(200, 23);
             cmbClientes.TabIndex = 15;
             // 
+            // lstDnis
+            // 
+            lstDnis.FormattingEnabled = true;
+            lstDnis.ItemHeight = 15;
+            lstDnis.Location = new Point(50, 290);
+            lstDnis.Name = "lstDnis";
+            lstDnis.Size = new Size(282, 109);
+            lstDnis.TabIndex = 19;
+            // 
+            // txtNuevoDni
+            // 
+            txtNuevoDni.Location = new Point(50, 255);
+            txtNuevoDni.Name = "txtNuevoDni";
+            txtNuevoDni.Size = new Size(160, 23);
+            txtNuevoDni.TabIndex = 16;
+            // 
+            // btnAgregarDni
+            // 
+            btnAgregarDni.Location = new Point(216, 254);
+            btnAgregarDni.Name = "btnAgregarDni";
+            btnAgregarDni.Size = new Size(55, 25);
+            btnAgregarDni.TabIndex = 17;
+            btnAgregarDni.Text = "+";
+            btnAgregarDni.UseVisualStyleBackColor = true;
+            btnAgregarDni.Click += btnAgregarDni_Click;
+            // 
+            // btnEliminarDni
+            // 
+            btnEliminarDni.Location = new Point(277, 254);
+            btnEliminarDni.Name = "btnEliminarDni";
+            btnEliminarDni.Size = new Size(55, 25);
+            btnEliminarDni.TabIndex = 18;
+            btnEliminarDni.Text = "-";
+            btnEliminarDni.UseVisualStyleBackColor = true;
+            btnEliminarDni.Click += btnEliminarDni_Click;
+            // 
             // FCuentaCorrienteABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 419);
+            Controls.Add(btnEliminarDni);
+            Controls.Add(btnAgregarDni);
+            Controls.Add(txtNuevoDni);
+            Controls.Add(lstDnis);
             Controls.Add(cmbClientes);
             Controls.Add(lblCliente);
             Controls.Add(lblDni);
-            Controls.Add(dgvDni);
             Controls.Add(dtpFechaVencimiento);
             Controls.Add(txtSaldo);
             Controls.Add(txtLimiteDeuda);
@@ -204,12 +229,14 @@
             Controls.SetChildIndex(txtLimiteDeuda, 0);
             Controls.SetChildIndex(txtSaldo, 0);
             Controls.SetChildIndex(dtpFechaVencimiento, 0);
-            Controls.SetChildIndex(dgvDni, 0);
             Controls.SetChildIndex(lblDni, 0);
             Controls.SetChildIndex(lblCliente, 0);
             Controls.SetChildIndex(cmbClientes, 0);
+            Controls.SetChildIndex(lstDnis, 0);
+            Controls.SetChildIndex(txtNuevoDni, 0);
+            Controls.SetChildIndex(btnAgregarDni, 0);
+            Controls.SetChildIndex(btnEliminarDni, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dgvDni).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -226,10 +253,14 @@
         private TextBox txtLimiteDeuda;
         private TextBox txtSaldo;
         private DateTimePicker dtpFechaVencimiento;
-        private DataGridView dgvDni;
         private Label lblDni;
-        private DataGridViewTextBoxColumn DNI;
         private Label lblCliente;
         private ComboBox cmbClientes;
+
+        // 🔹 Nuevos controles incorporados para la lista de DNIs
+        private ListBox lstDnis;
+        private TextBox txtNuevoDni;
+        private Button btnAgregarDni;
+        private Button btnEliminarDni;
     }
 }

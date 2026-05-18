@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Servicios.Helpers.Cliente;
+using Servicios.Helpers.Cliente.CtaCte;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,10 +17,18 @@ namespace Servicios.LogicaNegocio.CuentaCorriente.DTO
         public bool EstaEliminado { get; set; }
         public bool LimiteDeudaActivo { get; set; } // Indica si el límite de deuda está activo
         public DateTime? FechaVencimiento { get; set; }
-        public int EstadoCuentaCorriente { get; set; } //
+        public int EstadoCtaCte { get; set; } //
+        public string EstadoDescripcionCtaCte =>
+         EstadoCtaCte switch
+         {
+             (int)EstadoCuentaCorriente.Activa => "Activo",
+             (int)EstadoCuentaCorriente.Suspendida=> "Vencido",
+             (int)EstadoCuentaCorriente.Cerrada => "Cerrado",
+             _ => "Desconocido"
+         };
+
         public long ClienteId { get; set; } // Lista de ID de cliente asociado
         public string NombreCliente { get; set; } // Nombre del cliente asociado
         public List<long> DniAutorizados { get; set; } // Lista de DNI autorizados
-        public List<long> MovimientoCuentaCorrienteIds { get; set; } // Lista de IDs de movimientos asociados //nose xq esta esto aca deberia borrarlo
     }
 }
