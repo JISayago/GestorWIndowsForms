@@ -115,6 +115,7 @@ namespace Presentacion.Core.Movimiento
             cbx2.SelectedValue = "";
             cbx3.SelectedValue = "";
         }
+        
         protected override string TextoLblBuscar
      => "Buscar Movimientos:";
 
@@ -137,11 +138,8 @@ namespace Presentacion.Core.Movimiento
 
                 LimpiarFiltrosParaTodos();
             }
-
-            var filtros = ObtenerFiltros();
-
-            ActualizarDatos(dgvGrilla, filtros);
         }
+
         protected override void AccionCheck1()
         {
             if (chkBool1.Checked)
@@ -152,12 +150,7 @@ namespace Presentacion.Core.Movimiento
 
                 LimpiarFiltrosParaTodos();
             }
-
-            var filtros = ObtenerFiltros();
-
-            ActualizarDatos(dgvGrilla, filtros);
         }
-
         private void LimpiarFiltrosParaTodos()
         {
             _actualizandoFiltros = true;

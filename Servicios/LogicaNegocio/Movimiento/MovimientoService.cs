@@ -229,21 +229,6 @@ namespace Servicios.LogicaNegocio.Movimiento
                     x.NumeroMovimiento.Contains(texto));
             }
 
-            // =========================================================
-            // 📌 TIPO MOVIMIENTO (cbx2)
-            // =========================================================
-
-            if (!string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
-            {
-                if (int.TryParse(filtros.Filtro2.ToString(), out int tipo))
-                {
-                    if (Enum.IsDefined(typeof(TipoMovimiento), tipo))
-                    {
-                        query = query.Where(x =>
-                            x.TipoMovimiento == tipo);
-                    }
-                }
-            }
 
             // =========================================================
             // 📌 TIPO MOVIMIENTO / DETALLE (cbx2)
@@ -256,13 +241,11 @@ namespace Servicios.LogicaNegocio.Movimiento
                 if (filtroTipo.StartsWith("TM_"))
                 {
                     var valor = int.Parse(filtroTipo.Replace("TM_", ""));
-
                     query = query.Where(x => x.TipoMovimiento == valor);
                 }
                 else if (filtroTipo.StartsWith("TMD_"))
                 {
                     var valor = int.Parse(filtroTipo.Replace("TMD_", ""));
-
                     query = query.Where(x => x.TipoMovimientoDetalle == valor);
                 }
             }
