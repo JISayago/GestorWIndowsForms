@@ -281,6 +281,10 @@ namespace Servicios.LogicaNegocio.Movimiento
                 query = query.Where(x =>
                     x.FechaMovimiento >= fechaDefaultDesde);
             }
+            if (filtros.Bool2)
+            {
+                filtros.Page = 1;
+            }
             // =========================================================
             // 📊 TOTAL
             // =========================================================

@@ -138,6 +138,7 @@ namespace Presentacion.Core.Movimiento
 
                 LimpiarFiltrosParaTodos();
             }
+            paginaActual = 1;
         }
 
         protected override void AccionCheck1()
@@ -149,6 +150,7 @@ namespace Presentacion.Core.Movimiento
                 _actualizandoFiltros = false;
 
                 LimpiarFiltrosParaTodos();
+                paginaActual = 1;
             }
         }
         private void LimpiarFiltrosParaTodos()
