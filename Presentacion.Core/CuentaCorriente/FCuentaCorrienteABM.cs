@@ -142,7 +142,7 @@ namespace Presentacion.Core.CuentaCorriente
             txtLimiteDeuda.Enabled = cuentacorriente.LimiteDeudaActivo;
             cmbClientes.DisplayMember = "NombreCompleto";
             cmbClientes.ValueMember = "PersonaId";
-            cmbClientes.DataSource = clienteDeCuentaCorriente;
+            //cmbClientes.DataSource = clienteDeCuentaCorriente;
             cmbClientes.Enabled = false;
 
             // 🔹 Mapeo directo a la lista del ListBox sin dar vueltas con celdas

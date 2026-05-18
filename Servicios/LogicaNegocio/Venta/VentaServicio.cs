@@ -55,7 +55,7 @@ namespace Servicios.LogicaNegocio.Venta
                 decimal montoParaCaja = 0;
 
                 // Buscamos si en los tipos de pago seleccionados se usó Cuenta Corriente (Valor 3)
-                var pagoCtaCte = ventaDto.TiposDePagoSeleccionado?.FirstOrDefault(p => Convert.ToInt32(p.TipoDePago.Value) == 3);
+                var pagoCtaCte = ventaDto.TiposDePagoSeleccionado?.FirstOrDefault(p => Convert.ToInt32(p.TipoDePago.Value) == (int)TipoDePago.CtaCte);
 
                 if (pagoCtaCte != null)
                 {
