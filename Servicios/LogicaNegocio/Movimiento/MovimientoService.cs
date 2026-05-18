@@ -254,7 +254,8 @@ namespace Servicios.LogicaNegocio.Movimiento
             // 📅 FILTRO POR FECHA (cbx3)
             // =========================================================
             var filtroFecha = filtros.Filtro3?.ToString();
-            var fechaDesde = DateTime.Now.AddMonths(-2);
+            var fechaDefaultDesde = DateTime.Now.AddMonths(-2);
+
             bool hayFiltroFechaManual =
                 filtroFecha == "FECHA" &&
                 (filtros.FechaDesde.HasValue || filtros.FechaHasta.HasValue);
@@ -275,11 +276,10 @@ namespace Servicios.LogicaNegocio.Movimiento
                         x.FechaMovimiento < hasta);
                 }
             }
-            else if (!filtros.Bool2)
+            else if (!filtros.Bool2) // no histórico
             {
-
                 query = query.Where(x =>
-                    x.FechaMovimiento >= fechaDesde);
+                    x.FechaMovimiento >= fechaDefaultDesde);
             }
             // =========================================================
             // 📊 TOTAL
@@ -305,12 +305,6 @@ namespace Servicios.LogicaNegocio.Movimiento
             // =========================================================
             // 📌 ORDEN
             // =========================================================
-
-            fechaDesde = DateTime.Now.AddMonths(-2);
-
-            query = query.Where(x =>
-                x.FechaMovimiento >= fechaDesde);
-
             query = query.OrderByDescending(x => x.FechaMovimiento);
 
             // =========================================================
