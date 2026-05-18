@@ -126,10 +126,20 @@ namespace Servicios.LogicaNegocio.Articulo.Categoria
                 .AsQueryable();
 
             // 🔴 ELIMINADOS
-            query = filtros.Bool1
-                ? query.Where(x => x.EstaEliminado)
-                : query.Where(x => !x.EstaEliminado);
-
+            if (filtros.Bool2)
+            {
+                // 👉 Mostrar todas → no filtrar
+            }
+            else if (filtros.Bool1)
+            {
+                // 👉 Solo eliminadas
+                query = query.Where(x => x.EstaEliminado);
+            }
+            else
+            {
+                // 👉 Default → solo activas
+                query = query.Where(x => !x.EstaEliminado);
+            }
             // 🔍 BUSQUEDA
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
