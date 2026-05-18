@@ -222,11 +222,8 @@ namespace Presentacion.Core.Producto
 
                 LimpiarFiltrosParaTodos();
             }
-
-            var filtros = ObtenerFiltros();
-
-            ActualizarDatos(dgvGrilla, filtros);
         }
+
         protected override void AccionCheck1()
         {
             if (chkBool1.Checked)
@@ -237,10 +234,6 @@ namespace Presentacion.Core.Producto
 
                 LimpiarFiltrosParaTodos();
             }
-
-            var filtros = ObtenerFiltros();
-
-            ActualizarDatos(dgvGrilla, filtros);
         }
 
         private void LimpiarFiltrosParaTodos()
