@@ -125,43 +125,46 @@ namespace Servicios.LogicaNegocio.Articulo.Marca
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
+            string collation = "Latin1_General_CI_AI";
+
             var query = context.Marcas
                 .AsNoTracking()
                 .AsQueryable();
 
-            // 🔴 ELIMINADOS
-            query = filtros.Bool1
-                ? query.Where(x => x.EstaEliminado)
-                : query.Where(x => !x.EstaEliminado);
+            // 🔴 ELIMINADOS / TODOS
+            if (filtros.Bool2)
+            {
+                // 👉 todos
+            }
+            else if (filtros.Bool1)
+            {
+                // 👉 solo eliminados
+                query = query.Where(x => x.EstaEliminado);
+            }
+            else
+            {
+                // 👉 solo activos
+                query = query.Where(x => !x.EstaEliminado);
+            }
 
             // 🔍 BUSQUEDA
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
                 var texto = filtros.TextoBuscar.Trim();
 
-                switch (filtros.Filtro1?.ToString())
-                {
-                    case "Nombre":
-                        query = query.Where(x =>
-                            x.Nombre.Contains(texto));
-                        break;
-
-
-                    default:
-                        query = query.Where(x =>
-                            x.Nombre.Contains(texto) ||
-                            x.Nombre.Contains(texto));
-                        break;
-                }
+                query = query.Where(x =>
+                    x.Nombre != null &&
+                    EF.Functions.Collate(x.Nombre, collation)
+                        .Contains(texto));
             }
 
             // 📊 TOTAL
             var total = query.Count();
 
-            // 🔴 PAGINACION SEGURA
+            // 🔴 PAGINACION
             var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
 
-            if (totalPaginas == 0)
+            if (totalPaginas <= 0)
                 totalPaginas = 1;
 
             if (filtros.Page > totalPaginas)

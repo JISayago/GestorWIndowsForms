@@ -228,7 +228,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
         public ResultadoPaginacion<VentaLibreDTO> ObtenerVentasLibres(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.VentasLibres
                 .AsNoTracking()
                 .Include(v => v.Empleado).ThenInclude(e => e.Persona)
@@ -265,37 +265,43 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                var texto = filtros.TextoBuscar.Trim().ToLower();
+                var texto = filtros.TextoBuscar.Trim();
 
                 switch (filtros.Filtro1?.ToString())
                 {
                     case "NumeroVenta":
+
                         query = query.Where(v =>
-                            v.NumeroVenta.ToLower().Contains(texto));
+                            EF.Functions.Collate(v.NumeroVenta, collation)
+                                .Contains(texto));
+
                         break;
 
                     case "ClienteNombreCompleto":
+
                         query = query.Where(v =>
                             v.Cliente != null &&
-                            (
-                                (v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido)
-                                .ToLower()
-                                .Contains(texto)
-                            ));
+                            EF.Functions.Collate(
+                                (v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido),
+                                collation
+                            ).Contains(texto));
+
                         break;
 
                     default:
+
                         query = query.Where(v =>
-                            v.NumeroVenta.ToLower().Contains(texto)
+                            EF.Functions.Collate(v.NumeroVenta, collation)
+                                .Contains(texto)
                             ||
                             (
                                 v.Cliente != null &&
-                                (
-                                    (v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido)
-                                    .ToLower()
-                                    .Contains(texto)
-                                )
+                                EF.Functions.Collate(
+                                    (v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido),
+                                    collation
+                                ).Contains(texto)
                             ));
+
                         break;
                 }
             }

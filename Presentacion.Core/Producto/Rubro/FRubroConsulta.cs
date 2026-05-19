@@ -43,11 +43,8 @@ namespace Presentacion.Core.Producto.Rubro
 
             var opcionesBusqueda = new List<OpcionFiltro>
             {
-                new OpcionFiltro
-                {
-                    Texto = "Nombre",
-                    Valor = "Nombre"
-                }
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
+                new OpcionFiltro { Texto = "Nombre", Valor = "Nombre" }
             };
 
             ActivarCombo(
@@ -59,8 +56,10 @@ namespace Presentacion.Core.Producto.Rubro
                 "Buscar por"
             );
 
-            cbx1.SelectedValue = "Nombre";
+
             ActivarCheck(chkBool1, "Ver eliminados");
+            ActivarCheck(chkBool2, "Mostrar Todos los Rubros");
+            cbx1.SelectedValue = "";
         }
         protected override string TextoLblBuscar
     => "Buscar Rubro:";
@@ -76,6 +75,49 @@ namespace Presentacion.Core.Producto.Rubro
         #endregion
 
         #region 🔷 GRILLA
+        protected override void AccionCheck2()
+        {
+            if (chkBool2.Checked)
+            {
+                _actualizandoFiltros = true;
+                chkBool1.Checked = false;
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosParaTodos();
+            }
+        }
+
+        protected override void AccionCheck1()
+        {
+            if (chkBool1.Checked)
+            {
+                _actualizandoFiltros = true;
+                chkBool2.Checked = false;
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosParaTodos();
+            }
+        }
+
+        private void LimpiarFiltrosParaTodos()
+        {
+            _actualizandoFiltros = true;
+
+            txtBuscar.Clear();
+
+            if (cbx1.Enabled)
+                cbx1.SelectedIndex = 0;
+
+            if (cbx2.Enabled)
+                cbx2.SelectedIndex = 0;
+
+            if (cbx3.Enabled)
+                cbx3.SelectedIndex = 0;
+
+            chkUsarFecha.Checked = false;
+
+            _actualizandoFiltros = false;
+        }
 
         public override void ResetearGrilla(DataGridView grilla)
         {

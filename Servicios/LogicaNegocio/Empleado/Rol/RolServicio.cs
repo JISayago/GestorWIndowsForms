@@ -170,7 +170,7 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
         public ResultadoPaginacion<RolDTO> ObtenerRoles(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.Roles
                 .AsNoTracking()
                 .AsQueryable();
@@ -190,32 +190,41 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
                     case "Nombre":
 
                         query = query.Where(x =>
-                            x.Nombre.Contains(texto));
+                            x.Nombre != null &&
+                            EF.Functions.Collate(x.Nombre, collation)
+                                .Contains(texto));
 
                         break;
 
                     case "DetalleRol":
 
                         query = query.Where(x =>
-                            x.DetalleRol.Contains(texto));
+                            x.DetalleRol != null &&
+                            EF.Functions.Collate(x.DetalleRol, collation)
+                                .Contains(texto));
 
                         break;
 
                     case "CodigoRol":
 
                         query = query.Where(x =>
-                            x.CodigoRol.Contains(texto));
+                            x.CodigoRol != null &&
+                            EF.Functions.Collate(x.CodigoRol, collation)
+                                .Contains(texto));
 
                         break;
 
                     default:
 
                         query = query.Where(x =>
-                            x.Nombre.Contains(texto)
+                            (x.Nombre != null &&
+                             EF.Functions.Collate(x.Nombre, collation).Contains(texto))
                             ||
-                            x.DetalleRol.Contains(texto)
+                            (x.DetalleRol != null &&
+                             EF.Functions.Collate(x.DetalleRol, collation).Contains(texto))
                             ||
-                            x.CodigoRol.Contains(texto));
+                            (x.CodigoRol != null &&
+                             EF.Functions.Collate(x.CodigoRol, collation).Contains(texto)));
 
                         break;
                 }

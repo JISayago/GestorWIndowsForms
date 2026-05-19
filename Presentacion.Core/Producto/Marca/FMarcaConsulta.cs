@@ -190,6 +190,7 @@ namespace Presentacion.Core.Articulo.Marca
 
             var opciones = new List<OpcionFiltro>
             {
+                new OpcionFiltro { Texto = "Todas", Valor = "" },
                 new OpcionFiltro { Texto = "Nombre", Valor = "Nombre" },
             };
 
@@ -202,14 +203,52 @@ namespace Presentacion.Core.Articulo.Marca
                 "Buscar marca por:"
             );
 
-            ActivarCheck(
-                chkBool1,
-                "Ver eliminados"
-            );
-
-            cbx1.SelectedValue = "Nombre";
-
             ActivarCheck(chkBool1, "Ver eliminadas");
+            ActivarCheck(chkBool2, "Mostrar Todas las Marcas");
+            cbx1.SelectedValue = "";
+        }
+        protected override void AccionCheck2()
+        {
+            if (chkBool2.Checked)
+            {
+                _actualizandoFiltros = true;
+                chkBool1.Checked = false;
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosParaTodos();
+            }
+        }
+
+        protected override void AccionCheck1()
+        {
+            if (chkBool1.Checked)
+            {
+                _actualizandoFiltros = true;
+                chkBool2.Checked = false;
+                _actualizandoFiltros = false;
+
+                LimpiarFiltrosParaTodos();
+            }
+        }
+
+        private void LimpiarFiltrosParaTodos()
+        {
+            _actualizandoFiltros = true;
+
+            txtBuscar.Clear();
+
+            if (cbx1.Enabled)
+                cbx1.SelectedIndex = 0;
+
+            if (cbx2.Enabled)
+                cbx2.SelectedIndex = 0;
+
+            if (cbx3.Enabled)
+                cbx3.SelectedIndex = 0;
+
+            chkUsarFecha.Checked = false;
+
+            _actualizandoFiltros = false;
         }
 
         protected override string TextoLblBuscar

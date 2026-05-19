@@ -306,7 +306,7 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         public ResultadoPaginacion<OfertaDTO> ObtenerOfertas(FiltroConsulta filtros, bool vieneDeVenta)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.OfertasDescuentos
                 .AsNoTracking()
                 .Include(o => o.Productos)
@@ -330,53 +330,72 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
             // 🔍 BUSQUEDA
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                var texto = filtros.TextoBuscar.ToLower();
+                var texto = filtros.TextoBuscar.Trim();
 
                 switch (filtros.Filtro1?.ToString())
                 {
                     case "Codigo":
                         query = query.Where(o =>
-                            o.Codigo.ToLower().Contains(texto));
+                            o.Codigo != null &&
+                            EF.Functions.Collate(o.Codigo, collation)
+                                .Contains(texto));
                         break;
 
                     case "Descripcion":
                         query = query.Where(o =>
-                            o.Descripcion.ToLower().Contains(texto));
+                            o.Descripcion != null &&
+                            EF.Functions.Collate(o.Descripcion, collation)
+                                .Contains(texto));
                         break;
 
                     case "Detalle":
                         query = query.Where(o =>
-                            o.Detalle.ToLower().Contains(texto));
+                            o.Detalle != null &&
+                            EF.Functions.Collate(o.Detalle, collation)
+                                .Contains(texto));
                         break;
 
                     case "GrupoNombre":
                         query = query.Where(o =>
-                            o.GrupoNombre.ToLower().Contains(texto));
+                            o.GrupoNombre != null &&
+                            EF.Functions.Collate(o.GrupoNombre, collation)
+                                .Contains(texto));
                         break;
 
                     case "NombreMarca":
                         query = query.Where(o =>
                             o.Marca != null &&
-                            o.Marca.Nombre.ToLower().Contains(texto));
+                            o.Marca.Nombre != null &&
+                            EF.Functions.Collate(o.Marca.Nombre, collation)
+                                .Contains(texto));
                         break;
 
                     case "NombreRubro":
                         query = query.Where(o =>
                             o.Rubro != null &&
-                            o.Rubro.Nombre.ToLower().Contains(texto));
+                            o.Rubro.Nombre != null &&
+                            EF.Functions.Collate(o.Rubro.Nombre, collation)
+                                .Contains(texto));
                         break;
 
                     case "NombreCategoria":
                         query = query.Where(o =>
                             o.Categoria != null &&
-                            o.Categoria.Nombre.ToLower().Contains(texto));
+                            o.Categoria.Nombre != null &&
+                            EF.Functions.Collate(o.Categoria.Nombre, collation)
+                                .Contains(texto));
                         break;
 
                     default:
                         query = query.Where(o =>
-                            o.Codigo.ToLower().Contains(texto) ||
-                            o.Descripcion.ToLower().Contains(texto) ||
-                            o.Detalle.ToLower().Contains(texto));
+                            (o.Codigo != null &&
+                             EF.Functions.Collate(o.Codigo, collation).Contains(texto))
+                            ||
+                            (o.Descripcion != null &&
+                             EF.Functions.Collate(o.Descripcion, collation).Contains(texto))
+                            ||
+                            (o.Detalle != null &&
+                             EF.Functions.Collate(o.Detalle, collation).Contains(texto)));
                         break;
                 }
             }

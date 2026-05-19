@@ -183,7 +183,7 @@ namespace Servicios.LogicaNegocio.Empleado
         public ResultadoPaginacion<EmpleadoDTO> ObtenerEmpleados(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.Empleados
                 .AsNoTracking()
                 .Include(e => e.Persona)
@@ -222,42 +222,53 @@ namespace Servicios.LogicaNegocio.Empleado
                     case "ApyNom":
 
                         query = query.Where(e =>
-                            e.Persona.Nombre.Contains(texto) ||
-                            e.Persona.Apellido.Contains(texto));
+                            (e.Persona.Nombre != null &&
+                             EF.Functions.Collate(e.Persona.Nombre, collation).Contains(texto))
+                            ||
+                            (e.Persona.Apellido != null &&
+                             EF.Functions.Collate(e.Persona.Apellido, collation).Contains(texto)));
 
                         break;
 
                     case "Legajo":
 
+                        // ⚠️ OJO: esto puede no traducirse bien a SQL
                         query = query.Where(e =>
-                            e.Legajo.ToString().Contains(texto));
+                            EF.Functions.Collate(e.Legajo.ToString(), collation)
+                                .Contains(texto));
 
                         break;
 
                     case "Usuario":
 
                         query = query.Where(e =>
-                            e.Username.Contains(texto));
+                            e.Username != null &&
+                            EF.Functions.Collate(e.Username, collation)
+                                .Contains(texto));
 
                         break;
 
                     case "Dni":
 
                         query = query.Where(e =>
-                            e.Persona.Dni.Contains(texto));
+                            e.Persona.Dni != null &&
+                            EF.Functions.Collate(e.Persona.Dni, collation)
+                                .Contains(texto));
 
                         break;
 
                     default:
 
                         query = query.Where(e =>
-                            e.Persona.Nombre.Contains(texto) ||
-                            e.Persona.Apellido.Contains(texto));
+                            (e.Persona.Nombre != null &&
+                             EF.Functions.Collate(e.Persona.Nombre, collation).Contains(texto))
+                            ||
+                            (e.Persona.Apellido != null &&
+                             EF.Functions.Collate(e.Persona.Apellido, collation).Contains(texto)));
 
                         break;
                 }
             }
-
             // =========================================================
             // 📌 FILTRO ESTADO (cbx2)
             // =========================================================
