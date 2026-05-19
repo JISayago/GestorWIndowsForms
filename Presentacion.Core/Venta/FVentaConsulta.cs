@@ -206,8 +206,14 @@ namespace Presentacion.Core.Venta
                 return;
             }
 
-            //var resultado =
-            //    _ventaServicio.CancelacionVentaPorId(id.Value);// tiene q abrirl el detalle para cancelar
+            var resultado =
+                _ventaServicio.ObtenerVentasPorIds(new List<long> { id.Value });
+            if (resultado[0].Estado == (int)EstadoVenta.CancelacionVenta || resultado[0].Estado == (int)EstadoVenta.Cancelada)
+            {
+                MessageBox.Show("Por favor selecione una venta que no haya sido cancelada.");
+                return;
+
+            }
             var fVenta = new FVenta(_usuarioLogeadoID, id.Value);
             fVenta.Show();
             Close();
