@@ -1,4 +1,5 @@
-﻿using Presentacion.Core.Presentacion.Core.Helpers;
+﻿using AccesoDatos.Entidades;
+using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.Helpers.VentaEnum;
@@ -19,12 +20,16 @@ namespace Presentacion.Core.Venta
     public partial class FVentaConsulta : FBaseConsulta
     {
         private readonly IVentaServicio _ventaServicio;
-
+        private long _usuarioLogeadoID;
         private long? ventaLibreSeleccionada;
         public FVentaConsulta()
         {
             InitializeComponent();
             _ventaServicio = new VentaServicio();
+        }
+        public FVentaConsulta(long usuarioLogeadoID) : this()
+        {
+            _usuarioLogeadoID = usuarioLogeadoID;
         }
 
 
@@ -201,27 +206,30 @@ namespace Presentacion.Core.Venta
                 return;
             }
 
-            var resultado =
-                _ventaServicio.CancelacionVentaPorId(id.Value);// tiene q abrirl el detalle para cancelar
+            //var resultado =
+            //    _ventaServicio.CancelacionVentaPorId(id.Value);// tiene q abrirl el detalle para cancelar
+            var fVenta = new FVenta(_usuarioLogeadoID, id.Value);
+            fVenta.Show();
+            Close();
 
-            Recargar();
+            //Recargar();
 
-            if (resultado.Exitoso)
-            {
-                MessageBox.Show(
-                    resultado.Mensaje,
-                    "Éxito",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-            }
-            else
-            {
-                MessageBox.Show(
-                    resultado.Mensaje,
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
+            //if (resultado.Exitoso)
+            //{
+            //    MessageBox.Show(
+            //        resultado.Mensaje,
+            //        "Éxito",
+            //        MessageBoxButtons.OK,
+            //        MessageBoxIcon.Information);
+            //}
+            //else
+            //{
+            //    MessageBox.Show(
+            //        resultado.Mensaje,
+            //        "Error",
+            //        MessageBoxButtons.OK,
+            //        MessageBoxIcon.Error);
+            //}
         }
 
         #endregion
