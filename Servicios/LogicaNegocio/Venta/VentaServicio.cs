@@ -68,13 +68,13 @@ namespace Servicios.LogicaNegocio.Venta
                     montoParaCaja = Math.Abs(ventaDto.Total);
                 }
 
-                // 🌟 BLINDAJE DE SIGNOS: Si el total general es negativo, es una cancelación. 
+                // BLINDAJE DE SIGNOS: Si el total general es negativo, es una cancelación. 
                 // Forzamos que los montos parciales también sean negativos para que impacten restando en Caja y CtaCte.
-                if (ventaDto.Total < 0)
-                {
-                    montoParaCtaCte = -montoParaCtaCte;
-                    montoParaCaja = -montoParaCaja;
-                }
+                //if (ventaDto.Estado == (int)EstadoVenta.CancelacionVenta) //Si es cancelacion
+                //{
+                //    montoParaCtaCte = montoParaCtaCte;
+                //    montoParaCaja = montoParaCaja;
+                //}
 
                 Debug.WriteLine("2 - Obtener caja");
 
@@ -169,7 +169,7 @@ namespace Servicios.LogicaNegocio.Venta
 
                     if (prefijo == "VEN")
                     {
-                        // 👉 FLUJO VENTA: Genera deuda (Resta saldo)
+                        // FLUJO VENTA: Genera deuda (Resta saldo)
                         var resCtaCte = ctaCteServicio.RegistrarCompra(
                             ctaCteDto.CuentaCorrienteId,
                             venta.MontoAdeudado,
@@ -182,7 +182,7 @@ namespace Servicios.LogicaNegocio.Venta
                     }
                     else
                     {
-                        // 👉 FLUJO CANCELACIÓN: Revierte deuda (Suma saldo usando valor absoluto)
+                        // FLUJO CANCELACIÓN: Revierte deuda (Suma saldo usando valor absoluto)
                         decimal montoDevolucion = Math.Abs(venta.MontoAdeudado);
                         var resCtaCte = ctaCteServicio.RegistrarDevolucionOAnulacion(
                             ctaCteDto.CuentaCorrienteId,
