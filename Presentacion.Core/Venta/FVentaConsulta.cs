@@ -216,7 +216,6 @@ namespace Presentacion.Core.Venta
             }
             var fVenta = new FVenta(_usuarioLogeadoID, id.Value);
             fVenta.Show();
-            Close();
 
             //Recargar();
 
