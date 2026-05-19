@@ -112,7 +112,7 @@ namespace Presentacion.Core.Venta
                 new OpcionFiltro
                 {
                     Texto = "Fecha Venta",
-                    Valor = "FVL"
+                    Valor = "FV"
                 },
             };
 
@@ -126,7 +126,7 @@ namespace Presentacion.Core.Venta
             );
             cbx1.SelectedValue = "";
             cbx2.SelectedValue = "";
-            cbx3.SelectedValue = "FVL";
+            cbx3.SelectedValue = "FV";
         }
         protected override void AccionCheck2()
         {
@@ -139,6 +139,7 @@ namespace Presentacion.Core.Venta
                 _actualizandoFiltros = false;
 
                 LimpiarFiltrosEspeciales();
+                paginaActual = 1;
             }
 
         }
@@ -153,6 +154,7 @@ namespace Presentacion.Core.Venta
                 _actualizandoFiltros = false;
 
                 LimpiarFiltrosEspeciales();
+                paginaActual = 1;
             }
 
         }
@@ -200,7 +202,7 @@ namespace Presentacion.Core.Venta
             }
 
             var resultado =
-                _ventaServicio.CancelacionVentaPorId(id.Value);
+                _ventaServicio.CancelacionVentaPorId(id.Value);// tiene q abrirl el detalle para cancelar
 
             Recargar();
 
@@ -248,28 +250,8 @@ namespace Presentacion.Core.Venta
             {
                 grilla.Columns["FechaVenta"].Visible = true;
                 grilla.Columns["FechaVenta"].HeaderText = "Fecha";
+                grilla.Columns["FechaVenta"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
                 grilla.Columns["FechaVenta"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.AllCells;
-            }
-
-            if (grilla.Columns.Contains("ClienteNombreCompleto"))
-            {
-                grilla.Columns["ClienteNombreCompleto"].Visible = true;
-                grilla.Columns["ClienteNombreCompleto"].HeaderText =
-                    "Cliente";
-
-                grilla.Columns["ClienteNombreCompleto"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.AllCells;
-            }
-
-            if (grilla.Columns.Contains("VendedorNombreCompleto"))
-            {
-                grilla.Columns["VendedorNombreCompleto"].Visible = true;
-
-                grilla.Columns["VendedorNombreCompleto"].HeaderText =
-                    "Vendedor";
-
-                grilla.Columns["VendedorNombreCompleto"].AutoSizeMode =
                     DataGridViewAutoSizeColumnMode.AllCells;
             }
 
@@ -280,36 +262,38 @@ namespace Presentacion.Core.Venta
                 grilla.Columns["Total"].DefaultCellStyle.Format = "C2";
             }
 
-            if (grilla.Columns.Contains("MontoPagado"))
+            if (grilla.Columns.Contains("TotalSinDescuento"))
             {
-                grilla.Columns["MontoPagado"].Visible = true;
-                grilla.Columns["MontoPagado"].HeaderText = "Pagado";
-                grilla.Columns["MontoPagado"].DefaultCellStyle.Format = "C2";
+                grilla.Columns["TotalSinDescuento"].Visible = true;
+                grilla.Columns["TotalSinDescuento"].HeaderText = "Total s/Desc";
+                grilla.Columns["TotalSinDescuento"].DefaultCellStyle.Format = "C2";
             }
 
-            if (grilla.Columns.Contains("MontoAdeudado"))
+            if (grilla.Columns.Contains("Descuento"))
             {
-                grilla.Columns["MontoAdeudado"].Visible = true;
-
-                grilla.Columns["MontoAdeudado"].HeaderText = "Adeudado";
-
-                grilla.Columns["MontoAdeudado"].DefaultCellStyle.Format =
-                    "C2";
+                grilla.Columns["Descuento"].Visible = true;
+                grilla.Columns["Descuento"].HeaderText = "Descuento";
+                grilla.Columns["Descuento"].DefaultCellStyle.Format = "C2";
             }
 
+            // 🔥 IMPORTANTE: mostrar descripción, no el int
+            if (grilla.Columns.Contains("EstadoDescripcion"))
+            {
+                grilla.Columns["EstadoDescripcion"].Visible = true;
+                grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+                grilla.Columns["EstadoDescripcion"].AutoSizeMode =
+                    DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
+            // ocultás el campo crudo
             if (grilla.Columns.Contains("Estado"))
             {
-                grilla.Columns["Estado"].Visible = true;
-                grilla.Columns["Estado"].HeaderText = "Estado";
-
-                grilla.Columns["Estado"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.AllCells;
+                grilla.Columns["Estado"].Visible = false;
             }
 
             if (grilla.Columns.Contains("Detalle"))
             {
                 grilla.Columns["Detalle"].Visible = true;
-
                 grilla.Columns["Detalle"].AutoSizeMode =
                     DataGridViewAutoSizeColumnMode.Fill;
             }
