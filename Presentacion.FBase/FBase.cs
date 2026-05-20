@@ -50,7 +50,6 @@ namespace Presentacion.FBase
 
         protected virtual void EjecutarEnter()
         {
-            // opcional
         }
         private void FBase_Load(object sender, EventArgs e)
         {

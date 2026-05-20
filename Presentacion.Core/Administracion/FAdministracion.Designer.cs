@@ -47,8 +47,10 @@
             nUEVAOFERTAToolStripMenuItem = new ToolStripMenuItem();
             cONFIGURACIONToolStripMenuItem = new ToolStripMenuItem();
             tIPOPAGOToolStripMenuItem = new ToolStripMenuItem();
-            ventaLibreToolStripMenuItem = new ToolStripMenuItem();
-            consultaVentaLibreToolStripMenuItem = new ToolStripMenuItem();
+            vENTAToolStripMenuItem = new ToolStripMenuItem();
+            historialToolStripMenuItem = new ToolStripMenuItem();
+            nuevaVentaLibreToolStripMenuItem = new ToolStripMenuItem();
+            historialVentasLibresToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanel1 = new TableLayoutPanel();
             btnGasto = new Button();
             btnVolver = new Button();
@@ -105,9 +107,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.BackColor = SystemColors.ButtonFace;
-            menuStrip1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { pRODUCTOToolStripMenuItem, eMPLEADOSToolStripMenuItem, cLIENTESToolStripMenuItem, oFERTASToolStripMenuItem, cONFIGURACIONToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { pRODUCTOToolStripMenuItem, eMPLEADOSToolStripMenuItem, cLIENTESToolStripMenuItem, oFERTASToolStripMenuItem, cONFIGURACIONToolStripMenuItem, vENTAToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(1610, 25);
@@ -228,7 +228,7 @@
             // 
             // cONFIGURACIONToolStripMenuItem
             // 
-            cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tIPOPAGOToolStripMenuItem, ventaLibreToolStripMenuItem, consultaVentaLibreToolStripMenuItem });
+            cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tIPOPAGOToolStripMenuItem });
             cONFIGURACIONToolStripMenuItem.Name = "cONFIGURACIONToolStripMenuItem";
             cONFIGURACIONToolStripMenuItem.Size = new Size(126, 21);
             cONFIGURACIONToolStripMenuItem.Text = "CONFIGURACION";
@@ -240,19 +240,33 @@
             tIPOPAGOToolStripMenuItem.Text = "TIPO PAGO??";
             tIPOPAGOToolStripMenuItem.Click += tIPOPAGOToolStripMenuItem_Click;
             // 
-            // ventaLibreToolStripMenuItem
+            // vENTAToolStripMenuItem
             // 
-            ventaLibreToolStripMenuItem.Name = "ventaLibreToolStripMenuItem";
-            ventaLibreToolStripMenuItem.Size = new Size(192, 22);
-            ventaLibreToolStripMenuItem.Text = "VentaLibre";
-            ventaLibreToolStripMenuItem.Click += ventaLibreToolStripMenuItem_Click;
+            vENTAToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { historialToolStripMenuItem, nuevaVentaLibreToolStripMenuItem, historialVentasLibresToolStripMenuItem });
+            vENTAToolStripMenuItem.Name = "vENTAToolStripMenuItem";
+            vENTAToolStripMenuItem.Size = new Size(55, 20);
+            vENTAToolStripMenuItem.Text = "VENTA";
             // 
-            // consultaVentaLibreToolStripMenuItem
+            // historialToolStripMenuItem
             // 
-            consultaVentaLibreToolStripMenuItem.Name = "consultaVentaLibreToolStripMenuItem";
-            consultaVentaLibreToolStripMenuItem.Size = new Size(192, 22);
-            consultaVentaLibreToolStripMenuItem.Text = "ConsultaVentaLibre";
-            consultaVentaLibreToolStripMenuItem.Click += consultaVentaLibreToolStripMenuItem_Click;
+            historialToolStripMenuItem.Name = "historialToolStripMenuItem";
+            historialToolStripMenuItem.Size = new Size(189, 22);
+            historialToolStripMenuItem.Text = "Historial Ventas";
+            historialToolStripMenuItem.Click += historialToolStripMenuItem_Click;
+            // 
+            // nuevaVentaLibreToolStripMenuItem
+            // 
+            nuevaVentaLibreToolStripMenuItem.Name = "nuevaVentaLibreToolStripMenuItem";
+            nuevaVentaLibreToolStripMenuItem.Size = new Size(189, 22);
+            nuevaVentaLibreToolStripMenuItem.Text = "Nueva Venta Libre";
+            nuevaVentaLibreToolStripMenuItem.Click += nuevaVentaLibreToolStripMenuItem_Click;
+            // 
+            // historialVentasLibresToolStripMenuItem
+            // 
+            historialVentasLibresToolStripMenuItem.Name = "historialVentasLibresToolStripMenuItem";
+            historialVentasLibresToolStripMenuItem.Size = new Size(189, 22);
+            historialVentasLibresToolStripMenuItem.Text = "Historial Ventas Libres";
+            historialVentasLibresToolStripMenuItem.Click += historialVentasLibresToolStripMenuItem_Click;
             // 
             // tableLayoutPanel1
             // 
@@ -755,7 +769,9 @@
         private ScottPlot.WinForms.FormsPlot formsPlot4;
         private ScottPlot.WinForms.FormsPlot formsPlot6;
         private ToolStripMenuItem lOTESToolStripMenuItem;
-        private ToolStripMenuItem ventaLibreToolStripMenuItem;
-        private ToolStripMenuItem consultaVentaLibreToolStripMenuItem;
+        private ToolStripMenuItem vENTAToolStripMenuItem;
+        private ToolStripMenuItem historialToolStripMenuItem;
+        private ToolStripMenuItem historialVentasLibresToolStripMenuItem;
+        private ToolStripMenuItem nuevaVentaLibreToolStripMenuItem;
     }
 }

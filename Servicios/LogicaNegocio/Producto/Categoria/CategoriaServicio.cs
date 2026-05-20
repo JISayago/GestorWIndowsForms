@@ -120,23 +120,34 @@ namespace Servicios.LogicaNegocio.Articulo.Categoria
         public ResultadoPaginacion<CategoriaDTO> ObtenerCategorias(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.Categorias
                 .AsNoTracking()
                 .AsQueryable();
 
             // 🔴 ELIMINADOS
-            query = filtros.Bool1
-                ? query.Where(x => x.EstaEliminado)
-                : query.Where(x => !x.EstaEliminado);
-
+            if (filtros.Bool2)
+            {
+                // 👉 Mostrar todas → no filtrar
+            }
+            else if (filtros.Bool1)
+            {
+                // 👉 Solo eliminadas
+                query = query.Where(x => x.EstaEliminado);
+            }
+            else
+            {
+                // 👉 Default → solo activas
+                query = query.Where(x => !x.EstaEliminado);
+            }
             // 🔍 BUSQUEDA
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
                 var texto = filtros.TextoBuscar.Trim();
 
                 query = query.Where(x =>
-                    x.Nombre.Contains(texto));
+                    EF.Functions.Collate(x.Nombre, collation)
+                        .Contains(texto));
             }
 
             // 📊 TOTAL

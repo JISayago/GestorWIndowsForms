@@ -298,7 +298,7 @@ namespace Servicios.LogicaNegocio.Gasto
         public ResultadoPaginacion<GastoDTO> ObtenerGastos(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.Gastos
                 .AsNoTracking()
                 .Include(g => g.Empleado)
@@ -339,14 +339,25 @@ namespace Servicios.LogicaNegocio.Gasto
                 switch (filtros.Filtro1?.ToString())
                 {
                     case "NumeroGasto":
-                        query = query.Where(g => g.NumeroGasto.Contains(texto));
+                        query = query.Where(g =>
+                            g.NumeroGasto != null &&
+                            EF.Functions.Collate(g.NumeroGasto, collation)
+                                .Contains(texto));
                         break;
 
                     case "NombreEmpleado":
                         query = query.Where(g =>
-                            g.Empleado.Persona.Nombre.Contains(texto) ||
-                            g.Empleado.Persona.Apellido.Contains(texto));
+                            g.Empleado != null &&
+                            g.Empleado.Persona != null &&
+                            (
+                                (g.Empleado.Persona.Nombre != null &&
+                                 EF.Functions.Collate(g.Empleado.Persona.Nombre, collation).Contains(texto))
+                                ||
+                                (g.Empleado.Persona.Apellido != null &&
+                                 EF.Functions.Collate(g.Empleado.Persona.Apellido, collation).Contains(texto))
+                            ));
                         break;
+
                     case "CategoriaGasto":
 
                         var textoBusqueda = texto.ToLower();
@@ -364,7 +375,6 @@ namespace Servicios.LogicaNegocio.Gasto
                         }
                         else
                         {
-                            // 👉 no matchea nada
                             query = query.Where(g => false);
                         }
 
@@ -372,8 +382,11 @@ namespace Servicios.LogicaNegocio.Gasto
 
                     default:
                         query = query.Where(g =>
-                            g.NumeroGasto.Contains(texto) ||
-                            g.Detalle.Contains(texto));
+                            (g.NumeroGasto != null &&
+                             EF.Functions.Collate(g.NumeroGasto, collation).Contains(texto))
+                            ||
+                            (g.Detalle != null &&
+                             EF.Functions.Collate(g.Detalle, collation).Contains(texto)));
                         break;
                 }
             }

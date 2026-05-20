@@ -1,27 +1,37 @@
-﻿using Presentacion.Core.Presentacion.Core.Helpers;
+﻿using AccesoDatos.Entidades;
+using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
-using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.Helpers.VentaEnum;
+using Servicios.LogicaNegocio.Venta;
 using Servicios.LogicaNegocio.Venta.VentaLibre;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Presentacion.Core.Venta
 {
-    public partial class FVentaLibreConsulta : FBaseConsulta
+    public partial class FVentaConsulta : FBaseConsulta
     {
-        private readonly IVentaLibreServicio _ventaLibreServicio;
-
+        private readonly IVentaServicio _ventaServicio;
+        private long _usuarioLogeadoID;
         private long? ventaLibreSeleccionada;
-
-        public FVentaLibreConsulta()
+        public FVentaConsulta()
         {
             InitializeComponent();
-
-            _ventaLibreServicio = new VentaLibreServicio();
+            _ventaServicio = new VentaServicio();
         }
+        public FVentaConsulta(long usuarioLogeadoID) : this()
+        {
+            _usuarioLogeadoID = usuarioLogeadoID;
+        }
+
 
         #region 🔷 FILTROS
         protected override string TextoLblBuscar
@@ -39,7 +49,7 @@ namespace Presentacion.Core.Venta
         {
             base.ConfigurarFiltrosUI();
             ActivarCheck(chkBool1, "Mostrar ventas canceladas");
-            ActivarCheck(chkBool2, "Mostrar todas las Ventas Libres (histórico)");
+            ActivarCheck(chkBool2, "Mostrar todas las Ventas (histórico)");
             var opcionesBusqueda = new List<OpcionFiltro>
             {
                 new OpcionFiltro
@@ -77,7 +87,7 @@ namespace Presentacion.Core.Venta
                     Texto = "Todos",
                     Valor = ""
                 },
-             
+
                 new OpcionFiltro
                 {
                     Texto = "Confirmada",
@@ -107,7 +117,7 @@ namespace Presentacion.Core.Venta
                 new OpcionFiltro
                 {
                     Texto = "Fecha Venta",
-                    Valor = "FVL"
+                    Valor = "FV"
                 },
             };
 
@@ -121,7 +131,7 @@ namespace Presentacion.Core.Venta
             );
             cbx1.SelectedValue = "";
             cbx2.SelectedValue = "";
-            cbx3.SelectedValue = "FVL";
+            cbx3.SelectedValue = "FV";
         }
         protected override void AccionCheck2()
         {
@@ -134,6 +144,7 @@ namespace Presentacion.Core.Venta
                 _actualizandoFiltros = false;
 
                 LimpiarFiltrosEspeciales();
+                paginaActual = 1;
             }
 
         }
@@ -148,6 +159,7 @@ namespace Presentacion.Core.Venta
                 _actualizandoFiltros = false;
 
                 LimpiarFiltrosEspeciales();
+                paginaActual = 1;
             }
 
         }
@@ -195,26 +207,34 @@ namespace Presentacion.Core.Venta
             }
 
             var resultado =
-                _ventaLibreServicio.AnularVentaLibre(id.Value);
-
-            Recargar();
-
-            if (resultado.Exitoso)
+                _ventaServicio.ObtenerVentasPorIds(new List<long> { id.Value });
+            if (resultado[0].Estado == (int)EstadoVenta.CancelacionVenta || resultado[0].Estado == (int)EstadoVenta.Cancelada)
             {
-                MessageBox.Show(
-                    resultado.Mensaje,
-                    "Éxito",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                MessageBox.Show("Por favor selecione una venta que no haya sido cancelada.");
+                return;
+
             }
-            else
-            {
-                MessageBox.Show(
-                    resultado.Mensaje,
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
+            var fVenta = new FVenta(_usuarioLogeadoID, id.Value);
+            fVenta.Show();
+
+            //Recargar();
+
+            //if (resultado.Exitoso)
+            //{
+            //    MessageBox.Show(
+            //        resultado.Mensaje,
+            //        "Éxito",
+            //        MessageBoxButtons.OK,
+            //        MessageBoxIcon.Information);
+            //}
+            //else
+            //{
+            //    MessageBox.Show(
+            //        resultado.Mensaje,
+            //        "Error",
+            //        MessageBoxButtons.OK,
+            //        MessageBoxIcon.Error);
+            //}
         }
 
         #endregion
@@ -225,10 +245,10 @@ namespace Presentacion.Core.Venta
         {
             base.ResetearGrilla(grilla);
 
-            if (grilla.Columns.Contains("VentaLibreId"))
+            if (grilla.Columns.Contains("VentaId"))
             {
-                grilla.Columns["VentaLibreId"].Visible = false;
-                grilla.Columns["VentaLibreId"].Name = "Id";
+                grilla.Columns["VentaId"].Visible = false;
+                grilla.Columns["VentaId"].Name = "Id";
             }
 
             if (grilla.Columns.Contains("NumeroVenta"))
@@ -243,28 +263,8 @@ namespace Presentacion.Core.Venta
             {
                 grilla.Columns["FechaVenta"].Visible = true;
                 grilla.Columns["FechaVenta"].HeaderText = "Fecha";
+                grilla.Columns["FechaVenta"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
                 grilla.Columns["FechaVenta"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.AllCells;
-            }
-
-            if (grilla.Columns.Contains("ClienteNombreCompleto"))
-            {
-                grilla.Columns["ClienteNombreCompleto"].Visible = true;
-                grilla.Columns["ClienteNombreCompleto"].HeaderText =
-                    "Cliente";
-
-                grilla.Columns["ClienteNombreCompleto"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.AllCells;
-            }
-
-            if (grilla.Columns.Contains("VendedorNombreCompleto"))
-            {
-                grilla.Columns["VendedorNombreCompleto"].Visible = true;
-
-                grilla.Columns["VendedorNombreCompleto"].HeaderText =
-                    "Vendedor";
-
-                grilla.Columns["VendedorNombreCompleto"].AutoSizeMode =
                     DataGridViewAutoSizeColumnMode.AllCells;
             }
 
@@ -275,36 +275,38 @@ namespace Presentacion.Core.Venta
                 grilla.Columns["Total"].DefaultCellStyle.Format = "C2";
             }
 
-            if (grilla.Columns.Contains("MontoPagado"))
+            if (grilla.Columns.Contains("TotalSinDescuento"))
             {
-                grilla.Columns["MontoPagado"].Visible = true;
-                grilla.Columns["MontoPagado"].HeaderText = "Pagado";
-                grilla.Columns["MontoPagado"].DefaultCellStyle.Format = "C2";
+                grilla.Columns["TotalSinDescuento"].Visible = true;
+                grilla.Columns["TotalSinDescuento"].HeaderText = "Total s/Desc";
+                grilla.Columns["TotalSinDescuento"].DefaultCellStyle.Format = "C2";
             }
 
-            if (grilla.Columns.Contains("MontoAdeudado"))
+            if (grilla.Columns.Contains("Descuento"))
             {
-                grilla.Columns["MontoAdeudado"].Visible = true;
-
-                grilla.Columns["MontoAdeudado"].HeaderText = "Adeudado";
-
-                grilla.Columns["MontoAdeudado"].DefaultCellStyle.Format =
-                    "C2";
+                grilla.Columns["Descuento"].Visible = true;
+                grilla.Columns["Descuento"].HeaderText = "Descuento";
+                grilla.Columns["Descuento"].DefaultCellStyle.Format = "C2";
             }
 
+            // 🔥 IMPORTANTE: mostrar descripción, no el int
+            if (grilla.Columns.Contains("EstadoDescripcion"))
+            {
+                grilla.Columns["EstadoDescripcion"].Visible = true;
+                grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+                grilla.Columns["EstadoDescripcion"].AutoSizeMode =
+                    DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
+            // ocultás el campo crudo
             if (grilla.Columns.Contains("Estado"))
             {
-                grilla.Columns["Estado"].Visible = true;
-                grilla.Columns["Estado"].HeaderText = "Estado";
-
-                grilla.Columns["Estado"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.AllCells;
+                grilla.Columns["Estado"].Visible = false;
             }
 
             if (grilla.Columns.Contains("Detalle"))
             {
                 grilla.Columns["Detalle"].Visible = true;
-
                 grilla.Columns["Detalle"].AutoSizeMode =
                     DataGridViewAutoSizeColumnMode.Fill;
             }
@@ -321,7 +323,7 @@ namespace Presentacion.Core.Venta
             base.ActualizarDatos(dgv, filtros);
 
             var resultado =
-                _ventaLibreServicio.ObtenerVentasLibres(filtros);
+                _ventaServicio.ObtenerVentas(filtros);
 
             dgv.DataSource = resultado.Items;
 
@@ -348,7 +350,6 @@ namespace Presentacion.Core.Venta
 
         #endregion
 
-        #region 🔷 EVENTOS
 
         private void btnSeleccionar_Click(object sender, EventArgs e)
         {
@@ -366,11 +367,5 @@ namespace Presentacion.Core.Venta
             Close();
         }
 
-        private void FVentaLibreConsulta_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        #endregion
     }
 }

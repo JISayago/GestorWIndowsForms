@@ -478,7 +478,7 @@ namespace Servicios.LogicaNegocio.Producto
         public ResultadoPaginacion<ProductoDTO> ObtenerProductos(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.Productos
                 .AsNoTracking()
                 .Include(e => e.Marca)
@@ -514,7 +514,8 @@ namespace Servicios.LogicaNegocio.Producto
 
                         query = query.Where(e =>
                             e.Marca != null &&
-                            e.Marca.Nombre.Contains(texto));
+                            EF.Functions.Collate(e.Marca.Nombre, collation)
+                                .Contains(texto));
 
                         break;
 
@@ -522,45 +523,49 @@ namespace Servicios.LogicaNegocio.Producto
 
                         query = query.Where(e =>
                             e.Rubro != null &&
-                            e.Rubro.Nombre.Contains(texto));
+                            EF.Functions.Collate(e.Rubro.Nombre, collation)
+                                .Contains(texto));
 
                         break;
 
                     case "Codigo":
 
                         query = query.Where(e =>
-                            e.Codigo.Contains(texto));
+                            EF.Functions.Collate(e.Codigo, collation)
+                                .Contains(texto));
 
                         break;
 
                     case "CodigoBarra":
 
                         query = query.Where(e =>
-                            e.CodigoBarra.Contains(texto));
+                            EF.Functions.Collate(e.CodigoBarra, collation)
+                                .Contains(texto));
 
                         break;
 
                     case "Descripcion":
 
                         query = query.Where(e =>
-                            e.Descripcion.Contains(texto));
+                            EF.Functions.Collate(e.Descripcion, collation)
+                                .Contains(texto));
 
                         break;
 
                     default:
 
                         query = query.Where(e =>
-                            e.Descripcion.Contains(texto) ||
+                            EF.Functions.Collate(e.Descripcion, collation).Contains(texto) ||
 
                             (e.Marca != null &&
-                             e.Marca.Nombre.Contains(texto)) ||
+                             EF.Functions.Collate(e.Marca.Nombre, collation).Contains(texto)) ||
 
                             (e.Rubro != null &&
-                             e.Rubro.Nombre.Contains(texto)) ||
+                             EF.Functions.Collate(e.Rubro.Nombre, collation).Contains(texto)) ||
 
-                            e.Codigo.Contains(texto) ||
+                            EF.Functions.Collate(e.Codigo, collation).Contains(texto) ||
 
-                            e.CodigoBarra.Contains(texto));
+                            EF.Functions.Collate(e.CodigoBarra, collation).Contains(texto));
 
                         break;
                 }
@@ -571,7 +576,7 @@ namespace Servicios.LogicaNegocio.Producto
             {
                 if (string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
                 {
-                    query = query.Where(e => e.Estado == (int)EstadoProducto.Activo);
+                    query = query.Where(e => e.Estado == (int)EstadoProducto.Activo || e.Estado == (int)EstadoProducto.SinStock || e.Estado == (int)EstadoProducto.Vencido);
                 }
                 else
                 {
@@ -607,7 +612,13 @@ namespace Servicios.LogicaNegocio.Producto
                 filtros.Page = 1;
 
             // 🔹 ORDEN
-            query = query.OrderBy(e => e.Descripcion);
+             query = query
+            .OrderBy(e =>
+                e.Estado == (int)EstadoProducto.Activo ? 0 :
+                e.Estado == (int)EstadoProducto.SinStock ? 1 :
+                e.Estado == (int)EstadoProducto.Vencido ? 2 :
+                3)
+            .ThenBy(e => e.Descripcion);
 
             // 🔹 DATA
             var data = query

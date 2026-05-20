@@ -583,10 +583,7 @@ protected virtual string NormalizarTextoBusqueda(string texto)
             if (paginaActual < totalPaginas)
             {
                 paginaActual++;
-
-                ultimoFiltro.Page = paginaActual;
-
-                ActualizarDatos(dgvGrilla, ultimoFiltro);
+                RefrescarGrilla();
             }
         }
 
@@ -595,10 +592,7 @@ protected virtual string NormalizarTextoBusqueda(string texto)
             if (paginaActual > 1)
             {
                 paginaActual--;
-
-                ultimoFiltro.Page = paginaActual;
-
-                ActualizarDatos(dgvGrilla, ultimoFiltro);
+                RefrescarGrilla();
             }
         }
 
@@ -618,31 +612,22 @@ protected virtual string NormalizarTextoBusqueda(string texto)
                 return;
 
             paginaActual = 1;
-
             AccionCheck2();
-
-            //RefrescarGrilla();
+            RefrescarGrilla();
         }
+
         private void chkBool1_CheckedChanged(object sender, EventArgs e)
         {
             if (_actualizandoFiltros)
                 return;
 
             paginaActual = 1;
-
             AccionCheck1();
-
-            //RefrescarGrilla();
-        }
-        protected virtual void AccionCheck1()
-        {
             RefrescarGrilla();
         }
-        protected virtual void AccionCheck2()
-        {
-            RefrescarGrilla();
 
-        }
+        protected virtual void AccionCheck1() { }
+        protected virtual void AccionCheck2() { }
 
         private void chkUsarFecha_CheckedChanged(object sender, EventArgs e)
         {

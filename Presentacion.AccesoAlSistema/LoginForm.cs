@@ -105,7 +105,14 @@ namespace Presentacion.AccesoAlSistema
 
             Close();
         }
-
+        protected override void EjecutarEnter()
+        {
+            IngresarAlSistema();
+        }
+        protected override void EjecutarEscape()
+        {
+            base.EjecutarEscape();
+        }
         private void btnCancelar_Click(object sender, EventArgs e)
         {
             this.Close();

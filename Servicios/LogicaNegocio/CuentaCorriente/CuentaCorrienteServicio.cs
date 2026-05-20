@@ -159,7 +159,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         public ResultadoPaginacion<CuentaCorrienteDTO> ObtenerCuentaCorrientes(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.CuentaCorriente
                 .AsNoTracking()
                 .Include(x => x.CuentaCorrienteAutorizado)
@@ -204,7 +204,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 var texto = filtros.TextoBuscar.Trim();
 
                 query = query.Where(x =>
-                    x.NombreCuentaCorriente.Contains(texto));
+                    EF.Functions.Collate(x.NombreCuentaCorriente, collation)
+                        .Contains(texto));
             }
 
             // =========================================================

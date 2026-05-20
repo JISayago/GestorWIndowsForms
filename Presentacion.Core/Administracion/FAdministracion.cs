@@ -580,17 +580,23 @@ namespace Presentacion.Core.Administracion
             cbMesGrafico.SelectedIndex = DateTime.Now.Month - 1;
         }
 
-        private void ventaLibreToolStripMenuItem_Click(object sender, EventArgs e)
+        private void historialToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var cv = new FVentaConsulta();
+            cv.Show();
+        }
+
+        private void historialVentasLibresToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var cfvl = new FVentaLibreConsulta();
+            cfvl.Show();
+        }
+
+        private void nuevaVentaLibreToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var fvl = new FVentaLibre(_logeadoId);
 
             fvl.Show();
-        }
-
-        private void consultaVentaLibreToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var cfvl = new FVentaLibreConsulta();
-            cfvl.Show();
         }
     }
 }

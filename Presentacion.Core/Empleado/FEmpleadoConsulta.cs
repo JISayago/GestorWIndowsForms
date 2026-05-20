@@ -311,7 +311,6 @@ namespace Presentacion.Core.Empleado
                 LimpiarFiltrosModoGlobal();
             }
 
-            RefrescarGrilla();
         }
 
         protected override void AccionCheck1()
@@ -329,7 +328,6 @@ namespace Presentacion.Core.Empleado
                 LimpiarFiltrosModoEliminados();
             }
 
-            RefrescarGrilla();
         }
         private void LimpiarFiltrosModoGlobal()
         {

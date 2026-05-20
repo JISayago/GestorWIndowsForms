@@ -79,7 +79,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         public ResultadoPaginacion<LoteDTO> ObtenerLotes(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.Lotes
                 .AsNoTracking()
                 .Include(x => x.Producto)
@@ -101,22 +101,31 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                     case "Producto":
 
                         query = query.Where(x =>
-                            x.Producto.Descripcion.Contains(texto));
+                            x.Producto != null &&
+                            x.Producto.Descripcion != null &&
+                            EF.Functions.Collate(x.Producto.Descripcion, collation)
+                                .Contains(texto));
 
                         break;
 
                     case "NumeroLote":
 
                         query = query.Where(x =>
-                            x.NumeroLote.Contains(texto));
+                            x.NumeroLote != null &&
+                            EF.Functions.Collate(x.NumeroLote, collation)
+                                .Contains(texto));
 
                         break;
 
                     default:
 
                         query = query.Where(x =>
-                            x.NumeroLote.Contains(texto) ||
-                            x.Producto.Descripcion.Contains(texto));
+                            (x.NumeroLote != null &&
+                             EF.Functions.Collate(x.NumeroLote, collation).Contains(texto))
+                            ||
+                            (x.Producto != null &&
+                             x.Producto.Descripcion != null &&
+                             EF.Functions.Collate(x.Producto.Descripcion, collation).Contains(texto)));
 
                         break;
                 }

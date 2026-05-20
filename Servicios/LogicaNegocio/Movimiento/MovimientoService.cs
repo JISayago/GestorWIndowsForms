@@ -229,21 +229,6 @@ namespace Servicios.LogicaNegocio.Movimiento
                     x.NumeroMovimiento.Contains(texto));
             }
 
-            // =========================================================
-            // 📌 TIPO MOVIMIENTO (cbx2)
-            // =========================================================
-
-            if (!string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
-            {
-                if (int.TryParse(filtros.Filtro2.ToString(), out int tipo))
-                {
-                    if (Enum.IsDefined(typeof(TipoMovimiento), tipo))
-                    {
-                        query = query.Where(x =>
-                            x.TipoMovimiento == tipo);
-                    }
-                }
-            }
 
             // =========================================================
             // 📌 TIPO MOVIMIENTO / DETALLE (cbx2)
@@ -256,13 +241,11 @@ namespace Servicios.LogicaNegocio.Movimiento
                 if (filtroTipo.StartsWith("TM_"))
                 {
                     var valor = int.Parse(filtroTipo.Replace("TM_", ""));
-
                     query = query.Where(x => x.TipoMovimiento == valor);
                 }
                 else if (filtroTipo.StartsWith("TMD_"))
                 {
                     var valor = int.Parse(filtroTipo.Replace("TMD_", ""));
-
                     query = query.Where(x => x.TipoMovimientoDetalle == valor);
                 }
             }
@@ -270,10 +253,14 @@ namespace Servicios.LogicaNegocio.Movimiento
             // =========================================================
             // 📅 FILTRO POR FECHA (cbx3)
             // =========================================================
-
             var filtroFecha = filtros.Filtro3?.ToString();
+            var fechaDefaultDesde = DateTime.Now.AddMonths(-2);
 
-            if (filtroFecha == "FECHA")
+            bool hayFiltroFechaManual =
+                filtroFecha == "FECHA" &&
+                (filtros.FechaDesde.HasValue || filtros.FechaHasta.HasValue);
+
+            if (hayFiltroFechaManual)
             {
                 if (filtros.FechaDesde.HasValue)
                 {
@@ -289,7 +276,15 @@ namespace Servicios.LogicaNegocio.Movimiento
                         x.FechaMovimiento < hasta);
                 }
             }
-
+            else if (!filtros.Bool2) // no histórico
+            {
+                query = query.Where(x =>
+                    x.FechaMovimiento >= fechaDefaultDesde);
+            }
+            //if (filtros.Bool2)
+            //{
+            //    filtros.Page = 1;
+            //}
             // =========================================================
             // 📊 TOTAL
             // =========================================================
@@ -314,7 +309,6 @@ namespace Servicios.LogicaNegocio.Movimiento
             // =========================================================
             // 📌 ORDEN
             // =========================================================
-
             query = query.OrderByDescending(x => x.FechaMovimiento);
 
             // =========================================================

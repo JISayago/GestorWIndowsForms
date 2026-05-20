@@ -203,9 +203,6 @@ namespace Presentacion.Core.CuentaCorriente
                 LimpiarFiltrosEspeciales();
             }
 
-            paginaActual = 1;
-            var filtros = ObtenerFiltros();
-            ActualizarDatos(dgvGrilla, filtros);
         }
 
         protected override void AccionCheck1()
@@ -218,8 +215,7 @@ namespace Presentacion.Core.CuentaCorriente
                 LimpiarFiltrosEspeciales();
             }
 
-            paginaActual = 1;
-            var filtros = ObtenerFiltros();
+
             ActualizarDatos(dgvGrilla, filtros);
         }
 
