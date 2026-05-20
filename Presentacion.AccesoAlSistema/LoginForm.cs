@@ -139,7 +139,7 @@ namespace Presentacion.AccesoAlSistema
                         MessageBox.Show(estadoUsuario.Mensaje,
                             "Recuperación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         var X = estadoUsuario.DatoExtra;
-                        
+
                         var form = new FCodigoRecuperacion(estadoUsuario.DatoExtra);
                         form.ShowDialog();
                         return;
@@ -153,6 +153,11 @@ namespace Presentacion.AccesoAlSistema
         {
             using var f = new FCodigoRecuperacion();
             f.ShowDialog();
+        }
+
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+            txtUsuario.Focus();
         }
     }
 }
