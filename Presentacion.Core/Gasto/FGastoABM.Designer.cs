@@ -44,21 +44,21 @@
             // 
             // txtCategoriaGasto
             // 
-            txtCategoriaGasto.Location = new Point(164, 165);
+            txtCategoriaGasto.Location = new Point(157, 175);
             txtCategoriaGasto.Name = "txtCategoriaGasto";
             txtCategoriaGasto.Size = new Size(100, 23);
             txtCategoriaGasto.TabIndex = 0;
             // 
             // txtMontoPago
             // 
-            txtMontoPago.Location = new Point(164, 126);
+            txtMontoPago.Location = new Point(157, 128);
             txtMontoPago.Name = "txtMontoPago";
             txtMontoPago.Size = new Size(100, 23);
             txtMontoPago.TabIndex = 1;
             // 
             // txtDetalle
             // 
-            txtDetalle.Location = new Point(164, 81);
+            txtDetalle.Location = new Point(157, 81);
             txtDetalle.Name = "txtDetalle";
             txtDetalle.Size = new Size(483, 23);
             txtDetalle.TabIndex = 2;
@@ -66,25 +66,25 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(70, 168);
+            label1.Location = new Point(53, 178);
             label1.Name = "label1";
-            label1.Size = new Size(91, 15);
+            label1.Size = new Size(90, 15);
             label1.TabIndex = 3;
             label1.Text = "Categoria Gasto";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(55, 89);
+            label2.Location = new Point(48, 89);
             label2.Name = "label2";
-            label2.Size = new Size(94, 15);
+            label2.Size = new Size(95, 15);
             label2.TabIndex = 4;
             label2.Text = "Detalle del gasto";
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(106, 129);
+            label3.Location = new Point(100, 131);
             label3.Name = "label3";
             label3.Size = new Size(43, 15);
             label3.TabIndex = 5;
@@ -92,7 +92,7 @@
             // 
             // btnRegistrarGasto
             // 
-            btnRegistrarGasto.Location = new Point(138, 218);
+            btnRegistrarGasto.Location = new Point(123, 226);
             btnRegistrarGasto.Name = "btnRegistrarGasto";
             btnRegistrarGasto.Size = new Size(126, 40);
             btnRegistrarGasto.TabIndex = 6;
@@ -102,9 +102,9 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(302, 218);
+            btnCancelar.Location = new Point(288, 226);
             btnCancelar.Name = "btnCancelar";
-            btnCancelar.Size = new Size(126, 40);
+            btnCancelar.Size = new Size(127, 40);
             btnCancelar.TabIndex = 7;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
@@ -112,7 +112,7 @@
             // 
             // btnPagoPendiente
             // 
-            btnPagoPendiente.Location = new Point(469, 218);
+            btnPagoPendiente.Location = new Point(454, 226);
             btnPagoPendiente.Name = "btnPagoPendiente";
             btnPagoPendiente.Size = new Size(126, 40);
             btnPagoPendiente.TabIndex = 8;
@@ -122,7 +122,7 @@
             // 
             // dtpDiaGasto
             // 
-            dtpDiaGasto.Location = new Point(447, 152);
+            dtpDiaGasto.Location = new Point(440, 129);
             dtpDiaGasto.Name = "dtpDiaGasto";
             dtpDiaGasto.Size = new Size(200, 23);
             dtpDiaGasto.TabIndex = 9;
@@ -130,9 +130,9 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(447, 126);
+            label4.Location = new Point(357, 131);
             label4.Name = "label4";
-            label4.Size = new Size(76, 15);
+            label4.Size = new Size(77, 15);
             label4.TabIndex = 10;
             label4.Text = "Dia del Gasto";
             // 
@@ -140,7 +140,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(776, 289);
+            ClientSize = new Size(703, 289);
             Controls.Add(label4);
             Controls.Add(dtpDiaGasto);
             Controls.Add(btnPagoPendiente);

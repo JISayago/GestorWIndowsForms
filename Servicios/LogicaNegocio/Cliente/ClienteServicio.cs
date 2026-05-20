@@ -22,6 +22,7 @@ namespace Servicios.LogicaNegocio.Cliente
             if (clienteEliminar == null || clienteEliminar.Persona.EstaEliminado) throw new Exception($" No se encontro el Cliente: {clienteEliminar.Persona}");
 
             clienteEliminar.Persona.EstaEliminado = true;
+            clienteEliminar.FechaBaja = DateTime.Now;
 
             context.SaveChanges();
             return new EstadoOperacion
@@ -62,10 +63,10 @@ namespace Servicios.LogicaNegocio.Cliente
             var cliente = new AccesoDatos.Entidades.Cliente
             {
                 PersonaId = persona.PersonaId,
-                FechaAlta = clienteDto.FechaAlta,
+                FechaAlta = DateTime.Now,
                 NumeroCliente = string.IsNullOrEmpty(clienteDto.NumeroCliente) ? $"{DateTime.Now:ddMMyyyyHHmmssfff}{persona.PersonaId}" : "0",
                 //CuentaCorriente = clienteDto != null ? context.CuentaCorriente.Find(clienteDto.CuentaCorrienteId) : null,
-                Estado = 0
+                Estado = 1
             };
 
             context.Cliente.Add(cliente);

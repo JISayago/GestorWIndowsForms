@@ -93,7 +93,7 @@ namespace TuProyecto.Presentacion.Paneles
             lblSaldoActual.ForeColor = cc.Saldo < 0 ? Color.Firebrick : Color.SeaGreen;
 
             lblCliente.Text = $"👤 Cliente: {cc.NombreCliente} (ID: {cc.ClienteId})";
-            lblEstado.Text = $"📌 Estado de Cuenta: {cc.EstadoCuentaCorriente}";
+            lblEstado.Text = $"📌 Estado de Cuenta: {cc.EstadoCtaCte}";
 
             string limite = cc.LimiteDeudaActivo ? $"{cc.LimiteDeuda:C}" : "Sin límite definido";
             lblLimiteDeuda.Text = $"⚠️ Límite de Deuda: {limite}";

@@ -21,23 +21,25 @@ namespace Presentacion.Core.CuentaCorriente
 {
     public partial class FCuentaCorrienteABM : FBaseABM
     {
-        public FCuentaCorrienteABM()
-        {
-            InitializeComponent();
-        }
         private readonly ICuentaCorrienteServicio _cuentacorrienteServicio;
         private readonly IClienteServicio _clienteServicio;
 
-        public override void FBaseABM_Load(object sender, EventArgs e)
+        // 🔹 Reemplazamos el DataGridView por una BindingList en memoria
+        private BindingList<long> _dnisAutorizadosLista;
+
+        public FCuentaCorrienteABM()
         {
-            base.FBaseABM_Load(sender, e);
-            Inicializador(EntidadID);
+            InitializeComponent();
+            InicializarListaDni();
         }
+
         public FCuentaCorrienteABM(TipoOperacion tipoOperacion, long? entidadID = null) : base(tipoOperacion, entidadID)
         {
             InitializeComponent();
             _cuentacorrienteServicio = new CuentaCorrienteServicio();
             _clienteServicio = new ClienteServicio();
+
+            InicializarListaDni();
 
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
             {
@@ -47,30 +49,31 @@ namespace Presentacion.Core.CuentaCorriente
             if (tipoOperacion == TipoOperacion.Eliminar)
             {
                 DesactivarControles(this);
+                // Deshabilitar controles de carga de DNI en modo eliminación
+                txtNuevoDni.Enabled = false;
+                btnAgregarDni.Enabled = false;
+                btnEliminarDni.Enabled = false;
             }
 
             dtpFechaVencimiento.MinDate = DateTime.Now;
 
             var filtros = new FiltroConsulta
             {
-                TextoBuscar = null,        // sin búsqueda
-                Filtro1 = null,            // sin filtro por propiedad
-                Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(), // 🔴 clave
-
-                Bool1 = false,             // no eliminados
-                Bool2 = false,             // no histórico → aplica lógica default
-
+                TextoBuscar = null,
+                Filtro1 = null,
+                Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(),
+                Bool1 = false,
+                Bool2 = false,
                 FechaDesde = null,
                 FechaHasta = null,
                 Filtro3 = null,
-
                 Page = 1,
-                PageSize = 50 // o el tamaño que uses normalmente
+                PageSize = 50
             };
 
             var clientes = _clienteServicio.ObtenerClientes(filtros).Items;
 
-            cmbClientes.DisplayMember = "NombreCompleto"; // lo que se muestra
+            cmbClientes.DisplayMember = "NombreCompleto";
             cmbClientes.ValueMember = "PersonaId";
             cmbClientes.DataSource = clientes;
 
@@ -78,14 +81,25 @@ namespace Presentacion.Core.CuentaCorriente
             cmbClientes.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbClientes.DropDownStyle = ComboBoxStyle.DropDown;
 
-
             AgregarControlesObligatorios(txtNombreCC, "Nombre Cuenta Corriente");
             AgregarControlesObligatorios(txtSaldo, "Saldo");
-
         }
+
+        // 🔹 Método para enlazar la lista al ListBox
+        private void InicializarListaDni()
+        {
+            _dnisAutorizadosLista = new BindingList<long>();
+            lstDnis.DataSource = _dnisAutorizadosLista;
+        }
+
+        public override void FBaseABM_Load(object sender, EventArgs e)
+        {
+            base.FBaseABM_Load(sender, e);
+            Inicializador(EntidadID);
+        }
+
         public override void Inicializador(long? entidadId)
         {
-
         }
 
         public override void CargarDatos(long? entidadId)
@@ -93,8 +107,8 @@ namespace Presentacion.Core.CuentaCorriente
             if (!entidadId.HasValue)
             {
                 MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-
                 this.Close();
+                return;
             }
 
             if (TipoOperacion == TipoOperacion.Eliminar)
@@ -105,49 +119,45 @@ namespace Presentacion.Core.CuentaCorriente
             var cuentacorriente = _cuentacorrienteServicio.ObtenerCuentaCorrientePorId(entidadId.Value);
             var filtros = new FiltroConsulta
             {
-                TextoBuscar = null,        // sin búsqueda
-                Filtro1 = null,            // sin filtro por propiedad
-                Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(), // 🔴 clave
-
-                Bool1 = false,             // no eliminados
-                Bool2 = false,             // no histórico → aplica lógica default
-
+                TextoBuscar = null,
+                Filtro1 = null,
+                Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(),
+                Bool1 = false,
+                Bool2 = false,
                 FechaDesde = null,
                 FechaHasta = null,
                 Filtro3 = null,
-
                 Page = 1,
-                PageSize = 50 // o el tamaño que uses normalmente
+                PageSize = 50
             };
 
             var resultado = _clienteServicio.ObtenerClientes(filtros);
-
             var clienteDeCuentaCorriente = resultado.Items.FirstOrDefault();
-            // Datos Personales
 
             txtNombreCC.Text = cuentacorriente.NombreCuentaCorriente;
-            txtSaldo.Text = cuentacorriente.Saldo.ToString(); // FIX: Assign the value as string
+            txtSaldo.Text = cuentacorriente.Saldo.ToString();
             dtpFechaVencimiento.Value = (DateTime)cuentacorriente.FechaVencimiento;
             chkLimiteDeuda.Checked = cuentacorriente.LimiteDeudaActivo;
             txtLimiteDeuda.Text = cuentacorriente.LimiteDeuda.ToString();
             txtLimiteDeuda.Enabled = cuentacorriente.LimiteDeudaActivo;
-            cmbClientes.DisplayMember = "NombreCompleto"; // lo que se muestra
+            cmbClientes.DisplayMember = "NombreCompleto";
             cmbClientes.ValueMember = "PersonaId";
-            cmbClientes.DataSource = clienteDeCuentaCorriente;
-            cmbClientes.Enabled = false; // No se puede cambiar el cliente asociado en la modificación
+            //cmbClientes.DataSource = clienteDeCuentaCorriente;
+            cmbClientes.Enabled = false;
 
-            dgvDni.DataSource = cuentacorriente.DniAutorizados.Select(x => new { DNI = x }).ToList();
-
+            // 🔹 Mapeo directo a la lista del ListBox sin dar vueltas con celdas
+            _dnisAutorizadosLista.Clear();
+            foreach (var dni in cuentacorriente.DniAutorizados)
+            {
+                _dnisAutorizadosLista.Add(dni);
+            }
         }
-
 
         public override bool EjecutarComandoNuevo()
         {
-
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
@@ -159,11 +169,9 @@ namespace Presentacion.Core.CuentaCorriente
                 LimiteDeudaActivo = chkLimiteDeuda.Checked,
                 LimiteDeuda = Convert.ToDecimal(txtLimiteDeuda.Text),
                 ClienteId = (long)cmbClientes.SelectedValue,
-                DniAutorizados = dgvDni.Rows
-                                  .Cast<DataGridViewRow>()
-                                  .Where(r => r.Cells["Dni"].Value != null)
-                                  .Select(r => Convert.ToInt64(r.Cells["Dni"].Value))
-                                  .ToList(),
+
+                // 🔹 Directamente le pasamos la lista limpia convertida a List<long>
+                DniAutorizados = _dnisAutorizadosLista.ToList(),
                 EstaEliminado = false,
             };
 
@@ -171,14 +179,12 @@ namespace Presentacion.Core.CuentaCorriente
 
             if (response.Exitoso)
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Information);
+                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return true;
             }
             else
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
+                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -189,38 +195,33 @@ namespace Presentacion.Core.CuentaCorriente
             {
                 MessageBox.Show(@"´Por favor seleccione un cuentacorriente válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
-
             }
             if (TipoOperacion == TipoOperacion.Eliminar)
             {
                 var response = _cuentacorrienteServicio.Eliminar((long)EntidadID);
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Information);
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
-
             }
             return false;
         }
+
         public override bool EjecutarComandoModificar()
         {
             if (!EntidadID.HasValue)
             {
                 MessageBox.Show(@"´Por favor seleccione un cuentacorriente válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
-
             }
             if (TipoOperacion == TipoOperacion.Modificar)
             {
-
                 var cuentacorrienteEditar = new CuentaCorrienteDTO
                 {
                     NombreCuentaCorriente = txtNombreCC.Text,
@@ -228,9 +229,9 @@ namespace Presentacion.Core.CuentaCorriente
                     FechaVencimiento = dtpFechaVencimiento.Value,
                     LimiteDeudaActivo = chkLimiteDeuda.Checked,
                     LimiteDeuda = Convert.ToDecimal(txtLimiteDeuda.Text),
-                    DniAutorizados = dgvDni.Rows.Cast<DataGridViewRow>()
-                                      .Select(r => Convert.ToInt64(r.Cells["DNI"].Value))
-                                      .ToList(),
+
+                    // 🔹 Al modificar también usamos la lista del ListBox directamente
+                    DniAutorizados = _dnisAutorizadosLista.ToList(),
                     EstaEliminado = false
                 };
 
@@ -238,35 +239,63 @@ namespace Presentacion.Core.CuentaCorriente
 
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Information);
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
-
             }
             return false;
+        }
+
+        // 🔹 EVENTO: Botón Agregar DNI
+        private void btnAgregarDni_Click(object sender, EventArgs e)
+        {
+            if (long.TryParse(txtNuevoDni.Text.Trim(), out long dni))
+            {
+                if (_dnisAutorizadosLista.Contains(dni))
+                {
+                    MessageBox.Show("Este DNI ya está en la lista.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                _dnisAutorizadosLista.Add(dni);
+                txtNuevoDni.Clear();
+                txtNuevoDni.Focus();
+            }
+            else
+            {
+                MessageBox.Show("Por favor, ingrese un número de DNI válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // 🔹 EVENTO: Botón Eliminar DNI seleccionado
+        private void btnEliminarDni_Click(object sender, EventArgs e)
+        {
+            if (lstDnis.SelectedItem != null)
+            {
+                var dniSeleccionado = (long)lstDnis.SelectedItem;
+                _dnisAutorizadosLista.Remove(dniSeleccionado);
+            }
+            else
+            {
+                MessageBox.Show("Seleccione un DNI de la lista para eliminarlo.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void chkbLimiteDeuda_CheckedChanged(object sender, EventArgs e)
         {
             if (chkLimiteDeuda.Checked)
             {
-                // Habilitar el textbox y darle foco
                 txtLimiteDeuda.Enabled = true;
-
-                // Si está vacío, poner valor base 0
                 if (string.IsNullOrWhiteSpace(txtLimiteDeuda.Text))
                     txtLimiteDeuda.Text = "0";
             }
             else
             {
-                // Deshabilitar el textbox y resetear a 0
                 txtLimiteDeuda.Enabled = false;
                 txtLimiteDeuda.Text = "0";
             }
@@ -274,7 +303,6 @@ namespace Presentacion.Core.CuentaCorriente
 
         private void FCuentaCorrienteABM_Load(object sender, EventArgs e)
         {
-          
         }
     }
 }

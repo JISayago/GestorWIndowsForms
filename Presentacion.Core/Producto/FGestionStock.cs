@@ -1,4 +1,5 @@
 ﻿using Presentacion.Core.Venta;
+using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
 using System;
@@ -33,6 +34,7 @@ namespace Presentacion.Core.Producto
 
         private void FGestionStock_Load(object sender, EventArgs e)
         {
+            EstiloControlHelper.AplicarEstiloALabels(this);
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)

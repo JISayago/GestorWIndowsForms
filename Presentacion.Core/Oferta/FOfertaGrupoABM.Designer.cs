@@ -138,6 +138,7 @@
             lblTitulo.Name = "lblTitulo";
             lblTitulo.Size = new Size(611, 30);
             lblTitulo.TabIndex = 33;
+            lblTitulo.Tag = "NoModificarConBase";
             lblTitulo.Text = "Por favor elija el grupo que va a ser considerado para esta oferta";
             // 
             // txtMarca
@@ -157,6 +158,7 @@
             lblNumeroProductoAfectados.Name = "lblNumeroProductoAfectados";
             lblNumeroProductoAfectados.Size = new Size(52, 37);
             lblNumeroProductoAfectados.TabIndex = 35;
+            lblNumeroProductoAfectados.Tag = "NoModificarConBase";
             lblNumeroProductoAfectados.Text = "N1";
             // 
             // btnCancelar
@@ -395,6 +397,7 @@
             lblNumeroProductoQuitados.Name = "lblNumeroProductoQuitados";
             lblNumeroProductoQuitados.Size = new Size(52, 37);
             lblNumeroProductoQuitados.TabIndex = 74;
+            lblNumeroProductoQuitados.Tag = "NoModificarConBase";
             lblNumeroProductoQuitados.Text = "N1";
             // 
             // lblCantidadProductosQuitados

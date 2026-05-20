@@ -196,15 +196,15 @@ namespace Presentacion.Core.Producto.Lote
 
         protected override void ConfigurarAccionesPersonalizadas()
         {
-            if (vieneDeCargaLote)
-            {
-                AgregarAccion(
-                    "Seleccionar Lote",
-                    SystemIcons.Information.ToBitmap(),
-                    SeleccionLote,
-                    true
-                );
-            }
+            //if (vieneDeCargaLote)
+            //{
+            //    AgregarAccion(
+            //        "Seleccionar Lote",
+            //        SystemIcons.Information.ToBitmap(),
+            //        SeleccionLote,
+            //        true
+            //    );
+            //}
         }
 
         private void SeleccionLote(long? id)
