@@ -61,7 +61,7 @@
             // lblDescripcion
             // 
             lblDescripcion.AutoSize = true;
-            lblDescripcion.Location = new Point(23, 87);
+            lblDescripcion.Location = new Point(12, 88);
             lblDescripcion.Name = "lblDescripcion";
             lblDescripcion.Size = new Size(70, 15);
             lblDescripcion.TabIndex = 1;
@@ -79,7 +79,7 @@
             // lblPrecioCosto
             // 
             lblPrecioCosto.AutoSize = true;
-            lblPrecioCosto.Location = new Point(15, 177);
+            lblPrecioCosto.Location = new Point(12, 177);
             lblPrecioCosto.Name = "lblPrecioCosto";
             lblPrecioCosto.Size = new Size(73, 15);
             lblPrecioCosto.TabIndex = 3;
@@ -110,7 +110,7 @@
             // 
             // txtPrecioVenta
             // 
-            txtPrecioVenta.Location = new Point(302, 174);
+            txtPrecioVenta.Location = new Point(302, 172);
             txtPrecioVenta.Name = "txtPrecioVenta";
             txtPrecioVenta.Size = new Size(100, 23);
             txtPrecioVenta.TabIndex = 8;
@@ -126,7 +126,7 @@
             // 
             // txtStock
             // 
-            txtStock.Location = new Point(464, 174);
+            txtStock.Location = new Point(464, 175);
             txtStock.Name = "txtStock";
             txtStock.Size = new Size(100, 23);
             txtStock.TabIndex = 11;
@@ -134,7 +134,7 @@
             // lblCategoria
             // 
             lblCategoria.AutoSize = true;
-            lblCategoria.Location = new Point(589, 88);
+            lblCategoria.Location = new Point(592, 88);
             lblCategoria.Name = "lblCategoria";
             lblCategoria.Size = new Size(62, 15);
             lblCategoria.TabIndex = 15;
@@ -143,7 +143,7 @@
             // lblMedida
             // 
             lblMedida.AutoSize = true;
-            lblMedida.Location = new Point(35, 133);
+            lblMedida.Location = new Point(12, 133);
             lblMedida.Name = "lblMedida";
             lblMedida.Size = new Size(47, 15);
             lblMedida.TabIndex = 16;
@@ -167,7 +167,7 @@
             // 
             // txtUnidadMedida
             // 
-            txtUnidadMedida.Location = new Point(304, 130);
+            txtUnidadMedida.Location = new Point(304, 128);
             txtUnidadMedida.Name = "txtUnidadMedida";
             txtUnidadMedida.Size = new Size(100, 23);
             txtUnidadMedida.TabIndex = 19;
@@ -175,14 +175,14 @@
             // cmbMarca
             // 
             cmbMarca.FormattingEnabled = true;
-            cmbMarca.Location = new Point(463, 84);
+            cmbMarca.Location = new Point(463, 83);
             cmbMarca.Name = "cmbMarca";
             cmbMarca.Size = new Size(100, 23);
             cmbMarca.TabIndex = 21;
             // 
             // btnCategorias
             // 
-            btnCategorias.Location = new Point(658, 84);
+            btnCategorias.Location = new Point(661, 84);
             btnCategorias.Name = "btnCategorias";
             btnCategorias.Size = new Size(91, 23);
             btnCategorias.TabIndex = 22;
@@ -216,7 +216,7 @@
             // 
             // txtCodigoBarra
             // 
-            txtCodigoBarra.Location = new Point(302, 219);
+            txtCodigoBarra.Location = new Point(302, 221);
             txtCodigoBarra.Name = "txtCodigoBarra";
             txtCodigoBarra.Size = new Size(100, 23);
             txtCodigoBarra.TabIndex = 26;
@@ -224,7 +224,7 @@
             // lblCodigo
             // 
             lblCodigo.AutoSize = true;
-            lblCodigo.Location = new Point(35, 224);
+            lblCodigo.Location = new Point(15, 224);
             lblCodigo.Name = "lblCodigo";
             lblCodigo.Size = new Size(45, 15);
             lblCodigo.TabIndex = 27;
@@ -233,7 +233,7 @@
             // lblCodigoBarra
             // 
             lblCodigoBarra.AutoSize = true;
-            lblCodigoBarra.Location = new Point(218, 224);
+            lblCodigoBarra.Location = new Point(216, 224);
             lblCodigoBarra.Name = "lblCodigoBarra";
             lblCodigoBarra.Size = new Size(75, 15);
             lblCodigoBarra.TabIndex = 28;
@@ -242,7 +242,7 @@
             // chkIvaIncluido
             // 
             chkIvaIncluido.AutoSize = true;
-            chkIvaIncluido.Location = new Point(593, 119);
+            chkIvaIncluido.Location = new Point(588, 128);
             chkIvaIncluido.Name = "chkIvaIncluido";
             chkIvaIncluido.Size = new Size(172, 19);
             chkIvaIncluido.TabIndex = 29;
@@ -252,7 +252,7 @@
             // chkEsFraccionable
             // 
             chkEsFraccionable.AutoSize = true;
-            chkEsFraccionable.Location = new Point(593, 144);
+            chkEsFraccionable.Location = new Point(588, 157);
             chkEsFraccionable.Name = "chkEsFraccionable";
             chkEsFraccionable.Size = new Size(107, 19);
             chkEsFraccionable.TabIndex = 30;
@@ -262,7 +262,7 @@
             // chkControlPorLotes
             // 
             chkControlPorLotes.AutoSize = true;
-            chkControlPorLotes.Location = new Point(593, 169);
+            chkControlPorLotes.Location = new Point(588, 186);
             chkControlPorLotes.Name = "chkControlPorLotes";
             chkControlPorLotes.Size = new Size(160, 19);
             chkControlPorLotes.TabIndex = 31;
@@ -273,7 +273,7 @@
             // chkTieneVencimiento
             // 
             chkTieneVencimiento.AutoSize = true;
-            chkTieneVencimiento.Location = new Point(593, 194);
+            chkTieneVencimiento.Location = new Point(588, 215);
             chkTieneVencimiento.Name = "chkTieneVencimiento";
             chkTieneVencimiento.Size = new Size(168, 19);
             chkTieneVencimiento.TabIndex = 32;
@@ -283,7 +283,7 @@
             // chkbProductoDiscontinuado
             // 
             chkbProductoDiscontinuado.AutoSize = true;
-            chkbProductoDiscontinuado.Location = new Point(593, 247);
+            chkbProductoDiscontinuado.Location = new Point(588, 265);
             chkbProductoDiscontinuado.Name = "chkbProductoDiscontinuado";
             chkbProductoDiscontinuado.Size = new Size(156, 19);
             chkbProductoDiscontinuado.TabIndex = 33;
@@ -294,7 +294,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(784, 297);
+            ClientSize = new Size(784, 307);
             Controls.Add(chkbProductoDiscontinuado);
             Controls.Add(chkTieneVencimiento);
             Controls.Add(chkControlPorLotes);

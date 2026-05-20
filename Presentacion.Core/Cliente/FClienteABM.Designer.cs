@@ -52,7 +52,7 @@
             // txtEmail
             // 
             txtEmail.Font = new Font("Segoe UI", 9.75F);
-            txtEmail.Location = new Point(115, 304);
+            txtEmail.Location = new Point(120, 319);
             txtEmail.Name = "txtEmail";
             txtEmail.Size = new Size(498, 25);
             txtEmail.TabIndex = 44;
@@ -60,7 +60,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(27, 309);
+            label1.Location = new Point(32, 324);
             label1.Name = "label1";
             label1.Size = new Size(36, 15);
             label1.TabIndex = 43;
@@ -68,7 +68,7 @@
             // 
             // dtpFNacimiento
             // 
-            dtpFNacimiento.Location = new Point(115, 231);
+            dtpFNacimiento.Location = new Point(120, 243);
             dtpFNacimiento.Name = "dtpFNacimiento";
             dtpFNacimiento.Size = new Size(214, 23);
             dtpFNacimiento.TabIndex = 42;
@@ -76,7 +76,7 @@
             // txtDireccion
             // 
             txtDireccion.Font = new Font("Segoe UI", 9.75F);
-            txtDireccion.Location = new Point(115, 265);
+            txtDireccion.Location = new Point(120, 280);
             txtDireccion.Name = "txtDireccion";
             txtDireccion.Size = new Size(498, 25);
             txtDireccion.TabIndex = 40;
@@ -84,7 +84,7 @@
             // txtTelefono
             // 
             txtTelefono.Font = new Font("Segoe UI", 9.75F);
-            txtTelefono.Location = new Point(115, 194);
+            txtTelefono.Location = new Point(120, 203);
             txtTelefono.Name = "txtTelefono";
             txtTelefono.Size = new Size(214, 25);
             txtTelefono.TabIndex = 39;
@@ -92,7 +92,7 @@
             // txtCelular
             // 
             txtCelular.Font = new Font("Segoe UI", 9.75F);
-            txtCelular.Location = new Point(406, 197);
+            txtCelular.Location = new Point(411, 203);
             txtCelular.Name = "txtCelular";
             txtCelular.Size = new Size(201, 25);
             txtCelular.TabIndex = 38;
@@ -100,7 +100,7 @@
             // txtCuil
             // 
             txtCuil.Font = new Font("Segoe UI", 9.75F);
-            txtCuil.Location = new Point(406, 158);
+            txtCuil.Location = new Point(411, 164);
             txtCuil.Name = "txtCuil";
             txtCuil.Size = new Size(201, 25);
             txtCuil.TabIndex = 37;
@@ -108,7 +108,7 @@
             // txtDni
             // 
             txtDni.Font = new Font("Segoe UI", 9.75F);
-            txtDni.Location = new Point(115, 158);
+            txtDni.Location = new Point(120, 164);
             txtDni.Name = "txtDni";
             txtDni.Size = new Size(214, 25);
             txtDni.TabIndex = 36;
@@ -116,7 +116,7 @@
             // txtNombre
             // 
             txtNombre.Font = new Font("Segoe UI", 9.75F);
-            txtNombre.Location = new Point(115, 122);
+            txtNombre.Location = new Point(120, 125);
             txtNombre.Name = "txtNombre";
             txtNombre.Size = new Size(492, 25);
             txtNombre.TabIndex = 35;
@@ -124,7 +124,7 @@
             // txtApellido
             // 
             txtApellido.Font = new Font("Segoe UI", 9.75F);
-            txtApellido.Location = new Point(115, 86);
+            txtApellido.Location = new Point(120, 86);
             txtApellido.Name = "txtApellido";
             txtApellido.Size = new Size(492, 25);
             txtApellido.TabIndex = 34;
@@ -132,7 +132,7 @@
             // lblFechaNacimiento
             // 
             lblFechaNacimiento.AutoSize = true;
-            lblFechaNacimiento.Location = new Point(25, 237);
+            lblFechaNacimiento.Location = new Point(30, 249);
             lblFechaNacimiento.Name = "lblFechaNacimiento";
             lblFechaNacimiento.Size = new Size(80, 15);
             lblFechaNacimiento.TabIndex = 32;
@@ -141,7 +141,7 @@
             // lblDireccion
             // 
             lblDireccion.AutoSize = true;
-            lblDireccion.Location = new Point(27, 270);
+            lblDireccion.Location = new Point(32, 285);
             lblDireccion.Name = "lblDireccion";
             lblDireccion.Size = new Size(58, 15);
             lblDireccion.TabIndex = 31;
@@ -151,7 +151,7 @@
             // 
             lblCelular.AutoSize = true;
             lblCelular.Font = new Font("Segoe UI", 9.75F);
-            lblCelular.Location = new Point(352, 200);
+            lblCelular.Location = new Point(357, 209);
             lblCelular.Name = "lblCelular";
             lblCelular.Size = new Size(48, 17);
             lblCelular.TabIndex = 30;
@@ -161,7 +161,7 @@
             // 
             lblTelefono.AutoSize = true;
             lblTelefono.Font = new Font("Segoe UI", 9.75F);
-            lblTelefono.Location = new Point(25, 194);
+            lblTelefono.Location = new Point(30, 209);
             lblTelefono.Name = "lblTelefono";
             lblTelefono.Size = new Size(58, 17);
             lblTelefono.TabIndex = 29;
@@ -171,7 +171,7 @@
             // 
             lblCuil.AutoSize = true;
             lblCuil.Font = new Font("Segoe UI", 9.75F);
-            lblCuil.Location = new Point(366, 161);
+            lblCuil.Location = new Point(371, 167);
             lblCuil.Name = "lblCuil";
             lblCuil.Size = new Size(34, 17);
             lblCuil.TabIndex = 28;
@@ -181,7 +181,7 @@
             // 
             lblNombre.AutoSize = true;
             lblNombre.Font = new Font("Segoe UI", 9.75F);
-            lblNombre.Location = new Point(27, 121);
+            lblNombre.Location = new Point(32, 124);
             lblNombre.Name = "lblNombre";
             lblNombre.Size = new Size(57, 17);
             lblNombre.TabIndex = 27;
@@ -191,7 +191,7 @@
             // 
             lblDni.AutoSize = true;
             lblDni.Font = new Font("Segoe UI", 9.75F);
-            lblDni.Location = new Point(27, 158);
+            lblDni.Location = new Point(32, 164);
             lblDni.Name = "lblDni";
             lblDni.Size = new Size(30, 17);
             lblDni.TabIndex = 26;
@@ -201,7 +201,7 @@
             // 
             lblApellido.AutoSize = true;
             lblApellido.Font = new Font("Segoe UI", 9.75F);
-            lblApellido.Location = new Point(27, 84);
+            lblApellido.Location = new Point(32, 84);
             lblApellido.Name = "lblApellido";
             lblApellido.Size = new Size(56, 17);
             lblApellido.TabIndex = 25;
@@ -211,7 +211,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(640, 392);
+            ClientSize = new Size(646, 377);
             Controls.Add(txtEmail);
             Controls.Add(label1);
             Controls.Add(dtpFNacimiento);

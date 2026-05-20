@@ -38,7 +38,7 @@
             // 
             lblCategoria.AutoSize = true;
             lblCategoria.Font = new Font("Segoe UI", 15.75F);
-            lblCategoria.Location = new Point(55, 114);
+            lblCategoria.Location = new Point(52, 114);
             lblCategoria.Name = "lblCategoria";
             lblCategoria.Size = new Size(102, 30);
             lblCategoria.TabIndex = 1;
@@ -48,7 +48,7 @@
             // txtCategoria
             // 
             txtCategoria.Font = new Font("Segoe UI", 15.75F);
-            txtCategoria.Location = new Point(168, 111);
+            txtCategoria.Location = new Point(165, 111);
             txtCategoria.Name = "txtCategoria";
             txtCategoria.Size = new Size(219, 35);
             txtCategoria.TabIndex = 2;
@@ -57,7 +57,7 @@
             // 
             label3.AutoSize = true;
             label3.ForeColor = Color.Red;
-            label3.Location = new Point(262, 149);
+            label3.Location = new Point(259, 149);
             label3.Name = "label3";
             label3.Size = new Size(124, 15);
             label3.TabIndex = 4;
