@@ -214,9 +214,6 @@ namespace Presentacion.Core.CuentaCorriente
                 _actualizandoFiltros = false;
                 LimpiarFiltrosEspeciales();
             }
-
-
-            ActualizarDatos(dgvGrilla, filtros);
         }
 
         private void LimpiarFiltrosEspeciales()
