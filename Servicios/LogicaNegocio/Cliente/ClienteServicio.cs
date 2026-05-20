@@ -12,6 +12,34 @@ namespace Servicios.LogicaNegocio.Cliente
 {
     public class ClienteServicio : IClienteServicio
     {
+        public ClienteDTO ObtenerConsumidorFinal()
+        {
+            var context = new GestorContextDBFactory().CreateDbContext(null);
+            var cliente = context.Cliente
+                .AsNoTracking()
+                .Include(c => c.Persona)
+                .Where(c => c.Persona != null && c.Persona.Dni == "00000000" && c.NumeroCliente == "0")
+                .Select(c => new ClienteDTO
+                {
+                    PersonaId = c.PersonaId,
+                    Nombre = c.Persona.Nombre,
+                    Apellido = c.Persona.Apellido,
+                    Dni = c.Persona.Dni,
+                    Cuil = c.Persona.Cuil,
+                    Telefono = c.Persona.Telefono,
+                    Telefono2 = c.Persona.Telefono2,
+                    Email = c.Persona.Email,
+                    Direccion = c.Persona.Direccion,
+                    FechaNacimiento = c.Persona.FechaNacimiento,
+                    EstaEliminado = c.Persona.EstaEliminado,
+                    NumeroCliente = c.NumeroCliente,
+                    FechaAlta = c.FechaAlta,
+                    FechaBaja = c.FechaBaja,
+                    Estado = c.Estado
+                })
+                .FirstOrDefault();
+            return cliente;
+        }
         public EstadoOperacion Eliminar(long clienteId)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
