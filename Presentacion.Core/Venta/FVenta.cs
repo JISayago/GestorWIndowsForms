@@ -56,6 +56,7 @@ namespace Presentacion.Core.Venta
         private bool _actualizandoGrilla = false;
         private bool cargarOferta = false;
         private long idCliente;
+        private ClienteDTO consumidorFinal;
 
 
         public FVenta(long UsuarioLogeadoId, long? VentaId = null)
@@ -123,6 +124,13 @@ namespace Presentacion.Core.Venta
                     descripcionOferta = ""
                 };
                 itemsVenta = new BindingList<ItemVentaDTO>();
+                consumidorFinal = _clienteServicio.ObtenerConsumidorFinal();
+                if (consumidorFinal != null)
+                {
+                idCliente = consumidorFinal.PersonaId;
+                   
+                }
+
             }
         }
 
@@ -148,12 +156,12 @@ namespace Presentacion.Core.Venta
             if (ventaId != null)
             {
                 var vendedor = _empleadoServicio.ObtenerEmpleadoPorId(VENTAELIMINAR.IdVendedor);
-                txtCliente.Text = _clienteVenta != null ? $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}" : "Consumidor Final";
+                txtCliente.Text = _clienteVenta != null ? $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}" : consumidorFinal.NombreCompleto;
                 lblVendedorAsignado.Text = $"{vendedor.Nombre} {vendedor.Apellido}";
             }
             else
             {
-                txtCliente.Text = $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}";
+                txtCliente.Text = _clienteVenta != null ? $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}" : consumidorFinal!=null ? consumidorFinal.NombreCompleto : "";
                 lblVendedorAsignado.Text = esUsuarioLogeado
                     ? $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}"
                     : "";
@@ -180,6 +188,10 @@ namespace Presentacion.Core.Venta
         private void cbxConsumidorFinal_CheckedChanged(object sender, EventArgs e)
         {
             esConsumidorFinal = cbxConsumidorFinal.Checked;
+            if (cbxConsumidorFinal.Checked)
+            {
+                _clienteVenta = consumidorFinal;
+            }
             btnCargarCliente.Enabled = !esConsumidorFinal;
             ActualizarCamposInicio(VENTAID);
         }
@@ -672,7 +684,6 @@ namespace Presentacion.Core.Venta
                 return;
 
             long entidadID = Convert.ToInt64(celda.Value);
-            // tu lógica...
         }
 
         /*private void cbxEnOferta_CheckedChanged(object sender, EventArgs e)
@@ -804,7 +815,7 @@ namespace Presentacion.Core.Venta
             }
             else
             {
-                var clienteDefault = _clienteServicio.ObtenerClientePorNumero("0");
+                var clienteDefault = _clienteServicio.ObtenerConsumidorFinal();
                 _clienteVenta = new ClienteDTO
                 {
                     PersonaId = clienteDefault.PersonaId,
