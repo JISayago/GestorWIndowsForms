@@ -55,6 +55,7 @@
             lblTituloLotes.Name = "lblTituloLotes";
             lblTituloLotes.Size = new Size(252, 30);
             lblTituloLotes.TabIndex = 0;
+            lblTituloLotes.Tag = "NoModificarConBase";
             lblTituloLotes.Text = "Crear Lote del producto:";
             // 
             // lblNombreProducto
@@ -66,6 +67,7 @@
             lblNombreProducto.Name = "lblNombreProducto";
             lblNombreProducto.Size = new Size(126, 30);
             lblNombreProducto.TabIndex = 1;
+            lblNombreProducto.Tag = "NoModificarConBase";
             lblNombreProducto.Text = "PRODUCTO";
             // 
             // label2
@@ -73,7 +75,7 @@
             label2.AutoSize = true;
             label2.Location = new Point(40, 157);
             label2.Name = "label2";
-            label2.Size = new Size(73, 15);
+            label2.Size = new Size(75, 15);
             label2.TabIndex = 2;
             label2.Text = "Stock Inicial:";
             // 
@@ -82,7 +84,7 @@
             label3.AutoSize = true;
             label3.Location = new Point(40, 197);
             label3.Name = "label3";
-            label3.Size = new Size(76, 15);
+            label3.Size = new Size(77, 15);
             label3.TabIndex = 3;
             label3.Text = "Stock Actual:";
             // 
@@ -100,7 +102,7 @@
             lblDescripcionLote.AutoSize = true;
             lblDescripcionLote.Location = new Point(40, 264);
             lblDescripcionLote.Name = "lblDescripcionLote";
-            lblDescripcionLote.Size = new Size(72, 15);
+            lblDescripcionLote.Size = new Size(73, 15);
             lblDescripcionLote.TabIndex = 6;
             lblDescripcionLote.Text = "Descripcion:";
             // 
@@ -109,7 +111,7 @@
             lblFechaVencimientoLote.AutoSize = true;
             lblFechaVencimientoLote.Location = new Point(489, 197);
             lblFechaVencimientoLote.Name = "lblFechaVencimientoLote";
-            lblFechaVencimientoLote.Size = new Size(110, 15);
+            lblFechaVencimientoLote.Size = new Size(111, 15);
             lblFechaVencimientoLote.TabIndex = 7;
             lblFechaVencimientoLote.Text = "Fecha Vencimiento:";
             // 
@@ -149,7 +151,7 @@
             chkFechaVencimiento.AutoSize = true;
             chkFechaVencimiento.Location = new Point(489, 153);
             chkFechaVencimiento.Name = "chkFechaVencimiento";
-            chkFechaVencimiento.Size = new Size(174, 19);
+            chkFechaVencimiento.Size = new Size(175, 19);
             chkFechaVencimiento.TabIndex = 16;
             chkFechaVencimiento.Text = "Tiene Fecha de Vencimiento";
             chkFechaVencimiento.UseVisualStyleBackColor = true;

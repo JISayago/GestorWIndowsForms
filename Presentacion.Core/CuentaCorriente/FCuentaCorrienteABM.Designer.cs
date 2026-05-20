@@ -51,18 +51,18 @@
             // lblccorriente
             // 
             lblccorriente.AutoSize = true;
-            lblccorriente.Location = new Point(50, 93);
+            lblccorriente.Location = new Point(47, 93);
             lblccorriente.Name = "lblccorriente";
-            lblccorriente.Size = new Size(70, 15);
+            lblccorriente.Size = new Size(68, 15);
             lblccorriente.TabIndex = 0;
             lblccorriente.Text = "Nombre CC";
             // 
             // lblSaldo
             // 
             lblSaldo.AutoSize = true;
-            lblSaldo.Location = new Point(50, 141);
+            lblSaldo.Location = new Point(47, 140);
             lblSaldo.Name = "lblSaldo";
-            lblSaldo.Size = new Size(36, 15);
+            lblSaldo.Size = new Size(37, 15);
             lblSaldo.TabIndex = 1;
             lblSaldo.Text = "Saldo";
             // 
@@ -71,14 +71,14 @@
             label1.AutoSize = true;
             label1.Location = new Point(83, 446);
             label1.Name = "label1";
-            label1.Size = new Size(38, 15);
+            label1.Size = new Size(37, 15);
             label1.TabIndex = 2;
             label1.Text = "label1";
             // 
             // lblLimiteCuenta
             // 
             lblLimiteCuenta.AutoSize = true;
-            lblLimiteCuenta.Location = new Point(371, 144);
+            lblLimiteCuenta.Location = new Point(371, 143);
             lblLimiteCuenta.Name = "lblLimiteCuenta";
             lblLimiteCuenta.Size = new Size(92, 15);
             lblLimiteCuenta.TabIndex = 3;
@@ -96,7 +96,7 @@
             // chkLimiteDeuda
             // 
             chkLimiteDeuda.AutoSize = true;
-            chkLimiteDeuda.Location = new Point(484, 184);
+            chkLimiteDeuda.Location = new Point(484, 169);
             chkLimiteDeuda.Name = "chkLimiteDeuda";
             chkLimiteDeuda.Size = new Size(146, 19);
             chkLimiteDeuda.TabIndex = 7;
@@ -106,21 +106,21 @@
             // 
             // txtNombreCC
             // 
-            txtNombreCC.Location = new Point(132, 90);
+            txtNombreCC.Location = new Point(129, 90);
             txtNombreCC.Name = "txtNombreCC";
             txtNombreCC.Size = new Size(200, 23);
             txtNombreCC.TabIndex = 8;
             // 
             // txtLimiteDeuda
             // 
-            txtLimiteDeuda.Location = new Point(484, 141);
+            txtLimiteDeuda.Location = new Point(484, 140);
             txtLimiteDeuda.Name = "txtLimiteDeuda";
             txtLimiteDeuda.Size = new Size(200, 23);
             txtLimiteDeuda.TabIndex = 9;
             // 
             // txtSaldo
             // 
-            txtSaldo.Location = new Point(132, 138);
+            txtSaldo.Location = new Point(129, 137);
             txtSaldo.Name = "txtSaldo";
             txtSaldo.Size = new Size(200, 23);
             txtSaldo.TabIndex = 10;
@@ -135,25 +135,25 @@
             // lblDni
             // 
             lblDni.AutoSize = true;
-            lblDni.Location = new Point(50, 230);
+            lblDni.Location = new Point(227, 238);
             lblDni.Name = "lblDni";
-            lblDni.Size = new Size(243, 15);
+            lblDni.Size = new Size(246, 15);
             lblDni.TabIndex = 13;
             lblDni.Text = "DNI autorizados para usar la cuenta corriente";
             // 
             // lblCliente
             // 
             lblCliente.AutoSize = true;
-            lblCliente.Location = new Point(50, 185);
+            lblCliente.Location = new Point(47, 190);
             lblCliente.Name = "lblCliente";
-            lblCliente.Size = new Size(44, 15);
+            lblCliente.Size = new Size(43, 15);
             lblCliente.TabIndex = 14;
             lblCliente.Text = "Cliente";
             // 
             // cmbClientes
             // 
             cmbClientes.FormattingEnabled = true;
-            cmbClientes.Location = new Point(132, 182);
+            cmbClientes.Location = new Point(129, 187);
             cmbClientes.Name = "cmbClientes";
             cmbClientes.Size = new Size(200, 23);
             cmbClientes.TabIndex = 15;
@@ -162,21 +162,21 @@
             // 
             lstDnis.FormattingEnabled = true;
             lstDnis.ItemHeight = 15;
-            lstDnis.Location = new Point(50, 290);
+            lstDnis.Location = new Point(227, 298);
             lstDnis.Name = "lstDnis";
             lstDnis.Size = new Size(282, 109);
             lstDnis.TabIndex = 19;
             // 
             // txtNuevoDni
             // 
-            txtNuevoDni.Location = new Point(50, 255);
+            txtNuevoDni.Location = new Point(227, 263);
             txtNuevoDni.Name = "txtNuevoDni";
             txtNuevoDni.Size = new Size(160, 23);
             txtNuevoDni.TabIndex = 16;
             // 
             // btnAgregarDni
             // 
-            btnAgregarDni.Location = new Point(216, 254);
+            btnAgregarDni.Location = new Point(393, 262);
             btnAgregarDni.Name = "btnAgregarDni";
             btnAgregarDni.Size = new Size(55, 25);
             btnAgregarDni.TabIndex = 17;
@@ -186,7 +186,7 @@
             // 
             // btnEliminarDni
             // 
-            btnEliminarDni.Location = new Point(277, 254);
+            btnEliminarDni.Location = new Point(454, 262);
             btnEliminarDni.Name = "btnEliminarDni";
             btnEliminarDni.Size = new Size(55, 25);
             btnEliminarDni.TabIndex = 18;
@@ -198,7 +198,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(784, 419);
+            ClientSize = new Size(736, 419);
             Controls.Add(btnEliminarDni);
             Controls.Add(btnAgregarDni);
             Controls.Add(txtNuevoDni);

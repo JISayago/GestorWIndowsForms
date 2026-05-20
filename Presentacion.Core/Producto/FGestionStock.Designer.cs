@@ -49,6 +49,7 @@
             lblTexto.Name = "lblTexto";
             lblTexto.Size = new Size(320, 30);
             lblTexto.TabIndex = 0;
+            lblTexto.Tag = "NoModificarConBase";
             lblTexto.Text = "¿Desea Agregar o Quitar Stock?";
             // 
             // btnCancelar
@@ -64,7 +65,7 @@
             // rdbAgregar
             // 
             rdbAgregar.AutoSize = true;
-            rdbAgregar.Location = new Point(41, 83);
+            rdbAgregar.Location = new Point(56, 83);
             rdbAgregar.Name = "rdbAgregar";
             rdbAgregar.Size = new Size(99, 19);
             rdbAgregar.TabIndex = 4;
@@ -76,7 +77,7 @@
             // rdbQuitar
             // 
             rdbQuitar.AutoSize = true;
-            rdbQuitar.Location = new Point(276, 83);
+            rdbQuitar.Location = new Point(365, 83);
             rdbQuitar.Name = "rdbQuitar";
             rdbQuitar.Size = new Size(90, 19);
             rdbQuitar.TabIndex = 5;
@@ -88,7 +89,7 @@
             // lblDetalle
             // 
             lblDetalle.AutoSize = true;
-            lblDetalle.Location = new Point(56, 133);
+            lblDetalle.Location = new Point(59, 133);
             lblDetalle.Name = "lblDetalle";
             lblDetalle.Size = new Size(43, 15);
             lblDetalle.TabIndex = 6;
@@ -135,6 +136,7 @@
             lblProductoCargado.Name = "lblProductoCargado";
             lblProductoCargado.Size = new Size(248, 30);
             lblProductoCargado.TabIndex = 11;
+            lblProductoCargado.Tag = "NoModificarConBase";
             lblProductoCargado.Text = "Producto seleccionado: ";
             // 
             // lblProducto
@@ -146,6 +148,7 @@
             lblProducto.Name = "lblProducto";
             lblProducto.Size = new Size(104, 30);
             lblProducto.TabIndex = 12;
+            lblProducto.Tag = "NoModificarConBase";
             lblProducto.Text = "Producto";
             // 
             // FGestionStock
