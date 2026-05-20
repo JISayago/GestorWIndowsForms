@@ -105,7 +105,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.BackColor = SystemColors.ControlDark;
+            menuStrip1.BackColor = SystemColors.ButtonFace;
             menuStrip1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             menuStrip1.Items.AddRange(new ToolStripItem[] { pRODUCTOToolStripMenuItem, eMPLEADOSToolStripMenuItem, cLIENTESToolStripMenuItem, oFERTASToolStripMenuItem, cONFIGURACIONToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);

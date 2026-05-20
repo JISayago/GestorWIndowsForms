@@ -51,7 +51,7 @@
             // 
             lblTituloLotes.AutoSize = true;
             lblTituloLotes.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
-            lblTituloLotes.Location = new Point(40, 68);
+            lblTituloLotes.Location = new Point(45, 68);
             lblTituloLotes.Name = "lblTituloLotes";
             lblTituloLotes.Size = new Size(252, 30);
             lblTituloLotes.TabIndex = 0;
@@ -63,7 +63,7 @@
             lblNombreProducto.AutoSize = true;
             lblNombreProducto.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
             lblNombreProducto.ForeColor = Color.SeaGreen;
-            lblNombreProducto.Location = new Point(298, 68);
+            lblNombreProducto.Location = new Point(303, 68);
             lblNombreProducto.Name = "lblNombreProducto";
             lblNombreProducto.Size = new Size(126, 30);
             lblNombreProducto.TabIndex = 1;
@@ -73,7 +73,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(40, 157);
+            label2.Location = new Point(45, 157);
             label2.Name = "label2";
             label2.Size = new Size(75, 15);
             label2.TabIndex = 2;
@@ -82,7 +82,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(40, 197);
+            label3.Location = new Point(45, 197);
             label3.Name = "label3";
             label3.Size = new Size(77, 15);
             label3.TabIndex = 3;
@@ -91,7 +91,7 @@
             // lblNumeroLote
             // 
             lblNumeroLote.AutoSize = true;
-            lblNumeroLote.Location = new Point(36, 110);
+            lblNumeroLote.Location = new Point(41, 110);
             lblNumeroLote.Name = "lblNumeroLote";
             lblNumeroLote.Size = new Size(77, 15);
             lblNumeroLote.TabIndex = 5;
@@ -100,7 +100,7 @@
             // lblDescripcionLote
             // 
             lblDescripcionLote.AutoSize = true;
-            lblDescripcionLote.Location = new Point(40, 264);
+            lblDescripcionLote.Location = new Point(45, 264);
             lblDescripcionLote.Name = "lblDescripcionLote";
             lblDescripcionLote.Size = new Size(73, 15);
             lblDescripcionLote.TabIndex = 6;
@@ -109,7 +109,7 @@
             // lblFechaVencimientoLote
             // 
             lblFechaVencimientoLote.AutoSize = true;
-            lblFechaVencimientoLote.Location = new Point(489, 197);
+            lblFechaVencimientoLote.Location = new Point(435, 197);
             lblFechaVencimientoLote.Name = "lblFechaVencimientoLote";
             lblFechaVencimientoLote.Size = new Size(111, 15);
             lblFechaVencimientoLote.TabIndex = 7;
@@ -118,7 +118,7 @@
             // chkLoteEstaActivo
             // 
             chkLoteEstaActivo.AutoSize = true;
-            chkLoteEstaActivo.Location = new Point(489, 109);
+            chkLoteEstaActivo.Location = new Point(435, 109);
             chkLoteEstaActivo.Name = "chkLoteEstaActivo";
             chkLoteEstaActivo.Size = new Size(105, 19);
             chkLoteEstaActivo.TabIndex = 9;
@@ -127,21 +127,21 @@
             // 
             // txtNumeroLote
             // 
-            txtNumeroLote.Location = new Point(123, 107);
+            txtNumeroLote.Location = new Point(134, 107);
             txtNumeroLote.Name = "txtNumeroLote";
             txtNumeroLote.Size = new Size(206, 23);
             txtNumeroLote.TabIndex = 10;
             // 
             // txtDescripcionLote
             // 
-            txtDescripcionLote.Location = new Point(40, 282);
+            txtDescripcionLote.Location = new Point(45, 282);
             txtDescripcionLote.Name = "txtDescripcionLote";
-            txtDescripcionLote.Size = new Size(660, 23);
+            txtDescripcionLote.Size = new Size(601, 23);
             txtDescripcionLote.TabIndex = 14;
             // 
             // dtpFechaVencimiento
             // 
-            dtpFechaVencimiento.Location = new Point(489, 215);
+            dtpFechaVencimiento.Location = new Point(435, 215);
             dtpFechaVencimiento.Name = "dtpFechaVencimiento";
             dtpFechaVencimiento.Size = new Size(211, 23);
             dtpFechaVencimiento.TabIndex = 15;
@@ -149,7 +149,7 @@
             // chkFechaVencimiento
             // 
             chkFechaVencimiento.AutoSize = true;
-            chkFechaVencimiento.Location = new Point(489, 153);
+            chkFechaVencimiento.Location = new Point(435, 153);
             chkFechaVencimiento.Name = "chkFechaVencimiento";
             chkFechaVencimiento.Size = new Size(175, 19);
             chkFechaVencimiento.TabIndex = 16;
@@ -159,7 +159,7 @@
             // 
             // nudStockInicial
             // 
-            nudStockInicial.Location = new Point(165, 155);
+            nudStockInicial.Location = new Point(134, 155);
             nudStockInicial.Name = "nudStockInicial";
             nudStockInicial.Size = new Size(120, 23);
             nudStockInicial.TabIndex = 17;
@@ -167,7 +167,7 @@
             // 
             // nudStockActual
             // 
-            nudStockActual.Location = new Point(165, 195);
+            nudStockActual.Location = new Point(134, 195);
             nudStockActual.Name = "nudStockActual";
             nudStockActual.Size = new Size(120, 23);
             nudStockActual.TabIndex = 18;
@@ -176,7 +176,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(780, 339);
+            ClientSize = new Size(689, 339);
             Controls.Add(nudStockActual);
             Controls.Add(nudStockInicial);
             Controls.Add(chkFechaVencimiento);

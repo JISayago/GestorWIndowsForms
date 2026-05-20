@@ -68,6 +68,7 @@
             // 
             // btnAsignarRol
             // 
+            btnAsignarRol.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
             btnAsignarRol.Location = new Point(340, 110);
             btnAsignarRol.Name = "btnAsignarRol";
             btnAsignarRol.Size = new Size(94, 101);
@@ -78,6 +79,7 @@
             // 
             // btnQuitarRol
             // 
+            btnQuitarRol.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
             btnQuitarRol.Location = new Point(340, 215);
             btnQuitarRol.Name = "btnQuitarRol";
             btnQuitarRol.Size = new Size(94, 101);
@@ -88,6 +90,7 @@
             // 
             // btnActualizarRoles
             // 
+            btnActualizarRoles.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
             btnActualizarRoles.Location = new Point(252, 390);
             btnActualizarRoles.Name = "btnActualizarRoles";
             btnActualizarRoles.Size = new Size(264, 48);

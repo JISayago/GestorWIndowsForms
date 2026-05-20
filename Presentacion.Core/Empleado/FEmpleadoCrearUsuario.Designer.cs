@@ -66,7 +66,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(481, 337);
+            ClientSize = new Size(481, 348);
             Controls.Add(cbxHabilitarEdicionNombre);
             Controls.Add(txtNombreUsuario);
             Controls.Add(btnCrearUsuario);

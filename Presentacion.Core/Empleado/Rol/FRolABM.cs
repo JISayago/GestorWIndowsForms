@@ -61,7 +61,7 @@ namespace Presentacion.Core.Empleado.Rol
                 CodigoRol = txtCodigoRol.Text,
                 DetalleRol = txtDescripcionRol.Text,
             };
-            
+
 
             var response = _rolServicio.Insertar(nuevoRol);
 
@@ -102,8 +102,8 @@ namespace Presentacion.Core.Empleado.Rol
             // Datos Personales
             txtNombre.Text = rol.Nombre;
             txtCodigoRol.Text = rol.CodigoRol;
-            txtDescripcionRol.Text =rol.DetalleRol;
-            
+            txtDescripcionRol.Text = rol.DetalleRol;
+
         }
 
 
@@ -173,5 +173,9 @@ namespace Presentacion.Core.Empleado.Rol
             return false;
         }
 
+        private void FRolABM_Load(object sender, EventArgs e)
+        {
+            EstiloControlHelper.AplicarEstiloALabels(this);
+        }
     }
 }

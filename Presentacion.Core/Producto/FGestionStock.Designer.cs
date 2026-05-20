@@ -168,6 +168,7 @@
             Controls.Add(btnCancelar);
             Controls.Add(lblTexto);
             Name = "FGestionStock";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FGestionStock";
             Load += FGestionStock_Load;
             ResumeLayout(false);

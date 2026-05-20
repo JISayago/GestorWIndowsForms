@@ -104,6 +104,7 @@
             Controls.Add(lblCodigoRol);
             Name = "FRolABM";
             Text = "FRolABM";
+            Load += FRolABM_Load;
             Controls.SetChildIndex(lblCodigoRol, 0);
             Controls.SetChildIndex(lblDescripcion, 0);
             Controls.SetChildIndex(lblNombre, 0);
