@@ -45,7 +45,7 @@
             btnIngresar.Location = new Point(135, 144);
             btnIngresar.Name = "btnIngresar";
             btnIngresar.Size = new Size(113, 39);
-            btnIngresar.TabIndex = 0;
+            btnIngresar.TabIndex = 2;
             btnIngresar.Text = "Ingresar";
             btnIngresar.UseVisualStyleBackColor = true;
             btnIngresar.Click += btnIngresar_Click;
@@ -56,7 +56,7 @@
             btnCancelar.Location = new Point(297, 144);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(113, 39);
-            btnCancelar.TabIndex = 1;
+            btnCancelar.TabIndex = 3;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
             btnCancelar.Click += btnCancelar_Click;
@@ -67,8 +67,7 @@
             txtUsuario.Location = new Point(170, 31);
             txtUsuario.Name = "txtUsuario";
             txtUsuario.Size = new Size(297, 33);
-            txtUsuario.TabIndex = 2;
-            txtUsuario.Text = "admin";
+            txtUsuario.TabIndex = 0;
             // 
             // txtPass
             // 
@@ -77,8 +76,7 @@
             txtPass.Name = "txtPass";
             txtPass.PasswordChar = '*';
             txtPass.Size = new Size(297, 33);
-            txtPass.TabIndex = 3;
-            txtPass.Text = "Admin123";
+            txtPass.TabIndex = 1;
             txtPass.UseSystemPasswordChar = true;
             // 
             // lblUsuario
@@ -110,7 +108,7 @@
             lnklblRecuperacionContra.Location = new Point(411, 207);
             lnklblRecuperacionContra.Name = "lnklblRecuperacionContra";
             lnklblRecuperacionContra.Size = new Size(121, 13);
-            lnklblRecuperacionContra.TabIndex = 6;
+            lnklblRecuperacionContra.TabIndex = 4;
             lnklblRecuperacionContra.TabStop = true;
             lnklblRecuperacionContra.Text = "Recuperar Contraseña";
             lnklblRecuperacionContra.LinkClicked += lnklblRecuperacionContra_LinkClicked;
@@ -123,7 +121,7 @@
             lnklblCodigoRec.Location = new Point(12, 207);
             lnklblCodigoRec.Name = "lnklblCodigoRec";
             lnklblCodigoRec.Size = new Size(174, 13);
-            lnklblCodigoRec.TabIndex = 7;
+            lnklblCodigoRec.TabIndex = 5;
             lnklblCodigoRec.TabStop = true;
             lnklblCodigoRec.Text = "Ingresar código de recuperación";
             lnklblCodigoRec.LinkClicked += lnklblCodigoRec_LinkClicked;
@@ -144,6 +142,7 @@
             Name = "LoginForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Ingreso al Sistema";
+            Load += LoginForm_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();

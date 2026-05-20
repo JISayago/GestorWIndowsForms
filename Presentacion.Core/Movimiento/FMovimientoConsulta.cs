@@ -46,7 +46,10 @@ namespace Presentacion.Core.Movimiento
 
         protected override bool UsarCheck1 => true;
         protected override bool UsarCheck2 => true;
-
+        protected override bool EsModoSoloLectura(FiltroConsulta filtro)
+        {
+            return true;
+        }
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();

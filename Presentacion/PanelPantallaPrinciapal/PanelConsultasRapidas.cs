@@ -197,40 +197,71 @@ namespace Presentacion.Notificaciones
             Panel p = new Panel { Dock = DockStyle.Fill, Padding = new Padding(5) };
             Panel pHeader = new Panel { Dock = DockStyle.Top, Height = 35 };
 
-            Label lbl = new Label { Text = "Productos", Width = 100, Top = 5, Font = new Font("Segoe UI", 10, FontStyle.Bold) };
+            Label lbl = new Label
+            {
+                Text = "Productos",
+                Width = 100,
+                Top = 5,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold)
+            };
 
-            // Inicializamos el buscador
-            txtBuscador = new TextBox { Width = 350, Left = 110, Top = 5, PlaceholderText = "Buscar por nombre..." };
+            // Buscador
+            txtBuscador = new TextBox
+            {
+                Width = 350,
+                Left = 110,
+                Top = 5,
+                PlaceholderText = "Buscar por nombre..."
+            };
 
-            // Evento: Al cambiar el texto, volvemos a la página 1 y buscamos
-            txtBuscador.TextChanged += (s, e) => { _paginaActual = 1; RefrescarProductos(); };
+            // Evento búsqueda
+            txtBuscador.TextChanged += (s, e) =>
+            {
+                _paginaActual = 1;
+                RefrescarProductos();
+            };
 
             pHeader.Controls.Add(lbl);
             pHeader.Controls.Add(txtBuscador);
 
+            // Grilla
             dgvProds = ConfigurarGridSimple();
             dgvProds.Columns.Add("Codigo", "Código");
             dgvProds.Columns.Add("Nombre", "Descripción");
             dgvProds.Columns.Add("Precio", "Precio $");
             dgvProds.Columns.Add("Stock", "Stock");
 
-            // Footer para PRODUCTOS
+            // Footer
             var footer = CrearFooterPaginado(out btnPrevProd, out btnNextProd, out lblPaginaInfo, () => { });
 
-            btnPrevProd.Click += (s, e) => { if (_paginaActual > 1) { _paginaActual--; RefrescarProductos(); } };
-            btnNextProd.Click += (s, e) => { if (_paginaActual < _totalPaginas) { _paginaActual++; RefrescarProductos(); } };
-            btnVerMas.Click += (s, e) => {
-                // Aquí podrías abrir un nuevo formulario con una grilla completa o aplicar un filtro más amplio
-                var consultaProducto = new FProductoConsulta()
+            btnPrevProd.Click += (s, e) =>
+            {
+                if (_paginaActual > 1)
                 {
+                    _paginaActual--;
+                    RefrescarProductos();
+                }
+            };
 
-                };
+            btnNextProd.Click += (s, e) =>
+            {
+                if (_paginaActual < _totalPaginas)
+                {
+                    _paginaActual++;
+                    RefrescarProductos();
+                }
+            };
+
+            btnVerMas.Click += (s, e) =>
+            {
+                var consultaProducto = new FProductoConsulta();
                 consultaProducto.ShowDialog();
             };
 
             p.Controls.Add(dgvProds);
             p.Controls.Add(pHeader);
             p.Controls.Add(footer);
+
             return p;
         }
 

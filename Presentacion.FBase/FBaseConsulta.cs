@@ -1,5 +1,6 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.FBase.Helpers;
+using Servicios.Helpers.Sistema.Extras;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using System;
 using System.Collections.Generic;
@@ -241,6 +242,10 @@ namespace Presentacion.FBase
 
         #region FILTROS
 
+        protected virtual string NormalizarTexto(string texto)
+        {
+            return NormalizadorTextoBusqueda.NormalizarTextoParaBusqueda(texto);
+        }
 protected virtual string NormalizarTextoBusqueda(string texto)
     {
         if (string.IsNullOrWhiteSpace(texto))

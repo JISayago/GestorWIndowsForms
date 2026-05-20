@@ -1,5 +1,6 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
+using Servicios.Helpers.Cliente;
 using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.Cliente.DTO;
 using System;
@@ -32,7 +33,7 @@ namespace Servicios.Helpers.DatosObligatorios
                 FechaNacimiento = DateTime.Today.AddYears(-30),
                 Telefono2 = string.Empty,
                 NumeroCliente = "0", 
-                Estado = 1, 
+                Estado = (int)EstadoCliente.Activo, 
                 CuentaCorrienteId = null,
             };
 

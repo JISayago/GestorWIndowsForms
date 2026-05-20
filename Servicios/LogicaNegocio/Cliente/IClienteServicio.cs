@@ -13,6 +13,7 @@ namespace Servicios.LogicaNegocio.Cliente
     {
         ResultadoPaginacion<ClienteDTO> ObtenerClientes(FiltroConsulta filtros);
         ClienteDTO ObtenerClientePorId(long personaId);
+        ClienteDTO ObtenerConsumidorFinal();
         ClienteDTO ObtenerClientePorNumero(string numero);
         EstadoOperacion Insertar(ClienteDTO clienteDto);
         EstadoOperacion Modificar(ClienteDTO clienteDto, long? clienteId);
