@@ -329,6 +329,8 @@ namespace Presentacion.Core.Venta
             if (finalizarVenta)
             {
                 this.DialogResult = DialogResult.OK;
+
+                // 1. Armamos el DTO con toda la información limpia de la pantalla
                 _venta = new VentaDTO
                 {
                     NumeroVenta = lblNro.Text,
@@ -337,28 +339,19 @@ namespace Presentacion.Core.Venta
                     IdCliente = VENTAID != null ? (long?)idCliente : _clienteVenta.PersonaId,
                     FechaVenta = DateTime.Now,
                     Total = _totalVenta,
-                    TotalSinDescuento = _totalVenta, // actualizar cuando maneje descuentos
+                    TotalSinDescuento = _totalVenta, // Actualizar cuando manejes descuentos
                     Descuento = _porcentajeDescuento,
                     Detalle = Convert.ToString(_cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta)),
                     Items = itemsVenta.ToList(),
                     TiposDePagoSeleccionado = tipoDePagosVenta,
                 };
-                // Impactar cuenta corriente si corresponde
-                _venta.TiposDePagoSeleccionado.ForEach(tp =>
-                {
-                    if (tp.TipoDePago == TipoDePago.CtaCte)
-                    {
-                        var ctaCteServicio = new CuentaCorrienteServicio();
-                        var ctacte = ctaCteServicio.ObtenerCuentaCorrientePorClienteId(idCliente);
 
-                        if (ctacte != null)
-                        {
-                            ctaCteServicio.RegistrarCompra(ctacte.CuentaCorrienteId, tp.Monto, DatosSistema.CajaId.Value);
-                        }
-                    }
-                });
+                // 🌟 CORRECCIÓN CRÍTICA: Quitamos el bloque .ForEach que llamaba a ctaCteServicio.RegistrarCompra.
+                // Dejamos que el servicio 'NuevaVenta' haga todo el trabajo pesado dentro de la transacción de la DB.
 
+                // 2. Enviamos el DTO al servicio de negocio
                 var m = _ventaServicio.NuevaVenta(_venta);
+
                 if (m.Exitoso)
                 {
                     MessageBox.Show("Venta confirmada exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -367,7 +360,6 @@ namespace Presentacion.Core.Venta
                 {
                     MessageBox.Show($"Hubo un error al finalizar la venta: {m.Mensaje}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                //MessageBox.Show("Venta confirmada exitosamente.");
 
                 this.Close();
                 return;
@@ -736,6 +728,7 @@ namespace Presentacion.Core.Venta
             }
             else
             {
+                finalizarVenta = false;
                 InicializarYLimpiarCampos(VENTAID);
 
             }
@@ -860,6 +853,7 @@ namespace Presentacion.Core.Venta
                 cbxDescEfectivo.Checked = false;
                 txtSubtotalSinDescuento.Text = _subTotalVenta.ToString("C2");
                 txtTotal.Text = _totalVenta.ToString("C2");
+                txtAreaDetallesVenta.Text = string.Empty;
                 if (idCliente < 0)
                 {
                     cbxIncluirCtaCte.Checked = false;

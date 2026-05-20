@@ -14,7 +14,7 @@ namespace Servicios.LogicaNegocio.Movimiento
     public interface IMovimientoServicio
     {
         void CrearMovimientoVenta(long ventaId, decimal monto,int estado, TipoMovimientoDetalle detalleTipo, TipoEntidadMovimiento tipoEntidad, GestorContextDB context);
-        void CrearMovimientoCtaCte(decimal total, long cajaId, long ctacteId, TipoMovimientoDetalle detalleTipo, GestorContextDB context);
+        void CrearMovimientoCtaCte(decimal total, long cajaId, long ctacteId, TipoMovimientoDetalle detalleTipo, bool esPago, GestorContextDB context);
         void CrearMovimientoGasto(long gastoId, decimal monto, TipoMovimientoDetalle detalleTipo, GestorContextDB context);
         MovimientoDTO ObtenerMovimientoPorId(long movimientoId);
         ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros);

@@ -45,15 +45,16 @@
             // 
             lblTexto.AutoSize = true;
             lblTexto.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTexto.Location = new Point(143, 39);
+            lblTexto.Location = new Point(103, 39);
             lblTexto.Name = "lblTexto";
             lblTexto.Size = new Size(320, 30);
             lblTexto.TabIndex = 0;
+            lblTexto.Tag = "NoModificarConBase";
             lblTexto.Text = "¿Desea Agregar o Quitar Stock?";
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(291, 233);
+            btnCancelar.Location = new Point(300, 233);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(164, 50);
             btnCancelar.TabIndex = 3;
@@ -64,7 +65,7 @@
             // rdbAgregar
             // 
             rdbAgregar.AutoSize = true;
-            rdbAgregar.Location = new Point(41, 83);
+            rdbAgregar.Location = new Point(243, 113);
             rdbAgregar.Name = "rdbAgregar";
             rdbAgregar.Size = new Size(99, 19);
             rdbAgregar.TabIndex = 4;
@@ -76,7 +77,7 @@
             // rdbQuitar
             // 
             rdbQuitar.AutoSize = true;
-            rdbQuitar.Location = new Point(276, 83);
+            rdbQuitar.Location = new Point(374, 114);
             rdbQuitar.Name = "rdbQuitar";
             rdbQuitar.Size = new Size(90, 19);
             rdbQuitar.TabIndex = 5;
@@ -88,16 +89,16 @@
             // lblDetalle
             // 
             lblDetalle.AutoSize = true;
-            lblDetalle.Location = new Point(56, 133);
+            lblDetalle.Location = new Point(68, 95);
             lblDetalle.Name = "lblDetalle";
-            lblDetalle.Size = new Size(43, 15);
+            lblDetalle.Size = new Size(75, 15);
             lblDetalle.TabIndex = 6;
-            lblDetalle.Text = "Monto";
+            lblDetalle.Text = "Monto Stock";
             // 
             // lblMotivo
             // 
             lblMotivo.AutoSize = true;
-            lblMotivo.Location = new Point(56, 183);
+            lblMotivo.Location = new Point(68, 150);
             lblMotivo.Name = "lblMotivo";
             lblMotivo.Size = new Size(45, 15);
             lblMotivo.TabIndex = 7;
@@ -105,21 +106,21 @@
             // 
             // txtCantidad
             // 
-            txtCantidad.Location = new Point(59, 151);
+            txtCantidad.Location = new Point(68, 113);
             txtCantidad.Name = "txtCantidad";
             txtCantidad.Size = new Size(100, 23);
             txtCantidad.TabIndex = 8;
             // 
             // txtMotivo
             // 
-            txtMotivo.Location = new Point(59, 201);
+            txtMotivo.Location = new Point(68, 168);
             txtMotivo.Name = "txtMotivo";
             txtMotivo.Size = new Size(396, 23);
             txtMotivo.TabIndex = 9;
             // 
             // btnAccion
             // 
-            btnAccion.Location = new Point(56, 233);
+            btnAccion.Location = new Point(65, 233);
             btnAccion.Name = "btnAccion";
             btnAccion.Size = new Size(164, 50);
             btnAccion.TabIndex = 10;
@@ -131,10 +132,11 @@
             // 
             lblProductoCargado.AutoSize = true;
             lblProductoCargado.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblProductoCargado.Location = new Point(56, 9);
+            lblProductoCargado.Location = new Point(86, 9);
             lblProductoCargado.Name = "lblProductoCargado";
             lblProductoCargado.Size = new Size(248, 30);
             lblProductoCargado.TabIndex = 11;
+            lblProductoCargado.Tag = "NoModificarConBase";
             lblProductoCargado.Text = "Producto seleccionado: ";
             // 
             // lblProducto
@@ -142,17 +144,18 @@
             lblProducto.AutoSize = true;
             lblProducto.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblProducto.ForeColor = Color.SeaGreen;
-            lblProducto.Location = new Point(291, 9);
+            lblProducto.Location = new Point(340, 9);
             lblProducto.Name = "lblProducto";
             lblProducto.Size = new Size(104, 30);
             lblProducto.TabIndex = 12;
+            lblProducto.Tag = "NoModificarConBase";
             lblProducto.Text = "Producto";
             // 
             // FGestionStock
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(624, 295);
+            ClientSize = new Size(529, 295);
             Controls.Add(lblProducto);
             Controls.Add(lblProductoCargado);
             Controls.Add(btnAccion);
@@ -165,6 +168,7 @@
             Controls.Add(btnCancelar);
             Controls.Add(lblTexto);
             Name = "FGestionStock";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FGestionStock";
             Load += FGestionStock_Load;
             ResumeLayout(false);

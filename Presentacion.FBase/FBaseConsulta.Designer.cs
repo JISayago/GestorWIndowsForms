@@ -410,6 +410,7 @@
             // cbx3
             // 
             cbx3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cbx3.DropDownStyle = ComboBoxStyle.DropDownList;
             cbx3.Enabled = false;
             cbx3.FormattingEnabled = true;
             cbx3.Location = new Point(236, 3);
@@ -445,6 +446,7 @@
             // cbx2
             // 
             cbx2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cbx2.DropDownStyle = ComboBoxStyle.DropDownList;
             cbx2.Enabled = false;
             cbx2.FormattingEnabled = true;
             cbx2.Location = new Point(236, 3);
@@ -481,6 +483,7 @@
             // cbx1
             // 
             cbx1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cbx1.DropDownStyle = ComboBoxStyle.DropDownList;
             cbx1.Enabled = false;
             cbx1.FormattingEnabled = true;
             cbx1.Location = new Point(236, 3);

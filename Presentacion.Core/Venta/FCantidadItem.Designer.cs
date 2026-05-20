@@ -36,7 +36,7 @@
             // 
             // btnAceptar
             // 
-            btnAceptar.Location = new Point(32, 70);
+            btnAceptar.Location = new Point(31, 70);
             btnAceptar.Name = "btnAceptar";
             btnAceptar.Size = new Size(75, 23);
             btnAceptar.TabIndex = 0;
@@ -47,7 +47,7 @@
             // lblCantidad
             // 
             lblCantidad.AutoSize = true;
-            lblCantidad.Location = new Point(32, 24);
+            lblCantidad.Location = new Point(31, 27);
             lblCantidad.Name = "lblCantidad";
             lblCantidad.Size = new Size(55, 15);
             lblCantidad.TabIndex = 1;
@@ -55,14 +55,14 @@
             // 
             // txtCantidad
             // 
-            txtCantidad.Location = new Point(93, 21);
+            txtCantidad.Location = new Point(93, 24);
             txtCantidad.Name = "txtCantidad";
             txtCantidad.Size = new Size(100, 23);
             txtCantidad.TabIndex = 2;
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(118, 70);
+            btnCancelar.Location = new Point(121, 70);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(75, 23);
             btnCancelar.TabIndex = 3;
@@ -73,7 +73,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(223, 122);
+            ClientSize = new Size(227, 122);
             Controls.Add(btnCancelar);
             Controls.Add(txtCantidad);
             Controls.Add(lblCantidad);
@@ -81,6 +81,7 @@
             Name = "FCantidadItem";
             StartPosition = FormStartPosition.CenterParent;
             Text = "FCantidadItem";
+            Load += FCantidadItem_Load;
             ResumeLayout(false);
             PerformLayout();
         }

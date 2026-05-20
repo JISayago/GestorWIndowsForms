@@ -40,7 +40,7 @@
             // 
             // btnEfectivo
             // 
-            btnEfectivo.Location = new Point(33, 31);
+            btnEfectivo.Location = new Point(47, 31);
             btnEfectivo.Name = "btnEfectivo";
             btnEfectivo.Size = new Size(144, 61);
             btnEfectivo.TabIndex = 0;
@@ -50,7 +50,7 @@
             // 
             // btnTransferencia
             // 
-            btnTransferencia.Location = new Point(33, 116);
+            btnTransferencia.Location = new Point(47, 116);
             btnTransferencia.Name = "btnTransferencia";
             btnTransferencia.Size = new Size(144, 61);
             btnTransferencia.TabIndex = 1;
@@ -60,7 +60,7 @@
             // 
             // btnCredito
             // 
-            btnCredito.Location = new Point(252, 31);
+            btnCredito.Location = new Point(259, 31);
             btnCredito.Name = "btnCredito";
             btnCredito.Size = new Size(144, 61);
             btnCredito.TabIndex = 2;
@@ -70,7 +70,7 @@
             // 
             // btnDébito
             // 
-            btnDébito.Location = new Point(252, 116);
+            btnDébito.Location = new Point(259, 116);
             btnDébito.Name = "btnDébito";
             btnDébito.Size = new Size(144, 61);
             btnDébito.TabIndex = 3;
@@ -80,7 +80,7 @@
             // 
             // btnCtaCte
             // 
-            btnCtaCte.Location = new Point(252, 194);
+            btnCtaCte.Location = new Point(259, 201);
             btnCtaCte.Name = "btnCtaCte";
             btnCtaCte.Size = new Size(144, 61);
             btnCtaCte.TabIndex = 4;
@@ -90,7 +90,7 @@
             // 
             // btnQR
             // 
-            btnQR.Location = new Point(463, 116);
+            btnQR.Location = new Point(471, 116);
             btnQR.Name = "btnQR";
             btnQR.Size = new Size(144, 61);
             btnQR.TabIndex = 5;
@@ -100,7 +100,7 @@
             // 
             // btnCheque
             // 
-            btnCheque.Location = new Point(463, 31);
+            btnCheque.Location = new Point(471, 31);
             btnCheque.Name = "btnCheque";
             btnCheque.Size = new Size(144, 61);
             btnCheque.TabIndex = 6;
@@ -112,7 +112,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(700, 287);
+            ClientSize = new Size(661, 292);
             Controls.Add(btnCheque);
             Controls.Add(btnQR);
             Controls.Add(btnCtaCte);

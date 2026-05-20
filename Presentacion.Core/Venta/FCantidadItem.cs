@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Presentacion.FormulariosBase.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -41,6 +42,11 @@ namespace Presentacion.Core.Venta
                 MessageBox.Show("Ingrese un número válido.");
                 txtCantidad.Focus();
             }
+        }
+
+        private void FCantidadItem_Load(object sender, EventArgs e)
+        {
+            EstiloControlHelper.AplicarEstiloALabels(this);
         }
     }
 }

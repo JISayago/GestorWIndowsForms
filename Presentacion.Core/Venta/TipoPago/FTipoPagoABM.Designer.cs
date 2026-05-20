@@ -39,16 +39,16 @@
             // 
             // txtDescripcion
             // 
-            txtDescripcion.Location = new Point(211, 221);
+            txtDescripcion.Location = new Point(126, 170);
             txtDescripcion.Multiline = true;
             txtDescripcion.Name = "txtDescripcion";
-            txtDescripcion.Size = new Size(496, 77);
+            txtDescripcion.Size = new Size(498, 77);
             txtDescripcion.TabIndex = 26;
             // 
             // txtNombre
             // 
             txtNombre.Font = new Font("Segoe UI", 9.75F);
-            txtNombre.Location = new Point(209, 152);
+            txtNombre.Location = new Point(126, 82);
             txtNombre.Name = "txtNombre";
             txtNombre.Size = new Size(498, 25);
             txtNombre.TabIndex = 25;
@@ -56,7 +56,7 @@
             // txtCodigo
             // 
             txtCodigo.Font = new Font("Segoe UI", 9.75F);
-            txtCodigo.Location = new Point(209, 183);
+            txtCodigo.Location = new Point(126, 126);
             txtCodigo.Name = "txtCodigo";
             txtCodigo.Size = new Size(498, 25);
             txtCodigo.TabIndex = 24;
@@ -65,7 +65,7 @@
             // 
             lblNombre.AutoSize = true;
             lblNombre.Font = new Font("Segoe UI", 9.75F);
-            lblNombre.Location = new Point(142, 154);
+            lblNombre.Location = new Point(40, 85);
             lblNombre.Name = "lblNombre";
             lblNombre.Size = new Size(57, 17);
             lblNombre.TabIndex = 23;
@@ -75,7 +75,7 @@
             // 
             lblDescripcion.AutoSize = true;
             lblDescripcion.Font = new Font("Segoe UI", 9.75F);
-            lblDescripcion.Location = new Point(123, 222);
+            lblDescripcion.Location = new Point(40, 170);
             lblDescripcion.Name = "lblDescripcion";
             lblDescripcion.Size = new Size(76, 17);
             lblDescripcion.TabIndex = 22;
@@ -85,7 +85,7 @@
             // 
             lblCodigo.AutoSize = true;
             lblCodigo.Font = new Font("Segoe UI", 9.75F);
-            lblCodigo.Location = new Point(142, 186);
+            lblCodigo.Location = new Point(40, 129);
             lblCodigo.Name = "lblCodigo";
             lblCodigo.Size = new Size(51, 17);
             lblCodigo.TabIndex = 21;
@@ -95,7 +95,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(784, 450);
+            ClientSize = new Size(692, 279);
             Controls.Add(txtDescripcion);
             Controls.Add(txtNombre);
             Controls.Add(txtCodigo);
