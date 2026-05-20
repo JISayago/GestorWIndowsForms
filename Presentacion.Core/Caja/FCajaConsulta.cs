@@ -46,7 +46,10 @@ namespace Presentacion.Core.Caja
 
         protected override bool UsarCheck1 => true; // eliminados
         protected override bool UsarCheck2 => true; // histórico
-
+        protected override bool EsModoSoloLectura(FiltroConsulta filtro)
+        {
+            return true;
+        }
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
