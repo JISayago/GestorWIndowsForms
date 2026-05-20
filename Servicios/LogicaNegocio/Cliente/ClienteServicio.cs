@@ -228,7 +228,7 @@ namespace Servicios.LogicaNegocio.Cliente
             var query = context.Cliente
                 .AsNoTracking()
                 .Include(c => c.Persona)
-                .Where(c => c.Persona != null)
+                .Where(c => c.Persona != null && c.NumeroCliente != "0" && c.Persona.Dni != "00000000")
                 .AsQueryable();
 
             // =========================================================
