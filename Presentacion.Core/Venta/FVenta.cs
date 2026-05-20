@@ -717,6 +717,7 @@ namespace Presentacion.Core.Venta
             }
             else
             {
+                finalizarVenta = false;
                 InicializarYLimpiarCampos(VENTAID);
 
             }
@@ -841,6 +842,7 @@ namespace Presentacion.Core.Venta
                 cbxDescEfectivo.Checked = false;
                 txtSubtotalSinDescuento.Text = _subTotalVenta.ToString("C2");
                 txtTotal.Text = _totalVenta.ToString("C2");
+                txtAreaDetallesVenta.Text = string.Empty;
                 if (idCliente < 0)
                 {
                     cbxIncluirCtaCte.Checked = false;

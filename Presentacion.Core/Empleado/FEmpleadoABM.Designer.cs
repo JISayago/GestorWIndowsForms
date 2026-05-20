@@ -67,7 +67,7 @@
             // 
             lblFechaIngreso.AutoSize = true;
             lblFechaIngreso.Font = new Font("Segoe UI", 9.75F);
-            lblFechaIngreso.Location = new Point(394, 88);
+            lblFechaIngreso.Location = new Point(394, 85);
             lblFechaIngreso.Name = "lblFechaIngreso";
             lblFechaIngreso.Size = new Size(65, 17);
             lblFechaIngreso.TabIndex = 2;
@@ -107,7 +107,7 @@
             // 
             lblCuil.AutoSize = true;
             lblCuil.Font = new Font("Segoe UI", 9.75F);
-            lblCuil.Location = new Point(408, 200);
+            lblCuil.Location = new Point(394, 202);
             lblCuil.Name = "lblCuil";
             lblCuil.Size = new Size(34, 17);
             lblCuil.TabIndex = 6;
@@ -145,7 +145,7 @@
             // lblFechaNacimiento
             // 
             lblFechaNacimiento.AutoSize = true;
-            lblFechaNacimiento.Location = new Point(361, 284);
+            lblFechaNacimiento.Location = new Point(362, 284);
             lblFechaNacimiento.Name = "lblFechaNacimiento";
             lblFechaNacimiento.Size = new Size(80, 15);
             lblFechaNacimiento.TabIndex = 10;
