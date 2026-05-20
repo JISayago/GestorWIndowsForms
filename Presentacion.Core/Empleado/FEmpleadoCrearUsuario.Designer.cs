@@ -36,7 +36,7 @@
             // 
             // btnCrearUsuario
             // 
-            btnCrearUsuario.Location = new Point(231, 281);
+            btnCrearUsuario.Location = new Point(87, 160);
             btnCrearUsuario.Name = "btnCrearUsuario";
             btnCrearUsuario.Size = new Size(294, 65);
             btnCrearUsuario.TabIndex = 0;
@@ -46,7 +46,7 @@
             // 
             // txtNombreUsuario
             // 
-            txtNombreUsuario.Location = new Point(231, 201);
+            txtNombreUsuario.Location = new Point(87, 80);
             txtNombreUsuario.Name = "txtNombreUsuario";
             txtNombreUsuario.Size = new Size(294, 23);
             txtNombreUsuario.TabIndex = 1;
@@ -54,7 +54,7 @@
             // cbxHabilitarEdicionNombre
             // 
             cbxHabilitarEdicionNombre.AutoSize = true;
-            cbxHabilitarEdicionNombre.Location = new Point(231, 166);
+            cbxHabilitarEdicionNombre.Location = new Point(87, 45);
             cbxHabilitarEdicionNombre.Name = "cbxHabilitarEdicionNombre";
             cbxHabilitarEdicionNombre.Size = new Size(249, 19);
             cbxHabilitarEdicionNombre.TabIndex = 3;
@@ -66,7 +66,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(481, 337);
             Controls.Add(cbxHabilitarEdicionNombre);
             Controls.Add(txtNombreUsuario);
             Controls.Add(btnCrearUsuario);

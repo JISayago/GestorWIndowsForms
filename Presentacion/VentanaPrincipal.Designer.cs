@@ -104,6 +104,7 @@
             // btnPanelAdmin
             // 
             btnPanelAdmin.Anchor = AnchorStyles.Left;
+            btnPanelAdmin.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             btnPanelAdmin.Location = new Point(3, 12);
             btnPanelAdmin.MaximumSize = new Size(236, 63);
             btnPanelAdmin.MinimumSize = new Size(236, 63);
@@ -117,6 +118,7 @@
             // btnVenta
             // 
             btnVenta.Anchor = AnchorStyles.Right;
+            btnVenta.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             btnVenta.Location = new Point(1020, 12);
             btnVenta.MaximumSize = new Size(236, 63);
             btnVenta.MinimumSize = new Size(236, 63);
@@ -130,6 +132,7 @@
             // btnCaja
             // 
             btnCaja.Anchor = AnchorStyles.Right;
+            btnCaja.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             btnCaja.Location = new Point(389, 12);
             btnCaja.MaximumSize = new Size(236, 63);
             btnCaja.MinimumSize = new Size(236, 63);
@@ -143,6 +146,7 @@
             // btnContraVenta
             // 
             btnContraVenta.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            btnContraVenta.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             btnContraVenta.Location = new Point(631, 12);
             btnContraVenta.MaximumSize = new Size(236, 63);
             btnContraVenta.MinimumSize = new Size(236, 63);
@@ -314,6 +318,7 @@
             tcIzquierda.Controls.Add(tabPage1);
             tcIzquierda.Controls.Add(tabPage2);
             tcIzquierda.Dock = DockStyle.Fill;
+            tcIzquierda.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             tcIzquierda.Location = new Point(3, 3);
             tcIzquierda.Name = "tcIzquierda";
             tcIzquierda.SelectedIndex = 0;
@@ -322,20 +327,22 @@
             // 
             // tabPage1
             // 
-            tabPage1.Location = new Point(4, 24);
+            tabPage1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            tabPage1.Location = new Point(4, 26);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(772, 620);
+            tabPage1.Size = new Size(772, 618);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Acceso Rapido";
             tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
-            tabPage2.Location = new Point(4, 24);
+            tabPage2.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
+            tabPage2.Location = new Point(4, 26);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(772, 620);
+            tabPage2.Size = new Size(772, 618);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Info Turno";
             tabPage2.UseVisualStyleBackColor = true;

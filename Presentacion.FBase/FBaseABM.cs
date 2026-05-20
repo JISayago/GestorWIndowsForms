@@ -67,7 +67,7 @@ namespace Presentacion.FBase
 
         public virtual void FBaseABM_Load(object sender, EventArgs e)
         {
-            AplicarEstiloALabels(this);
+            EstiloControlHelper.AplicarEstiloALabels(this);
 
             if (TipoOperacion == TipoOperacion.Eliminar || TipoOperacion == TipoOperacion.Modificar)
             {
@@ -170,37 +170,37 @@ namespace Presentacion.FBase
         //        }
         //    }
 
-        private void AplicarEstiloALabels(Control contenedor)
-        {
-            if (contenedor == null) return;
+        //private void AplicarEstiloALabels(Control contenedor)
+        //{
+        //    if (contenedor == null) return;
 
-            foreach (Control control in contenedor.Controls)
-            {
-                // 1. Aplicamos el estilo al control actual si corresponde
-                if (control is Label lbl && lbl.Tag?.ToString() != "NoModificarConBase")
-                {
-                    lbl.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold);
-                    lbl.ForeColor = Color.FromArgb(50, 51, 53);
+        //    foreach (Control control in contenedor.Controls)
+        //    {
+        //        // 1. Aplicamos el estilo al control actual si corresponde
+        //        if (control is Label lbl && lbl.Tag?.ToString() != "NoModificarConBase")
+        //        {
+        //            lbl.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold);
+        //            lbl.ForeColor = Color.FromArgb(50, 51, 53);
 
-                    if (lbl.Tag?.ToString() == "NoModificarConBase")
-                    {
-                        //lbl.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-                        //lbl.ForeColor = Color.FromArgb(30, 30, 30);
-                    }
-                }
-                else if (control is CheckBox chk)
-                {
-                    chk.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold);
-                    chk.ForeColor = Color.FromArgb(50, 51, 53);
-                }
+        //            if (lbl.Tag?.ToString() == "NoModificarConBase")
+        //            {
+        //                //lbl.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+        //                //lbl.ForeColor = Color.FromArgb(30, 30, 30);
+        //            }
+        //        }
+        //        else if (control is CheckBox chk)
+        //        {
+        //            chk.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold);
+        //            chk.ForeColor = Color.FromArgb(50, 51, 53);
+        //        }
 
-                // 2. CORRECCIÓN RECURSIVA: Si el control tiene hijos, entramos a revisarlos también
-                if (control.HasChildren)
-                {
-                    AplicarEstiloALabels(control);
-                }
-            }
-        }
+        //        // 2. CORRECCIÓN RECURSIVA: Si el control tiene hijos, entramos a revisarlos también
+        //        if (control.HasChildren)
+        //        {
+        //            AplicarEstiloALabels(control);
+        //        }
+        //    }
+        //}
     }
     
 }

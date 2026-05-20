@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Presentacion.FormulariosBase.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -29,10 +30,15 @@ namespace Presentacion.Core.Venta
         {
             if (!string.IsNullOrWhiteSpace(txtDetalleVenta.Text))
             {
-               descripcionDetalle = txtDetalleVenta.Text.Trim();
+                descripcionDetalle = txtDetalleVenta.Text.Trim();
             }
             confirmarDetalle = true;
             this.DialogResult = DialogResult.OK;
+        }
+
+        private void FDetalleVenta_Load(object sender, EventArgs e)
+        {
+            EstiloControlHelper.AplicarEstiloALabels(this);
         }
     }
 }
