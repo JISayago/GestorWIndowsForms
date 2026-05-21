@@ -132,7 +132,7 @@
             tableLayoutPanel5.Name = "tableLayoutPanel5";
             tableLayoutPanel5.RowCount = 1;
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel5.Size = new Size(1163, 64);
+            tableLayoutPanel5.Size = new Size(1163, 94);
             tableLayoutPanel5.TabIndex = 2;
             // 
             // tableLayoutPanel1
@@ -150,7 +150,7 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(1157, 58);
+            tableLayoutPanel1.Size = new Size(1157, 88);
             tableLayoutPanel1.TabIndex = 43;
             // 
             // flowLayoutPanel5
@@ -162,7 +162,7 @@
             flowLayoutPanel5.FlowDirection = FlowDirection.RightToLeft;
             flowLayoutPanel5.Location = new Point(797, 3);
             flowLayoutPanel5.Name = "flowLayoutPanel5";
-            flowLayoutPanel5.Size = new Size(357, 29);
+            flowLayoutPanel5.Size = new Size(357, 82);
             flowLayoutPanel5.TabIndex = 43;
             // 
             // lblNro
@@ -200,7 +200,7 @@
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 1;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel4.Size = new Size(390, 52);
+            tableLayoutPanel4.Size = new Size(390, 82);
             tableLayoutPanel4.TabIndex = 45;
             // 
             // flowLayoutPanel14
@@ -228,7 +228,7 @@
             flowLayoutPanel4.Controls.Add(lblFechaHoy);
             flowLayoutPanel4.Location = new Point(93, 3);
             flowLayoutPanel4.Name = "flowLayoutPanel4";
-            flowLayoutPanel4.Size = new Size(171, 36);
+            flowLayoutPanel4.Size = new Size(171, 76);
             flowLayoutPanel4.TabIndex = 44;
             // 
             // lblFechaHoy
@@ -248,7 +248,7 @@
             flowLayoutPanel3.FlowDirection = FlowDirection.RightToLeft;
             flowLayoutPanel3.Location = new Point(3, 3);
             flowLayoutPanel3.Name = "flowLayoutPanel3";
-            flowLayoutPanel3.Size = new Size(84, 36);
+            flowLayoutPanel3.Size = new Size(84, 76);
             flowLayoutPanel3.TabIndex = 43;
             // 
             // lblDiaAbrev
@@ -274,7 +274,7 @@
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new Size(392, 51);
+            tableLayoutPanel2.Size = new Size(392, 79);
             tableLayoutPanel2.TabIndex = 45;
             // 
             // tableLayoutPanel3
@@ -287,7 +287,7 @@
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.Size = new Size(386, 45);
+            tableLayoutPanel3.Size = new Size(386, 73);
             tableLayoutPanel3.TabIndex = 45;
             // 
             // flowLayoutPanel2
@@ -297,7 +297,7 @@
             flowLayoutPanel2.Controls.Add(lblVendedorAsignado);
             flowLayoutPanel2.Location = new Point(3, 3);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(380, 39);
+            flowLayoutPanel2.Size = new Size(380, 67);
             flowLayoutPanel2.TabIndex = 44;
             // 
             // lblVendedor
@@ -346,6 +346,7 @@
             dgvProductos.RowsDefaultCellStyle = dataGridViewCellStyle3;
             dgvProductos.Size = new Size(1089, 185);
             dgvProductos.TabIndex = 16;
+            dgvProductos.CellContentClick += dgvProductos_CellContentClick;
             // 
             // txtDescripcion
             // 
