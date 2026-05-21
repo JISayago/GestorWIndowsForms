@@ -589,11 +589,11 @@
             tableLayoutPanel8.Location = new Point(12, 19);
             tableLayoutPanel8.Name = "tableLayoutPanel8";
             tableLayoutPanel8.RowCount = 5;
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 9F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 17.789072F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 15.6289711F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 8.005082F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 8.962079F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 49.78933F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 17.714119F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 15.5631189F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 7.97135353F));
             tableLayoutPanel8.Size = new Size(1101, 787);
             tableLayoutPanel8.TabIndex = 45;
             // 

@@ -107,7 +107,7 @@ namespace Presentacion.Core.Venta
 
         private void FVentaLibre_Load(object sender, EventArgs e)
         {
-
+            txtDescripcion.Focus();
             InicializarYLimpiarCampos();
             ResetearGrilla(dgvProductos);
             dgvProductos.DataSource = _itemsVenta;
@@ -724,6 +724,11 @@ namespace Presentacion.Core.Venta
             {
                 EditarCantidad(item);
             }
+        }
+
+        private void tableLayoutPanel5_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
