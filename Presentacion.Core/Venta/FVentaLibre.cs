@@ -157,7 +157,7 @@ namespace Presentacion.Core.Venta
 
         private void InicializarYLimpiarCampos()
         {
-            var clienteDefault = _clienteServicio.ObtenerClientePorNumero("0");
+            var clienteDefault = _clienteServicio.ObtenerConsumidorFinal();
 
             _clienteVenta = new ClienteDTO
             {
@@ -380,7 +380,7 @@ namespace Presentacion.Core.Venta
             if (esConsumidorFinal)
             {
 
-                var clienteDefault = _clienteServicio.ObtenerClientePorNumero("0");
+                var clienteDefault = _clienteServicio.ObtenerConsumidorFinal();
 
                 _clienteVenta = new ClienteDTO
                 {
