@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            txtCategoriaGasto = new TextBox();
             txtMontoPago = new TextBox();
             txtDetalle = new TextBox();
             label1 = new Label();
@@ -36,18 +35,13 @@
             label3 = new Label();
             btnRegistrarGasto = new Button();
             btnCancelar = new Button();
-            btnPagoPendiente = new Button();
             dtpDiaGasto = new DateTimePicker();
             label4 = new Label();
+            cmbCategoriaGasto = new ComboBox();
+            cmbEstado = new ComboBox();
+            lblEstado = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
-            // 
-            // txtCategoriaGasto
-            // 
-            txtCategoriaGasto.Location = new Point(157, 175);
-            txtCategoriaGasto.Name = "txtCategoriaGasto";
-            txtCategoriaGasto.Size = new Size(100, 23);
-            txtCategoriaGasto.TabIndex = 0;
             // 
             // txtMontoPago
             // 
@@ -66,11 +60,11 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(53, 178);
+            label1.Location = new Point(86, 183);
             label1.Name = "label1";
-            label1.Size = new Size(90, 15);
+            label1.Size = new Size(57, 15);
             label1.TabIndex = 3;
-            label1.Text = "Categoria Gasto";
+            label1.Text = "Categoria";
             // 
             // label2
             // 
@@ -92,7 +86,7 @@
             // 
             // btnRegistrarGasto
             // 
-            btnRegistrarGasto.Location = new Point(123, 226);
+            btnRegistrarGasto.Location = new Point(157, 226);
             btnRegistrarGasto.Name = "btnRegistrarGasto";
             btnRegistrarGasto.Size = new Size(126, 40);
             btnRegistrarGasto.TabIndex = 6;
@@ -102,23 +96,13 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(288, 226);
+            btnCancelar.Location = new Point(434, 226);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(127, 40);
             btnCancelar.TabIndex = 7;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
             btnCancelar.Click += btnCancelar_Click;
-            // 
-            // btnPagoPendiente
-            // 
-            btnPagoPendiente.Location = new Point(454, 226);
-            btnPagoPendiente.Name = "btnPagoPendiente";
-            btnPagoPendiente.Size = new Size(126, 40);
-            btnPagoPendiente.TabIndex = 8;
-            btnPagoPendiente.Text = "Pago Pendiente";
-            btnPagoPendiente.UseVisualStyleBackColor = true;
-            btnPagoPendiente.Click += btnPagoPendiente_Click;
             // 
             // dtpDiaGasto
             // 
@@ -136,14 +120,41 @@
             label4.TabIndex = 10;
             label4.Text = "Dia del Gasto";
             // 
+            // cmbCategoriaGasto
+            // 
+            cmbCategoriaGasto.FormattingEnabled = true;
+            cmbCategoriaGasto.Location = new Point(157, 175);
+            cmbCategoriaGasto.Name = "cmbCategoriaGasto";
+            cmbCategoriaGasto.Size = new Size(121, 23);
+            cmbCategoriaGasto.TabIndex = 11;
+            // 
+            // cmbEstado
+            // 
+            cmbEstado.FormattingEnabled = true;
+            cmbEstado.Location = new Point(440, 170);
+            cmbEstado.Name = "cmbEstado";
+            cmbEstado.Size = new Size(121, 23);
+            cmbEstado.TabIndex = 13;
+            // 
+            // lblEstado
+            // 
+            lblEstado.AutoSize = true;
+            lblEstado.Location = new Point(392, 175);
+            lblEstado.Name = "lblEstado";
+            lblEstado.Size = new Size(42, 15);
+            lblEstado.TabIndex = 12;
+            lblEstado.Text = "Estado";
+            // 
             // FGastoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(703, 289);
+            Controls.Add(cmbEstado);
+            Controls.Add(lblEstado);
+            Controls.Add(cmbCategoriaGasto);
             Controls.Add(label4);
             Controls.Add(dtpDiaGasto);
-            Controls.Add(btnPagoPendiente);
             Controls.Add(btnCancelar);
             Controls.Add(btnRegistrarGasto);
             Controls.Add(label3);
@@ -151,10 +162,9 @@
             Controls.Add(label1);
             Controls.Add(txtDetalle);
             Controls.Add(txtMontoPago);
-            Controls.Add(txtCategoriaGasto);
             Name = "FGastoABM";
             Text = "FGastoABM";
-            Controls.SetChildIndex(txtCategoriaGasto, 0);
+            Load += FGastoABM_Load;
             Controls.SetChildIndex(txtMontoPago, 0);
             Controls.SetChildIndex(txtDetalle, 0);
             Controls.SetChildIndex(label1, 0);
@@ -162,17 +172,17 @@
             Controls.SetChildIndex(label3, 0);
             Controls.SetChildIndex(btnRegistrarGasto, 0);
             Controls.SetChildIndex(btnCancelar, 0);
-            Controls.SetChildIndex(btnPagoPendiente, 0);
             Controls.SetChildIndex(dtpDiaGasto, 0);
             Controls.SetChildIndex(label4, 0);
+            Controls.SetChildIndex(cmbCategoriaGasto, 0);
+            Controls.SetChildIndex(lblEstado, 0);
+            Controls.SetChildIndex(cmbEstado, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-
-        private TextBox txtCategoriaGasto;
         private TextBox txtMontoPago;
         private TextBox txtDetalle;
         private Label label1;
@@ -180,8 +190,10 @@
         private Label label3;
         private Button btnRegistrarGasto;
         private Button btnCancelar;
-        private Button btnPagoPendiente;
         private DateTimePicker dtpDiaGasto;
         private Label label4;
+        private ComboBox cmbCategoriaGasto;
+        private ComboBox cmbEstado;
+        private Label lblEstado;
     }
 }

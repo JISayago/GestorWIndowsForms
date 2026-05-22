@@ -1,4 +1,5 @@
-﻿using Presentacion.FBase;
+﻿using AccesoDatos.Entidades;
+using Presentacion.FBase;
 using Servicios.Helpers.Gasto;
 using Servicios.LogicaNegocio.Gasto;
 using Servicios.LogicaNegocio.Gasto.DTO;
@@ -17,7 +18,6 @@ namespace Presentacion.Core.Gasto
     public partial class FGastoABM : FBaseABM
     {
         private readonly IGastoServicio _gastoServicio;
-        private bool _esPagoPendiente;
         private readonly long _logeadoId;
         public bool RealizoAlgunaOperacion = false;
         public FGastoABM(long logeadoId)
@@ -26,15 +26,8 @@ namespace Presentacion.Core.Gasto
             _gastoServicio = new GastoServicio();
             _logeadoId = logeadoId;
 
-            AgregarControlesObligatorios(txtCategoriaGasto, "Categoria Gasto");
             AgregarControlesObligatorios(txtDetalle, "Detalle");
             AgregarControlesObligatorios(txtMontoPago, "Monto Pago");
-        }
-
-        private void btnRegistrarGasto_Click(object sender, EventArgs e)
-        {
-            _esPagoPendiente = false;
-            RegistrarGasto(_esPagoPendiente);
         }
 
 
@@ -44,26 +37,20 @@ namespace Presentacion.Core.Gasto
         }
 
 
-        private void RegistrarGasto(bool esPagoPendiente)
+        private void RegistrarGasto()
         {
             var gasto = new GastoDTO
             {
                 IdEmpleado = _logeadoId,
-                CategoriaGasto = 1,
+                CategoriaGasto = (int)cmbCategoriaGasto.SelectedValue,
                 Detalle = txtDetalle.Text,
                 MontoTotal = decimal.Parse(txtMontoPago.Text),
                 FechaGasto = dtpDiaGasto.Value,
-                
+                EstadoGasto = (int)cmbEstado.SelectedValue
+
             };
-            if (!_esPagoPendiente)
-            {
-                gasto.EstadoGasto = (int)EstadoGasto.Pagado;
-            }
-            else
-            {
-                gasto.EstadoGasto = (int)EstadoGasto.Pendiente;
-            }
-             var resultado = _gastoServicio.NuevoGasto(gasto);
+            gasto.EstadoGasto = (int)cmbCategoriaGasto.SelectedValue;
+            var resultado = _gastoServicio.NuevoGasto(gasto);
             if (resultado.Exitoso)
             {
                 RealizoAlgunaOperacion = true;
@@ -71,15 +58,46 @@ namespace Presentacion.Core.Gasto
             }
             else
             {
-                               MessageBox.Show($"{resultado.Mensaje}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"{resultado.Mensaje}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
         }
 
-        private void btnPagoPendiente_Click(object sender, EventArgs e)
+
+        private void FGastoABM_Load(object sender, EventArgs e)
         {
-            _esPagoPendiente = true;
-            RegistrarGasto(_esPagoPendiente);
+            var listaCategoria = Enum.GetValues(typeof(CategoriaGasto))
+                .Cast<CategoriaGasto>()
+                .Select(x => new
+                {
+                    Texto = x.ToString().Replace("_", " "),
+                    Valor = (int)x
+                })
+                .ToList();
+
+            cmbCategoriaGasto.DataSource = listaCategoria;
+            cmbCategoriaGasto.DisplayMember = "Texto";
+            cmbCategoriaGasto.ValueMember = "Valor";
+
+
+            var listaEstado = Enum.GetValues(typeof(EstadoGasto))
+                .Cast<EstadoGasto>()
+                .Where(x => x == EstadoGasto.Pagado || x == EstadoGasto.Pendiente)
+                .Select(x => new
+                {
+                    Texto = x.ToString(),
+                    Valor = (int)x
+                })
+                .ToList();
+
+            cmbEstado.DataSource = listaEstado;
+            cmbEstado.DisplayMember = "Texto";
+            cmbEstado.ValueMember = "Valor";
+        }
+
+        private void btnRegistrarGasto_Click(object sender, EventArgs e)
+        {
+            RegistrarGasto();
         }
     }
 }
