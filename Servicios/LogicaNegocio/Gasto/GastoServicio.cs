@@ -158,7 +158,7 @@ namespace Servicios.LogicaNegocio.Gasto
                 }
 
                 // 2. Generar número
-                var fechaGasto = gastoDto.FechaGasto.Date;
+                var fechaGasto = gastoDto.FechaGasto.Value.Date;
 
                 var cantidadDelDia = context.Gastos
                     .Count(g => g.FechaGasto.Date == fechaGasto);
@@ -465,7 +465,10 @@ namespace Servicios.LogicaNegocio.Gasto
             // 📌 ORDEN
             // =========================================================
 
-            query = query.OrderByDescending(g => g.FechaGasto);
+    query = query
+    .OrderBy(g => g.EstadoGasto == (int)EstadoGasto.Pagado)
+    .ThenByDescending(g => g.FechaGasto)
+    .ThenByDescending(g => g.FechaRegistro);
 
             // =========================================================
             // 📄 DATA

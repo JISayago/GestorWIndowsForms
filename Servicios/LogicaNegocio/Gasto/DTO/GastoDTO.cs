@@ -34,7 +34,7 @@ namespace Servicios.LogicaNegocio.Gasto.DTO
                 };
             }
         }
-        public DateTime FechaGasto { get; set; }
+        public DateTime? FechaGasto { get; set; }
         public DateTime FechaRegistro { get; set; }
 
         public decimal MontoTotal { get; set; }

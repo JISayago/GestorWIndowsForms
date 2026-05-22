@@ -354,6 +354,7 @@ namespace Presentacion.Core.Gasto
                 "Valor",
                 "Fecha"
             );
+
             cbx1.SelectedValue = "";
             cbx2.SelectedValue = "";
             cbx3.SelectedValue = "";
@@ -416,6 +417,7 @@ namespace Presentacion.Core.Gasto
 
             filtros.Filtro1 = cbx1.SelectedValue?.ToString();
             filtros.Filtro2 = cbx2.SelectedValue?.ToString();
+            filtros.Filtro3 = cbx3.SelectedValue?.ToString();
 
             return filtros;
         }
