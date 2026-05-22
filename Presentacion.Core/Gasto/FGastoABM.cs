@@ -42,7 +42,7 @@ namespace Presentacion.Core.Gasto
             cmbCategoriaGasto.DisplayMember = "Texto";
             cmbCategoriaGasto.ValueMember = "Valor";
 
-            // 🔹 Estado (solo Pagado / Pendiente)
+            // 🔹 Estados (solo los válidos)
             var listaEstado = Enum.GetValues(typeof(EstadoGasto))
                 .Cast<EstadoGasto>()
                 .Where(x => x == EstadoGasto.Pagado || x == EstadoGasto.Pendiente)
@@ -57,12 +57,9 @@ namespace Presentacion.Core.Gasto
             cmbEstado.DisplayMember = "Texto";
             cmbEstado.ValueMember = "Valor";
 
-            // 🔥 Estado inicial
-            chkPagado.Checked = true;
-            chkPendiente.Checked = false;
-
-            dtpDiaGasto.Enabled = true;
+            // 🔥 Default
             cmbEstado.SelectedValue = (int)EstadoGasto.Pagado;
+            dtpDiaGasto.Enabled = true;
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -83,35 +80,25 @@ namespace Presentacion.Core.Gasto
                 return;
             }
 
+            if (cmbEstado.SelectedValue == null)
+            {
+                MessageBox.Show("Seleccione un estado.");
+                return;
+            }
+
             if (!decimal.TryParse(txtMontoPago.Text, out var monto))
             {
                 MessageBox.Show("Monto inválido.");
                 return;
             }
 
-            int estado;
+            var estado = (int)cmbEstado.SelectedValue;
 
-            if (chkPagado.Checked)
-                estado = (int)EstadoGasto.Pagado;
-            else if (chkPendiente.Checked)
-                estado = (int)EstadoGasto.Pendiente;
-            else
-            {
-                MessageBox.Show("Seleccione un estado.");
-                return;
-            }
-
-            // 🔥 Fecha nullable
+            // 🔥 manejo correcto de fecha
             DateTime? fechaGasto = null;
 
             if (estado == (int)EstadoGasto.Pagado)
             {
-                if (!dtpDiaGasto.Enabled)
-                {
-                    MessageBox.Show("Un gasto pagado debe tener fecha.");
-                    return;
-                }
-
                 fechaGasto = dtpDiaGasto.Value;
             }
 
@@ -121,7 +108,7 @@ namespace Presentacion.Core.Gasto
                 CategoriaGasto = (int)cmbCategoriaGasto.SelectedValue,
                 Detalle = txtDetalle.Text,
                 MontoTotal = monto,
-                FechaGasto = fechaGasto, // 🔥 NULL SI ES PENDIENTE
+                FechaGasto = fechaGasto,
                 EstadoGasto = estado
             };
 
@@ -139,29 +126,25 @@ namespace Presentacion.Core.Gasto
             }
         }
 
-        // =========================================================
-        // 🔘 CHECKS (CONTROLAN TODO)
-        // =========================================================
-
-        private void chkPagado_CheckedChanged(object sender, EventArgs e)
+        private void cmbEstado_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (chkPagado.Checked)
+            if (cmbEstado.SelectedValue == null) return;
+
+            var estadoObj = cmbEstado.SelectedItem;
+
+            if (estadoObj == null)
+                return;
+
+            var estado = (int)estadoObj.GetType().GetProperty("Valor").GetValue(estadoObj);
+
+            bool esPagado = estado == (int)EstadoGasto.Pagado;
+
+            dtpDiaGasto.Enabled = esPagado;
+
+            if (!esPagado)
             {
-                chkPendiente.Checked = false;
-
-                dtpDiaGasto.Enabled = true;
-                cmbEstado.SelectedValue = (int)EstadoGasto.Pagado;
-            }
-        }
-
-        private void chkPendiente_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chkPendiente.Checked)
-            {
-                chkPagado.Checked = false;
-
-                dtpDiaGasto.Enabled = false;
-                cmbEstado.SelectedValue = (int)EstadoGasto.Pendiente;
+                // opcional: limpiar visualmente
+                dtpDiaGasto.Value = DateTime.Now;
             }
         }
     }

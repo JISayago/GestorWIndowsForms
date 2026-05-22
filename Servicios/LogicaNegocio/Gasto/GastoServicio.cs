@@ -149,53 +149,87 @@ namespace Servicios.LogicaNegocio.Gasto
                 if (!existeEmpleado)
                     return new EstadoOperacion { Exitoso = false, Mensaje = "El empleado indicado no existe." };
 
-           
-
                 if (!string.IsNullOrEmpty(gastoDto.NumeroGasto) &&
                     context.Gastos.Any(g => g.NumeroGasto == gastoDto.NumeroGasto))
                 {
                     return new EstadoOperacion { Exitoso = false, Mensaje = "Ya existe un gasto con el mismo número." };
                 }
 
-                // 2. Generar número
-                var fechaGasto = gastoDto.FechaGasto.Value.Date;
+                // =========================================================
+                // 🔥 2. LÓGICA DE FECHA
+                // =========================================================
+
+                DateTime? fechaGasto = null;
+
+                if (gastoDto.EstadoGasto == (int)EstadoGasto.Pagado)
+                {
+                    if (!gastoDto.FechaGasto.HasValue)
+                        return new EstadoOperacion
+                        {
+                            Exitoso = false,
+                            Mensaje = "Debe ingresar una fecha para un gasto pagado."
+                        };
+
+                    fechaGasto = gastoDto.FechaGasto.Value.Date;
+                }
+
+                // =========================================================
+                // 🔢 3. GENERAR NÚMERO (CLAVE)
+                // =========================================================
+
+                // 👉 SI NO HAY fecha (pendiente), usamos FechaRegistro
+                var fechaBase = fechaGasto ?? DateTime.Today;
 
                 var cantidadDelDia = context.Gastos
-                    .Count(g => g.FechaGasto.Date == fechaGasto);
+                    .Count(g =>
+                        (g.FechaGasto ?? g.FechaRegistro).Date == fechaBase.Date
+                    );
 
                 gastoDto.NumeroGasto = GeneradorNumeroComprobante
-                    .Generar("GAS", fechaGasto, cantidadDelDia);
+                    .Generar("GAS", fechaBase, cantidadDelDia);
 
-                // 3. Crear entidad
+                // =========================================================
+                // 🧾 4. CREAR ENTIDAD
+                // =========================================================
+
+                var montoPagado = gastoDto.EstadoGasto == (int)EstadoGasto.Pagado
+                    ? gastoDto.MontoTotal
+                    : 0;
+
                 var gasto = new AccesoDatos.Entidades.Gasto
                 {
                     NumeroGasto = gastoDto.NumeroGasto,
                     IdEmpleado = gastoDto.IdEmpleado,
                     CategoriaGasto = gastoDto.CategoriaGasto,
-                    FechaGasto = fechaGasto,
+                    FechaGasto = fechaGasto, // 🔥 ahora sí nullable real
                     FechaRegistro = DateTime.Now,
                     MontoTotal = gastoDto.MontoTotal,
-                    MontoPagado = gastoDto.MontoPagado > 0
-                        ? gastoDto.MontoPagado
-                        : gastoDto.MontoTotal,
+                    MontoPagado = montoPagado,
                     EstadoGasto = gastoDto.EstadoGasto,
                     Detalle = gastoDto.Detalle
                 };
 
+                // Validación coherente
                 if (gasto.MontoPagado > gasto.MontoTotal)
+                {
                     return new EstadoOperacion
                     {
                         Exitoso = false,
                         Mensaje = "El monto pagado no puede ser mayor al monto total."
                     };
+                }
 
-                // 4. Guardar gasto (para obtener ID)
+                // =========================================================
+                // 💾 5. GUARDAR
+                // =========================================================
+
                 context.Gastos.Add(gasto);
                 context.SaveChanges();
 
-                // 🔥 ACÁ YA TENÉS gasto.GastoId
+                // =========================================================
+                // 💰 6. MOVIMIENTO (SOLO SI PAGADO)
+                // =========================================================
 
-                // 5. Crear movimiento (MISMO CONTEXTO)
                 if (gasto.EstadoGasto == (int)EstadoGasto.Pagado)
                 {
                     var movimientoServicio = new MovimientoServicio();
@@ -208,10 +242,12 @@ namespace Servicios.LogicaNegocio.Gasto
                     );
                 }
 
-                // 6. Guardar movimiento
                 context.SaveChanges();
 
-                // 7. Commit
+                // =========================================================
+                // ✅ 7. COMMIT
+                // =========================================================
+
                 transaction.Commit();
 
                 return new EstadoOperacion
@@ -232,7 +268,6 @@ namespace Servicios.LogicaNegocio.Gasto
                 };
             }
         }
-
         public GastoDTO ObtenerGastoPorId(long gastoId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -299,6 +334,7 @@ namespace Servicios.LogicaNegocio.Gasto
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             string collation = "Latin1_General_CI_AI";
+
             var query = context.Gastos
                 .AsNoTracking()
                 .Include(g => g.Empleado)
@@ -320,12 +356,15 @@ namespace Servicios.LogicaNegocio.Gasto
             }
             else
             {
-                // 👉 DEFAULT → NO anulados + último mes
+                // 👉 DEFAULT → NO anulados + lógica nueva
                 var desde = DateTime.Now.AddMonths(-1);
 
                 query = query.Where(g =>
                     g.EstadoGasto != (int)EstadoGasto.Anulado &&
-                    g.FechaGasto >= desde);
+                    (
+                        g.EstadoGasto == (int)EstadoGasto.Pendiente
+                        || (g.FechaGasto.HasValue && g.FechaGasto.Value >= desde)
+                    ));
             }
 
             // =========================================================
@@ -341,8 +380,7 @@ namespace Servicios.LogicaNegocio.Gasto
                     case "NumeroGasto":
                         query = query.Where(g =>
                             g.NumeroGasto != null &&
-                            EF.Functions.Collate(g.NumeroGasto, collation)
-                                .Contains(texto));
+                            EF.Functions.Collate(g.NumeroGasto, collation).Contains(texto));
                         break;
 
                     case "NombreEmpleado":
@@ -359,7 +397,6 @@ namespace Servicios.LogicaNegocio.Gasto
                         break;
 
                     case "CategoriaGasto":
-
                         var textoBusqueda = texto.ToLower();
 
                         var categorias = Enum
@@ -370,13 +407,9 @@ namespace Servicios.LogicaNegocio.Gasto
                             .ToList();
 
                         if (categorias.Any())
-                        {
                             query = query.Where(g => categorias.Contains(g.CategoriaGasto));
-                        }
                         else
-                        {
                             query = query.Where(g => false);
-                        }
 
                         break;
 
@@ -415,12 +448,16 @@ namespace Servicios.LogicaNegocio.Gasto
                     case TipoFiltroFechaGasto.FechaGasto:
 
                         if (filtros.FechaDesde.HasValue)
-                            query = query.Where(g => g.FechaGasto >= filtros.FechaDesde.Value);
+                            query = query.Where(g =>
+                                g.FechaGasto.HasValue &&
+                                g.FechaGasto.Value >= filtros.FechaDesde.Value);
 
                         if (filtros.FechaHasta.HasValue)
                         {
                             var hasta = filtros.FechaHasta.Value.AddDays(1);
-                            query = query.Where(g => g.FechaGasto < hasta);
+                            query = query.Where(g =>
+                                g.FechaGasto.HasValue &&
+                                g.FechaGasto.Value < hasta);
                         }
 
                         break;
@@ -465,10 +502,10 @@ namespace Servicios.LogicaNegocio.Gasto
             // 📌 ORDEN
             // =========================================================
 
-    query = query
-    .OrderBy(g => g.EstadoGasto == (int)EstadoGasto.Pagado)
-    .ThenByDescending(g => g.FechaGasto)
-    .ThenByDescending(g => g.FechaRegistro);
+            query = query
+                .OrderBy(g => g.EstadoGasto == (int)EstadoGasto.Pagado) // pendientes primero
+                .ThenByDescending(g => g.FechaGasto ?? g.FechaRegistro)
+                .ThenByDescending(g => g.FechaRegistro);
 
             // =========================================================
             // 📄 DATA
@@ -514,6 +551,6 @@ namespace Servicios.LogicaNegocio.Gasto
                 PageSize = filtros.PageSize
             };
         }
-    }
 
+    }
 }

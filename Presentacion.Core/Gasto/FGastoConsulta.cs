@@ -128,13 +128,18 @@ namespace Presentacion.Core.Gasto
                 grilla.Columns["NumeroGasto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
 
-            // 🔹 Fecha
+            // 🔥 🔹 Fecha (AHORA USA DESCRIPCIÓN)
+            if (grilla.Columns.Contains("FechaGastoDescripcion"))
+            {
+                grilla.Columns["FechaGastoDescripcion"].Visible = true;
+                grilla.Columns["FechaGastoDescripcion"].HeaderText = "Fecha";
+                grilla.Columns["FechaGastoDescripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
+            // 🔸 Ocultás la real (opcional pero recomendable)
             if (grilla.Columns.Contains("FechaGasto"))
             {
-                grilla.Columns["FechaGasto"].Visible = true;
-                grilla.Columns["FechaGasto"].HeaderText = "Fecha";
-                grilla.Columns["FechaGasto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-                grilla.Columns["FechaGasto"].DefaultCellStyle.Format = "dd/MM/yyyy";
+                grilla.Columns["FechaGasto"].Visible = false;
             }
 
             // 🔹 Empleado
@@ -146,7 +151,6 @@ namespace Presentacion.Core.Gasto
             }
 
             // 🔹 Categoría
-            // 🔹 Categoría (DESCRIPCIÓN)
             if (grilla.Columns.Contains("CategoriaGastoDescripcion"))
             {
                 grilla.Columns["CategoriaGastoDescripcion"].Visible = true;
@@ -154,7 +158,6 @@ namespace Presentacion.Core.Gasto
                 grilla.Columns["CategoriaGastoDescripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
 
-            // 🔸 Ocultar el int
             if (grilla.Columns.Contains("CategoriaGasto"))
             {
                 grilla.Columns["CategoriaGasto"].Visible = false;
@@ -176,8 +179,6 @@ namespace Presentacion.Core.Gasto
             }
 
             // 🔹 Estado
-           
-
             if (grilla.Columns.Contains("EstadoGastoDescripcion"))
             {
                 grilla.Columns["EstadoGastoDescripcion"].Visible = true;
@@ -185,11 +186,11 @@ namespace Presentacion.Core.Gasto
                 grilla.Columns["EstadoGastoDescripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
 
-            // 🔸 Ocultar el int
             if (grilla.Columns.Contains("EstadoGasto"))
             {
                 grilla.Columns["EstadoGasto"].Visible = false;
             }
+
             // 🔹 Detalle
             if (grilla.Columns.Contains("Detalle"))
             {

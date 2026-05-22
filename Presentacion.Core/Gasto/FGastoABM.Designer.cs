@@ -40,14 +40,12 @@
             cmbCategoriaGasto = new ComboBox();
             cmbEstado = new ComboBox();
             lblEstado = new Label();
-            chkPagado = new CheckBox();
-            chkPendiente = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
             // txtMontoPago
             // 
-            txtMontoPago.Location = new Point(70, 104);
+            txtMontoPago.Location = new Point(119, 104);
             txtMontoPago.Name = "txtMontoPago";
             txtMontoPago.Size = new Size(100, 23);
             txtMontoPago.TabIndex = 1;
@@ -62,7 +60,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(194, 112);
+            label1.Location = new Point(276, 112);
             label1.Name = "label1";
             label1.Size = new Size(57, 15);
             label1.TabIndex = 3;
@@ -80,7 +78,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(21, 112);
+            label3.Location = new Point(64, 112);
             label3.Name = "label3";
             label3.Size = new Size(43, 15);
             label3.TabIndex = 5;
@@ -108,7 +106,7 @@
             // 
             // dtpDiaGasto
             // 
-            dtpDiaGasto.Location = new Point(341, 165);
+            dtpDiaGasto.Location = new Point(369, 161);
             dtpDiaGasto.Name = "dtpDiaGasto";
             dtpDiaGasto.Size = new Size(200, 23);
             dtpDiaGasto.TabIndex = 9;
@@ -116,7 +114,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(248, 171);
+            label4.Location = new Point(276, 167);
             label4.Name = "label4";
             label4.Size = new Size(87, 15);
             label4.TabIndex = 10;
@@ -125,7 +123,7 @@
             // cmbCategoriaGasto
             // 
             cmbCategoriaGasto.FormattingEnabled = true;
-            cmbCategoriaGasto.Location = new Point(257, 104);
+            cmbCategoriaGasto.Location = new Point(369, 104);
             cmbCategoriaGasto.Name = "cmbCategoriaGasto";
             cmbCategoriaGasto.Size = new Size(121, 23);
             cmbCategoriaGasto.TabIndex = 11;
@@ -133,49 +131,26 @@
             // cmbEstado
             // 
             cmbEstado.FormattingEnabled = true;
-            cmbEstado.Location = new Point(481, 104);
+            cmbEstado.Location = new Point(119, 159);
             cmbEstado.Name = "cmbEstado";
             cmbEstado.Size = new Size(121, 23);
             cmbEstado.TabIndex = 13;
+            cmbEstado.SelectedIndexChanged += cmbEstado_SelectedIndexChanged;
             // 
             // lblEstado
             // 
             lblEstado.AutoSize = true;
-            lblEstado.Location = new Point(433, 109);
+            lblEstado.Location = new Point(65, 167);
             lblEstado.Name = "lblEstado";
             lblEstado.Size = new Size(42, 15);
             lblEstado.TabIndex = 12;
             lblEstado.Text = "Estado";
-            // 
-            // chkPagado
-            // 
-            chkPagado.AutoSize = true;
-            chkPagado.Location = new Point(59, 146);
-            chkPagado.Name = "chkPagado";
-            chkPagado.Size = new Size(66, 19);
-            chkPagado.TabIndex = 14;
-            chkPagado.Text = "Pagado";
-            chkPagado.UseVisualStyleBackColor = true;
-            chkPagado.CheckedChanged += chkPagado_CheckedChanged;
-            // 
-            // chkPendiente
-            // 
-            chkPendiente.AutoSize = true;
-            chkPendiente.Location = new Point(59, 171);
-            chkPendiente.Name = "chkPendiente";
-            chkPendiente.Size = new Size(125, 19);
-            chkPendiente.TabIndex = 15;
-            chkPendiente.Text = "Pendiente de Pago";
-            chkPendiente.UseVisualStyleBackColor = true;
-            chkPendiente.CheckedChanged += chkPendiente_CheckedChanged;
             // 
             // FGastoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(620, 289);
-            Controls.Add(chkPendiente);
-            Controls.Add(chkPagado);
             Controls.Add(cmbEstado);
             Controls.Add(lblEstado);
             Controls.Add(cmbCategoriaGasto);
@@ -203,8 +178,6 @@
             Controls.SetChildIndex(cmbCategoriaGasto, 0);
             Controls.SetChildIndex(lblEstado, 0);
             Controls.SetChildIndex(cmbEstado, 0);
-            Controls.SetChildIndex(chkPagado, 0);
-            Controls.SetChildIndex(chkPendiente, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -223,7 +196,5 @@
         private ComboBox cmbCategoriaGasto;
         private ComboBox cmbEstado;
         private Label lblEstado;
-        private CheckBox chkPagado;
-        private CheckBox chkPendiente;
     }
 }

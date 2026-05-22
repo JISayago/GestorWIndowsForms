@@ -19,7 +19,7 @@ namespace AccesoDatos.Entidades
 
         public int CategoriaGasto { get; set; } // Corregido: propiedad de tipo enum
 
-        public DateTime FechaGasto { get; set; }
+        public DateTime? FechaGasto { get; set; }
         public DateTime FechaRegistro { get; set; }
 
         public decimal MontoTotal { get; set; }

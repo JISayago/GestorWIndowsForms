@@ -1001,8 +1001,7 @@ namespace AccesoDatos
 
                 entity.Property(e => e.FechaGasto)
                     .HasColumnName("fecha_gasto")
-                    .HasColumnType("datetime2")
-                    .IsRequired();
+                    .HasColumnType("datetime2");
 
                 entity.Property(e => e.FechaRegistro)
                     .HasColumnName("fecha_registro")
