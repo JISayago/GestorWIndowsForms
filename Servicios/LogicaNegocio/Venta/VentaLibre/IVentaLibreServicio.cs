@@ -1,4 +1,6 @@
-﻿using Servicios.Helpers.Sistema;
+﻿using AccesoDatos;
+using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
@@ -13,7 +15,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 {
     public interface IVentaLibreServicio
     {
-        EstadoOperacion NuevaVentaLibre(VentaLibreDTO ventaLibreDto);
+        EstadoOperacion NuevaVentaLibre(VentaLibreDTO dto);
         EstadoOperacion AnularVentaLibre(long ventaLibreId);
         ResultadoPaginacion<VentaLibreDTO> ObtenerVentasLibres(FiltroConsulta filtros);
     }

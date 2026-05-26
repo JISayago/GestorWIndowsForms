@@ -37,9 +37,13 @@ namespace Servicios.LogicaNegocio.Venta
             _pdf = pdf;
         }
 
-        public string GenerarPdfDeVenta(AccesoDatos.Entidades.Venta venta)
+        public string GenerarPdf(AccesoDatos.Entidades.Venta venta)
         {
-            return _pdf.GenerarComprobante(venta);
+            return venta.Estado switch
+            {
+                (int)EstadoVenta.CancelacionVenta => _pdf.GenerarCancelacionVenta(venta),
+                _ => _pdf.GenerarVenta(venta)
+            };
         }
 
 
@@ -67,14 +71,6 @@ namespace Servicios.LogicaNegocio.Venta
                 {
                     montoParaCaja = Math.Abs(ventaDto.Total);
                 }
-
-                // BLINDAJE DE SIGNOS: Si el total general es negativo, es una cancelación. 
-                // Forzamos que los montos parciales también sean negativos para que impacten restando en Caja y CtaCte.
-                //if (ventaDto.Estado == (int)EstadoVenta.CancelacionVenta) //Si es cancelacion
-                //{
-                //    montoParaCtaCte = montoParaCtaCte;
-                //    montoParaCaja = montoParaCaja;
-                //}
 
                 Debug.WriteLine("2 - Obtener caja");
 
@@ -379,8 +375,16 @@ namespace Servicios.LogicaNegocio.Venta
 
                 _productoServicio.ModificarEstadoStockProductos();
 
+                try
+                {
                 Debug.WriteLine("F - Commit realizado");
-                GeneracionComprobanteVenta(context, venta);
+                    GeneracionComprobanteVenta(context, venta);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error generando PDF: " + ex.Message);
+                    // no cortás la venta por un PDF
+                }
 
 
                 return new EstadoOperacion
@@ -409,16 +413,16 @@ namespace Servicios.LogicaNegocio.Venta
         private void GeneracionComprobanteVenta(GestorContextDB context, AccesoDatos.Entidades.Venta venta)
         {
             var ventaCompleta = context.Ventas
-              .Include(v => v.DetallesVentas)
-                  .ThenInclude(d => d.Producto)
-              .Include(v => v.VentaPagoDetalles)
-                  .ThenInclude(p => p.TipoPago)
-              .Include(v => v.Cliente.Persona)
-              .Include(v => v.Empleado.Persona)
-              .Include(v => v.Vendedor.Persona)
-              .First(v => v.VentaId == venta.VentaId);
+                .Include(v => v.DetallesVentas)
+                    .ThenInclude(d => d.Producto)
+                .Include(v => v.VentaPagoDetalles)
+                    .ThenInclude(p => p.TipoPago)
+                .Include(v => v.Cliente.Persona)
+                .Include(v => v.Empleado.Persona)
+                .Include(v => v.Vendedor.Persona)
+                .First(v => v.VentaId == venta.VentaId);
 
-            GenerarPdfDeVenta(ventaCompleta);
+            GenerarPdf(ventaCompleta); // 🔥 cambia acá
         }
 
         public VentaDTO ObtenerVentaPorId(long ventaId)
@@ -790,6 +794,20 @@ namespace Servicios.LogicaNegocio.Venta
                 .ToList();
         }
 
+        private void GeneracionComprobanteCancelacion(GestorContextDB context, AccesoDatos.Entidades.Venta ventaCancelacion)
+        {
+            var ventaCompleta = context.Ventas
+                .Include(v => v.DetallesVentas)
+                    .ThenInclude(d => d.Producto)
+                .Include(v => v.VentaPagoDetalles)
+                    .ThenInclude(p => p.TipoPago)
+                .Include(v => v.Cliente.Persona)
+                .Include(v => v.Empleado.Persona)
+                .Include(v => v.Vendedor.Persona)
+                .First(v => v.VentaId == ventaCancelacion.VentaId);
+
+            _pdf.GenerarCancelacionVenta(ventaCompleta);
+        }
         public EstadoOperacion CancelacionVentaPorId(long ventaId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -808,7 +826,7 @@ namespace Servicios.LogicaNegocio.Venta
                 if (ventaOriginal.Estado == (int)EstadoVenta.Cancelada)
                     return new EstadoOperacion { Exitoso = false, Mensaje = "La venta ya está cancelada." };
 
-                ventaOriginal.Estado = 10;
+                ventaOriginal.Estado = (int)EstadoVenta.Cancelada;
 
                 var ventaCancelacionDto = new VentaDTO
                 {
@@ -870,12 +888,24 @@ namespace Servicios.LogicaNegocio.Venta
                     }).ToList()
                 }; //AGREGAR DETALLEVENTALOTE EN EL CASO QUE EXISTA if(ventaOriginal.DetallesVentasLotes.any()), cargar en el dto 
 
-                CrearVentaInterna(context, ventaCancelacionDto, TipoMovimientoDetalle.Cancelacion, ventaId);
+                var ventaCancelacion = CrearVentaInterna(context, ventaCancelacionDto, TipoMovimientoDetalle.Cancelacion, ventaId);
 
                 context.SaveChanges();
+
+
                 transaction.Commit();
 
                 _productoServicio.ModificarEstadoStockProductos();
+
+                try
+                {
+                    GeneracionComprobanteCancelacion(context, ventaCancelacion);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error generando PDF cancelación: " + ex.Message);
+                }
+                ;
 
                 return new EstadoOperacion
                 {

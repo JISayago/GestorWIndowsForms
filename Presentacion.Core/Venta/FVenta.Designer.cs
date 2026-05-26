@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
             lblFechaHoy = new Label();
             btnLimpiar = new Button();
             txtCliente = new TextBox();
@@ -179,24 +179,24 @@
             dgvProductos.AllowUserToAddRows = false;
             dgvProductos.AllowUserToDeleteRows = false;
             dgvProductos.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dgvProductos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle7.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dgvProductos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
             dgvProductos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Control;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = SystemColors.Control;
+            dataGridViewCellStyle8.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle8.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = DataGridViewTriState.True;
+            dgvProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductos.EditMode = DataGridViewEditMode.EditProgrammatically;
             dgvProductos.Location = new Point(3, 64);
             dgvProductos.MultiSelect = false;
             dgvProductos.Name = "dgvProductos";
-            dataGridViewCellStyle3.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dgvProductos.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle9.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dgvProductos.RowsDefaultCellStyle = dataGridViewCellStyle9;
             dgvProductos.Size = new Size(1089, 318);
             dgvProductos.TabIndex = 15;
             dgvProductos.CellClick += dgvProductos_CellClick;
@@ -589,11 +589,11 @@
             tableLayoutPanel8.Location = new Point(12, 19);
             tableLayoutPanel8.Name = "tableLayoutPanel8";
             tableLayoutPanel8.RowCount = 5;
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 9F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 17.789072F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 15.6289711F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 8.005082F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 8.962079F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 49.78933F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 17.714119F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 15.5631189F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 7.97135353F));
             tableLayoutPanel8.Size = new Size(1101, 787);
             tableLayoutPanel8.TabIndex = 45;
             // 
@@ -743,12 +743,10 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            AutoScroll = true;
+            AutoSize = true;
             ClientSize = new Size(1125, 818);
             Controls.Add(tableLayoutPanel8);
-            MaximizeBox = true;
-            MdiChildrenMinimizedAnchorBottom = false;
-            MinimizeBox = true;
             Name = "FVenta";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FVenta";

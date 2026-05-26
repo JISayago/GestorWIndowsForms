@@ -34,7 +34,16 @@ namespace Servicios.LogicaNegocio.Gasto.DTO
                 };
             }
         }
-        public DateTime FechaGasto { get; set; }
+        public DateTime? FechaGasto { get; set; }
+        public string FechaGastoDescripcion
+        {
+            get
+            {
+                return FechaGasto.HasValue
+                    ? FechaGasto.Value.ToString("dd/MM/yyyy")
+                    : "Pendiente";
+            }
+        }
         public DateTime FechaRegistro { get; set; }
 
         public decimal MontoTotal { get; set; }

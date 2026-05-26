@@ -107,7 +107,7 @@ namespace Presentacion.Core.Venta
 
         private void FVentaLibre_Load(object sender, EventArgs e)
         {
-
+            txtDescripcion.Focus();
             InicializarYLimpiarCampos();
             ResetearGrilla(dgvProductos);
             dgvProductos.DataSource = _itemsVenta;
@@ -157,7 +157,7 @@ namespace Presentacion.Core.Venta
 
         private void InicializarYLimpiarCampos()
         {
-            var clienteDefault = _clienteServicio.ObtenerClientePorNumero("0");
+            var clienteDefault = _clienteServicio.ObtenerConsumidorFinal();
 
             _clienteVenta = new ClienteDTO
             {
@@ -380,7 +380,7 @@ namespace Presentacion.Core.Venta
             if (esConsumidorFinal)
             {
 
-                var clienteDefault = _clienteServicio.ObtenerClientePorNumero("0");
+                var clienteDefault = _clienteServicio.ObtenerConsumidorFinal();
 
                 _clienteVenta = new ClienteDTO
                 {
@@ -676,6 +676,59 @@ namespace Presentacion.Core.Venta
             txtTotal.Text = totalFinal.ToString("C2");
         }
 
+        private void EliminarItem(ItemVentaDTO item)
+        {
+            var confirm = MessageBox.Show(
+                $"¿Eliminar {item.Descripcion}?",
+                "Confirmar",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
 
+            if (confirm == DialogResult.Yes)
+            {
+                _itemsVenta.Remove(item);   // lista bindada
+                dgvProductos.Refresh();
+                CalcularTotal();
+            }
+        }
+        private void EditarCantidad(ItemVentaDTO item)
+        {
+            var input = Microsoft.VisualBasic.Interaction.InputBox(
+                "Ingrese nueva cantidad:",
+                "Modificar cantidad",
+                item.Cantidad.ToString()
+            );
+
+            if (int.TryParse(input, out int nuevaCantidad) && nuevaCantidad > 0)
+            {
+                item.Cantidad = nuevaCantidad;
+                dgvProductos.Refresh();
+                CalcularTotal();
+            }
+        }
+
+        private void dgvProductos_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            var grilla = (DataGridView)sender;
+            var item = (ItemVentaDTO)grilla.Rows[e.RowIndex].DataBoundItem;
+
+            if (grilla.Columns[e.ColumnIndex].Name == "BtnEliminar")
+            {
+                EliminarItem(item);
+            }
+            else if (grilla.Columns[e.ColumnIndex].Name == "BtnEditar")
+            {
+                EditarCantidad(item);
+            }
+        }
+
+        private void tableLayoutPanel5_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

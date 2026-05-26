@@ -1,15 +1,10 @@
-﻿using Presentacion.FBase;
+﻿using AccesoDatos.Entidades;
+using Presentacion.FBase;
 using Servicios.Helpers.Gasto;
 using Servicios.LogicaNegocio.Gasto;
 using Servicios.LogicaNegocio.Gasto.DTO;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Presentacion.Core.Gasto
@@ -17,69 +12,140 @@ namespace Presentacion.Core.Gasto
     public partial class FGastoABM : FBaseABM
     {
         private readonly IGastoServicio _gastoServicio;
-        private bool _esPagoPendiente;
         private readonly long _logeadoId;
+
         public bool RealizoAlgunaOperacion = false;
+
         public FGastoABM(long logeadoId)
         {
             InitializeComponent();
             _gastoServicio = new GastoServicio();
             _logeadoId = logeadoId;
 
-            AgregarControlesObligatorios(txtCategoriaGasto, "Categoria Gasto");
             AgregarControlesObligatorios(txtDetalle, "Detalle");
             AgregarControlesObligatorios(txtMontoPago, "Monto Pago");
         }
 
-        private void btnRegistrarGasto_Click(object sender, EventArgs e)
+        private void FGastoABM_Load(object sender, EventArgs e)
         {
-            _esPagoPendiente = false;
-            RegistrarGasto(_esPagoPendiente);
-        }
+            // 🔹 Categorías
+            var listaCategoria = Enum.GetValues(typeof(CategoriaGasto))
+                .Cast<CategoriaGasto>()
+                .Select(x => new
+                {
+                    Texto = x.ToString().Replace("_", " "),
+                    Valor = (int)x
+                })
+                .ToList();
 
+            cmbCategoriaGasto.DataSource = listaCategoria;
+            cmbCategoriaGasto.DisplayMember = "Texto";
+            cmbCategoriaGasto.ValueMember = "Valor";
+
+            // 🔹 Estados (solo los válidos)
+            var listaEstado = Enum.GetValues(typeof(EstadoGasto))
+                .Cast<EstadoGasto>()
+                .Where(x => x == EstadoGasto.Pagado || x == EstadoGasto.Pendiente)
+                .Select(x => new
+                {
+                    Texto = x.ToString(),
+                    Valor = (int)x
+                })
+                .ToList();
+
+            cmbEstado.DataSource = listaEstado;
+            cmbEstado.DisplayMember = "Texto";
+            cmbEstado.ValueMember = "Valor";
+
+            // 🔥 Default
+            cmbEstado.SelectedValue = (int)EstadoGasto.Pagado;
+            dtpDiaGasto.Enabled = true;
+        }
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-
-        private void RegistrarGasto(bool esPagoPendiente)
+        private void btnRegistrarGasto_Click(object sender, EventArgs e)
         {
+            RegistrarGasto();
+        }
+
+        private void RegistrarGasto()
+        {
+            if (cmbCategoriaGasto.SelectedValue == null)
+            {
+                MessageBox.Show("Seleccione una categoría.");
+                return;
+            }
+
+            if (cmbEstado.SelectedValue == null)
+            {
+                MessageBox.Show("Seleccione un estado.");
+                return;
+            }
+
+            if (!decimal.TryParse(txtMontoPago.Text, out var monto))
+            {
+                MessageBox.Show("Monto inválido.");
+                return;
+            }
+
+            var estado = (int)cmbEstado.SelectedValue;
+
+            // 🔥 manejo correcto de fecha
+            DateTime? fechaGasto = null;
+
+            if (estado == (int)EstadoGasto.Pagado)
+            {
+                fechaGasto = dtpDiaGasto.Value;
+            }
+
             var gasto = new GastoDTO
             {
                 IdEmpleado = _logeadoId,
-                CategoriaGasto = 1,
+                CategoriaGasto = (int)cmbCategoriaGasto.SelectedValue,
                 Detalle = txtDetalle.Text,
-                MontoTotal = decimal.Parse(txtMontoPago.Text),
-                FechaGasto = dtpDiaGasto.Value,
-                
+                MontoTotal = monto,
+                FechaGasto = fechaGasto,
+                EstadoGasto = estado
             };
-            if (!_esPagoPendiente)
-            {
-                gasto.EstadoGasto = (int)EstadoGasto.Pagado;
-            }
-            else
-            {
-                gasto.EstadoGasto = (int)EstadoGasto.Pendiente;
-            }
-             var resultado = _gastoServicio.NuevoGasto(gasto);
+
+            var resultado = _gastoServicio.NuevoGasto(gasto);
+
             if (resultado.Exitoso)
             {
                 RealizoAlgunaOperacion = true;
-                MessageBox.Show($"{resultado.Mensaje}", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(resultado.Mensaje, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Close();
             }
             else
             {
-                               MessageBox.Show($"{resultado.Mensaje}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
         }
 
-        private void btnPagoPendiente_Click(object sender, EventArgs e)
+        private void cmbEstado_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _esPagoPendiente = true;
-            RegistrarGasto(_esPagoPendiente);
+            if (cmbEstado.SelectedValue == null) return;
+
+            var estadoObj = cmbEstado.SelectedItem;
+
+            if (estadoObj == null)
+                return;
+
+            var estado = (int)estadoObj.GetType().GetProperty("Valor").GetValue(estadoObj);
+
+            bool esPagado = estado == (int)EstadoGasto.Pagado;
+
+            dtpDiaGasto.Enabled = esPagado;
+
+            if (!esPagado)
+            {
+                // opcional: limpiar visualmente
+                dtpDiaGasto.Value = DateTime.Now;
+            }
         }
     }
 }

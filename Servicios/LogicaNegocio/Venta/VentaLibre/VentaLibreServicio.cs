@@ -2,10 +2,12 @@
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.OpcionesPagos;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Extras;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.Helpers.VentaEnum;
+using Servicios.Infraestructura;
 using Servicios.LogicaNegocio.Venta.TipoPago;
 using Servicios.LogicaNegocio.Venta.VentaLibre.DTO;
 using System;
@@ -19,15 +21,49 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 {
     public class VentaLibreServicio : IVentaLibreServicio
     {
+        private readonly IPdfGenerator _pdf;
+
+        public VentaLibreServicio()
+        {
+            _pdf = new PdfGenerator();
+        }
+        private void GeneracionComprobanteVentaLibre(GestorContextDB context, AccesoDatos.Entidades.VentaLibre venta)
+        {
+            if (venta == null)
+            {
+                Debug.WriteLine("VentaLibre es null al generar comprobante.");
+                return;
+            }
+
+            var ventaCompleta = context.VentasLibres
+                .Include(v => v.VentaPagoDetalles)
+                    .ThenInclude(p => p.TipoPago)
+                .Include(v => v.Empleado)
+                    .ThenInclude(e => e.Persona)
+                .Include(v => v.Vendedor)
+                    .ThenInclude(v => v.Persona)
+                .Include(v => v.Cliente)
+                    .ThenInclude(c => c.Persona)
+                .FirstOrDefault(v => v.VentaLibreId == venta.VentaLibreId);
+
+            // 🔥 3. validar resultado
+            if (ventaCompleta == null)
+            {
+                Debug.WriteLine($"No se encontró VentaLibreId: {venta.VentaLibreId}");
+                return;
+            }
+
+            _pdf.GenerarVentaLibre(ventaCompleta);
+        }
         public EstadoOperacion AnularVentaLibre(long ventaLibreId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
             using var transaction = context.Database.BeginTransaction();
 
             try
             {
                 var venta = context.VentasLibres
+                    .Include(v => v.VentaPagoDetalles)
                     .FirstOrDefault(v => v.VentaLibreId == ventaLibreId);
 
                 if (venta == null)
@@ -39,52 +75,62 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     };
                 }
 
-                if (venta.Estado == (int)EstadoVenta.Cancelada) // Anulado
+                if (venta.Estado == (int)EstadoVenta.Cancelada)
                 {
                     return new EstadoOperacion
                     {
                         Exitoso = false,
-                        Mensaje = "La venta ya se encuentra anulada."
+                        Mensaje = "La venta ya está anulada."
                     };
                 }
 
                 venta.Estado = (int)EstadoVenta.Cancelada;
 
-                var cajaServicio = new Caja.CajaServicio();
-                var cajaId = cajaServicio.ObtenerIdDeEña(context);
+                var dto = new VentaLibreDTO
+                {
+                    IdEmpleado = venta.IdEmpleado,
+                    IdVendedor = venta.IdVendedor,
+                    IdCliente = venta.IdCliente,
+                    FechaVenta = DateTime.Now,
 
-                if (!cajaId.HasValue)
-                    throw new Exception("No hay una caja abierta para revertir la operación.");
+                    Total = venta.Total,
+                    Estado = (int)EstadoVenta.CancelacionVenta,
+                    Detalle = $"Cancelación de venta libre N° {venta.NumeroVenta}",
 
-                // 🏦 Caja (correcto)
-                cajaServicio.RegistrarTransaccion(
+                    MontoPagado = venta.MontoPagado,
+                    MontoAdeudado = venta.MontoAdeudado,
+
+                    TiposDePagoSeleccionado = venta.VentaPagoDetalles.Select(p => new FormaPago
+                    {
+                        TipoDePago = (TipoDePago)p.IdTipoPago,
+                        Monto = p.Monto
+                    }).ToList()
+                };
+
+                // 🔥 CAPTURAR CONTRAVENTA
+                var ventaCancelacion = CrearVentaLibreInterna(
                     context,
-                    venta.Total,
-                    venta.Total >= 0 ? TipoMovimiento.Egreso : TipoMovimiento.Ingreso,
-                    cajaId.Value
-                );
-
-                // 🔁 Movimiento inverso (corregido)
-                var movimientoServicio = new Movimiento.MovimientoServicio();
-
-                movimientoServicio.CrearMovimientoVenta(
-                    venta.VentaLibreId,
-                    venta.Total,
-                    venta.Estado,
-                    TipoMovimientoDetalle.Cancelacion,
-                    TipoEntidadMovimiento.VentaLibre, // 🔥 nuevo
-                    context
+                    dto,
+                    TipoMovimientoDetalle.Cancelacion
                 );
 
                 context.SaveChanges();
-
                 transaction.Commit();
+
+                // 🔥 PDF DE CANCELACIÓN
+                try
+                {
+                    GeneracionComprobanteVentaLibre(context, ventaCancelacion);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error PDF cancelación venta libre: " + ex.Message);
+                }
 
                 return new EstadoOperacion
                 {
                     Exitoso = true,
-                    Mensaje = "Venta anulada correctamente.",
-                    EntidadId = venta.VentaLibreId
+                    Mensaje = "Venta anulada y contraventa generada correctamente."
                 };
             }
             catch (Exception ex)
@@ -101,7 +147,6 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
         public EstadoOperacion NuevaVentaLibre(VentaLibreDTO dto)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
             using var transaction = context.Database.BeginTransaction();
 
             try
@@ -112,7 +157,18 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     TipoMovimientoDetalle.VentaLibre
                 );
 
+                context.SaveChanges();
                 transaction.Commit();
+
+                // 🔥 PDF
+                try
+                {
+                    GeneracionComprobanteVentaLibre(context, venta);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error PDF venta libre: " + ex.Message);
+                }
 
                 return new EstadoOperacion
                 {
@@ -133,9 +189,9 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
         }
 
         public AccesoDatos.Entidades.VentaLibre CrearVentaLibreInterna(
-         GestorContextDB context,
-         VentaLibreDTO dto,
-         TipoMovimientoDetalle movimientoDetalle)
+       GestorContextDB context,
+       VentaLibreDTO dto,
+       TipoMovimientoDetalle movimientoDetalle)
         {
             try
             {
@@ -145,9 +201,11 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 if (!cajaId.HasValue)
                     throw new Exception("No hay una caja abierta.");
 
+                bool esCancelacion = dto.Estado == (int)EstadoVenta.CancelacionVenta;
+
                 // 🔢 Número comprobante
                 var fecha = DateTime.Today;
-                var prefijo = dto.Estado == (int)EstadoVenta.Cancelada ? "CAN" : "VLIB";
+                var prefijo = esCancelacion ? "CANVL" : "VLIB";
 
                 var cantidadHoy = context.VentasLibres.Count(v =>
                     v.NumeroVenta.StartsWith($"{prefijo}-{fecha:yyyyMMdd}")
@@ -159,7 +217,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     cantidadHoy
                 );
 
-                // 🧾 Crear entidad
+                // 🧾 Crear entidad (TODO POSITIVO)
                 var venta = new AccesoDatos.Entidades.VentaLibre
                 {
                     NumeroVenta = dto.NumeroVenta,
@@ -167,37 +225,41 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     IdVendedor = dto.IdVendedor,
                     IdCliente = dto.IdCliente,
                     FechaVenta = dto.FechaVenta,
-                    Total = dto.Total,
+                    Total = Math.Abs(dto.Total),
                     Estado = dto.Estado,
                     Detalle = dto.Detalle,
-                    MontoPagado = dto.MontoPagado,
-                    MontoAdeudado = dto.MontoAdeudado
+                    MontoPagado = Math.Abs(dto.MontoPagado),
+                    MontoAdeudado = Math.Abs(dto.MontoAdeudado),
                 };
 
                 context.VentasLibres.Add(venta);
                 context.SaveChanges();
 
-                // 💰 Movimiento
+                // 🔁 Movimiento
                 var movimientoServicio = new Movimiento.MovimientoServicio();
 
                 movimientoServicio.CrearMovimientoVenta(
                     venta.VentaLibreId,
                     venta.Total,
                     venta.Estado,
-                    movimientoDetalle,
-                    TipoEntidadMovimiento.VentaLibre, // 👈 🔥 CLAVE
+                    esCancelacion ? TipoMovimientoDetalle.Cancelacion : movimientoDetalle,
+                    TipoEntidadMovimiento.VentaLibre,
                     context
                 );
 
-                // 🏦 Caja
+                // 🏦 Caja (SIN SIGNO, SOLO TIPO)
+                var tipoMovimientoCaja = esCancelacion
+                    ? TipoMovimiento.Egreso
+                    : TipoMovimiento.Ingreso;
+
                 cajaServicio.RegistrarTransaccion(
                     context,
-                    venta.Total,
-                    venta.Total >= 0 ? TipoMovimiento.Ingreso : TipoMovimiento.Egreso,
+                    venta.MontoPagado,
+                    tipoMovimientoCaja,
                     cajaId.Value
                 );
 
-                // 💳 Pagos
+                // 💳 Pagos (SIEMPRE POSITIVOS)
                 if (dto.TiposDePagoSeleccionado != null && dto.TiposDePagoSeleccionado.Any())
                 {
                     var servicioTP = new TipoPagoServicio();
@@ -208,7 +270,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                         IdTipoPago = servicioTP
                             .ObtenerTipoPagoPorNumero(context, Convert.ToInt32(p.TipoDePago.Value))
                             .TipoPagoId,
-                        Monto = p.Monto
+                        Monto = Math.Abs(p.Monto)
                     }).ToList();
 
                     context.VentaPagosDetalles.AddRange(pagos);
