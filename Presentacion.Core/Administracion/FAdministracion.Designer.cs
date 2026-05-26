@@ -67,23 +67,23 @@
             sqlCommand1 = new Microsoft.Data.SqlClient.SqlCommand();
             dgvGrilla = new DataGridView();
             pnlInfoInicial = new Panel();
+            tlpBaseNivel1 = new TableLayoutPanel();
             tlpArribaNivel2 = new TableLayoutPanel();
             tabControlGraficoArriba = new TabControl();
-            tabPage2 = new TabPage();
-            formsPlot2 = new ScottPlot.WinForms.FormsPlot();
             tabPage1 = new TabPage();
             formsPlot1 = new ScottPlot.WinForms.FormsPlot();
-            tlpBaseNivel1 = new TableLayoutPanel();
+            tabPage2 = new TabPage();
+            formsPlot2 = new ScottPlot.WinForms.FormsPlot();
             tlpBajoNivel2 = new TableLayoutPanel();
             tabControl1 = new TabControl();
-            tabPage4 = new TabPage();
             tabPage3 = new TabPage();
-            formsPlot4 = new ScottPlot.WinForms.FormsPlot();
             tlpBajoNivel3 = new TableLayoutPanel();
+            formsPlot4 = new ScottPlot.WinForms.FormsPlot();
             formsPlot3 = new ScottPlot.WinForms.FormsPlot();
-            formsPlot5 = new ScottPlot.WinForms.FormsPlot();
-            formsPlot6 = new ScottPlot.WinForms.FormsPlot();
+            tabPage4 = new TabPage();
             tlpBajoNivel3Pagina2 = new TableLayoutPanel();
+            formsPlot6 = new ScottPlot.WinForms.FormsPlot();
+            formsPlot5 = new ScottPlot.WinForms.FormsPlot();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -92,16 +92,16 @@
             tlpFiltradoBotones.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
             pnlInfoInicial.SuspendLayout();
+            tlpBaseNivel1.SuspendLayout();
             tlpArribaNivel2.SuspendLayout();
             tabControlGraficoArriba.SuspendLayout();
-            tabPage2.SuspendLayout();
             tabPage1.SuspendLayout();
-            tlpBaseNivel1.SuspendLayout();
+            tabPage2.SuspendLayout();
             tlpBajoNivel2.SuspendLayout();
             tabControl1.SuspendLayout();
-            tabPage4.SuspendLayout();
             tabPage3.SuspendLayout();
             tlpBajoNivel3.SuspendLayout();
+            tabPage4.SuspendLayout();
             tlpBajoNivel3Pagina2.SuspendLayout();
             SuspendLayout();
             // 
@@ -473,13 +473,29 @@
             pnlInfoInicial.Size = new Size(1610, 872);
             pnlInfoInicial.TabIndex = 24;
             // 
+            // tlpBaseNivel1
+            // 
+            tlpBaseNivel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tlpBaseNivel1.BackColor = SystemColors.ButtonFace;
+            tlpBaseNivel1.ColumnCount = 1;
+            tlpBaseNivel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tlpBaseNivel1.Controls.Add(tlpArribaNivel2, 0, 0);
+            tlpBaseNivel1.Controls.Add(tlpBajoNivel2, 0, 1);
+            tlpBaseNivel1.Location = new Point(0, 0);
+            tlpBaseNivel1.Name = "tlpBaseNivel1";
+            tlpBaseNivel1.RowCount = 2;
+            tlpBaseNivel1.RowStyles.Add(new RowStyle(SizeType.Percent, 42.66055F));
+            tlpBaseNivel1.RowStyles.Add(new RowStyle(SizeType.Percent, 57.33945F));
+            tlpBaseNivel1.Size = new Size(1610, 872);
+            tlpBaseNivel1.TabIndex = 24;
+            // 
             // tlpArribaNivel2
             // 
+            tlpArribaNivel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tlpArribaNivel2.BackColor = SystemColors.ButtonFace;
             tlpArribaNivel2.ColumnCount = 1;
             tlpArribaNivel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tlpArribaNivel2.Controls.Add(tabControlGraficoArriba, 0, 0);
-            tlpArribaNivel2.Dock = DockStyle.Fill;
             tlpArribaNivel2.ForeColor = SystemColors.ButtonShadow;
             tlpArribaNivel2.Location = new Point(3, 3);
             tlpArribaNivel2.Name = "tlpArribaNivel2";
@@ -491,35 +507,15 @@
             // 
             // tabControlGraficoArriba
             // 
+            tabControlGraficoArriba.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControlGraficoArriba.Controls.Add(tabPage1);
             tabControlGraficoArriba.Controls.Add(tabPage2);
-            tabControlGraficoArriba.Dock = DockStyle.Fill;
             tabControlGraficoArriba.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             tabControlGraficoArriba.Location = new Point(3, 3);
             tabControlGraficoArriba.Name = "tabControlGraficoArriba";
             tabControlGraficoArriba.SelectedIndex = 0;
             tabControlGraficoArriba.Size = new Size(1598, 360);
             tabControlGraficoArriba.TabIndex = 0;
-            // 
-            // tabPage2
-            // 
-            tabPage2.Controls.Add(formsPlot2);
-            tabPage2.Location = new Point(4, 26);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1590, 330);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Ultimas 50 Cajas";
-            tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // formsPlot2
-            // 
-            formsPlot2.DisplayScale = 1F;
-            formsPlot2.Dock = DockStyle.Fill;
-            formsPlot2.Location = new Point(3, 3);
-            formsPlot2.Name = "formsPlot2";
-            formsPlot2.Size = new Size(1584, 324);
-            formsPlot2.TabIndex = 0;
             // 
             // tabPage1
             // 
@@ -541,21 +537,25 @@
             formsPlot1.Size = new Size(1584, 324);
             formsPlot1.TabIndex = 0;
             // 
-            // tlpBaseNivel1
+            // tabPage2
             // 
-            tlpBaseNivel1.BackColor = SystemColors.ButtonFace;
-            tlpBaseNivel1.ColumnCount = 1;
-            tlpBaseNivel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tlpBaseNivel1.Controls.Add(tlpArribaNivel2, 0, 0);
-            tlpBaseNivel1.Controls.Add(tlpBajoNivel2, 0, 1);
-            tlpBaseNivel1.Dock = DockStyle.Top;
-            tlpBaseNivel1.Location = new Point(0, 0);
-            tlpBaseNivel1.Name = "tlpBaseNivel1";
-            tlpBaseNivel1.RowCount = 2;
-            tlpBaseNivel1.RowStyles.Add(new RowStyle(SizeType.Percent, 42.66055F));
-            tlpBaseNivel1.RowStyles.Add(new RowStyle(SizeType.Percent, 57.33945F));
-            tlpBaseNivel1.Size = new Size(1610, 872);
-            tlpBaseNivel1.TabIndex = 24;
+            tabPage2.Controls.Add(formsPlot2);
+            tabPage2.Location = new Point(4, 26);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(1590, 330);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Ultimas 50 Cajas";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // formsPlot2
+            // 
+            formsPlot2.DisplayScale = 1F;
+            formsPlot2.Dock = DockStyle.Fill;
+            formsPlot2.Location = new Point(3, 3);
+            formsPlot2.Name = "formsPlot2";
+            formsPlot2.Size = new Size(1584, 324);
+            formsPlot2.TabIndex = 0;
             // 
             // tlpBajoNivel2
             // 
@@ -584,18 +584,6 @@
             tabControl1.Size = new Size(1598, 488);
             tabControl1.TabIndex = 0;
             // 
-            // tabPage4
-            // 
-            tabPage4.Controls.Add(tlpBajoNivel3Pagina2);
-            tabPage4.Font = new Font("Microsoft Sans Serif", 15.75F);
-            tabPage4.Location = new Point(4, 26);
-            tabPage4.Name = "tabPage4";
-            tabPage4.Padding = new Padding(3);
-            tabPage4.Size = new Size(1590, 458);
-            tabPage4.TabIndex = 1;
-            tabPage4.Text = "Por Mes";
-            tabPage4.UseVisualStyleBackColor = true;
-            // 
             // tabPage3
             // 
             tabPage3.Controls.Add(tlpBajoNivel3);
@@ -607,15 +595,6 @@
             tabPage3.TabIndex = 0;
             tabPage3.Text = "Por Dia";
             tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // formsPlot4
-            // 
-            formsPlot4.DisplayScale = 1F;
-            formsPlot4.Dock = DockStyle.Fill;
-            formsPlot4.Location = new Point(795, 3);
-            formsPlot4.Name = "formsPlot4";
-            formsPlot4.Size = new Size(786, 446);
-            formsPlot4.TabIndex = 2;
             // 
             // tlpBajoNivel3
             // 
@@ -633,24 +612,52 @@
             tlpBajoNivel3.Size = new Size(1584, 452);
             tlpBajoNivel3.TabIndex = 0;
             // 
+            // formsPlot4
+            // 
+            formsPlot4.DisplayScale = 1F;
+            formsPlot4.Dock = DockStyle.Fill;
+            formsPlot4.Location = new Point(795, 3);
+            formsPlot4.Name = "formsPlot4";
+            formsPlot4.Size = new Size(786, 446);
+            formsPlot4.TabIndex = 2;
+            // 
             // formsPlot3
             // 
+            formsPlot3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             formsPlot3.BackColor = SystemColors.ButtonFace;
             formsPlot3.DisplayScale = 1F;
-            formsPlot3.Dock = DockStyle.Fill;
             formsPlot3.Location = new Point(3, 3);
             formsPlot3.Name = "formsPlot3";
             formsPlot3.Size = new Size(786, 446);
             formsPlot3.TabIndex = 1;
             // 
-            // formsPlot5
+            // tabPage4
             // 
-            formsPlot5.DisplayScale = 1F;
-            formsPlot5.Dock = DockStyle.Fill;
-            formsPlot5.Location = new Point(3, 3);
-            formsPlot5.Name = "formsPlot5";
-            formsPlot5.Size = new Size(786, 446);
-            formsPlot5.TabIndex = 2;
+            tabPage4.Controls.Add(tlpBajoNivel3Pagina2);
+            tabPage4.Font = new Font("Microsoft Sans Serif", 15.75F);
+            tabPage4.Location = new Point(4, 26);
+            tabPage4.Name = "tabPage4";
+            tabPage4.Padding = new Padding(3);
+            tabPage4.Size = new Size(1590, 458);
+            tabPage4.TabIndex = 1;
+            tabPage4.Text = "Por Mes";
+            tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // tlpBajoNivel3Pagina2
+            // 
+            tlpBajoNivel3Pagina2.BackColor = Color.IndianRed;
+            tlpBajoNivel3Pagina2.ColumnCount = 2;
+            tlpBajoNivel3Pagina2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tlpBajoNivel3Pagina2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tlpBajoNivel3Pagina2.Controls.Add(formsPlot6, 1, 0);
+            tlpBajoNivel3Pagina2.Controls.Add(formsPlot5, 0, 0);
+            tlpBajoNivel3Pagina2.Location = new Point(3, 3);
+            tlpBajoNivel3Pagina2.Name = "tlpBajoNivel3Pagina2";
+            tlpBajoNivel3Pagina2.RowCount = 1;
+            tlpBajoNivel3Pagina2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpBajoNivel3Pagina2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tlpBajoNivel3Pagina2.Size = new Size(1584, 452);
+            tlpBajoNivel3Pagina2.TabIndex = 0;
             // 
             // formsPlot6
             // 
@@ -661,22 +668,14 @@
             formsPlot6.Size = new Size(786, 446);
             formsPlot6.TabIndex = 3;
             // 
-            // tlpBajoNivel3Pagina2
+            // formsPlot5
             // 
-            tlpBajoNivel3Pagina2.BackColor = Color.IndianRed;
-            tlpBajoNivel3Pagina2.ColumnCount = 2;
-            tlpBajoNivel3Pagina2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tlpBajoNivel3Pagina2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tlpBajoNivel3Pagina2.Controls.Add(formsPlot6, 1, 0);
-            tlpBajoNivel3Pagina2.Controls.Add(formsPlot5, 0, 0);
-            tlpBajoNivel3Pagina2.Dock = DockStyle.Fill;
-            tlpBajoNivel3Pagina2.Location = new Point(3, 3);
-            tlpBajoNivel3Pagina2.Name = "tlpBajoNivel3Pagina2";
-            tlpBajoNivel3Pagina2.RowCount = 1;
-            tlpBajoNivel3Pagina2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpBajoNivel3Pagina2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tlpBajoNivel3Pagina2.Size = new Size(1584, 452);
-            tlpBajoNivel3Pagina2.TabIndex = 0;
+            formsPlot5.DisplayScale = 1F;
+            formsPlot5.Dock = DockStyle.Fill;
+            formsPlot5.Location = new Point(3, 3);
+            formsPlot5.Name = "formsPlot5";
+            formsPlot5.Size = new Size(786, 446);
+            formsPlot5.TabIndex = 2;
             // 
             // FAdministracion
             // 
@@ -701,16 +700,16 @@
             tlpFiltradoBotones.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
             pnlInfoInicial.ResumeLayout(false);
+            tlpBaseNivel1.ResumeLayout(false);
             tlpArribaNivel2.ResumeLayout(false);
             tabControlGraficoArriba.ResumeLayout(false);
-            tabPage2.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
-            tlpBaseNivel1.ResumeLayout(false);
+            tabPage2.ResumeLayout(false);
             tlpBajoNivel2.ResumeLayout(false);
             tabControl1.ResumeLayout(false);
-            tabPage4.ResumeLayout(false);
             tabPage3.ResumeLayout(false);
             tlpBajoNivel3.ResumeLayout(false);
+            tabPage4.ResumeLayout(false);
             tlpBajoNivel3Pagina2.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
