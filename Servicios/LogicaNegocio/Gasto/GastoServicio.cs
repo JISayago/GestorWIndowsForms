@@ -42,7 +42,7 @@ namespace Servicios.LogicaNegocio.Gasto
                 };
             }
 
-            gasto.EstadoGasto = 3; // ANULADO
+            gasto.EstadoGasto = (int)EstadoGasto.Anulado;
 
             context.SaveChanges();
 
