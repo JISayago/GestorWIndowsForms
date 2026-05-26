@@ -15,7 +15,7 @@ public class PdfGenerator : IPdfGenerator
     
     public string GenerarVenta(Venta venta)
     {
-        var ruta = ObtenerRutaPdf("Ventas", "Realizadas", venta.NumeroVenta.ToString());
+        var ruta = ObtenerRutaPdf("Ventas", "Ventas Realizadas", venta.NumeroVenta.ToString());
 
         var doc = CrearDocumentoBase($"Factura {venta.NumeroVenta}");
         var section = doc.AddSection();
@@ -39,7 +39,7 @@ public class PdfGenerator : IPdfGenerator
 
     public string GenerarVentaLibre(VentaLibre venta)
     {
-        var ruta = ObtenerRutaPdf("VentasLibres","Todas", venta.NumeroVenta.ToString());
+        var ruta = ObtenerRutaPdf("Ventas Libres","Todas", venta.NumeroVenta.ToString());
 
         var doc = CrearDocumentoBase($"Venta Libre {venta.NumeroVenta}");
         var section = doc.AddSection();
@@ -61,7 +61,7 @@ public class PdfGenerator : IPdfGenerator
 
     public string GenerarGasto(Gasto gasto)
     {
-        var ruta = ObtenerRutaPdf("Gastos", "Realizados", gasto.NumeroGasto);
+        var ruta = ObtenerRutaPdf("Gastos", "Gastos Realizados", gasto.NumeroGasto);
 
         var doc = CrearDocumentoBase($"Gasto {gasto.NumeroGasto}");
         var section = doc.AddSection();
@@ -83,7 +83,7 @@ public class PdfGenerator : IPdfGenerator
 
     public string GenerarGastoAnulado(Gasto gasto)
     {
-        var ruta = ObtenerRutaPdf("Gastos", "Anulados", gasto.NumeroGasto);
+        var ruta = ObtenerRutaPdf("Gastos", "Gastos Anulados", gasto.NumeroGasto);
 
         var doc = CrearDocumentoBase($"Gasto Anulado {gasto.NumeroGasto}");
         var section = doc.AddSection();
@@ -119,7 +119,7 @@ public class PdfGenerator : IPdfGenerator
 
     public string GenerarCancelacionVenta(Venta venta)
     {
-        var ruta = ObtenerRutaPdf("Ventas", "Cancelaciones", venta.NumeroVenta.ToString());
+        var ruta = ObtenerRutaPdf("Ventas", "Ventas Canceladas", venta.NumeroVenta.ToString());
 
         var doc = CrearDocumentoBase($"Cancelación {venta.NumeroVenta}");
         var section = doc.AddSection();
