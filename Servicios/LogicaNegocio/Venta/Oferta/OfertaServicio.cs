@@ -306,109 +306,171 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         public ResultadoPaginacion<OfertaDTO> ObtenerOfertas(FiltroConsulta filtros, bool vieneDeVenta)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.OfertasDescuentos
                 .AsNoTracking()
                 .Include(o => o.Productos)
+                .Include(o => o.Marca)
+                .Include(o => o.Rubro)
+                .Include(o => o.Categoria)
                 .AsQueryable();
 
-            // 🔹 SOLO PRODUCTOS (venta)
+            // 🔹 SOLO OFERTAS APLICABLES A VENTA
             if (vieneDeVenta)
+            {
                 query = query.Where(o => !o.esOfertaPorGrupo);
+            }
 
-            // 🔴 ACTIVAS / INACTIVAS
-            //query = filtros.VerEliminados
-            //    ? query.Where(o => !o.EstaActiva)
-            //    : query.Where(o => o.EstaActiva);
+            // 🔴 BOOL1 = VER INACTIVAS
+            if (filtros.Bool1)
+                query = query.Where(o => !o.EstaActiva);
+            else
+                query = query.Where(o => o.EstaActiva);
 
             // 🔍 BUSQUEDA
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                var texto = filtros.TextoBuscar.ToLower();
+                var texto = filtros.TextoBuscar.Trim();
 
-                switch (filtros.Extra?.ToString())
+                switch (filtros.Filtro1?.ToString())
                 {
                     case "Codigo":
-                        query = query.Where(o => o.Codigo.ToLower().Contains(texto));
+                        query = query.Where(o =>
+                            o.Codigo != null &&
+                            EF.Functions.Collate(o.Codigo, collation)
+                                .Contains(texto));
                         break;
 
                     case "Descripcion":
-                        query = query.Where(o => o.Descripcion.ToLower().Contains(texto));
+                        query = query.Where(o =>
+                            o.Descripcion != null &&
+                            EF.Functions.Collate(o.Descripcion, collation)
+                                .Contains(texto));
                         break;
 
                     case "Detalle":
-                        query = query.Where(o => o.Detalle.ToLower().Contains(texto));
+                        query = query.Where(o =>
+                            o.Detalle != null &&
+                            EF.Functions.Collate(o.Detalle, collation)
+                                .Contains(texto));
                         break;
 
                     case "GrupoNombre":
-                        query = query.Where(o => o.GrupoNombre.ToLower().Contains(texto));
+                        query = query.Where(o =>
+                            o.GrupoNombre != null &&
+                            EF.Functions.Collate(o.GrupoNombre, collation)
+                                .Contains(texto));
                         break;
 
                     case "NombreMarca":
-                        query = query.Where(o => o.Marca.Nombre.ToLower().Contains(texto));
+                        query = query.Where(o =>
+                            o.Marca != null &&
+                            o.Marca.Nombre != null &&
+                            EF.Functions.Collate(o.Marca.Nombre, collation)
+                                .Contains(texto));
                         break;
 
                     case "NombreRubro":
-                        query = query.Where(o => o.Rubro.Nombre.ToLower().Contains(texto));
+                        query = query.Where(o =>
+                            o.Rubro != null &&
+                            o.Rubro.Nombre != null &&
+                            EF.Functions.Collate(o.Rubro.Nombre, collation)
+                                .Contains(texto));
                         break;
 
                     case "NombreCategoria":
-                        query = query.Where(o => o.Categoria.Nombre.ToLower().Contains(texto));
+                        query = query.Where(o =>
+                            o.Categoria != null &&
+                            o.Categoria.Nombre != null &&
+                            EF.Functions.Collate(o.Categoria.Nombre, collation)
+                                .Contains(texto));
                         break;
 
-                    default: // TODOS
+                    default:
                         query = query.Where(o =>
-                            o.Codigo.ToLower().Contains(texto) ||
-                            o.Descripcion.ToLower().Contains(texto) ||
-                            o.Detalle.ToLower().Contains(texto));
+                            (o.Codigo != null &&
+                             EF.Functions.Collate(o.Codigo, collation).Contains(texto))
+                            ||
+                            (o.Descripcion != null &&
+                             EF.Functions.Collate(o.Descripcion, collation).Contains(texto))
+                            ||
+                            (o.Detalle != null &&
+                             EF.Functions.Collate(o.Detalle, collation).Contains(texto)));
                         break;
                 }
             }
 
-            // 📅 + 🔴 TIPOS (Extra2)
-            var tipo = filtros.Extra2?.ToString();
+            // 🔴 FILTRO ESTADO / TIPO
+            var filtroEstado = filtros.Filtro2?.ToString();
 
-            // 📅 FECHAS
-            if (tipo == ((int)TipoFiltroFechaOferta.FechaInicio).ToString())
+            if (!string.IsNullOrWhiteSpace(filtroEstado))
             {
-                if (filtros.FechaDesde.HasValue)
-                    query = query.Where(o => o.FechaInicio >= filtros.FechaDesde.Value);
+                if (filtroEstado == ((int)TipoFiltroOferta.Activas).ToString())
+                    query = query.Where(o => o.EstaActiva);
 
-                if (filtros.FechaHasta.HasValue)
-                    query = query.Where(o => o.FechaInicio <= filtros.FechaHasta.Value);
+                if (filtroEstado == ((int)TipoFiltroOferta.Inactivas).ToString())
+                    query = query.Where(o => !o.EstaActiva);
+
+                if (filtroEstado == ((int)TipoFiltroOferta.EsUnSoloProducto).ToString())
+                    query = query.Where(o => o.EsUnSoloProducto);
+
+                if (filtroEstado == ((int)TipoFiltroOferta.EsCombo).ToString())
+                    query = query.Where(o =>
+                        !o.EsUnSoloProducto &&
+                        !o.esOfertaPorGrupo);
+
+                if (filtroEstado == ((int)TipoFiltroOferta.EsGrupo).ToString())
+                    query = query.Where(o => o.esOfertaPorGrupo);
             }
 
-            if (tipo == ((int)TipoFiltroFechaOferta.FechaFin).ToString())
+            // 📅 FILTRO FECHAS
+            var filtroFecha = filtros.Filtro3?.ToString();
+
+            if (!string.IsNullOrWhiteSpace(filtroFecha))
             {
-                if (filtros.FechaDesde.HasValue)
-                    query = query.Where(o => o.FechaFin >= filtros.FechaDesde.Value);
+                if (filtroFecha == ((int)TipoFiltroFechaOferta.FechaInicio).ToString())
+                {
+                    if (filtros.FechaDesde.HasValue)
+                    {
+                        query = query.Where(o =>
+                            o.FechaInicio >= filtros.FechaDesde.Value);
+                    }
 
-                if (filtros.FechaHasta.HasValue)
-                    query = query.Where(o => o.FechaFin <= filtros.FechaHasta.Value);
+                    if (filtros.FechaHasta.HasValue)
+                    {
+                        var hasta = filtros.FechaHasta.Value.Date.AddDays(1);
+
+                        query = query.Where(o =>
+                            o.FechaInicio < hasta);
+                    }
+                }
+
+                if (filtroFecha == ((int)TipoFiltroFechaOferta.FechaFin).ToString())
+                {
+                    if (filtros.FechaDesde.HasValue)
+                    {
+                        query = query.Where(o =>
+                            o.FechaFin >= filtros.FechaDesde.Value);
+                    }
+
+                    if (filtros.FechaHasta.HasValue)
+                    {
+                        var hasta = filtros.FechaHasta.Value.Date.AddDays(1);
+
+                        query = query.Where(o =>
+                            o.FechaFin < hasta);
+                    }
+                }
             }
-
-            // 🔴 TIPOS DE OFERTA
-            if (tipo == ((int)TipoFiltroOferta.Activas).ToString())
-                query = query.Where(o => o.EstaActiva);
-
-            if (tipo == ((int)TipoFiltroOferta.Inactivas).ToString())
-                query = query.Where(o => !o.EstaActiva);
-
-            if (tipo == ((int)TipoFiltroOferta.EsUnSoloProducto).ToString())
-                query = query.Where(o => o.EsUnSoloProducto);
-
-            if (tipo == ((int)TipoFiltroOferta.EsCombo).ToString())
-                query = query.Where(o => !o.EsUnSoloProducto && !o.esOfertaPorGrupo);
-
-            if (tipo == ((int)TipoFiltroOferta.EsGrupo).ToString())
-                query = query.Where(o => o.esOfertaPorGrupo);
 
             // 📊 TOTAL
             var total = query.Count();
 
-            // 🔴 CONTROL PAGINACION
+            // 🔴 PAGINACION SEGURA
             var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
-            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
 
             if (filtros.Page > totalPaginas)
                 filtros.Page = totalPaginas;
@@ -416,11 +478,11 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
             if (filtros.Page < 1)
                 filtros.Page = 1;
 
-            // 📦 ORDEN INTELIGENTE
-            if (tipo == ((int)TipoFiltroFechaOferta.FechaFin).ToString())
-                query = query.OrderBy(o => o.FechaFin); // vence primero
+            // 🔹 ORDEN
+            if (filtroFecha == ((int)TipoFiltroFechaOferta.FechaFin).ToString())
+                query = query.OrderBy(o => o.FechaFin);
             else
-                query = query.OrderByDescending(o => o.FechaInicio); // más nuevas primero
+                query = query.OrderByDescending(o => o.FechaInicio);
 
             // 📦 DATA
             var data = query
@@ -444,9 +506,11 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                     esOfertaPorGrupo = x.esOfertaPorGrupo,
                     TieneLimiteDeStock = x.TieneLimiteDeStock,
                     CantidadLimiteDeStock = x.CantidadLimiteDeStock,
+
                     IdMarca = x.IdMarca,
                     IdRubro = x.IdRubro,
                     IdCategoria = x.IdCategoria,
+
                     GrupoNombre = x.GrupoNombre,
 
                     Productos = x.Productos
@@ -454,7 +518,8 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                         {
                             ProductoId = p.ProductoId,
                             PrecioVenta = p.PrecioOrginal
-                        }).ToList()
+                        })
+                        .ToList()
                 })
                 .ToList();
 
@@ -466,7 +531,6 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 PageSize = filtros.PageSize
             };
         }
-
         public List<OfertaDTO> ObtenerOfertasActivasCompuestas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);

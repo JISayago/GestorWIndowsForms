@@ -1,6 +1,7 @@
 ﻿using AccesoDatos.Entidades;
 using Azure;
 using Servicios.Helpers.OpcionesPagos;
+using Servicios.Helpers.VentaEnum;
 using Servicios.LogicaNegocio.Venta.TipoPago.DTO;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,22 @@ namespace Servicios.LogicaNegocio.Venta.DTO
         public decimal Total { get; set; }
         public decimal TotalSinDescuento { get; set; }
         public decimal Descuento { get; set; }
+
+        public string ClienteNombreCompleto { get; set; }
         public int Estado { get; set; }
+        public string EstadoDescripcion
+        {
+            get
+            {
+                return Estado switch
+                {
+                    (int)EstadoVenta.Confirmada => "Confirmada",
+                    (int)EstadoVenta.Cancelada => "Venta Cancelada",
+                    (int)EstadoVenta.CancelacionVenta => "Cancelación Venta",
+                    _ => "Desconocido"
+                };
+            }
+        }
         public string Detalle { get; set; }
         public List<ItemVentaDTO> Items { get; set; }
         public List<FormaPago> TiposDePagoSeleccionado { get; set; }

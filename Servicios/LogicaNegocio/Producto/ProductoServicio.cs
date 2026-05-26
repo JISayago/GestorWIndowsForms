@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Servicios.LogicaNegocio.Producto
@@ -131,7 +132,7 @@ namespace Servicios.LogicaNegocio.Producto
                     
                 }
             }
-            
+            ModificarEstadoStockProductos();
             return detallesLotesUsados;
         }
      
@@ -162,6 +163,8 @@ namespace Servicios.LogicaNegocio.Producto
             producto.Stock -= item.Cantidad;
 
             context.Productos.Update(producto);
+
+            ModificarEstadoStockProductos();
 
             return detallesLotesUsados;
         }
@@ -195,6 +198,8 @@ namespace Servicios.LogicaNegocio.Producto
 
                 context.Productos.Update(producto);
             }
+
+            ModificarEstadoStockProductos();
         }
         public void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context, long ventdaId)
         {
@@ -213,7 +218,10 @@ namespace Servicios.LogicaNegocio.Producto
                     RestaurarStockProducto(item, context, ventdaId);
                 }
             }
+
+            ModificarEstadoStockProductos();
         }
+
         private void RestaurarStockProducto(ItemVentaDTO item, GestorContextDB context, long ventaId)
         {
             var producto = context.Productos
@@ -246,6 +254,8 @@ namespace Servicios.LogicaNegocio.Producto
             producto.Stock += item.Cantidad;
 
             context.Productos.Update(producto);
+
+            ModificarEstadoStockProductos();
         }
 
         /* private void DescontarStockOferta(ItemVentaDTO item, GestorContextDB context)
@@ -344,6 +354,8 @@ namespace Servicios.LogicaNegocio.Producto
 
         public EstadoOperacion Modificar(ProductoDTO productoDto, long? productoId)
         {
+            bool? controlPorLoteActivadoDescativado = null;
+
             var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var productoEditar = context.Productos
@@ -362,7 +374,31 @@ namespace Servicios.LogicaNegocio.Producto
 
             //bool productoDuplicado ??
 
-            productoEditar.Stock = productoDto.Stock;
+            productoEditar.Stock = productoDto.Stock;            
+
+            //Verificamos si se intenta desactivar el control por lote y el producto tiene lotes asociados, en ese caso no permitimos la modificación
+            if (productoEditar.ControlPorLote && !productoDto.ControlPorLote)
+            {
+                var tieneLotes = context.Lotes.Any(l => l.IdProducto == productoEditar.ProductoId && l.EstaActivo);
+                if (tieneLotes)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "No se puede desactivar el control por lote porque el producto tiene lotes asociados, deshabilite los lotes asociados al producto."
+                    };
+                }
+
+                productoEditar.Stock = 0; //llevamos a 0 el stock del producto
+            }
+
+            //Verificamos si se intenta activar el control por lote 
+            if (!productoEditar.ControlPorLote && productoDto.ControlPorLote)
+            {
+                productoEditar.Stock = 0; //llevamos a 0 el stock del producto
+            }
+
+
             productoEditar.ControlPorLote = productoDto.ControlPorLote;
             productoEditar.TieneVencimiento = productoDto.TieneVencimiento;
             productoEditar.PrecioCosto = productoDto.PrecioCosto;
@@ -389,6 +425,8 @@ namespace Servicios.LogicaNegocio.Producto
             };
 
             context.SaveChanges();
+
+            ModificarEstadoStockProductos();
 
             return new EstadoOperacion
             {
@@ -440,7 +478,7 @@ namespace Servicios.LogicaNegocio.Producto
         public ResultadoPaginacion<ProductoDTO> ObtenerProductos(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.Productos
                 .AsNoTracking()
                 .Include(e => e.Marca)
@@ -448,51 +486,124 @@ namespace Servicios.LogicaNegocio.Producto
                 .Include(e => e.CategoriasProductos)
                 .AsQueryable();
 
-            // 🔹 Eliminados
-            query = filtros.VerEliminados
-                ? query.Where(e => e.EstaEliminado)
-                : query.Where(e => !e.EstaEliminado);
+            // 🔹 ELIMINADOS
+            // TODOS
+            if (filtros.Bool2)
+            {
+                // no filtra nada
+            }
+            // SOLO ELIMINADOS
+            else if (filtros.Bool1)
+            {
+                query = query.Where(e => e.EstaEliminado);
+            }
+            // SOLO ACTIVOS / NO ELIMINADOS
+            else
+            {
+                query = query.Where(e => !e.EstaEliminado);
+            }
 
-            // 🔹 Buscador
+            // 🔹 BUSQUEDA TEXTO
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                switch (filtros.Extra?.ToString())
+                var texto = filtros.TextoBuscar.Trim();
+
+                switch (filtros.Filtro1?.ToString())
                 {
                     case "MarcaNombre":
-                        query = query.Where(e => e.Marca.Nombre.Contains(filtros.TextoBuscar));
+
+                        query = query.Where(e =>
+                            e.Marca != null &&
+                            EF.Functions.Collate(e.Marca.Nombre, collation)
+                                .Contains(texto));
+
                         break;
 
                     case "RubroNombre":
-                        query = query.Where(e => e.Rubro.Nombre.Contains(filtros.TextoBuscar));
+
+                        query = query.Where(e =>
+                            e.Rubro != null &&
+                            EF.Functions.Collate(e.Rubro.Nombre, collation)
+                                .Contains(texto));
+
                         break;
 
                     case "Codigo":
-                        query = query.Where(e => e.Codigo.Contains(filtros.TextoBuscar));
+
+                        query = query.Where(e =>
+                            EF.Functions.Collate(e.Codigo, collation)
+                                .Contains(texto));
+
                         break;
 
                     case "CodigoBarra":
-                        query = query.Where(e => e.CodigoBarra.Contains(filtros.TextoBuscar));
+
+                        query = query.Where(e =>
+                            EF.Functions.Collate(e.CodigoBarra, collation)
+                                .Contains(texto));
+
+                        break;
+
+                    case "Descripcion":
+
+                        query = query.Where(e =>
+                            EF.Functions.Collate(e.Descripcion, collation)
+                                .Contains(texto));
+
                         break;
 
                     default:
-                        query = query.Where(e => e.Descripcion.Contains(filtros.TextoBuscar));
+
+                        query = query.Where(e =>
+                            EF.Functions.Collate(e.Descripcion, collation).Contains(texto) ||
+
+                            (e.Marca != null &&
+                             EF.Functions.Collate(e.Marca.Nombre, collation).Contains(texto)) ||
+
+                            (e.Rubro != null &&
+                             EF.Functions.Collate(e.Rubro.Nombre, collation).Contains(texto)) ||
+
+                            EF.Functions.Collate(e.Codigo, collation).Contains(texto) ||
+
+                            EF.Functions.Collate(e.CodigoBarra, collation).Contains(texto));
+
                         break;
                 }
             }
 
-            if (!string.IsNullOrEmpty(filtros.Extra2?.ToString()))
+            // 🔹 FILTRO ESTADO
+            if (!filtros.Bool1 && !filtros.Bool2)
             {
-                if (int.TryParse(filtros.Extra2.ToString(), out int estado))
+                if (string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
                 {
-                    query = query.Where(e => e.Estado == estado);
+                    query = query.Where(e => e.Estado == (int)EstadoProducto.Activo || e.Estado == (int)EstadoProducto.SinStock || e.Estado == (int)EstadoProducto.Vencido);
+                }
+                else
+                {
+                    if (int.TryParse(filtros.Filtro2.ToString(), out int estado))
+                    {
+                        query = query.Where(e => e.Estado == estado);
+                    }
                 }
             }
 
+            // 🔹 FILTRO MARCA
+            if (!string.IsNullOrWhiteSpace(filtros.Filtro3?.ToString()))
+            {
+                if (long.TryParse(filtros.Filtro3.ToString(), out long marcaId))
+                {
+                    query = query.Where(e => e.IdMarca == marcaId);
+                }
+            }
+
+            // 🔹 TOTAL
             var total = query.Count();
 
+            // 🔹 PAGINACION SEGURA
             var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
 
-            if (totalPaginas == 0) totalPaginas = 1;
+            if (totalPaginas == 0)
+                totalPaginas = 1;
 
             if (filtros.Page > totalPaginas)
                 filtros.Page = totalPaginas;
@@ -501,32 +612,59 @@ namespace Servicios.LogicaNegocio.Producto
                 filtros.Page = 1;
 
             // 🔹 ORDEN
-            query = query.OrderBy(e => e.ProductoId);
+             query = query
+            .OrderBy(e =>
+                e.Estado == (int)EstadoProducto.Activo ? 0 :
+                e.Estado == (int)EstadoProducto.SinStock ? 1 :
+                e.Estado == (int)EstadoProducto.Vencido ? 2 :
+                3)
+            .ThenBy(e => e.Descripcion);
 
-            // 🔹 PAGINADO
+            // 🔹 DATA
             var data = query
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)
                 .Select(e => new ProductoDTO
                 {
                     ProductoId = e.ProductoId,
+
                     IdMarca = e.IdMarca,
                     IdRubro = e.IdRubro,
-                    MarcaNombre = e.Marca.Nombre,
-                    RubroNombre = e.Rubro.Nombre,
+
+                    MarcaNombre = e.Marca != null
+                        ? e.Marca.Nombre
+                        : string.Empty,
+
+                    RubroNombre = e.Rubro != null
+                        ? e.Rubro.Nombre
+                        : string.Empty,
+
                     Stock = e.Stock,
+
                     ControlPorLote = e.ControlPorLote,
+
                     PrecioCosto = e.PrecioCosto,
+
                     PrecioVenta = e.PrecioVenta,
+
                     Descripcion = e.Descripcion,
+
                     EstaEliminado = e.EstaEliminado,
+
                     Estado = e.Estado,
+
                     Medida = e.Medida,
+
                     UnidadMedida = e.UnidadMedida,
+
                     Codigo = e.Codigo,
+
                     CodigoBarra = e.CodigoBarra,
+
                     IvaIncluidoPrecioFinal = e.IvaIncluidoPrecioFinal,
+
                     EsFraccionable = e.EsFraccionable,
+
                     CategoriaIds = e.CategoriasProductos
                         .Select(cp => cp.IdCategoria)
                         .ToList()
@@ -537,7 +675,7 @@ namespace Servicios.LogicaNegocio.Producto
             {
                 Items = data,
                 TotalRegistros = total,
-                Page = filtros.Page, // 🔴 importante devolver la corregida
+                Page = filtros.Page,
                 PageSize = filtros.PageSize
             };
         }
@@ -657,6 +795,8 @@ namespace Servicios.LogicaNegocio.Producto
 
             context.SaveChanges();
 
+            ModificarEstadoStockProductos();
+
             // registrar movimiento
 
             return new EstadoOperacion
@@ -667,6 +807,34 @@ namespace Servicios.LogicaNegocio.Producto
                     : "Stock descontado correctamente.",
                 EntidadId = producto.ProductoId
             };
+        }
+
+        public void ModificarEstadoStockProductos()
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            // Traemos los productos activos o sin stock que no estén eliminados
+            var productos = context.Productos
+                .Where(p => !p.EstaEliminado &&
+                           (p.Estado == (int)EstadoProducto.Activo || p.Estado == (int)EstadoProducto.SinStock))
+                .ToList();
+
+            foreach (var p in productos)
+            {
+                // CASO A: Tiene stock pero figura como "Sin Stock" -> Corregir a Activo
+                if (p.Stock > 0 && p.Estado == (int)EstadoProducto.SinStock)
+                {
+                    p.Estado = (int)EstadoProducto.Activo;
+                }
+
+                // CASO B: No tiene stock pero figura como "Activo" -> Corregir a Sin Stock
+                else if (p.Stock <= 0 && p.Estado == (int)EstadoProducto.Activo)
+                {
+                    p.Estado = (int)EstadoProducto.SinStock;
+                }
+            }
+
+            context.SaveChanges();
         }
     }
 }

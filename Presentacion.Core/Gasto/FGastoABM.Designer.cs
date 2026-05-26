@@ -39,51 +39,52 @@
             btnPagoPendiente = new Button();
             dtpDiaGasto = new DateTimePicker();
             label4 = new Label();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
             // txtCategoriaGasto
             // 
-            txtCategoriaGasto.Location = new Point(149, 35);
+            txtCategoriaGasto.Location = new Point(157, 175);
             txtCategoriaGasto.Name = "txtCategoriaGasto";
             txtCategoriaGasto.Size = new Size(100, 23);
             txtCategoriaGasto.TabIndex = 0;
             // 
             // txtMontoPago
             // 
-            txtMontoPago.Location = new Point(149, 126);
+            txtMontoPago.Location = new Point(157, 128);
             txtMontoPago.Name = "txtMontoPago";
             txtMontoPago.Size = new Size(100, 23);
             txtMontoPago.TabIndex = 1;
             // 
             // txtDetalle
             // 
-            txtDetalle.Location = new Point(149, 81);
+            txtDetalle.Location = new Point(157, 81);
             txtDetalle.Name = "txtDetalle";
-            txtDetalle.Size = new Size(585, 23);
+            txtDetalle.Size = new Size(483, 23);
             txtDetalle.TabIndex = 2;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(55, 38);
+            label1.Location = new Point(53, 178);
             label1.Name = "label1";
-            label1.Size = new Size(88, 15);
+            label1.Size = new Size(90, 15);
             label1.TabIndex = 3;
-            label1.Text = "categoria gasto";
+            label1.Text = "Categoria Gasto";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(55, 89);
+            label2.Location = new Point(48, 89);
             label2.Name = "label2";
-            label2.Size = new Size(93, 15);
+            label2.Size = new Size(95, 15);
             label2.TabIndex = 4;
-            label2.Text = "detalle del gasto";
+            label2.Text = "Detalle del gasto";
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(81, 134);
+            label3.Location = new Point(100, 131);
             label3.Name = "label3";
             label3.Size = new Size(43, 15);
             label3.TabIndex = 5;
@@ -91,9 +92,9 @@
             // 
             // btnRegistrarGasto
             // 
-            btnRegistrarGasto.Location = new Point(109, 253);
+            btnRegistrarGasto.Location = new Point(123, 226);
             btnRegistrarGasto.Name = "btnRegistrarGasto";
-            btnRegistrarGasto.Size = new Size(125, 51);
+            btnRegistrarGasto.Size = new Size(126, 40);
             btnRegistrarGasto.TabIndex = 6;
             btnRegistrarGasto.Text = "Registrar Gasto";
             btnRegistrarGasto.UseVisualStyleBackColor = true;
@@ -101,9 +102,9 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(272, 253);
+            btnCancelar.Location = new Point(288, 226);
             btnCancelar.Name = "btnCancelar";
-            btnCancelar.Size = new Size(125, 51);
+            btnCancelar.Size = new Size(127, 40);
             btnCancelar.TabIndex = 7;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
@@ -111,9 +112,9 @@
             // 
             // btnPagoPendiente
             // 
-            btnPagoPendiente.Location = new Point(439, 253);
+            btnPagoPendiente.Location = new Point(454, 226);
             btnPagoPendiente.Name = "btnPagoPendiente";
-            btnPagoPendiente.Size = new Size(125, 51);
+            btnPagoPendiente.Size = new Size(126, 40);
             btnPagoPendiente.TabIndex = 8;
             btnPagoPendiente.Text = "Pago Pendiente";
             btnPagoPendiente.UseVisualStyleBackColor = true;
@@ -121,7 +122,7 @@
             // 
             // dtpDiaGasto
             // 
-            dtpDiaGasto.Location = new Point(512, 134);
+            dtpDiaGasto.Location = new Point(440, 129);
             dtpDiaGasto.Name = "dtpDiaGasto";
             dtpDiaGasto.Size = new Size(200, 23);
             dtpDiaGasto.TabIndex = 9;
@@ -129,9 +130,9 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(430, 142);
+            label4.Location = new Point(357, 131);
             label4.Name = "label4";
-            label4.Size = new Size(76, 15);
+            label4.Size = new Size(77, 15);
             label4.TabIndex = 10;
             label4.Text = "Dia del Gasto";
             // 
@@ -139,7 +140,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(760, 356);
+            ClientSize = new Size(703, 289);
             Controls.Add(label4);
             Controls.Add(dtpDiaGasto);
             Controls.Add(btnPagoPendiente);
@@ -153,6 +154,18 @@
             Controls.Add(txtCategoriaGasto);
             Name = "FGastoABM";
             Text = "FGastoABM";
+            Controls.SetChildIndex(txtCategoriaGasto, 0);
+            Controls.SetChildIndex(txtMontoPago, 0);
+            Controls.SetChildIndex(txtDetalle, 0);
+            Controls.SetChildIndex(label1, 0);
+            Controls.SetChildIndex(label2, 0);
+            Controls.SetChildIndex(label3, 0);
+            Controls.SetChildIndex(btnRegistrarGasto, 0);
+            Controls.SetChildIndex(btnCancelar, 0);
+            Controls.SetChildIndex(btnPagoPendiente, 0);
+            Controls.SetChildIndex(dtpDiaGasto, 0);
+            Controls.SetChildIndex(label4, 0);
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }

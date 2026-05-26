@@ -43,6 +43,7 @@
             lblSeleccionCantPagos.Name = "lblSeleccionCantPagos";
             lblSeleccionCantPagos.Size = new Size(260, 21);
             lblSeleccionCantPagos.TabIndex = 0;
+            lblSeleccionCantPagos.Tag = "NoModificarConBase";
             lblSeleccionCantPagos.Text = "Seleccionar la cantidad de pagos";
             // 
             // cbx1pago

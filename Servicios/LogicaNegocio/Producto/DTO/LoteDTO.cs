@@ -18,6 +18,26 @@ namespace Servicios.LogicaNegocio.Producto.DTO
         public DateTime FechaAlta { get; set; }
         public DateTime? FechaVencimiento { get; set; }
         public bool EstaVencido { get; set; }
+
+        public string EstaVencidoDescripcion
+        {
+            get
+            {
+                if (!FechaVencimiento.HasValue)
+                    return "Sin fecha de vencimiento";
+                if (EstaVencido)
+                    return "Vencido";
+                var diasRestantes = (FechaVencimiento.Value - DateTime.Now).Days;
+                return $"Vence en {diasRestantes} días";
+            }
+        }
         public bool EstaActivo { get; set; }
+        public string EstaActivoDescripcion
+        {
+            get
+            {
+                return EstaActivo ? "Activo" : "Inactivo";
+            }
+        }
     }
 }

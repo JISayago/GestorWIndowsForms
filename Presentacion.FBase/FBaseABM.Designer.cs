@@ -42,9 +42,10 @@
             // panel1
             // 
             panel1.Controls.Add(BarraSuperiorBotones);
-            panel1.Location = new Point(12, 12);
+            panel1.Dock = DockStyle.Top;
+            panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(760, 53);
+            panel1.Size = new Size(784, 53);
             panel1.TabIndex = 0;
             // 
             // BarraSuperiorBotones
@@ -53,7 +54,7 @@
             BarraSuperiorBotones.Items.AddRange(new ToolStripItem[] { btnEjecutar, btnLimpiar, toolStripSeparator1, btnSalir });
             BarraSuperiorBotones.Location = new Point(0, 0);
             BarraSuperiorBotones.Name = "BarraSuperiorBotones";
-            BarraSuperiorBotones.Size = new Size(760, 25);
+            BarraSuperiorBotones.Size = new Size(784, 25);
             BarraSuperiorBotones.TabIndex = 0;
             BarraSuperiorBotones.Text = "toolStrip1";
             // 
@@ -100,6 +101,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 561);
             Controls.Add(panel1);
+            Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximumSize = new Size(800, 600);
             Name = "FBaseABM";

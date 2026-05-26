@@ -33,7 +33,8 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         // - Integrar la gestión de lotes con el sistema de ventas para asegurar que se descuenten los lotes correctos al realizar una venta.
         // - Implementar validaciones para asegurar que no se puedan crear lotes con fechas de vencimiento pasadas o con stock negativo.
         // - Integrar la gestión de lotes con el sistema de inventario para asegurar que el stock se actualice correctamente al recibir nuevos lotes o al realizar ventas.
-        
+        private readonly ProductoServicio _productoServicio = new ProductoServicio();
+
         public EstadoOperacion CrearLote(LoteDTO loteACrear)
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -78,76 +79,163 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         public ResultadoPaginacion<LoteDTO> ObtenerLotes(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.Lotes
                 .AsNoTracking()
-                .Include(l => l.Producto)
+                .Include(x => x.Producto)
                 .AsQueryable();
 
-            // 🔴 Eliminados
-            query = filtros.VerEliminados
-                ? query.Where(x => x.EstaEliminado)
-                : query.Where(x => !x.EstaEliminado);
+            // 🔴 HISTORICO / ELIMINADOS
+            if (!filtros.Bool2)
+            {
+                query = query.Where(x => !x.EstaEliminado);
+            }
 
             // 🔍 BUSQUEDA
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                var texto = filtros.TextoBuscar;
+                var texto = filtros.TextoBuscar.Trim();
 
-                switch (filtros.Extra?.ToString())
+                switch (filtros.Filtro1?.ToString())
                 {
                     case "Producto":
-                        query = query.Where(x => x.Producto.Descripcion.Contains(texto));
+
+                        query = query.Where(x =>
+                            x.Producto != null &&
+                            x.Producto.Descripcion != null &&
+                            EF.Functions.Collate(x.Producto.Descripcion, collation)
+                                .Contains(texto));
+
                         break;
 
-                    case "Descripcion":
-                        query = query.Where(x => x.Descripcion.Contains(texto));
+                    case "NumeroLote":
+
+                        query = query.Where(x =>
+                            x.NumeroLote != null &&
+                            EF.Functions.Collate(x.NumeroLote, collation)
+                                .Contains(texto));
+
                         break;
 
-                    default: // NumeroLote
-                        query = query.Where(x => x.NumeroLote.Contains(texto));
+                    default:
+
+                        query = query.Where(x =>
+                            (x.NumeroLote != null &&
+                             EF.Functions.Collate(x.NumeroLote, collation).Contains(texto))
+                            ||
+                            (x.Producto != null &&
+                             x.Producto.Descripcion != null &&
+                             EF.Functions.Collate(x.Producto.Descripcion, collation).Contains(texto)));
+
                         break;
                 }
             }
 
-            // 📅 FECHAS (Extra2)
-            TipoFiltroFechaLote? tipoFecha = null;
-
-            if (filtros.Extra2 != null &&
-                int.TryParse(filtros.Extra2.ToString(), out var valor))
+            // 📌 FILTRO ESTADO
+            if (!filtros.Bool2)
             {
-                tipoFecha = (TipoFiltroFechaLote)valor;
+                switch (filtros.Filtro2?.ToString())
+                {
+                    case "Activo":
+
+                        query = query.Where(x =>
+                            x.EstaActivo);
+
+                        break;
+
+                    case "Desactivado":
+
+                        query = query.Where(x =>
+                            !x.EstaActivo);
+
+                        break;
+
+                    case "Vencido":
+
+                        query = query.Where(x =>
+                            x.EstaVencido);
+
+                        break;
+
+                    case "Valido":
+
+                        query = query.Where(x =>
+                            !x.EstaVencido);
+
+                        break;
+
+                    default:
+
+                        // 🔹 DEFAULT
+                        // Solo activos y válidos
+
+                        if (filtros.Bool1)
+                        {
+                            query = query.Where(x =>
+                                x.EstaVencido);
+                        }
+                        else
+                        {
+                            query = query.Where(x =>
+                                x.EstaActivo &&
+                                !x.EstaVencido);
+                        }
+
+                        break;
+                }
             }
 
-            if (tipoFecha.HasValue && tipoFecha != TipoFiltroFechaLote.Ninguno)
-            {
-                if (tipoFecha == TipoFiltroFechaLote.Alta)
-                {
-                    if (filtros.FechaDesde.HasValue)
-                        query = query.Where(x => x.FechaAlta >= filtros.FechaDesde.Value);
+            // 📅 TIPO FECHA
+            var tipoFecha = string.IsNullOrWhiteSpace(filtros.Filtro3?.ToString())
+                ? "Alta"
+                : filtros.Filtro3.ToString();
 
-                    if (filtros.FechaHasta.HasValue)
-                        query = query.Where(x => x.FechaAlta <= filtros.FechaHasta.Value);
+            // 📅 FILTRO FECHAS
+            if (tipoFecha == "Alta")
+            {
+                if (filtros.FechaDesde.HasValue)
+                {
+                    query = query.Where(x =>
+                        x.FechaAlta >= filtros.FechaDesde.Value);
                 }
 
-                if (tipoFecha == TipoFiltroFechaLote.Vencimiento)
+                if (filtros.FechaHasta.HasValue)
                 {
-                    query = query.Where(x => x.FechaVencimiento.HasValue);
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
 
-                    if (filtros.FechaDesde.HasValue)
-                        query = query.Where(x => x.FechaVencimiento.Value >= filtros.FechaDesde.Value);
+                    query = query.Where(x =>
+                        x.FechaAlta < hasta);
+                }
+            }
 
-                    if (filtros.FechaHasta.HasValue)
-                        query = query.Where(x => x.FechaVencimiento.Value <= filtros.FechaHasta.Value);
+            if (tipoFecha == "Vencimiento")
+            {
+                query = query.Where(x =>
+                    x.FechaVencimiento.HasValue);
+
+                if (filtros.FechaDesde.HasValue)
+                {
+                    query = query.Where(x =>
+                        x.FechaVencimiento.Value >= filtros.FechaDesde.Value);
+                }
+
+                if (filtros.FechaHasta.HasValue)
+                {
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
+
+                    query = query.Where(x =>
+                        x.FechaVencimiento.Value < hasta);
                 }
             }
 
             // 📊 TOTAL
             var total = query.Count();
 
-            // 🔴 CONTROL PAGINACION (CLAVE para que no se rompa)
+            // 🔴 CONTROL PAGINACION
             var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
-            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
 
             if (filtros.Page > totalPaginas)
                 filtros.Page = totalPaginas;
@@ -155,42 +243,48 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             if (filtros.Page < 1)
                 filtros.Page = 1;
 
+            // 📌 ORDEN
             IQueryable<AccesoDatos.Entidades.Lote> queryOrdenado;
 
-            if (tipoFecha == TipoFiltroFechaLote.Alta)
+            if (tipoFecha == "Vencimiento")
             {
-                // 🔹 más viejo primero
-                queryOrdenado = query.OrderBy(x => x.FechaAlta);
-            }
-            else if (tipoFecha == TipoFiltroFechaLote.Vencimiento)
-            {
-                // 🔹 más próximo a vencer primero
-                queryOrdenado = query.OrderBy(x => x.FechaVencimiento ?? DateTime.MaxValue);
+                // Más próximos a vencer primero
+
+                queryOrdenado = query
+                    .OrderBy(x => x.FechaVencimiento ?? DateTime.MaxValue);
             }
             else
             {
-                // 🔹 default (lo que vos prefieras)
-                queryOrdenado = query.OrderByDescending(x => x.FechaAlta);
+                // Más recientes primero
+
+                queryOrdenado = query
+                    .OrderByDescending(x => x.FechaAlta);
             }
+
             // 📦 DATA
             var data = queryOrdenado
-            .Skip((filtros.Page - 1) * filtros.PageSize)
-            .Take(filtros.PageSize)
-            .Select(x => new LoteDTO
-            {
-                Id = x.LoteId,
-                IdProducto = x.IdProducto,
-                StockInicial = x.StockIncial,
-                StockActual = x.StockActual,
-                NumeroLote = x.NumeroLote,
-                Descripcion = x.Descripcion,
-                FechaAlta = x.FechaAlta,
-                FechaVencimiento = x.FechaVencimiento,
-                EstaVencido = x.EstaVencido,
-                EstaActivo = x.EstaActivo,
-                NombreProducto = x.Producto.Descripcion
-            })
-            .ToList();
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
+                .Select(x => new LoteDTO
+                {
+                    Id = x.LoteId,
+                    IdProducto = x.IdProducto,
+
+                    NumeroLote = x.NumeroLote,
+                    Descripcion = x.Descripcion,
+
+                    FechaAlta = x.FechaAlta,
+                    FechaVencimiento = x.FechaVencimiento,
+
+                    StockInicial = x.StockIncial,
+                    StockActual = x.StockActual,
+
+                    EstaVencido = x.EstaVencido,
+                    EstaActivo = x.EstaActivo,
+
+                    NombreProducto = x.Producto.Descripcion
+                })
+                .ToList();
 
             return new ResultadoPaginacion<LoteDTO>
             {
@@ -200,7 +294,6 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 PageSize = filtros.PageSize
             };
         }
-
         public EstadoOperacion ModficiarLote(LoteDTO loteDto, long loteId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -495,14 +588,33 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             {
                 producto.Stock += stockLoteParaAgregar.Value;
             }
+
+            _productoServicio.ModificarEstadoStockProductos();
         }
 
         public string GenerarNumeroLote()
         {
-            var context = new GestorContextDBFactory().CreateDbContext(null);
-            string numeroLoteGenerado;
-            // Generar un número de lote único utilizando un prefijo y un contador incremental
-            return numeroLoteGenerado = $"LOTE-{context.Lotes.Count() + 1:0000}";
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            // 1. Buscamos el número más alto que exista actualmente
+            // Traemos solo los strings para no cargar toda la entidad en memoria
+            var maxNumero = context.Lotes
+                .AsNoTracking()
+                .Select(l => l.NumeroLote)
+                .AsEnumerable() // Pasamos a memoria para poder manipular el string con seguridad
+                .Select(n => {
+                    // Quitamos el prefijo "LOTE-" y tratamos de convertir el resto a número
+                    int.TryParse(n.Replace("LOTE-", ""), out int num);
+                    return num;
+                })
+                .DefaultIfEmpty(0) // Si la tabla está vacía, empezamos en 0
+                .Max();
+
+            // 2. El siguiente es el máximo + 1
+            int siguienteNumero = maxNumero + 1;
+
+            // 3. Formateamos con ceros a la izquierda (ej: LOTE-0005)
+            return $"LOTE-{siguienteNumero:0000}";
         }
 
         public AccesoDatos.Entidades.Lote ObtenerLoteFefoLifo(long productoId, bool tieneFechaVencimiento, GestorContextDB context)

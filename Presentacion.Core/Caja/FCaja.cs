@@ -1,4 +1,5 @@
 ﻿using Presentacion.Core.Movimiento;
+using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Caja;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,11 @@ namespace Presentacion.Core.Caja
 
         private void btnAbrirCaja_Click(object sender, EventArgs e)
         {
+            if (!AuthHelper.Tiene("Caja.Abrir"))
+            {
+                MessageBox.Show("No Cuenta con las credenciales necesarias para abrir la caja");
+                return;
+            }
             var FCajaAbrir = new FCajaAbrir();
 
             var result = FCajaAbrir.ShowDialog();
@@ -38,6 +44,11 @@ namespace Presentacion.Core.Caja
 
         private void btnCerrarCaja_Click(object sender, EventArgs e)
         {
+            if (!AuthHelper.Tiene("Caja.Cerrar"))
+            {
+                MessageBox.Show("No Cuenta con las credenciales necesarias para cerrar la caja");
+                return;
+            }
             var FCerrarCaja = new FCerrarCaja();
 
             var result = FCerrarCaja.ShowDialog();
@@ -75,12 +86,22 @@ namespace Presentacion.Core.Caja
 
         private void btnConsultarCajas_Click(object sender, EventArgs e)
         {
+            if (!AuthHelper.Tiene("Caja.VerMovimientos"))
+            {
+                MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                return;
+            }
             var formConsultaCajas = new FCajaConsulta();
             formConsultaCajas.ShowDialog();
         }
 
         private void btnConsultarMovimientos_Click(object sender, EventArgs e)
         {
+            if (!AuthHelper.Tiene("Caja.VerMovimientos"))
+            {
+                MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                return;
+            }
             var fmov = new FMovimientoConsulta();
             fmov.ShowDialog();
             // debería abrir un formulario específico para consultar movimientos de caja, pero por ahora reutilizo el de movimientos generales

@@ -757,6 +757,35 @@ namespace AccesoDatos.Migrations
                     b.ToTable("OfertasDescuentos", (string)null);
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.Permiso", b =>
+                {
+                    b.Property<long>("PermisoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_permiso");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("PermisoId"));
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("codigo");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("descripcion");
+
+                    b.HasKey("PermisoId");
+
+                    b.HasIndex("Codigo")
+                        .IsUnique();
+
+                    b.ToTable("Permisos", (string)null);
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.Persona", b =>
                 {
                     b.Property<long>("PersonaId")
@@ -983,6 +1012,23 @@ namespace AccesoDatos.Migrations
                         .IsUnique();
 
                     b.ToTable("Roles", (string)null);
+                });
+
+            modelBuilder.Entity("AccesoDatos.Entidades.RolPermiso", b =>
+                {
+                    b.Property<long>("IdRol")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_rol");
+
+                    b.Property<long>("IdPermiso")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_permiso");
+
+                    b.HasKey("IdRol", "IdPermiso");
+
+                    b.HasIndex("IdPermiso");
+
+                    b.ToTable("Roles_Permisos", (string)null);
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.Rubro", b =>
@@ -1480,6 +1526,25 @@ namespace AccesoDatos.Migrations
                     b.Navigation("Producto");
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.RolPermiso", b =>
+                {
+                    b.HasOne("AccesoDatos.Entidades.Permiso", "Permiso")
+                        .WithMany()
+                        .HasForeignKey("IdPermiso")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AccesoDatos.Entidades.Rol", "Rol")
+                        .WithMany("RolesPermisos")
+                        .HasForeignKey("IdRol")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permiso");
+
+                    b.Navigation("Rol");
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.UsuarioSesion", b =>
                 {
                     b.HasOne("AccesoDatos.Entidades.Empleado", "Usuario")
@@ -1640,6 +1705,8 @@ namespace AccesoDatos.Migrations
             modelBuilder.Entity("AccesoDatos.Entidades.Rol", b =>
                 {
                     b.Navigation("EmpleadosRoles");
+
+                    b.Navigation("RolesPermisos");
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.Rubro", b =>

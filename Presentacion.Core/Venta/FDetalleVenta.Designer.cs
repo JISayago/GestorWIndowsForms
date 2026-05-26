@@ -37,7 +37,7 @@
             // 
             // txtDetalleVenta
             // 
-            txtDetalleVenta.Location = new Point(30, 53);
+            txtDetalleVenta.Location = new Point(33, 53);
             txtDetalleVenta.Multiline = true;
             txtDetalleVenta.Name = "txtDetalleVenta";
             txtDetalleVenta.Size = new Size(602, 126);
@@ -46,7 +46,7 @@
             // lblDetallesExtraDeVenta
             // 
             lblDetallesExtraDeVenta.AutoSize = true;
-            lblDetallesExtraDeVenta.Location = new Point(27, 31);
+            lblDetallesExtraDeVenta.Location = new Point(33, 26);
             lblDetallesExtraDeVenta.Name = "lblDetallesExtraDeVenta";
             lblDetallesExtraDeVenta.Size = new Size(108, 15);
             lblDetallesExtraDeVenta.TabIndex = 26;
@@ -54,9 +54,9 @@
             // 
             // btnConfirmarDetalle
             // 
-            btnConfirmarDetalle.Location = new Point(223, 202);
+            btnConfirmarDetalle.Location = new Point(224, 200);
             btnConfirmarDetalle.Name = "btnConfirmarDetalle";
-            btnConfirmarDetalle.Size = new Size(75, 23);
+            btnConfirmarDetalle.Size = new Size(85, 31);
             btnConfirmarDetalle.TabIndex = 28;
             btnConfirmarDetalle.Text = "Confirmar";
             btnConfirmarDetalle.UseVisualStyleBackColor = true;
@@ -64,9 +64,9 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(332, 202);
+            btnCancelar.Location = new Point(357, 200);
             btnCancelar.Name = "btnCancelar";
-            btnCancelar.Size = new Size(75, 23);
+            btnCancelar.Size = new Size(85, 31);
             btnCancelar.TabIndex = 29;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
@@ -76,13 +76,14 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(688, 256);
+            ClientSize = new Size(666, 256);
             Controls.Add(btnCancelar);
             Controls.Add(btnConfirmarDetalle);
             Controls.Add(txtDetalleVenta);
             Controls.Add(lblDetallesExtraDeVenta);
             Name = "FDetalleVenta";
             Text = "FDetalleVenta";
+            Load += FDetalleVenta_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();

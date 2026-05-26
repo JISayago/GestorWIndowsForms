@@ -14,9 +14,7 @@ namespace Servicios.LogicaNegocio.Producto
 {
     public interface IProductoServicio
     {
-        public ResultadoPaginacion<ProductoDTO> ObtenerProductos(FiltroConsulta filtros);
-        //IEnumerable<ProductoDTO> ObtenerProductos(string cadenabuscar, string columa);
-        //IEnumerable<ProductoDTO> ObtenerProductosEliminados(string cadenabuscar, string columa);
+        ResultadoPaginacion<ProductoDTO> ObtenerProductos(FiltroConsulta filtros);
         ProductoDTO ObtenerProductoPorId(long productoId);
         ProductosEnOfertaDescuentosDTO ControlarProductoEstaEnOfertaPorId(long productoId);
 
@@ -28,5 +26,6 @@ namespace Servicios.LogicaNegocio.Producto
         IEnumerable<ProductoDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(long? MarcaId = null, long? RubroId = null, long? CategoriaId = null);
         List<DetalleVentaLoteDTO> DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context);
         void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context, long ventdaId);
+        void ModificarEstadoStockProductos();
     }
 }

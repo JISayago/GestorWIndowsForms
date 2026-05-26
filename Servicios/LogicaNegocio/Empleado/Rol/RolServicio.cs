@@ -170,40 +170,62 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
         public ResultadoPaginacion<RolDTO> ObtenerRoles(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
+            string collation = "Latin1_General_CI_AI";
             var query = context.Roles
                 .AsNoTracking()
                 .AsQueryable();
 
             // 🔴 ELIMINADOS
-            query = filtros.VerEliminados
-                ? query.Where(e => e.EstaEliminado)
-                : query.Where(e => !e.EstaEliminado);
+            query = filtros.Bool1
+                ? query.Where(x => x.EstaEliminado)
+                : query.Where(x => !x.EstaEliminado);
 
             // 🔍 BUSQUEDA
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
-                var texto = filtros.TextoBuscar;
+                var texto = filtros.TextoBuscar.Trim();
 
-                switch (filtros.Extra?.ToString())
+                switch (filtros.Filtro1?.ToString())
                 {
                     case "Nombre":
-                        query = query.Where(e => e.Nombre.Contains(texto));
+
+                        query = query.Where(x =>
+                            x.Nombre != null &&
+                            EF.Functions.Collate(x.Nombre, collation)
+                                .Contains(texto));
+
                         break;
 
                     case "DetalleRol":
-                        query = query.Where(e => e.DetalleRol.Contains(texto));
+
+                        query = query.Where(x =>
+                            x.DetalleRol != null &&
+                            EF.Functions.Collate(x.DetalleRol, collation)
+                                .Contains(texto));
+
                         break;
 
                     case "CodigoRol":
-                        query = query.Where(e => e.CodigoRol.Contains(texto));
+
+                        query = query.Where(x =>
+                            x.CodigoRol != null &&
+                            EF.Functions.Collate(x.CodigoRol, collation)
+                                .Contains(texto));
+
                         break;
 
-                    default: // TODOS
-                        query = query.Where(e =>
-                            e.Nombre.Contains(texto) ||
-                            e.DetalleRol.Contains(texto) ||
-                            e.CodigoRol.Contains(texto));
+                    default:
+
+                        query = query.Where(x =>
+                            (x.Nombre != null &&
+                             EF.Functions.Collate(x.Nombre, collation).Contains(texto))
+                            ||
+                            (x.DetalleRol != null &&
+                             EF.Functions.Collate(x.DetalleRol, collation).Contains(texto))
+                            ||
+                            (x.CodigoRol != null &&
+                             EF.Functions.Collate(x.CodigoRol, collation).Contains(texto)));
+
                         break;
                 }
             }
@@ -213,7 +235,9 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
 
             // 🔴 CONTROL PAGINACION
             var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
-            if (totalPaginas == 0) totalPaginas = 1;
+
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
 
             if (filtros.Page > totalPaginas)
                 filtros.Page = totalPaginas;
@@ -221,19 +245,22 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
             if (filtros.Page < 1)
                 filtros.Page = 1;
 
-            // 📌 ORDEN (más lógico que por Id)
-            query = query.OrderBy(e => e.Nombre);
+            // 🔽 ORDEN
+            query = query.OrderBy(x => x.Nombre);
 
             // 📄 DATA
             var data = query
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)
-                .Select(e => new RolDTO
+                .Select(x => new RolDTO
                 {
-                    RolId = e.RolId,
-                    Nombre = e.Nombre,
-                    CodigoRol = e.CodigoRol,
-                    DetalleRol = e.DetalleRol
+                    RolId = x.RolId,
+
+                    Nombre = x.Nombre,
+
+                    CodigoRol = x.CodigoRol,
+
+                    DetalleRol = x.DetalleRol
                 })
                 .ToList();
 

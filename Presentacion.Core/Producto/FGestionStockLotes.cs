@@ -41,8 +41,32 @@ namespace Presentacion.Core.Producto
             TipoOperacion = tipoOperacion;
 
             dtpFechaVencimiento.Format = DateTimePickerFormat.Short;
-            
-            if(tipoOperacion == TipoOperacion.Nuevo)
+
+            AgregarControlesObligatorios(nudStockInicial, "Stock Inicial");
+            AgregarControlesObligatorios(nudStockActual, "Stock Actual");
+            AgregarControlesObligatorios(txtNumeroLote, "Numero Lote");
+            AgregarControlesObligatorios(txtDescripcionLote, "Descripcion");
+            if (chkFechaVencimiento.Checked)
+            {
+                AgregarControlesObligatorios(dtpFechaVencimiento, "Fecha Vencimiento");
+            }
+            //IdProducto = productoDTO.ProductoId,
+            //    StockInicial = nudStockInicial.Value,
+            //    StockActual = nudStockActual.Value,
+            //    NumeroLote = txtNumeroLote.Text,
+            //    Descripcion = txtDescripcionLote.Text,
+            //    FechaAlta = DateTime.Now, //cambiar por datetime , asi se puede filtrar el mas viejo con la hora incluida
+            //    FechaVencimiento = chkFechaVencimiento.Checked ? dtpFechaVencimiento.Value : null,
+            //    EstaVencido = false,
+            //    EstaActivo = true
+
+            if (tipoOperacion == TipoOperacion.Eliminar)
+            {
+                DesactivarControles(this);
+                chkLoteEstaActivo.Enabled = false;
+            }
+
+            if (tipoOperacion == TipoOperacion.Nuevo)
             {
                 productoDTO = _productoServicio.ObtenerProductoPorId(entidadId.Value);
 
@@ -55,9 +79,10 @@ namespace Presentacion.Core.Producto
                 if (productoDTO.TieneVencimiento)
                 {
                     chkFechaVencimiento.Checked = true;
+                    chkFechaVencimiento.Enabled = false;
                 }
             }
-            else 
+            else
             {
                 loteDTO = _loteSevicio.ObtenerLotePorId(entidadId.Value);
                 productoDTO = _productoServicio.ObtenerProductoPorId(loteDTO.IdProducto);
@@ -78,6 +103,8 @@ namespace Presentacion.Core.Producto
                     dtpFechaVencimiento.CustomFormat = " ";
                 }
             }
+
+
         }
 
         #region 🔵 EVENTOS
@@ -167,7 +194,7 @@ namespace Presentacion.Core.Producto
                 return false;
             }
 
-            if(nudStockActual.Value > nudStockInicial.Value)
+            if (nudStockActual.Value > nudStockInicial.Value)
             {
                 MessageBox.Show(@"El Stock Actual no puede ser mayor al Stock Inicial.", @"Atención", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -191,6 +218,8 @@ namespace Presentacion.Core.Producto
 
             if (response.Exitoso)
             {
+                _productoServicio.ModificarEstadoStockProductos();
+
                 MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                    MessageBoxIcon.Information);
                 return true;
@@ -216,6 +245,8 @@ namespace Presentacion.Core.Producto
                 var response = _loteSevicio.EliminarLote((long)EntidadID);
                 if (response.Exitoso)
                 {
+                    _productoServicio.ModificarEstadoStockProductos();
+
                     MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                        MessageBoxIcon.Information);
                     return true;
@@ -264,6 +295,8 @@ namespace Presentacion.Core.Producto
 
                 if (response.Exitoso)
                 {
+                    _productoServicio.ModificarEstadoStockProductos();
+
                     MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
                     return true;
@@ -279,17 +312,28 @@ namespace Presentacion.Core.Producto
             return true;
 
         }
-        
+
         #endregion
 
         private void FGestionStockLotes_Load(object sender, EventArgs e)
         {
-            if (TipoOperacion == TipoOperacion.Nuevo ) //Nombre default auto generado cuando cargar un lote nuevo
+            if (TipoOperacion == TipoOperacion.Nuevo) //Nombre default auto generado cuando cargar un lote nuevo
             {
                 chkLoteEstaActivo.Checked = true;
-                //txtNombreLote.Text = $"{NombreProducto}-{DateTime.Now: yyyyMMddHHmmss}".ToUpper();
+
+
+
                 txtNumeroLote.Text = NumeroLote;
             }
+        }
+
+        private void nudStockInicial_ValueChanged(object sender, EventArgs e)
+        {
+            // El máximo de Stock Actual ahora es el valor de Stock Inicial
+            nudStockActual.Maximum = nudStockInicial.Value;
+
+            // Opcional: Si al bajar el inicial, el actual queda por encima, 
+            // el control NumericUpDown lo bajará automáticamente al nuevo máximo.
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
@@ -24,6 +25,7 @@ namespace Presentacion.Core.Producto
         private readonly IRubroServicio _RubroServicio;
         protected long? EntidadID;
         private List<long> _categoriasSeleccionadas = new List<long>();
+        private bool _cargandoDatos = false;
 
         public override void FBaseABM_Load(object sender, EventArgs e)
         {
@@ -41,6 +43,8 @@ namespace Presentacion.Core.Producto
             _RubroServicio = new RubroServicio();
             EntidadID = entidadId;
 
+            _cargandoDatos = true; // Indicador para evitar eventos durante la carga de datos
+
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
             {
                 CargarDatos(entidadId);
@@ -50,12 +54,31 @@ namespace Presentacion.Core.Producto
             {
                 DesactivarControles(this);
             }
-            /*
+
+
             AgregarControlesObligatorios(txtProducto, "Producto");
-            AgregarControlesObligatorios(txtStock, "Stock");
+            AgregarControlesObligatorios(txtMedida, "Medida");
+            AgregarControlesObligatorios(txtUnidadMedida, "Unidad Medida");
+            //AgregarControlesObligatorios(txtStock, "Stock");
+            AgregarControlesObligatorios(txtPrecioCosto, "Precio Costo");
+            AgregarControlesObligatorios(txtPrecioVenta, "Precio Venta");
+            AgregarControlesObligatorios(txtCodigo, "Codigo");
+            AgregarControlesObligatorios(txtCodigoBarra, "Codigo Barra");
             AgregarControlesObligatorios(cmbMarca, "Marca");
-            */
-            var marcas = _MarcaServicio.ObtenerMarca("").ToList();
+            AgregarControlesObligatorios(cmbRubro, "Rubro");
+
+            var filtrosMarca = new FiltroConsulta
+            {
+                TextoBuscar = "",
+                Page = 1,
+                PageSize = int.MaxValue,
+                Bool1 = false // no eliminados
+            };
+
+            var marcas = _MarcaServicio
+                .ObtenerMarcas(filtrosMarca)
+                .Items
+                .ToList();
 
             cmbMarca.DisplayMember = "Nombre"; // lo que se muestra
             cmbMarca.ValueMember = "Id";
@@ -65,7 +88,18 @@ namespace Presentacion.Core.Producto
             cmbMarca.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbMarca.DropDownStyle = ComboBoxStyle.DropDown;
 
-            var rubros = _RubroServicio.ObtenerRubro("").ToList();
+            var filtrosRubros = new FiltroConsulta
+            {
+                TextoBuscar = string.Empty,
+                Bool1 = false, // no eliminados
+                Page = 1,
+                PageSize = 1000
+            };
+
+            var rubros = _RubroServicio
+                .ObtenerRubros(filtrosRubros)
+                .Items
+                .ToList();
 
             cmbRubro.DisplayMember = "Nombre"; // lo que se muestra
             cmbRubro.ValueMember = "Id";
@@ -76,6 +110,7 @@ namespace Presentacion.Core.Producto
             cmbRubro.DropDownStyle = ComboBoxStyle.DropDown;
 
             EntidadID = entidadId;
+            _cargandoDatos = false; // Fin de la carga de datos
         }
 
         public override void Inicializador(long? entidadId)
@@ -114,10 +149,12 @@ namespace Presentacion.Core.Producto
             if (Producto != null)
             {
                 txtProducto.Text = Producto.Descripcion;
-                txtEstado.Text = Producto.Estado.ToString();
+                chkbProductoDiscontinuado.Checked = Producto.Estado == 3; // Si el estado es 3, marcamos como discontinuado
+                //txtEstado.Text = Producto.Estado.ToString();
                 txtMedida.Text = Producto.Medida;
                 txtUnidadMedida.Text = Producto.UnidadMedida;
                 txtStock.Text = Producto.Stock.ToString();
+                txtStock.Enabled = false; // Si el producto tiene control por lote, deshabilitamos el campo de stock
                 txtPrecioCosto.Text = Producto.PrecioCosto.ToString();
                 txtPrecioVenta.Text = Producto.PrecioVenta.ToString();
                 txtCodigo.Text = Producto.Codigo;
@@ -144,13 +181,15 @@ namespace Presentacion.Core.Producto
                     MessageBoxIcon.Error);
                 return false;
             }
+
+
             var ProductoNueva = new ProductoDTO
             {
                 Descripcion = txtProducto.Text,
                 Stock = decimal.Parse(txtStock.Text),
                 PrecioCosto = decimal.Parse(txtPrecioCosto.Text),
                 PrecioVenta = decimal.Parse(txtPrecioVenta.Text),
-                Estado = int.Parse(txtEstado.Text),
+                Estado = chkbProductoDiscontinuado.Checked ? 3 : 1, // Si el producto está marcado como discontinuado, asignamos el estado 3, de lo contrario, 1 (activo)
                 Medida = txtMedida.Text,
                 UnidadMedida = txtUnidadMedida.Text,
                 Codigo = txtCodigo.Text,
@@ -236,7 +275,7 @@ namespace Presentacion.Core.Producto
                     Stock = decimal.Parse(txtStock.Text),
                     PrecioCosto = decimal.Parse(txtPrecioCosto.Text),
                     PrecioVenta = decimal.Parse(txtPrecioVenta.Text),
-                    Estado = int.Parse(txtEstado.Text),
+                    Estado = chkbProductoDiscontinuado.Checked ? 3 : 1,
                     Medida = txtMedida.Text,
                     UnidadMedida = txtUnidadMedida.Text,
                     Codigo = txtCodigo.Text,
@@ -284,6 +323,37 @@ namespace Presentacion.Core.Producto
 
                 // Si querés mostrarlas en una textbox invisible o label:
                 //txtCategoria.Text = string.Join(",", _categoriasSeleccionadas);
+            }
+        }
+
+        private void chkControlPorLotes_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_cargandoDatos) return;
+
+            if (TipoOperacion == TipoOperacion.Modificar)
+            {
+                var checkbox = (CheckBox)sender;
+                string accion = checkbox.Checked ? "activar" : "desactivar";
+                string mensaje = checkbox.Checked
+                    ? "Al activar el control por lotes, se reiniciara el stock actual del producto. ¿Desea continuar?"
+                    : "Al desactivar el control por lotes, se reiniciara el stock del producto y se deben deshabilitar los lotes asociados. ¿Desea continuar?";
+
+                var mensajeConfirmacion = MessageBox.Show(mensaje, "Confirmación", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
+                if (mensajeConfirmacion == DialogResult.OK)
+                {
+                    // Si acepta, ejecutamos la lógica
+                    txtStock.Enabled = !checkbox.Checked;
+                    txtStock.Text = "0";
+                }
+                else
+                {
+                    _cargandoDatos = true; // Apagamos los eventos temporalmente
+
+                    checkbox.Checked = !checkbox.Checked; // Revertimos el cambio
+
+                    _cargandoDatos = false; // Prendemos los eventos de nuevo
+                }
             }
         }
     }

@@ -47,7 +47,7 @@
             flowLayoutPanel3 = new FlowLayoutPanel();
             lblHora = new Label();
             lblHoraValor = new Label();
-            tlpInoformacion1 = new TableLayoutPanel();
+            tlpPanelBaseTabControlYNotis = new TableLayoutPanel();
             tcIzquierda = new TabControl();
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
@@ -62,7 +62,7 @@
             flowLayoutPanel1.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
             flowLayoutPanel3.SuspendLayout();
-            tlpInoformacion1.SuspendLayout();
+            tlpPanelBaseTabControlYNotis.SuspendLayout();
             tcIzquierda.SuspendLayout();
             tlpNotificaciones0.SuspendLayout();
             panel1.SuspendLayout();
@@ -104,6 +104,7 @@
             // btnPanelAdmin
             // 
             btnPanelAdmin.Anchor = AnchorStyles.Left;
+            btnPanelAdmin.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             btnPanelAdmin.Location = new Point(3, 12);
             btnPanelAdmin.MaximumSize = new Size(236, 63);
             btnPanelAdmin.MinimumSize = new Size(236, 63);
@@ -117,6 +118,7 @@
             // btnVenta
             // 
             btnVenta.Anchor = AnchorStyles.Right;
+            btnVenta.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             btnVenta.Location = new Point(1020, 12);
             btnVenta.MaximumSize = new Size(236, 63);
             btnVenta.MinimumSize = new Size(236, 63);
@@ -130,6 +132,7 @@
             // btnCaja
             // 
             btnCaja.Anchor = AnchorStyles.Right;
+            btnCaja.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             btnCaja.Location = new Point(389, 12);
             btnCaja.MaximumSize = new Size(236, 63);
             btnCaja.MinimumSize = new Size(236, 63);
@@ -143,6 +146,7 @@
             // btnContraVenta
             // 
             btnContraVenta.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            btnContraVenta.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             btnContraVenta.Location = new Point(631, 12);
             btnContraVenta.MaximumSize = new Size(236, 63);
             btnContraVenta.MinimumSize = new Size(236, 63);
@@ -155,12 +159,12 @@
             // 
             // tlpBaseInfo1
             // 
-            tlpBaseInfo1.BackColor = SystemColors.ActiveCaption;
+            tlpBaseInfo1.BackColor = SystemColors.ButtonFace;
             tlpBaseInfo1.ColumnCount = 1;
             tlpBaseInfo1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tlpBaseInfo1.Controls.Add(tableLayoutPanel2, 0, 0);
             tlpBaseInfo1.Controls.Add(PnlBotones, 0, 2);
-            tlpBaseInfo1.Controls.Add(tlpInoformacion1, 0, 1);
+            tlpBaseInfo1.Controls.Add(tlpPanelBaseTabControlYNotis, 0, 1);
             tlpBaseInfo1.Dock = DockStyle.Fill;
             tlpBaseInfo1.Location = new Point(0, 0);
             tlpBaseInfo1.Name = "tlpBaseInfo1";
@@ -293,27 +297,28 @@
             lblHoraValor.TabIndex = 25;
             lblHoraValor.Text = "00:00:00";
             // 
-            // tlpInoformacion1
+            // tlpPanelBaseTabControlYNotis
             // 
-            tlpInoformacion1.BackColor = Color.SandyBrown;
-            tlpInoformacion1.ColumnCount = 2;
-            tlpInoformacion1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 62.5F));
-            tlpInoformacion1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 37.5F));
-            tlpInoformacion1.Controls.Add(tcIzquierda, 0, 0);
-            tlpInoformacion1.Controls.Add(tlpNotificaciones0, 1, 0);
-            tlpInoformacion1.Dock = DockStyle.Fill;
-            tlpInoformacion1.Location = new Point(3, 66);
-            tlpInoformacion1.Name = "tlpInoformacion1";
-            tlpInoformacion1.RowCount = 1;
-            tlpInoformacion1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpInoformacion1.Size = new Size(1259, 654);
-            tlpInoformacion1.TabIndex = 19;
+            tlpPanelBaseTabControlYNotis.BackColor = SystemColors.ButtonFace;
+            tlpPanelBaseTabControlYNotis.ColumnCount = 2;
+            tlpPanelBaseTabControlYNotis.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 62.5F));
+            tlpPanelBaseTabControlYNotis.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 37.5F));
+            tlpPanelBaseTabControlYNotis.Controls.Add(tcIzquierda, 0, 0);
+            tlpPanelBaseTabControlYNotis.Controls.Add(tlpNotificaciones0, 1, 0);
+            tlpPanelBaseTabControlYNotis.Dock = DockStyle.Fill;
+            tlpPanelBaseTabControlYNotis.Location = new Point(3, 66);
+            tlpPanelBaseTabControlYNotis.Name = "tlpPanelBaseTabControlYNotis";
+            tlpPanelBaseTabControlYNotis.RowCount = 1;
+            tlpPanelBaseTabControlYNotis.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpPanelBaseTabControlYNotis.Size = new Size(1259, 654);
+            tlpPanelBaseTabControlYNotis.TabIndex = 19;
             // 
             // tcIzquierda
             // 
             tcIzquierda.Controls.Add(tabPage1);
             tcIzquierda.Controls.Add(tabPage2);
             tcIzquierda.Dock = DockStyle.Fill;
+            tcIzquierda.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             tcIzquierda.Location = new Point(3, 3);
             tcIzquierda.Name = "tcIzquierda";
             tcIzquierda.SelectedIndex = 0;
@@ -322,27 +327,29 @@
             // 
             // tabPage1
             // 
-            tabPage1.Location = new Point(4, 24);
+            tabPage1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            tabPage1.Location = new Point(4, 26);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(772, 620);
+            tabPage1.Size = new Size(772, 618);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Acceso Rapido";
             tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
-            tabPage2.Location = new Point(4, 24);
+            tabPage2.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
+            tabPage2.Location = new Point(4, 26);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(772, 620);
+            tabPage2.Size = new Size(772, 618);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Info Turno";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // tlpNotificaciones0
             // 
-            tlpNotificaciones0.BackColor = Color.SaddleBrown;
+            tlpNotificaciones0.BackColor = SystemColors.ButtonFace;
             tlpNotificaciones0.ColumnCount = 1;
             tlpNotificaciones0.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tlpNotificaciones0.Controls.Add(flowLayoutNotificaciones, 0, 1);
@@ -350,20 +357,21 @@
             tlpNotificaciones0.Location = new Point(789, 3);
             tlpNotificaciones0.Name = "tlpNotificaciones0";
             tlpNotificaciones0.RowCount = 2;
-            tlpNotificaciones0.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tlpNotificaciones0.RowStyles.Add(new RowStyle(SizeType.Absolute, 8F));
             tlpNotificaciones0.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tlpNotificaciones0.Size = new Size(467, 648);
             tlpNotificaciones0.TabIndex = 1;
+            tlpNotificaciones0.Paint += tlpNotificaciones0_Paint;
             // 
             // flowLayoutNotificaciones
             // 
             flowLayoutNotificaciones.AutoScroll = true;
-            flowLayoutNotificaciones.BackColor = Color.White;
+            flowLayoutNotificaciones.BackColor = SystemColors.ButtonFace;
             flowLayoutNotificaciones.Dock = DockStyle.Fill;
             flowLayoutNotificaciones.FlowDirection = FlowDirection.TopDown;
-            flowLayoutNotificaciones.Location = new Point(3, 23);
+            flowLayoutNotificaciones.Location = new Point(3, 11);
             flowLayoutNotificaciones.Name = "flowLayoutNotificaciones";
-            flowLayoutNotificaciones.Size = new Size(461, 622);
+            flowLayoutNotificaciones.Size = new Size(461, 634);
             flowLayoutNotificaciones.TabIndex = 0;
             flowLayoutNotificaciones.WrapContents = false;
             // 
@@ -402,7 +410,7 @@
             flowLayoutPanel2.PerformLayout();
             flowLayoutPanel3.ResumeLayout(false);
             flowLayoutPanel3.PerformLayout();
-            tlpInoformacion1.ResumeLayout(false);
+            tlpPanelBaseTabControlYNotis.ResumeLayout(false);
             tcIzquierda.ResumeLayout(false);
             tlpNotificaciones0.ResumeLayout(false);
             panel1.ResumeLayout(false);
@@ -430,7 +438,7 @@
         private Label lblUsuario;
         private Label lblNombreUsuario;
         private TableLayoutPanel tableLayoutPanel2;
-        private TableLayoutPanel tlpInoformacion1;
+        private TableLayoutPanel tlpPanelBaseTabControlYNotis;
         private TabControl tcIzquierda;
         private TabPage tabPage1;
         private TabPage tabPage2;

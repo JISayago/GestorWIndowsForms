@@ -10,7 +10,7 @@ public class NotificationGroupBox : GroupBox
 {
     private Button btnToggle;
     private FlowLayoutPanel panelItems;
-    private bool expanded = true;
+    private bool expanded = false;
     private string _tituloVisual = "";
 
     // ===========================================================================

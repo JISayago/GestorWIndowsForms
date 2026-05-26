@@ -1,4 +1,5 @@
 ﻿using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Articulo.Categoria.DTO;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,8 @@ namespace Servicios.LogicaNegocio.Articulo.Categoria
 {
     public interface ICategoriaServicio
     {
-        IEnumerable<CategoriaDTO> ObtenerCategoria(string cadenaBuscar);
+        ResultadoPaginacion<CategoriaDTO> ObtenerCategorias(FiltroConsulta filtros);
 
-        IEnumerable<CategoriaDTO> ObtenerCategoriaEliminada(string cadenaBuscar);
 
         CategoriaDTO ObtenerPorId(long categoria);
 

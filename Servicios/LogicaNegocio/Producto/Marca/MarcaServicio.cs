@@ -1,6 +1,8 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
+using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
 using System;
 using System.Collections.Generic;
@@ -101,33 +103,7 @@ namespace Servicios.LogicaNegocio.Articulo.Marca
             };
         }
 
-        public IEnumerable<MarcaDTO> ObtenerMarca(string cadenaBuscar)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            return context.Marcas
-                .Where(x => !x.EstaEliminado && x.Nombre.Contains(cadenaBuscar))
-                .Select(x => new MarcaDTO
-                {
-                    Id = x.MarcaId,
-                    Nombre = x.Nombre
-                })
-                .ToList();
-        }
-
-        public IEnumerable<MarcaDTO> ObtenerMarcaEliminada(string cadenaBuscar)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            return context.Marcas
-                .Where(x => x.EstaEliminado && x.Nombre.Contains(cadenaBuscar))
-                .Select(x => new MarcaDTO
-                {
-                    Id = x.MarcaId,
-                    Nombre = x.Nombre
-                })
-                .ToList();
-        }
 
         public MarcaDTO ObtenerPorId(long marca)
         {
@@ -142,6 +118,82 @@ namespace Servicios.LogicaNegocio.Articulo.Marca
             {
                 Id = marcaBusqueda.MarcaId,
                 Nombre = marcaBusqueda.Nombre
+            };
+        }
+
+        public ResultadoPaginacion<MarcaDTO> ObtenerMarcas(FiltroConsulta filtros)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            string collation = "Latin1_General_CI_AI";
+
+            var query = context.Marcas
+                .AsNoTracking()
+                .AsQueryable();
+
+            // 🔴 ELIMINADOS / TODOS
+            if (filtros.Bool2)
+            {
+                // 👉 todos
+            }
+            else if (filtros.Bool1)
+            {
+                // 👉 solo eliminados
+                query = query.Where(x => x.EstaEliminado);
+            }
+            else
+            {
+                // 👉 solo activos
+                query = query.Where(x => !x.EstaEliminado);
+            }
+
+            // 🔍 BUSQUEDA
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                var texto = filtros.TextoBuscar.Trim();
+
+                query = query.Where(x =>
+                    x.Nombre != null &&
+                    EF.Functions.Collate(x.Nombre, collation)
+                        .Contains(texto));
+            }
+
+            // 📊 TOTAL
+            var total = query.Count();
+
+            // 🔴 PAGINACION
+            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 🔽 ORDEN
+            query = query.OrderBy(x => x.Nombre);
+
+            // 📄 DATA
+            var data = query
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
+                .Select(x => new MarcaDTO
+                {
+                    Id = x.MarcaId,
+                    Nombre = x.Nombre,
+                    EstaEliminado = x.EstaEliminado,
+                })
+                .ToList();
+
+            return new ResultadoPaginacion<MarcaDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
             };
         }
     }

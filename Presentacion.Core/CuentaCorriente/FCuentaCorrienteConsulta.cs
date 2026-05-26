@@ -6,6 +6,7 @@ using Servicios.Helpers.Cliente.CtaCte;
 using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.CuentaCorriente;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace Presentacion.Core.CuentaCorriente
@@ -26,13 +27,13 @@ namespace Presentacion.Core.CuentaCorriente
         }
 
         #region 🔷 GRILLA
-
         public override void ResetearGrilla(DataGridView grilla)
         {
             base.ResetearGrilla(grilla);
 
             if (grilla.Columns.Count == 0) return;
 
+            // Ocultamos el ID numérico
             if (grilla.Columns.Contains("CuentaCorrienteId"))
             {
                 grilla.Columns["CuentaCorrienteId"].Visible = false;
@@ -53,35 +54,42 @@ namespace Presentacion.Core.CuentaCorriente
                 grilla.Columns["FechaVencimiento"].HeaderText = "Fecha Vencimiento";
             }
 
-            if (grilla.Columns.Contains("EstadoCuentaCorriente"))
+            // 🔹 MODIFICACIÓN: Ocultamos el entero EstadoCtaCte para que no ensucie la grilla
+            if (grilla.Columns.Contains("EstadoCtaCte"))
             {
-                grilla.Columns["EstadoCuentaCorriente"].Visible = true;
-                grilla.Columns["EstadoCuentaCorriente"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                grilla.Columns["EstadoCuentaCorriente"].HeaderText = "Estado CC";
+                grilla.Columns["EstadoCtaCte"].Visible = false;
             }
+
+            // 🔹 MODIFICACIÓN: Mostramos la propiedad calculada con la descripción en texto
+            if (grilla.Columns.Contains("EstadoDescripcionCtaCte"))
+            {
+                grilla.Columns["EstadoDescripcionCtaCte"].Visible = true;
+                grilla.Columns["EstadoDescripcionCtaCte"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                grilla.Columns["EstadoDescripcionCtaCte"].HeaderText = "Estado CC";
+            }
+
+            // 🔹 TIP ADICIONAL: Podés ocultar listas internas si Windows Forms las auto-genera como columnas toscas
+            if (grilla.Columns.Contains("DniAutorizados")) grilla.Columns["DniAutorizados"].Visible = false;
+            if (grilla.Columns.Contains("MovimientoCuentaCorrienteIds")) grilla.Columns["MovimientoCuentaCorrienteIds"].Visible = false;
         }
 
         #endregion
 
-        #region 🔥 ACTUALIZAR DATOS (NUEVO SISTEMA)
+        #region 🔥 ACTUALIZAR DATOS
 
         public override void ActualizarDatos(DataGridView dgv, FiltroConsulta filtros)
         {
             base.ActualizarDatos(dgv, filtros);
 
-            // 🔹 valor por defecto de búsqueda (ajustalo a tu modelo)
-            filtros.Extra ??= "Nombre";
+            filtros.Filtro1 ??= "NombreCuentaCorriente";
 
-            // 🔹 llamada única al servicio (nuevo esquema)
             var resultado = _cuentacorrienteServicio.ObtenerCuentaCorrientes(filtros);
 
-            // 🔹 bind
+            // Al asignar la lista de DTOs, la grilla auto-mapea la propiedad EstadoDescripcionCtaCte al instante
             dgv.DataSource = resultado.Items;
 
-            // 🔴 CLAVE: reaplicar columnas
             ResetearGrilla(dgv);
 
-            // 🔹 paginación
             var paginacion = new DatosPaginacion
             {
                 PaginaActual = resultado.Page,
@@ -91,8 +99,7 @@ namespace Presentacion.Core.CuentaCorriente
 
             ActualizarPaginacionUI(paginacion);
 
-            // 🔹 estado botones
-            BarraLateralBotones.Enabled = !filtros.VerEliminados;
+            BarraLateralBotones.Enabled = !filtros.Bool1;
         }
 
         #endregion
@@ -111,6 +118,7 @@ namespace Presentacion.Core.CuentaCorriente
         public override void EjecutarBtnModificar()
         {
             base.EjecutarBtnModificar();
+
             if (!puedeEjecutarComando) return;
 
             var f = new FCuentaCorrienteABM(TipoOperacion.Modificar, entidadID);
@@ -123,6 +131,7 @@ namespace Presentacion.Core.CuentaCorriente
         public override void EjecutarBtnEliminar()
         {
             base.EjecutarBtnEliminar();
+
             if (!puedeEjecutarComando) return;
 
             var f = new FCuentaCorrienteABM(TipoOperacion.Eliminar, entidadID);
@@ -134,57 +143,92 @@ namespace Presentacion.Core.CuentaCorriente
 
         private void Recargar()
         {
-         //   btnActualizar_Click_Base();
+            RefrescarGrilla();
         }
 
         #endregion
 
+        #region 🔷 FILTROS
+
+        protected override string TextoLblBuscar => "Buscar Cuenta Corriente:";
+        protected override string TextoLblCbx1 => "Filtrar por Propiedad";
+        protected override string TextoLblCbx2 => "Filtrar por Estado";
+        protected override string TextoLblCbx3 => "Filtrar por Fecha";
+
         protected override void ConfigurarFiltrosUI()
         {
-
             base.ConfigurarFiltrosUI();
 
-            ActivarFiltroEliminados("Mostrar productos eliminados.");
+            ActivarCheck(chkBool1, "Mostrar Eliminados");
+            ActivarCheck(chkBool2, "Mostrar todas las Cuentas Corrientes (histórico)");
 
-            var opciones = new List<OpcionFiltro>
+            var opcionesBusqueda = new List<OpcionFiltro>
             {
                 new OpcionFiltro { Texto = "Todos", Valor = "" },
-                new OpcionFiltro { Texto = "Nombre de Cuenta Corriente", Valor = "NombreCuentaCorriente" },
+                new OpcionFiltro { Texto = "Nombre Cuenta Corriente", Valor = "NombreCuentaCorriente" }
             };
 
-            ActivarFiltroCombo(opciones, "Texto", "Valor");
+            ActivarCombo(cbx1, lblcbx1, opcionesBusqueda, "Texto", "Valor", "Buscar cuenta por:");
+            ActivarFiltroFechas("Usar filtro de fechas");
 
-            ActivarFiltroFechas("Filtrar por fecha de vencimiento");
-
-            var tiposFecha = new List<OpcionFiltro>
+            var opcionesEstado = new List<OpcionFiltro>
             {
-                new OpcionFiltro { Texto = "Todas", Valor = "" },
-                new OpcionFiltro { Texto = "Fecha vencimiento", Valor = "vto" },
-                //new OpcionFiltro { Texto = "Fecha creación", Valor = "creacion" },
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
                 new OpcionFiltro { Texto = "Activa", Valor = ((int)EstadoCuentaCorriente.Activa).ToString() },
                 new OpcionFiltro { Texto = "Suspendida", Valor = ((int)EstadoCuentaCorriente.Suspendida).ToString() },
-                new OpcionFiltro { Texto = "Cerrada", Valor = ((int)EstadoCuentaCorriente.Cerrada).ToString() },
+                new OpcionFiltro { Texto = "Cerrada", Valor = ((int)EstadoCuentaCorriente.Cerrada).ToString() }
             };
 
-            ActivarComboOpcional(tiposFecha, "Texto", "Valor");
+            ActivarCombo(cbx2, lblcbx2, opcionesEstado, "Texto", "Valor", "Filtrar por:");
 
-            cbxFiltroOpcional.SelectedValue = "";
-            cbxFiltroExtraEstado.SelectedValue = "";
+            var tipoFecha = new List<OpcionFiltro>
+            {
+                new OpcionFiltro { Texto = "Fecha de vencimiento", Valor = "vto" }
+            };
+
+            ActivarCombo(cbx3, lblcbx3, tipoFecha, "Texto", "Valor", "Filtrar por:");
+
+            cbx1.SelectedValue = "";
+            cbx2.SelectedValue = "";
+            cbx3.SelectedValue = "vto";
         }
 
-        protected override string ObtenerTextoLabelFiltroOpcional()
+        protected override void AccionCheck2()
         {
-            return "Buscar cuente corriente por:";
+            if (chkBool2.Checked)
+            {
+                _actualizandoFiltros = true;
+                chkBool1.Checked = false;
+                _actualizandoFiltros = false;
+                LimpiarFiltrosEspeciales();
+            }
+
         }
 
-        protected override string ObtenerTextoLabelFiltroExtra()
+        protected override void AccionCheck1()
         {
-            return "Filtrar por:";
+            if (chkBool1.Checked)
+            {
+                _actualizandoFiltros = true;
+                chkBool2.Checked = false;
+                _actualizandoFiltros = false;
+                LimpiarFiltrosEspeciales();
+            }
         }
 
-        protected override string ObtenerTextoLabelBusqueda()
+        private void LimpiarFiltrosEspeciales()
         {
-            return "Buscar cuenta corriente:";
+            _actualizandoFiltros = true;
+            txtBuscar.Clear();
+
+            if (cbx1.Enabled) cbx1.SelectedIndex = 0;
+            if (cbx2.Enabled) cbx2.SelectedIndex = 0;
+            if (cbx3.Enabled) cbx3.SelectedIndex = 0;
+
+            chkUsarFecha.Checked = false;
+            _actualizandoFiltros = false;
         }
+
+        #endregion
     }
 }

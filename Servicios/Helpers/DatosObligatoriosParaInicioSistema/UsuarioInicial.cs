@@ -13,45 +13,78 @@ namespace Servicios.Helpers.DatosObligatorios
     {
         public static void Inicializar(GestorContextDB context)
         {
-            // Aplica migraciones pendientes
-            //context.Database.Migrate();
+            // Buscar usuario admin existente
+            var empleado = context.Empleados
+                .FirstOrDefault(e => e.Username == "admin");
 
-            // Si ya existe un usuario admin, no hacer nada
-            if (context.Empleados.Any(e => e.Username == "admin"))
-                return;
-
-            // Crear persona
-            var persona = new Persona
+            if (empleado == null)
             {
-                Nombre = "Administrador",
-                Apellido = "DelSistema",
-                Dni = "99999999",
-                Cuil = "20-99999999-9",
-                Telefono = "0000000000",
-                Email = "admin@sistema.com",
-                Direccion = "Oficina Central",
-                EstaEliminado = false,
-                FechaNacimiento = DateTime.Today.AddYears(-30)
-            };
+                // Crear persona
+                var persona = new Persona
+                {
+                    Nombre = "Administrador",
+                    Apellido = "DelSistema",
+                    Dni = "99999999",
+                    Cuil = "20-99999999-9",
+                    Telefono = "0000000000",
+                    Email = "admin@sistema.com",
+                    Direccion = "Oficina Central",
+                    EstaEliminado = false,
+                    FechaNacimiento = DateTime.Today.AddYears(-30)
+                };
 
-            context.Personas.Add(persona);
-            context.SaveChanges(); // Esto genera el PersonaId
+                context.Personas.Add(persona);
+                context.SaveChanges();
 
-            // Crear empleado vinculado a esa persona
-            var empleado = new AccesoDatos.Entidades.Empleado
+                // Crear empleado
+                empleado = new AccesoDatos.Entidades.Empleado
+                {
+                    PersonaId = persona.PersonaId,
+                    Legajo = "ADM001",
+                    FechaIngreso = DateTime.Today,
+                    Estado = 2,
+                    Username = "admin",
+                    Pass = HashPass.HashPassword("Admin123"),
+                    UsuarioEstaHabilitado = true
+                };
+
+                context.Empleados.Add(empleado);
+                context.SaveChanges();
+            }
+
+            // 🔥 ASEGURAR ROL SADMIN
+
+            var rol = context.Roles.FirstOrDefault(r => r.CodigoRol == "SADMIN");
+
+            if (rol == null)
             {
-                PersonaId = persona.PersonaId,
-                Legajo = "ADM001",
-                FechaIngreso = DateTime.Today,
-                Estado = 2,
-                Username = "admin",
-                Pass = HashPass.HashPassword("Admin123")
-                , // Reemplazá esto con un hash si lo vas a encriptar
-                UsuarioEstaHabilitado = true
-            };
+                // esto en teoría ya lo creaste antes, pero por seguridad:
+                rol = new Rol
+                {
+                    CodigoRol = "SADMIN",
+                    Nombre = "Super Administrador",
+                    DetalleRol = "Control Total"
+                };
 
-            context.Empleados.Add(empleado);
-            context.SaveChanges();
+                context.Roles.Add(rol);
+                context.SaveChanges();
+            }
+
+            // Verificar si ya tiene el rol
+            bool tieneRol = context.EmpleadoRoles.Any(ur =>
+                ur.IdEmpleado == empleado.PersonaId && ur.IdRol == rol.RolId);
+
+            if (!tieneRol)
+            {
+                context.EmpleadoRoles.Add(new EmpleadoRol
+                {
+                    IdEmpleado = empleado.PersonaId,
+                    IdRol = rol.RolId,
+                    FechaAsignacion = DateTime.Now
+                });
+
+                context.SaveChanges();
+            }
         }
     }
 }

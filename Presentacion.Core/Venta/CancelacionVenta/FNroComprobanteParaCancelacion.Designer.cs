@@ -107,6 +107,7 @@
             Controls.Add(btnCancelar);
             Controls.Add(txtNroComprobante);
             Name = "FNroComprobanteParaCancelacion";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FCancelacionDevolucion";
             Load += FNroComprobanteParaCancelacion_Load;
             ResumeLayout(false);

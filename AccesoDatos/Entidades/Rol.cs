@@ -17,6 +17,7 @@ namespace AccesoDatos.Entidades
 
         public bool EstaEliminado { get; set; }
         public ICollection<EmpleadoRol> EmpleadosRoles { get; set; }
+        public ICollection<RolPermiso> RolesPermisos { get; set; }
 
     }
 }

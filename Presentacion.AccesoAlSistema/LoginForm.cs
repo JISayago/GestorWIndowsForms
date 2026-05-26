@@ -1,5 +1,6 @@
 ﻿using Presentacion.FBase;
 using ServicioAccesoSistema.AccesoSistema;
+using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Empleado;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace Presentacion.AccesoAlSistema
     {
         private readonly IAccesoSistema _accesoSistema;
         private readonly IEmpleadoServicio _empleadoServicio;
+        private readonly IUsuarioServicio _usuarioServicio;
         public UsuarioLogeado _usuarioLogeado { get; protected set; }
         public bool PuedeAccederAlSistema { get; protected set; }
 
@@ -25,14 +27,15 @@ namespace Presentacion.AccesoAlSistema
         private string username;
 
 
-        public LoginForm() : this(new AccesoSistema(), new EmpleadoServicio())
+        public LoginForm() : this(new AccesoSistema(), new EmpleadoServicio(), new UsuarioServicio())
         {
             InitializeComponent();
         }
-        public LoginForm(IAccesoSistema accesoSistema, IEmpleadoServicio empleadoServicio)
+        public LoginForm(IAccesoSistema accesoSistema, IEmpleadoServicio empleadoServicio, IUsuarioServicio usuarioServicio)
         {
             _accesoSistema = accesoSistema;
             _empleadoServicio = empleadoServicio;
+            _usuarioServicio = usuarioServicio;
         }
 
         private void btnIngresar_Click(object sender, EventArgs e)
@@ -42,17 +45,17 @@ namespace Presentacion.AccesoAlSistema
 
         private void IngresarAlSistema()
         {
-            if (string.IsNullOrEmpty(txtUsuario.Text) || string.IsNullOrEmpty(txtPass.Text))
+            if (string.IsNullOrWhiteSpace(txtUsuario.Text) || string.IsNullOrWhiteSpace(txtPass.Text))
             {
                 MessageBox.Show("Por favor el usuario y la contraseña son obligatorios",
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            username = txtUsuario.Text;
-            pass = txtPass.Text;
+            var username = txtUsuario.Text.Trim();
+            var pass = txtPass.Text;
 
-            // 🔹 1. Validar estado del usuario
+
             var estadoUsuario = _accesoSistema.ValidarEstadoUsuario(username);
 
             if (estadoUsuario.Exitoso)
@@ -67,20 +70,9 @@ namespace Presentacion.AccesoAlSistema
                     form.ShowDialog();
                     return;
                 }
-                // mejorar el filtro de accion no puede ser solo con un string.contains, se puede agregar un campo de tipo enum o algo similar para identificar la accion a realizar
-                // 🔸 Recuperación de contraseña
-                if (estadoUsuario.Mensaje.Contains("recuperación"))
-                {
-                    MessageBox.Show(estadoUsuario.Mensaje,
-                        "Recuperación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                    var form = new FCodigoRecuperacion((long)estadoUsuario.EntidadId);
-                    form.ShowDialog();
-                    return;
-                }
+                var permisos = _usuarioServicio.ObtenerPermisosPorUsuario((long)estadoUsuario.EntidadId);
             }
-
-            // 🔹 2. Login normal
             var response = _accesoSistema.LogeoAlSistema(username, pass);
 
             if (!response.Exitoso)
@@ -90,28 +82,37 @@ namespace Presentacion.AccesoAlSistema
                 return;
             }
 
-            // 🔹 3. Obtener usuario logueado
             var uLogeado = _empleadoServicio.ObtenerEmpleadoPorId((long)response.EntidadId);
 
             if (uLogeado.PersonaId != null)
             {
+                var permisos = _usuarioServicio.ObtenerPermisosPorUsuario((long)response.EntidadId);
+                var esSAdmin = _usuarioServicio.EsSuperAdmin((long)response.EntidadId);
+
                 _usuarioLogeado = new UsuarioLogeado
                 {
                     PersonaId = uLogeado.PersonaId,
                     Nombre = uLogeado.Nombre,
                     Apellido = uLogeado.Apellido,
-                    Username = uLogeado.Username
+                    Username = uLogeado.Username,
+                    Permisos = permisos,
+                    EsSuperAdmin = esSAdmin
                 };
 
-                MessageBox.Show(response.Mensaje,
-                    "Ingreso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                AuthHelper.UsuarioActual = _usuarioLogeado;
                 PuedeAccederAlSistema = true;
             }
 
-            this.Close();
+            Close();
         }
-
+        protected override void EjecutarEnter()
+        {
+            IngresarAlSistema();
+        }
+        protected override void EjecutarEscape()
+        {
+            base.EjecutarEscape();
+        }
         private void btnCancelar_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -127,10 +128,36 @@ namespace Presentacion.AccesoAlSistema
             var Frec = new FRecuperarContra();
             Frec.ShowDialog();
 
-            if (Frec.recuperar && Frec.esAdmin )
+            if (Frec.recuperar && Frec.esAdmin)
             {
-                IngresarAlSistema();
+                var estadoUsuario = _accesoSistema.ValidarEstadoUsuario(Frec.Usuario);
+
+                if (estadoUsuario.Exitoso)
+                {
+                    if (estadoUsuario.Mensaje.Contains("recuperación"))
+                    {
+                        MessageBox.Show(estadoUsuario.Mensaje,
+                            "Recuperación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        var X = estadoUsuario.DatoExtra;
+
+                        var form = new FCodigoRecuperacion(estadoUsuario.DatoExtra);
+                        form.ShowDialog();
+                        return;
+                    }
+
+                }
             }
+        }
+
+        private void lnklblCodigoRec_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            using var f = new FCodigoRecuperacion();
+            f.ShowDialog();
+        }
+
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+            txtUsuario.Focus();
         }
     }
 }

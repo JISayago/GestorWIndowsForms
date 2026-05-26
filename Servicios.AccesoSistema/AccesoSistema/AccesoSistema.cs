@@ -105,6 +105,7 @@ namespace ServicioAccesoSistema.AccesoSistema
             };
         }
 
+      
         public EstadoOperacion CerrarSesion(long usuarioId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -137,7 +138,7 @@ namespace ServicioAccesoSistema.AccesoSistema
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             var empleado = context.Empleados
                 .FirstOrDefault(e => e.Username == nombreUsuario);
-            if (empleado == null || empleado.Estado == (int)EstadoEmpleado.Habilitado || pass != "123456789")
+            if (empleado == null || empleado.Estado == (int)EstadoEmpleado.Habilitado || pass != "123456789")//cambiar esto por lo que corresponda por cofig primer ingreso.
             {
                 return new EstadoOperacion
                 {
@@ -208,7 +209,7 @@ namespace ServicioAccesoSistema.AccesoSistema
                     UsuarioAsignadoId = empleado.PersonaId,
                     Codigo = codigo,
                     FechaCreacion = DateTime.Now,
-                    FechaExpiracion = DateTime.Now.AddMinutes(5),
+                    FechaExpiracion = DateTime.Now.AddHours(24),
                     EstaUsado = false
                 };
 
@@ -219,8 +220,9 @@ namespace ServicioAccesoSistema.AccesoSistema
                 return new EstadoOperacion
                 {
                     Exitoso = true,
-                    Mensaje = $"Código de recuperación: {codigo}. Válido por 5 minutos .",
-                    EntidadId = empleado.PersonaId // forzamos estado en vez de id
+                    Mensaje = $"Código de recuperación: {codigo}. Válido por 24 horas .",
+                    EntidadId = empleado.PersonaId,
+                    DatoExtra = codigo.ToString(),
                 };
             }
 

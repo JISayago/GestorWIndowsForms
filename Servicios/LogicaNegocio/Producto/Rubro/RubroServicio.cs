@@ -1,5 +1,7 @@
 ﻿using AccesoDatos;
+using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto.Rubro.DTO;
 using System;
 using System.Collections.Generic;
@@ -100,32 +102,79 @@ namespace Servicios.LogicaNegocio.Producto.Rubro
             };
         }
 
-        public IEnumerable<RubroDTO> ObtenerRubro(string cadenaBuscar)
+        public ResultadoPaginacion<RubroDTO> ObtenerRubros(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
+            string collation = "Latin1_General_CI_AI";
+            var query = context.Rubros
+                .AsNoTracking()
+                .AsQueryable();
 
-            return context.Rubros
-                .Where(x => !x.EstaEliminado && x.Nombre.Contains(cadenaBuscar))
+            // 🔴 ELIMINADOS / TODOS
+            if (filtros.Bool2)
+            {
+                // 👉 Mostrar todos (activos + eliminados)
+            }
+            else if (filtros.Bool1)
+            {
+                // 👉 Solo eliminados
+                query = query.Where(x => x.EstaEliminado);
+            }
+            else
+            {
+                // 👉 Solo activos
+                query = query.Where(x => !x.EstaEliminado);
+            }
+
+            // 🔍 BUSQUEDA
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                var texto = filtros.TextoBuscar.Trim();
+
+                query = query.Where(x =>
+         x.Nombre != null &&
+         EF.Functions.Collate(x.Nombre, collation)
+             .Contains(texto));
+            }
+
+            // 📊 TOTAL
+            var total = query.Count();
+
+            // 🔴 PAGINACION SEGURA
+            var totalPaginas =
+                (int)Math.Ceiling((double)total / filtros.PageSize);
+
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            // 🔽 ORDEN
+            query = query.OrderBy(x => x.Nombre);
+
+            // 📄 DATA
+            var data = query
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
                 .Select(x => new RubroDTO
                 {
                     Id = x.RubroId,
-                    Nombre = x.Nombre
+                    Nombre = x.Nombre,
+                    EstaEliminado = x.EstaEliminado
                 })
                 .ToList();
-        }
 
-        public IEnumerable<RubroDTO> ObtenerRubroEliminado(string cadenaBuscar)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            return context.Rubros
-                .Where(x => x.EstaEliminado && x.Nombre.Contains(cadenaBuscar))
-                .Select(x => new RubroDTO
-                {
-                    Id = x.RubroId,
-                    Nombre = x.Nombre
-                })
-                .ToList();
+            return new ResultadoPaginacion<RubroDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
         }
 
         public RubroDTO ObtenerPorId(long rubro)

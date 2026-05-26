@@ -15,6 +15,7 @@ using AccesoDatos.Entidades;
 using Presentacion.Core.Empleado;
 using Servicios.Helpers;
 using Servicios.Helpers.Empleado;
+using Presentacion.FormulariosBase.Helpers;
 
 namespace Presentacion.Core.Empleado
 {
@@ -40,6 +41,8 @@ namespace Presentacion.Core.Empleado
 
         private void FEmpleadoCrearUsuario_Load(object sender, EventArgs e)
         {
+            EstiloControlHelper.AplicarEstiloALabels(this);
+
             if (!string.IsNullOrEmpty(_empleadoDto.Username))
             {
                 MessageBox.Show($"El empleado {_empleadoDto.Nombre} {_empleadoDto.Apellido} ya cuenta con el usuario asignado: {_empleadoDto.Username}", "Usuario Existente", MessageBoxButtons.OK, MessageBoxIcon.Information);
