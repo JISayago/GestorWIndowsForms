@@ -6,10 +6,13 @@ using Servicios.Helpers.Movimiento;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Extras;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Infraestructura;
 using Servicios.LogicaNegocio.Gasto.DTO;
 using Servicios.LogicaNegocio.Movimiento;
+using Servicios.LogicaNegocio.Producto;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +21,31 @@ namespace Servicios.LogicaNegocio.Gasto
 {
     public class GastoServicio : IGastoServicio
     {
+        private readonly IPdfGenerator _pdf;
+
+        public GastoServicio()
+        {
+            _pdf = new PdfGenerator();
+        }
+        private void GeneracionComprobanteGasto(GestorContextDB context, AccesoDatos.Entidades.Gasto gasto)
+        {
+            var gastoCompleto = context.Gastos
+                .Include(g => g.Empleado)
+                    .ThenInclude(e => e.Persona)
+                .Include(g => g.VentaPagoDetalles)
+                    .ThenInclude(p => p.TipoPago)
+                .First(g => g.GastoId == gasto.GastoId);
+
+            // 🔥 lógica de decisión
+            if (gastoCompleto.EstadoGasto == (int)EstadoGasto.Pagado)
+            {
+                _pdf.GenerarGasto(gastoCompleto);
+            }
+            else if (gastoCompleto.EstadoGasto == (int)EstadoGasto.Anulado && gastoCompleto.MontoPagado > 0)
+            {
+                _pdf.GenerarGastoAnulado(gastoCompleto);
+            }
+        }
         public EstadoOperacion AnularGasto(long gastoId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -42,9 +70,24 @@ namespace Servicios.LogicaNegocio.Gasto
                 };
             }
 
+
+            var estabaPagado = gasto.MontoPagado > 0;
+
             gasto.EstadoGasto = (int)EstadoGasto.Anulado;
 
             context.SaveChanges();
+
+            if (estabaPagado)
+            {
+                try
+                {
+                    GeneracionComprobanteGasto(context, gasto);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error generando PDF gasto anulado: " + ex.Message);
+                }
+            }
 
             return new EstadoOperacion
             {
@@ -53,6 +96,7 @@ namespace Servicios.LogicaNegocio.Gasto
                 EntidadId = gasto.GastoId
             };
         }
+
 
         public EstadoOperacion ConfirmarPago(long gastoId)
         {
@@ -111,6 +155,15 @@ namespace Servicios.LogicaNegocio.Gasto
                 context.SaveChanges();
 
                 transaction.Commit();
+
+                try
+                {
+                    GeneracionComprobanteGasto(context, gasto);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error generando PDF gasto pagado: " + ex.Message);
+                }
 
                 return new EstadoOperacion
                 {
@@ -249,6 +302,15 @@ namespace Servicios.LogicaNegocio.Gasto
                 // =========================================================
 
                 transaction.Commit();
+
+                try
+                {
+                    GeneracionComprobanteGasto(context, gasto);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error generando PDF gasto: " + ex.Message);
+                }
 
                 return new EstadoOperacion
                 {
