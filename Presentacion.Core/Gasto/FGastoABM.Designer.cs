@@ -45,17 +45,17 @@
             // 
             // txtMontoPago
             // 
-            txtMontoPago.Location = new Point(119, 104);
+            txtMontoPago.Location = new Point(125, 104);
             txtMontoPago.Name = "txtMontoPago";
-            txtMontoPago.Size = new Size(100, 23);
+            txtMontoPago.Size = new Size(94, 23);
             txtMontoPago.TabIndex = 1;
             // 
             // txtDetalle
             // 
-            txtDetalle.Location = new Point(119, 64);
+            txtDetalle.Location = new Point(125, 64);
             txtDetalle.Name = "txtDetalle";
-            txtDetalle.Size = new Size(483, 23);
-            txtDetalle.TabIndex = 2;
+            txtDetalle.Size = new Size(477, 23);
+            txtDetalle.TabIndex = 0;
             // 
             // label1
             // 
@@ -109,7 +109,7 @@
             dtpDiaGasto.Location = new Point(369, 161);
             dtpDiaGasto.Name = "dtpDiaGasto";
             dtpDiaGasto.Size = new Size(200, 23);
-            dtpDiaGasto.TabIndex = 9;
+            dtpDiaGasto.TabIndex = 4;
             // 
             // label4
             // 
@@ -126,15 +126,15 @@
             cmbCategoriaGasto.Location = new Point(369, 104);
             cmbCategoriaGasto.Name = "cmbCategoriaGasto";
             cmbCategoriaGasto.Size = new Size(121, 23);
-            cmbCategoriaGasto.TabIndex = 11;
+            cmbCategoriaGasto.TabIndex = 2;
             // 
             // cmbEstado
             // 
             cmbEstado.FormattingEnabled = true;
-            cmbEstado.Location = new Point(119, 159);
+            cmbEstado.Location = new Point(125, 159);
             cmbEstado.Name = "cmbEstado";
-            cmbEstado.Size = new Size(121, 23);
-            cmbEstado.TabIndex = 13;
+            cmbEstado.Size = new Size(115, 23);
+            cmbEstado.TabIndex = 3;
             cmbEstado.SelectedIndexChanged += cmbEstado_SelectedIndexChanged;
             // 
             // lblEstado
