@@ -574,15 +574,16 @@
             // 
             // tabControl1
             // 
+            tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControl1.Controls.Add(tabPage3);
             tabControl1.Controls.Add(tabPage4);
-            tabControl1.Dock = DockStyle.Fill;
             tabControl1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             tabControl1.Location = new Point(3, 3);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(1598, 488);
             tabControl1.TabIndex = 0;
+            tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
             // 
             // tabPage3
             // 
@@ -614,8 +615,8 @@
             // 
             // formsPlot4
             // 
+            formsPlot4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             formsPlot4.DisplayScale = 1F;
-            formsPlot4.Dock = DockStyle.Fill;
             formsPlot4.Location = new Point(795, 3);
             formsPlot4.Name = "formsPlot4";
             formsPlot4.Size = new Size(786, 446);
@@ -645,7 +646,8 @@
             // 
             // tlpBajoNivel3Pagina2
             // 
-            tlpBajoNivel3Pagina2.BackColor = Color.IndianRed;
+            tlpBajoNivel3Pagina2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tlpBajoNivel3Pagina2.BackColor = Color.Transparent;
             tlpBajoNivel3Pagina2.ColumnCount = 2;
             tlpBajoNivel3Pagina2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tlpBajoNivel3Pagina2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -661,8 +663,8 @@
             // 
             // formsPlot6
             // 
+            formsPlot6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             formsPlot6.DisplayScale = 1F;
-            formsPlot6.Dock = DockStyle.Fill;
             formsPlot6.Location = new Point(795, 3);
             formsPlot6.Name = "formsPlot6";
             formsPlot6.Size = new Size(786, 446);
@@ -670,8 +672,8 @@
             // 
             // formsPlot5
             // 
+            formsPlot5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             formsPlot5.DisplayScale = 1F;
-            formsPlot5.Dock = DockStyle.Fill;
             formsPlot5.Location = new Point(3, 3);
             formsPlot5.Name = "formsPlot5";
             formsPlot5.Size = new Size(786, 446);

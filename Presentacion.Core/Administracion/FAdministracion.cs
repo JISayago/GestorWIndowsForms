@@ -598,5 +598,10 @@ namespace Presentacion.Core.Administracion
 
             fvl.Show();
         }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
