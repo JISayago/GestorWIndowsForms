@@ -110,7 +110,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { pRODUCTOToolStripMenuItem, eMPLEADOSToolStripMenuItem, cLIENTESToolStripMenuItem, oFERTASToolStripMenuItem, cONFIGURACIONToolStripMenuItem, vENTAToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1610, 25);
+            menuStrip1.Size = new Size(1610, 24);
             menuStrip1.TabIndex = 2;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -118,41 +118,41 @@
             // 
             pRODUCTOToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sTOCKToolStripMenuItem, mARCASToolStripMenuItem, cATEGORIASToolStripMenuItem, rUBROSToolStripMenuItem, lOTESToolStripMenuItem });
             pRODUCTOToolStripMenuItem.Name = "pRODUCTOToolStripMenuItem";
-            pRODUCTOToolStripMenuItem.Size = new Size(88, 21);
+            pRODUCTOToolStripMenuItem.Size = new Size(81, 20);
             pRODUCTOToolStripMenuItem.Text = "PRODUCTO";
             // 
             // sTOCKToolStripMenuItem
             // 
             sTOCKToolStripMenuItem.Name = "sTOCKToolStripMenuItem";
-            sTOCKToolStripMenuItem.Size = new Size(153, 22);
+            sTOCKToolStripMenuItem.Size = new Size(143, 22);
             sTOCKToolStripMenuItem.Text = "STOCK";
             sTOCKToolStripMenuItem.Click += sTOCKToolStripMenuItem_Click;
             // 
             // mARCASToolStripMenuItem
             // 
             mARCASToolStripMenuItem.Name = "mARCASToolStripMenuItem";
-            mARCASToolStripMenuItem.Size = new Size(153, 22);
+            mARCASToolStripMenuItem.Size = new Size(143, 22);
             mARCASToolStripMenuItem.Text = "MARCAS";
             mARCASToolStripMenuItem.Click += mARCASToolStripMenuItem_Click;
             // 
             // cATEGORIASToolStripMenuItem
             // 
             cATEGORIASToolStripMenuItem.Name = "cATEGORIASToolStripMenuItem";
-            cATEGORIASToolStripMenuItem.Size = new Size(153, 22);
+            cATEGORIASToolStripMenuItem.Size = new Size(143, 22);
             cATEGORIASToolStripMenuItem.Text = "CATEGORIAS";
             cATEGORIASToolStripMenuItem.Click += cATEGORIASToolStripMenuItem_Click;
             // 
             // rUBROSToolStripMenuItem
             // 
             rUBROSToolStripMenuItem.Name = "rUBROSToolStripMenuItem";
-            rUBROSToolStripMenuItem.Size = new Size(153, 22);
+            rUBROSToolStripMenuItem.Size = new Size(143, 22);
             rUBROSToolStripMenuItem.Text = "RUBROS";
             rUBROSToolStripMenuItem.Click += rUBROSToolStripMenuItem_Click;
             // 
             // lOTESToolStripMenuItem
             // 
             lOTESToolStripMenuItem.Name = "lOTESToolStripMenuItem";
-            lOTESToolStripMenuItem.Size = new Size(153, 22);
+            lOTESToolStripMenuItem.Size = new Size(143, 22);
             lOTESToolStripMenuItem.Text = "LOTES";
             lOTESToolStripMenuItem.Click += lOTESToolStripMenuItem_Click;
             // 
@@ -160,20 +160,20 @@
             // 
             eMPLEADOSToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOEMPLEADOSToolStripMenuItem, rOLESToolStripMenuItem });
             eMPLEADOSToolStripMenuItem.Name = "eMPLEADOSToolStripMenuItem";
-            eMPLEADOSToolStripMenuItem.Size = new Size(95, 21);
+            eMPLEADOSToolStripMenuItem.Size = new Size(86, 20);
             eMPLEADOSToolStripMenuItem.Text = "EMPLEADOS";
             // 
             // lISTADOEMPLEADOSToolStripMenuItem
             // 
             lISTADOEMPLEADOSToolStripMenuItem.Name = "lISTADOEMPLEADOSToolStripMenuItem";
-            lISTADOEMPLEADOSToolStripMenuItem.Size = new Size(206, 22);
+            lISTADOEMPLEADOSToolStripMenuItem.Size = new Size(190, 22);
             lISTADOEMPLEADOSToolStripMenuItem.Text = "LISTADO EMPLEADOS";
             lISTADOEMPLEADOSToolStripMenuItem.Click += lISTADOEMPLEADOSToolStripMenuItem_Click;
             // 
             // rOLESToolStripMenuItem
             // 
             rOLESToolStripMenuItem.Name = "rOLESToolStripMenuItem";
-            rOLESToolStripMenuItem.Size = new Size(206, 22);
+            rOLESToolStripMenuItem.Size = new Size(190, 22);
             rOLESToolStripMenuItem.Text = "ROLES";
             rOLESToolStripMenuItem.Click += rOLESToolStripMenuItem_Click;
             // 
@@ -181,20 +181,20 @@
             // 
             cLIENTESToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOCLIENTESToolStripMenuItem, cUENTASCORRIENTESToolStripMenuItem });
             cLIENTESToolStripMenuItem.Name = "cLIENTESToolStripMenuItem";
-            cLIENTESToolStripMenuItem.Size = new Size(76, 21);
+            cLIENTESToolStripMenuItem.Size = new Size(70, 20);
             cLIENTESToolStripMenuItem.Text = "CLIENTES";
             // 
             // lISTADOCLIENTESToolStripMenuItem
             // 
             lISTADOCLIENTESToolStripMenuItem.Name = "lISTADOCLIENTESToolStripMenuItem";
-            lISTADOCLIENTESToolStripMenuItem.Size = new Size(212, 22);
+            lISTADOCLIENTESToolStripMenuItem.Size = new Size(196, 22);
             lISTADOCLIENTESToolStripMenuItem.Text = "LISTADO CLIENTES";
             lISTADOCLIENTESToolStripMenuItem.Click += lISTADOCLIENTESToolStripMenuItem_Click;
             // 
             // cUENTASCORRIENTESToolStripMenuItem
             // 
             cUENTASCORRIENTESToolStripMenuItem.Name = "cUENTASCORRIENTESToolStripMenuItem";
-            cUENTASCORRIENTESToolStripMenuItem.Size = new Size(212, 22);
+            cUENTASCORRIENTESToolStripMenuItem.Size = new Size(196, 22);
             cUENTASCORRIENTESToolStripMenuItem.Text = "CUENTAS CORRIENTES";
             cUENTASCORRIENTESToolStripMenuItem.Click += cUENTASCORRIENTESToolStripMenuItem_Click;
             // 
@@ -202,27 +202,27 @@
             // 
             oFERTASToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOOFERTASToolStripMenuItem, aCTIVARDESACTIVARToolStripMenuItem, nUEVAOFERTAToolStripMenuItem });
             oFERTASToolStripMenuItem.Name = "oFERTASToolStripMenuItem";
-            oFERTASToolStripMenuItem.Size = new Size(74, 21);
+            oFERTASToolStripMenuItem.Size = new Size(66, 20);
             oFERTASToolStripMenuItem.Text = "OFERTAS";
             // 
             // lISTADOOFERTASToolStripMenuItem
             // 
             lISTADOOFERTASToolStripMenuItem.Name = "lISTADOOFERTASToolStripMenuItem";
-            lISTADOOFERTASToolStripMenuItem.Size = new Size(216, 22);
+            lISTADOOFERTASToolStripMenuItem.Size = new Size(199, 22);
             lISTADOOFERTASToolStripMenuItem.Text = "LISTADO OFERTAS";
             lISTADOOFERTASToolStripMenuItem.Click += lISTADOOFERTASToolStripMenuItem_Click;
             // 
             // aCTIVARDESACTIVARToolStripMenuItem
             // 
             aCTIVARDESACTIVARToolStripMenuItem.Name = "aCTIVARDESACTIVARToolStripMenuItem";
-            aCTIVARDESACTIVARToolStripMenuItem.Size = new Size(216, 22);
+            aCTIVARDESACTIVARToolStripMenuItem.Size = new Size(199, 22);
             aCTIVARDESACTIVARToolStripMenuItem.Text = "ACTIVAR / DESACTIVAR";
             aCTIVARDESACTIVARToolStripMenuItem.Click += aCTIVARDESACTIVARToolStripMenuItem_Click;
             // 
             // nUEVAOFERTAToolStripMenuItem
             // 
             nUEVAOFERTAToolStripMenuItem.Name = "nUEVAOFERTAToolStripMenuItem";
-            nUEVAOFERTAToolStripMenuItem.Size = new Size(216, 22);
+            nUEVAOFERTAToolStripMenuItem.Size = new Size(199, 22);
             nUEVAOFERTAToolStripMenuItem.Text = "NUEVA OFERTA";
             nUEVAOFERTAToolStripMenuItem.Click += nUEVAOFERTAToolStripMenuItem_Click;
             // 
@@ -230,13 +230,13 @@
             // 
             cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tIPOPAGOToolStripMenuItem });
             cONFIGURACIONToolStripMenuItem.Name = "cONFIGURACIONToolStripMenuItem";
-            cONFIGURACIONToolStripMenuItem.Size = new Size(126, 21);
+            cONFIGURACIONToolStripMenuItem.Size = new Size(114, 20);
             cONFIGURACIONToolStripMenuItem.Text = "CONFIGURACION";
             // 
             // tIPOPAGOToolStripMenuItem
             // 
             tIPOPAGOToolStripMenuItem.Name = "tIPOPAGOToolStripMenuItem";
-            tIPOPAGOToolStripMenuItem.Size = new Size(192, 22);
+            tIPOPAGOToolStripMenuItem.Size = new Size(144, 22);
             tIPOPAGOToolStripMenuItem.Text = "TIPO PAGO??";
             tIPOPAGOToolStripMenuItem.Click += tIPOPAGOToolStripMenuItem_Click;
             // 
@@ -282,7 +282,7 @@
             tableLayoutPanel1.Controls.Add(btnMovimientos, 3, 0);
             tableLayoutPanel1.Controls.Add(tlpBaseFiltrado, 2, 0);
             tableLayoutPanel1.Dock = DockStyle.Top;
-            tableLayoutPanel1.Location = new Point(0, 25);
+            tableLayoutPanel1.Location = new Point(0, 24);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -454,9 +454,9 @@
             pnlInfoInicial.Controls.Add(tlpBaseNivel1);
             pnlInfoInicial.Controls.Add(dgvGrilla);
             pnlInfoInicial.Dock = DockStyle.Fill;
-            pnlInfoInicial.Location = new Point(0, 119);
+            pnlInfoInicial.Location = new Point(0, 118);
             pnlInfoInicial.Name = "pnlInfoInicial";
-            pnlInfoInicial.Size = new Size(1610, 871);
+            pnlInfoInicial.Size = new Size(1610, 872);
             pnlInfoInicial.TabIndex = 24;
             // 
             // tlpBaseNivel1
@@ -670,7 +670,7 @@
             dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvGrilla.Location = new Point(2024, -3);
             dgvGrilla.Name = "dgvGrilla";
-            dgvGrilla.Size = new Size(380, 1226);
+            dgvGrilla.Size = new Size(380, 1227);
             dgvGrilla.TabIndex = 17;
             // 
             // sqlCommand1
@@ -689,6 +689,7 @@
             Name = "FAdministracion";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Panel Administración";
+            WindowState = FormWindowState.Maximized;
             Load += FAdministracion_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             menuStrip1.ResumeLayout(false);
