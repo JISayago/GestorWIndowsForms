@@ -37,20 +37,18 @@ public class PdfGenerator : IPdfGenerator
         return ruta;
     }
 
-    public string GenerarVentaLibre(Venta venta)
+    public string GenerarVentaLibre(VentaLibre venta)
     {
-        var ruta = ObtenerRutaPdf("Ventas", "VentasLibres", venta.NumeroVenta.ToString());
+        var ruta = ObtenerRutaPdf("VentasLibres","Todas", venta.NumeroVenta.ToString());
 
         var doc = CrearDocumentoBase($"Venta Libre {venta.NumeroVenta}");
         var section = doc.AddSection();
 
         AgregarHeader(section, "VENTA LIBRE");
 
-        AgregarDatosVenta(section, venta, consumidorFinal: true);
+        AgregarDatosVentaLibre(section, venta);
 
-        AgregarDetalleVenta(section, venta);
-
-        AgregarTotalesVenta(section, venta);
+        AgregarTotalesVentaLibre(section, venta);
 
         AgregarPagos(section, venta.VentaPagoDetalles);
 
@@ -367,5 +365,42 @@ public class PdfGenerator : IPdfGenerator
 
         if (bold)
             p.Format.Font.Bold = true;
+    }
+
+    private void AgregarDatosVentaLibre(Section section, VentaLibre venta)
+    {
+        var tabla = section.AddTable();
+        tabla.AddColumn("8cm");
+        tabla.AddColumn("8cm");
+
+        var r1 = tabla.AddRow();
+        r1.Cells[0].AddParagraph($"N°: {venta.NumeroVenta}");
+        r1.Cells[1].AddParagraph($"Fecha: {venta.FechaVenta:dd/MM/yyyy}");
+
+        var r2 = tabla.AddRow();
+        r2.Cells[0].AddParagraph($"Cliente: Consumidor Final");
+        r2.Cells[1].AddParagraph($"Vendedor: {venta.Vendedor?.Persona?.Apellido ?? ""}");
+
+        section.AddParagraph("\n");
+
+        // 🔥 Detalle directo (no hay grilla)
+        section.AddParagraph("Detalle", "Subtitulo");
+        section.AddParagraph(venta.Detalle ?? "Sin detalle");
+
+        section.AddParagraph("\n");
+    }
+    private void AgregarTotalesVentaLibre(Section section, VentaLibre venta)
+    {
+        var tabla = section.AddTable();
+        tabla.AddColumn("12cm");
+        tabla.AddColumn("4cm");
+
+        AddRow(tabla, "Total:", venta.Total, true);
+        AddRow(tabla, "Pagado:", venta.MontoPagado);
+
+        if (venta.MontoAdeudado > 0)
+            AddRow(tabla, "Adeudado:", venta.MontoAdeudado, true);
+
+        section.AddParagraph("\n");
     }
 }

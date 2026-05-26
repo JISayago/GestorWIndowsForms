@@ -7,6 +7,7 @@ using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Extras;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.Helpers.VentaEnum;
+using Servicios.Infraestructura;
 using Servicios.LogicaNegocio.Venta.TipoPago;
 using Servicios.LogicaNegocio.Venta.VentaLibre.DTO;
 using System;
@@ -20,6 +21,40 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 {
     public class VentaLibreServicio : IVentaLibreServicio
     {
+        private readonly IPdfGenerator _pdf;
+
+        public VentaLibreServicio()
+        {
+            _pdf = new PdfGenerator();
+        }
+        private void GeneracionComprobanteVentaLibre(GestorContextDB context, AccesoDatos.Entidades.VentaLibre venta)
+        {
+            if (venta == null)
+            {
+                Debug.WriteLine("VentaLibre es null al generar comprobante.");
+                return;
+            }
+
+            var ventaCompleta = context.VentasLibres
+                .Include(v => v.VentaPagoDetalles)
+                    .ThenInclude(p => p.TipoPago)
+                .Include(v => v.Empleado)
+                    .ThenInclude(e => e.Persona)
+                .Include(v => v.Vendedor)
+                    .ThenInclude(v => v.Persona)
+                .Include(v => v.Cliente)
+                    .ThenInclude(c => c.Persona)
+                .FirstOrDefault(v => v.VentaLibreId == venta.VentaLibreId);
+
+            // 🔥 3. validar resultado
+            if (ventaCompleta == null)
+            {
+                Debug.WriteLine($"No se encontró VentaLibreId: {venta.VentaLibreId}");
+                return;
+            }
+
+            _pdf.GenerarVentaLibre(ventaCompleta);
+        }
         public EstadoOperacion AnularVentaLibre(long ventaLibreId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -49,10 +84,8 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     };
                 }
 
-                // 1️⃣ Marcar original
                 venta.Estado = (int)EstadoVenta.Cancelada;
 
-                // 2️⃣ Crear DTO de cancelación (TODO POSITIVO)
                 var dto = new VentaLibreDTO
                 {
                     IdEmpleado = venta.IdEmpleado,
@@ -67,7 +100,6 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     MontoPagado = venta.MontoPagado,
                     MontoAdeudado = venta.MontoAdeudado,
 
-
                     TiposDePagoSeleccionado = venta.VentaPagoDetalles.Select(p => new FormaPago
                     {
                         TipoDePago = (TipoDePago)p.IdTipoPago,
@@ -75,8 +107,8 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     }).ToList()
                 };
 
-                // 3️⃣ Crear contraventa
-                CrearVentaLibreInterna(
+                // 🔥 CAPTURAR CONTRAVENTA
+                var ventaCancelacion = CrearVentaLibreInterna(
                     context,
                     dto,
                     TipoMovimientoDetalle.Cancelacion
@@ -84,6 +116,16 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 
                 context.SaveChanges();
                 transaction.Commit();
+
+                // 🔥 PDF DE CANCELACIÓN
+                try
+                {
+                    GeneracionComprobanteVentaLibre(context, ventaCancelacion);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error PDF cancelación venta libre: " + ex.Message);
+                }
 
                 return new EstadoOperacion
                 {
@@ -105,7 +147,6 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
         public EstadoOperacion NuevaVentaLibre(VentaLibreDTO dto)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-
             using var transaction = context.Database.BeginTransaction();
 
             try
@@ -116,7 +157,18 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     TipoMovimientoDetalle.VentaLibre
                 );
 
+                context.SaveChanges();
                 transaction.Commit();
+
+                // 🔥 PDF
+                try
+                {
+                    GeneracionComprobanteVentaLibre(context, venta);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error PDF venta libre: " + ex.Message);
+                }
 
                 return new EstadoOperacion
                 {

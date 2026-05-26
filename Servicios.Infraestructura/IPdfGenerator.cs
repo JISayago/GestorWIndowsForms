@@ -10,7 +10,7 @@ namespace Servicios.Infraestructura
 {
     string GenerarVenta(Venta venta);
 
-    string GenerarVentaLibre(Venta venta);
+    string GenerarVentaLibre(VentaLibre venta);
 
     string GenerarCancelacionVenta(Venta venta);
 
