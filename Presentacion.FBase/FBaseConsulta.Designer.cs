@@ -42,17 +42,12 @@
             toolStripSeparator3 = new ToolStripSeparator();
             btnSalir = new ToolStripButton();
             panel1 = new Panel();
+            tableLayoutPanel15 = new TableLayoutPanel();
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel9 = new TableLayoutPanel();
             tableLayoutPanel13 = new TableLayoutPanel();
             chkBool2 = new CheckBox();
             chkBool1 = new CheckBox();
-            tableLayoutPanel10 = new TableLayoutPanel();
-            tableLayoutPanel11 = new TableLayoutPanel();
-            btnSiguiente = new Button();
-            lblPagina = new Label();
-            btnAnterior = new Button();
-            lblTotalRegistros = new Label();
             tableLayoutPanel6 = new TableLayoutPanel();
             tableLayoutPanel12 = new TableLayoutPanel();
             lblcbx3 = new Label();
@@ -76,15 +71,20 @@
             tableLayoutPanel5 = new TableLayoutPanel();
             txtBuscar = new TextBox();
             lblBuscar = new Label();
+            tableLayoutPanel10 = new TableLayoutPanel();
+            tableLayoutPanel11 = new TableLayoutPanel();
+            btnSiguiente = new Button();
+            lblPagina = new Label();
+            btnAnterior = new Button();
+            lblTotalRegistros = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
             BarraLateralBotones.SuspendLayout();
             panel1.SuspendLayout();
+            tableLayoutPanel15.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel9.SuspendLayout();
             tableLayoutPanel13.SuspendLayout();
-            tableLayoutPanel10.SuspendLayout();
-            tableLayoutPanel11.SuspendLayout();
             tableLayoutPanel6.SuspendLayout();
             tableLayoutPanel12.SuspendLayout();
             tableLayoutPanel7.SuspendLayout();
@@ -94,6 +94,8 @@
             tableLayoutPanel4.SuspendLayout();
             tableLayoutPanel14.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
+            tableLayoutPanel10.SuspendLayout();
+            tableLayoutPanel11.SuspendLayout();
             SuspendLayout();
             // 
             // dgvGrilla
@@ -116,9 +118,9 @@
             dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
             dgvGrilla.DefaultCellStyle = dataGridViewCellStyle2;
-            dgvGrilla.Location = new Point(12, 302);
+            dgvGrilla.Location = new Point(3, 255);
             dgvGrilla.Name = "dgvGrilla";
-            dgvGrilla.Size = new Size(1427, 247);
+            dgvGrilla.Size = new Size(1430, 309);
             dgvGrilla.TabIndex = 2;
             // 
             // BarraLateralBotones
@@ -200,14 +202,30 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(tableLayoutPanel1);
+            panel1.Controls.Add(tableLayoutPanel15);
             panel1.Controls.Add(BarraLateralBotones);
-            panel1.Controls.Add(dgvGrilla);
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1451, 561);
+            panel1.Size = new Size(1451, 688);
             panel1.TabIndex = 0;
+            // 
+            // tableLayoutPanel15
+            // 
+            tableLayoutPanel15.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel15.ColumnCount = 1;
+            tableLayoutPanel15.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel15.Controls.Add(tableLayoutPanel1, 0, 0);
+            tableLayoutPanel15.Controls.Add(tableLayoutPanel10, 0, 2);
+            tableLayoutPanel15.Controls.Add(dgvGrilla, 0, 1);
+            tableLayoutPanel15.Location = new Point(12, 55);
+            tableLayoutPanel15.Name = "tableLayoutPanel15";
+            tableLayoutPanel15.RowCount = 3;
+            tableLayoutPanel15.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
+            tableLayoutPanel15.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel15.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
+            tableLayoutPanel15.Size = new Size(1436, 630);
+            tableLayoutPanel15.TabIndex = 8;
             // 
             // tableLayoutPanel1
             // 
@@ -219,12 +237,12 @@
             tableLayoutPanel1.Controls.Add(tableLayoutPanel6, 0, 0);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel3, 1, 0);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel4, 0, 1);
-            tableLayoutPanel1.Location = new Point(12, 47);
+            tableLayoutPanel1.Location = new Point(3, 3);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 2;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
-            tableLayoutPanel1.Size = new Size(1424, 228);
+            tableLayoutPanel1.Size = new Size(1430, 244);
             tableLayoutPanel1.TabIndex = 7;
             // 
             // tableLayoutPanel9
@@ -233,13 +251,11 @@
             tableLayoutPanel9.ColumnCount = 1;
             tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel9.Controls.Add(tableLayoutPanel13, 0, 0);
-            tableLayoutPanel9.Controls.Add(tableLayoutPanel10, 0, 1);
-            tableLayoutPanel9.Location = new Point(715, 139);
+            tableLayoutPanel9.Location = new Point(718, 149);
             tableLayoutPanel9.Name = "tableLayoutPanel9";
-            tableLayoutPanel9.RowCount = 2;
+            tableLayoutPanel9.RowCount = 1;
             tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel9.Size = new Size(706, 86);
+            tableLayoutPanel9.Size = new Size(709, 92);
             tableLayoutPanel9.TabIndex = 7;
             // 
             // tableLayoutPanel13
@@ -253,7 +269,7 @@
             tableLayoutPanel13.Name = "tableLayoutPanel13";
             tableLayoutPanel13.RowCount = 1;
             tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel13.Size = new Size(700, 37);
+            tableLayoutPanel13.Size = new Size(550, 83);
             tableLayoutPanel13.TabIndex = 8;
             // 
             // chkBool2
@@ -262,9 +278,9 @@
             chkBool2.AutoSize = true;
             chkBool2.Enabled = false;
             chkBool2.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            chkBool2.Location = new Point(353, 3);
+            chkBool2.Location = new Point(278, 3);
             chkBool2.Name = "chkBool2";
-            chkBool2.Size = new Size(80, 31);
+            chkBool2.Size = new Size(80, 77);
             chkBool2.TabIndex = 4;
             chkBool2.Text = "cbxBool2";
             chkBool2.TextAlign = ContentAlignment.MiddleCenter;
@@ -279,92 +295,12 @@
             chkBool1.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             chkBool1.Location = new Point(3, 3);
             chkBool1.Name = "chkBool1";
-            chkBool1.Size = new Size(80, 31);
+            chkBool1.Size = new Size(80, 77);
             chkBool1.TabIndex = 3;
             chkBool1.Text = "cbxBool1";
             chkBool1.TextAlign = ContentAlignment.MiddleCenter;
             chkBool1.UseVisualStyleBackColor = true;
             chkBool1.CheckedChanged += chkBool1_CheckedChanged;
-            // 
-            // tableLayoutPanel10
-            // 
-            tableLayoutPanel10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel10.ColumnCount = 2;
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
-            tableLayoutPanel10.Controls.Add(tableLayoutPanel11, 1, 0);
-            tableLayoutPanel10.Controls.Add(lblTotalRegistros, 0, 0);
-            tableLayoutPanel10.Location = new Point(3, 46);
-            tableLayoutPanel10.Name = "tableLayoutPanel10";
-            tableLayoutPanel10.RowCount = 1;
-            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel10.Size = new Size(700, 37);
-            tableLayoutPanel10.TabIndex = 7;
-            // 
-            // tableLayoutPanel11
-            // 
-            tableLayoutPanel11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel11.ColumnCount = 3;
-            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel11.Controls.Add(btnSiguiente, 2, 0);
-            tableLayoutPanel11.Controls.Add(lblPagina, 1, 0);
-            tableLayoutPanel11.Controls.Add(btnAnterior, 0, 0);
-            tableLayoutPanel11.Location = new Point(283, 3);
-            tableLayoutPanel11.Name = "tableLayoutPanel11";
-            tableLayoutPanel11.RowCount = 1;
-            tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel11.Size = new Size(414, 31);
-            tableLayoutPanel11.TabIndex = 7;
-            // 
-            // btnSiguiente
-            // 
-            btnSiguiente.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            btnSiguiente.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnSiguiente.Location = new Point(313, 3);
-            btnSiguiente.Name = "btnSiguiente";
-            btnSiguiente.Size = new Size(98, 25);
-            btnSiguiente.TabIndex = 7;
-            btnSiguiente.Text = ">";
-            btnSiguiente.UseVisualStyleBackColor = true;
-            btnSiguiente.Click += btnSiguiente_Click;
-            // 
-            // lblPagina
-            // 
-            lblPagina.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            lblPagina.AutoSize = true;
-            lblPagina.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblPagina.Location = new Point(106, 0);
-            lblPagina.Name = "lblPagina";
-            lblPagina.Size = new Size(201, 31);
-            lblPagina.TabIndex = 1;
-            lblPagina.Text = "label2";
-            lblPagina.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // btnAnterior
-            // 
-            btnAnterior.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            btnAnterior.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnAnterior.Location = new Point(3, 3);
-            btnAnterior.Name = "btnAnterior";
-            btnAnterior.Size = new Size(97, 25);
-            btnAnterior.TabIndex = 2;
-            btnAnterior.Text = "<";
-            btnAnterior.UseVisualStyleBackColor = true;
-            btnAnterior.Click += btnAnterior_Click;
-            // 
-            // lblTotalRegistros
-            // 
-            lblTotalRegistros.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            lblTotalRegistros.AutoSize = true;
-            lblTotalRegistros.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotalRegistros.Location = new Point(3, 0);
-            lblTotalRegistros.Name = "lblTotalRegistros";
-            lblTotalRegistros.Size = new Size(274, 37);
-            lblTotalRegistros.TabIndex = 0;
-            lblTotalRegistros.Text = "label1";
-            lblTotalRegistros.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel6
             // 
@@ -379,7 +315,7 @@
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel6.Size = new Size(706, 130);
+            tableLayoutPanel6.Size = new Size(555, 140);
             tableLayoutPanel6.TabIndex = 7;
             // 
             // tableLayoutPanel12
@@ -389,11 +325,11 @@
             tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.6666641F));
             tableLayoutPanel12.Controls.Add(lblcbx3, 0, 0);
             tableLayoutPanel12.Controls.Add(cbx3, 1, 0);
-            tableLayoutPanel12.Location = new Point(3, 89);
+            tableLayoutPanel12.Location = new Point(3, 95);
             tableLayoutPanel12.Name = "tableLayoutPanel12";
             tableLayoutPanel12.RowCount = 1;
             tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel12.Size = new Size(700, 26);
+            tableLayoutPanel12.Size = new Size(549, 26);
             tableLayoutPanel12.TabIndex = 8;
             // 
             // lblcbx3
@@ -413,9 +349,9 @@
             cbx3.DropDownStyle = ComboBoxStyle.DropDownList;
             cbx3.Enabled = false;
             cbx3.FormattingEnabled = true;
-            cbx3.Location = new Point(236, 3);
+            cbx3.Location = new Point(186, 3);
             cbx3.Name = "cbx3";
-            cbx3.Size = new Size(461, 23);
+            cbx3.Size = new Size(360, 23);
             cbx3.TabIndex = 5;
             // 
             // tableLayoutPanel7
@@ -425,11 +361,11 @@
             tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.6666641F));
             tableLayoutPanel7.Controls.Add(lblcbx2, 0, 0);
             tableLayoutPanel7.Controls.Add(cbx2, 1, 0);
-            tableLayoutPanel7.Location = new Point(3, 46);
+            tableLayoutPanel7.Location = new Point(3, 49);
             tableLayoutPanel7.Name = "tableLayoutPanel7";
             tableLayoutPanel7.RowCount = 1;
             tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel7.Size = new Size(700, 26);
+            tableLayoutPanel7.Size = new Size(549, 26);
             tableLayoutPanel7.TabIndex = 7;
             // 
             // lblcbx2
@@ -449,9 +385,9 @@
             cbx2.DropDownStyle = ComboBoxStyle.DropDownList;
             cbx2.Enabled = false;
             cbx2.FormattingEnabled = true;
-            cbx2.Location = new Point(236, 3);
+            cbx2.Location = new Point(186, 3);
             cbx2.Name = "cbx2";
-            cbx2.Size = new Size(461, 23);
+            cbx2.Size = new Size(360, 23);
             cbx2.TabIndex = 5;
             // 
             // tableLayoutPanel2
@@ -466,7 +402,7 @@
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new Size(700, 26);
+            tableLayoutPanel2.Size = new Size(549, 26);
             tableLayoutPanel2.TabIndex = 7;
             // 
             // lblcbx1
@@ -486,9 +422,9 @@
             cbx1.DropDownStyle = ComboBoxStyle.DropDownList;
             cbx1.Enabled = false;
             cbx1.FormattingEnabled = true;
-            cbx1.Location = new Point(236, 3);
+            cbx1.Location = new Point(186, 3);
             cbx1.Name = "cbx1";
-            cbx1.Size = new Size(461, 23);
+            cbx1.Size = new Size(360, 23);
             cbx1.TabIndex = 0;
             cbx1.SelectedIndexChanged += cbxFiltroOpcional_SelectedIndexChanged;
             // 
@@ -499,13 +435,13 @@
             tableLayoutPanel3.Controls.Add(tableLayoutPanel8, 0, 0);
             tableLayoutPanel3.Controls.Add(dtpHasta, 0, 2);
             tableLayoutPanel3.Controls.Add(dtpDesde, 0, 1);
-            tableLayoutPanel3.Location = new Point(715, 3);
+            tableLayoutPanel3.Location = new Point(718, 3);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 3;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33333F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel3.Size = new Size(706, 130);
+            tableLayoutPanel3.Size = new Size(556, 140);
             tableLayoutPanel3.TabIndex = 7;
             // 
             // tableLayoutPanel8
@@ -519,7 +455,7 @@
             tableLayoutPanel8.Name = "tableLayoutPanel8";
             tableLayoutPanel8.RowCount = 1;
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel8.Size = new Size(700, 24);
+            tableLayoutPanel8.Size = new Size(550, 24);
             tableLayoutPanel8.TabIndex = 7;
             // 
             // chkUsarRango
@@ -527,7 +463,7 @@
             chkUsarRango.AutoSize = true;
             chkUsarRango.Enabled = false;
             chkUsarRango.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            chkUsarRango.Location = new Point(353, 3);
+            chkUsarRango.Location = new Point(278, 3);
             chkUsarRango.Name = "chkUsarRango";
             chkUsarRango.Size = new Size(96, 18);
             chkUsarRango.TabIndex = 4;
@@ -554,18 +490,18 @@
             // 
             dtpHasta.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dtpHasta.Enabled = false;
-            dtpHasta.Location = new Point(3, 89);
+            dtpHasta.Location = new Point(3, 95);
             dtpHasta.Name = "dtpHasta";
-            dtpHasta.Size = new Size(700, 23);
+            dtpHasta.Size = new Size(550, 23);
             dtpHasta.TabIndex = 2;
             // 
             // dtpDesde
             // 
             dtpDesde.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dtpDesde.Enabled = false;
-            dtpDesde.Location = new Point(3, 46);
+            dtpDesde.Location = new Point(3, 49);
             dtpDesde.Name = "dtpDesde";
-            dtpDesde.Size = new Size(700, 23);
+            dtpDesde.Size = new Size(550, 23);
             dtpDesde.TabIndex = 1;
             // 
             // tableLayoutPanel4
@@ -575,11 +511,11 @@
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.17647F));
             tableLayoutPanel4.Controls.Add(tableLayoutPanel14, 1, 0);
             tableLayoutPanel4.Controls.Add(tableLayoutPanel5, 0, 0);
-            tableLayoutPanel4.Location = new Point(3, 139);
+            tableLayoutPanel4.Location = new Point(3, 149);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 1;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel4.Size = new Size(704, 74);
+            tableLayoutPanel4.Size = new Size(555, 74);
             tableLayoutPanel4.TabIndex = 7;
             // 
             // tableLayoutPanel14
@@ -589,12 +525,12 @@
             tableLayoutPanel14.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel14.Controls.Add(btnLimpiar, 0, 1);
             tableLayoutPanel14.Controls.Add(btnBuscar, 0, 0);
-            tableLayoutPanel14.Location = new Point(417, 3);
+            tableLayoutPanel14.Location = new Point(329, 3);
             tableLayoutPanel14.Name = "tableLayoutPanel14";
             tableLayoutPanel14.RowCount = 2;
             tableLayoutPanel14.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel14.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel14.Size = new Size(284, 68);
+            tableLayoutPanel14.Size = new Size(223, 68);
             tableLayoutPanel14.TabIndex = 8;
             // 
             // btnLimpiar
@@ -603,7 +539,7 @@
             btnLimpiar.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnLimpiar.Location = new Point(3, 37);
             btnLimpiar.Name = "btnLimpiar";
-            btnLimpiar.Size = new Size(278, 28);
+            btnLimpiar.Size = new Size(217, 28);
             btnLimpiar.TabIndex = 2;
             btnLimpiar.Text = "Limpiar Filtros";
             btnLimpiar.UseVisualStyleBackColor = true;
@@ -615,7 +551,7 @@
             btnBuscar.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnBuscar.Location = new Point(3, 3);
             btnBuscar.Name = "btnBuscar";
-            btnBuscar.Size = new Size(278, 28);
+            btnBuscar.Size = new Size(217, 28);
             btnBuscar.TabIndex = 1;
             btnBuscar.Text = "Aplicar Filtros";
             btnBuscar.UseVisualStyleBackColor = true;
@@ -632,7 +568,7 @@
             tableLayoutPanel5.RowCount = 2;
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel5.Size = new Size(408, 68);
+            tableLayoutPanel5.Size = new Size(320, 68);
             tableLayoutPanel5.TabIndex = 2;
             // 
             // txtBuscar
@@ -642,7 +578,7 @@
             txtBuscar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtBuscar.Location = new Point(3, 37);
             txtBuscar.Name = "txtBuscar";
-            txtBuscar.Size = new Size(402, 29);
+            txtBuscar.Size = new Size(314, 29);
             txtBuscar.TabIndex = 0;
             // 
             // lblBuscar
@@ -657,13 +593,93 @@
             lblBuscar.Text = "Buscar :";
             lblBuscar.TextAlign = ContentAlignment.BottomLeft;
             // 
+            // tableLayoutPanel10
+            // 
+            tableLayoutPanel10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel10.ColumnCount = 2;
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
+            tableLayoutPanel10.Controls.Add(tableLayoutPanel11, 1, 0);
+            tableLayoutPanel10.Controls.Add(lblTotalRegistros, 0, 0);
+            tableLayoutPanel10.Location = new Point(3, 570);
+            tableLayoutPanel10.Name = "tableLayoutPanel10";
+            tableLayoutPanel10.RowCount = 1;
+            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel10.Size = new Size(1430, 57);
+            tableLayoutPanel10.TabIndex = 7;
+            // 
+            // tableLayoutPanel11
+            // 
+            tableLayoutPanel11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel11.ColumnCount = 3;
+            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel11.Controls.Add(btnSiguiente, 2, 0);
+            tableLayoutPanel11.Controls.Add(lblPagina, 1, 0);
+            tableLayoutPanel11.Controls.Add(btnAnterior, 0, 0);
+            tableLayoutPanel11.Location = new Point(575, 3);
+            tableLayoutPanel11.Name = "tableLayoutPanel11";
+            tableLayoutPanel11.RowCount = 1;
+            tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel11.Size = new Size(852, 51);
+            tableLayoutPanel11.TabIndex = 7;
+            // 
+            // btnSiguiente
+            // 
+            btnSiguiente.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            btnSiguiente.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnSiguiente.Location = new Point(642, 5);
+            btnSiguiente.Name = "btnSiguiente";
+            btnSiguiente.Size = new Size(207, 41);
+            btnSiguiente.TabIndex = 7;
+            btnSiguiente.Text = ">";
+            btnSiguiente.UseVisualStyleBackColor = true;
+            btnSiguiente.Click += btnSiguiente_Click;
+            // 
+            // lblPagina
+            // 
+            lblPagina.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            lblPagina.AutoSize = true;
+            lblPagina.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblPagina.Location = new Point(216, 0);
+            lblPagina.Name = "lblPagina";
+            lblPagina.Size = new Size(420, 51);
+            lblPagina.TabIndex = 1;
+            lblPagina.Text = "label2";
+            lblPagina.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnAnterior
+            // 
+            btnAnterior.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            btnAnterior.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnAnterior.Location = new Point(3, 6);
+            btnAnterior.Name = "btnAnterior";
+            btnAnterior.Size = new Size(207, 38);
+            btnAnterior.TabIndex = 2;
+            btnAnterior.Text = "<";
+            btnAnterior.UseVisualStyleBackColor = true;
+            btnAnterior.Click += btnAnterior_Click;
+            // 
+            // lblTotalRegistros
+            // 
+            lblTotalRegistros.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            lblTotalRegistros.AutoSize = true;
+            lblTotalRegistros.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTotalRegistros.Location = new Point(3, 0);
+            lblTotalRegistros.Name = "lblTotalRegistros";
+            lblTotalRegistros.Size = new Size(566, 57);
+            lblTotalRegistros.TabIndex = 0;
+            lblTotalRegistros.Text = "label1";
+            lblTotalRegistros.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // FBaseConsulta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             AutoSize = true;
-            ClientSize = new Size(1451, 561);
+            ClientSize = new Size(1451, 688);
             Controls.Add(panel1);
             Name = "FBaseConsulta";
             StartPosition = FormStartPosition.CenterScreen;
@@ -676,14 +692,11 @@
             BarraLateralBotones.PerformLayout();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            tableLayoutPanel15.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel9.ResumeLayout(false);
             tableLayoutPanel13.ResumeLayout(false);
             tableLayoutPanel13.PerformLayout();
-            tableLayoutPanel10.ResumeLayout(false);
-            tableLayoutPanel10.PerformLayout();
-            tableLayoutPanel11.ResumeLayout(false);
-            tableLayoutPanel11.PerformLayout();
             tableLayoutPanel6.ResumeLayout(false);
             tableLayoutPanel12.ResumeLayout(false);
             tableLayoutPanel12.PerformLayout();
@@ -698,6 +711,10 @@
             tableLayoutPanel14.ResumeLayout(false);
             tableLayoutPanel5.ResumeLayout(false);
             tableLayoutPanel5.PerformLayout();
+            tableLayoutPanel10.ResumeLayout(false);
+            tableLayoutPanel10.PerformLayout();
+            tableLayoutPanel11.ResumeLayout(false);
+            tableLayoutPanel11.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -750,5 +767,6 @@
         protected ComboBox cbx2;
         private TableLayoutPanel tableLayoutPanel14;
         protected Button btnLimpiar;
+        private TableLayoutPanel tableLayoutPanel15;
     }
 }
