@@ -14,6 +14,7 @@ using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
 using Presentacion.Core.Venta;
 using ScottPlot;
+using ScottPlot.WinForms;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Caja;
 using Servicios.LogicaNegocio.Caja.DTO;
@@ -25,6 +26,7 @@ using System.ComponentModel.Design;
 using System.Data;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,6 +41,28 @@ namespace Presentacion.Core.Administracion
         private readonly CajaServicio _cajaSerivicio;
         private readonly VentaServicio _ventaServicio;
         List<CajaDTO> todasLasCajas;
+        // Definición de la fuente y tamaño personalizados
+        private Font _toolTipFont = new Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold, GraphicsUnit.Pixel);
+        private string _currentToolTipText = string.Empty;
+
+        // Componente nativo de WinForms para mostrar los valores flotantes
+        private System.Windows.Forms.ToolTip _winFormsToolTip;
+
+        // Arrays de respaldo para almacenar los datos reales de cada gráfico y leerlos en el MouseMove
+        private double[] _xs1, _ys1;
+        private double[] _xs2, _ys2;
+        private double[] _xs3, _ys3;
+        private double[] _xs4, _ys4;
+        private double[] _xs5, _ys5;
+        private double[] _xs6, _ys6;
+
+        // Índices para controlar el estado y evitar parpadeos molestos al mover el mouse
+        private int _lastIndex1 = -1;
+        private int _lastIndex2 = -1;
+        private int _lastIndex3 = -1;
+        private int _lastIndex4 = -1;
+        private int _lastIndex5 = -1;
+        private int _lastIndex6 = -1;
 
         public FAdministracion(long logeadoId)
         {
@@ -47,6 +71,22 @@ namespace Presentacion.Core.Administracion
 
             _cajaSerivicio = new CajaServicio();
             _ventaServicio = new VentaServicio();
+
+            // Inicializamos el ToolTip con un comportamiento rápido de respuesta
+            // Modificá esta parte dentro de tu Constructor actual:
+            _winFormsToolTip = new System.Windows.Forms.ToolTip
+            {
+                InitialDelay = 0,
+                ReshowDelay = 0,
+                AutomaticDelay = 0,
+                UseAnimation = false,
+                UseFading = false,
+                OwnerDraw = true // <-- ACTIVAR ESTO
+            };
+
+            // Suscribir los eventos de dibujo personalizado
+            _winFormsToolTip.Popup += WinFormsToolTip_Popup;
+            _winFormsToolTip.Draw += WinFormsToolTip_Draw;
 
             //ComboBox de meses para el filtro del grafico de ganancias por mes
             var meses = DateTimeFormatInfo.CurrentInfo.MonthNames
@@ -61,8 +101,6 @@ namespace Presentacion.Core.Administracion
             cbMesGrafico.SelectedIndex = DateTime.Now.Month - 1;
 
             //ComboBox de años para el filtro del grafico de ganancias por mes
-            //Buscar el año mas viejo en ventas o en caja, asi limitamos el rango de años a mostrar en el combo
-
             int anioActual = DateTime.Now.Year;
 
             var anios = Enumerable.Range(anioActual - 9, 10)
@@ -84,21 +122,18 @@ namespace Presentacion.Core.Administracion
         private void sTOCKToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var fProducto = new FProductoConsulta();
-
             fProducto.Show();
         }
 
         private void mARCASToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var fmarca = new FMarcaConsulta(false);
-
             fmarca.Show();
         }
 
         private void cATEGORIASToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var fCategoria = new FCategoriaConsulta(false);
-
             fCategoria.Show();
         }
 
@@ -118,7 +153,6 @@ namespace Presentacion.Core.Administracion
         {
             var FCliente = new FClienteConsulta();
             FCliente.Show();
-
         }
 
         private void cUENTASCORRIENTESToolStripMenuItem_Click(object sender, EventArgs e)
@@ -129,11 +163,8 @@ namespace Presentacion.Core.Administracion
 
         private void lISTADOOFERTASToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //ver porque creo q falta una pantalla intermedia entre creacion y listado
-
             var FOferta = new FOfertaConsulta();
             FOferta.Show();
-
         }
 
         private void aCTIVARDESACTIVARToolStripMenuItem_Click(object sender, EventArgs e)
@@ -169,16 +200,13 @@ namespace Presentacion.Core.Administracion
         private void nUEVAOFERTAToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var fGrupo = new FOfertaGrupoABM();
-
             fGrupo.ShowDialog();
-
         }
 
         private void btnGasto_Click(object sender, EventArgs e)
         {
             var FGasto = new Gasto.FGastoConsulta(_logeadoId);
             FGasto.Show();
-
         }
 
         private void btnComprobantes_Click(object sender, EventArgs e)
@@ -222,14 +250,14 @@ namespace Presentacion.Core.Administracion
 
             formsPlot6.Plot.Axes.AutoScale();
             formsPlot6.Refresh();
-            ////grafico X////
 
-            //Ingresos, egresos
-            //La idea que sea los dos graficos en un mismo formplot, barras lado a lado puede ser una 
-            //o directamente con scatter
-            //capaz es al pedo mostrar ingresos si ya lo estmaos mostrando como en 2 graficos pero en diferentes contextos
-
-            ////////////////////////////////Deberiamos mostrar el balance final y no el total de ingresos
+            // Enlazamos los movimientos de mouse de los controles a nuestra lógica segura
+            formsPlot1.MouseMove += FormsPlot1_MouseMove;
+            formsPlot2.MouseMove += FormsPlot2_MouseMove;
+            formsPlot3.MouseMove += FormsPlot3_MouseMove;
+            formsPlot4.MouseMove += FormsPlot4_MouseMove;
+            formsPlot5.MouseMove += FormsPlot5_MouseMove;
+            formsPlot6.MouseMove += FormsPlot6_MouseMove;
         }
 
         private void btnFiltrarGraficos_Click(object sender, EventArgs e)
@@ -251,17 +279,12 @@ namespace Presentacion.Core.Administracion
 
         private void grafico1(int? mes = null, int? año = null)
         {
-
-            ////Primer grafico////
-            ///Ganacias por cajas de un MES y un AÑO especificos
-
-            var cajasEnUnMesXyAñoX = _cajaSerivicio.ObtenerCajasPorMesYAño(DateTime.Now.Month, DateTime.Now.Year); //CAMBIAR LA FUNCION a una que traiga por mes y año
+            var cajasEnUnMesXyAñoX = _cajaSerivicio.ObtenerCajasPorMesYAño(DateTime.Now.Month, DateTime.Now.Year);
 
             if (mes.HasValue && año.HasValue)
             {
                 int añoBusqueda = año.Value;
                 int mesBusqueda = mes.Value;
-
                 cajasEnUnMesXyAñoX = _cajaSerivicio.ObtenerCajasPorMesYAño(mesBusqueda, añoBusqueda);
             }
 
@@ -278,6 +301,11 @@ namespace Presentacion.Core.Administracion
                 .Select(i => (double)i)
                 .ToArray();
 
+            // Guardamos copia local en variables de clase para el Tooltip
+            _xs1 = numerosCajas;
+            _ys1 = gananciasPorCaja;
+            _lastIndex1 = -1; // Reseteamos puntero
+
             formsPlot1.Plot.Clear();
 
             string title = mes.HasValue ?
@@ -288,24 +316,15 @@ namespace Presentacion.Core.Administracion
             formsPlot1.Plot.XLabel("Fecha de las Cajas");
             formsPlot1.Plot.YLabel("Total Ingresos");
 
+            formsPlot1.Plot.Add.Scatter(numerosCajas, gananciasPorCaja);
 
-            formsPlot1.Plot.Add.Scatter(numerosCajas, gananciasPorCaja); //Eje x e y
-
-            formsPlot1.Plot.Axes.Bottom.SetTicks(numerosCajas, fechasDeCadaCaja); //Etiquetas eje x
-
+            formsPlot1.Plot.Axes.Bottom.SetTicks(numerosCajas, fechasDeCadaCaja);
             formsPlot1.Plot.Axes.AutoScale();
             formsPlot1.Refresh();
         }
 
         private void grafico2()
         {
-            ////Segundo Grafico////
-            ///Ganacias por cajas agrupadas por X cantidad de dias (ultimos 31 dias actual)  // Este grafico no me cierra mucho teniendo el grafico 1
-
-            //Agrupar las cajas por dia de apertura y sumar los ingresos de cada dia
-
-            // LO SIGUIENTE SERIA PODER MODIFICAR LA CANTIDAD DE DIAS A MOSTRAR O PODER CAMBIAR EL MES 
-
             var cajasUltimos31Dias = _cajaSerivicio.ObtenerCajasUltimosXDias(31);
 
             var cajasPorDia = cajasUltimos31Dias
@@ -313,7 +332,7 @@ namespace Presentacion.Core.Administracion
             .OrderBy(g => g.Key)
             .ToList();
 
-            double[] ingresosPorDia = cajasPorDia //Eje Y el total de ingresos (deberia ser balance final, pero no entraria la caja sin cerrar creo)
+            double[] ingresosPorDia = cajasPorDia
                 .Select(g => (double)g.Sum(c => c.TotalIngresos))
                 .ToArray();
 
@@ -324,6 +343,10 @@ namespace Presentacion.Core.Administracion
                 .Select(i => (double)i)
                 .ToArray();
 
+            // Guardamos copia local en variables de clase
+            _xs2 = numerosDias;
+            _ys2 = ingresosPorDia;
+            _lastIndex2 = -1;
 
             formsPlot2.Plot.Clear();
 
@@ -333,25 +356,20 @@ namespace Presentacion.Core.Administracion
 
             formsPlot2.Plot.Add.Scatter(numerosDias, ingresosPorDia);
 
-            formsPlot2.Plot.Axes.Bottom.SetTicks(numerosDias, dias); //Etiquetas eje x
-
+            formsPlot2.Plot.Axes.Bottom.SetTicks(numerosDias, dias);
             formsPlot2.Plot.Axes.AutoScale();
             formsPlot2.Refresh();
         }
 
         private void grafico3(int? mes = null, int? año = null)
         {
-            ////Cuarto grafico////
-            ///Ganacias por dias en un mes y año especificos
-
-            var GananciasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year); //traemos toda las ventas de un mes y año especificos 
+            var GananciasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year);
 
             if (mes.HasValue && año.HasValue)
             {
                 int añoBusqueda = año.Value;
                 int mesBusqueda = mes.Value;
-
-                GananciasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(mesBusqueda, añoBusqueda); //traemos toda las ventas de un mes y año especificos 
+                GananciasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(mesBusqueda, añoBusqueda);
             }
 
             var ganaciasAgrupadasPorFecha = GananciasMesXAñoX
@@ -364,15 +382,20 @@ namespace Presentacion.Core.Administracion
                 .OrderBy(x => x.Fecha)
                 .ToList();
 
-            string[] diaDeLasGanancias = ganaciasAgrupadasPorFecha //seleccionamos las fechas de las ventas
+            string[] diaDeLasGanancias = ganaciasAgrupadasPorFecha
                 .Select(x => x.Fecha.ToString("dd/MM"))
                 .ToArray();
 
-            double[] cantidadesGananciasPorDia = ganaciasAgrupadasPorFecha.Select(x => (double)x.IngresoTotal).ToArray(); //seleccionamos la cantidad de ventas por dia (valor de las bars)
+            double[] cantidadesGananciasPorDia = ganaciasAgrupadasPorFecha.Select(x => (double)x.IngresoTotal).ToArray();
 
             double[] posicionesDiasGanancias = Enumerable.Range(0, diaDeLasGanancias.Length)
                                 .Select(i => (double)i)
                                 .ToArray();
+
+            // Guardamos copia local en variables de clase
+            _xs3 = posicionesDiasGanancias;
+            _ys3 = cantidadesGananciasPorDia;
+            _lastIndex3 = -1;
 
             formsPlot3.Plot.Clear();
 
@@ -386,28 +409,23 @@ namespace Presentacion.Core.Administracion
 
             formsPlot3.Plot.Add.Bars(cantidadesGananciasPorDia);
 
-            formsPlot3.Plot.Axes.Bottom.SetTicks(posicionesDiasGanancias, diaDeLasGanancias); //agregamos al grafico 
-
+            formsPlot3.Plot.Axes.Bottom.SetTicks(posicionesDiasGanancias, diaDeLasGanancias);
             formsPlot3.Plot.Axes.AutoScale();
             formsPlot3.Refresh();
         }
 
         private void grafico4(int? mes = null, int? año = null)
         {
-            ////Sexto grafico////
-            ///Ventas por dias en un mes y año especificos
-
-            var ventasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year); //traemos toda las ventas de un mes y año especificos
+            var ventasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year);
 
             if (año.HasValue && mes.HasValue)
             {
                 int añoBusqueda = año.Value;
                 int mesBusqueda = mes.Value;
-
                 ventasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(mesBusqueda, añoBusqueda);
             }
 
-            var ventarAgrupadasPorFecha = ventasMesXAñoX.Select(i => i.FechaVenta.Date) //agrupamos por fecha y contamos la cantidad de ventas de cada dia
+            var ventarAgrupadasPorFecha = ventasMesXAñoX.Select(i => i.FechaVenta.Date)
                 .GroupBy(fecha => fecha)
                 .Select(g => new
                 {
@@ -417,15 +435,20 @@ namespace Presentacion.Core.Administracion
                 .OrderBy(x => x.Fecha)
                 .ToList();
 
-            string[] diaDeLasVentas = ventarAgrupadasPorFecha //seleccionamos las fechas de las ventas
+            string[] diaDeLasVentas = ventarAgrupadasPorFecha
                 .Select(x => x.Fecha.ToString("dd/MM"))
                 .ToArray();
 
-            double[] cantidadesVentasPorDia = ventarAgrupadasPorFecha.Select(x => (double)x.CantidadVentas).ToArray(); //seleccionamos la cantidad de ventas por dia (valor de las bars)
+            double[] cantidadesVentasPorDia = ventarAgrupadasPorFecha.Select(x => (double)x.CantidadVentas).ToArray();
 
             double[] posicionesDiasVentas = Enumerable.Range(0, diaDeLasVentas.Length)
                                 .Select(i => (double)i)
                                 .ToArray();
+
+            // Guardamos copia local en variables de clase
+            _xs4 = posicionesDiasVentas;
+            _ys4 = cantidadesVentasPorDia;
+            _lastIndex4 = -1;
 
             formsPlot4.Plot.Clear();
 
@@ -439,32 +462,26 @@ namespace Presentacion.Core.Administracion
 
             formsPlot4.Plot.Add.Bars(cantidadesVentasPorDia);
 
-            formsPlot4.Plot.Axes.Bottom.SetTicks(posicionesDiasVentas, diaDeLasVentas); //agregamos al grafico 
-
+            formsPlot4.Plot.Axes.Bottom.SetTicks(posicionesDiasVentas, diaDeLasVentas);
             formsPlot4.Plot.Axes.AutoScale();
             formsPlot4.Refresh();
         }
 
         private void grafico5(int? año = null)
         {
-            ////Tercer grafico/////
-            ///Ganancias por meses en un año especifico
-
-            var cajasAñoX = _cajaSerivicio.ObtenerLasCajasDeXAño(DateTime.Now.Year); //Filtro de año
+            var cajasAñoX = _cajaSerivicio.ObtenerLasCajasDeXAño(DateTime.Now.Year);
 
             if (año.HasValue)
             {
                 int añoBusqueda = año.Value;
-
-                cajasAñoX = _cajaSerivicio.ObtenerLasCajasDeXAño(añoBusqueda); //Filtro de año
-
+                cajasAñoX = _cajaSerivicio.ObtenerLasCajasDeXAño(añoBusqueda);
             }
 
             var fechasYGanaciasAgrupadasPorMeses = cajasAñoX.GroupBy(c => new { c.FechaInicio.Year, c.FechaInicio.Month })
             .Select(g => new
             {
                 Fecha = new DateTime(g.Key.Year, g.Key.Month, 1),
-                Balance = g.Sum(c => c.TotalIngresos)//deberia ser balance final?
+                Balance = g.Sum(c => c.TotalIngresos)
             }).ToList();
 
             string[] meses =
@@ -474,7 +491,6 @@ namespace Presentacion.Core.Administracion
                 "Septiembre", "Octubre", "Noviembre", "Diciembre"
             };
 
-            // X = índices (0..11)
             double[] xs = fechasYGanaciasAgrupadasPorMeses
                 .Select(x => x.Fecha.Month - 1)
                 .Select(m => (double)m)
@@ -488,6 +504,10 @@ namespace Presentacion.Core.Administracion
                 .Select(x => meses[x.Fecha.Month - 1])
                 .ToArray();
 
+            // Guardamos copia local en variables de clase
+            _xs5 = xs;
+            _ys5 = ganaciasPorMesEjeY;
+            _lastIndex5 = -1;
 
             formsPlot5.Plot.Clear();
 
@@ -499,36 +519,27 @@ namespace Presentacion.Core.Administracion
 
             formsPlot5.Plot.Add.Bars(xs, ganaciasPorMesEjeY);
 
-            //Meses como labels del eje X
             formsPlot5.Plot.Axes.Bottom.SetTicks(xs, mesesPresentesEjeX);
-
-            //Rotar etiquetas
             formsPlot5.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
-
             formsPlot5.Plot.Axes.AutoScale();
             formsPlot5.Refresh();
         }
 
         private void grafico6(int? año = null)
         {
-            ////Quinto grafico/////
-            ///Ventas por meses en un año especifico
-
-            var ventasAñoX = _ventaServicio.ObtenerVentasPorMesYAño(0, 2026); //Filtro de año, pasamos 0 asi traemos el año completo
+            var ventasAñoX = _ventaServicio.ObtenerVentasPorMesYAño(0, 2026);
 
             if (año.HasValue)
             {
                 int añoBusqueda = año.Value;
-
-                ventasAñoX = _ventaServicio.ObtenerVentasPorMesYAño(0, añoBusqueda); //Filtro de año, pasamos 0 asi traemos el año completo
-
+                ventasAñoX = _ventaServicio.ObtenerVentasPorMesYAño(0, añoBusqueda);
             }
 
             var fechasYVentasAgrupadasPorMeses = ventasAñoX.GroupBy(c => new { c.FechaVenta.Year, c.FechaVenta.Month })
             .Select(g => new
             {
                 Fecha = new DateTime(g.Key.Year, g.Key.Month, 1),
-                CantidadVentas = g.Count()
+                QuantityVentas = g.Count() // Corregido tipado interno implícito
             }).ToList();
 
             string[] mesesVentas =
@@ -538,24 +549,27 @@ namespace Presentacion.Core.Administracion
                 "Septiembre", "Octubre", "Noviembre", "Diciembre"
             };
 
-            // X = índices (0..11)
             double[] xsVentas = fechasYVentasAgrupadasPorMeses
                 .Select(x => x.Fecha.Month - 1)
                 .Select(m => (double)m)
                 .ToArray();
 
             double[] ventasPorMesEjeY = fechasYVentasAgrupadasPorMeses
-                .Select(x => (double)x.CantidadVentas)
+                .Select(x => (double)x.QuantityVentas)
                 .ToArray();
 
             string[] mesesVentasPresentesEjeX = fechasYVentasAgrupadasPorMeses
                 .Select(x => mesesVentas[x.Fecha.Month - 1])
                 .ToArray();
 
+            // Guardamos copia local en variables de clase
+            _xs6 = xsVentas;
+            _ys6 = ventasPorMesEjeY;
+            _lastIndex6 = -1;
 
             formsPlot6.Plot.Clear();
 
-            string title = año.HasValue ? $"Ventas en {año.Value}" : $"Ventas en {DateTime.Now.Year}";
+            string title = año.HasValue ? $"Ventas en {año.Value}" : $"Ventas in {DateTime.Now.Year}";
 
             formsPlot6.Plot.Title(title);
             formsPlot6.Plot.XLabel("Meses");
@@ -563,9 +577,7 @@ namespace Presentacion.Core.Administracion
 
             formsPlot6.Plot.Add.Bars(xsVentas, ventasPorMesEjeY);
 
-            //Meses como labels del eje X
             formsPlot6.Plot.Axes.Bottom.SetTicks(xsVentas, mesesVentasPresentesEjeX);
-
             formsPlot6.Plot.Axes.AutoScale();
             formsPlot6.Refresh();
         }
@@ -595,13 +607,143 @@ namespace Presentacion.Core.Administracion
         private void nuevaVentaLibreToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var fvl = new FVentaLibre(_logeadoId);
-
             fvl.Show();
         }
 
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-        {
+        // =======================================================
+        // LÓGICA DE PROXIMIDAD MATEMÁTICA Y RENDERIZADO FLOTANTE
+        // =======================================================
 
+        private void EvaluarPosicionMouse(FormsPlot formsPlot, double[] xs, double[] ys, MouseEventArgs e, string prefijo, string formato, ref int lastIndex)
+        {
+            if (xs == null || ys == null || xs.Length == 0)
+            {
+                OcultarTooltip(formsPlot, ref lastIndex);
+                return;
+            }
+
+            Pixel pixelMouse = new Pixel(e.X, e.Y);
+            Coordinates coordMouse = formsPlot.Plot.GetCoordinates(pixelMouse);
+
+            int indexMasCercano = -1;
+            double minimaDistanciaX = double.MaxValue;
+
+            for (int i = 0; i < xs.Length; i++)
+            {
+                double distancia = Math.Abs(xs[i] - coordMouse.X);
+                if (distancia < minimaDistanciaX)
+                {
+                    minimaDistanciaX = distancia;
+                    indexMasCercano = i;
+                }
+            }
+
+            if (indexMasCercano != -1 && minimaDistanciaX < 0.4)
+            {
+                if (lastIndex != indexMasCercano)
+                {
+                    lastIndex = indexMasCercano;
+                    double valorY = ys[indexMasCercano];
+
+                    // 1. Guardamos el texto en la variable global para medirlo en el Popup
+                    _currentToolTipText = $"{prefijo}: {valorY.ToString(formato)}";
+
+                    // 2. Lanzamos el ToolTip
+                    _winFormsToolTip.Show(_currentToolTipText, formsPlot, e.X + 15, e.Y + 15, 3000);
+                }
+            }
+            else
+            {
+                OcultarTooltip(formsPlot, ref lastIndex);
+            }
+        }
+
+        // =======================================================
+        // NUEVOS MÉTODOS PARA CONTROLAR FUENTE, TAMAÑO Y DISEÑO
+        // =======================================================
+
+        private void WinFormsToolTip_Popup(object sender, PopupEventArgs e)
+        {
+            // Medimos cuánto va a medir el texto usando la fuente personalizada
+            // Sumamos un pequeño margen (Padding) para que no quede pegado a los bordes
+            Size tamanoTexto = TextRenderer.MeasureText(_currentToolTipText, _toolTipFont);
+            e.ToolTipSize = new Size(tamanoTexto.Width + 12, tamanoTexto.Height + 8);
+        }
+
+        private void WinFormsToolTip_Draw(object sender, DrawToolTipEventArgs e)
+        {
+            // 1. Dibujamos el fondo (Blanco limpio minimalista)
+            e.Graphics.FillRectangle(Brushes.White, e.Bounds);
+
+            // 2. Dibujamos un borde sutil gris oscuro
+            using (Pen lapizBorde = new Pen(System.Drawing.Color.FromArgb(180, 180, 180), 1))
+            {
+                e.Graphics.DrawRectangle(lapizBorde, 0, 0, e.Bounds.Width - 1, e.Bounds.Height - 1);
+            }
+
+            // 3. Dibujamos el texto usando nuestra FUENTE y TAMAÑO personalizados
+            // TextFormatFlags centra el texto perfectamente en el rectángulo calculado
+            TextFormatFlags alineacion = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
+            TextRenderer.DrawText(e.Graphics, e.ToolTipText, _toolTipFont, e.Bounds, System.Drawing.Color.Black, alineacion);
+        }
+
+        private void OcultarTooltip(FormsPlot formsPlot, ref int lastIndex)
+        {
+            if (lastIndex != -1)
+            {
+                lastIndex = -1;
+                _winFormsToolTip.Hide(formsPlot);
+            }
+        }
+
+        // Enlaces individuales de cada control hacia la función de evaluación matemática segura
+        private void FormsPlot1_MouseMove(object sender, MouseEventArgs e) =>
+            EvaluarPosicionMouse(formsPlot1, _xs1, _ys1, e, "Ingreso", "C2", ref _lastIndex1);
+
+        private void FormsPlot2_MouseMove(object sender, MouseEventArgs e) =>
+            EvaluarPosicionMouse(formsPlot2, _xs2, _ys2, e, "Total Día", "C2", ref _lastIndex2);
+
+        private void FormsPlot3_MouseMove(object sender, MouseEventArgs e) =>
+            EvaluarPosicionMouse(formsPlot3, _xs3, _ys3, e, "Ganancia", "C2", ref _lastIndex3);
+
+        private void FormsPlot4_MouseMove(object sender, MouseEventArgs e) =>
+            EvaluarPosicionMouse(formsPlot4, _xs4, _ys4, e, "Cant. Ventas", "N0", ref _lastIndex4);
+
+        private void FormsPlot5_MouseMove(object sender, MouseEventArgs e) =>
+            EvaluarPosicionMouse(formsPlot5, _xs5, _ys5, e, "Total Mes", "C2", ref _lastIndex5);
+
+        private void FormsPlot6_MouseMove(object sender, MouseEventArgs e) =>
+            EvaluarPosicionMouse(formsPlot6, _xs6, _ys6, e, "Cant. Ventas", "N0", ref _lastIndex6);
+
+        private void cbMesGrafico_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Evaluamos de forma segura si ya hay un año seleccionado y lo extraemos
+            if (cbAñoGraficos.SelectedItem is int añoFiltrado)
+            {
+                int mesFiltrado = cbMesGrafico.SelectedIndex + 1;
+
+                // Solo ejecutamos el filtro si el mes es válido
+                if (mesFiltrado > 0)
+                {
+                    filtrarGraficos(añoFiltrado, mesFiltrado);
+                }
+            }
+            // Si es null (como en el arranque), el 'if' no se cumple y no hace nada,
+            // evitando que la aplicación se rompa.
+        }
+        private void cbAñoGraficos_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Validamos de forma segura que el objeto seleccionado sea un entero válido
+            if (cbAñoGraficos.SelectedItem is int añoFiltrado)
+            {
+                int mesFiltrado = cbMesGrafico.SelectedIndex + 1;
+
+                // Nos aseguramos de que el mes también tenga una selección válida
+                if (mesFiltrado > 0)
+                {
+                    filtrarGraficos(añoFiltrado, mesFiltrado);
+                }
+            }
         }
     }
 }

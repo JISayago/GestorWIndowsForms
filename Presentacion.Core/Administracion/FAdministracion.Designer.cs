@@ -382,9 +382,10 @@
             // 
             lblMesGraficos.AutoSize = true;
             lblMesGraficos.Dock = DockStyle.Bottom;
-            lblMesGraficos.Location = new Point(3, 4);
+            lblMesGraficos.Font = new Font("Segoe UI Semibold", 13F, FontStyle.Bold);
+            lblMesGraficos.Location = new Point(3, 0);
             lblMesGraficos.Name = "lblMesGraficos";
-            lblMesGraficos.Size = new Size(204, 15);
+            lblMesGraficos.Size = new Size(204, 19);
             lblMesGraficos.TabIndex = 0;
             lblMesGraficos.Text = "Mes";
             lblMesGraficos.TextAlign = ContentAlignment.MiddleCenter;
@@ -393,9 +394,10 @@
             // 
             lblAñoGraficos.AutoSize = true;
             lblAñoGraficos.Dock = DockStyle.Bottom;
-            lblAñoGraficos.Location = new Point(213, 4);
+            lblAñoGraficos.Font = new Font("Segoe UI Semibold", 13F, FontStyle.Bold);
+            lblAñoGraficos.Location = new Point(213, 0);
             lblAñoGraficos.Name = "lblAñoGraficos";
-            lblAñoGraficos.Size = new Size(204, 15);
+            lblAñoGraficos.Size = new Size(204, 19);
             lblAñoGraficos.TabIndex = 1;
             lblAñoGraficos.Text = "Año";
             lblAñoGraficos.TextAlign = ContentAlignment.MiddleCenter;
@@ -409,6 +411,7 @@
             cbMesGrafico.Name = "cbMesGrafico";
             cbMesGrafico.Size = new Size(150, 23);
             cbMesGrafico.TabIndex = 4;
+            cbMesGrafico.SelectedIndexChanged += cbMesGrafico_SelectedIndexChanged;
             // 
             // cbAñoGraficos
             // 
@@ -419,6 +422,7 @@
             cbAñoGraficos.Name = "cbAñoGraficos";
             cbAñoGraficos.Size = new Size(150, 23);
             cbAñoGraficos.TabIndex = 5;
+            cbAñoGraficos.SelectedIndexChanged += cbAñoGraficos_SelectedIndexChanged;
             // 
             // tlpFiltradoBotones
             // 
@@ -583,7 +587,6 @@
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(1598, 488);
             tabControl1.TabIndex = 0;
-            tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
             // 
             // tabPage3
             // 
