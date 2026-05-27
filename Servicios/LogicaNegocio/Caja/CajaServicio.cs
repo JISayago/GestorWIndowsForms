@@ -50,6 +50,7 @@ namespace Servicios.LogicaNegocio.Caja
                 caja.FechaFin = DateTime.Now;
                 caja.EstaCerrada = true;
                 caja.EmpleadoCierre = empleadoId; //asignar el empleado que cierra la caja
+                caja.BalanceFinal = caja.SaldoActual;
                 // Asignar otros valores finales como TotalIngresos, TotalEgresos, BalanceFinal si es necesario
                 context.SaveChanges();
             }

@@ -122,7 +122,8 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
                     CajaId = cajaDTO.CajaId,
                     MontoInicial = cajaDTO.SaldoInicial,
                     Ingresos = cajaDTO.TotalIngresos,
-                    TotalCaja = cajaDTO.BalanceFinal,
+                    Egresos = cajaDTO.TotalEgresos,
+                    TotalCaja = cajaDTO.SaldoActual,
                     CajaAbierta = !cajaDTO.EstaCerrada
                 };
             }
@@ -158,7 +159,8 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
                     CajaId = cajaDTO.CajaId,
                     MontoInicial = cajaDTO.SaldoInicial,
                     Ingresos = cajaDTO.TotalIngresos,
-                    TotalCaja = cajaDTO.BalanceFinal,
+                    Egresos = cajaDTO.TotalEgresos,
+                    TotalCaja = cajaDTO.SaldoActual,
                     CajaAbierta = !cajaDTO.EstaCerrada,
                     UsuarioId = datosTurno.UsuarioId,
                     UsuarioLogeado = datosTurno.UsuarioLogeado,

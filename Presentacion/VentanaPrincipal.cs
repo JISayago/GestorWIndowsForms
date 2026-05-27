@@ -112,9 +112,9 @@ namespace Presentacion
             MyTimer.Tick += MyTimer_Tick;
             MyTimer.Start();
 
-            // Timer Datos de Caja (Sincronización cada 20s)
+            // Timer Datos de Caja (Sincronización cada 15s)
             System.Windows.Forms.Timer MyTimerDatos = new System.Windows.Forms.Timer();
-            MyTimerDatos.Interval = 20000;
+            MyTimerDatos.Interval = 15000;
             MyTimerDatos.Tick += MyTimerDatos_Tick;
             MyTimerDatos.Start();
         }

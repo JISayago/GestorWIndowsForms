@@ -55,11 +55,9 @@ namespace Presentacion.Core.Producto
                 DesactivarControles(this);
             }
 
-
             AgregarControlesObligatorios(txtProducto, "Producto");
             AgregarControlesObligatorios(txtMedida, "Medida");
             AgregarControlesObligatorios(txtUnidadMedida, "Unidad Medida");
-            //AgregarControlesObligatorios(txtStock, "Stock");
             AgregarControlesObligatorios(txtPrecioCosto, "Precio Costo");
             AgregarControlesObligatorios(txtPrecioVenta, "Precio Venta");
             AgregarControlesObligatorios(txtCodigo, "Codigo");
@@ -111,6 +109,7 @@ namespace Presentacion.Core.Producto
 
             EntidadID = entidadId;
             _cargandoDatos = false; // Fin de la carga de datos
+            txtStock.Enabled = false;
         }
 
         public override void Inicializador(long? entidadId)
