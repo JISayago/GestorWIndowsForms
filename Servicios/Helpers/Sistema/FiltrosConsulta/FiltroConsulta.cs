@@ -24,7 +24,7 @@ namespace Servicios.Helpers.Sistema.FiltrosConsulta
 
         // Paginado
         public int Page { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
+        public int PageSize { get; set; } = 12;
 
         // Ordenamiento
         public string OrdenarPor { get; set; }

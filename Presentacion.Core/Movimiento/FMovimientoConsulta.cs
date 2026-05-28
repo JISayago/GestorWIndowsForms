@@ -113,7 +113,7 @@ namespace Presentacion.Core.Movimiento
             );
             ActivarFiltroFechas("Filtrar por fecha");
             ActivarCheck(chkBool1, "Ver eliminados");
-            ActivarCheck(chkBool2, "Ver todos (históricos)");
+            ActivarCheck(chkBool2, "Ver movimientos (últimos 6 meses)");
             cbx1.SelectedValue = "";
             cbx2.SelectedValue = "";
             cbx3.SelectedValue = "";
@@ -130,6 +130,9 @@ namespace Presentacion.Core.Movimiento
 
         protected override string TextoLblCbx3
             => "Filtrar por Fecha";
+
+        protected override string TextoTitular
+    => "Listado de Movimientos";
 
         protected override void AccionCheck2()
         {

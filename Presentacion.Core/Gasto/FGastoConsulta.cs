@@ -272,11 +272,14 @@ namespace Presentacion.Core.Gasto
 
         protected override string TextoLblCbx3
             => "Filtrar por Fecha";
+
+        protected override string TextoTitular
+          => "Listado de los gastos";
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
             ActivarCheck(chkBool1, "Mostrar Anulados");
-            ActivarCheck(chkBool2, "Mostrar todos los Gastos (histórico)");
+            ActivarCheck(chkBool2, "Mostrar los Gastos (últimos 6 meses)");
             ActivarFiltroFechas("Filtrar por fecha");
             // 🔎 Buscar por
             var filtrosBusqueda = new List<OpcionFiltro>

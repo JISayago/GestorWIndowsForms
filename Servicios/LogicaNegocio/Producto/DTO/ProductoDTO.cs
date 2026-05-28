@@ -34,7 +34,7 @@ namespace Servicios.LogicaNegocio.Producto.DTO
         public string EstadoDescripcion =>
      Estado switch
      {
-         (int)EstadoProducto.Activo => "Activo",
+         (int)EstadoProducto.Disponible => "Disponible",
          (int)EstadoProducto.Vencido => "Vencido",
          (int)EstadoProducto.Discontinuado => "Discontinuado",
          (int)EstadoProducto.SinStock => "Sin Stock",

@@ -60,6 +60,9 @@ namespace Presentacion.Core.Cliente
 
         protected override string TextoLblCbx3
             => "Filtrar por Fecha";
+
+        protected override string TextoTitular
+          => "Listado de Clientes";
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();

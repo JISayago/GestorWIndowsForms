@@ -18,7 +18,7 @@ namespace Presentacion.FBase
         private FiltroConsulta ultimoFiltro;
 
         protected int paginaActual = 1;
-        protected int pageSize = 10;
+        protected int pageSize = 12;
         protected int totalPaginas = 1;
 
         protected bool _actualizandoFiltros;
@@ -32,6 +32,9 @@ namespace Presentacion.FBase
         protected virtual string TextoLblCbx2 => "Filtro 2";
 
         protected virtual string TextoLblCbx3 => "Filtro 3";
+        protected virtual string TextoTitular => "Aqui se describe que se esta mostrando";
+
+        
 
         public FBaseConsulta()
         {
@@ -61,6 +64,7 @@ namespace Presentacion.FBase
         {
             ConfigurarFiltrosUI();
             ActualizarTextosLabels();
+            CargarLogoEnBase();
 
             ResetearGrilla(dgvGrilla);
 
@@ -68,8 +72,16 @@ namespace Presentacion.FBase
             CrearBotonesPersonalizados();
 
             RefrescarGrilla();
+            
         }
 
+        private void CargarLogoEnBase()
+        {
+            pbxLogo.Image = Constantes.Imagenes.ImgActualizar;
+            pbxLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            pbxLogo.Dock = DockStyle.Fill;
+            pbxLogo.Margin = new Padding(10);
+        }
         #endregion
 
         #region ENTER
@@ -223,15 +235,16 @@ namespace Presentacion.FBase
 
         protected virtual void ActualizarTextosLabels()
         {
-            ActualizarLabelCombo(lblcbx1, TextoLblCbx1);
-            ActualizarLabelCombo(lblcbx2, TextoLblCbx2);
-            ActualizarLabelCombo(lblcbx3, TextoLblCbx3);
+            ActualizarLabel(lblcbx1, TextoLblCbx1);
+            ActualizarLabel(lblcbx2, TextoLblCbx2);
+            ActualizarLabel(lblcbx3, TextoLblCbx3);
+            ActualizarLabel(lblContenidoTexto, TextoTitular);
 
             if (lblBuscar != null)
                 lblBuscar.Text = TextoLblBuscar;
         }
 
-        private void ActualizarLabelCombo(Label label, string texto)
+        private void ActualizarLabel(Label label, string texto)
         {
             if (label == null) return;
 

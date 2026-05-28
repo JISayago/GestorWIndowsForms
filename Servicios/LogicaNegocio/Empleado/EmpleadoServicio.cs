@@ -191,22 +191,28 @@ namespace Servicios.LogicaNegocio.Empleado
                 .AsQueryable();
 
             // =========================================================
-            // 🔴 ELIMINADOS / TODOS
+            // 🔴 ELIMINADOS / INHABILITADOS / SIN PASS
             // =========================================================
 
             if (filtros.Bool2)
             {
-                // VER TODOS → no filtra eliminados
+                // SOLO empleados sin contraseña
+                query = query.Where(e =>
+                    (string.IsNullOrWhiteSpace(e.Pass) || e.Estado == (int)EstadoEmpleado.SinPass)&& !string.IsNullOrWhiteSpace(e.Username));
             }
             else if (filtros.Bool1)
             {
-                // SOLO eliminados
-                query = query.Where(e => e.Persona.EstaEliminado);
+                // Eliminados o inhabilitados
+                query = query.Where(e =>
+                    e.Persona.EstaEliminado ||
+                    e.Estado == (int)EstadoEmpleado.Inhablitado);
             }
             else
             {
-                // NORMAL → solo no eliminados
-                query = query.Where(e => !e.Persona.EstaEliminado);
+                // NORMAL
+                query = query.Where(e =>
+                    !e.Persona.EstaEliminado &&
+                    e.Estado != (int)EstadoEmpleado.Inhablitado);
             }
 
             // =========================================================
@@ -273,35 +279,32 @@ namespace Servicios.LogicaNegocio.Empleado
             // 📌 FILTRO ESTADO (cbx2)
             // =========================================================
 
-            if (!filtros.Bool2) // si está en "ver todos", no filtrar estado
+            if (!string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
             {
-                if (!string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
+                if (int.TryParse(filtros.Filtro2.ToString(), out int estado))
                 {
-                    if (int.TryParse(filtros.Filtro2.ToString(), out int estado))
+                    switch ((EstadoEmpleado)estado)
                     {
-                        switch ((EstadoEmpleado)estado)
-                        {
-                            case EstadoEmpleado.Habilitado:
+                        case EstadoEmpleado.Habilitado:
 
-                                query = query.Where(e =>
-                                    e.Estado == (int)EstadoEmpleado.Habilitado);
+                            query = query.Where(e =>
+                                e.Estado == (int)EstadoEmpleado.Habilitado);
 
-                                break;
+                            break;
 
-                            case EstadoEmpleado.Inhablitado:
+                        case EstadoEmpleado.Inhablitado:
 
-                                query = query.Where(e =>
-                                    e.Estado == (int)EstadoEmpleado.Inhablitado);
+                            query = query.Where(e =>
+                                e.Estado == (int)EstadoEmpleado.Inhablitado);
 
-                                break;
+                            break;
 
-                            case EstadoEmpleado.SinPass:
+                        case EstadoEmpleado.SinPass:
 
-                                query = query.Where(e =>
-                                    string.IsNullOrWhiteSpace(e.Pass));
+                            query = query.Where(e =>
+                                string.IsNullOrWhiteSpace(e.Pass));
 
-                                break;
-                        }
+                            break;
                     }
                 }
             }

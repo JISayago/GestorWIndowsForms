@@ -263,6 +263,9 @@ namespace Presentacion.Core.Articulo.Marca
         protected override string TextoLblCbx3
             => "Filtrar por";
 
+        protected override string TextoTitular
+          => "Listado de las Marcas";
+
         #endregion
     }
 }

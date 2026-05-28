@@ -204,17 +204,20 @@ namespace Servicios.LogicaNegocio.Movimiento
 
             if (filtros.Bool2)
             {
-                // VER TODOS → no filtra eliminados ni fechas por defecto
+                // 👉 HISTORICO
+                // trae eliminados y no eliminados
             }
             else if (filtros.Bool1)
             {
-                // SOLO ELIMINADOS
-                query = query.Where(x => x.EstaEliminado);
+                // 👉 SOLO ELIMINADOS
+                query = query.Where(x =>
+                    x.EstaEliminado);
             }
             else
             {
-                // NORMAL
-                query = query.Where(x => !x.EstaEliminado);
+                // 👉 NORMAL
+                query = query.Where(x =>
+                    !x.EstaEliminado);
             }
 
             // =========================================================
@@ -229,7 +232,6 @@ namespace Servicios.LogicaNegocio.Movimiento
                     x.NumeroMovimiento.Contains(texto));
             }
 
-
             // =========================================================
             // 📌 TIPO MOVIMIENTO / DETALLE (cbx2)
             // =========================================================
@@ -240,25 +242,34 @@ namespace Servicios.LogicaNegocio.Movimiento
             {
                 if (filtroTipo.StartsWith("TM_"))
                 {
-                    var valor = int.Parse(filtroTipo.Replace("TM_", ""));
-                    query = query.Where(x => x.TipoMovimiento == valor);
+                    var valor = int.Parse(
+                        filtroTipo.Replace("TM_", ""));
+
+                    query = query.Where(x =>
+                        x.TipoMovimiento == valor);
                 }
                 else if (filtroTipo.StartsWith("TMD_"))
                 {
-                    var valor = int.Parse(filtroTipo.Replace("TMD_", ""));
-                    query = query.Where(x => x.TipoMovimientoDetalle == valor);
+                    var valor = int.Parse(
+                        filtroTipo.Replace("TMD_", ""));
+
+                    query = query.Where(x =>
+                        x.TipoMovimientoDetalle == valor);
                 }
             }
 
             // =========================================================
-            // 📅 FILTRO POR FECHA (cbx3)
+            // 📅 FILTRO FECHA (cbx3)
             // =========================================================
+
             var filtroFecha = filtros.Filtro3?.ToString();
-            var fechaDefaultDesde = DateTime.Now.AddMonths(-2);
 
             bool hayFiltroFechaManual =
                 filtroFecha == "FECHA" &&
-                (filtros.FechaDesde.HasValue || filtros.FechaHasta.HasValue);
+                (
+                    filtros.FechaDesde.HasValue ||
+                    filtros.FechaHasta.HasValue
+                );
 
             if (hayFiltroFechaManual)
             {
@@ -276,15 +287,19 @@ namespace Servicios.LogicaNegocio.Movimiento
                         x.FechaMovimiento < hasta);
                 }
             }
-            else if (!filtros.Bool2) // no histórico
+            else
             {
+                // 🔹 NORMAL = 2 meses
+                // 🔹 HISTORICO = 6 meses
+
+                var fechaLimite = filtros.Bool2
+                    ? DateTime.Now.AddMonths(-6)
+                    : DateTime.Now.AddMonths(-2);
+
                 query = query.Where(x =>
-                    x.FechaMovimiento >= fechaDefaultDesde);
+                    x.FechaMovimiento >= fechaLimite);
             }
-            //if (filtros.Bool2)
-            //{
-            //    filtros.Page = 1;
-            //}
+
             // =========================================================
             // 📊 TOTAL
             // =========================================================
@@ -295,7 +310,8 @@ namespace Servicios.LogicaNegocio.Movimiento
             // 📄 PAGINACION
             // =========================================================
 
-            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+            var totalPaginas =
+                (int)Math.Ceiling((double)total / filtros.PageSize);
 
             if (totalPaginas <= 0)
                 totalPaginas = 1;
@@ -309,7 +325,9 @@ namespace Servicios.LogicaNegocio.Movimiento
             // =========================================================
             // 📌 ORDEN
             // =========================================================
-            query = query.OrderByDescending(x => x.FechaMovimiento);
+
+            query = query
+                .OrderByDescending(x => x.FechaMovimiento);
 
             // =========================================================
             // 📦 DATA
@@ -321,13 +339,21 @@ namespace Servicios.LogicaNegocio.Movimiento
                 .Select(x => new MovimientoDTO
                 {
                     MovimientoId = x.MovimientoId,
+
                     NumeroMovimiento = x.NumeroMovimiento,
+
                     TipoMovimiento = x.TipoMovimiento,
+
                     TipoMovimientoDetalle = x.TipoMovimientoDetalle,
+
                     Monto = x.Monto,
+
                     FechaMovimiento = x.FechaMovimiento,
+
                     EstaEliminado = x.EstaEliminado,
+
                     EntidadId = x.EntidadId,
+
                     TipoEntidad = x.TipoEntidad
                 })
                 .ToList();
