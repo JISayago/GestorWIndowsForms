@@ -85,9 +85,21 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 .Include(x => x.Producto)
                 .AsQueryable();
 
-            // 🔴 HISTORICO / ELIMINADOS
-            if (!filtros.Bool2)
+            // 🔴 HISTORICOS
+            if (filtros.Bool2)
             {
+                var fechaLimite = DateTime.Now.AddMonths(-6);
+
+                query = query.Where(x =>
+                    !x.EstaEliminado ||
+                    (
+                        x.EstaEliminado &&
+                        x.FechaVencimiento >= fechaLimite
+                    ));
+            }
+            else
+            {
+                // comportamiento normal
                 query = query.Where(x => !x.EstaEliminado);
             }
 
