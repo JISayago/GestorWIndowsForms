@@ -18,7 +18,7 @@ namespace Presentacion.FBase
         private FiltroConsulta ultimoFiltro;
 
         protected int paginaActual = 1;
-        protected int pageSize = 10;
+        protected int pageSize = 12;
         protected int totalPaginas = 1;
 
         protected bool _actualizandoFiltros;
