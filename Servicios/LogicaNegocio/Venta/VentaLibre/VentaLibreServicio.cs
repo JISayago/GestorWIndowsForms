@@ -291,34 +291,37 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             string collation = "Latin1_General_CI_AI";
+
             var query = context.VentasLibres
                 .AsNoTracking()
-                .Include(v => v.Empleado).ThenInclude(e => e.Persona)
-                .Include(v => v.Vendedor).ThenInclude(e => e.Persona)
-                .Include(v => v.Cliente).ThenInclude(c => c.Persona)
+                .Include(v => v.Empleado)
+                    .ThenInclude(e => e.Persona)
+                .Include(v => v.Vendedor)
+                    .ThenInclude(e => e.Persona)
+                .Include(v => v.Cliente)
+                    .ThenInclude(c => c.Persona)
                 .AsQueryable();
 
             // =========================================================
-            // 🧠 CORE: ELIMINADOS + HISTORICO
+            // 🧠 CORE: ESTADO
             // =========================================================
 
             if (filtros.Bool2)
             {
-                // 👉 HISTÓRICO → trae TODO (no filtra nada)
+                // 👉 HISTORICO
+                // trae todos los estados
             }
             else if (filtros.Bool1)
             {
-                // 👉 SOLO ELIMINADAS
-                query = query.Where(v => v.Estado == (int)EstadoVenta.Cancelada);
+                // 👉 SOLO canceladas
+                query = query.Where(v =>
+                    v.Estado == (int)EstadoVenta.Cancelada);
             }
             else
             {
-                // 👉 DEFAULT → NO eliminadas + último mes
-                var desde = DateTime.Now.AddMonths(-1);
-
+                // 👉 NORMAL → no canceladas
                 query = query.Where(v =>
-                    v.Estado != (int)EstadoVenta.Cancelada &&
-                    v.FechaVenta >= desde);
+                    v.Estado != (int)EstadoVenta.Cancelada);
             }
 
             // =========================================================
@@ -344,7 +347,8 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                         query = query.Where(v =>
                             v.Cliente != null &&
                             EF.Functions.Collate(
-                                (v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido),
+                                (v.Cliente.Persona.Nombre + " " +
+                                 v.Cliente.Persona.Apellido),
                                 collation
                             ).Contains(texto));
 
@@ -355,11 +359,14 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                         query = query.Where(v =>
                             EF.Functions.Collate(v.NumeroVenta, collation)
                                 .Contains(texto)
+
                             ||
+
                             (
                                 v.Cliente != null &&
                                 EF.Functions.Collate(
-                                    (v.Cliente.Persona.Nombre + " " + v.Cliente.Persona.Apellido),
+                                    (v.Cliente.Persona.Nombre + " " +
+                                     v.Cliente.Persona.Apellido),
                                     collation
                                 ).Contains(texto)
                             ));
@@ -375,16 +382,23 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
             if (filtros.Filtro2 != null &&
                 int.TryParse(filtros.Filtro2.ToString(), out var estado))
             {
-                query = query.Where(v => v.Estado == estado);
+                query = query.Where(v =>
+                    v.Estado == estado);
             }
 
             // =========================================================
-            // 📅 FILTRO FECHA (cbx3 + picker)
+            // 📅 FILTRO FECHAS
             // =========================================================
 
-            bool usaFechas = filtros.FechaDesde.HasValue || filtros.FechaHasta.HasValue;
+            bool usaFechas =
+                filtros.FechaDesde.HasValue ||
+                filtros.FechaHasta.HasValue;
 
-            if (usaFechas && filtros.Filtro3?.ToString() == "FVL")
+            bool hayFiltroManual =
+                usaFechas &&
+                filtros.Filtro3?.ToString() == "FVL";
+
+            if (hayFiltroManual)
             {
                 if (filtros.FechaDesde.HasValue)
                 {
@@ -400,6 +414,18 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                         v.FechaVenta < hasta);
                 }
             }
+            else
+            {
+                // 🔹 NORMAL = 1 mes
+                // 🔹 HISTORICO = 6 meses
+
+                var fechaLimite = filtros.Bool2
+                    ? DateTime.Now.AddMonths(-6)
+                    : DateTime.Now.AddMonths(-1);
+
+                query = query.Where(v =>
+                    v.FechaVenta >= fechaLimite);
+            }
 
             // =========================================================
             // 📊 TOTAL
@@ -411,7 +437,8 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
             // 🔴 PAGINACION
             // =========================================================
 
-            var totalPaginas = (int)Math.Ceiling((double)total / filtros.PageSize);
+            var totalPaginas =
+                (int)Math.Ceiling((double)total / filtros.PageSize);
 
             if (totalPaginas <= 0)
                 totalPaginas = 1;
@@ -439,16 +466,19 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     FechaVenta = v.FechaVenta,
 
                     IdEmpleado = v.IdEmpleado,
+
                     EmpleadoNombreCompleto =
                         v.Empleado.Persona.Nombre + " " +
                         v.Empleado.Persona.Apellido,
 
                     IdVendedor = v.IdVendedor,
+
                     VendedorNombreCompleto =
                         v.Vendedor.Persona.Nombre + " " +
                         v.Vendedor.Persona.Apellido,
 
                     IdCliente = v.IdCliente,
+
                     ClienteNombreCompleto = v.Cliente != null
                         ? v.Cliente.Persona.Nombre + " " +
                           v.Cliente.Persona.Apellido
@@ -461,6 +491,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     Detalle = v.Detalle,
 
                     MontoPagado = v.MontoPagado,
+
                     MontoAdeudado = v.MontoAdeudado
                 })
                 .ToList();

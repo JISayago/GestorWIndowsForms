@@ -461,22 +461,23 @@ namespace Servicios.LogicaNegocio.Venta
                 .AsQueryable();
 
             // =========================================================
-            // 🔴 ESTADO / HISTORICO
+            // 🔴 ESTADO
             // =========================================================
 
             if (filtros.Bool2)
             {
-                // histórico → no filtra nada
+                // 👉 HISTORICO
+                // trae todos los estados
             }
             else if (filtros.Bool1)
             {
-                // canceladas
+                // 👉 SOLO canceladas
                 query = query.Where(v =>
                     v.Estado == (int)EstadoVenta.Cancelada);
             }
             else
             {
-                // default → no canceladas
+                // 👉 NORMAL → no canceladas
                 query = query.Where(v =>
                     v.Estado != (int)EstadoVenta.Cancelada);
             }
@@ -513,13 +514,18 @@ namespace Servicios.LogicaNegocio.Venta
                     default:
 
                         query = query.Where(v =>
-                            v.NumeroVenta.Contains(texto) ||
-                            (v.Cliente != null &&
-                             (
-                                 (v.Cliente.Persona.Nombre + " " +
-                                  v.Cliente.Persona.Apellido)
-                                 .Contains(texto)
-                             )));
+                            v.NumeroVenta.Contains(texto)
+
+                            ||
+
+                            (
+                                v.Cliente != null &&
+                                (
+                                    (v.Cliente.Persona.Nombre + " " +
+                                     v.Cliente.Persona.Apellido)
+                                    .Contains(texto)
+                                )
+                            ));
 
                         break;
                 }
@@ -530,7 +536,6 @@ namespace Servicios.LogicaNegocio.Venta
             // =========================================================
 
             var filtroFecha = filtros.Filtro3?.ToString();
-            var fechaDefaultDesde = DateTime.Now.AddMonths(-2);
 
             bool hayFiltroFechaManual =
                 filtroFecha == "FV" &&
@@ -552,11 +557,17 @@ namespace Servicios.LogicaNegocio.Venta
                         v.FechaVenta < hasta);
                 }
             }
-            else if (!filtros.Bool2)
+            else
             {
-                // default → últimos 2 meses
+                // 🔹 NORMAL = 2 meses
+                // 🔹 HISTORICO = 6 meses
+
+                var fechaLimite = filtros.Bool2
+                    ? DateTime.Now.AddMonths(-6)
+                    : DateTime.Now.AddMonths(-2);
+
                 query = query.Where(v =>
-                    v.FechaVenta >= fechaDefaultDesde);
+                    v.FechaVenta >= fechaLimite);
             }
 
             // =========================================================
@@ -566,7 +577,8 @@ namespace Servicios.LogicaNegocio.Venta
             if (!string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()) &&
                 int.TryParse(filtros.Filtro2.ToString(), out int estado))
             {
-                query = query.Where(v => v.Estado == estado);
+                query = query.Where(v =>
+                    v.Estado == estado);
             }
 
             // =========================================================
@@ -595,7 +607,8 @@ namespace Servicios.LogicaNegocio.Venta
             // 📌 ORDEN
             // =========================================================
 
-            query = query.OrderByDescending(v => v.FechaVenta);
+            query = query
+                .OrderByDescending(v => v.FechaVenta);
 
             // =========================================================
             // 📦 DATA
@@ -607,6 +620,7 @@ namespace Servicios.LogicaNegocio.Venta
                 .Select(v => new VentaDTO
                 {
                     VentaId = v.VentaId,
+
                     NumeroVenta = v.NumeroVenta,
 
                     FechaVenta = v.FechaVenta,
@@ -614,6 +628,7 @@ namespace Servicios.LogicaNegocio.Venta
                     Total = v.Total,
 
                     Estado = v.Estado,
+
                     Detalle = v.Detalle,
 
                     ClienteNombreCompleto = v.Cliente != null

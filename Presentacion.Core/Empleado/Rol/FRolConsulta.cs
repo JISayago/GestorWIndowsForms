@@ -101,6 +101,8 @@ namespace Presentacion.Core.Empleado.Rol
 
         protected override string TextoLblCbx3
             => "Filtrar por";
+        protected override string TextoTitular
+          => "Listado de los Roles";
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();

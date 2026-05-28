@@ -154,13 +154,15 @@ namespace Presentacion.Core.CuentaCorriente
         protected override string TextoLblCbx1 => "Filtrar por Propiedad";
         protected override string TextoLblCbx2 => "Filtrar por Estado";
         protected override string TextoLblCbx3 => "Filtrar por Fecha";
+        protected override string TextoTitular
+          => "Listado de Cuentas Corrientes";
 
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
 
             ActivarCheck(chkBool1, "Mostrar Eliminados");
-            ActivarCheck(chkBool2, "Mostrar todas las Cuentas Corrientes (histórico)");
+            ActivarCheck(chkBool2, "Mostrar Cuentas Corrientes (Histórico)");
 
             var opcionesBusqueda = new List<OpcionFiltro>
             {
