@@ -132,7 +132,7 @@ namespace Presentacion.Core.Producto
 
             cbx3.SelectedValue = "";
 
-            ActivarCheck(chkBool1, "Ver eliminados");
+            ActivarCheck(chkBool1, "Ver eliminados/discontinuados");
             ActivarCheck(chkBool2, "Mostrar Todos los Productos");
         }
 
@@ -148,6 +148,12 @@ namespace Presentacion.Core.Producto
 
         protected override string TextoLblCbx3
             => "Filtrar por Marca";
+
+        protected override string TextoTitular 
+            => "Listado de los productos";
+
+
+
         #region ACCIONES DINAMICAS
 
         protected override void ConfigurarAccionesPersonalizadas()
