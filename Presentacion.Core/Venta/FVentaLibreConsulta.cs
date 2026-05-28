@@ -295,13 +295,19 @@ namespace Presentacion.Core.Venta
                     "C2";
             }
 
+            if (grilla.Columns.Contains("EstadoDescripcion"))
+            {
+                grilla.Columns["EstadoDescripcion"].Visible = true;
+                grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+
+                grilla.Columns["EstadoDescripcion"].AutoSizeMode =
+                    DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
+            // opcional ocultar el int
             if (grilla.Columns.Contains("Estado"))
             {
-                grilla.Columns["Estado"].Visible = true;
-                grilla.Columns["Estado"].HeaderText = "Estado";
-
-                grilla.Columns["Estado"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.AllCells;
+                grilla.Columns["Estado"].Visible = false;
             }
 
             if (grilla.Columns.Contains("Detalle"))
