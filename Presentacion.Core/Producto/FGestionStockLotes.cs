@@ -20,6 +20,7 @@ namespace Presentacion.Core.Producto
 {
     public partial class FGestionStockLotes : FBaseABM
     {
+        //al crear lo se vuelve a abir el form pero no tiene el numero/nombre del siguiente lote
         private readonly ILoteServicio _loteSevicio;
         private readonly IProductoServicio _productoServicio;
 
@@ -45,7 +46,7 @@ namespace Presentacion.Core.Producto
             AgregarControlesObligatorios(nudStockInicial, "Stock Inicial");
             AgregarControlesObligatorios(nudStockActual, "Stock Actual");
             AgregarControlesObligatorios(txtNumeroLote, "Numero Lote");
-            AgregarControlesObligatorios(txtDescripcionLote, "Descripcion");
+            //AgregarControlesObligatorios(txtDescripcionLote, "Descripcion");
             if (chkFechaVencimiento.Checked)
             {
                 AgregarControlesObligatorios(dtpFechaVencimiento, "Fecha Vencimiento");
@@ -222,6 +223,7 @@ namespace Presentacion.Core.Producto
 
                 MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                    MessageBoxIcon.Information);
+                this.Close(); //ESTO SE PODRIA DEJAR MEJOR PARA EL USUARIO PREGUNTANDO SI QUIERE CARGAR OTRO LOTE DEL MISMO PRODUCTO
                 return true;
             }
             else
@@ -320,8 +322,6 @@ namespace Presentacion.Core.Producto
             if (TipoOperacion == TipoOperacion.Nuevo) //Nombre default auto generado cuando cargar un lote nuevo
             {
                 chkLoteEstaActivo.Checked = true;
-
-
 
                 txtNumeroLote.Text = NumeroLote;
             }
