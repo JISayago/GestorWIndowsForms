@@ -12,6 +12,7 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal.DTO
         public long? CajaId { get; set; }
         public decimal MontoInicial { get; set; }
         public decimal Ingresos { get; set; }
+        public decimal Egresos { get; set; }
         public decimal TotalCaja { get; set; }
         public bool CajaAbierta { get; set; }
         public long UsuarioId { get; set; }

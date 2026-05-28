@@ -206,6 +206,12 @@ namespace Presentacion.Core.Producto
 
                 fLotes.ShowDialog();
 
+                if (fLotes.reabrirForm)
+                {
+                    AbrirGestionStock(id);
+                    RefrescarGrilla();
+                }
+
                 RefrescarGrilla();
             }
             else

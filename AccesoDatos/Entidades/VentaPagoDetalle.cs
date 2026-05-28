@@ -12,6 +12,7 @@ namespace AccesoDatos.Entidades
         [Key]
         public long VentaPagoDetalleId { get; set; }
 
+        public string ExtraDescripcionPago { get; set; } = "Sin especificar"; // puede ser dni para confirmar el pago o cualquier otra descripcion adicional del pago
         public long? IdVenta { get; set; }
         public Venta? Venta { get; set; }
         public long? IdVentaLibre { get; set; }

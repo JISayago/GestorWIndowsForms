@@ -460,6 +460,10 @@ namespace AccesoDatos
                     .HasColumnName("monto")
                     .HasColumnType("decimal(18,2)")
                     .IsRequired();
+                entity.Property(e => e.ExtraDescripcionPago)
+                    .HasColumnName("extra_descripcion_pago")
+                    .HasMaxLength(50)
+                    .IsRequired();
 
                 // Relaciones
 

@@ -53,7 +53,6 @@
             historialVentasLibresToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanel1 = new TableLayoutPanel();
             btnGasto = new Button();
-            btnVolver = new Button();
             btnComprobantes = new Button();
             btnMovimientos = new Button();
             tlpBaseFiltrado = new TableLayoutPanel();
@@ -62,8 +61,7 @@
             lblAñoGraficos = new Label();
             cbMesGrafico = new ComboBox();
             cbAñoGraficos = new ComboBox();
-            tlpFiltradoBotones = new TableLayoutPanel();
-            btnFiltrarGraficos = new Button();
+            btnVolver = new Button();
             sqlCommand1 = new Microsoft.Data.SqlClient.SqlCommand();
             dgvGrilla = new DataGridView();
             pnlInfoInicial = new Panel();
@@ -89,7 +87,6 @@
             tableLayoutPanel1.SuspendLayout();
             tlpBaseFiltrado.SuspendLayout();
             tlpFiltradoMesYAño.SuspendLayout();
-            tlpFiltradoBotones.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
             pnlInfoInicial.SuspendLayout();
             tlpBaseNivel1.SuspendLayout();
@@ -277,10 +274,10 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 18.2815361F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 18.2815361F));
             tableLayoutPanel1.Controls.Add(btnGasto, 1, 0);
-            tableLayoutPanel1.Controls.Add(btnVolver, 0, 0);
             tableLayoutPanel1.Controls.Add(btnComprobantes, 4, 0);
             tableLayoutPanel1.Controls.Add(btnMovimientos, 3, 0);
             tableLayoutPanel1.Controls.Add(tlpBaseFiltrado, 2, 0);
+            tableLayoutPanel1.Controls.Add(btnVolver, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Top;
             tableLayoutPanel1.Location = new Point(0, 24);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -302,20 +299,6 @@
             btnGasto.Text = "GASTO";
             btnGasto.UseVisualStyleBackColor = true;
             btnGasto.Click += btnGasto_Click;
-            // 
-            // btnVolver
-            // 
-            btnVolver.Anchor = AnchorStyles.Right;
-            btnVolver.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
-            btnVolver.Location = new Point(55, 15);
-            btnVolver.MaximumSize = new Size(236, 63);
-            btnVolver.MinimumSize = new Size(236, 63);
-            btnVolver.Name = "btnVolver";
-            btnVolver.Size = new Size(236, 63);
-            btnVolver.TabIndex = 13;
-            btnVolver.Text = "VOLVER AL INICIO";
-            btnVolver.UseVisualStyleBackColor = true;
-            btnVolver.Click += btnVolver_Click;
             // 
             // btnComprobantes
             // 
@@ -350,13 +333,11 @@
             tlpBaseFiltrado.ColumnCount = 1;
             tlpBaseFiltrado.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tlpBaseFiltrado.Controls.Add(tlpFiltradoMesYAño, 0, 0);
-            tlpBaseFiltrado.Controls.Add(tlpFiltradoBotones, 0, 1);
             tlpBaseFiltrado.Dock = DockStyle.Fill;
             tlpBaseFiltrado.Location = new Point(591, 3);
             tlpBaseFiltrado.Name = "tlpBaseFiltrado";
-            tlpBaseFiltrado.RowCount = 2;
+            tlpBaseFiltrado.RowCount = 1;
             tlpBaseFiltrado.RowStyles.Add(new RowStyle(SizeType.Percent, 61.363636F));
-            tlpBaseFiltrado.RowStyles.Add(new RowStyle(SizeType.Percent, 38.636364F));
             tlpBaseFiltrado.Size = new Size(426, 88);
             tlpBaseFiltrado.TabIndex = 17;
             // 
@@ -375,78 +356,70 @@
             tlpFiltradoMesYAño.RowCount = 2;
             tlpFiltradoMesYAño.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
             tlpFiltradoMesYAño.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
-            tlpFiltradoMesYAño.Size = new Size(420, 48);
+            tlpFiltradoMesYAño.Size = new Size(420, 82);
             tlpFiltradoMesYAño.TabIndex = 2;
             // 
             // lblMesGraficos
             // 
             lblMesGraficos.AutoSize = true;
             lblMesGraficos.Dock = DockStyle.Bottom;
-            lblMesGraficos.Location = new Point(3, 4);
+            lblMesGraficos.Font = new Font("Segoe UI Semibold", 12.5F, FontStyle.Bold);
+            lblMesGraficos.Location = new Point(3, 9);
             lblMesGraficos.Name = "lblMesGraficos";
-            lblMesGraficos.Size = new Size(204, 15);
+            lblMesGraficos.Size = new Size(204, 23);
             lblMesGraficos.TabIndex = 0;
-            lblMesGraficos.Text = "Mes";
+            lblMesGraficos.Text = "MES";
             lblMesGraficos.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblAñoGraficos
             // 
             lblAñoGraficos.AutoSize = true;
             lblAñoGraficos.Dock = DockStyle.Bottom;
-            lblAñoGraficos.Location = new Point(213, 4);
+            lblAñoGraficos.Font = new Font("Segoe UI Semibold", 12.5F, FontStyle.Bold);
+            lblAñoGraficos.Location = new Point(213, 9);
             lblAñoGraficos.Name = "lblAñoGraficos";
-            lblAñoGraficos.Size = new Size(204, 15);
+            lblAñoGraficos.Size = new Size(204, 23);
             lblAñoGraficos.TabIndex = 1;
-            lblAñoGraficos.Text = "Año";
+            lblAñoGraficos.Text = "AÑO";
             lblAñoGraficos.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // cbMesGrafico
             // 
-            cbMesGrafico.Dock = DockStyle.Bottom;
+            cbMesGrafico.Dock = DockStyle.Top;
+            cbMesGrafico.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             cbMesGrafico.FormattingEnabled = true;
-            cbMesGrafico.Location = new Point(30, 22);
+            cbMesGrafico.Location = new Point(30, 35);
             cbMesGrafico.Margin = new Padding(30, 3, 30, 3);
             cbMesGrafico.Name = "cbMesGrafico";
-            cbMesGrafico.Size = new Size(150, 23);
+            cbMesGrafico.Size = new Size(150, 28);
             cbMesGrafico.TabIndex = 4;
+            cbMesGrafico.SelectedIndexChanged += cbMesGrafico_SelectedIndexChanged;
             // 
             // cbAñoGraficos
             // 
-            cbAñoGraficos.Dock = DockStyle.Bottom;
+            cbAñoGraficos.Dock = DockStyle.Top;
+            cbAñoGraficos.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             cbAñoGraficos.FormattingEnabled = true;
-            cbAñoGraficos.Location = new Point(240, 22);
+            cbAñoGraficos.Location = new Point(240, 35);
             cbAñoGraficos.Margin = new Padding(30, 3, 30, 3);
             cbAñoGraficos.Name = "cbAñoGraficos";
-            cbAñoGraficos.Size = new Size(150, 23);
+            cbAñoGraficos.Size = new Size(150, 28);
             cbAñoGraficos.TabIndex = 5;
+            cbAñoGraficos.SelectedIndexChanged += cbAñoGraficos_SelectedIndexChanged;
             // 
-            // tlpFiltradoBotones
+            // btnVolver
             // 
-            tlpFiltradoBotones.ColumnCount = 3;
-            tlpFiltradoBotones.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tlpFiltradoBotones.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tlpFiltradoBotones.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tlpFiltradoBotones.Controls.Add(btnFiltrarGraficos, 1, 0);
-            tlpFiltradoBotones.Dock = DockStyle.Fill;
-            tlpFiltradoBotones.Location = new Point(3, 57);
-            tlpFiltradoBotones.Name = "tlpFiltradoBotones";
-            tlpFiltradoBotones.RowCount = 1;
-            tlpFiltradoBotones.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpFiltradoBotones.Size = new Size(420, 28);
-            tlpFiltradoBotones.TabIndex = 3;
-            // 
-            // btnFiltrarGraficos
-            // 
-            btnFiltrarGraficos.Dock = DockStyle.Fill;
-            btnFiltrarGraficos.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
-            btnFiltrarGraficos.Location = new Point(169, 3);
-            btnFiltrarGraficos.Margin = new Padding(30, 3, 30, 3);
-            btnFiltrarGraficos.Name = "btnFiltrarGraficos";
-            btnFiltrarGraficos.Size = new Size(79, 22);
-            btnFiltrarGraficos.TabIndex = 0;
-            btnFiltrarGraficos.Text = "Filtrar";
-            btnFiltrarGraficos.UseVisualStyleBackColor = true;
-            btnFiltrarGraficos.Click += btnFiltrarGraficos_Click;
+            btnVolver.Anchor = AnchorStyles.Right;
+            btnVolver.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
+            btnVolver.Location = new Point(55, 15);
+            btnVolver.MaximumSize = new Size(236, 63);
+            btnVolver.MinimumSize = new Size(236, 63);
+            btnVolver.Name = "btnVolver";
+            btnVolver.Size = new Size(236, 63);
+            btnVolver.TabIndex = 13;
+            btnVolver.Text = "VOLVER AL INICIO";
+            btnVolver.UseVisualStyleBackColor = true;
+            btnVolver.Click += btnVolver_Click;
             // 
             // sqlCommand1
             // 
@@ -583,7 +556,6 @@
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(1598, 488);
             tabControl1.TabIndex = 0;
-            tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
             // 
             // tabPage3
             // 
@@ -699,7 +671,6 @@
             tlpBaseFiltrado.ResumeLayout(false);
             tlpFiltradoMesYAño.ResumeLayout(false);
             tlpFiltradoMesYAño.PerformLayout();
-            tlpFiltradoBotones.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
             pnlInfoInicial.ResumeLayout(false);
             tlpBaseNivel1.ResumeLayout(false);
@@ -749,8 +720,6 @@
         private Label lblAñoGraficos;
         private ComboBox cbMesGrafico;
         private ComboBox cbAñoGraficos;
-        private TableLayoutPanel tlpFiltradoBotones;
-        private Button btnFiltrarGraficos;
         private ToolStripMenuItem lOTESToolStripMenuItem;
         private ToolStripMenuItem vENTAToolStripMenuItem;
         private ToolStripMenuItem historialToolStripMenuItem;
