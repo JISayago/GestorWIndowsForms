@@ -29,6 +29,7 @@ namespace Presentacion.Core.Producto
         private ProductoDTO productoDTO;
         private LoteDTO loteDTO;
         private string NumeroLote;
+        public bool reabrirForm { get; private set; } = false;
         public bool RealizoOperacion { get; private set; } = false;
 
         public FGestionStockLotes(TipoOperacion tipoOperacion, long? entidadId = null)
@@ -221,9 +222,23 @@ namespace Presentacion.Core.Producto
             {
                 _productoServicio.ModificarEstadoStockProductos();
 
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Information);
-                this.Close(); //ESTO SE PODRIA DEJAR MEJOR PARA EL USUARIO PREGUNTANDO SI QUIERE CARGAR OTRO LOTE DEL MISMO PRODUCTO
+                var respuesta = MessageBox.Show($"{response.Mensaje}\n ¿Quieres cargar un lote de mismo producto del alcance de?",
+                    "Confirmar acción",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if(respuesta == DialogResult.Yes)
+                {
+                    RealizoOperacion = true;
+                    reabrirForm = true;
+                    this.Close();
+                }
+                else
+                {
+                    RealizoOperacion = true; // Indicar que se realizó una operación exitosa
+                    this.Close();
+                }
+
                 return true;
             }
             else
