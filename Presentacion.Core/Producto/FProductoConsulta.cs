@@ -133,7 +133,7 @@ namespace Presentacion.Core.Producto
             cbx3.SelectedValue = "";
 
             ActivarCheck(chkBool1, "Ver eliminados/discontinuados");
-            ActivarCheck(chkBool2, "Mostrar Todos los Productos");
+            ActivarCheck(chkBool2, "Mostrar sólo disponibles");
         }
 
         #endregion

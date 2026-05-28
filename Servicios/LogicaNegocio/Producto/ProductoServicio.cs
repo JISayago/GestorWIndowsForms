@@ -296,6 +296,7 @@ namespace Servicios.LogicaNegocio.Producto
                 throw new Exception($" No se encontro el Producto");
 
             productoEliminar.EstaEliminado = true;
+            productoEliminar.Estado = (int)EstadoProducto.Discontinuado;
 
             context.SaveChanges();
             return new EstadoOperacion
@@ -486,23 +487,37 @@ namespace Servicios.LogicaNegocio.Producto
                 .Include(e => e.CategoriasProductos)
                 .AsQueryable();
 
-            // 🔹 ELIMINADOS
-            // TODOS
-            if (filtros.Bool2)
+            // 🔹 FILTRO BASE
+            if (filtros.Bool1)
             {
-                // no filtra nada
+                // Mostrar discontinuados y eliminados
+                query = query.Where(e =>
+                    e.EstaEliminado ||
+                    e.Estado == (int)EstadoProducto.Discontinuado);
             }
-            // SOLO ELIMINADOS
-            else if (filtros.Bool1)
-            {
-                query = query.Where(e => e.EstaEliminado);
-            }
-            // SOLO ACTIVOS / NO ELIMINADOS
             else
             {
-                query = query.Where(e => !e.EstaEliminado);
+                // Ocultar eliminados y discontinuados
+                query = query.Where(e =>
+                    !e.EstaEliminado &&
+                    e.Estado != (int)EstadoProducto.Discontinuado);
             }
 
+            // 🔹 SOLO DISPONIBLES
+            if (filtros.Bool2)
+            {
+                query = query.Where(e =>
+                    e.Estado == (int)EstadoProducto.Disponible);
+            }
+
+            // 🔹 FILTRO ESTADO MANUAL
+            if (!string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
+            {
+                if (int.TryParse(filtros.Filtro2.ToString(), out int estado))
+                {
+                    query = query.Where(e => e.Estado == estado);
+                }
+            }
             // 🔹 BUSQUEDA TEXTO
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
             {
@@ -576,7 +591,7 @@ namespace Servicios.LogicaNegocio.Producto
             {
                 if (string.IsNullOrWhiteSpace(filtros.Filtro2?.ToString()))
                 {
-                    query = query.Where(e => e.Estado == (int)EstadoProducto.Activo || e.Estado == (int)EstadoProducto.SinStock || e.Estado == (int)EstadoProducto.Vencido);
+                    query = query.Where(e => e.Estado == (int)EstadoProducto.Disponible || e.Estado == (int)EstadoProducto.SinStock || e.Estado == (int)EstadoProducto.Vencido);
                 }
                 else
                 {
@@ -612,13 +627,14 @@ namespace Servicios.LogicaNegocio.Producto
                 filtros.Page = 1;
 
             // 🔹 ORDEN
-             query = query
-            .OrderBy(e =>
-                e.Estado == (int)EstadoProducto.Activo ? 0 :
-                e.Estado == (int)EstadoProducto.SinStock ? 1 :
-                e.Estado == (int)EstadoProducto.Vencido ? 2 :
-                3)
-            .ThenBy(e => e.Descripcion);
+            query = query
+               .OrderBy(e =>
+                   e.Estado == (int)EstadoProducto.Disponible ? 0 :
+                   e.Estado == (int)EstadoProducto.SinStock ? 1 :
+                   e.Estado == (int)EstadoProducto.Vencido ? 2 :
+                   e.Estado == (int)EstadoProducto.Discontinuado ? 3 :
+                   4)
+               .ThenBy(e => e.Descripcion);
 
             // 🔹 DATA
             var data = query
@@ -816,19 +832,19 @@ namespace Servicios.LogicaNegocio.Producto
             // Traemos los productos activos o sin stock que no estén eliminados
             var productos = context.Productos
                 .Where(p => !p.EstaEliminado &&
-                           (p.Estado == (int)EstadoProducto.Activo || p.Estado == (int)EstadoProducto.SinStock))
+                           (p.Estado == (int)EstadoProducto.Disponible || p.Estado == (int)EstadoProducto.SinStock))
                 .ToList();
 
             foreach (var p in productos)
             {
-                // CASO A: Tiene stock pero figura como "Sin Stock" -> Corregir a Activo
+                // CASO A: Tiene stock pero figura como "Sin Stock" -> Corregir a Disponible
                 if (p.Stock > 0 && p.Estado == (int)EstadoProducto.SinStock)
                 {
-                    p.Estado = (int)EstadoProducto.Activo;
+                    p.Estado = (int)EstadoProducto.Disponible;
                 }
 
-                // CASO B: No tiene stock pero figura como "Activo" -> Corregir a Sin Stock
-                else if (p.Stock <= 0 && p.Estado == (int)EstadoProducto.Activo)
+                // CASO B: No tiene stock pero figura como "Disponible" -> Corregir a Sin Stock
+                else if (p.Stock <= 0 && p.Estado == (int)EstadoProducto.Disponible)
                 {
                     p.Estado = (int)EstadoProducto.SinStock;
                 }
