@@ -35,28 +35,49 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Presentacion.Core.Administracion
 {
+    /// <summary>
+    /// Estructura auxiliar interna para mapear de forma segura los objetos de los ComboBoxes.
+    /// Permite desacoplar el índice visual del control (.SelectedIndex) de los valores reales de la consulta.
+    /// </summary>
+    public class MesFiltro
+    {
+        public int Numero { get; set; }    // El valor numérico real para las consultas en Base de Datos (1 al 12)
+        public string Nombre { get; set; } // El texto legible por el usuario en la interfaz ("Enero", etc.)
+    }
+
+    /// <summary>
+    /// Formulario de Administración Centralizada.
+    /// Encargado de la navegación modular y el procesamiento de métricas financieras mediante gráficos estadísticos.
+    /// </summary>
     public partial class FAdministracion : FBase.FBase
     {
+        // ==========================================
+        // DEPENDENCIAS Y SERVICIOS DE CAPA DE NEGOCIO
+        // ==========================================
         private readonly long _logeadoId;
         private readonly CajaServicio _cajaSerivicio;
         private readonly VentaServicio _ventaServicio;
         List<CajaDTO> todasLasCajas;
-        // Definición de la fuente y tamaño personalizados
+
+        // ==========================================
+        // CONFIGURACIÓN DE TOOLTIPS PERSONALIZADOS
+        // ==========================================
         private Font _toolTipFont = new Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold, GraphicsUnit.Pixel);
         private string _currentToolTipText = string.Empty;
-
-        // Componente nativo de WinForms para mostrar los valores flotantes
         private System.Windows.Forms.ToolTip _winFormsToolTip;
 
-        // Arrays de respaldo para almacenar los datos reales de cada gráfico y leerlos en el MouseMove
-        private double[] _xs1, _ys1;
-        private double[] _xs2, _ys2;
-        private double[] _xs3, _ys3;
-        private double[] _xs4, _ys4;
-        private double[] _xs5, _ys5;
-        private double[] _xs6, _ys6;
+        // ==========================================
+        // ENMASCARAMIENTO DE ESTADOS MATEMÁTICOS (SCOTTPLOT)
+        // Vectores globales que almacenan los ejes X e Y actuales de cada gráfico para el motor de proximidad.
+        // ==========================================
+        private double[] _xs1, _ys1; // Gráfico 1: Histórico Cajas del Mes
+        private double[] _xs2, _ys2; // Gráfico 2: Cajas Últimos 31 Días
+        private double[] _xs3, _ys3; // Gráfico 3: Ganancias Diarias del Mes
+        private double[] _xs4, _ys4; // Gráfico 4: Cantidad de Ventas Diarias
+        private double[] _xs5, _ys5; // Gráfico 5: Balance Anual Combinado
+        private double[] _xs6, _ys6; // Gráfico 6: Volumen de Ventas Anual
 
-        // Índices para controlar el estado y evitar parpadeos molestos al mover el mouse
+        // Índices del último punto trackeado por el mouse (Evitan el parpadeo y la re-ejecución del render de Windows)
         private int _lastIndex1 = -1;
         private int _lastIndex2 = -1;
         private int _lastIndex3 = -1;
@@ -64,16 +85,19 @@ namespace Presentacion.Core.Administracion
         private int _lastIndex5 = -1;
         private int _lastIndex6 = -1;
 
+        /// <summary>
+        /// Constructor del Formulario Administrativo
+        /// </summary>
         public FAdministracion(long logeadoId)
         {
             InitializeComponent();
             _logeadoId = logeadoId;
 
+            // Inicialización de la lógica de negocio
             _cajaSerivicio = new CajaServicio();
             _ventaServicio = new VentaServicio();
 
-            // Inicializamos el ToolTip con un comportamiento rápido de respuesta
-            // Modificá esta parte dentro de tu Constructor actual:
+            // Configuración inicial del ToolTip nativo con retardos en cero para respuesta inmediata
             _winFormsToolTip = new System.Windows.Forms.ToolTip
             {
                 InitialDelay = 0,
@@ -81,177 +105,119 @@ namespace Presentacion.Core.Administracion
                 AutomaticDelay = 0,
                 UseAnimation = false,
                 UseFading = false,
-                OwnerDraw = true // <-- ACTIVAR ESTO
+                OwnerDraw = true // Habilita el control total del dibujo visual (fuentes, bordes)
             };
 
-            // Suscribir los eventos de dibujo personalizado
+            // Enlace de eventos para el redibujado estético del ToolTip
             _winFormsToolTip.Popup += WinFormsToolTip_Popup;
             _winFormsToolTip.Draw += WinFormsToolTip_Draw;
 
-            //ComboBox de meses para el filtro del grafico de ganancias por mes
-            var meses = DateTimeFormatInfo.CurrentInfo.MonthNames
-                .Where(m => !string.IsNullOrEmpty(m))
-                .ToArray();
+            // Configuración estricta de UI: DropDownList impide que el usuario tipee texto libre en los filtros cronológicos
+            cbMesGrafico.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbAñoGraficos.DropDownStyle = ComboBoxStyle.DropDownList;
 
-            cbMesGrafico.DataSource = meses;
-
-            cbMesGrafico.DropDownStyle = ComboBoxStyle.DropDown;
-            cbMesGrafico.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            cbMesGrafico.AutoCompleteSource = AutoCompleteSource.ListItems;
-            cbMesGrafico.SelectedIndex = DateTime.Now.Month - 1;
-
-            //ComboBox de años para el filtro del grafico de ganancias por mes
-            int anioActual = DateTime.Now.Year;
-
-            var anios = Enumerable.Range(anioActual - 9, 10)
-                                  .OrderByDescending(a => a)
-                                  .ToList();
-
-            cbAñoGraficos.DataSource = anios;
-
-            cbAñoGraficos.DropDownStyle = ComboBoxStyle.DropDown;
-            cbAñoGraficos.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            cbAñoGraficos.AutoCompleteSource = AutoCompleteSource.ListItems;
+            // Ejecutamos la carga inicial dinámica analizando la base de datos de manera segura
+            InicializarFiltrosCronologicos();
         }
 
-        private void btnVolver_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Analiza de forma segura los registros históricos en la BD para cargar los años disponibles.
+        /// Aplica patrones de resguardo para sistemas nuevos sin transacciones.
+        /// </summary>
+        private void InicializarFiltrosCronologicos()
         {
-            this.Close();
-        }
+            // DESVINCULACIÓN TEMPORAL DE EVENTOS:
+            // Evita loops infinitos de refresco visual e hilos bloqueados mientras se manipulan los DataSources por código.
+            cbAñoGraficos.SelectedIndexChanged -= cbAñoGraficos_SelectedIndexChanged;
+            cbMesGrafico.SelectedIndexChanged -= cbMesGrafico_SelectedIndexChanged;
 
-        private void sTOCKToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var fProducto = new FProductoConsulta();
-            fProducto.Show();
-        }
+            // Consulta a la base de datos de los años que registran actividad de cajas
+            var aniosDisponibles = _cajaSerivicio.ObtenerAniosConCajas();
 
-        private void mARCASToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var fmarca = new FMarcaConsulta(false);
-            fmarca.Show();
-        }
-
-        private void cATEGORIASToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var fCategoria = new FCategoriaConsulta(false);
-            fCategoria.Show();
-        }
-
-        private void rUBROSToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var fRubro = new FRubroConsulta(false);
-            fRubro.Show();
-        }
-
-        private void lISTADOEMPLEADOSToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var fEmpleado = new FEmpleadoConsulta(_logeadoId);
-            fEmpleado.Show();
-        }
-
-        private void lISTADOCLIENTESToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var FCliente = new FClienteConsulta();
-            FCliente.Show();
-        }
-
-        private void cUENTASCORRIENTESToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var FCuentaCorriente = new FCuentaCorrienteConsulta();
-            FCuentaCorriente.Show();
-        }
-
-        private void lISTADOOFERTASToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var FOferta = new FOfertaConsulta();
-            FOferta.Show();
-        }
-
-        private void aCTIVARDESACTIVARToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var FActDesac = new FOfertaConsulta(true, "a");
-            FActDesac.Show();
-        }
-
-        private void lOTESToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var flote = new FLoteConsulta();
-            flote.Show();
-        }
-
-        private void btnMovimientos_Click(object sender, EventArgs e)
-        {
-            var FMovimiento = new FMovimientoConsulta();
-            FMovimiento.Show();
-        }
-
-        private void tIPOPAGOToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var fTipoPago = new FTipoPagoConsulta();
-            fTipoPago.Show();
-        }
-
-        private void rOLESToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var FRoles = new FRolConsulta();
-            FRoles.Show();
-        }
-
-        private void nUEVAOFERTAToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var fGrupo = new FOfertaGrupoABM();
-            fGrupo.ShowDialog();
-        }
-
-        private void btnGasto_Click(object sender, EventArgs e)
-        {
-            var FGasto = new Gasto.FGastoConsulta(_logeadoId);
-            FGasto.Show();
-        }
-
-        private void btnComprobantes_Click(object sender, EventArgs e)
-        {
-            var escritorio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var carpeta = Path.Combine(escritorio, "ComprobantesPdf");
-
-            if (!Directory.Exists(carpeta))
+            // BLOQUE DE RESGUARDO (FALLBACK): Si el sistema está vacío (App nueva), pre-cargamos el año corriente en curso
+            if (aniosDisponibles.Count == 0)
             {
-                MessageBox.Show(
-                    "La carpeta de comprobantes todavía no existe.",
-                    "Comprobantes",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
-                return;
+                aniosDisponibles.Add(DateTime.Now.Year);
             }
 
-            using var dialog = new OpenFileDialog
-            {
-                InitialDirectory = carpeta,
-                Filter = "Archivos PDF (*.pdf)|*.pdf",
-                Title = "Seleccionar comprobante"
-            };
+            // Enlace de datos al combo de años
+            cbAñoGraficos.DataSource = aniosDisponibles;
 
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                using var visor = new FVisorPDF(dialog.FileName);
-                visor.ShowDialog();
-            }
+            // Seleccionamos cronológicamente el año más reciente de la lista y cargamos sus meses correspondientes
+            int anioInicial = aniosDisponibles.First();
+            ActualizarComboMeses(anioInicial);
+
+            // RE-VINCULACIÓN DE EVENTOS: Una vez que la UI está armada de forma segura, volvemos a escuchar al usuario
+            cbAñoGraficos.SelectedIndexChanged += cbAñoGraficos_SelectedIndexChanged;
+            cbMesGrafico.SelectedIndexChanged += cbMesGrafico_SelectedIndexChanged;
         }
 
+        /// <summary>
+        /// Actualiza dinámicamente el combo de meses en base al año seleccionado en el combo padre.
+        /// </summary>
+        private void ActualizarComboMeses(int anio)
+        {
+            // Consulta los meses que contienen transacciones para el año provisto
+            var mesesNumeros = _cajaSerivicio.ObtenerMesesConCajas(anio);
+
+            // FALLBACK: Si no hay transacciones en ese año, inyectamos el mes actual para evitar listas vacías de control
+            if (mesesNumeros.Count == 0)
+            {
+                mesesNumeros.Add(DateTime.Now.Month);
+            }
+
+            // Transformación con LINQ a objetos de negocio complejos utilizando la Cultura del Sistema Operativo
+            var listaMeses = mesesNumeros.Select(m => new MesFiltro
+            {
+                Numero = m, // Lo que procesa el código (.SelectedValue)
+                Nombre = char.ToUpper(CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)[0]) +
+                         CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m).Substring(1) // Lo que ve el usuario ("Enero")
+            }).ToList();
+
+            cbMesGrafico.DataSource = null; // Forzamos la limpieza del motor de enlaces nativos de WinForms
+            cbMesGrafico.ValueMember = "Numero";
+            cbMesGrafico.DisplayMember = "Nombre";
+            cbMesGrafico.DataSource = listaMeses;
+
+            // Posiciona automáticamente el foco visual en el último mes registrado disponible de ese lote
+            cbMesGrafico.SelectedValue = mesesNumeros.Max();
+        }
+
+        /// <summary>
+        /// Helper de resolución de strings para formatear títulos dinámicos con la primera letra en mayúscula.
+        /// </summary>
+        private string ObtenerNombreMesLocal(int numeroMes)
+        {
+            string nombre = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(numeroMes);
+            return char.ToUpper(nombre[0]) + nombre.Substring(1);
+        }
+
+        /// <summary>
+        /// Evento de carga principal del formulario. Inicializa y dibuja los 6 gráficos analíticos en pantalla.
+        /// </summary>
         private void FAdministracion_Load(object sender, EventArgs e)
         {
-            grafico1();
-            grafico2();
-            grafico3();
-            grafico4();
-            grafico5();
-            grafico6();
+            // Verificación tipada segura: Leemos los estados pre-calculados por los combos dinámicos en vez de usar DateTime.Now directo
+            if (cbAñoGraficos.SelectedItem is int año && cbMesGrafico.SelectedValue is int mes)
+            {
+                grafico1(mes, año);
+                grafico2(); // Histórico estático de los últimos 31 días agrupados
+                grafico3(mes, año);
+                grafico4(mes, año);
+                grafico5(año);
+                grafico6(año);
+            }
+            else
+            {
+                // Fallback de contingencia por si falla la resolución de tipos en los combos
+                grafico1(); grafico2(); grafico3(); grafico4(); grafico5(); grafico6();
+            }
 
+            // Ajuste de ejes del gráfico 6 y refresco inicial obligatorio
             formsPlot6.Plot.Axes.AutoScale();
             formsPlot6.Refresh();
 
-            // Enlazamos los movimientos de mouse de los controles a nuestra lógica segura
+            // Vinculación de eventos de mouse para procesar la proximidad matemática y mostrar Tooltips interactivos
             formsPlot1.MouseMove += FormsPlot1_MouseMove;
             formsPlot2.MouseMove += FormsPlot2_MouseMove;
             formsPlot3.MouseMove += FormsPlot3_MouseMove;
@@ -260,14 +226,48 @@ namespace Presentacion.Core.Administracion
             formsPlot6.MouseMove += FormsPlot6_MouseMove;
         }
 
+        // =================================================================================
+        // CONTROLADORES DE INTERFACCIÓN Y FILTRADO CRONOLÓGICO
+        // =================================================================================
+
         private void btnFiltrarGraficos_Click(object sender, EventArgs e)
         {
-            int añoFiltrado = (int)cbAñoGraficos.SelectedItem;
-            int mesFiltrado = cbMesGrafico.SelectedIndex + 1;
-
-            filtrarGraficos(añoFiltrado, mesFiltrado);
+            if (cbAñoGraficos.SelectedItem is int añoFiltrado && cbMesGrafico.SelectedValue is int mesFiltrado)
+            {
+                filtrarGraficos(añoFiltrado, mesFiltrado);
+            }
         }
 
+        private void cbAñoGraficos_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbAñoGraficos.SelectedItem is int añoFiltrado)
+            {
+                // Apagamos el trigger del mes intermitentemente para evitar llamadas huérfanas 
+                // con combinaciones de mes/año inexistentes durante el cambio de DataSource
+                cbMesGrafico.SelectedIndexChanged -= cbMesGrafico_SelectedIndexChanged;
+
+                ActualizarComboMeses(añoFiltrado);
+
+                cbMesGrafico.SelectedIndexChanged += cbMesGrafico_SelectedIndexChanged;
+
+                if (cbMesGrafico.SelectedValue is int mesFiltrado)
+                {
+                    filtrarGraficos(añoFiltrado, mesFiltrado);
+                }
+            }
+        }
+
+        private void cbMesGrafico_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbAñoGraficos.SelectedItem is int añoFiltrado && cbMesGrafico.SelectedValue is int mesFiltrado)
+            {
+                filtrarGraficos(añoFiltrado, mesFiltrado);
+            }
+        }
+
+        /// <summary>
+        /// Refresca en bloque los gráficos dependientes de filtros temporales.
+        /// </summary>
         private void filtrarGraficos(int año, int mes)
         {
             grafico1(mes, año);
@@ -277,240 +277,196 @@ namespace Presentacion.Core.Administracion
             grafico6(año);
         }
 
+        // =================================================================================
+        // ARQUITECTURA INTERNA DE LOS GRÁFICOS (SCOTTPLOT)
+        // Todos los métodos respetan el patrón: 1. Leer BD -> 2. Formatear Vectores -> 3. Dibujar -> 4. Guardar variables de mouse
+        // =================================================================================
+
+        /// <summary>
+        /// Gráfico 1: Scatter (Puntos y Líneas) - Muestra los ingresos brutos individuales de cada caja en el mes/año provisto.
+        /// </summary>
         private void grafico1(int? mes = null, int? año = null)
         {
+            // 1. Obtención de datos con parámetros por defecto en caso de nulidad
             var cajasEnUnMesXyAñoX = _cajaSerivicio.ObtenerCajasPorMesYAño(DateTime.Now.Month, DateTime.Now.Year);
 
             if (mes.HasValue && año.HasValue)
             {
-                int añoBusqueda = año.Value;
-                int mesBusqueda = mes.Value;
-                cajasEnUnMesXyAñoX = _cajaSerivicio.ObtenerCajasPorMesYAño(mesBusqueda, añoBusqueda);
+                cajasEnUnMesXyAñoX = _cajaSerivicio.ObtenerCajasPorMesYAño(mes.Value, año.Value);
             }
 
-            double[] gananciasPorCaja = cajasEnUnMesXyAñoX
-                .Select(c => (double)c.TotalIngresos)
-                .ToArray();
-
+            // 2. Proyección de colecciones hacia arrays de tipos primitivos (Requerido por ScottPlot)
+            double[] gananciasPorCaja = cajasEnUnMesXyAñoX.Select(c => (double)c.TotalIngresos).ToArray();
             string[] fechasDeCadaCaja = cajasEnUnMesXyAñoX
-            .Select(c => $"A: {c.FechaInicio:dd/MM}\nC: {c.FechaFin?.ToString("dd/MM") ?? "Abierta"}")
-            .ToArray();
-
-            double[] numerosCajas = Enumerable
-                .Range(1, cajasEnUnMesXyAñoX.Count)
-                .Select(i => (double)i)
+                .Select(c => $"A: {c.FechaInicio:dd/MM}\nC: {c.FechaFin?.ToString("dd/MM") ?? "Abierta"}")
                 .ToArray();
 
-            // Guardamos copia local en variables de clase para el Tooltip
+            // El eje X requiere un array incremental secuencial (1, 2, 3...) sobre el cual mapear los Ticks textuales
+            double[] numerosCajas = Enumerable.Range(1, cajasEnUnMesXyAñoX.Count).Select(i => (double)i).ToArray();
+
+            // 3. Resguardo de estado en variables globales de la clase para el motor de Tooltips
             _xs1 = numerosCajas;
             _ys1 = gananciasPorCaja;
-            _lastIndex1 = -1; // Reseteamos puntero
+            _lastIndex1 = -1;
 
-            formsPlot1.Plot.Clear();
+            // 4. Renderizado en el componente UI
+            formsPlot1.Plot.Clear(); // Limpieza del buffer del lienzo anterior
 
-            string title = mes.HasValue ?
-                $"Cajas en {cbMesGrafico.Items[mes.Value - 1]}" :
-                $"Cajas en {CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(DateTime.Now.Month)}";
+            string nombreMes = mes.HasValue ? ObtenerNombreMesLocal(mes.Value) : ObtenerNombreMesLocal(DateTime.Now.Month);
+            string title = $"Cajas en {nombreMes}";
 
             formsPlot1.Plot.Title(title);
             formsPlot1.Plot.XLabel("Fecha de las Cajas");
             formsPlot1.Plot.YLabel("Total Ingresos");
 
+            // Añade el tipo de gráfico lineal
             formsPlot1.Plot.Add.Scatter(numerosCajas, gananciasPorCaja);
-
+            // Sobrescribe los números del eje X con las etiquetas personalizadas de fechas ("A: 10/05...")
             formsPlot1.Plot.Axes.Bottom.SetTicks(numerosCajas, fechasDeCadaCaja);
             formsPlot1.Plot.Axes.AutoScale();
-            formsPlot1.Refresh();
+            formsPlot1.Refresh(); // Renderiza los cambios en pantalla
         }
 
+        /// <summary>
+        /// Gráfico 2: Scatter (Puntos y Líneas) - Muestra ingresos agrupados por día de los últimos 31 días.
+        /// </summary>
         private void grafico2()
         {
             var cajasUltimos31Dias = _cajaSerivicio.ObtenerCajasUltimosXDias(31);
+            // Agrupamiento estricto por truncamiento de fecha (.Date) para consolidar ingresos diarios
+            var cajasPorDia = cajasUltimos31Dias.GroupBy(c => c.FechaInicio.Date).OrderBy(g => g.Key).ToList();
 
-            var cajasPorDia = cajasUltimos31Dias
-            .GroupBy(c => c.FechaInicio.Date)
-            .OrderBy(g => g.Key)
-            .ToList();
-
-            double[] ingresosPorDia = cajasPorDia
-                .Select(g => (double)g.Sum(c => c.TotalIngresos))
-                .ToArray();
-
+            double[] ingresosPorDia = cajasPorDia.Select(g => (double)g.Sum(c => c.TotalIngresos)).ToArray();
             string[] dias = cajasPorDia.Select(g => g.Key.ToString("dd/MM")).ToArray();
+            double[] numerosDias = Enumerable.Range(1, cajasPorDia.Count).Select(i => (double)i).ToArray();
 
-            double[] numerosDias = Enumerable
-                .Range(1, cajasPorDia.Count)
-                .Select(i => (double)i)
-                .ToArray();
-
-            // Guardamos copia local en variables de clase
             _xs2 = numerosDias;
             _ys2 = ingresosPorDia;
             _lastIndex2 = -1;
 
             formsPlot2.Plot.Clear();
-
             formsPlot2.Plot.Title("Cajas ultimos 31 dias agrupadas por fecha");
             formsPlot2.Plot.XLabel("Fecha de las Cajas");
             formsPlot2.Plot.YLabel("Total Ingresos");
 
             formsPlot2.Plot.Add.Scatter(numerosDias, ingresosPorDia);
-
             formsPlot2.Plot.Axes.Bottom.SetTicks(numerosDias, dias);
             formsPlot2.Plot.Axes.AutoScale();
             formsPlot2.Refresh();
         }
 
+        /// <summary>
+        /// Gráfico 3: Bars (Barras) - Muestra la sumatoria económica diaria total de ventas en el mes.
+        /// </summary>
         private void grafico3(int? mes = null, int? año = null)
         {
             var GananciasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year);
 
             if (mes.HasValue && año.HasValue)
             {
-                int añoBusqueda = año.Value;
-                int mesBusqueda = mes.Value;
-                GananciasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(mesBusqueda, añoBusqueda);
+                GananciasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(mes.Value, año.Value);
             }
 
             var ganaciasAgrupadasPorFecha = GananciasMesXAñoX
                 .GroupBy(i => i.FechaVenta.Date)
-                .Select(g => new
-                {
-                    Fecha = g.Key,
-                    IngresoTotal = g.Sum(x => x.Total)
-                })
+                .Select(g => new { Fecha = g.Key, IngresoTotal = g.Sum(x => x.Total) })
                 .OrderBy(x => x.Fecha)
                 .ToList();
 
-            string[] diaDeLasGanancias = ganaciasAgrupadasPorFecha
-                .Select(x => x.Fecha.ToString("dd/MM"))
-                .ToArray();
-
+            string[] diaDeLasGanancias = ganaciasAgrupadasPorFecha.Select(x => x.Fecha.ToString("dd/MM")).ToArray();
             double[] cantidadesGananciasPorDia = ganaciasAgrupadasPorFecha.Select(x => (double)x.IngresoTotal).ToArray();
+            double[] posicionesDiasGanancias = Enumerable.Range(0, diaDeLasGanancias.Length).Select(i => (double)i).ToArray();
 
-            double[] posicionesDiasGanancias = Enumerable.Range(0, diaDeLasGanancias.Length)
-                                .Select(i => (double)i)
-                                .ToArray();
-
-            // Guardamos copia local en variables de clase
             _xs3 = posicionesDiasGanancias;
             _ys3 = cantidadesGananciasPorDia;
             _lastIndex3 = -1;
 
             formsPlot3.Plot.Clear();
 
-            string title = mes.HasValue ?
-                $"Ganancias diarias en {cbMesGrafico.Items[mes.Value - 1]}" :
-                $"Ganancias diarias en {CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(DateTime.Now.Month)}";
+            string nombreMes = mes.HasValue ? ObtenerNombreMesLocal(mes.Value) : ObtenerNombreMesLocal(DateTime.Now.Month);
+            string title = $"Ganancias diarias en {nombreMes}";
 
             formsPlot3.Plot.Title(title);
             formsPlot3.Plot.XLabel("Dias");
             formsPlot3.Plot.YLabel("Total Ventas");
 
+            // Instancia gráfico de barras nativo
             formsPlot3.Plot.Add.Bars(cantidadesGananciasPorDia);
-
             formsPlot3.Plot.Axes.Bottom.SetTicks(posicionesDiasGanancias, diaDeLasGanancias);
             formsPlot3.Plot.Axes.AutoScale();
             formsPlot3.Refresh();
         }
 
+        /// <summary>
+        /// Gráfico 4: Bars (Barras) - Cantidad transaccional de ventas brutas realizadas por día.
+        /// </summary>
         private void grafico4(int? mes = null, int? año = null)
         {
             var ventasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year);
 
             if (año.HasValue && mes.HasValue)
             {
-                int añoBusqueda = año.Value;
-                int mesBusqueda = mes.Value;
-                ventasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(mesBusqueda, añoBusqueda);
+                ventasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(mes.Value, año.Value);
             }
 
             var ventarAgrupadasPorFecha = ventasMesXAñoX.Select(i => i.FechaVenta.Date)
                 .GroupBy(fecha => fecha)
-                .Select(g => new
-                {
-                    Fecha = g.Key,
-                    CantidadVentas = g.Count()
-                })
+                .Select(g => new { Fecha = g.Key, CantidadVentas = g.Count() }) // Mapeo con .Count() en lugar de .Sum()
                 .OrderBy(x => x.Fecha)
                 .ToList();
 
-            string[] diaDeLasVentas = ventarAgrupadasPorFecha
-                .Select(x => x.Fecha.ToString("dd/MM"))
-                .ToArray();
-
+            string[] diaDeLasVentas = ventarAgrupadasPorFecha.Select(x => x.Fecha.ToString("dd/MM")).ToArray();
             double[] cantidadesVentasPorDia = ventarAgrupadasPorFecha.Select(x => (double)x.CantidadVentas).ToArray();
+            double[] posicionesDiasVentas = Enumerable.Range(0, diaDeLasVentas.Length).Select(i => (double)i).ToArray();
 
-            double[] posicionesDiasVentas = Enumerable.Range(0, diaDeLasVentas.Length)
-                                .Select(i => (double)i)
-                                .ToArray();
-
-            // Guardamos copia local en variables de clase
             _xs4 = posicionesDiasVentas;
             _ys4 = cantidadesVentasPorDia;
             _lastIndex4 = -1;
 
             formsPlot4.Plot.Clear();
 
-            string title = mes.HasValue ?
-                $"Ventas diarias en {cbMesGrafico.Items[mes.Value - 1]}" :
-                $"Ventas diarias en {CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(DateTime.Now.Month)}";
+            string nombreMes = mes.HasValue ? ObtenerNombreMesLocal(mes.Value) : ObtenerNombreMesLocal(DateTime.Now.Month);
+            string title = $"Ventas diarias en {nombreMes}";
 
             formsPlot4.Plot.Title(title);
             formsPlot4.Plot.XLabel("Dias");
             formsPlot4.Plot.YLabel("Total Ventas");
 
             formsPlot4.Plot.Add.Bars(cantidadesVentasPorDia);
-
             formsPlot4.Plot.Axes.Bottom.SetTicks(posicionesDiasVentas, diaDeLasVentas);
             formsPlot4.Plot.Axes.AutoScale();
             formsPlot4.Refresh();
         }
 
+        /// <summary>
+        /// Gráfico 5: Bars (Barras) - Acumulado mensual financiero anualizado.
+        /// </summary>
         private void grafico5(int? año = null)
         {
             var cajasAñoX = _cajaSerivicio.ObtenerLasCajasDeXAño(DateTime.Now.Year);
 
             if (año.HasValue)
             {
-                int añoBusqueda = año.Value;
-                cajasAñoX = _cajaSerivicio.ObtenerLasCajasDeXAño(añoBusqueda);
+                cajasAñoX = _cajaSerivicio.ObtenerLasCajasDeXAño(año.Value);
             }
 
+            // Agrupación de claves compuestas (Año y Mes) para aislar balances de periodos interanuales
             var fechasYGanaciasAgrupadasPorMeses = cajasAñoX.GroupBy(c => new { c.FechaInicio.Year, c.FechaInicio.Month })
-            .Select(g => new
-            {
-                Fecha = new DateTime(g.Key.Year, g.Key.Month, 1),
-                Balance = g.Sum(c => c.TotalIngresos)
-            }).ToList();
+                .Select(g => new { Fecha = new DateTime(g.Key.Year, g.Key.Month, 1), Balance = g.Sum(c => c.TotalIngresos) })
+                .ToList();
 
-            string[] meses =
-            {
-                "Enero", "Febrero", "Marzo", "Abril",
-                "Mayo", "Junio", "Julio", "Agosto",
-                "Septiembre", "Octubre", "Noviembre", "Diciembre"
-            };
+            string[] meses = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" };
 
-            double[] xs = fechasYGanaciasAgrupadasPorMeses
-                .Select(x => x.Fecha.Month - 1)
-                .Select(m => (double)m)
-                .ToArray();
+            // Desplazamiento aritmético (Month - 1) para coordinar el índice base cero de los arrays con el calendario gregoriano (1-12)
+            double[] xs = fechasYGanaciasAgrupadasPorMeses.Select(x => (double)(x.Fecha.Month - 1)).ToArray();
+            double[] ganaciasPorMesEjeY = fechasYGanaciasAgrupadasPorMeses.Select(x => (double)x.Balance).ToArray();
+            string[] mesesPresentesEjeX = fechasYGanaciasAgrupadasPorMeses.Select(x => meses[x.Fecha.Month - 1]).ToArray();
 
-            double[] ganaciasPorMesEjeY = fechasYGanaciasAgrupadasPorMeses
-                .Select(x => (double)x.Balance)
-                .ToArray();
-
-            string[] mesesPresentesEjeX = fechasYGanaciasAgrupadasPorMeses
-                .Select(x => meses[x.Fecha.Month - 1])
-                .ToArray();
-
-            // Guardamos copia local en variables de clase
             _xs5 = xs;
             _ys5 = ganaciasPorMesEjeY;
             _lastIndex5 = -1;
 
             formsPlot5.Plot.Clear();
-
             string title = año.HasValue ? $"Ganancias en {año.Value}" : $"Ganancias en {DateTime.Now.Year}";
 
             formsPlot5.Plot.Title(title);
@@ -518,57 +474,40 @@ namespace Presentacion.Core.Administracion
             formsPlot5.Plot.YLabel("Total Ingresos");
 
             formsPlot5.Plot.Add.Bars(xs, ganaciasPorMesEjeY);
-
             formsPlot5.Plot.Axes.Bottom.SetTicks(xs, mesesPresentesEjeX);
+            // Rotación visual a 45 grados de las etiquetas de texto del eje inferior para evitar solapamientos tipográficos
             formsPlot5.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
             formsPlot5.Plot.Axes.AutoScale();
             formsPlot5.Refresh();
         }
 
+        /// <summary>
+        /// Gráfico 6: Bars (Barras) - Volumen total de operaciones comerciales anualizado por mes.
+        /// </summary>
         private void grafico6(int? año = null)
         {
             var ventasAñoX = _ventaServicio.ObtenerVentasPorMesYAño(0, 2026);
 
             if (año.HasValue)
             {
-                int añoBusqueda = año.Value;
-                ventasAñoX = _ventaServicio.ObtenerVentasPorMesYAño(0, añoBusqueda);
+                ventasAñoX = _ventaServicio.ObtenerVentasPorMesYAño(0, año.Value);
             }
 
             var fechasYVentasAgrupadasPorMeses = ventasAñoX.GroupBy(c => new { c.FechaVenta.Year, c.FechaVenta.Month })
-            .Select(g => new
-            {
-                Fecha = new DateTime(g.Key.Year, g.Key.Month, 1),
-                QuantityVentas = g.Count() // Corregido tipado interno implícito
-            }).ToList();
+                .Select(g => new { Fecha = new DateTime(g.Key.Year, g.Key.Month, 1), QuantityVentas = g.Count() })
+                .ToList();
 
-            string[] mesesVentas =
-            {
-                "Enero", "Febrero", "Marzo", "Abril",
-                "Mayo", "Junio", "Julio", "Agosto",
-                "Septiembre", "Octubre", "Noviembre", "Diciembre"
-            };
+            string[] mesesVentas = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" };
 
-            double[] xsVentas = fechasYVentasAgrupadasPorMeses
-                .Select(x => x.Fecha.Month - 1)
-                .Select(m => (double)m)
-                .ToArray();
+            double[] xsVentas = fechasYVentasAgrupadasPorMeses.Select(x => (double)(x.Fecha.Month - 1)).ToArray();
+            double[] ventasPorMesEjeY = fechasYVentasAgrupadasPorMeses.Select(x => (double)x.QuantityVentas).ToArray();
+            string[] mesesVentasPresentesEjeX = fechasYVentasAgrupadasPorMeses.Select(x => mesesVentas[x.Fecha.Month - 1]).ToArray();
 
-            double[] ventasPorMesEjeY = fechasYVentasAgrupadasPorMeses
-                .Select(x => (double)x.QuantityVentas)
-                .ToArray();
-
-            string[] mesesVentasPresentesEjeX = fechasYVentasAgrupadasPorMeses
-                .Select(x => mesesVentas[x.Fecha.Month - 1])
-                .ToArray();
-
-            // Guardamos copia local en variables de clase
             _xs6 = xsVentas;
             _ys6 = ventasPorMesEjeY;
             _lastIndex6 = -1;
 
             formsPlot6.Plot.Clear();
-
             string title = año.HasValue ? $"Ventas en {año.Value}" : $"Ventas in {DateTime.Now.Year}";
 
             formsPlot6.Plot.Title(title);
@@ -576,7 +515,6 @@ namespace Presentacion.Core.Administracion
             formsPlot6.Plot.YLabel("Total Ingresos");
 
             formsPlot6.Plot.Add.Bars(xsVentas, ventasPorMesEjeY);
-
             formsPlot6.Plot.Axes.Bottom.SetTicks(xsVentas, mesesVentasPresentesEjeX);
             formsPlot6.Plot.Axes.AutoScale();
             formsPlot6.Refresh();
@@ -584,166 +522,155 @@ namespace Presentacion.Core.Administracion
 
         private void btnFechaActualGraficos_Click(object sender, EventArgs e)
         {
-            grafico1(DateTime.Now.Month, DateTime.Now.Year);
-            grafico3(DateTime.Now.Month, DateTime.Now.Year);
-            grafico4(DateTime.Now.Month, DateTime.Now.Year);
-            grafico5(DateTime.Now.Year);
-            grafico6(DateTime.Now.Year);
-            cbMesGrafico.SelectedIndex = DateTime.Now.Month - 1;
+            // Resetea y sincroniza visualmente el estado del dashboard a la fecha real de hoy
+            InicializarFiltrosCronologicos();
         }
 
-        private void historialToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var cv = new FVentaConsulta();
-            cv.Show();
-        }
+        // =================================================================================
+        // ENRUTAMIENTO DIRECTO DE MÓDULOS DEL MENÚ ADMINISTRATIVO
+        // Métodos encapsulados para invocar los distintos formularios satélites del sistema de gestión.
+        // =================================================================================
+        private void btnVolver_Click(object sender, EventArgs e) => this.Close();
+        private void sTOCKToolStripMenuItem_Click(object sender, EventArgs e) => new FProductoConsulta().Show();
+        private void mARCASToolStripMenuItem_Click(object sender, EventArgs e) => new FMarcaConsulta(false).Show();
+        private void cATEGORIASToolStripMenuItem_Click(object sender, EventArgs e) => new FCategoriaConsulta(false).Show();
+        private void rUBROSToolStripMenuItem_Click(object sender, EventArgs e) => new FRubroConsulta(false).Show();
+        private void lISTADOEMPLEADOSToolStripMenuItem_Click(object sender, EventArgs e) => new FEmpleadoConsulta(_logeadoId).Show();
+        private void lISTADOCLIENTESToolStripMenuItem_Click(object sender, EventArgs e) => new FClienteConsulta().Show();
+        private void cUENTASCORRIENTESToolStripMenuItem_Click(object sender, EventArgs e) => new FCuentaCorrienteConsulta().Show();
+        private void lISTADOOFERTASToolStripMenuItem_Click(object sender, EventArgs e) => new FOfertaConsulta().Show();
+        private void aCTIVARDESACTIVARToolStripMenuItem_Click(object sender, EventArgs e) => new FOfertaConsulta(true, "a").Show();
+        private void lOTESToolStripMenuItem_Click(object sender, EventArgs e) => new FLoteConsulta().Show();
+        private void btnMovimientos_Click(object sender, EventArgs e) => new FMovimientoConsulta().Show();
+        private void tIPOPAGOToolStripMenuItem_Click(object sender, EventArgs e) => new FTipoPagoConsulta().Show();
+        private void rOLESToolStripMenuItem_Click(object sender, EventArgs e) => new FRolConsulta().Show();
+        private void nUEVAOFERTAToolStripMenuItem_Click(object sender, EventArgs e) => new FOfertaGrupoABM().ShowDialog();
+        private void btnGasto_Click(object sender, EventArgs e) => new Gasto.FGastoConsulta(_logeadoId).Show();
+        private void historialToolStripMenuItem_Click(object sender, EventArgs e) => new FVentaConsulta().Show();
+        private void historialVentasLibresToolStripMenuItem_Click(object sender, EventArgs e) => new FVentaLibreConsulta().Show();
+        private void nuevaVentaLibreToolStripMenuItem_Click(object sender, EventArgs e) => new FVentaLibre(_logeadoId).Show();
 
-        private void historialVentasLibresToolStripMenuItem_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Acceso rápido al subsistema de impresión y visualización de archivos PDF almacenados localmente.
+        /// </summary>
+        private void btnComprobantes_Click(object sender, EventArgs e)
         {
-            var cfvl = new FVentaLibreConsulta();
-            cfvl.Show();
-        }
+            var escritorio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var carpeta = Path.Combine(escritorio, "ComprobantesPdf");
 
-        private void nuevaVentaLibreToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var fvl = new FVentaLibre(_logeadoId);
-            fvl.Show();
-        }
-
-        // =======================================================
-        // LÓGICA DE PROXIMIDAD MATEMÁTICA Y RENDERIZADO FLOTANTE
-        // =======================================================
-
-        private void EvaluarPosicionMouse(FormsPlot formsPlot, double[] xs, double[] ys, MouseEventArgs e, string prefijo, string formato, ref int lastIndex)
-        {
-            if (xs == null || ys == null || xs.Length == 0)
+            if (!Directory.Exists(carpeta))
             {
-                OcultarTooltip(formsPlot, ref lastIndex);
+                MessageBox.Show("La carpeta de comprobantes todavía no existe.", "Comprobantes", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
+            using var dialog = new OpenFileDialog { InitialDirectory = carpeta, Filter = "Archivos PDF (*.pdf)|*.pdf", Title = "Seleccionar comprobante" };
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                using var visor = new FVisorPDF(dialog.FileName);
+                visor.ShowDialog();
+            }
+        }
+
+        // =================================================================================
+        // MOTOR MATEMÁTICO DE SEGUIMIENTO DE MOUSE Y RENDERIZADO PERSONALIZADO DE TOOLTIPS
+        // =================================================================================
+
+        /// <summary>
+        /// Realiza la traducción de coordenadas físicas del monitor (píxeles de pantalla) a coordenadas cartesianas 
+        /// matemáticas de ScottPlot para identificar el punto de datos más cercano bajo el puntero del mouse.
+        /// </summary>
+        /// <param name="formsPlot">El control UI sobre el que se desplaza el cursor.</param>
+        /// <param name="xs">Colección de valores cartesianos del eje X actual del gráfico.</param>
+        /// <param name="ys">Colección de valores cartesianos del eje Y actual del gráfico.</param>
+        /// <param name="e">Argumentos del evento de movimiento de mouse nativo.</param>
+        /// <param name="prefijo">Texto descriptivo inicial ("Ingreso", "Ganancia").</param>
+        /// <param name="formato">Cadena de formato estándar .NET para monedas o enteros ("C2", "N0").</param>
+        /// <param name="lastIndex">Referencia por dirección (ref) del puntero interno del gráfico para trackear cambios de estado.</param>
+        private void EvaluarPosicionMouse(FormsPlot formsPlot, double[] xs, double[] ys, MouseEventArgs e, string prefijo, string formato, ref int lastIndex)
+        {
+            // Si el lote de datos estructurales está vacío, forzamos la ocultación inmediata del ToolTip y cancelamos la evaluación
+            if (xs == null || ys == null || xs.Length == 0) { OcultarTooltip(formsPlot, ref lastIndex); return; }
+
+            // 1. Instanciamos la posición del puntero en píxeles
             Pixel pixelMouse = new Pixel(e.X, e.Y);
+            // 2. Traducimos esos píxeles a coordenadas lógicas cartesianas matemáticas
             Coordinates coordMouse = formsPlot.Plot.GetCoordinates(pixelMouse);
 
             int indexMasCercano = -1;
             double minimaDistanciaX = double.MaxValue;
 
+            // 3. Algoritmo de Proximidad Lineal por diferencia absoluta mínima en el eje X
             for (int i = 0; i < xs.Length; i++)
             {
                 double distancia = Math.Abs(xs[i] - coordMouse.X);
-                if (distancia < minimaDistanciaX)
-                {
-                    minimaDistanciaX = distancia;
-                    indexMasCercano = i;
-                }
+                if (distancia < minimaDistanciaX) { minimaDistanciaX = distancia; indexMasCercano = i; }
             }
 
+            // 4. Umbral de Sensibilidad (0.4 unidades matemáticas): Evita que se dispare el tooltip si el mouse está lejos del punto real
             if (indexMasCercano != -1 && minimaDistanciaX < 0.4)
             {
+                // Solo operamos si el usuario movió el cursor a un punto estadístico DIFERENTE al evaluado en el ciclo anterior
                 if (lastIndex != indexMasCercano)
                 {
-                    lastIndex = indexMasCercano;
+                    lastIndex = indexMasCercano; // Guardamos el nuevo estado para evitar parpadeos
                     double valorY = ys[indexMasCercano];
-
-                    // 1. Guardamos el texto en la variable global para medirlo en el Popup
                     _currentToolTipText = $"{prefijo}: {valorY.ToString(formato)}";
 
-                    // 2. Lanzamos el ToolTip
+                    // Despliega el ToolTip flotante con un pequeño desfasaje estratégico de +15 píxeles para no tapar el nodo visual
                     _winFormsToolTip.Show(_currentToolTipText, formsPlot, e.X + 15, e.Y + 15, 3000);
                 }
             }
-            else
-            {
-                OcultarTooltip(formsPlot, ref lastIndex);
-            }
+            else { OcultarTooltip(formsPlot, ref lastIndex); }
         }
 
-        // =======================================================
-        // NUEVOS MÉTODOS PARA CONTROLAR FUENTE, TAMAÑO Y DISEÑO
-        // =======================================================
-
+        /// <summary>
+        /// Intercepta el evento de dimensionamiento del cuadro de diálogo flotante.
+        /// Mide de antemano el tamaño de los strings para forzar márgenes de padding estéticos personalizados.
+        /// </summary>
         private void WinFormsToolTip_Popup(object sender, PopupEventArgs e)
         {
-            // Medimos cuánto va a medir el texto usando la fuente personalizada
-            // Sumamos un pequeño margen (Padding) para que no quede pegado a los bordes
             Size tamanoTexto = TextRenderer.MeasureText(_currentToolTipText, _toolTipFont);
+            // Añade un padding controlado (+12 de ancho, +8 de alto) sobre el tamaño nativo delimitado por el texto
             e.ToolTipSize = new Size(tamanoTexto.Width + 12, tamanoTexto.Height + 8);
         }
 
+        /// <summary>
+        /// Sobrescribe por completo el motor de dibujo por defecto de Windows (OwnerDraw).
+        /// Permite aplicar tipografías anti-aliasing de alta definición y paletas de color minimalistas profesionales.
+        /// </summary>
         private void WinFormsToolTip_Draw(object sender, DrawToolTipEventArgs e)
         {
-            // 1. Dibujamos el fondo (Blanco limpio minimalista)
+            // Relleno de fondo minimalista blanco
             e.Graphics.FillRectangle(Brushes.White, e.Bounds);
 
-            // 2. Dibujamos un borde sutil gris oscuro
+            // Dibujado del marco perimetral con un tono gris neutro estilizado (RGB: 180, 180, 180)
             using (Pen lapizBorde = new Pen(System.Drawing.Color.FromArgb(180, 180, 180), 1))
             {
                 e.Graphics.DrawRectangle(lapizBorde, 0, 0, e.Bounds.Width - 1, e.Bounds.Height - 1);
             }
 
-            // 3. Dibujamos el texto usando nuestra FUENTE y TAMAÑO personalizados
-            // TextFormatFlags centra el texto perfectamente en el rectángulo calculado
+            // Forzado de alineación bidireccional completamente centrada tanto vertical como horizontalmente
             TextFormatFlags alineacion = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
             TextRenderer.DrawText(e.Graphics, e.ToolTipText, _toolTipFont, e.Bounds, System.Drawing.Color.Black, alineacion);
         }
 
+        /// <summary>
+        /// Oculta de manera segura el cartel flotante activo y reinicia los punteros de control del mouse.
+        /// </summary>
         private void OcultarTooltip(FormsPlot formsPlot, ref int lastIndex)
         {
-            if (lastIndex != -1)
-            {
-                lastIndex = -1;
-                _winFormsToolTip.Hide(formsPlot);
-            }
+            if (lastIndex != -1) { lastIndex = -1; _winFormsToolTip.Hide(formsPlot); }
         }
 
-        // Enlaces individuales de cada control hacia la función de evaluación matemática segura
-        private void FormsPlot1_MouseMove(object sender, MouseEventArgs e) =>
-            EvaluarPosicionMouse(formsPlot1, _xs1, _ys1, e, "Ingreso", "C2", ref _lastIndex1);
-
-        private void FormsPlot2_MouseMove(object sender, MouseEventArgs e) =>
-            EvaluarPosicionMouse(formsPlot2, _xs2, _ys2, e, "Total Día", "C2", ref _lastIndex2);
-
-        private void FormsPlot3_MouseMove(object sender, MouseEventArgs e) =>
-            EvaluarPosicionMouse(formsPlot3, _xs3, _ys3, e, "Ganancia", "C2", ref _lastIndex3);
-
-        private void FormsPlot4_MouseMove(object sender, MouseEventArgs e) =>
-            EvaluarPosicionMouse(formsPlot4, _xs4, _ys4, e, "Cant. Ventas", "N0", ref _lastIndex4);
-
-        private void FormsPlot5_MouseMove(object sender, MouseEventArgs e) =>
-            EvaluarPosicionMouse(formsPlot5, _xs5, _ys5, e, "Total Mes", "C2", ref _lastIndex5);
-
-        private void FormsPlot6_MouseMove(object sender, MouseEventArgs e) =>
-            EvaluarPosicionMouse(formsPlot6, _xs6, _ys6, e, "Cant. Ventas", "N0", ref _lastIndex6);
-
-        private void cbMesGrafico_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Evaluamos de forma segura si ya hay un año seleccionado y lo extraemos
-            if (cbAñoGraficos.SelectedItem is int añoFiltrado)
-            {
-                int mesFiltrado = cbMesGrafico.SelectedIndex + 1;
-
-                // Solo ejecutamos el filtro si el mes es válido
-                if (mesFiltrado > 0)
-                {
-                    filtrarGraficos(añoFiltrado, mesFiltrado);
-                }
-            }
-            // Si es null (como en el arranque), el 'if' no se cumple y no hace nada,
-            // evitando que la aplicación se rompa.
-        }
-        private void cbAñoGraficos_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Validamos de forma segura que el objeto seleccionado sea un entero válido
-            if (cbAñoGraficos.SelectedItem is int añoFiltrado)
-            {
-                int mesFiltrado = cbMesGrafico.SelectedIndex + 1;
-
-                // Nos aseguramos de que el mes también tenga una selección válida
-                if (mesFiltrado > 0)
-                {
-                    filtrarGraficos(añoFiltrado, mesFiltrado);
-                }
-            }
-        }
+        // =================================================================================
+        // REDIRECCIONAMIENTO DIRECTO DE EVENTOS DE MOUSE INDIVIDUALES POR COMPONENTE VISUAL
+        // =================================================================================
+        private void FormsPlot1_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot1, _xs1, _ys1, e, "Ingreso", "C2", ref _lastIndex1);
+        private void FormsPlot2_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot2, _xs2, _ys2, e, "Total Día", "C2", ref _lastIndex2);
+        private void FormsPlot3_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot3, _xs3, _ys3, e, "Ganancia", "C2", ref _lastIndex3);
+        private void FormsPlot4_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot4, _xs4, _ys4, e, "Cant. Ventas", "N0", ref _lastIndex4);
+        private void FormsPlot5_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot5, _xs5, _ys5, e, "Total Mes", "C2", ref _lastIndex5);
+        private void FormsPlot6_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot6, _xs6, _ys6, e, "Cant. Ventas", "N0", ref _lastIndex6);
     }
 }

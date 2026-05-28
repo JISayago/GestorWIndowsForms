@@ -494,6 +494,28 @@ namespace Servicios.LogicaNegocio.Caja
             return caja;
         }
 
-      
+        //Graficos (mover la funicones de grafios que estan arriba a abacjo)
+        public List<int> ObtenerAniosConCajas()
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+
+            return context.Cajas
+                .Select(c => c.FechaInicio.Year)
+                .Distinct()
+                .OrderByDescending(y => y) // Trae del más reciente al más antiguo
+                .ToList();
+        }
+
+        public List<int> ObtenerMesesConCajas(int anio)
+        {
+            var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+
+            return context.Cajas
+                .Where(c => c.FechaInicio.Year == anio)
+                .Select(c => c.FechaInicio.Month)
+                .Distinct()
+                .OrderBy(m => m) // De Enero a Diciembre
+                .ToList();
+        }
     }
 }
