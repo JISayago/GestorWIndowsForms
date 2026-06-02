@@ -320,7 +320,7 @@ namespace AccesoDatos
 
                 entity.Property(e => e.Detalle)
                     .HasColumnName("detalle")
-                    .HasMaxLength(500);
+                    .HasMaxLength(2000);
 
                 entity.Property(e => e.MontoAdeudado)
                     .HasColumnName("monto_adeudado")
