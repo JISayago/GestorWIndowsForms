@@ -471,8 +471,14 @@ namespace Presentacion.Core.Venta
 
                 // Asignar a los objetos usados por el resto del formulario
                 tipoDePagosVenta = pagosSeleccionados;
-                _cuerpoDetalleVenta.tiposDePago = pagosSeleccionados;
 
+
+
+
+
+                _cuerpoDetalleVenta.TotalOriginal = _subTotalVenta;
+                _cuerpoDetalleVenta.TotalFinal = _totalVenta;
+                _cuerpoDetalleVenta.tiposDePago = pagosSeleccionados;
                 // Calcular pendiente
                 var suma = pagosSeleccionados.Sum(p => p.Monto);
                 _cuerpoDetalleVenta.saldoPendiente = _totalVenta - suma;
@@ -501,6 +507,8 @@ namespace Presentacion.Core.Venta
                 _cuerpoDetalleVenta.tiposDePago = tipoPagosSeleccionados;
                 tipoDePagosVenta = tipoPagosSeleccionados;
 
+                _cuerpoDetalleVenta.TotalOriginal = _subTotalVenta;
+                _cuerpoDetalleVenta.TotalFinal = _totalVenta;
                 _cuerpoDetalleVenta.saldoPendiente = fConfirmarVenta.MontoPendiente;
 
                 if (fConfirmarVenta.MontoPendiente > 0.00m)

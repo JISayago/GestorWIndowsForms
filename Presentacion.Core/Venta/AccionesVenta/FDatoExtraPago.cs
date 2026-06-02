@@ -114,7 +114,7 @@ namespace Presentacion.Formularios
             Controls.Add(btnAceptar);
             Controls.Add(btnCancelar);
 
-            if (_cliente.NumeroCliente != "0")
+            if (_cliente != null && _cliente.NumeroCliente != "0")
             {
                 txtDocumento.Text = _cliente.Dni;
                 txtNombre.Text = _cliente.NombreCompleto;
