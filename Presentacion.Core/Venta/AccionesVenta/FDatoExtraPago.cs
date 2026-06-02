@@ -151,7 +151,7 @@ namespace Presentacion.Formularios
 
         private void BtnAceptar_Click(object sender, EventArgs e)
         {
-            datosExtra = $"DNI: {(string.IsNullOrWhiteSpace(txtDocumento.Text) ? null : txtDocumento.Text.Trim())}, Nombre: {(string.IsNullOrWhiteSpace(txtNombre.Text) ? null : txtNombre.Text.Trim())}";
+            datosExtra = $"Nombre: {(string.IsNullOrWhiteSpace(txtNombre.Text) ? "Sin Especificar" : txtNombre.Text.Trim())} | DNI: {(string.IsNullOrWhiteSpace(txtDocumento.Text) ? "Sin especificar" : txtDocumento.Text.Trim())}";
             DialogResult = DialogResult.OK;
             Close();
         }

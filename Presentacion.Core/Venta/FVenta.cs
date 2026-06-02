@@ -7,6 +7,7 @@ using Presentacion.Core.Empleado;
 using Presentacion.Core.Oferta;
 using Presentacion.Core.Producto;
 using Presentacion.Core.Venta.HelpersVenta;
+using Presentacion.Core.Venta.HelpersVenta.Servicios.Helpers.Venta;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.OpcionesPagos;
 using Servicios.LogicaNegocio.Cliente;
@@ -252,7 +253,11 @@ namespace Presentacion.Core.Venta
                 }
 
                 tipoDePagosVenta = pagosSeleccionados;
+
                 _cuerpoDetalleVenta.tiposDePago = pagosSeleccionados;
+
+                _cuerpoDetalleVenta.TotalOriginal = _subTotalVenta;
+                _cuerpoDetalleVenta.TotalFinal = _totalVenta;
 
                 var suma = pagosSeleccionados.Sum(p => p.Monto);
                 _cuerpoDetalleVenta.saldoPendiente = _totalVenta - suma;
@@ -288,7 +293,8 @@ namespace Presentacion.Core.Venta
 
                 tipoDePagosVenta = tipoPagosSeleccionados;
                 _cuerpoDetalleVenta.tiposDePago = tipoPagosSeleccionados;
-
+                _cuerpoDetalleVenta.TotalOriginal = _subTotalVenta;
+                _cuerpoDetalleVenta.TotalFinal = _totalVenta;
                 _cuerpoDetalleVenta.saldoPendiente = fConfirmarVenta.MontoPendiente;
                 _cuerpoDetalleVenta.pagoParcial = fConfirmarVenta.MontoPendiente > 0.00m;
                 //detallesExtraDePago = fConfirmarVenta.datosExtraPagos;
@@ -343,7 +349,7 @@ namespace Presentacion.Core.Venta
                     IdCliente = VENTAID != null ? (long?)idCliente : _clienteVenta.PersonaId,
                     FechaVenta = DateTime.Now,
                     Total = _totalVenta,
-                    TotalSinDescuento = _totalVenta, // Actualizar cuando manejes descuentos
+                    TotalSinDescuento = _subTotalVenta, // Actualizar cuando manejes descuentos
                     Descuento = _porcentajeDescuento,
                     Detalle = Convert.ToString(_cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta)),
                     Items = itemsVenta.ToList(),
