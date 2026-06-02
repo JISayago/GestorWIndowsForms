@@ -53,6 +53,7 @@ namespace Presentacion.Core.Venta
         private BindingList<ItemVentaDTO> itemsVenta;
         private CuerpoDetalleVenta _cuerpoDetalleVenta;
         private List<FormaPago> tipoDePagosVenta;
+        private string detallesExtraDePago = "";
         private bool _actualizandoGrilla = false;
         private bool cargarOferta = false;
         private long idCliente;
@@ -220,7 +221,8 @@ namespace Presentacion.Core.Venta
             {
                 Total = _totalVenta,
                 IncluirCtaCte = _incluirCtaCte,
-                DescuentoEfectivo = cbxDescEfectivo.Checked
+                DescuentoEfectivo = cbxDescEfectivo.Checked,
+                Cliente = _clienteVenta 
             };
 
             var fSeleccionCantidad = new FSeleccionCantidadPagos();
@@ -256,6 +258,7 @@ namespace Presentacion.Core.Venta
                 _cuerpoDetalleVenta.saldoPendiente = _totalVenta - suma;
                 _cuerpoDetalleVenta.pagoParcial = _cuerpoDetalleVenta.saldoPendiente > 0m;
 
+
                 // 🔥 CLAVE: cargar ofertas ANTES
                 CargarInfoOfertas();
 
@@ -288,6 +291,7 @@ namespace Presentacion.Core.Venta
 
                 _cuerpoDetalleVenta.saldoPendiente = fConfirmarVenta.MontoPendiente;
                 _cuerpoDetalleVenta.pagoParcial = fConfirmarVenta.MontoPendiente > 0.00m;
+                detallesExtraDePago = fConfirmarVenta.datosExtraPagos;
 
                 // 🔥 CLAVE: cargar ofertas ANTES
                 CargarInfoOfertas();
@@ -344,6 +348,7 @@ namespace Presentacion.Core.Venta
                     Detalle = Convert.ToString(_cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta)),
                     Items = itemsVenta.ToList(),
                     TiposDePagoSeleccionado = tipoDePagosVenta,
+                    ExtraDetallePago = detallesExtraDePago //
                 };
 
                 // 🌟 CORRECCIÓN CRÍTICA: Quitamos el bloque .ForEach que llamaba a ctaCteServicio.RegistrarCompra.
@@ -703,7 +708,9 @@ namespace Presentacion.Core.Venta
                 {
                     PersonaId = _clienteCargado.PersonaId,
                     Nombre = _clienteCargado.Nombre,
-                    Apellido = _clienteCargado.Apellido
+                    Apellido = _clienteCargado.Apellido,
+                    Dni = _clienteCargado.Dni,
+                    NumeroCliente = _clienteCargado.NumeroCliente,
                 };
                 cbxIncluirCtaCte.Enabled = true;
                 cbxIncluirCtaCte.Checked = true;

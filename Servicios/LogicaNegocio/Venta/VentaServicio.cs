@@ -49,11 +49,11 @@ namespace Servicios.LogicaNegocio.Venta
 
         public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto, TipoMovimientoDetalle movimientoDetalle, long? ventdaIdOriginalParaCancerlar = null)
         {
-            Debug.WriteLine("1 - Inicio CrearVentaInterna");
+            //Debug.WriteLine("1 - Inicio CrearVentaInterna");
 
             try
             {
-                Debug.WriteLine("1.5 - Montos para ctacte o caja");
+                //Debug.WriteLine("1.5 - Montos para ctacte o caja");
 
                 decimal montoParaCtaCte = 0;
                 decimal montoParaCaja = 0;
@@ -72,7 +72,7 @@ namespace Servicios.LogicaNegocio.Venta
                     montoParaCaja = Math.Abs(ventaDto.Total);
                 }
 
-                Debug.WriteLine("2 - Obtener caja");
+                //Debug.WriteLine("2 - Obtener caja");
 
                 var cajaServicio = new Caja.CajaServicio();
                 var cajaId = cajaServicio.ObtenerIdDeEña(context); // Mantenemos tu método original
@@ -80,7 +80,7 @@ namespace Servicios.LogicaNegocio.Venta
                 if (!cajaId.HasValue)
                     throw new Exception("No hay una caja abierta. No se puede registrar la venta.");
 
-                Debug.WriteLine("3 - Generar número venta");
+                //Debug.WriteLine("3 - Generar número venta");
 
                 var fecha = DateTime.Today;
                 var prefijo = ventaDto.Estado == (int)EstadoVenta.CancelacionVenta ? "CAN" : "VEN";
@@ -95,7 +95,7 @@ namespace Servicios.LogicaNegocio.Venta
                     cantidadHoy
                 );
 
-                Debug.WriteLine("4 - Crear entidad venta");
+                //Debug.WriteLine("4 - Crear entidad venta");
 
                 // 🌟 CAMBIO: Mapeamos los montos reales del DTO en lugar de hardcodearlos en 0 y Total
                 var venta = new AccesoDatos.Entidades.Venta
@@ -114,15 +114,15 @@ namespace Servicios.LogicaNegocio.Venta
                     MontoPagado = montoParaCaja    // Asigna lo que se pagó en efectivo/tarjeta
                 };
 
-                Debug.WriteLine("5 - Add venta");
+                //Debug.WriteLine("5 - Add venta");
                 context.Ventas.Add(venta);
 
-                Debug.WriteLine("6 - SaveChanges venta");
+                //Debug.WriteLine("6 - SaveChanges venta");
                 context.SaveChanges();
 
-                Debug.WriteLine("7 - Venta guardada ID: " + venta.VentaId);
+                //Debug.WriteLine("7 - Venta guardada ID: " + venta.VentaId);
 
-                Debug.WriteLine("8 - Crear movimiento");
+                //Debug.WriteLine("8 - Crear movimiento");
                 var movimientoServicio = new Movimiento.MovimientoServicio();
                 movimientoServicio.CrearMovimientoVenta(
                    venta.VentaId,
@@ -133,9 +133,9 @@ namespace Servicios.LogicaNegocio.Venta
                    context
                 );
 
-                Debug.WriteLine("9 - Movimiento creado");
+                //Debug.WriteLine("9 - Movimiento creado");
 
-                Debug.WriteLine("10 - Actualizar caja");
+                //Debug.WriteLine("10 - Actualizar caja");
                 // 🌟 CAMBIO: La caja física solo debe enterarse de transacciones con dinero real (MontoPagado)
                 if (venta.MontoPagado != 0)
                 {
@@ -146,12 +146,12 @@ namespace Servicios.LogicaNegocio.Venta
                         cajaId.Value
                     );
                 }
-                Debug.WriteLine("11 - Caja actualizada");
+                //Debug.WriteLine("11 - Caja actualizada");
 
                 // =========================================================================
                 // 🌟 PASO 11b - NUEVO: IMPACTAR CUENTA CORRIENTE (VENTA O CANCELACIÓN)
                 // =========================================================================
-                Debug.WriteLine("11b - Procesar Cuenta Corriente");
+                //Debug.WriteLine("11b - Procesar Cuenta Corriente");
                 if (venta.MontoAdeudado != 0)
                 {
                     if (!venta.IdCliente.HasValue)
@@ -191,22 +191,22 @@ namespace Servicios.LogicaNegocio.Venta
                             throw new Exception(resCtaCte.Mensaje);
                     }
                 }
-                Debug.WriteLine("11c - Cuenta Corriente procesada");
+                //Debug.WriteLine("11c - Cuenta Corriente procesada");
 
-                Debug.WriteLine("12 - Procesar items");
+                //Debug.WriteLine("12 - Procesar items");
                 if (ventaDto.Items != null && ventaDto.Items.Any())
                 {
-                    Debug.WriteLine("13 - Items detectados");
+                    //Debug.WriteLine("13 - Items detectados");
                     var itemsStock = new List<ItemVentaDTO>();
 
                     foreach (var item in ventaDto.Items)
                     {
-                        Debug.WriteLine($"14 - Item: {item.ItemId} | EsOferta:{item.EsOferta} | Grupo:{item.EsOfertaPorGrupo}");
+                        //Debug.WriteLine($"14 - Item: {item.ItemId} | EsOferta:{item.EsOferta} | Grupo:{item.EsOfertaPorGrupo}");
 
                         // 🔹 1. PRODUCTO NORMAL
                         if (!item.EsOferta)
                         {
-                            Debug.WriteLine("15 - Producto normal");
+                            //Debug.WriteLine("15 - Producto normal");
                             itemsStock.Add(new ItemVentaDTO
                             {
                                 ItemId = item.ItemId,
@@ -218,7 +218,7 @@ namespace Servicios.LogicaNegocio.Venta
                         // 🔹 2. PRODUCTO CON DESCUENTO (POR GRUPO)
                         if (item.EsOfertaPorGrupo)
                         {
-                            Debug.WriteLine("16 - Producto con descuento por grupo");
+                            //Debug.WriteLine("16 - Producto con descuento por grupo");
                             var existeProducto = context.Productos.Any(p => p.ProductoId == item.ItemId);
 
                             if (!existeProducto)
@@ -233,13 +233,13 @@ namespace Servicios.LogicaNegocio.Venta
                         }
 
                         // 🔹 3. OFERTA COMBO
-                        Debug.WriteLine("17 - Buscar oferta combo");
+                        //Debug.WriteLine("17 - Buscar oferta combo");
                         var oferta = context.OfertasDescuentos.FirstOrDefault(o => o.OfertaDescuentoId == item.ItemId);
 
                         if (oferta == null)
                             throw new Exception($"Oferta combo inválida. Id: {item.ItemId}");
 
-                        Debug.WriteLine("18 - Oferta encontrada");
+                        //Debug.WriteLine("18 - Oferta encontrada");
                         var productosOferta = context.ProductosEnOfertasDescuentos
                             .Where(x => x.OfertaId == oferta.OfertaDescuentoId)
                             .ToList();
@@ -247,7 +247,7 @@ namespace Servicios.LogicaNegocio.Venta
                         if (!productosOferta.Any())
                             throw new Exception($"La oferta {oferta.Descripcion} no tiene productos asociados.");
 
-                        Debug.WriteLine("19 - Productos de oferta cargados");
+                        //Debug.WriteLine("19 - Productos de oferta cargados");
                         foreach (var po in productosOferta)
                         {
                             itemsStock.Add(new ItemVentaDTO
@@ -258,7 +258,7 @@ namespace Servicios.LogicaNegocio.Venta
                         }
                     }
 
-                    Debug.WriteLine("20 - Actualizar stock");
+                    //Debug.WriteLine("20 - Actualizar stock");
                     var detallesLotesUsado = new List<DetalleVentaLoteDTO>();
 
                     if (ventaDto.Total < 0)
@@ -280,12 +280,12 @@ namespace Servicios.LogicaNegocio.Venta
                         context.DetalleVentaLotes.AddRange(detallesLotes);
                     }
 
-                    Debug.WriteLine("21 - Stock actualizado");
+                    //Debug.WriteLine("21 - Stock actualizado");
 
                     var detalles = new List<DetallesVenta>();
                     foreach (var i in ventaDto.Items)
                     {
-                        Debug.WriteLine($"22 - Crear detalle item | Id: {i.ItemId} | EsOferta: {i.EsOferta}");
+                        //Debug.WriteLine($"22 - Crear detalle item | Id: {i.ItemId} | EsOferta: {i.EsOferta}");
 
                         var precioOriginal = i.PrecioVenta;
                         var precioFinal = i.EsOferta ? i.PrecioOferta : i.PrecioVenta;
@@ -307,11 +307,11 @@ namespace Servicios.LogicaNegocio.Venta
                         detalles.Add(detalle);
                     }
 
-                    Debug.WriteLine("23 - Agregar detalles");
+                    //Debug.WriteLine("23 - Agregar detalles");
                     context.DetallesVentas.AddRange(detalles);
                 }
 
-                Debug.WriteLine("24 - Procesar pagos");
+                //Debug.WriteLine("24 - Procesar pagos");
                 if (ventaDto.TiposDePagoSeleccionado != null && ventaDto.TiposDePagoSeleccionado.Any())
                 {
                     var servicioTP = new TipoPagoServicio();
@@ -320,8 +320,10 @@ namespace Servicios.LogicaNegocio.Venta
                     {
                         IdVenta = venta.VentaId,
                         IdTipoPago = servicioTP.ObtenerTipoPagoPorNumero(context, Convert.ToInt32(p.TipoDePago.Value)).TipoPagoId,
-                        Monto = p.Monto
+                        Monto = p.Monto,
+                        ExtraDescripcionPago = ventaDto.ExtraDetallePago ?? string.Empty
                     }).ToList();
+
 
                     context.VentaPagosDetalles.AddRange(pagos);
                 }
@@ -339,37 +341,37 @@ namespace Servicios.LogicaNegocio.Venta
                 }
 
                 context.SaveChanges();
-                Debug.WriteLine("26 - SaveChanges final OK");
+                //Debug.WriteLine("26 - SaveChanges final OK");
 
                 return venta;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("=================================");
-                Debug.WriteLine("ERROR EN PASO");
-                Debug.WriteLine(ex.ToString());
-                Debug.WriteLine("=================================");
+                //Debug.WriteLine("=================================");
+                //Debug.WriteLine("ERROR EN PASO");
+                //Debug.WriteLine(ex.ToString());
+                //Debug.WriteLine("=================================");
                 throw;
             }
         }
 
         public EstadoOperacion NuevaVenta(VentaDTO ventaDto)
         {
-            Debug.WriteLine("A - Inicio NuevaVenta");
+            //Debug.WriteLine("A - Inicio NuevaVenta");
 
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-            Debug.WriteLine("B - Context creado");
+            //Debug.WriteLine("B - Context creado");
 
             using var transaction = context.Database.BeginTransaction();
-            Debug.WriteLine("C - Transacción iniciada");
+            //Debug.WriteLine("C - Transacción iniciada");
 
             try
             {
-                Debug.WriteLine("D - Antes CrearVentaInterna");
+                //Debug.WriteLine("D - Antes CrearVentaInterna");
 
                 var venta = CrearVentaInterna(context, ventaDto, TipoMovimientoDetalle.Venta);
 
-                Debug.WriteLine("E - Antes Commit");
+                //Debug.WriteLine("E - Antes Commit");
 
                 transaction.Commit();
 
@@ -377,12 +379,12 @@ namespace Servicios.LogicaNegocio.Venta
 
                 try
                 {
-                Debug.WriteLine("F - Commit realizado");
+                //Debug.WriteLine("F - Commit realizado");
                     GeneracionComprobanteVenta(context, venta);
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("Error generando PDF: " + ex.Message);
+                    //Debug.WriteLine("Error generando PDF: " + ex.Message);
                     // no cortás la venta por un PDF
                 }
 
@@ -395,10 +397,10 @@ namespace Servicios.LogicaNegocio.Venta
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("=================================");
-                Debug.WriteLine("ERROR EN NUEVA VENTA");
-                Debug.WriteLine(ex.ToString());
-                Debug.WriteLine("=================================");
+                //Debug.WriteLine("=================================");
+                //Debug.WriteLine("ERROR EN NUEVA VENTA");
+                //Debug.WriteLine(ex.ToString());
+                //Debug.WriteLine("=================================");
 
                 transaction.Rollback();
 

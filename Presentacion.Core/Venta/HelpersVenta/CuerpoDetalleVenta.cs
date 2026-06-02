@@ -10,9 +10,9 @@ namespace Presentacion.Core.Venta.HelpersVenta
     public class CuerpoDetalleVenta
     {
         public List<FormaPago> tiposDePago;
+        public string datosExtraPagos { get; set; } // dni y nombre del cliente del pago.
         public bool pagoParcial { get; set; }
         public decimal saldoPendiente { get; set; } = 0.00m;
-
         public bool ofertaIncluidas { get; set; }
         public string descripcionOferta { get; set; }
 
