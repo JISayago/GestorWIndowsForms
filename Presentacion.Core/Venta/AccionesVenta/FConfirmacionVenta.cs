@@ -60,11 +60,13 @@ namespace Presentacion.Core.Venta
                     return;
                 }
 
-                datosExtraPagos = fFormaPagoSeleccionada.datosExtra ?? ""; // Aseguramos que no sea null para el caller.
+                //datosExtraPagos = fFormaPagoSeleccionada.datosExtra ?? "Sin especificar"; // Aseguramos que no sea null para el caller.
                 // Si llegó OK, asignamos la forma y monto por el total de la venta
                 var tipoSeleccionado = fFormaPagoSeleccionada.tipoPagoSeleccionado;
+                var datoExtraPagos = fFormaPagoSeleccionada.datosExtra ?? "Sin especificar"; // Aseguramos que no sea null para el caller.
                 pagos[0].TipoDePago = tipoSeleccionado;
                 pagos[0].Monto = TotalVenta;
+                pagos[0].DatosExtra = datoExtraPagos;
 
                 // Actualizamos labels y estado mínimo para que el caller reciba todo en el mismo formato
                 lblFormaPago1.Text = tipoSeleccionado.ToString();

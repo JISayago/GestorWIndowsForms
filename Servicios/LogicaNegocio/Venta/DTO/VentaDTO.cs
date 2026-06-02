@@ -40,7 +40,6 @@ namespace Servicios.LogicaNegocio.Venta.DTO
             }
         }
         public string Detalle { get; set; }
-        public string ExtraDetallePago { get; set; } // Para información adicional como DNI o nombre del cliente en pagos.
         public List<ItemVentaDTO> Items { get; set; }
         public List<FormaPago> TiposDePagoSeleccionado { get; set; }
     }

@@ -32,6 +32,7 @@ namespace Presentacion.Core.Venta
         private readonly List<Button> _btnTipoPago = new List<Button>();
         private readonly List<Label> _lblTipoPago = new List<Label>();
         private readonly List<TipoDePago?> _tipoSeleccionado = new List<TipoDePago?>();
+        private readonly List<string> _datosExtra = new List<string>();
 
         // Panel donde se agregan las filas
         private FlowLayoutPanel flowPanel;
@@ -268,6 +269,7 @@ namespace Presentacion.Core.Venta
 
                 // Inicializamos sel tipo como nulo
                 _tipoSeleccionado.Add(null);
+                _datosExtra.Add(null);
 
                 flowPanel.Controls.Add(panelRow);
             }
@@ -365,7 +367,7 @@ namespace Presentacion.Core.Venta
             {
                 decimal monto = 0m;
                 decimal.TryParse(_txtMontos[i].Text, NumberStyles.Number, CultureInfo.CurrentCulture, out monto);
-                var fp = new FormaPago { Numero = i + 1, Monto = monto, TipoDePago = null };
+                var fp = new FormaPago { Numero = i + 1, Monto = monto, TipoDePago = null, DatosExtra = "Sin especificar" };
                 tmpPagos.Add(fp);
             }
             // Abrir selector (reutiliza tu dialog existente). Ajustá el constructor si lo tenés distinto.
@@ -379,9 +381,9 @@ namespace Presentacion.Core.Venta
                     return;
                 }
                 _tipoSeleccionado[index] = tipo;
-
+                _datosExtra[index] = fTipo.datosExtra ?? "Sin especificar";
                 // Pongo el texto en label
-                _lblTipoPago[index].Text = tipo.ToString();
+                _lblTipoPago[index].Text = $"{tipo.ToString()} ({_datosExtra[index]})";
                 // Mantengo el botón como "Cambiar"
                 _btnTipoPago[index].Text = "Cambiar forma";
             }
@@ -447,7 +449,8 @@ namespace Presentacion.Core.Venta
                 {
                     Numero = i + 1,
                     Monto = monto,
-                    TipoDePago = _tipoSeleccionado[i] ?? default
+                    TipoDePago = _tipoSeleccionado[i] ?? default,
+                    DatosExtra = _datosExtra[i] ?? "Sin especificar"
                 };
 
                 ResultPagos.Add(forma);

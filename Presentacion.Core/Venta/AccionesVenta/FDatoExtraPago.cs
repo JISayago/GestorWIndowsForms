@@ -24,7 +24,6 @@ namespace Presentacion.Formularios
 
         private readonly TipoDePago _tipoPago;
         private readonly ClienteDTO _cliente;   
-        //public DatosPagadorDTO datosPagador { get; private set; }
         public string datosExtra { get; private set; } // Para información adicional como DNI o nombre del cliente en pagos.
 
         public FDatosPagador(TipoDePago tipoPago, ClienteDTO cliente)

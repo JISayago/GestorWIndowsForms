@@ -291,7 +291,7 @@ namespace Presentacion.Core.Venta
 
                 _cuerpoDetalleVenta.saldoPendiente = fConfirmarVenta.MontoPendiente;
                 _cuerpoDetalleVenta.pagoParcial = fConfirmarVenta.MontoPendiente > 0.00m;
-                detallesExtraDePago = fConfirmarVenta.datosExtraPagos;
+                //detallesExtraDePago = fConfirmarVenta.datosExtraPagos;
 
                 // 🔥 CLAVE: cargar ofertas ANTES
                 CargarInfoOfertas();
@@ -348,7 +348,6 @@ namespace Presentacion.Core.Venta
                     Detalle = Convert.ToString(_cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta)),
                     Items = itemsVenta.ToList(),
                     TiposDePagoSeleccionado = tipoDePagosVenta,
-                    ExtraDetallePago = detallesExtraDePago //
                 };
 
                 // 🌟 CORRECCIÓN CRÍTICA: Quitamos el bloque .ForEach que llamaba a ctaCteServicio.RegistrarCompra.
