@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Presentacion.Formularios
+namespace Presentacion.Core
 {
     public partial class FProcesando : Form
     {
@@ -17,7 +17,7 @@ namespace Presentacion.Formularios
         private void InicializarComponentes()
         {
             Text = "Procesando";
-            StartPosition = FormStartPosition.CenterParent;
+            StartPosition = FormStartPosition.CenterScreen;
 
             FormBorderStyle = FormBorderStyle.FixedDialog;
             ControlBox = false;

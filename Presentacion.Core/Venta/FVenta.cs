@@ -9,6 +9,7 @@ using Presentacion.Core.Producto;
 using Presentacion.Core.Venta.HelpersVenta;
 using Presentacion.Core.Venta.HelpersVenta.Servicios.Helpers.Venta;
 using Presentacion.FBase.Helpers;
+using Presentacion.Formularios;
 using Servicios.Helpers.OpcionesPagos;
 using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.Cliente.DTO;
@@ -334,45 +335,68 @@ namespace Presentacion.Core.Venta
                 _cuerpoDetalleVenta.descripcionOferta = string.Empty;
             }
         }
-        private void FinalizacionVenta()
+        private async Task FinalizacionVenta()
         {
-            if (finalizarVenta)
-            {
-                this.DialogResult = DialogResult.OK;
+            if (!finalizarVenta)
+                return;
 
-                // 1. Armamos el DTO con toda la información limpia de la pantalla
+            using var frmProcesando = new FProcesando();
+
+            frmProcesando.Show();
+            frmProcesando.ActualizarEstado("Generando venta...");
+
+            try
+            {
+                this.Enabled = false;
+
                 _venta = new VentaDTO
                 {
                     NumeroVenta = lblNro.Text,
                     IdEmpleado = _usuarioLogeadoID,
                     IdVendedor = idVendedor,
-                    IdCliente = VENTAID != null ? (long?)idCliente : _clienteVenta.PersonaId,
+                    IdCliente = VENTAID != null
+                        ? (long?)idCliente
+                        : _clienteVenta.PersonaId,
+
                     FechaVenta = DateTime.Now,
                     Total = _totalVenta,
-                    TotalSinDescuento = _subTotalVenta, // Actualizar cuando manejes descuentos
+                    TotalSinDescuento = _subTotalVenta,
                     Descuento = _porcentajeDescuento,
-                    Detalle = Convert.ToString(_cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta)),
+                    Detalle = _cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta),
                     Items = itemsVenta.ToList(),
-                    TiposDePagoSeleccionado = tipoDePagosVenta,
+                    TiposDePagoSeleccionado = tipoDePagosVenta
                 };
 
-                // 🌟 CORRECCIÓN CRÍTICA: Quitamos el bloque .ForEach que llamaba a ctaCteServicio.RegistrarCompra.
-                // Dejamos que el servicio 'NuevaVenta' haga todo el trabajo pesado dentro de la transacción de la DB.
+                frmProcesando.ActualizarEstado("Registrando venta...");
 
-                // 2. Enviamos el DTO al servicio de negocio
-                var m = _ventaServicio.NuevaVenta(_venta);
+                var m = await Task.Run(() =>
+                    _ventaServicio.NuevaVenta(_venta));
+
+                frmProcesando.Close();
 
                 if (m.Exitoso)
                 {
-                    MessageBox.Show("Venta confirmada exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(
+                        "Venta confirmada exitosamente.",
+                        "Éxito",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    DialogResult = DialogResult.OK;
+                    Close();
                 }
                 else
                 {
-                    MessageBox.Show($"Hubo un error al finalizar la venta: {m.Mensaje}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(
+                        $"Hubo un error al finalizar la venta: {m.Mensaje}",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
                 }
-
-                this.Close();
-                return;
+            }
+            finally
+            {
+                this.Enabled = true;
             }
         }
 
@@ -722,7 +746,7 @@ namespace Presentacion.Core.Venta
             }
         }
 
-        private void btnLimpiar_Click(object sender, EventArgs e)
+        private async void btnLimpiar_Click(object sender, EventArgs e)
         {
             if (VENTAID != null)
             {
@@ -735,16 +759,20 @@ namespace Presentacion.Core.Venta
 
                 if (result == DialogResult.OK)
                 {
-                    CancelarVenta(VENTAID);
+                    using var frmProcesando = new FProcesando();
+                    frmProcesando.Show();
+                    frmProcesando.ActualizarEstado("Cancelando venta...");
+
+                    await Task.Run(() => CancelarVenta(VENTAID));
+
+                    frmProcesando.Close();
                 }
             }
             else
             {
                 finalizarVenta = false;
                 InicializarYLimpiarCampos(VENTAID);
-
             }
-
         }
 
         private void CancelarVenta(long? VenId)
