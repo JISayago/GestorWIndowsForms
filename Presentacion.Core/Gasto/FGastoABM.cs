@@ -67,12 +67,12 @@ namespace Presentacion.Core.Gasto
             this.Close();
         }
 
-        private void btnRegistrarGasto_Click(object sender, EventArgs e)
+        private async void btnRegistrarGasto_Click(object sender, EventArgs e)
         {
-            RegistrarGasto();
+            await RegistrarGasto();
         }
 
-        private void RegistrarGasto()
+        private async Task RegistrarGasto()
         {
             if (cmbCategoriaGasto.SelectedValue == null)
             {
@@ -94,7 +94,6 @@ namespace Presentacion.Core.Gasto
 
             var estado = (int)cmbEstado.SelectedValue;
 
-            // 🔥 manejo correcto de fecha
             DateTime? fechaGasto = null;
 
             if (estado == (int)EstadoGasto.Pagado)
@@ -112,17 +111,44 @@ namespace Presentacion.Core.Gasto
                 EstadoGasto = estado
             };
 
-            var resultado = _gastoServicio.NuevoGasto(gasto);
+            using var frmProcesando = new FProcesando();
 
-            if (resultado.Exitoso)
+            try
             {
-                RealizoAlgunaOperacion = true;
-                MessageBox.Show(resultado.Mensaje, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Close();
+                btnRegistrarGasto.Enabled = false;
+
+                frmProcesando.Show();
+                frmProcesando.ActualizarEstado("Registrando gasto...");
+
+                var resultado = await Task.Run(() =>
+                    _gastoServicio.NuevoGasto(gasto));
+
+                frmProcesando.Close();
+
+                if (resultado.Exitoso)
+                {
+                    RealizoAlgunaOperacion = true;
+
+                    MessageBox.Show(
+                        resultado.Mensaje,
+                        "Éxito",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    Close();
+                }
+                else
+                {
+                    MessageBox.Show(
+                        resultado.Mensaje,
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
             }
-            else
+            finally
             {
-                MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                btnRegistrarGasto.Enabled = true;
             }
         }
 

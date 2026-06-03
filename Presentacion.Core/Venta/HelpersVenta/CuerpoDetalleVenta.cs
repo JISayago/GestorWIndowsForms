@@ -7,44 +7,119 @@ using System.Threading.Tasks;
 
 namespace Presentacion.Core.Venta.HelpersVenta
 {
-    public class CuerpoDetalleVenta
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+
+    namespace Servicios.Helpers.Venta
     {
-        public List<FormaPago> tiposDePago;
-        public bool pagoParcial { get; set; }
-        public decimal saldoPendiente { get; set; } = 0.00m;
-
-        public bool ofertaIncluidas { get; set; }
-        public string descripcionOferta { get; set; }
-
-        public string CuerpoDelTextoTP()
+        public class CuerpoDetalleVenta
         {
-            var pagos = tiposDePago != null && tiposDePago.Any()
-                ? string.Join(", ", tiposDePago.Select(p => $"{p.TipoDePago}: {p.Monto:C2}"))
-                : "Sin pagos registrados";
+            public decimal TotalOriginal { get; set; }
 
-            var texto = $"Pagos Realizados: {pagos}";
+            public decimal TotalFinal { get; set; }
 
-            if (pagoParcial)
-                texto += $"{Environment.NewLine}Saldo Pendiente: {saldoPendiente:C2}";
+            public decimal Descuento => TotalOriginal - TotalFinal;
 
-            return texto;
-        }
+            public List<FormaPago> tiposDePago { get; set; } = new();
 
-        public string CuerpoDelTextoFinal(string extra)
-        {
-            var pagos = $"Pagos Realizados: {string.Join(", ", tiposDePago.Select(p => $"{p.TipoDePago}: {p.Monto:C2}"))}";
-            var saldo = $"Saldo Pendiente: {saldoPendiente:C2}";
+            public bool pagoParcial { get; set; }
 
-            var ofertas = string.Empty;
+            public decimal saldoPendiente { get; set; }
 
-            if (ofertaIncluidas && !string.IsNullOrWhiteSpace(descripcionOferta))
+            public bool ofertaIncluidas { get; set; }
+
+            public string descripcionOferta { get; set; }
+
+            public string CuerpoDelTextoTP()
             {
-                ofertas = $"{Environment.NewLine}Ofertas aplicadas: {descripcionOferta}";
+                var sb = new StringBuilder();
+
+                sb.AppendLine("FORMAS DE PAGO");
+
+                foreach (var pago in tiposDePago)
+                {
+                    sb.AppendLine(
+                        $"{pago.TipoDePago}: {pago.Monto:C2}");
+                }
+
+                if (pagoParcial)
+                {
+                    sb.AppendLine(
+                        $"Saldo pendiente: {saldoPendiente:C2}");
+                }
+
+                return sb.ToString();
             }
 
-            var detalleExtra = $"{Environment.NewLine}Detalle adicional: {extra}";
+            public string CuerpoDelTextoFinal(string observaciones)
+            {
+                var sb = new StringBuilder();
 
-            return $"{pagos}{Environment.NewLine}{saldo}{ofertas}{detalleExtra}";
+                sb.AppendLine("===== RESUMEN DE VENTA =====");
+                sb.AppendLine();
+
+                sb.AppendLine($"Total Original: {TotalOriginal:C2}");
+
+                if (Descuento > 0)
+                {
+                    sb.AppendLine($"Descuento Aplicado: {Descuento:C2}");
+                }
+
+                sb.AppendLine($"Total Final: {TotalFinal:C2}");
+
+                sb.AppendLine();
+                sb.AppendLine("FORMAS DE PAGO");
+
+                if (tiposDePago != null && tiposDePago.Any())
+                {
+                    foreach (var pago in tiposDePago)
+                    {
+                        sb.Append($"- {pago.TipoDePago}: {pago.Monto:C2}");
+
+                        if (!string.IsNullOrWhiteSpace(pago.DatosExtra))
+                        {
+                            sb.Append($" | {pago.DatosExtra}");
+                        }
+
+                        sb.AppendLine();
+                    }
+                }
+                else
+                {
+                    sb.AppendLine("Sin pagos registrados");
+                }
+
+                if (saldoPendiente > 0)
+                {
+                    sb.AppendLine();
+                    sb.AppendLine($"Saldo Pendiente: {saldoPendiente:C2}");
+                }
+
+                if (ofertaIncluidas &&
+                    !string.IsNullOrWhiteSpace(descripcionOferta))
+                {
+                    sb.AppendLine();
+                    sb.AppendLine("OFERTAS APLICADAS");
+
+                    sb.AppendLine(descripcionOferta);
+                }
+
+                if (!string.IsNullOrWhiteSpace(observaciones))
+                {
+                    sb.AppendLine();
+                    sb.AppendLine("OBSERVACIONES");
+
+                    sb.AppendLine(observaciones.Trim());
+                }
+
+                var resultado = sb.ToString().Trim();
+
+                return resultado.Length > 2000
+                    ? resultado.Substring(0, 2000)
+                    : resultado;
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Cliente;
 using Presentacion.Core.Venta.HelpersVenta;
+using Presentacion.Core.Venta.HelpersVenta.Servicios.Helpers.Venta;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.OpcionesPagos;
 using Servicios.LogicaNegocio.Cliente;
@@ -416,7 +417,7 @@ namespace Presentacion.Core.Venta
         }
 
 
-        private void btnConfirmarYFPago_Click(object sender, EventArgs e)
+        private async void btnConfirmarYFPago_Click(object sender, EventArgs e)
         {
             if (_totalVenta == 0)
             {
@@ -431,7 +432,7 @@ namespace Presentacion.Core.Venta
             // Si ya se confirmó antes, registrar la venta directamente
             if (finalizarVenta)
             {
-                FinalizacionVenta();
+                await FinalizacionVenta();
                 return;
             }
 
@@ -470,8 +471,14 @@ namespace Presentacion.Core.Venta
 
                 // Asignar a los objetos usados por el resto del formulario
                 tipoDePagosVenta = pagosSeleccionados;
-                _cuerpoDetalleVenta.tiposDePago = pagosSeleccionados;
 
+
+
+
+
+                _cuerpoDetalleVenta.TotalOriginal = _subTotalVenta;
+                _cuerpoDetalleVenta.TotalFinal = _totalVenta;
+                _cuerpoDetalleVenta.tiposDePago = pagosSeleccionados;
                 // Calcular pendiente
                 var suma = pagosSeleccionados.Sum(p => p.Monto);
                 _cuerpoDetalleVenta.saldoPendiente = _totalVenta - suma;
@@ -500,6 +507,8 @@ namespace Presentacion.Core.Venta
                 _cuerpoDetalleVenta.tiposDePago = tipoPagosSeleccionados;
                 tipoDePagosVenta = tipoPagosSeleccionados;
 
+                _cuerpoDetalleVenta.TotalOriginal = _subTotalVenta;
+                _cuerpoDetalleVenta.TotalFinal = _totalVenta;
                 _cuerpoDetalleVenta.saldoPendiente = fConfirmarVenta.MontoPendiente;
 
                 if (fConfirmarVenta.MontoPendiente > 0.00m)
@@ -512,88 +521,100 @@ namespace Presentacion.Core.Venta
                 GenerarDetalleVenta(tipoPagosSeleccionados);
             }
         }
-        private void FinalizacionVenta()
+        private async Task FinalizacionVenta()
         {
-            if (!finalizarVenta) return;
+            if (!finalizarVenta)
+                return;
 
-            this.DialogResult = DialogResult.OK;
+            using var frmProcesando = new FProcesando();
 
-            _ventaLibreDto = new VentaLibreDTO()
+            try
             {
-                NumeroVenta = lblNro.Text,
-                IdEmpleado = _usuarioLogeadoID,
-                IdVendedor = idVendedor,
+                btnConfirmarYFPago.Enabled = false;
 
-                IdCliente = esConsumidorFinal
-                    ? (long?)_clienteVenta.PersonaId
-                    : idCliente,
+                frmProcesando.Show();
+                frmProcesando.ActualizarEstado("Preparando venta...");
 
-                ClienteNombreCompleto = $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}",
-
-                EmpleadoNombreCompleto = $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}",
-                VendedorNombreCompleto = $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}",
-
-                FechaVenta = DateTime.Now,
-                Total = _totalVenta,
-
-                Estado = 1, // o el enum que uses
-
-                Detalle = Convert.ToString(
-                    _cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta)
-                ),
-
-                MontoPagado = tipoDePagosVenta.Sum(x => x.Monto),
-                MontoAdeudado = _totalVenta - tipoDePagosVenta.Sum(x => x.Monto),
-                TiposDePagoSeleccionado = tipoDePagosVenta,
-
-            };
-            _ventaLibreDto.TiposDePagoSeleccionado.ForEach(tp =>
-            {
-                if (tp.TipoDePago == TipoDePago.CtaCte)
+                _ventaLibreDto = new VentaLibreDTO
                 {
-                    var ctaCteServicio = new CuentaCorrienteServicio();
-                    var ctacte = ctaCteServicio.ObtenerCuentaCorrientePorClienteId(idCliente);
+                    NumeroVenta = lblNro.Text,
+                    IdEmpleado = _usuarioLogeadoID,
+                    IdVendedor = idVendedor,
 
-                    if (ctacte != null)
-                    {
-                        ctaCteServicio.RegistrarCompra(ctacte.CuentaCorrienteId, tp.Monto, DatosSistema.CajaId.Value);
-                    }
-                }
-            });
+                    IdCliente = esConsumidorFinal
+                        ? (long?)_clienteVenta.PersonaId
+                        : idCliente,
 
-            foreach (var tp in tipoDePagosVenta)
-            {
-                if (tp.TipoDePago == TipoDePago.CtaCte)
+                    ClienteNombreCompleto = $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}",
+
+                    EmpleadoNombreCompleto = $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}",
+                    VendedorNombreCompleto = $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}",
+
+                    FechaVenta = DateTime.Now,
+                    Total = _totalVenta,
+
+                    Estado = 1,
+
+                    Detalle = _cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta),
+
+                    MontoPagado = tipoDePagosVenta.Sum(x => x.Monto),
+                    MontoAdeudado = _totalVenta - tipoDePagosVenta.Sum(x => x.Monto),
+
+                    TiposDePagoSeleccionado = tipoDePagosVenta
+                };
+
+                frmProcesando.ActualizarEstado("Registrando venta...");
+
+                var resultado = await Task.Run(() =>
                 {
-                    var ctaCteServicio = new CuentaCorrienteServicio();
-                    var ctacte = ctaCteServicio.ObtenerCuentaCorrientePorClienteId(idCliente);
-
-                    if (ctacte != null)
+                    foreach (var tp in tipoDePagosVenta)
                     {
-                        ctaCteServicio.RegistrarCompra(
-                            ctacte.CuentaCorrienteId,
-                            tp.Monto,
-                            DatosSistema.CajaId.Value
-                        );
+                        if (tp.TipoDePago == TipoDePago.CtaCte)
+                        {
+                            var ctaCteServicio = new CuentaCorrienteServicio();
+
+                            var ctacte =
+                                ctaCteServicio.ObtenerCuentaCorrientePorClienteId(idCliente);
+
+                            if (ctacte != null)
+                            {
+                                ctaCteServicio.RegistrarCompra(
+                                    ctacte.CuentaCorrienteId,
+                                    tp.Monto,
+                                    DatosSistema.CajaId.Value);
+                            }
+                        }
                     }
+
+                    return _ventaLibreServicio.NuevaVentaLibre(_ventaLibreDto);
+                });
+
+                frmProcesando.Close();
+
+                if (resultado.Exitoso)
+                {
+                    MessageBox.Show(
+                        "Venta confirmada exitosamente.",
+                        "Éxito",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+                else
+                {
+                    MessageBox.Show(
+                        $"Error al finalizar la venta: {resultado.Mensaje}",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
                 }
             }
-
-            // 🔥 Guardar venta
-            var resultado = _ventaLibreServicio.NuevaVentaLibre(_ventaLibreDto);
-
-            if (resultado.Exitoso)
+            finally
             {
-                MessageBox.Show("Venta confirmada exitosamente.", "Éxito",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                btnConfirmarYFPago.Enabled = true;
             }
-            else
-            {
-                MessageBox.Show($"Error al finalizar la venta: {resultado.Mensaje}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            this.Close();
         }
         private void GenerarDetalleVenta(List<FormaPago> tipoPagosSeleccionados)
         {

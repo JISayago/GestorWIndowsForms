@@ -1,6 +1,8 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.Core.CuentaCorriente;
+using Presentacion.Core.Venta.AccionesVenta;
 using Presentacion.Core.Venta.HelpersVenta;
+using Presentacion.Formularios;
 using Servicios.Helpers.OpcionesPagos;
 using Servicios.LogicaNegocio.Cliente.DTO;
 using System;
@@ -23,6 +25,8 @@ namespace Presentacion.Core.Venta.TipoPago
         public List<FormaPago> _pagos { get; private set; }
         private int _indexActual; // índice que estamos editando (puede ser -1 si es nuevo)
         private long idCliente;
+        private ClienteDTO cliente;
+        public string datosExtra { get; private set; } // para guardar datos adicionales como DNI o nombre del cliente en pagos.
 
         // array de límites: si ya lo tenés en otro lado, usá ese. Aquí lo dejo como ejemplo.
         private readonly int[] listPagosCantidades = new int[8] { 1, 2, 1, 1, 1, 1, 1, 1 };
@@ -30,6 +34,7 @@ namespace Presentacion.Core.Venta.TipoPago
         public FTipoPagoSeleccionEnVenta(DatosVenta dv, List<FormaPago> pagos, int indexActual, long? clienteCargado)
         {
             InitializeComponent();
+            cliente = dv.Cliente;
             _incluirCtaCte = dv.IncluirCtaCte;
             _descuentoEfectivo = dv.DescuentoEfectivo;
             _pagos = pagos;
@@ -44,7 +49,27 @@ namespace Presentacion.Core.Venta.TipoPago
 
         private void btnCredito_Click(object sender, EventArgs e)
         {
+            GestionDatosExtra(TipoDePago.Credito);
             SeleccionTipoPago(TipoDePago.Credito);
+        }
+
+        private void GestionDatosExtra(TipoDePago tipoPago)
+        {
+            if (tipoPago != TipoDePago.Credito &&
+                tipoPago != TipoDePago.Debito &&
+                tipoPago != TipoDePago.Transferencia &&
+                tipoPago != TipoDePago.QR)
+            {
+                return;
+            }
+
+            using (var formulario = new FDatosPagador(tipoPago, cliente))
+            {
+                if (formulario.ShowDialog() == DialogResult.OK)
+                {
+                    datosExtra = formulario.datosExtra; // guardamos el dato extra para usarlo después (ej: al generar la venta)
+                }
+            }
         }
 
         private void btnCtaCte_Click(object sender, EventArgs e)
@@ -71,11 +96,13 @@ namespace Presentacion.Core.Venta.TipoPago
 
         private void btnTransferencia_Click(object sender, EventArgs e)
         {
+            GestionDatosExtra(TipoDePago.Transferencia);
             SeleccionTipoPago(TipoDePago.Transferencia);
         }
 
         private void btnDébito_Click(object sender, EventArgs e)
         {
+            GestionDatosExtra(TipoDePago.Debito);
             SeleccionTipoPago(TipoDePago.Debito);
         }
 
@@ -150,11 +177,13 @@ namespace Presentacion.Core.Venta.TipoPago
 
         private void btnQR_Click(object sender, EventArgs e)
         {
+            GestionDatosExtra(TipoDePago.QR);
             SeleccionTipoPago(TipoDePago.QR);
         }
 
         private void btnCheque_Click(object sender, EventArgs e)
         {
+            GestionDatosExtra(TipoDePago.Cheque);
             SeleccionTipoPago(TipoDePago.Cheque);
         }
     }
