@@ -51,7 +51,6 @@ namespace Presentacion.Core.Venta
         private string descripcionVenta = "";
         //configuracion tomada del json de config.
         private bool _incluirCtaCte = true;
-        //private List<ItemVentaDTO> itemsVenta;
         private BindingList<ItemVentaDTO> itemsVenta;
         private CuerpoDetalleVenta _cuerpoDetalleVenta;
         private List<FormaPago> tipoDePagosVenta;
