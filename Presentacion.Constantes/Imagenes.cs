@@ -19,5 +19,12 @@ namespace Presentacion.Constantes
         public static Image ImgModificar = Properties.Resources.ImagenModificar;
         public static Image ImgImprimir = Properties.Resources.ImagenImprimir;
         public static Image ImgNuevo = Properties.Resources.ImagenNuevo;
+        public static Image ImgAdministracion = Properties.Resources.ImagenAdministracion;
+        public static Image ImgCancelacion = Properties.Resources.ImagenCancelacion;
+        public static Image ImgVenta = Properties.Resources.ImagenVenta;
+        public static Image ImgGasto = Properties.Resources.ImagenGastos;
+        public static Image ImgVolver= Properties.Resources.ImagenVolver;
+        public static Image ImgMovimiento = Properties.Resources.ImagenMovimiento;
+        public static Image ImgComprobante = Properties.Resources.ImagenComprobantes;
     }
 }
