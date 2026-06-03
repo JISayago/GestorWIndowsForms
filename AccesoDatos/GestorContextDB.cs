@@ -1268,6 +1268,56 @@ namespace AccesoDatos
                     .HasForeignKey(e => e.IdPermiso)
                     .OnDelete(DeleteBehavior.Cascade);
             });
+
+            modelBuilder.Entity<Notificacion>(entity =>
+            {
+                entity.ToTable("Notificaciones");
+
+                entity.HasKey(e => e.NotificacionId);
+
+                entity.Property(e => e.NotificacionId)
+                    .HasColumnName("id_notificacion")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.EmpleadoId)
+                    .HasColumnName("empleado_id")
+                    .IsRequired();
+
+                entity.Property(e => e.Titulo)
+                    .HasColumnName("titulo")
+                    .HasMaxLength(500)
+                    .IsRequired();
+
+                entity.Property(e => e.Descripcion)
+                    .HasColumnName("descripcion")
+                    .HasMaxLength(500)
+                    .IsRequired();
+
+                entity.Property(e => e.Mensaje)
+                    .HasColumnName("mensaje")
+                    .HasMaxLength(500)
+                    .IsRequired();
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnName("fecha_creacion")
+                    .HasColumnType("datetime")
+                    .IsRequired();
+
+                entity.Property(e => e.FechaConfirmacion)
+                    .HasColumnName("fecha_confirmacion")
+                    .HasColumnType("datetime")
+                    .IsRequired();
+
+                entity.Property(e => e.EstaLeida)
+                    .HasColumnName("esta_leida")
+                    .IsRequired();
+
+                // Relación con Usuario
+                entity.HasOne<Empleado>()
+                    .WithMany(u => u.Notificaciones)
+                    .HasForeignKey(e => e.EmpleadoId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
         }
     }
 }

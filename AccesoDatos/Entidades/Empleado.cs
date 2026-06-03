@@ -29,5 +29,6 @@ namespace AccesoDatos.Entidades
         public ICollection<UsuarioSesion> Sesiones { get; set; }
 
         public ICollection<CodigoRecuperacionPass> CodigosRecuperacion { get; set; }
+        public ICollection<Notificacion> Notificaciones { get; set; }
     }
 }
