@@ -93,6 +93,16 @@ namespace Presentacion.Constantes.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ImagenAsignarVendedor {
+            get {
+                object obj = ResourceManager.GetObject("ImagenAsignarVendedor", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ImagenCancelacion {
             get {
                 object obj = ResourceManager.GetObject("ImagenCancelacion", resourceCulture);
@@ -116,6 +126,16 @@ namespace Presentacion.Constantes.Properties {
         internal static System.Drawing.Bitmap ImagenComprobantes {
             get {
                 object obj = ResourceManager.GetObject("ImagenComprobantes", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ImagenCrearUsuario {
+            get {
+                object obj = ResourceManager.GetObject("ImagenCrearUsuario", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -196,6 +216,56 @@ namespace Presentacion.Constantes.Properties {
         internal static System.Drawing.Bitmap ImagenNuevo {
             get {
                 object obj = ResourceManager.GetObject("ImagenNuevo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ImagenPermisos {
+            get {
+                object obj = ResourceManager.GetObject("ImagenPermisos", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ImagenPromocion {
+            get {
+                object obj = ResourceManager.GetObject("ImagenPromocion", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ImagenResetearContraseña {
+            get {
+                object obj = ResourceManager.GetObject("ImagenResetearContraseña", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ImagenRoles {
+            get {
+                object obj = ResourceManager.GetObject("ImagenRoles", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ImagenStock {
+            get {
+                object obj = ResourceManager.GetObject("ImagenStock", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

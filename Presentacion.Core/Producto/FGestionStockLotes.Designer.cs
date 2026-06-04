@@ -160,6 +160,7 @@
             // nudStockInicial
             // 
             nudStockInicial.Location = new Point(134, 155);
+            nudStockInicial.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
             nudStockInicial.Name = "nudStockInicial";
             nudStockInicial.Size = new Size(120, 23);
             nudStockInicial.TabIndex = 17;
@@ -168,6 +169,7 @@
             // nudStockActual
             // 
             nudStockActual.Location = new Point(134, 195);
+            nudStockActual.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
             nudStockActual.Name = "nudStockActual";
             nudStockActual.Size = new Size(120, 23);
             nudStockActual.TabIndex = 18;

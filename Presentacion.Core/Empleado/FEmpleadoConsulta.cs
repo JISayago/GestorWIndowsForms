@@ -68,28 +68,28 @@ namespace Presentacion.Core.Empleado
         {
             AgregarAccion(
                 "Roles",
-                Constantes.Imagenes.ImgModificar,
+                Constantes.Imagenes.ImgRoles,
                 AbrirAsignacionRoles,
                 true
             );
 
             AgregarAccion(
                 "Crear Usuario",
-                Constantes.Imagenes.ImgNuevo,
+                Constantes.Imagenes.ImgCrearUsuario,
                 AbrirCrearUsuario,
                 true
             );
 
             AgregarAccion(
                 "Asignar Vendedor",
-                Constantes.Imagenes.ImgNuevo,
+                Constantes.Imagenes.ImgAsignarVendedor,
                 AsignarVendedor,
                 true
             );
 
             AgregarAccion(
                 "Resetear Contraseña",
-                Constantes.Imagenes.ImgNuevo,
+                Constantes.Imagenes.ImgResetearContraseña,
                 ResetarContraseniaUsuario,
                 true
             );

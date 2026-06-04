@@ -169,4 +169,25 @@
   <data name="ImagenMovimiento" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Imagenes\IconsPx48\arrow-left-right-48px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ImagenStock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx24\bx-box-alt.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenResetearContraseña" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx24\bx-lock-open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenCrearUsuario" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx48\user-plus (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenAsignarVendedor" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx48\user-check (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenPermisos" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx48\bx-address-book-48 (11).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenRoles" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx48\bx-address-book-48 (23).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenPromocion" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx24\bx-discount.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

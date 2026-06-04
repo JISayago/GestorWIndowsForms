@@ -160,7 +160,7 @@ namespace Presentacion.Core.Producto
         {
             AgregarAccion(
                 "Stock",
-                Constantes.Imagenes.ImgActualizar,
+                Constantes.Imagenes.ImgStock,
                 AbrirGestionStock,
                 true
             );
@@ -174,6 +174,8 @@ namespace Presentacion.Core.Producto
                     true
                 );
             }
+
+
         }
 
         private void AbrirGestionStock(long? id)
