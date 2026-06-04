@@ -190,4 +190,13 @@
   <data name="ImagenPromocion" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Imagenes\IconsPx24\bx-discount.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="LogoSimple" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\LogoV1\LogoStockeateV1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LogoCompuesto" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\LogoV1\LogoStockeateConTextoV1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LogoCompuestoStretch" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\LogoV1\LogoStockeateConTextoV1Stretch.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
