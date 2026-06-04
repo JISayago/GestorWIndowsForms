@@ -601,7 +601,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 producto.Stock += stockLoteParaAgregar.Value;
             }
 
-            _productoServicio.ModificarEstadoStockProductos();
+            _productoServicio.ModificarEstadoStockProductos(context);
         }
 
         public string GenerarNumeroLote()

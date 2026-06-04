@@ -375,7 +375,7 @@ namespace Servicios.LogicaNegocio.Venta
 
                 transaction.Commit();
 
-                _productoServicio.ModificarEstadoStockProductos();
+                _productoServicio.ModificarEstadoStockProductos(context);
 
                 try
                 {
@@ -907,12 +907,12 @@ namespace Servicios.LogicaNegocio.Venta
 
                 var ventaCancelacion = CrearVentaInterna(context, ventaCancelacionDto, TipoMovimientoDetalle.Cancelacion, ventaId);
 
+                _productoServicio.ModificarEstadoStockProductos(context);
                 context.SaveChanges();
 
 
                 transaction.Commit();
 
-                _productoServicio.ModificarEstadoStockProductos();
 
                 try
                 {

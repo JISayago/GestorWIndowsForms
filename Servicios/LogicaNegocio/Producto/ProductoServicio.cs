@@ -132,7 +132,7 @@ namespace Servicios.LogicaNegocio.Producto
                     
                 }
             }
-            ModificarEstadoStockProductos();
+            ModificarEstadoStockProductos(context);
             return detallesLotesUsados;
         }
      
@@ -164,7 +164,7 @@ namespace Servicios.LogicaNegocio.Producto
 
             context.Productos.Update(producto);
 
-            ModificarEstadoStockProductos();
+            ModificarEstadoStockProductos(context);
 
             return detallesLotesUsados;
         }
@@ -199,7 +199,7 @@ namespace Servicios.LogicaNegocio.Producto
                 context.Productos.Update(producto);
             }
 
-            ModificarEstadoStockProductos();
+            ModificarEstadoStockProductos(context);
         }
         public void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context, long ventdaId)
         {
@@ -219,7 +219,7 @@ namespace Servicios.LogicaNegocio.Producto
                 }
             }
 
-            ModificarEstadoStockProductos();
+            ModificarEstadoStockProductos(context);
         }
 
         private void RestaurarStockProducto(ItemVentaDTO item, GestorContextDB context, long ventaId)
@@ -255,7 +255,8 @@ namespace Servicios.LogicaNegocio.Producto
 
             context.Productos.Update(producto);
 
-            ModificarEstadoStockProductos();
+            ModificarEstadoStockProductos(context);
+
         }
 
         /* private void DescontarStockOferta(ItemVentaDTO item, GestorContextDB context)
@@ -425,9 +426,9 @@ namespace Servicios.LogicaNegocio.Producto
                 });
             };
 
+            ModificarEstadoStockProductos(context);
             context.SaveChanges();
 
-            ModificarEstadoStockProductos();
 
             return new EstadoOperacion
             {
@@ -809,9 +810,9 @@ namespace Servicios.LogicaNegocio.Producto
                 producto.Stock -= mStockDTO.Monto;
             }
 
+            ModificarEstadoStockProductos(context);
             context.SaveChanges();
 
-            ModificarEstadoStockProductos();
 
             // registrar movimiento
 
@@ -825,9 +826,9 @@ namespace Servicios.LogicaNegocio.Producto
             };
         }
 
-        public void ModificarEstadoStockProductos()
+        public void ModificarEstadoStockProductos(GestorContextDB context)
         {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            //using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             // Traemos los productos activos o sin stock que no estén eliminados
             var productos = context.Productos
@@ -850,7 +851,7 @@ namespace Servicios.LogicaNegocio.Producto
                 }
             }
 
-            context.SaveChanges();
+            //context.SaveChanges();
         }
     }
 }
