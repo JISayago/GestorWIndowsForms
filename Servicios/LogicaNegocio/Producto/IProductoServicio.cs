@@ -1,4 +1,5 @@
 ﻿using AccesoDatos;
+using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto.DTO;
@@ -26,6 +27,6 @@ namespace Servicios.LogicaNegocio.Producto
         IEnumerable<ProductoDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(long? MarcaId = null, long? RubroId = null, long? CategoriaId = null);
         List<DetalleVentaLoteDTO> DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context);
         void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context, long ventdaId);
-        void ModificarEstadoStockProductos();
+        void ModificarEstadoStockProductos(GestorContextDB context);
     }
 }

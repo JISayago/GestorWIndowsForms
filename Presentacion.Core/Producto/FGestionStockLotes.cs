@@ -220,7 +220,7 @@ namespace Presentacion.Core.Producto
 
             if (response.Exitoso)
             {
-                _productoServicio.ModificarEstadoStockProductos();
+                //_productoServicio.ModificarEstadoStockProductos();
 
                 var respuesta = MessageBox.Show($"{response.Mensaje}\n ¿Quieres cargar un lote de mismo producto?",
                     "Confirmar acción",
@@ -262,7 +262,7 @@ namespace Presentacion.Core.Producto
                 var response = _loteSevicio.EliminarLote((long)EntidadID);
                 if (response.Exitoso)
                 {
-                    _productoServicio.ModificarEstadoStockProductos();
+                    //_productoServicio.ModificarEstadoStockProductos();
 
                     MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                        MessageBoxIcon.Information);
@@ -312,7 +312,7 @@ namespace Presentacion.Core.Producto
 
                 if (response.Exitoso)
                 {
-                    _productoServicio.ModificarEstadoStockProductos();
+                    //_productoServicio.ModificarEstadoStockProductos();
 
                     MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                         MessageBoxIcon.Information);

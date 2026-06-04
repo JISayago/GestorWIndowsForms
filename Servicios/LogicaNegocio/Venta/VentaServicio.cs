@@ -163,7 +163,7 @@ namespace Servicios.LogicaNegocio.Venta
                     if (ctaCteDto == null)
                         throw new Exception("El cliente seleccionado no posee una Cuenta Corriente activa.");
 
-                    if (prefijo == "VEN")
+                    if (ventaDto.Estado == (int)EstadoVenta.Confirmada)
                     {
                         // FLUJO VENTA: Genera deuda (Resta saldo)
                         var resCtaCte = ctaCteServicio.RegistrarCompra(
@@ -258,13 +258,26 @@ namespace Servicios.LogicaNegocio.Venta
                         }
                     }
 
-                    //Debug.WriteLine("20 - Actualizar stock");
+                    //Debug.WriteLine("20 - Actualizar stock"); con control de cancealcion de venta por estado no por < 0
                     var detallesLotesUsado = new List<DetalleVentaLoteDTO>();
+                    bool esCancelacion = ventaDto.Estado == (int)EstadoVenta.CancelacionVenta;
 
-                    if (ventaDto.Total < 0)
-                        _productoServicio.RestaurarStockProductos(itemsStock, context, (long)ventdaIdOriginalParaCancerlar);
+                    if (esCancelacion)
+                    {
+                        _productoServicio.RestaurarStockProductos(
+                            itemsStock,
+                            context,
+                            ventdaIdOriginalParaCancerlar
+                                ?? throw new Exception("No se recibió el Id de la venta original para restaurar stock.")
+                        );
+                    }
                     else
-                        detallesLotesUsado = _productoServicio.DescontarStockProductos(itemsStock, context);
+                    {
+                        detallesLotesUsado = _productoServicio.DescontarStockProductos(
+                            itemsStock,
+                            context
+                        );
+                    }
 
                     // CREAR DETALLE VENTA LOTE
                     if (detallesLotesUsado.Any())
@@ -321,7 +334,7 @@ namespace Servicios.LogicaNegocio.Venta
                         IdVenta = venta.VentaId,
                         IdTipoPago = servicioTP.ObtenerTipoPagoPorNumero(context, Convert.ToInt32(p.TipoDePago.Value)).TipoPagoId,
                         Monto = p.Monto,
-                        ExtraDescripcionPago = p.DatosExtra ?? "Sin especificar."
+                        ExtraDescripcionPago = p.DatosExtra ?? "Sin especificar"
                     }).ToList();
 
 
@@ -375,7 +388,7 @@ namespace Servicios.LogicaNegocio.Venta
 
                 transaction.Commit();
 
-                _productoServicio.ModificarEstadoStockProductos();
+                _productoServicio.ModificarEstadoStockProductos(context);
 
                 try
                 {
@@ -907,12 +920,12 @@ namespace Servicios.LogicaNegocio.Venta
 
                 var ventaCancelacion = CrearVentaInterna(context, ventaCancelacionDto, TipoMovimientoDetalle.Cancelacion, ventaId);
 
+                _productoServicio.ModificarEstadoStockProductos(context);
                 context.SaveChanges();
 
 
                 transaction.Commit();
 
-                _productoServicio.ModificarEstadoStockProductos();
 
                 try
                 {
