@@ -1,6 +1,7 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using Servicios.LogicaNegocio.Producto;
@@ -56,8 +57,8 @@ namespace Presentacion.Core.Producto
             }
 
             AgregarControlesObligatorios(txtProducto, "Producto");
-            AgregarControlesObligatorios(txtMedida, "Medida");
-            AgregarControlesObligatorios(txtUnidadMedida, "Unidad Medida");
+            //AgregarControlesObligatorios(txtMedida, "Medida");
+            //AgregarControlesObligatorios(txtUnidadMedida, "Unidad Medida");
             AgregarControlesObligatorios(txtPrecioCosto, "Precio Costo");
             AgregarControlesObligatorios(txtPrecioVenta, "Precio Venta");
             AgregarControlesObligatorios(txtCodigo, "Codigo");
@@ -148,7 +149,7 @@ namespace Presentacion.Core.Producto
             if (Producto != null)
             {
                 txtProducto.Text = Producto.Descripcion;
-                chkbProductoDiscontinuado.Checked = Producto.Estado == 3; // Si el estado es 3, marcamos como discontinuado
+                chkbProductoDiscontinuado.Checked = Producto.Estado == (int)EstadoProducto.Discontinuado; // Si el estado es 3, marcamos como discontinuado
                 //txtEstado.Text = Producto.Estado.ToString();
                 txtMedida.Text = Producto.Medida;
                 txtUnidadMedida.Text = Producto.UnidadMedida;
@@ -185,10 +186,10 @@ namespace Presentacion.Core.Producto
             var ProductoNueva = new ProductoDTO
             {
                 Descripcion = txtProducto.Text,
-                Stock = decimal.Parse(txtStock.Text),
+                Stock = 0,
                 PrecioCosto = decimal.Parse(txtPrecioCosto.Text),
                 PrecioVenta = decimal.Parse(txtPrecioVenta.Text),
-                Estado = chkbProductoDiscontinuado.Checked ? 3 : 1, // Si el producto está marcado como discontinuado, asignamos el estado 3, de lo contrario, 1 (activo)
+                Estado = chkbProductoDiscontinuado.Checked ? (int)EstadoProducto.Discontinuado : (int)EstadoProducto.Disponible, // Si el producto está marcado como discontinuado, asignamos el estado 3, de lo contrario, 1 (activo)
                 Medida = txtMedida.Text,
                 UnidadMedida = txtUnidadMedida.Text,
                 Codigo = txtCodigo.Text,
@@ -274,7 +275,7 @@ namespace Presentacion.Core.Producto
                     Stock = decimal.Parse(txtStock.Text),
                     PrecioCosto = decimal.Parse(txtPrecioCosto.Text),
                     PrecioVenta = decimal.Parse(txtPrecioVenta.Text),
-                    Estado = chkbProductoDiscontinuado.Checked ? 3 : 1,
+                    Estado = chkbProductoDiscontinuado.Checked ? (int)EstadoProducto.Discontinuado : (int)EstadoProducto.Disponible,
                     Medida = txtMedida.Text,
                     UnidadMedida = txtUnidadMedida.Text,
                     Codigo = txtCodigo.Text,
