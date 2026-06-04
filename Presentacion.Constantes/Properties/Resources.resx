@@ -118,34 +118,76 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="CargaGIF" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Imagenes\CargaGif.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="ImagenActualizar" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Imagenes\Actualizar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
+    <value>..\Imagenes\IconsPx24\bx-refresh-ccw-alt.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
+  </data>
+  <data name="ImagenAdministracion" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx24\bx-store.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenCancelacion" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx24\bx-cart-x.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ImagenCerrar" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Imagenes\Cerrar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
+    <value>..\Imagenes\IconsPx24\bx-cross-circle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
   </data>
   <data name="ImagenEliminar" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Imagenes\Eliminar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
+    <value>..\Imagenes\IconsPx24\bx-trash-x.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
   </data>
   <data name="ImagenGuardar" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Imagenes\Guardar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
+    <value>..\Imagenes\IconsPx24\bx-save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
   </data>
   <data name="ImagenImprimir" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Imagenes\Imprimir.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
   </data>
   <data name="ImagenLimpiar" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Imagenes\Limpiar 4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
+    <value>..\Imagenes\IconsPx24\bx-eraser.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
   </data>
   <data name="ImagenModificar" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Imagenes\Modificar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
+    <value>..\Imagenes\IconsPx24\bx-edit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
   </data>
   <data name="ImagenNuevo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Imagenes\Nuevo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
+    <value>..\Imagenes\IconsPx24\bx-plus-square.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
   </data>
   <data name="ImagenUsuario" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Imagenes\usuari.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
+    <value>..\Imagenes\IconsPx24\bx-user.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B03F5F7F11D50A3A</value>
+  </data>
+  <data name="ImagenVenta" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx24\bx-cart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CargaGIF" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\CargaGif.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenVolver" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx24\bx-reply.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenGastos" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx24\bx-address-book.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenComprobantes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx24\bx-receipt.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenMovimiento" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx48\arrow-left-right-48px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenStock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx24\bx-box-alt.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenResetearContraseña" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx24\bx-lock-open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenCrearUsuario" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx48\user-plus (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenAsignarVendedor" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx48\user-check (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenPermisos" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx48\bx-address-book-48 (11).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenRoles" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx48\bx-address-book-48 (23).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImagenPromocion" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Imagenes\IconsPx24\bx-discount.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

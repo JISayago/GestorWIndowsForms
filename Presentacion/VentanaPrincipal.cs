@@ -59,6 +59,7 @@ namespace Presentacion
         public VentanaPrincipal( UsuarioLogeado usuarioLogeado, ElementoDePanelesPantallaPrincipal datosIniciales, List<ProductoDTO> productosIniciales, List<VentaDTO> ventasIniciales)
         {
             InitializeComponent();
+            DibujarBotones();
 
             _ofertaServicio = new OfertaServicio();
             _dellesSistema = new DetallesSistemaServicio();
@@ -373,6 +374,57 @@ namespace Presentacion
 
         private void tlpNotificaciones0_Paint(object sender, PaintEventArgs e)
         {
+
+        }
+
+        private void DibujarBotones()
+        {
+            //========================= //
+            //BOTON PANEL ADMINISTRACION//
+            //========================= //
+
+            btnPanelAdmin.Image = Constantes.Imagenes.ImgAdministracion;
+
+            // Alineamos la imagen arriba al centro
+            btnPanelAdmin.ImageAlign = ContentAlignment.TopCenter;
+            btnPanelAdmin.TextImageRelation = TextImageRelation.ImageAboveText;
+
+            // Le damos un padding superior para que el ícono no pegue contra el techo del botón
+            btnPanelAdmin.Padding = new Padding(0, 10, 0, 0);
+
+            //========================= //
+            //BOTON CAJA                //
+            //========================= //
+
+            btnCaja.Image = Constantes.Imagenes.ImgVenta;
+            // Alineamos la imagen arriba al centro
+            btnCaja.ImageAlign = ContentAlignment.TopCenter;
+            btnCaja.TextImageRelation = TextImageRelation.ImageAboveText;
+
+            // Le damos un padding superior para que el ícono no pegue contra el techo del botón
+            btnCaja.Padding = new Padding(0, 10, 0, 0);
+
+            //========================= //
+            //BOTON CANCELACION          //
+            //========================= //
+
+            btnContraVenta.Image = Constantes.Imagenes.ImgCancelacion;
+            // Alineamos la imagen arriba al centro
+            btnContraVenta.ImageAlign = ContentAlignment.TopCenter;
+            btnContraVenta.TextImageRelation = TextImageRelation.ImageAboveText;
+            // Le damos un padding superior para que el ícono no pegue contra el techo del botón
+            btnContraVenta.Padding = new Padding(0, 10, 0, 0);
+
+            //========================= //
+            //BOTON VENTA               //
+            //========================= //
+
+            btnVenta.Image = Constantes.Imagenes.ImgVenta;
+            // Alineamos la imagen arriba al centro
+            btnVenta.ImageAlign = ContentAlignment.TopCenter;
+            btnVenta.TextImageRelation = TextImageRelation.ImageAboveText;
+            // Le damos un padding superior para que el ícono no pegue contra el techo del botón
+            btnVenta.Padding = new Padding(0, 10, 0, 0);
 
         }
     }

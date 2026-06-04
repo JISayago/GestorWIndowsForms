@@ -40,6 +40,8 @@ namespace Presentacion.FBase
         {
             InitializeComponent();
 
+            BarraLateralBotones.ImageScalingSize = new Size(25, 25);
+
             btnImprimir.Visible = false;
 
             btnNuevo.Image = Constantes.Imagenes.ImgNuevo;

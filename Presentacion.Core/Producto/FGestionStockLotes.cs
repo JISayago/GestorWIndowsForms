@@ -222,7 +222,7 @@ namespace Presentacion.Core.Producto
             {
                 //_productoServicio.ModificarEstadoStockProductos();
 
-                var respuesta = MessageBox.Show($"{response.Mensaje}\n ¿Quieres cargar un lote de mismo producto del alcance de?",
+                var respuesta = MessageBox.Show($"{response.Mensaje}\n ¿Quieres cargar un lote de mismo producto?",
                     "Confirmar acción",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
@@ -345,7 +345,12 @@ namespace Presentacion.Core.Producto
         private void nudStockInicial_ValueChanged(object sender, EventArgs e)
         {
             // El máximo de Stock Actual ahora es el valor de Stock Inicial
+            nudStockInicial.Maximum = 999999;
+            nudStockInicial.Minimum = 0;
+
             nudStockActual.Maximum = nudStockInicial.Value;
+            nudStockActual.Minimum = 0;
+
 
             // Opcional: Si al bajar el inicial, el actual queda por encima, 
             // el control NumericUpDown lo bajará automáticamente al nuevo máximo.
