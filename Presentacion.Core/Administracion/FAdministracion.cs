@@ -91,6 +91,8 @@ namespace Presentacion.Core.Administracion
         public FAdministracion(long logeadoId)
         {
             InitializeComponent();
+            DibujarBotones();
+
             _logeadoId = logeadoId;
 
             // Inicialización de la lógica de negocio
@@ -672,5 +674,40 @@ namespace Presentacion.Core.Administracion
         private void FormsPlot4_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot4, _xs4, _ys4, e, "Cant. Ventas", "N0", ref _lastIndex4);
         private void FormsPlot5_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot5, _xs5, _ys5, e, "Total Mes", "C2", ref _lastIndex5);
         private void FormsPlot6_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot6, _xs6, _ys6, e, "Cant. Ventas", "N0", ref _lastIndex6);
+
+        private void DibujarBotones()
+        {
+            //BOTON VOLVER A INICIO//
+            btnVolver.Image = Constantes.Imagenes.ImgVolver; // Asumiendo que tienes un recurso de imagen llamado "volver" en tu proyecto
+            // Alineamos la imagen arriba al centro
+            btnVolver.ImageAlign = ContentAlignment.TopCenter;
+            btnVolver.TextImageRelation = TextImageRelation.ImageAboveText;
+            // Le damos un padding superior para que el ícono no pegue contra el techo del botón
+            btnVolver.Padding = new Padding(0, 10, 0, 0);
+
+            //BOTON GASTO//
+            btnGasto.Image = Constantes.Imagenes.ImgGasto; // Asumiendo que tienes un recurso de imagen llamado "gasto" en tu proyecto
+            // Alineamos la imagen arriba al centro
+            btnGasto.ImageAlign = ContentAlignment.TopCenter;
+            btnGasto.TextImageRelation = TextImageRelation.ImageAboveText;
+            // Le damos un padding superior para que el ícono no pegue contra el techo del botón
+            btnGasto.Padding = new Padding(0, 10, 0, 0);
+
+            //BOTON MOVIMIENTOS//
+            btnMovimientos.Image = Constantes.Imagenes.ImgMovimiento; // Asumiendo que tienes un recurso de imagen llamado "movimientos" en tu proyecto
+            // Alineamos la imagen arriba al centro
+            btnMovimientos.ImageAlign = ContentAlignment.TopCenter;
+            btnMovimientos.TextImageRelation = TextImageRelation.ImageAboveText;
+            // Le damos un padding superior para que el ícono no pegue contra el techo del botón
+            btnMovimientos.Padding = new Padding(0, 10, 0, 0);
+
+            //BOTON COMPROBANTES//
+            btnComprobantes.Image = Constantes.Imagenes.ImgComprobante; // Asumiendo que tienes un recurso de imagen llamado "comprobantes" en tu proyecto
+            // Alineamos la imagen arriba al centro
+            btnComprobantes.ImageAlign = ContentAlignment.TopCenter;
+            btnComprobantes.TextImageRelation = TextImageRelation.ImageAboveText;
+            // Le damos un padding superior para que el ícono no pegue contra el techo del botón
+            btnComprobantes.Padding = new Padding(0, 10, 0, 0);
+        }
     }
 }
