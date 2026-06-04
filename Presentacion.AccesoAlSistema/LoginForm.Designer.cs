@@ -36,13 +36,15 @@
             lblPass = new Label();
             lnklblRecuperacionContra = new LinkLabel();
             lnklblCodigoRec = new LinkLabel();
+            pbxLogo = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbxLogo).BeginInit();
             SuspendLayout();
             // 
             // btnIngresar
             // 
             btnIngresar.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnIngresar.Location = new Point(135, 144);
+            btnIngresar.Location = new Point(145, 269);
             btnIngresar.Name = "btnIngresar";
             btnIngresar.Size = new Size(113, 39);
             btnIngresar.TabIndex = 2;
@@ -53,7 +55,7 @@
             // btnCancelar
             // 
             btnCancelar.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnCancelar.Location = new Point(297, 144);
+            btnCancelar.Location = new Point(307, 269);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(113, 39);
             btnCancelar.TabIndex = 3;
@@ -64,7 +66,7 @@
             // txtUsuario
             // 
             txtUsuario.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtUsuario.Location = new Point(170, 31);
+            txtUsuario.Location = new Point(180, 156);
             txtUsuario.Name = "txtUsuario";
             txtUsuario.Size = new Size(297, 33);
             txtUsuario.TabIndex = 0;
@@ -73,7 +75,7 @@
             // txtPass
             // 
             txtPass.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtPass.Location = new Point(170, 82);
+            txtPass.Location = new Point(180, 207);
             txtPass.Name = "txtPass";
             txtPass.PasswordChar = '*';
             txtPass.Size = new Size(297, 33);
@@ -85,7 +87,7 @@
             // 
             lblUsuario.AutoSize = true;
             lblUsuario.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblUsuario.Location = new Point(75, 43);
+            lblUsuario.Location = new Point(85, 168);
             lblUsuario.Name = "lblUsuario";
             lblUsuario.Size = new Size(81, 25);
             lblUsuario.TabIndex = 4;
@@ -95,7 +97,7 @@
             // 
             lblPass.AutoSize = true;
             lblPass.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblPass.Location = new Point(48, 88);
+            lblPass.Location = new Point(58, 213);
             lblPass.Name = "lblPass";
             lblPass.Size = new Size(113, 25);
             lblPass.TabIndex = 5;
@@ -107,7 +109,7 @@
             lnklblRecuperacionContra.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             lnklblRecuperacionContra.AutoSize = true;
             lnklblRecuperacionContra.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lnklblRecuperacionContra.Location = new Point(411, 207);
+            lnklblRecuperacionContra.Location = new Point(411, 325);
             lnklblRecuperacionContra.Name = "lnklblRecuperacionContra";
             lnklblRecuperacionContra.Size = new Size(121, 13);
             lnklblRecuperacionContra.TabIndex = 4;
@@ -120,7 +122,7 @@
             lnklblCodigoRec.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             lnklblCodigoRec.AutoSize = true;
             lnklblCodigoRec.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lnklblCodigoRec.Location = new Point(12, 207);
+            lnklblCodigoRec.Location = new Point(12, 325);
             lnklblCodigoRec.Name = "lnklblCodigoRec";
             lnklblCodigoRec.Size = new Size(174, 13);
             lnklblCodigoRec.TabIndex = 5;
@@ -128,11 +130,23 @@
             lnklblCodigoRec.Text = "Ingresar código de recuperación";
             lnklblCodigoRec.LinkClicked += lnklblCodigoRec_LinkClicked;
             // 
+            // pbxLogo
+            // 
+            pbxLogo.Location = new Point(38, 12);
+            pbxLogo.Margin = new Padding(50, 3, 3, 3);
+            pbxLogo.MaximumSize = new Size(472, 118);
+            pbxLogo.MinimumSize = new Size(472, 118);
+            pbxLogo.Name = "pbxLogo";
+            pbxLogo.Size = new Size(472, 118);
+            pbxLogo.TabIndex = 6;
+            pbxLogo.TabStop = false;
+            // 
             // LoginForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(546, 231);
+            ClientSize = new Size(546, 349);
+            Controls.Add(pbxLogo);
             Controls.Add(lnklblCodigoRec);
             Controls.Add(lnklblRecuperacionContra);
             Controls.Add(lblPass);
@@ -146,6 +160,7 @@
             Text = "Ingreso al Sistema";
             Load += LoginForm_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbxLogo).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -160,5 +175,6 @@
         private Label lblPass;
         private LinkLabel lnklblRecuperacionContra;
         private LinkLabel lnklblCodigoRec;
+        private PictureBox pbxLogo;
     }
 }

@@ -37,5 +37,6 @@ namespace Presentacion.Constantes
         public static Image ImgLogoSimple = Properties.Resources.LogoSimple;
         public static Image ImgLogoCompuesto = Properties.Resources.LogoCompuesto;
         public static Image ImgLogoCompuestoStretch = Properties.Resources.LogoCompuestoStretch;
+        public static Image ImgLogoICO = Properties.Resources.LogoICO;
     }
 }

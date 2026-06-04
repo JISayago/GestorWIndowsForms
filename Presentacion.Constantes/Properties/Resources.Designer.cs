@@ -323,6 +323,16 @@ namespace Presentacion.Constantes.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap LogoICO {
+            get {
+                object obj = ResourceManager.GetObject("LogoICO", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap LogoSimple {
             get {
                 object obj = ResourceManager.GetObject("LogoSimple", resourceCulture);
