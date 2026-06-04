@@ -163,7 +163,7 @@ namespace Servicios.LogicaNegocio.Venta
                     if (ctaCteDto == null)
                         throw new Exception("El cliente seleccionado no posee una Cuenta Corriente activa.");
 
-                    if (prefijo == "VEN")
+                    if (ventaDto.Estado == (int)EstadoVenta.Confirmada)
                     {
                         // FLUJO VENTA: Genera deuda (Resta saldo)
                         var resCtaCte = ctaCteServicio.RegistrarCompra(
@@ -258,13 +258,26 @@ namespace Servicios.LogicaNegocio.Venta
                         }
                     }
 
-                    //Debug.WriteLine("20 - Actualizar stock");
+                    //Debug.WriteLine("20 - Actualizar stock"); con control de cancealcion de venta por estado no por < 0
                     var detallesLotesUsado = new List<DetalleVentaLoteDTO>();
+                    bool esCancelacion = ventaDto.Estado == (int)EstadoVenta.CancelacionVenta;
 
-                    if (ventaDto.Total < 0)
-                        _productoServicio.RestaurarStockProductos(itemsStock, context, (long)ventdaIdOriginalParaCancerlar);
+                    if (esCancelacion)
+                    {
+                        _productoServicio.RestaurarStockProductos(
+                            itemsStock,
+                            context,
+                            ventdaIdOriginalParaCancerlar
+                                ?? throw new Exception("No se recibió el Id de la venta original para restaurar stock.")
+                        );
+                    }
                     else
-                        detallesLotesUsado = _productoServicio.DescontarStockProductos(itemsStock, context);
+                    {
+                        detallesLotesUsado = _productoServicio.DescontarStockProductos(
+                            itemsStock,
+                            context
+                        );
+                    }
 
                     // CREAR DETALLE VENTA LOTE
                     if (detallesLotesUsado.Any())
