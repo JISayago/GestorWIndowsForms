@@ -334,7 +334,7 @@ namespace Servicios.LogicaNegocio.Venta
                         IdVenta = venta.VentaId,
                         IdTipoPago = servicioTP.ObtenerTipoPagoPorNumero(context, Convert.ToInt32(p.TipoDePago.Value)).TipoPagoId,
                         Monto = p.Monto,
-                        ExtraDescripcionPago = p.DatosExtra ?? "Sin especificar."
+                        ExtraDescripcionPago = p.DatosExtra ?? "Sin especificar"
                     }).ToList();
 
 
