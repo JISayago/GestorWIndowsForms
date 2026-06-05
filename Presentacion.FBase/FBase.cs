@@ -1,4 +1,5 @@
-﻿using Presentacion.FormulariosBase.DTO;
+﻿using Presentacion.FBase.Helpers;
+using Presentacion.FormulariosBase.DTO;
 using System.Text.Json.Nodes;
 
 namespace Presentacion.FBase
@@ -24,6 +25,7 @@ namespace Presentacion.FBase
         {
             base.OnLoad(e);
             this.KeyPreview = true;
+            AplicarTema(this);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -302,6 +304,138 @@ namespace Presentacion.FBase
                         ? string.Empty
                         : $"El campo es Obligatorio.");
             }
+        }
+
+        protected virtual void AplicarTema(Control parent)
+        {
+            if (parent is Form form)
+            {
+                form.BackColor = TemaSistema.Fondo;
+                form.ForeColor = TemaSistema.Texto;
+            }
+
+            foreach (Control control in parent.Controls)
+            {
+                switch (control)
+                {
+                    case Button btn:
+                        ConfigurarBoton(btn);
+                        break;
+
+                    case TextBox txt:
+                        ConfigurarTextBox(txt);
+                        break;
+
+                    case RichTextBox rtb:
+                        ConfigurarRichTextBox(rtb);
+                        break;
+
+                    case ComboBox cmb:
+                        ConfigurarComboBox(cmb);
+                        break;
+
+                    case DateTimePicker dtp:
+                        ConfigurarDateTimePicker(dtp);
+                        break;
+
+                    case NumericUpDown nud:
+                        ConfigurarNumeric(nud);
+                        break;
+
+                    case CheckBox chk:
+                        ConfigurarCheck(chk);
+                        break;
+
+                    case RadioButton rb:
+                        ConfigurarRadio(rb);
+                        break;
+
+                    case DataGridView dgv:
+                        ConfigurarGrilla(dgv);
+                        break;
+
+                    case GroupBox gb:
+                        gb.ForeColor = TemaSistema.Primario;
+                        break;
+
+                    case Panel pnl:
+                        pnl.BackColor = TemaSistema.Fondo;
+                        break;
+                }
+
+                if (control.HasChildren)
+                {
+                    AplicarTema(control);
+                }
+            }
+        }
+        private void ConfigurarBoton(Button btn)
+        {
+            btn.BackColor = TemaSistema.Primario;
+            btn.ForeColor = Color.White;
+
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 0;
+            btn.Cursor = Cursors.Hand;
+        }
+        private void ConfigurarTextBox(TextBox txt)
+        {
+            txt.BackColor = TemaSistema.FondoControl;
+            txt.ForeColor = TemaSistema.Texto;
+            txt.BorderStyle = BorderStyle.FixedSingle;
+        }
+        private void ConfigurarRichTextBox(RichTextBox txt)
+        {
+            txt.BackColor = TemaSistema.FondoControl;
+            txt.ForeColor = TemaSistema.Texto;
+        }
+        private void ConfigurarComboBox(ComboBox cmb)
+        {
+            cmb.BackColor = TemaSistema.FondoControl;
+            cmb.ForeColor = TemaSistema.Texto;
+        }
+        private void ConfigurarDateTimePicker(DateTimePicker dtp)
+        {
+            dtp.CalendarForeColor = TemaSistema.Texto;
+            dtp.CalendarMonthBackground = TemaSistema.FondoControl;
+        }
+        private void ConfigurarNumeric(NumericUpDown nud)
+        {
+            nud.BackColor = TemaSistema.FondoControl;
+            nud.ForeColor = TemaSistema.Texto;
+        }
+        private void ConfigurarCheck(CheckBox chk)
+        {
+            chk.ForeColor = TemaSistema.Texto;
+        }
+        private void ConfigurarRadio(RadioButton rb)
+        {
+            rb.ForeColor = TemaSistema.Texto;
+        }
+        private void ConfigurarGrilla(DataGridView dgv)
+        {
+            dgv.EnableHeadersVisualStyles = false;
+
+            dgv.BackgroundColor = TemaSistema.FondoControl;
+            dgv.BorderStyle = BorderStyle.None;
+
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = TemaSistema.Oscuro;
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = TemaSistema.Acento;
+            dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = TemaSistema.Oscuro;
+
+            dgv.DefaultCellStyle.BackColor = TemaSistema.FondoControl;
+            dgv.DefaultCellStyle.ForeColor = TemaSistema.Texto;
+
+            dgv.DefaultCellStyle.SelectionBackColor = TemaSistema.Seleccion;
+            dgv.DefaultCellStyle.SelectionForeColor = TemaSistema.Oscuro;
+
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = TemaSistema.Alternado;
+
+            dgv.GridColor = TemaSistema.Borde;
+
+            dgv.RowHeadersVisible = false;
+
+            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         }
 
     }
