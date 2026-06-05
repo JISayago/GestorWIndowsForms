@@ -39,19 +39,19 @@
             txtSaldo = new TextBox();
             dtpFechaVencimiento = new DateTimePicker();
             lblDni = new Label();
-            lblCliente = new Label();
-            cmbClientes = new ComboBox();
             lstDnis = new ListBox();
             txtNuevoDni = new TextBox();
             btnAgregarDni = new Button();
             btnEliminarDni = new Button();
+            lblCliente = new Label();
+            lblNombreCliente = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
             // lblccorriente
             // 
             lblccorriente.AutoSize = true;
-            lblccorriente.Location = new Point(47, 93);
+            lblccorriente.Location = new Point(47, 117);
             lblccorriente.Name = "lblccorriente";
             lblccorriente.Size = new Size(68, 15);
             lblccorriente.TabIndex = 0;
@@ -60,7 +60,7 @@
             // lblSaldo
             // 
             lblSaldo.AutoSize = true;
-            lblSaldo.Location = new Point(47, 140);
+            lblSaldo.Location = new Point(47, 164);
             lblSaldo.Name = "lblSaldo";
             lblSaldo.Size = new Size(37, 15);
             lblSaldo.TabIndex = 1;
@@ -78,7 +78,7 @@
             // lblLimiteCuenta
             // 
             lblLimiteCuenta.AutoSize = true;
-            lblLimiteCuenta.Location = new Point(371, 143);
+            lblLimiteCuenta.Location = new Point(371, 167);
             lblLimiteCuenta.Name = "lblLimiteCuenta";
             lblLimiteCuenta.Size = new Size(92, 15);
             lblLimiteCuenta.TabIndex = 3;
@@ -87,7 +87,7 @@
             // lblFechaVencimiento
             // 
             lblFechaVencimiento.AutoSize = true;
-            lblFechaVencimiento.Location = new Point(371, 93);
+            lblFechaVencimiento.Location = new Point(371, 117);
             lblFechaVencimiento.Name = "lblFechaVencimiento";
             lblFechaVencimiento.Size = new Size(107, 15);
             lblFechaVencimiento.TabIndex = 5;
@@ -96,7 +96,7 @@
             // chkLimiteDeuda
             // 
             chkLimiteDeuda.AutoSize = true;
-            chkLimiteDeuda.Location = new Point(484, 169);
+            chkLimiteDeuda.Location = new Point(484, 193);
             chkLimiteDeuda.Name = "chkLimiteDeuda";
             chkLimiteDeuda.Size = new Size(146, 19);
             chkLimiteDeuda.TabIndex = 7;
@@ -106,28 +106,28 @@
             // 
             // txtNombreCC
             // 
-            txtNombreCC.Location = new Point(129, 90);
+            txtNombreCC.Location = new Point(129, 114);
             txtNombreCC.Name = "txtNombreCC";
             txtNombreCC.Size = new Size(200, 23);
             txtNombreCC.TabIndex = 8;
             // 
             // txtLimiteDeuda
             // 
-            txtLimiteDeuda.Location = new Point(484, 140);
+            txtLimiteDeuda.Location = new Point(484, 164);
             txtLimiteDeuda.Name = "txtLimiteDeuda";
             txtLimiteDeuda.Size = new Size(200, 23);
             txtLimiteDeuda.TabIndex = 9;
             // 
             // txtSaldo
             // 
-            txtSaldo.Location = new Point(129, 137);
+            txtSaldo.Location = new Point(129, 161);
             txtSaldo.Name = "txtSaldo";
             txtSaldo.Size = new Size(200, 23);
             txtSaldo.TabIndex = 10;
             // 
             // dtpFechaVencimiento
             // 
-            dtpFechaVencimiento.Location = new Point(484, 90);
+            dtpFechaVencimiento.Location = new Point(484, 114);
             dtpFechaVencimiento.Name = "dtpFechaVencimiento";
             dtpFechaVencimiento.Size = new Size(200, 23);
             dtpFechaVencimiento.TabIndex = 11;
@@ -135,48 +135,31 @@
             // lblDni
             // 
             lblDni.AutoSize = true;
-            lblDni.Location = new Point(227, 238);
+            lblDni.Location = new Point(227, 233);
             lblDni.Name = "lblDni";
             lblDni.Size = new Size(246, 15);
             lblDni.TabIndex = 13;
             lblDni.Text = "DNI autorizados para usar la cuenta corriente";
             // 
-            // lblCliente
-            // 
-            lblCliente.AutoSize = true;
-            lblCliente.Location = new Point(47, 190);
-            lblCliente.Name = "lblCliente";
-            lblCliente.Size = new Size(43, 15);
-            lblCliente.TabIndex = 14;
-            lblCliente.Text = "Cliente";
-            // 
-            // cmbClientes
-            // 
-            cmbClientes.FormattingEnabled = true;
-            cmbClientes.Location = new Point(129, 187);
-            cmbClientes.Name = "cmbClientes";
-            cmbClientes.Size = new Size(200, 23);
-            cmbClientes.TabIndex = 15;
-            // 
             // lstDnis
             // 
             lstDnis.FormattingEnabled = true;
             lstDnis.ItemHeight = 15;
-            lstDnis.Location = new Point(227, 298);
+            lstDnis.Location = new Point(227, 293);
             lstDnis.Name = "lstDnis";
             lstDnis.Size = new Size(282, 109);
             lstDnis.TabIndex = 19;
             // 
             // txtNuevoDni
             // 
-            txtNuevoDni.Location = new Point(227, 263);
+            txtNuevoDni.Location = new Point(227, 258);
             txtNuevoDni.Name = "txtNuevoDni";
             txtNuevoDni.Size = new Size(160, 23);
             txtNuevoDni.TabIndex = 16;
             // 
             // btnAgregarDni
             // 
-            btnAgregarDni.Location = new Point(393, 262);
+            btnAgregarDni.Location = new Point(393, 257);
             btnAgregarDni.Name = "btnAgregarDni";
             btnAgregarDni.Size = new Size(55, 25);
             btnAgregarDni.TabIndex = 17;
@@ -186,7 +169,7 @@
             // 
             // btnEliminarDni
             // 
-            btnEliminarDni.Location = new Point(454, 262);
+            btnEliminarDni.Location = new Point(454, 257);
             btnEliminarDni.Name = "btnEliminarDni";
             btnEliminarDni.Size = new Size(55, 25);
             btnEliminarDni.TabIndex = 18;
@@ -194,17 +177,39 @@
             btnEliminarDni.UseVisualStyleBackColor = true;
             btnEliminarDni.Click += btnEliminarDni_Click;
             // 
+            // lblCliente
+            // 
+            lblCliente.AutoSize = true;
+            lblCliente.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
+            lblCliente.Location = new Point(69, 67);
+            lblCliente.Name = "lblCliente";
+            lblCliente.Size = new Size(96, 32);
+            lblCliente.TabIndex = 20;
+            lblCliente.Tag = "NoModificarConBase";
+            lblCliente.Text = "Cliente:";
+            // 
+            // lblNombreCliente
+            // 
+            lblNombreCliente.AutoSize = true;
+            lblNombreCliente.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
+            lblNombreCliente.Location = new Point(171, 67);
+            lblNombreCliente.Name = "lblNombreCliente";
+            lblNombreCliente.Size = new Size(114, 32);
+            lblNombreCliente.TabIndex = 21;
+            lblNombreCliente.Tag = "NoModificarConBase";
+            lblNombreCliente.Text = "**********";
+            // 
             // FCuentaCorrienteABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(736, 419);
+            ClientSize = new Size(736, 428);
+            Controls.Add(lblNombreCliente);
+            Controls.Add(lblCliente);
             Controls.Add(btnEliminarDni);
             Controls.Add(btnAgregarDni);
             Controls.Add(txtNuevoDni);
             Controls.Add(lstDnis);
-            Controls.Add(cmbClientes);
-            Controls.Add(lblCliente);
             Controls.Add(lblDni);
             Controls.Add(dtpFechaVencimiento);
             Controls.Add(txtSaldo);
@@ -217,6 +222,7 @@
             Controls.Add(lblSaldo);
             Controls.Add(lblccorriente);
             Name = "FCuentaCorrienteABM";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FCuentaCorrienteABM";
             Load += FCuentaCorrienteABM_Load;
             Controls.SetChildIndex(lblccorriente, 0);
@@ -230,12 +236,12 @@
             Controls.SetChildIndex(txtSaldo, 0);
             Controls.SetChildIndex(dtpFechaVencimiento, 0);
             Controls.SetChildIndex(lblDni, 0);
-            Controls.SetChildIndex(lblCliente, 0);
-            Controls.SetChildIndex(cmbClientes, 0);
             Controls.SetChildIndex(lstDnis, 0);
             Controls.SetChildIndex(txtNuevoDni, 0);
             Controls.SetChildIndex(btnAgregarDni, 0);
             Controls.SetChildIndex(btnEliminarDni, 0);
+            Controls.SetChildIndex(lblCliente, 0);
+            Controls.SetChildIndex(lblNombreCliente, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -254,13 +260,13 @@
         private TextBox txtSaldo;
         private DateTimePicker dtpFechaVencimiento;
         private Label lblDni;
-        private Label lblCliente;
-        private ComboBox cmbClientes;
 
         // 🔹 Nuevos controles incorporados para la lista de DNIs
         private ListBox lstDnis;
         private TextBox txtNuevoDni;
         private Button btnAgregarDni;
         private Button btnEliminarDni;
+        private Label lblCliente;
+        private Label lblNombreCliente;
     }
 }

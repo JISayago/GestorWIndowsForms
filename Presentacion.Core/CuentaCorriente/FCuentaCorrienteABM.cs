@@ -57,29 +57,25 @@ namespace Presentacion.Core.CuentaCorriente
 
             dtpFechaVencimiento.MinDate = DateTime.Now;
 
-            var filtros = new FiltroConsulta
-            {
-                TextoBuscar = null,
-                Filtro1 = null,
-                Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(),
-                Bool1 = false,
-                Bool2 = false,
-                FechaDesde = null,
-                FechaHasta = null,
-                Filtro3 = null,
-                Page = 1,
-                PageSize = 50
-            };
+            //var filtros = new FiltroConsulta
+            //{
+            //    TextoBuscar = null,
+            //    Filtro1 = null,
+            //    Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(),
+            //    Bool1 = false,
+            //    Bool2 = false,
+            //    FechaDesde = null,
+            //    FechaHasta = null,
+            //    Filtro3 = null,
+            //    Page = 1,
+            //    PageSize = 50
+            //};
 
-            var clientes = _clienteServicio.ObtenerClientes(filtros).Items;
+            //var clientes = _clienteServicio.ObtenerClientes(filtros).Items;
+            var cliente = _clienteServicio.ObtenerClientePorId(entidadID.Value);
 
-            cmbClientes.DisplayMember = "NombreCompleto";
-            cmbClientes.ValueMember = "PersonaId";
-            cmbClientes.DataSource = clientes;
+            lblNombreCliente.Text = cliente.NombreCompleto;
 
-            cmbClientes.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            cmbClientes.AutoCompleteSource = AutoCompleteSource.ListItems;
-            cmbClientes.DropDownStyle = ComboBoxStyle.DropDown;
 
             AgregarControlesObligatorios(txtNombreCC, "Nombre Cuenta Corriente");
             AgregarControlesObligatorios(txtSaldo, "Saldo");
@@ -117,22 +113,23 @@ namespace Presentacion.Core.CuentaCorriente
             }
 
             var cuentacorriente = _cuentacorrienteServicio.ObtenerCuentaCorrientePorId(entidadId.Value);
-            var filtros = new FiltroConsulta
-            {
-                TextoBuscar = null,
-                Filtro1 = null,
-                Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(),
-                Bool1 = false,
-                Bool2 = false,
-                FechaDesde = null,
-                FechaHasta = null,
-                Filtro3 = null,
-                Page = 1,
-                PageSize = 50
-            };
+            //var filtros = new FiltroConsulta
+            //{
+            //    TextoBuscar = null,
+            //    Filtro1 = null,
+            //    Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(),
+            //    Bool1 = false,
+            //    Bool2 = false,
+            //    FechaDesde = null,
+            //    FechaHasta = null,
+            //    Filtro3 = null,
+            //    Page = 1,
+            //    PageSize = 50
+            //};
 
-            var resultado = _clienteServicio.ObtenerClientes(filtros);
-            var clienteDeCuentaCorriente = resultado.Items.FirstOrDefault();
+            //var resultado = _clienteServicio.ObtenerClientes(filtros);
+            //var clienteDeCuentaCorriente = resultado.Items.FirstOrDefault();
+
 
             txtNombreCC.Text = cuentacorriente.NombreCuentaCorriente;
             txtSaldo.Text = cuentacorriente.Saldo.ToString();
@@ -140,10 +137,6 @@ namespace Presentacion.Core.CuentaCorriente
             chkLimiteDeuda.Checked = cuentacorriente.LimiteDeudaActivo;
             txtLimiteDeuda.Text = cuentacorriente.LimiteDeuda.ToString();
             txtLimiteDeuda.Enabled = cuentacorriente.LimiteDeudaActivo;
-            cmbClientes.DisplayMember = "NombreCompleto";
-            cmbClientes.ValueMember = "PersonaId";
-            //cmbClientes.DataSource = clienteDeCuentaCorriente;
-            cmbClientes.Enabled = false;
 
             // 🔹 Mapeo directo a la lista del ListBox sin dar vueltas con celdas
             _dnisAutorizadosLista.Clear();
@@ -163,12 +156,12 @@ namespace Presentacion.Core.CuentaCorriente
 
             var nuevoCuentaCorriente = new CuentaCorrienteDTO
             {
+                ClienteId = EntidadID.Value, // Asumimos que el ID del cliente se pasa al formulario y se usa para crear la cuenta corriente
                 NombreCuentaCorriente = txtNombreCC.Text,
                 Saldo = Convert.ToDecimal(txtSaldo.Text),
                 FechaVencimiento = dtpFechaVencimiento.Value,
                 LimiteDeudaActivo = chkLimiteDeuda.Checked,
                 LimiteDeuda = Convert.ToDecimal(txtLimiteDeuda.Text),
-                ClienteId = (long)cmbClientes.SelectedValue,
 
                 // 🔹 Directamente le pasamos la lista limpia convertida a List<long>
                 DniAutorizados = _dnisAutorizadosLista.ToList(),
