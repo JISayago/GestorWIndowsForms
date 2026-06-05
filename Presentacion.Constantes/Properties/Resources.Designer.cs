@@ -273,6 +273,16 @@ namespace Presentacion.Constantes.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ImagenSumar {
+            get {
+                object obj = ResourceManager.GetObject("ImagenSumar", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ImagenUsuario {
             get {
                 object obj = ResourceManager.GetObject("ImagenUsuario", resourceCulture);

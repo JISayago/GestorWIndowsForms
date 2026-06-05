@@ -148,7 +148,7 @@ namespace Servicios.LogicaNegocio.Cliente
             persona.EstaEliminado = clienteDto.EstaEliminado;
             persona.FechaNacimiento = clienteDto.FechaNacimiento;
 
-            clienteEditar.NumeroCliente = clienteDto.NumeroCliente;
+            //clienteEditar.NumeroCliente = clienteDto.NumeroCliente;
             clienteEditar.FechaAlta = clienteDto.FechaAlta;
             clienteEditar.FechaBaja = clienteDto.FechaBaja;
             clienteEditar.Estado = clienteEditar.Estado;
@@ -188,7 +188,8 @@ namespace Servicios.LogicaNegocio.Cliente
                      NumeroCliente = e.NumeroCliente,
                      FechaAlta = e.FechaAlta,
                      FechaBaja = e.FechaBaja,
-                     Estado = e.Estado
+                     Estado = e.Estado,
+                     CuentaCorrienteId = e.CuentaCorrienteId
                  })
                  .FirstOrDefault();
             return cliente;
@@ -216,7 +217,8 @@ namespace Servicios.LogicaNegocio.Cliente
                      NumeroCliente = c.NumeroCliente,
                      FechaAlta = c.FechaAlta,
                      FechaBaja = c.FechaBaja,
-                     Estado = c.Estado
+                     Estado = c.Estado,
+                     CuentaCorrienteId = c.CuentaCorrienteId
                  })
                  .FirstOrDefault();
             return cliente;
@@ -429,7 +431,9 @@ namespace Servicios.LogicaNegocio.Cliente
                     FechaAlta = c.FechaAlta,
                     FechaBaja = c.FechaBaja,
 
-                    Estado = c.Estado
+                    Estado = c.Estado,
+
+                    CuentaCorrienteId = c.CuentaCorrienteId
                 })
                 .ToList();
 

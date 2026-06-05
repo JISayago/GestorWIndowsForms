@@ -46,40 +46,74 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
+            // Validaciones previas (fuera de la transacción)
             if (context.CuentaCorriente.Any(p => p.NombreCuentaCorriente == cuentacorrienteDto.NombreCuentaCorriente))
+                return new EstadoOperacion { Exitoso = false, Mensaje = "Ya existe una cuentacorriente con el mismo nombre" };
+
+            if (context.CuentaCorriente.Any(p => p.ClienteId == cuentacorrienteDto.ClienteId))
+                return new EstadoOperacion { Exitoso = false, Mensaje = "El cliente ya tiene una cuenta corriente" };
+
+            using var transaction = context.Database.BeginTransaction();
+
+            try
+            {
+                var nuevaCuentaCorriente = new AccesoDatos.Entidades.CuentaCorriente
+                {
+                    NombreCuentaCorriente = cuentacorrienteDto.NombreCuentaCorriente,
+                    Saldo = cuentacorrienteDto.Saldo,
+                    LimiteDeuda = cuentacorrienteDto.LimiteDeuda,
+                    LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo,
+                    FechaVencimiento = cuentacorrienteDto.FechaVencimiento,
+                    EstaEliminado = false,
+                    ClienteId = cuentacorrienteDto.ClienteId,
+                    CuentaCorrienteAutorizado = cuentacorrienteDto.DniAutorizados
+                        .Select(dni => new CuentaCorrienteAutorizado { Dni = dni })
+                        .ToList()
+                };
+
+                // 1. Agregamos la cuenta corriente y guardamos para GENERAR EL ID
+                context.CuentaCorriente.Add(nuevaCuentaCorriente);
+                context.SaveChanges();
+
+                // 2. Ahora que nuevaCuentaCorriente.CuentaCorrienteId YA TIENE VALOR, buscamos al cliente
+                var cliente = context.Cliente.Include(c => c.Persona)
+                    .FirstOrDefault(x => x.PersonaId == cuentacorrienteDto.ClienteId);
+
+                if (cliente == null)
+                {
+                    // Si por alguna razón no existe el cliente, hacemos rollback manual
+                    transaction.Rollback();
+                    return new EstadoOperacion { Exitoso = false, Mensaje = "El cliente especificado no existe." };
+                }
+
+                // 3. Le asignamos el ID recién generado y actualizamos el cliente
+                cliente.CuentaCorrienteId = nuevaCuentaCorriente.CuentaCorrienteId;
+                context.Cliente.Update(cliente);
+
+                // 4. Guardamos el cambio del cliente en la DB
+                context.SaveChanges();
+
+                // 5. Si todo salió bien, confirmamos AMBOS guardados juntos
+                transaction.Commit();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "CuentaCorriente creada correctamente.",
+                    EntidadId = nuevaCuentaCorriente.CuentaCorrienteId
+                };
+            }
+            catch (Exception ex)
+            {
+                // Si salta una excepción en cualquier SaveChanges, se deshace todo por igual
+                transaction.Rollback();
+
                 return new EstadoOperacion
                 {
                     Exitoso = false,
-                    Mensaje = "Ya existe una cuentacorriente con el mismo nombre"
+                    Mensaje = ex.ToString()
                 };
-
-            var nuevaCuentaCorriente = new AccesoDatos.Entidades.CuentaCorriente
-            {
-                NombreCuentaCorriente = cuentacorrienteDto.NombreCuentaCorriente,
-                Saldo = cuentacorrienteDto.Saldo,
-                LimiteDeuda = cuentacorrienteDto.LimiteDeuda,
-                LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo,
-                FechaVencimiento = cuentacorrienteDto.FechaVencimiento,
-                EstaEliminado = false,
-                ClienteId = cuentacorrienteDto.ClienteId,
-                // Convertimos los DNIs a objetos de entidad
-                CuentaCorrienteAutorizado = cuentacorrienteDto.DniAutorizados
-                    .Select(dni => new CuentaCorrienteAutorizado
-                    {
-                        Dni = dni
-                    })
-                    .ToList()
-            };
-
-            context.CuentaCorriente.Add(nuevaCuentaCorriente);
-            context.SaveChanges(); // Guarda en la DB
-
-            return new EstadoOperacion
-            {
-                Exitoso = true,
-                Mensaje = "CuentaCorriente creada correctamente.",
-                EntidadId = nuevaCuentaCorriente.CuentaCorrienteId
-            }; // Devuelve el ID generado
+            }
         }
 
         public EstadoOperacion Modificar(CuentaCorrienteDTO cuentacorrienteDto, long? cuentacorrienteId)

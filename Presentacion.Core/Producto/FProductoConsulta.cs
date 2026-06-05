@@ -169,7 +169,7 @@ namespace Presentacion.Core.Producto
             {
                 AgregarAccion(
                     "Seleccionar Producto",
-                    Constantes.Imagenes.ImgPerfilUsuario,
+                    Constantes.Imagenes.ImgSumar,
                     SeleccionProducto,
                     true
                 );
