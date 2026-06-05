@@ -37,9 +37,9 @@
             btnPanelAdmin = new Button();
             tlpBaseInfo1 = new TableLayoutPanel();
             tableLayoutPanel2 = new TableLayoutPanel();
-            flowLayoutPanel1 = new FlowLayoutPanel();
-            lblUsuario = new Label();
+            tableLayoutPanel3 = new TableLayoutPanel();
             lblNombreUsuario = new Label();
+            lblUsuario = new Label();
             llbCerrarSesion = new LinkLabel();
             flowLayoutPanel2 = new FlowLayoutPanel();
             lblFechaValor = new Label();
@@ -59,7 +59,7 @@
             tableLayoutPanel1.SuspendLayout();
             tlpBaseInfo1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
-            flowLayoutPanel1.SuspendLayout();
+            tableLayoutPanel3.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
             flowLayoutPanel3.SuspendLayout();
             tlpPanelBaseTabControlYNotis.SuspendLayout();
@@ -183,56 +183,67 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel2.Controls.Add(flowLayoutPanel1, 0, 0);
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel3, 0, 0);
             tableLayoutPanel2.Controls.Add(flowLayoutPanel2, 1, 0);
             tableLayoutPanel2.Controls.Add(flowLayoutPanel3, 2, 0);
             tableLayoutPanel2.Dock = DockStyle.Bottom;
-            tableLayoutPanel2.Location = new Point(3, 16);
+            tableLayoutPanel2.Location = new Point(3, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.Padding = new Padding(20, 0, 20, 0);
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new Size(1259, 44);
+            tableLayoutPanel2.Size = new Size(1259, 57);
             tableLayoutPanel2.TabIndex = 1;
             // 
-            // flowLayoutPanel1
+            // tableLayoutPanel3
             // 
-            flowLayoutPanel1.Controls.Add(lblUsuario);
-            flowLayoutPanel1.Controls.Add(lblNombreUsuario);
-            flowLayoutPanel1.Controls.Add(llbCerrarSesion);
-            flowLayoutPanel1.Location = new Point(23, 3);
-            flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(328, 38);
-            flowLayoutPanel1.TabIndex = 27;
-            // 
-            // lblUsuario
-            // 
-            lblUsuario.AutoSize = true;
-            lblUsuario.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblUsuario.Location = new Point(3, 0);
-            lblUsuario.Name = "lblUsuario";
-            lblUsuario.Size = new Size(125, 20);
-            lblUsuario.TabIndex = 26;
-            lblUsuario.Text = "Usuario Logeado:";
+            tableLayoutPanel3.ColumnCount = 2;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 46.75F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 53.25F));
+            tableLayoutPanel3.Controls.Add(lblNombreUsuario, 1, 0);
+            tableLayoutPanel3.Controls.Add(lblUsuario, 0, 0);
+            tableLayoutPanel3.Controls.Add(llbCerrarSesion, 0, 1);
+            tableLayoutPanel3.Location = new Point(23, 3);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 2;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
+            tableLayoutPanel3.Size = new Size(400, 51);
+            tableLayoutPanel3.TabIndex = 1;
             // 
             // lblNombreUsuario
             // 
+            lblNombreUsuario.Anchor = AnchorStyles.Left;
             lblNombreUsuario.AutoSize = true;
-            lblNombreUsuario.Location = new Point(134, 0);
+            lblNombreUsuario.Location = new Point(190, 7);
             lblNombreUsuario.Name = "lblNombreUsuario";
             lblNombreUsuario.Size = new Size(38, 15);
             lblNombreUsuario.TabIndex = 25;
             lblNombreUsuario.Text = "label3";
             // 
+            // lblUsuario
+            // 
+            lblUsuario.Anchor = AnchorStyles.Left;
+            lblUsuario.AutoSize = true;
+            lblUsuario.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblUsuario.Location = new Point(3, 0);
+            lblUsuario.Name = "lblUsuario";
+            lblUsuario.Size = new Size(174, 30);
+            lblUsuario.TabIndex = 26;
+            lblUsuario.Text = "Usuario Logeado:";
+            // 
             // llbCerrarSesion
             // 
+            llbCerrarSesion.Anchor = AnchorStyles.Left;
             llbCerrarSesion.AutoSize = true;
-            llbCerrarSesion.Location = new Point(178, 0);
+            llbCerrarSesion.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+            llbCerrarSesion.Location = new Point(3, 33);
             llbCerrarSesion.Name = "llbCerrarSesion";
             llbCerrarSesion.Size = new Size(76, 15);
             llbCerrarSesion.TabIndex = 28;
             llbCerrarSesion.TabStop = true;
             llbCerrarSesion.Text = "Cerrar Sesión";
+            llbCerrarSesion.TextAlign = ContentAlignment.MiddleCenter;
             llbCerrarSesion.LinkClicked += llbCerrarSesion_LinkClicked;
             // 
             // flowLayoutPanel2
@@ -243,7 +254,7 @@
             flowLayoutPanel2.FlowDirection = FlowDirection.RightToLeft;
             flowLayoutPanel2.Location = new Point(501, 3);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(328, 38);
+            flowLayoutPanel2.Size = new Size(328, 51);
             flowLayoutPanel2.TabIndex = 28;
             // 
             // lblFechaValor
@@ -274,7 +285,7 @@
             error.SetIconAlignment(flowLayoutPanel3, ErrorIconAlignment.MiddleLeft);
             flowLayoutPanel3.Location = new Point(907, 3);
             flowLayoutPanel3.Name = "flowLayoutPanel3";
-            flowLayoutPanel3.Size = new Size(329, 38);
+            flowLayoutPanel3.Size = new Size(329, 51);
             flowLayoutPanel3.TabIndex = 29;
             // 
             // lblHora
@@ -404,8 +415,8 @@
             tableLayoutPanel1.ResumeLayout(false);
             tlpBaseInfo1.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
-            flowLayoutPanel1.ResumeLayout(false);
-            flowLayoutPanel1.PerformLayout();
+            tableLayoutPanel3.ResumeLayout(false);
+            tableLayoutPanel3.PerformLayout();
             flowLayoutPanel2.ResumeLayout(false);
             flowLayoutPanel2.PerformLayout();
             flowLayoutPanel3.ResumeLayout(false);
@@ -434,7 +445,6 @@
         private FlowLayoutPanel flowLayoutPanel2;
         private Label lblFechaValor;
         private Label lblFecha;
-        private FlowLayoutPanel flowLayoutPanel1;
         private Label lblUsuario;
         private Label lblNombreUsuario;
         private TableLayoutPanel tableLayoutPanel2;
@@ -444,5 +454,6 @@
         private TabPage tabPage2;
         private TableLayoutPanel tlpNotificaciones0;
         private FlowLayoutPanel flowLayoutNotificaciones;
+        private TableLayoutPanel tableLayoutPanel3;
     }
 }

@@ -77,10 +77,11 @@ namespace Presentacion
             this.Bounds = Screen.PrimaryScreen.WorkingArea;
 
             // Formato de nombre de usuario
-            var font = new Font(lblNombreUsuario.Font.FontFamily, 12F, FontStyle.Bold);
+            var font = new Font(lblNombreUsuario.Font.FontFamily, 15F, FontStyle.Bold);
             lblNombreUsuario.Font = font;
-            lblNombreUsuario.ForeColor = Color.DarkGreen;
+            lblNombreUsuario.ForeColor = TemaSistema.Primario;
             lblNombreUsuario.Text = _usuarioLogeado.Username.ToUpper();
+            lblNombreUsuario.Anchor = AnchorStyles.Left;
         }
 
         #endregion

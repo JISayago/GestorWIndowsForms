@@ -172,7 +172,7 @@ namespace Presentacion.Core.Cliente
                     Email = txtEmail.Text,
                     FechaNacimiento = dtpFNacimiento.Value,
                     Telefono2 = txtCelular.Text,
-                    //Estado = chkEstado,  agregar estado en front al modificar cliente
+                    Estado = 0,
                     EstaEliminado = false
                 };
 

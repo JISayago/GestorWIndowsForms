@@ -151,7 +151,7 @@ namespace Servicios.LogicaNegocio.Cliente
             clienteEditar.NumeroCliente = clienteDto.NumeroCliente;
             clienteEditar.FechaAlta = clienteDto.FechaAlta;
             clienteEditar.FechaBaja = clienteDto.FechaBaja;
-            clienteEditar.Estado = clienteDto.Estado;
+            clienteEditar.Estado = clienteEditar.Estado;
 
 
 
