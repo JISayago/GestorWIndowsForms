@@ -31,10 +31,10 @@
             sqlCommand1 = new Microsoft.Data.SqlClient.SqlCommand();
             PnlBotones = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
-            btnPanelAdmin = new Button();
             btnVenta = new Button();
-            btnCaja = new Button();
             btnContraVenta = new Button();
+            btnCaja = new Button();
+            btnPanelAdmin = new Button();
             tlpBaseInfo1 = new TableLayoutPanel();
             tableLayoutPanel2 = new TableLayoutPanel();
             flowLayoutPanel1 = new FlowLayoutPanel();
@@ -84,15 +84,17 @@
             // 
             // tableLayoutPanel1
             // 
-            tableLayoutPanel1.ColumnCount = 4;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.Controls.Add(btnPanelAdmin, 0, 0);
-            tableLayoutPanel1.Controls.Add(btnVenta, 3, 0);
-            tableLayoutPanel1.Controls.Add(btnCaja, 1, 0);
-            tableLayoutPanel1.Controls.Add(btnContraVenta, 2, 0);
+            tableLayoutPanel1.ColumnCount = 6;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 3.06927F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 23.4653645F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 23.4653645F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 23.4653645F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 23.4653645F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 3.06927F));
+            tableLayoutPanel1.Controls.Add(btnVenta, 4, 0);
+            tableLayoutPanel1.Controls.Add(btnContraVenta, 3, 0);
+            tableLayoutPanel1.Controls.Add(btnCaja, 2, 0);
+            tableLayoutPanel1.Controls.Add(btnPanelAdmin, 1, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -101,25 +103,11 @@
             tableLayoutPanel1.Size = new Size(1259, 87);
             tableLayoutPanel1.TabIndex = 6;
             // 
-            // btnPanelAdmin
-            // 
-            btnPanelAdmin.Anchor = AnchorStyles.Left;
-            btnPanelAdmin.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
-            btnPanelAdmin.Location = new Point(3, 12);
-            btnPanelAdmin.MaximumSize = new Size(236, 63);
-            btnPanelAdmin.MinimumSize = new Size(236, 63);
-            btnPanelAdmin.Name = "btnPanelAdmin";
-            btnPanelAdmin.Size = new Size(236, 63);
-            btnPanelAdmin.TabIndex = 15;
-            btnPanelAdmin.Text = "PANEL ADMINISTRACIÓN";
-            btnPanelAdmin.UseVisualStyleBackColor = true;
-            btnPanelAdmin.Click += btnPanelAdmin_Click;
-            // 
             // btnVenta
             // 
             btnVenta.Anchor = AnchorStyles.Right;
             btnVenta.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
-            btnVenta.Location = new Point(1020, 12);
+            btnVenta.Location = new Point(979, 12);
             btnVenta.MaximumSize = new Size(236, 63);
             btnVenta.MinimumSize = new Size(236, 63);
             btnVenta.Name = "btnVenta";
@@ -129,11 +117,25 @@
             btnVenta.UseVisualStyleBackColor = true;
             btnVenta.Click += btnVenta_Click;
             // 
+            // btnContraVenta
+            // 
+            btnContraVenta.Anchor = AnchorStyles.None;
+            btnContraVenta.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
+            btnContraVenta.Location = new Point(657, 12);
+            btnContraVenta.MaximumSize = new Size(236, 63);
+            btnContraVenta.MinimumSize = new Size(236, 63);
+            btnContraVenta.Name = "btnContraVenta";
+            btnContraVenta.Size = new Size(236, 63);
+            btnContraVenta.TabIndex = 16;
+            btnContraVenta.Text = "DEVOLUCIÓN / CONTRAASIENTO";
+            btnContraVenta.UseVisualStyleBackColor = true;
+            btnContraVenta.Click += btnContraVenta_Click;
+            // 
             // btnCaja
             // 
-            btnCaja.Anchor = AnchorStyles.Right;
+            btnCaja.Anchor = AnchorStyles.None;
             btnCaja.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
-            btnCaja.Location = new Point(389, 12);
+            btnCaja.Location = new Point(362, 12);
             btnCaja.MaximumSize = new Size(236, 63);
             btnCaja.MinimumSize = new Size(236, 63);
             btnCaja.Name = "btnCaja";
@@ -143,19 +145,19 @@
             btnCaja.UseVisualStyleBackColor = true;
             btnCaja.Click += btnCaja_Click;
             // 
-            // btnContraVenta
+            // btnPanelAdmin
             // 
-            btnContraVenta.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            btnContraVenta.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
-            btnContraVenta.Location = new Point(631, 12);
-            btnContraVenta.MaximumSize = new Size(236, 63);
-            btnContraVenta.MinimumSize = new Size(236, 63);
-            btnContraVenta.Name = "btnContraVenta";
-            btnContraVenta.Size = new Size(236, 63);
-            btnContraVenta.TabIndex = 16;
-            btnContraVenta.Text = "DEVOLUCIÓN / CONTRAASIENTO";
-            btnContraVenta.UseVisualStyleBackColor = true;
-            btnContraVenta.Click += btnContraVenta_Click;
+            btnPanelAdmin.Anchor = AnchorStyles.Left;
+            btnPanelAdmin.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
+            btnPanelAdmin.Location = new Point(41, 12);
+            btnPanelAdmin.MaximumSize = new Size(236, 63);
+            btnPanelAdmin.MinimumSize = new Size(236, 63);
+            btnPanelAdmin.Name = "btnPanelAdmin";
+            btnPanelAdmin.Size = new Size(236, 63);
+            btnPanelAdmin.TabIndex = 15;
+            btnPanelAdmin.Text = "PANEL ADMINISTRACIÓN";
+            btnPanelAdmin.UseVisualStyleBackColor = true;
+            btnPanelAdmin.Click += btnPanelAdmin_Click;
             // 
             // tlpBaseInfo1
             // 
@@ -390,6 +392,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1265, 816);
             Controls.Add(panel1);
+            ForeColor = Color.FromArgb(31, 26, 43);
             MinimumSize = new Size(1061, 732);
             Name = "VentanaPrincipal";
             StartPosition = FormStartPosition.CenterScreen;
