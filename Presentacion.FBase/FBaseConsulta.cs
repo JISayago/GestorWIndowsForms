@@ -79,10 +79,9 @@ namespace Presentacion.FBase
 
         private void CargarLogoEnBase()
         {
-            pbxLogo.Image = Constantes.Imagenes.ImgActualizar;
-            pbxLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            pbxLogo.Image = Constantes.Imagenes.ImgLogoCompuesto;
             pbxLogo.Dock = DockStyle.Fill;
-            pbxLogo.Margin = new Padding(10);
+            pbxLogo.SizeMode = PictureBoxSizeMode.StretchImage;
         }
         #endregion
 

@@ -16,8 +16,8 @@ namespace Presentacion.FBase
             _listaControlesObligatorios = new List<ControlDTO>();
             this.components = new System.ComponentModel.Container();
             this.error = new System.Windows.Forms.ErrorProvider(this.components);
+            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         }
-       //     this.BackColor = System.Drawing.ColorTranslator.FromHtml(ColorFondo); Pensado para config
 
 
 
