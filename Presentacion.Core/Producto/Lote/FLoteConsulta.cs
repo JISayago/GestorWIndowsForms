@@ -78,13 +78,15 @@ namespace Presentacion.Core.Producto.Lote
 
         protected override string TextoLblCbx3
             => "Filtrar por Fecha";
+        protected override string TextoTitular
+             => "Listado de los Lotes";
         #region ACCIONES DINAMICAS
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
 
             ActivarCheck(chkBool1, "Mostrar Vencidos");
-            ActivarCheck(chkBool2, "Mostrar Todos los Lotes (histórico)");
+            ActivarCheck(chkBool2, "Mostrar Lotes (últimos 6 meses)");
 
             ActivarFiltroFechas("Filtrar por fecha");
 

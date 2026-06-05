@@ -7,7 +7,15 @@ using System.Threading.Tasks;
 namespace Servicios.Infraestructura
 {
     public interface IPdfGenerator
-    {
-        string GenerarComprobante(Venta venta);
-    }
+{
+    string GenerarVenta(Venta venta);
+
+    string GenerarVentaLibre(VentaLibre venta);
+
+    string GenerarCancelacionVenta(Venta venta);
+
+    string GenerarGasto(Gasto gasto);
+
+    string GenerarGastoAnulado(Gasto gasto);
+}
 }

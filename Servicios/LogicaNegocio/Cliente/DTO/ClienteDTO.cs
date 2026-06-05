@@ -47,6 +47,16 @@ namespace Servicios.LogicaNegocio.Cliente.DTO
         public long? CuentaCorrienteId { get; set; } // Puede ser null si no tiene cuenta corriente asociada
 
         public string NombreCompleto => $"{Nombre} {Apellido}";
+        public string TieneCuentaCorriente
+        {
+            get
+            {
+                if(CuentaCorrienteId != null)
+                    return "Activa";
+
+                return "Sin Asignar";
+            }
+        }
 
     }
 }

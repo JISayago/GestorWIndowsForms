@@ -20,6 +20,7 @@ namespace Presentacion.Core.Producto
 {
     public partial class FGestionStockLotes : FBaseABM
     {
+        //al crear lo se vuelve a abir el form pero no tiene el numero/nombre del siguiente lote
         private readonly ILoteServicio _loteSevicio;
         private readonly IProductoServicio _productoServicio;
 
@@ -28,6 +29,7 @@ namespace Presentacion.Core.Producto
         private ProductoDTO productoDTO;
         private LoteDTO loteDTO;
         private string NumeroLote;
+        public bool reabrirForm { get; private set; } = false;
         public bool RealizoOperacion { get; private set; } = false;
 
         public FGestionStockLotes(TipoOperacion tipoOperacion, long? entidadId = null)
@@ -45,7 +47,7 @@ namespace Presentacion.Core.Producto
             AgregarControlesObligatorios(nudStockInicial, "Stock Inicial");
             AgregarControlesObligatorios(nudStockActual, "Stock Actual");
             AgregarControlesObligatorios(txtNumeroLote, "Numero Lote");
-            AgregarControlesObligatorios(txtDescripcionLote, "Descripcion");
+            //AgregarControlesObligatorios(txtDescripcionLote, "Descripcion");
             if (chkFechaVencimiento.Checked)
             {
                 AgregarControlesObligatorios(dtpFechaVencimiento, "Fecha Vencimiento");
@@ -218,10 +220,25 @@ namespace Presentacion.Core.Producto
 
             if (response.Exitoso)
             {
-                _productoServicio.ModificarEstadoStockProductos();
+                //_productoServicio.ModificarEstadoStockProductos();
 
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Information);
+                var respuesta = MessageBox.Show($"{response.Mensaje}\n ¿Quieres cargar un lote de mismo producto?",
+                    "Confirmar acción",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if(respuesta == DialogResult.Yes)
+                {
+                    RealizoOperacion = true;
+                    reabrirForm = true;
+                    this.Close();
+                }
+                else
+                {
+                    RealizoOperacion = true; // Indicar que se realizó una operación exitosa
+                    this.Close();
+                }
+
                 return true;
             }
             else
@@ -245,7 +262,7 @@ namespace Presentacion.Core.Producto
                 var response = _loteSevicio.EliminarLote((long)EntidadID);
                 if (response.Exitoso)
                 {
-                    _productoServicio.ModificarEstadoStockProductos();
+                    //_productoServicio.ModificarEstadoStockProductos();
 
                     MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                        MessageBoxIcon.Information);
@@ -295,7 +312,7 @@ namespace Presentacion.Core.Producto
 
                 if (response.Exitoso)
                 {
-                    _productoServicio.ModificarEstadoStockProductos();
+                    //_productoServicio.ModificarEstadoStockProductos();
 
                     MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
@@ -321,8 +338,6 @@ namespace Presentacion.Core.Producto
             {
                 chkLoteEstaActivo.Checked = true;
 
-
-
                 txtNumeroLote.Text = NumeroLote;
             }
         }
@@ -330,7 +345,12 @@ namespace Presentacion.Core.Producto
         private void nudStockInicial_ValueChanged(object sender, EventArgs e)
         {
             // El máximo de Stock Actual ahora es el valor de Stock Inicial
+            nudStockInicial.Maximum = 999999;
+            nudStockInicial.Minimum = 0;
+
             nudStockActual.Maximum = nudStockInicial.Value;
+            nudStockActual.Minimum = 0;
+
 
             // Opcional: Si al bajar el inicial, el actual queda por encima, 
             // el control NumericUpDown lo bajará automáticamente al nuevo máximo.

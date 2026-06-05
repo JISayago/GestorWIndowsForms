@@ -45,11 +45,13 @@ namespace Presentacion.Core.Venta
 
         protected override string TextoLblCbx3
             => "Filtrar por Fecha";
+        protected override string TextoTitular
+   => "Listado de Ventas";
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
             ActivarCheck(chkBool1, "Mostrar ventas canceladas");
-            ActivarCheck(chkBool2, "Mostrar todas las Ventas (histórico)");
+            ActivarCheck(chkBool2, "Mostrar Ventas (últimos 6 meses)");
             var opcionesBusqueda = new List<OpcionFiltro>
             {
                 new OpcionFiltro

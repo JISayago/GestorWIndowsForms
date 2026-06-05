@@ -68,28 +68,28 @@ namespace Presentacion.Core.Empleado
         {
             AgregarAccion(
                 "Roles",
-                Constantes.Imagenes.ImgModificar,
+                Constantes.Imagenes.ImgRoles,
                 AbrirAsignacionRoles,
                 true
             );
 
             AgregarAccion(
                 "Crear Usuario",
-                Constantes.Imagenes.ImgNuevo,
+                Constantes.Imagenes.ImgCrearUsuario,
                 AbrirCrearUsuario,
                 true
             );
 
             AgregarAccion(
                 "Asignar Vendedor",
-                Constantes.Imagenes.ImgNuevo,
+                Constantes.Imagenes.ImgAsignarVendedor,
                 AsignarVendedor,
                 true
             );
 
             AgregarAccion(
                 "Resetear Contraseña",
-                Constantes.Imagenes.ImgNuevo,
+                Constantes.Imagenes.ImgResetearContraseña,
                 ResetarContraseniaUsuario,
                 true
             );
@@ -267,8 +267,8 @@ namespace Presentacion.Core.Empleado
             cbx1.SelectedValue = "";
             cbx2.SelectedValue = "";
             cbx3.SelectedValue = "";
-            ActivarCheck(chkBool1, "Ver eliminados");
-            ActivarCheck(chkBool2, "Ver todos");
+            ActivarCheck(chkBool1, "Ver eliminados/Inhabilitados");
+            ActivarCheck(chkBool2, "Ver empleados sin contraseña");
         }
 
         protected override string TextoLblBuscar
@@ -282,6 +282,8 @@ namespace Presentacion.Core.Empleado
 
         protected override string TextoLblCbx3
             => "Filtrar por Fecha";
+        protected override string TextoTitular
+       => "Listado de los Empleados";
 
         protected override FiltroConsulta ObtenerFiltros()
         {

@@ -20,6 +20,8 @@ namespace Presentacion.FBase
         {
             InitializeComponent();
             btnSalir.Image = Constantes.Imagenes.ImgCerrar;
+
+            BarraSuperiorBotones.ImageScalingSize = new Size(25, 25);
         }
         public FBaseABM(TipoOperacion tipoOperacion, long? entidadId) : this()
         {

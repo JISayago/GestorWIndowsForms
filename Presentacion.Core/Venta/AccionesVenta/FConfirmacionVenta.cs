@@ -23,6 +23,7 @@ namespace Presentacion.Core.Venta
         public List<FormaPago> pagos = new List<FormaPago>();
         public DatosVenta _datosVenta = new DatosVenta();
         public long? idCliente;
+        public string datosExtraPagos { get; private set; } // Para información adicional como DNI o nombre del cliente en pagos.
 
         public bool PermitirMultiplesPagos { get; set; } = true;
 
@@ -59,10 +60,13 @@ namespace Presentacion.Core.Venta
                     return;
                 }
 
+                //datosExtraPagos = fFormaPagoSeleccionada.datosExtra ?? "Sin especificar"; // Aseguramos que no sea null para el caller.
                 // Si llegó OK, asignamos la forma y monto por el total de la venta
                 var tipoSeleccionado = fFormaPagoSeleccionada.tipoPagoSeleccionado;
+                var datoExtraPagos = fFormaPagoSeleccionada.datosExtra ?? "Sin especificar"; // Aseguramos que no sea null para el caller.
                 pagos[0].TipoDePago = tipoSeleccionado;
                 pagos[0].Monto = TotalVenta;
+                pagos[0].DatosExtra = datoExtraPagos;
 
                 // Actualizamos labels y estado mínimo para que el caller reciba todo en el mismo formato
                 lblFormaPago1.Text = tipoSeleccionado.ToString();

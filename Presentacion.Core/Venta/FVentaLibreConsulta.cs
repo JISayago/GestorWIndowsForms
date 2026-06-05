@@ -35,11 +35,14 @@ namespace Presentacion.Core.Venta
 
         protected override string TextoLblCbx3
             => "Filtrar por Fecha";
+
+        protected override string TextoTitular
+   => "Listado de Ventas Libres";
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
             ActivarCheck(chkBool1, "Mostrar ventas canceladas");
-            ActivarCheck(chkBool2, "Mostrar todas las Ventas Libres (histórico)");
+            ActivarCheck(chkBool2, "Mostrar Ventas Libres (últimos 6 meses)");
             var opcionesBusqueda = new List<OpcionFiltro>
             {
                 new OpcionFiltro
@@ -292,13 +295,19 @@ namespace Presentacion.Core.Venta
                     "C2";
             }
 
+            if (grilla.Columns.Contains("EstadoDescripcion"))
+            {
+                grilla.Columns["EstadoDescripcion"].Visible = true;
+                grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
+
+                grilla.Columns["EstadoDescripcion"].AutoSizeMode =
+                    DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
+            // opcional ocultar el int
             if (grilla.Columns.Contains("Estado"))
             {
-                grilla.Columns["Estado"].Visible = true;
-                grilla.Columns["Estado"].HeaderText = "Estado";
-
-                grilla.Columns["Estado"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.AllCells;
+                grilla.Columns["Estado"].Visible = false;
             }
 
             if (grilla.Columns.Contains("Detalle"))

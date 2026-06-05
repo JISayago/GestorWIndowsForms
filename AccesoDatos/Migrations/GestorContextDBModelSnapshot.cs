@@ -459,7 +459,7 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("int")
                         .HasColumnName("estado_gasto");
 
-                    b.Property<DateTime>("FechaGasto")
+                    b.Property<DateTime?>("FechaGasto")
                         .HasColumnType("datetime2")
                         .HasColumnName("fecha_gasto");
 
@@ -652,6 +652,61 @@ namespace AccesoDatos.Migrations
                     b.HasKey("NotaId");
 
                     b.ToTable("NotasRapidas", (string)null);
+                });
+
+            modelBuilder.Entity("AccesoDatos.Entidades.Notificacion", b =>
+                {
+                    b.Property<long>("NotificacionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_notificacion");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("NotificacionId"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("descripcion");
+
+                    b.Property<long>("EmpleadoId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("empleado_id");
+
+                    b.Property<long>("EmpleadoPersonaId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("EstaLeida")
+                        .HasColumnType("bit")
+                        .HasColumnName("esta_leida");
+
+                    b.Property<DateTime>("FechaConfirmacion")
+                        .HasColumnType("datetime")
+                        .HasColumnName("fecha_confirmacion");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime")
+                        .HasColumnName("fecha_creacion");
+
+                    b.Property<string>("Mensaje")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("mensaje");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("titulo");
+
+                    b.HasKey("NotificacionId");
+
+                    b.HasIndex("EmpleadoId");
+
+                    b.HasIndex("EmpleadoPersonaId");
+
+                    b.ToTable("Notificaciones", (string)null);
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.OfertaDescuento", b =>
@@ -1137,8 +1192,8 @@ namespace AccesoDatos.Migrations
 
                     b.Property<string>("Detalle")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)")
                         .HasColumnName("detalle");
 
                     b.Property<int>("Estado")
@@ -1266,6 +1321,12 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("id_VentaPagoDetalle");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("VentaPagoDetalleId"));
+
+                    b.Property<string>("ExtraDescripcionPago")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("extra_descripcion_pago");
 
                     b.Property<long?>("IdGasto")
                         .HasColumnType("bigint")
@@ -1462,6 +1523,23 @@ namespace AccesoDatos.Migrations
                         .IsRequired();
 
                     b.Navigation("Producto");
+                });
+
+            modelBuilder.Entity("AccesoDatos.Entidades.Notificacion", b =>
+                {
+                    b.HasOne("AccesoDatos.Entidades.Empleado", null)
+                        .WithMany("Notificaciones")
+                        .HasForeignKey("EmpleadoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("AccesoDatos.Entidades.Empleado", "Empleado")
+                        .WithMany()
+                        .HasForeignKey("EmpleadoPersonaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Empleado");
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.OfertaDescuento", b =>
@@ -1661,6 +1739,8 @@ namespace AccesoDatos.Migrations
                     b.Navigation("CodigosRecuperacion");
 
                     b.Navigation("EmpleadoRoles");
+
+                    b.Navigation("Notificaciones");
 
                     b.Navigation("Sesiones");
 

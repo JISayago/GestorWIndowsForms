@@ -289,7 +289,7 @@ namespace Presentacion.Notificaciones
 
             // Alineación vertical centrada para que el texto no quede arriba
             dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-
+            dgv.Margin = new Padding(0, 0, 0, 8);
             return dgv;
         }
 
@@ -298,14 +298,19 @@ namespace Presentacion.Notificaciones
         // ===========================================================================
         private Panel CrearFooterPaginado(out Button btnPrev, out Button btnNext, out Label lblInfo, Action onRefresh)
         {
-            Panel pNav = new Panel { Dock = DockStyle.Bottom, Height = 45 };
+            Panel pNav = new Panel
+            {
+                Dock = DockStyle.Bottom,
+                Height = 50,
+                Padding = new Padding(0, 15, 0, 0) // separación superior
+            };
 
             btnPrev = new Button { Text = "<", Width = 40, Dock = DockStyle.Left };
             btnNext = new Button { Text = ">", Width = 40, Dock = DockStyle.Left };
             lblInfo = new Label { Text = "Página 1 de 1", AutoSize = true, Dock = DockStyle.Left, Padding = new Padding(10, 12, 0, 0) };
 
             btnVerMas = new Button { Text = "Ver Más", Width = 80, Dock = DockStyle.Right };
-            // Asignamos la acción que se pase por parámetro
+
             btnPrev.Click += (s, e) => onRefresh();
             btnNext.Click += (s, e) => onRefresh();
 

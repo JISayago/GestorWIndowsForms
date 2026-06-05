@@ -11,5 +11,7 @@ namespace Servicios.Helpers.OpcionesPagos
         public int Numero { get; set; }
         public decimal Monto { get; set; }
         public TipoDePago? TipoDePago { get; set; }
+
+        public string DatosExtra { get; set; } // Para información adicional como DNI o nombre del cliente en pagos.
     }
 }

@@ -54,21 +54,21 @@ namespace Presentacion.Core.Empleado.Rol
 
         protected override void ConfigurarAccionesPersonalizadas()
         {
-            AgregarAccion(
-                "Asignar Roles",
-                SystemIcons.Shield.ToBitmap(),
-                (id) =>
-                {
-                    var f = new FAsignacionRolesEmpleados(TipoAsignacionRol.Nuevo);
+            //AgregarAccion(
+            //    "Asignar Roles",
+            //    SystemIcons.Shield.ToBitmap(),
+            //    (id) =>
+            //    {
+            //        var f = new FAsignacionRolesEmpleados(TipoAsignacionRol.Nuevo);
 
-                    f.ShowDialog();
-                },
-                false
-            );
+            //        f.ShowDialog();
+            //    },
+            //    false
+            //);
 
             AgregarAccion(
                 "Asignar Permisos",
-                SystemIcons.Shield.ToBitmap(),
+                Constantes.Imagenes.ImgPermisos,
                 AbrirAsignacionPermisos,
                 true
             );
@@ -101,6 +101,8 @@ namespace Presentacion.Core.Empleado.Rol
 
         protected override string TextoLblCbx3
             => "Filtrar por";
+        protected override string TextoTitular
+          => "Listado de los Roles";
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();

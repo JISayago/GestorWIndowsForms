@@ -1,4 +1,5 @@
-﻿using Presentacion.Core.Presentacion.Core.Helpers;
+﻿using Presentacion.Core.Cliente;
+using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
@@ -108,11 +109,15 @@ namespace Presentacion.Core.CuentaCorriente
 
         public override void EjecutarBtnNuevo()
         {
-            var f = new FCuentaCorrienteABM(TipoOperacion.Nuevo);
+            //var f = new FCuentaCorrienteABM(TipoOperacion.Nuevo);
+            //f.ShowDialog();
+
+            //if (f.RealizoAlgunaOperacion)
+            //    Recargar();
+
+            var f = new FClienteConsulta(true, 0);
             f.ShowDialog();
 
-            if (f.RealizoAlgunaOperacion)
-                Recargar();
         }
 
         public override void EjecutarBtnModificar()
@@ -154,13 +159,15 @@ namespace Presentacion.Core.CuentaCorriente
         protected override string TextoLblCbx1 => "Filtrar por Propiedad";
         protected override string TextoLblCbx2 => "Filtrar por Estado";
         protected override string TextoLblCbx3 => "Filtrar por Fecha";
+        protected override string TextoTitular
+          => "Listado de Cuentas Corrientes";
 
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
 
             ActivarCheck(chkBool1, "Mostrar Eliminados");
-            ActivarCheck(chkBool2, "Mostrar todas las Cuentas Corrientes (histórico)");
+            ActivarCheck(chkBool2, "Mostrar Cuentas Corrientes (Histórico)");
 
             var opcionesBusqueda = new List<OpcionFiltro>
             {

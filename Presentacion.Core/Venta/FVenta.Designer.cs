@@ -31,6 +31,7 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             lblFechaHoy = new Label();
             btnLimpiar = new Button();
             txtCliente = new TextBox();
@@ -71,6 +72,8 @@
             tableLayoutPanel7 = new TableLayoutPanel();
             tableLayoutPanel8 = new TableLayoutPanel();
             tableLayoutPanel10 = new TableLayoutPanel();
+            tableLayoutPanel12 = new TableLayoutPanel();
+            tableLayoutPanel13 = new TableLayoutPanel();
             flowLayoutPanel10 = new FlowLayoutPanel();
             tableLayoutPanel9 = new TableLayoutPanel();
             flowLayoutPanel8 = new FlowLayoutPanel();
@@ -98,6 +101,8 @@
             tableLayoutPanel7.SuspendLayout();
             tableLayoutPanel8.SuspendLayout();
             tableLayoutPanel10.SuspendLayout();
+            tableLayoutPanel12.SuspendLayout();
+            tableLayoutPanel13.SuspendLayout();
             flowLayoutPanel10.SuspendLayout();
             tableLayoutPanel9.SuspendLayout();
             flowLayoutPanel8.SuspendLayout();
@@ -122,7 +127,7 @@
             // btnLimpiar
             // 
             btnLimpiar.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnLimpiar.Location = new Point(3, 3);
+            btnLimpiar.Location = new Point(17, 3);
             btnLimpiar.Name = "btnLimpiar";
             btnLimpiar.Size = new Size(161, 45);
             btnLimpiar.TabIndex = 7;
@@ -179,25 +184,40 @@
             dgvProductos.AllowUserToAddRows = false;
             dgvProductos.AllowUserToDeleteRows = false;
             dgvProductos.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dgvProductos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dgvProductos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Control;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ActiveCaptionText;
             dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dgvProductos.DefaultCellStyle = dataGridViewCellStyle2;
             dgvProductos.EditMode = DataGridViewEditMode.EditProgrammatically;
-            dgvProductos.Location = new Point(3, 64);
+            dgvProductos.Location = new Point(3, 65);
             dgvProductos.MultiSelect = false;
             dgvProductos.Name = "dgvProductos";
-            dataGridViewCellStyle3.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dgvProductos.RowsDefaultCellStyle = dataGridViewCellStyle3;
-            dgvProductos.Size = new Size(1089, 318);
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.Control;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            dgvProductos.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle4.Padding = new Padding(2, 4, 2, 4);
+            dgvProductos.RowsDefaultCellStyle = dataGridViewCellStyle4;
+            dgvProductos.RowTemplate.Height = 40;
+            dgvProductos.Size = new Size(1089, 250);
             dgvProductos.TabIndex = 15;
             dgvProductos.CellClick += dgvProductos_CellClick;
             dgvProductos.CellContentClick += dgvProductos_CellContentClick;
@@ -260,7 +280,7 @@
             btnCambiarVendedor.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCambiarVendedor.Location = new Point(3, 3);
             btnCambiarVendedor.Name = "btnCambiarVendedor";
-            btnCambiarVendedor.Size = new Size(209, 39);
+            btnCambiarVendedor.Size = new Size(209, 37);
             btnCambiarVendedor.TabIndex = 29;
             btnCambiarVendedor.Text = "Cambiar Vendedor";
             btnCambiarVendedor.UseVisualStyleBackColor = true;
@@ -270,7 +290,7 @@
             // 
             btnConfirmarYFPago.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnConfirmarYFPago.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnConfirmarYFPago.Location = new Point(103, 3);
+            btnConfirmarYFPago.Location = new Point(75, 3);
             btnConfirmarYFPago.Name = "btnConfirmarYFPago";
             btnConfirmarYFPago.Size = new Size(160, 44);
             btnConfirmarYFPago.TabIndex = 31;
@@ -282,7 +302,7 @@
             // 
             btnCancelar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnCancelar.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnCancelar.Location = new Point(269, 3);
+            btnCancelar.Location = new Point(241, 3);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(160, 44);
             btnCancelar.TabIndex = 32;
@@ -529,7 +549,7 @@
             // 
             // tableLayoutPanel6
             // 
-            tableLayoutPanel6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel6.ColumnCount = 7;
             tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5F));
@@ -545,7 +565,7 @@
             tableLayoutPanel6.Name = "tableLayoutPanel6";
             tableLayoutPanel6.RowCount = 1;
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel6.Size = new Size(1089, 53);
+            tableLayoutPanel6.Size = new Size(1089, 56);
             tableLayoutPanel6.TabIndex = 43;
             // 
             // flowLayoutPanel15
@@ -556,7 +576,7 @@
             flowLayoutPanel15.FlowDirection = FlowDirection.RightToLeft;
             flowLayoutPanel15.Location = new Point(545, 3);
             flowLayoutPanel15.Name = "flowLayoutPanel15";
-            flowLayoutPanel15.Size = new Size(541, 47);
+            flowLayoutPanel15.Size = new Size(541, 50);
             flowLayoutPanel15.TabIndex = 43;
             // 
             // tableLayoutPanel7
@@ -570,9 +590,9 @@
             tableLayoutPanel7.Location = new Point(3, 73);
             tableLayoutPanel7.Name = "tableLayoutPanel7";
             tableLayoutPanel7.RowCount = 2;
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 15.89571F));
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 84.1042938F));
-            tableLayoutPanel7.Size = new Size(1095, 385);
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 19.4968548F));
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 80.50314F));
+            tableLayoutPanel7.Size = new Size(1095, 318);
             tableLayoutPanel7.TabIndex = 44;
             // 
             // tableLayoutPanel8
@@ -590,10 +610,10 @@
             tableLayoutPanel8.Name = "tableLayoutPanel8";
             tableLayoutPanel8.RowCount = 5;
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 9F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 17.789072F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 15.6289711F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 8.005082F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 41.1689949F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 18.8055916F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 23F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 8F));
             tableLayoutPanel8.Size = new Size(1101, 787);
             tableLayoutPanel8.TabIndex = 45;
             // 
@@ -604,14 +624,42 @@
             tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 26.666666F));
             tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
-            tableLayoutPanel10.Controls.Add(flowLayoutPanel10, 2, 0);
-            tableLayoutPanel10.Controls.Add(btnLimpiar, 0, 0);
-            tableLayoutPanel10.Location = new Point(3, 725);
+            tableLayoutPanel10.Controls.Add(tableLayoutPanel12, 0, 0);
+            tableLayoutPanel10.Controls.Add(tableLayoutPanel13, 2, 0);
+            tableLayoutPanel10.Location = new Point(3, 726);
             tableLayoutPanel10.Name = "tableLayoutPanel10";
             tableLayoutPanel10.RowCount = 1;
             tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel10.Size = new Size(1095, 59);
+            tableLayoutPanel10.Size = new Size(1095, 58);
             tableLayoutPanel10.TabIndex = 46;
+            // 
+            // tableLayoutPanel12
+            // 
+            tableLayoutPanel12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel12.ColumnCount = 2;
+            tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 4.99886942F));
+            tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 95.00113F));
+            tableLayoutPanel12.Controls.Add(btnLimpiar, 1, 0);
+            tableLayoutPanel12.Location = new Point(3, 3);
+            tableLayoutPanel12.Name = "tableLayoutPanel12";
+            tableLayoutPanel12.RowCount = 1;
+            tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel12.Size = new Size(286, 52);
+            tableLayoutPanel12.TabIndex = 46;
+            // 
+            // tableLayoutPanel13
+            // 
+            tableLayoutPanel13.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel13.ColumnCount = 2;
+            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 95F));
+            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5F));
+            tableLayoutPanel13.Controls.Add(flowLayoutPanel10, 0, 0);
+            tableLayoutPanel13.Location = new Point(660, 3);
+            tableLayoutPanel13.Name = "tableLayoutPanel13";
+            tableLayoutPanel13.RowCount = 1;
+            tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel13.Size = new Size(432, 52);
+            tableLayoutPanel13.TabIndex = 46;
             // 
             // flowLayoutPanel10
             // 
@@ -619,14 +667,14 @@
             flowLayoutPanel10.Controls.Add(btnCancelar);
             flowLayoutPanel10.Controls.Add(btnConfirmarYFPago);
             flowLayoutPanel10.FlowDirection = FlowDirection.RightToLeft;
-            flowLayoutPanel10.Location = new Point(660, 3);
+            flowLayoutPanel10.Location = new Point(3, 3);
             flowLayoutPanel10.Name = "flowLayoutPanel10";
-            flowLayoutPanel10.Size = new Size(432, 53);
+            flowLayoutPanel10.Size = new Size(404, 46);
             flowLayoutPanel10.TabIndex = 47;
             // 
             // tableLayoutPanel9
             // 
-            tableLayoutPanel9.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel9.BackColor = SystemColors.Control;
             tableLayoutPanel9.ColumnCount = 3;
             tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 34.0524254F));
@@ -635,11 +683,11 @@
             tableLayoutPanel9.Controls.Add(flowLayoutPanel8, 2, 0);
             tableLayoutPanel9.Controls.Add(flowLayoutPanel7, 1, 0);
             tableLayoutPanel9.Controls.Add(flowLayoutPanel6, 0, 0);
-            tableLayoutPanel9.Location = new Point(3, 464);
+            tableLayoutPanel9.Location = new Point(3, 397);
             tableLayoutPanel9.Name = "tableLayoutPanel9";
             tableLayoutPanel9.RowCount = 1;
             tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel9.Size = new Size(1095, 133);
+            tableLayoutPanel9.Size = new Size(1095, 142);
             tableLayoutPanel9.TabIndex = 46;
             // 
             // flowLayoutPanel8
@@ -650,7 +698,7 @@
             flowLayoutPanel8.FlowDirection = FlowDirection.RightToLeft;
             flowLayoutPanel8.Location = new Point(693, 3);
             flowLayoutPanel8.Name = "flowLayoutPanel8";
-            flowLayoutPanel8.Size = new Size(399, 127);
+            flowLayoutPanel8.Size = new Size(399, 136);
             flowLayoutPanel8.TabIndex = 47;
             // 
             // tableLayoutPanel11
@@ -668,7 +716,7 @@
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel11.Size = new Size(396, 123);
+            tableLayoutPanel11.Size = new Size(396, 133);
             tableLayoutPanel11.TabIndex = 41;
             // 
             // flowLayoutPanel13
@@ -677,7 +725,7 @@
             flowLayoutPanel13.Controls.Add(txtTotal);
             flowLayoutPanel13.Controls.Add(lblTotal);
             flowLayoutPanel13.FlowDirection = FlowDirection.RightToLeft;
-            flowLayoutPanel13.Location = new Point(3, 85);
+            flowLayoutPanel13.Location = new Point(3, 91);
             flowLayoutPanel13.Name = "flowLayoutPanel13";
             flowLayoutPanel13.Size = new Size(390, 35);
             flowLayoutPanel13.TabIndex = 42;
@@ -699,7 +747,7 @@
             flowLayoutPanel12.Controls.Add(txtSubtotalSinDescuento);
             flowLayoutPanel12.Controls.Add(lblSubtotal);
             flowLayoutPanel12.FlowDirection = FlowDirection.RightToLeft;
-            flowLayoutPanel12.Location = new Point(3, 44);
+            flowLayoutPanel12.Location = new Point(3, 47);
             flowLayoutPanel12.Name = "flowLayoutPanel12";
             flowLayoutPanel12.Size = new Size(390, 35);
             flowLayoutPanel12.TabIndex = 1;
@@ -713,7 +761,7 @@
             flowLayoutPanel7.FlowDirection = FlowDirection.RightToLeft;
             flowLayoutPanel7.Location = new Point(375, 3);
             flowLayoutPanel7.Name = "flowLayoutPanel7";
-            flowLayoutPanel7.Size = new Size(312, 127);
+            flowLayoutPanel7.Size = new Size(312, 136);
             flowLayoutPanel7.TabIndex = 47;
             // 
             // flowLayoutPanel6
@@ -725,30 +773,30 @@
             flowLayoutPanel6.Controls.Add(cbxConsumidorFinal);
             flowLayoutPanel6.Location = new Point(3, 3);
             flowLayoutPanel6.Name = "flowLayoutPanel6";
-            flowLayoutPanel6.Size = new Size(366, 127);
+            flowLayoutPanel6.Size = new Size(366, 136);
             flowLayoutPanel6.TabIndex = 47;
             // 
             // txtAreaDetallesVenta
             // 
-            txtAreaDetallesVenta.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtAreaDetallesVenta.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            txtAreaDetallesVenta.BorderStyle = BorderStyle.FixedSingle;
             tableLayoutPanel8.SetColumnSpan(txtAreaDetallesVenta, 4);
             txtAreaDetallesVenta.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtAreaDetallesVenta.Location = new Point(3, 603);
+            txtAreaDetallesVenta.Location = new Point(3, 545);
             txtAreaDetallesVenta.Multiline = true;
             txtAreaDetallesVenta.Name = "txtAreaDetallesVenta";
-            txtAreaDetallesVenta.Size = new Size(1095, 116);
+            txtAreaDetallesVenta.ScrollBars = ScrollBars.Vertical;
+            txtAreaDetallesVenta.Size = new Size(1095, 175);
             txtAreaDetallesVenta.TabIndex = 47;
             // 
             // FVenta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            AutoScroll = true;
+            AutoSize = true;
             ClientSize = new Size(1125, 818);
             Controls.Add(tableLayoutPanel8);
-            MaximizeBox = true;
-            MdiChildrenMinimizedAnchorBottom = false;
-            MinimizeBox = true;
             Name = "FVenta";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FVenta";
@@ -777,6 +825,8 @@
             tableLayoutPanel8.ResumeLayout(false);
             tableLayoutPanel8.PerformLayout();
             tableLayoutPanel10.ResumeLayout(false);
+            tableLayoutPanel12.ResumeLayout(false);
+            tableLayoutPanel13.ResumeLayout(false);
             flowLayoutPanel10.ResumeLayout(false);
             tableLayoutPanel9.ResumeLayout(false);
             flowLayoutPanel8.ResumeLayout(false);
@@ -847,5 +897,7 @@
         private FlowLayoutPanel flowLayoutPanel15;
         private TextBox txtAreaDetallesVenta;
         private TextBox txtSubtotalSinDescuento;
+        private TableLayoutPanel tableLayoutPanel12;
+        private TableLayoutPanel tableLayoutPanel13;
     }
 }

@@ -72,5 +72,9 @@ namespace Presentacion.Core.Venta.CancelacionVenta
             dgvComprobantes.DataSource = ventas;
         }
 
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

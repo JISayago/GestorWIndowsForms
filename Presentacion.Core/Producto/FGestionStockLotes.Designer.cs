@@ -73,25 +73,25 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(45, 157);
+            label2.Location = new Point(32, 157);
             label2.Name = "label2";
-            label2.Size = new Size(75, 15);
+            label2.Size = new Size(96, 15);
             label2.TabIndex = 2;
-            label2.Text = "Stock Inicial:";
+            label2.Text = "Stock Comprado";
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(45, 197);
+            label3.Location = new Point(32, 197);
             label3.Name = "label3";
-            label3.Size = new Size(77, 15);
+            label3.Size = new Size(89, 15);
             label3.TabIndex = 3;
-            label3.Text = "Stock Actual:";
+            label3.Text = "Stock Recibido:";
             // 
             // lblNumeroLote
             // 
             lblNumeroLote.AutoSize = true;
-            lblNumeroLote.Location = new Point(41, 110);
+            lblNumeroLote.Location = new Point(32, 110);
             lblNumeroLote.Name = "lblNumeroLote";
             lblNumeroLote.Size = new Size(77, 15);
             lblNumeroLote.TabIndex = 5;
@@ -160,6 +160,7 @@
             // nudStockInicial
             // 
             nudStockInicial.Location = new Point(134, 155);
+            nudStockInicial.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
             nudStockInicial.Name = "nudStockInicial";
             nudStockInicial.Size = new Size(120, 23);
             nudStockInicial.TabIndex = 17;
@@ -168,6 +169,7 @@
             // nudStockActual
             // 
             nudStockActual.Location = new Point(134, 195);
+            nudStockActual.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
             nudStockActual.Name = "nudStockActual";
             nudStockActual.Size = new Size(120, 23);
             nudStockActual.TabIndex = 18;

@@ -72,6 +72,8 @@ namespace Presentacion.Core.Producto.Rubro
 
         protected override string TextoLblCbx3
             => "Filtrar por";
+        protected override string TextoTitular
+          => "Listado de los Rubros";
         #endregion
 
         #region 🔷 GRILLA

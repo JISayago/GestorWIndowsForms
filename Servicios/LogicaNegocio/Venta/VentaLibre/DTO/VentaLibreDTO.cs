@@ -1,4 +1,5 @@
 ﻿using Servicios.Helpers.OpcionesPagos;
+using Servicios.Helpers.VentaEnum;
 using Servicios.LogicaNegocio.Venta.DTO;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,23 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre.DTO
         public decimal Total { get; set; }
 
         public int Estado { get; set; }
+
+        public string EstadoDescripcion
+        {
+            get
+            {
+                return Estado switch
+                {
+                    (int)EstadoVenta.Confirmada => "Confirmada",
+
+                    (int)EstadoVenta.Cancelada => "Cancelada",
+
+                    (int)EstadoVenta.CancelacionVenta => "Cancelación",
+
+                    _ => "Desconocido"
+                };
+            }
+        }
 
         public string Detalle { get; set; }
 

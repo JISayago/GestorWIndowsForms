@@ -1,4 +1,5 @@
-﻿using Presentacion.Core.Presentacion.Core.Helpers;
+﻿using Presentacion.Core.CuentaCorriente;
+using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
@@ -17,6 +18,7 @@ namespace Presentacion.Core.Cliente
         private readonly IClienteServicio _clienteServicio;
 
         private bool vieneDeCargaCliente = false;
+        private bool vieneDeCtacte = false;
 
         public long? clienteSeleccionado = null;
 
@@ -35,6 +37,13 @@ namespace Presentacion.Core.Cliente
         public FClienteConsulta(bool _vieneDeCargaCliente) : this(new ClienteServicio())
         {
             vieneDeCargaCliente = _vieneDeCargaCliente;
+
+            InitializeComponent();
+        }
+
+        public FClienteConsulta(bool _vieneDeCtacte, int x) : this(new ClienteServicio())
+        {
+            vieneDeCtacte = _vieneDeCtacte;
 
             InitializeComponent();
         }
@@ -60,6 +69,9 @@ namespace Presentacion.Core.Cliente
 
         protected override string TextoLblCbx3
             => "Filtrar por Fecha";
+
+        protected override string TextoTitular
+          => "Listado de Clientes";
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();
@@ -363,6 +375,17 @@ namespace Presentacion.Core.Cliente
             }
 
             // =========================
+            // CUENTACORRIENTE ID
+            // =========================
+            if (grilla.Columns.Contains("TieneCuentaCorriente"))
+            {
+                var col = grilla.Columns["TieneCuentaCorriente"];
+                col.Visible = true;
+                col.HeaderText = "CtaCte";
+                col.Width = 110;
+            }
+
+            // =========================
             // OCULTAR CAMPOS CRUDOS
             // =========================
             if (grilla.Columns.Contains("Estado"))
@@ -381,7 +404,9 @@ namespace Presentacion.Core.Cliente
 
             f.ShowDialog();
 
+
             if (f.RealizoAlgunaOperacion)
+                f.Close();
                 RefrescarGrilla();
         }
 
@@ -412,6 +437,7 @@ namespace Presentacion.Core.Cliente
             f.ShowDialog();
 
             if (f.RealizoAlgunaOperacion)
+                f.Close();
                 RefrescarGrilla();
         }
 
@@ -425,11 +451,18 @@ namespace Presentacion.Core.Cliente
             {
                 AgregarAccion(
                     "Seleccionar Cliente",
-                    Constantes.Imagenes.ImgPerfilUsuario,
+                    Constantes.Imagenes.ImgSumar,
                     SeleccionarCliente,
                     true
                 );
             }
+
+            AgregarAccion(
+            "Seleccionar Cliente para CtaCte",
+            Constantes.Imagenes.ImgNuevo,
+            SeleccionarClienteParaCtaCte,
+            true
+            );
         }
 
         private void SeleccionarCliente(long? id)
@@ -444,6 +477,39 @@ namespace Presentacion.Core.Cliente
             DialogResult = DialogResult.OK;
 
             Close();
+        }
+
+        private void SeleccionarClienteParaCtaCte(long? id)
+        {
+            ControlCargaExistencaDatos();
+
+            if (!puedeEjecutarComando)
+                return;
+            
+            clienteSeleccionado = id;
+
+            var cliente = _clienteServicio.ObtenerClientePorId(id.Value);
+
+            if(cliente.CuentaCorrienteId != null)
+            {
+                MessageBox.Show(
+                    "El cliente seleccionado ya tiene una cuenta corriente asociada.", 
+                    "Advertencia",                                                          
+                    MessageBoxButtons.OK,                                    
+                    MessageBoxIcon.Warning
+                );
+
+                return;
+            }
+
+            var fCtacte = new FCuentaCorrienteABM(TipoOperacion.Nuevo, clienteSeleccionado);
+            fCtacte.Show();
+
+            if (fCtacte.RealizoAlgunaOperacion)
+            {
+                DialogResult = DialogResult.OK;
+                Close();
+            }
         }
 
         #endregion

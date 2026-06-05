@@ -23,6 +23,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
 {
     public class LoteServicio : ILoteServicio
     {
+    private readonly ProductoServicio _productoServicio = new ProductoServicio();
 
         // Implementar métodos para gestionar lotes de productos, como:
         // - Crear un nuevo lote para un producto específico. DONE
@@ -33,7 +34,6 @@ namespace Servicios.LogicaNegocio.Producto.Lote
         // - Integrar la gestión de lotes con el sistema de ventas para asegurar que se descuenten los lotes correctos al realizar una venta.
         // - Implementar validaciones para asegurar que no se puedan crear lotes con fechas de vencimiento pasadas o con stock negativo.
         // - Integrar la gestión de lotes con el sistema de inventario para asegurar que el stock se actualice correctamente al recibir nuevos lotes o al realizar ventas.
-        private readonly ProductoServicio _productoServicio = new ProductoServicio();
 
         public EstadoOperacion CrearLote(LoteDTO loteACrear)
         {
@@ -65,6 +65,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             context.Lotes.Add(nuevoLote);
 
             ActualizarStockEnProductoConLotes(loteACrear.IdProducto, context, nuevoLote.StockActual);
+            _productoServicio.ModificarEstadoStockProductos(context);
 
             context.SaveChanges();
 
@@ -85,9 +86,21 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 .Include(x => x.Producto)
                 .AsQueryable();
 
-            // 🔴 HISTORICO / ELIMINADOS
-            if (!filtros.Bool2)
+            // 🔴 HISTORICOS
+            if (filtros.Bool2)
             {
+                var fechaLimite = DateTime.Now.AddMonths(-6);
+
+                query = query.Where(x =>
+                    !x.EstaEliminado ||
+                    (
+                        x.EstaEliminado &&
+                        x.FechaVencimiento >= fechaLimite
+                    ));
+            }
+            else
+            {
+                // comportamiento normal
                 query = query.Where(x => !x.EstaEliminado);
             }
 
@@ -325,6 +338,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 context.SaveChanges();
 
                 ActualizarStockEnProductoConLotes(loteDto.IdProducto, context);
+                _productoServicio.ModificarEstadoStockProductos(context);
 
                 context.SaveChanges();
 
@@ -373,6 +387,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 context.SaveChanges();
 
                 ActualizarStockEnProductoConLotes(loteEliminar.IdProducto, context);
+                _productoServicio.ModificarEstadoStockProductos(context);
 
                 context.SaveChanges();
 
@@ -589,7 +604,7 @@ namespace Servicios.LogicaNegocio.Producto.Lote
                 producto.Stock += stockLoteParaAgregar.Value;
             }
 
-            _productoServicio.ModificarEstadoStockProductos();
+            _productoServicio.ModificarEstadoStockProductos(context);
         }
 
         public string GenerarNumeroLote()

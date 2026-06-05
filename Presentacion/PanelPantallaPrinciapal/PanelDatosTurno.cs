@@ -326,9 +326,11 @@ namespace Presentacion.Notificaciones
             string mInicial = _informacionCensurada ? "****" : datos.MontoInicial.ToString("N2");
             string mIngresos = _informacionCensurada ? "****" : datos.Ingresos.ToString("N2");
             string mTotal = _informacionCensurada ? "****" : datos.TotalCaja.ToString("N2");
+            //string mEgresos = _informacionCensurada ? "****" : datos.Egresos.ToString("N2");
 
             return $"Monto Inicial:    $ {mInicial}\n" +
                    $"Total Ingresos:   $ {mIngresos}\n" +
+                   //$"Total Egresos:    $ {mEgresos}\n" +
                    $"TOTAL CAJA:       $ {mTotal}";
         }
 

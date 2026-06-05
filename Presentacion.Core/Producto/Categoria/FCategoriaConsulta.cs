@@ -81,6 +81,9 @@ namespace Presentacion.Core.Categoria
 
         protected override string TextoLblCbx3
             => "Filtrar por";
+
+        protected override string TextoTitular
+          => "Listado de las Categorias";
         #endregion
 
         #region 🔥 ACTUALIZAR DATOS

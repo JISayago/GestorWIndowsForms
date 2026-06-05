@@ -132,8 +132,8 @@ namespace Presentacion.Core.Producto
 
             cbx3.SelectedValue = "";
 
-            ActivarCheck(chkBool1, "Ver eliminados");
-            ActivarCheck(chkBool2, "Mostrar Todos los Productos");
+            ActivarCheck(chkBool1, "Ver eliminados/discontinuados");
+            ActivarCheck(chkBool2, "Mostrar sólo disponibles");
         }
 
         #endregion
@@ -148,13 +148,19 @@ namespace Presentacion.Core.Producto
 
         protected override string TextoLblCbx3
             => "Filtrar por Marca";
+
+        protected override string TextoTitular 
+            => "Listado de los productos";
+
+
+
         #region ACCIONES DINAMICAS
 
         protected override void ConfigurarAccionesPersonalizadas()
         {
             AgregarAccion(
                 "Stock",
-                Constantes.Imagenes.ImgActualizar,
+                Constantes.Imagenes.ImgStock,
                 AbrirGestionStock,
                 true
             );
@@ -163,11 +169,13 @@ namespace Presentacion.Core.Producto
             {
                 AgregarAccion(
                     "Seleccionar Producto",
-                    Constantes.Imagenes.ImgPerfilUsuario,
+                    Constantes.Imagenes.ImgSumar,
                     SeleccionProducto,
                     true
                 );
             }
+
+
         }
 
         private void AbrirGestionStock(long? id)
@@ -199,6 +207,12 @@ namespace Presentacion.Core.Producto
                 );
 
                 fLotes.ShowDialog();
+
+                if (fLotes.reabrirForm)
+                {
+                    AbrirGestionStock(id);
+                    RefrescarGrilla();
+                }
 
                 RefrescarGrilla();
             }

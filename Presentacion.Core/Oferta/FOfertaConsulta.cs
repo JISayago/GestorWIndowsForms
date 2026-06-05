@@ -56,7 +56,7 @@ public partial class FOfertaConsulta : FBaseConsulta
         {
             AgregarAccion(
                 "Activar/Desactivar Oferta",
-                Presentacion.Constantes.Imagenes.ImgPerfilUsuario,
+                Presentacion.Constantes.Imagenes.ImgPromocion,
                 ActivarDesactivarOferta,
                 true
             );
@@ -66,7 +66,7 @@ public partial class FOfertaConsulta : FBaseConsulta
         {
             AgregarAccion(
                 "Seleccionar para venta",
-                Presentacion.Constantes.Imagenes.ImgPerfilUsuario,
+                Presentacion.Constantes.Imagenes.ImgPromocion,
                 SeleccionarParaVenta,
                 true
             );

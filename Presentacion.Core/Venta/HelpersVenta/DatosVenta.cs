@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Servicios.LogicaNegocio.Cliente.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace Presentacion.Core.Venta.HelpersVenta
     {
         public decimal Total { get; set; }
         public bool IncluirCtaCte { get; set; }
-
+        public ClienteDTO Cliente { get; set; }
         public bool DescuentoEfectivo { get; set; }
     }
 }

@@ -53,7 +53,6 @@
             historialVentasLibresToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanel1 = new TableLayoutPanel();
             btnGasto = new Button();
-            btnVolver = new Button();
             btnComprobantes = new Button();
             btnMovimientos = new Button();
             tlpBaseFiltrado = new TableLayoutPanel();
@@ -62,8 +61,9 @@
             lblAñoGraficos = new Label();
             cbMesGrafico = new ComboBox();
             cbAñoGraficos = new ComboBox();
-            tlpFiltradoBotones = new TableLayoutPanel();
-            btnFiltrarGraficos = new Button();
+            btnVolver = new Button();
+            sqlCommand1 = new Microsoft.Data.SqlClient.SqlCommand();
+            dgvGrilla = new DataGridView();
             pnlInfoInicial = new Panel();
             tlpBaseNivel1 = new TableLayoutPanel();
             tlpArribaNivel2 = new TableLayoutPanel();
@@ -82,14 +82,12 @@
             tlpBajoNivel3Pagina2 = new TableLayoutPanel();
             formsPlot6 = new ScottPlot.WinForms.FormsPlot();
             formsPlot5 = new ScottPlot.WinForms.FormsPlot();
-            dgvGrilla = new DataGridView();
-            sqlCommand1 = new Microsoft.Data.SqlClient.SqlCommand();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             tlpBaseFiltrado.SuspendLayout();
             tlpFiltradoMesYAño.SuspendLayout();
-            tlpFiltradoBotones.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
             pnlInfoInicial.SuspendLayout();
             tlpBaseNivel1.SuspendLayout();
             tlpArribaNivel2.SuspendLayout();
@@ -102,7 +100,6 @@
             tlpBajoNivel3.SuspendLayout();
             tabPage4.SuspendLayout();
             tlpBajoNivel3Pagina2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
             SuspendLayout();
             // 
             // menuStrip1
@@ -110,7 +107,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { pRODUCTOToolStripMenuItem, eMPLEADOSToolStripMenuItem, cLIENTESToolStripMenuItem, oFERTASToolStripMenuItem, cONFIGURACIONToolStripMenuItem, vENTAToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1610, 25);
+            menuStrip1.Size = new Size(1610, 24);
             menuStrip1.TabIndex = 2;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -118,41 +115,41 @@
             // 
             pRODUCTOToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sTOCKToolStripMenuItem, mARCASToolStripMenuItem, cATEGORIASToolStripMenuItem, rUBROSToolStripMenuItem, lOTESToolStripMenuItem });
             pRODUCTOToolStripMenuItem.Name = "pRODUCTOToolStripMenuItem";
-            pRODUCTOToolStripMenuItem.Size = new Size(88, 21);
+            pRODUCTOToolStripMenuItem.Size = new Size(81, 20);
             pRODUCTOToolStripMenuItem.Text = "PRODUCTO";
             // 
             // sTOCKToolStripMenuItem
             // 
             sTOCKToolStripMenuItem.Name = "sTOCKToolStripMenuItem";
-            sTOCKToolStripMenuItem.Size = new Size(153, 22);
+            sTOCKToolStripMenuItem.Size = new Size(143, 22);
             sTOCKToolStripMenuItem.Text = "STOCK";
             sTOCKToolStripMenuItem.Click += sTOCKToolStripMenuItem_Click;
             // 
             // mARCASToolStripMenuItem
             // 
             mARCASToolStripMenuItem.Name = "mARCASToolStripMenuItem";
-            mARCASToolStripMenuItem.Size = new Size(153, 22);
+            mARCASToolStripMenuItem.Size = new Size(143, 22);
             mARCASToolStripMenuItem.Text = "MARCAS";
             mARCASToolStripMenuItem.Click += mARCASToolStripMenuItem_Click;
             // 
             // cATEGORIASToolStripMenuItem
             // 
             cATEGORIASToolStripMenuItem.Name = "cATEGORIASToolStripMenuItem";
-            cATEGORIASToolStripMenuItem.Size = new Size(153, 22);
+            cATEGORIASToolStripMenuItem.Size = new Size(143, 22);
             cATEGORIASToolStripMenuItem.Text = "CATEGORIAS";
             cATEGORIASToolStripMenuItem.Click += cATEGORIASToolStripMenuItem_Click;
             // 
             // rUBROSToolStripMenuItem
             // 
             rUBROSToolStripMenuItem.Name = "rUBROSToolStripMenuItem";
-            rUBROSToolStripMenuItem.Size = new Size(153, 22);
+            rUBROSToolStripMenuItem.Size = new Size(143, 22);
             rUBROSToolStripMenuItem.Text = "RUBROS";
             rUBROSToolStripMenuItem.Click += rUBROSToolStripMenuItem_Click;
             // 
             // lOTESToolStripMenuItem
             // 
             lOTESToolStripMenuItem.Name = "lOTESToolStripMenuItem";
-            lOTESToolStripMenuItem.Size = new Size(153, 22);
+            lOTESToolStripMenuItem.Size = new Size(143, 22);
             lOTESToolStripMenuItem.Text = "LOTES";
             lOTESToolStripMenuItem.Click += lOTESToolStripMenuItem_Click;
             // 
@@ -160,20 +157,20 @@
             // 
             eMPLEADOSToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOEMPLEADOSToolStripMenuItem, rOLESToolStripMenuItem });
             eMPLEADOSToolStripMenuItem.Name = "eMPLEADOSToolStripMenuItem";
-            eMPLEADOSToolStripMenuItem.Size = new Size(95, 21);
+            eMPLEADOSToolStripMenuItem.Size = new Size(86, 20);
             eMPLEADOSToolStripMenuItem.Text = "EMPLEADOS";
             // 
             // lISTADOEMPLEADOSToolStripMenuItem
             // 
             lISTADOEMPLEADOSToolStripMenuItem.Name = "lISTADOEMPLEADOSToolStripMenuItem";
-            lISTADOEMPLEADOSToolStripMenuItem.Size = new Size(206, 22);
+            lISTADOEMPLEADOSToolStripMenuItem.Size = new Size(190, 22);
             lISTADOEMPLEADOSToolStripMenuItem.Text = "LISTADO EMPLEADOS";
             lISTADOEMPLEADOSToolStripMenuItem.Click += lISTADOEMPLEADOSToolStripMenuItem_Click;
             // 
             // rOLESToolStripMenuItem
             // 
             rOLESToolStripMenuItem.Name = "rOLESToolStripMenuItem";
-            rOLESToolStripMenuItem.Size = new Size(206, 22);
+            rOLESToolStripMenuItem.Size = new Size(190, 22);
             rOLESToolStripMenuItem.Text = "ROLES";
             rOLESToolStripMenuItem.Click += rOLESToolStripMenuItem_Click;
             // 
@@ -181,20 +178,20 @@
             // 
             cLIENTESToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOCLIENTESToolStripMenuItem, cUENTASCORRIENTESToolStripMenuItem });
             cLIENTESToolStripMenuItem.Name = "cLIENTESToolStripMenuItem";
-            cLIENTESToolStripMenuItem.Size = new Size(76, 21);
+            cLIENTESToolStripMenuItem.Size = new Size(70, 20);
             cLIENTESToolStripMenuItem.Text = "CLIENTES";
             // 
             // lISTADOCLIENTESToolStripMenuItem
             // 
             lISTADOCLIENTESToolStripMenuItem.Name = "lISTADOCLIENTESToolStripMenuItem";
-            lISTADOCLIENTESToolStripMenuItem.Size = new Size(212, 22);
+            lISTADOCLIENTESToolStripMenuItem.Size = new Size(196, 22);
             lISTADOCLIENTESToolStripMenuItem.Text = "LISTADO CLIENTES";
             lISTADOCLIENTESToolStripMenuItem.Click += lISTADOCLIENTESToolStripMenuItem_Click;
             // 
             // cUENTASCORRIENTESToolStripMenuItem
             // 
             cUENTASCORRIENTESToolStripMenuItem.Name = "cUENTASCORRIENTESToolStripMenuItem";
-            cUENTASCORRIENTESToolStripMenuItem.Size = new Size(212, 22);
+            cUENTASCORRIENTESToolStripMenuItem.Size = new Size(196, 22);
             cUENTASCORRIENTESToolStripMenuItem.Text = "CUENTAS CORRIENTES";
             cUENTASCORRIENTESToolStripMenuItem.Click += cUENTASCORRIENTESToolStripMenuItem_Click;
             // 
@@ -202,27 +199,27 @@
             // 
             oFERTASToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOOFERTASToolStripMenuItem, aCTIVARDESACTIVARToolStripMenuItem, nUEVAOFERTAToolStripMenuItem });
             oFERTASToolStripMenuItem.Name = "oFERTASToolStripMenuItem";
-            oFERTASToolStripMenuItem.Size = new Size(74, 21);
+            oFERTASToolStripMenuItem.Size = new Size(66, 20);
             oFERTASToolStripMenuItem.Text = "OFERTAS";
             // 
             // lISTADOOFERTASToolStripMenuItem
             // 
             lISTADOOFERTASToolStripMenuItem.Name = "lISTADOOFERTASToolStripMenuItem";
-            lISTADOOFERTASToolStripMenuItem.Size = new Size(216, 22);
+            lISTADOOFERTASToolStripMenuItem.Size = new Size(199, 22);
             lISTADOOFERTASToolStripMenuItem.Text = "LISTADO OFERTAS";
             lISTADOOFERTASToolStripMenuItem.Click += lISTADOOFERTASToolStripMenuItem_Click;
             // 
             // aCTIVARDESACTIVARToolStripMenuItem
             // 
             aCTIVARDESACTIVARToolStripMenuItem.Name = "aCTIVARDESACTIVARToolStripMenuItem";
-            aCTIVARDESACTIVARToolStripMenuItem.Size = new Size(216, 22);
+            aCTIVARDESACTIVARToolStripMenuItem.Size = new Size(199, 22);
             aCTIVARDESACTIVARToolStripMenuItem.Text = "ACTIVAR / DESACTIVAR";
             aCTIVARDESACTIVARToolStripMenuItem.Click += aCTIVARDESACTIVARToolStripMenuItem_Click;
             // 
             // nUEVAOFERTAToolStripMenuItem
             // 
             nUEVAOFERTAToolStripMenuItem.Name = "nUEVAOFERTAToolStripMenuItem";
-            nUEVAOFERTAToolStripMenuItem.Size = new Size(216, 22);
+            nUEVAOFERTAToolStripMenuItem.Size = new Size(199, 22);
             nUEVAOFERTAToolStripMenuItem.Text = "NUEVA OFERTA";
             nUEVAOFERTAToolStripMenuItem.Click += nUEVAOFERTAToolStripMenuItem_Click;
             // 
@@ -230,13 +227,13 @@
             // 
             cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tIPOPAGOToolStripMenuItem });
             cONFIGURACIONToolStripMenuItem.Name = "cONFIGURACIONToolStripMenuItem";
-            cONFIGURACIONToolStripMenuItem.Size = new Size(126, 21);
+            cONFIGURACIONToolStripMenuItem.Size = new Size(114, 20);
             cONFIGURACIONToolStripMenuItem.Text = "CONFIGURACION";
             // 
             // tIPOPAGOToolStripMenuItem
             // 
             tIPOPAGOToolStripMenuItem.Name = "tIPOPAGOToolStripMenuItem";
-            tIPOPAGOToolStripMenuItem.Size = new Size(192, 22);
+            tIPOPAGOToolStripMenuItem.Size = new Size(144, 22);
             tIPOPAGOToolStripMenuItem.Text = "TIPO PAGO??";
             tIPOPAGOToolStripMenuItem.Click += tIPOPAGOToolStripMenuItem_Click;
             // 
@@ -277,12 +274,12 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 18.2815361F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 18.2815361F));
             tableLayoutPanel1.Controls.Add(btnGasto, 1, 0);
-            tableLayoutPanel1.Controls.Add(btnVolver, 0, 0);
             tableLayoutPanel1.Controls.Add(btnComprobantes, 4, 0);
             tableLayoutPanel1.Controls.Add(btnMovimientos, 3, 0);
             tableLayoutPanel1.Controls.Add(tlpBaseFiltrado, 2, 0);
+            tableLayoutPanel1.Controls.Add(btnVolver, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Top;
-            tableLayoutPanel1.Location = new Point(0, 25);
+            tableLayoutPanel1.Location = new Point(0, 24);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -302,20 +299,6 @@
             btnGasto.Text = "GASTO";
             btnGasto.UseVisualStyleBackColor = true;
             btnGasto.Click += btnGasto_Click;
-            // 
-            // btnVolver
-            // 
-            btnVolver.Anchor = AnchorStyles.Right;
-            btnVolver.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
-            btnVolver.Location = new Point(55, 15);
-            btnVolver.MaximumSize = new Size(236, 63);
-            btnVolver.MinimumSize = new Size(236, 63);
-            btnVolver.Name = "btnVolver";
-            btnVolver.Size = new Size(236, 63);
-            btnVolver.TabIndex = 13;
-            btnVolver.Text = "VOLVER AL INICIO";
-            btnVolver.UseVisualStyleBackColor = true;
-            btnVolver.Click += btnVolver_Click;
             // 
             // btnComprobantes
             // 
@@ -350,13 +333,11 @@
             tlpBaseFiltrado.ColumnCount = 1;
             tlpBaseFiltrado.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tlpBaseFiltrado.Controls.Add(tlpFiltradoMesYAño, 0, 0);
-            tlpBaseFiltrado.Controls.Add(tlpFiltradoBotones, 0, 1);
             tlpBaseFiltrado.Dock = DockStyle.Fill;
             tlpBaseFiltrado.Location = new Point(591, 3);
             tlpBaseFiltrado.Name = "tlpBaseFiltrado";
-            tlpBaseFiltrado.RowCount = 2;
+            tlpBaseFiltrado.RowCount = 1;
             tlpBaseFiltrado.RowStyles.Add(new RowStyle(SizeType.Percent, 61.363636F));
-            tlpBaseFiltrado.RowStyles.Add(new RowStyle(SizeType.Percent, 38.636364F));
             tlpBaseFiltrado.Size = new Size(426, 88);
             tlpBaseFiltrado.TabIndex = 17;
             // 
@@ -375,98 +356,104 @@
             tlpFiltradoMesYAño.RowCount = 2;
             tlpFiltradoMesYAño.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
             tlpFiltradoMesYAño.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
-            tlpFiltradoMesYAño.Size = new Size(420, 48);
+            tlpFiltradoMesYAño.Size = new Size(420, 82);
             tlpFiltradoMesYAño.TabIndex = 2;
             // 
             // lblMesGraficos
             // 
             lblMesGraficos.AutoSize = true;
             lblMesGraficos.Dock = DockStyle.Bottom;
-            lblMesGraficos.Location = new Point(3, 4);
+            lblMesGraficos.Font = new Font("Segoe UI Semibold", 12.5F, FontStyle.Bold);
+            lblMesGraficos.Location = new Point(3, 9);
             lblMesGraficos.Name = "lblMesGraficos";
-            lblMesGraficos.Size = new Size(204, 15);
+            lblMesGraficos.Size = new Size(204, 23);
             lblMesGraficos.TabIndex = 0;
-            lblMesGraficos.Text = "Mes";
+            lblMesGraficos.Text = "MES";
             lblMesGraficos.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblAñoGraficos
             // 
             lblAñoGraficos.AutoSize = true;
             lblAñoGraficos.Dock = DockStyle.Bottom;
-            lblAñoGraficos.Location = new Point(213, 4);
+            lblAñoGraficos.Font = new Font("Segoe UI Semibold", 12.5F, FontStyle.Bold);
+            lblAñoGraficos.Location = new Point(213, 9);
             lblAñoGraficos.Name = "lblAñoGraficos";
-            lblAñoGraficos.Size = new Size(204, 15);
+            lblAñoGraficos.Size = new Size(204, 23);
             lblAñoGraficos.TabIndex = 1;
-            lblAñoGraficos.Text = "Año";
+            lblAñoGraficos.Text = "AÑO";
             lblAñoGraficos.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // cbMesGrafico
             // 
-            cbMesGrafico.Dock = DockStyle.Bottom;
+            cbMesGrafico.Dock = DockStyle.Top;
+            cbMesGrafico.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             cbMesGrafico.FormattingEnabled = true;
-            cbMesGrafico.Location = new Point(30, 22);
+            cbMesGrafico.Location = new Point(30, 35);
             cbMesGrafico.Margin = new Padding(30, 3, 30, 3);
             cbMesGrafico.Name = "cbMesGrafico";
-            cbMesGrafico.Size = new Size(150, 23);
+            cbMesGrafico.Size = new Size(150, 28);
             cbMesGrafico.TabIndex = 4;
+            cbMesGrafico.SelectedIndexChanged += cbMesGrafico_SelectedIndexChanged;
             // 
             // cbAñoGraficos
             // 
-            cbAñoGraficos.Dock = DockStyle.Bottom;
+            cbAñoGraficos.Dock = DockStyle.Top;
+            cbAñoGraficos.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             cbAñoGraficos.FormattingEnabled = true;
-            cbAñoGraficos.Location = new Point(240, 22);
+            cbAñoGraficos.Location = new Point(240, 35);
             cbAñoGraficos.Margin = new Padding(30, 3, 30, 3);
             cbAñoGraficos.Name = "cbAñoGraficos";
-            cbAñoGraficos.Size = new Size(150, 23);
+            cbAñoGraficos.Size = new Size(150, 28);
             cbAñoGraficos.TabIndex = 5;
+            cbAñoGraficos.SelectedIndexChanged += cbAñoGraficos_SelectedIndexChanged;
             // 
-            // tlpFiltradoBotones
+            // btnVolver
             // 
-            tlpFiltradoBotones.ColumnCount = 3;
-            tlpFiltradoBotones.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tlpFiltradoBotones.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tlpFiltradoBotones.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tlpFiltradoBotones.Controls.Add(btnFiltrarGraficos, 1, 0);
-            tlpFiltradoBotones.Dock = DockStyle.Fill;
-            tlpFiltradoBotones.Location = new Point(3, 57);
-            tlpFiltradoBotones.Name = "tlpFiltradoBotones";
-            tlpFiltradoBotones.RowCount = 1;
-            tlpFiltradoBotones.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpFiltradoBotones.Size = new Size(420, 28);
-            tlpFiltradoBotones.TabIndex = 3;
+            btnVolver.Anchor = AnchorStyles.Right;
+            btnVolver.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
+            btnVolver.Location = new Point(55, 15);
+            btnVolver.MaximumSize = new Size(236, 63);
+            btnVolver.MinimumSize = new Size(236, 63);
+            btnVolver.Name = "btnVolver";
+            btnVolver.Size = new Size(236, 63);
+            btnVolver.TabIndex = 13;
+            btnVolver.Text = "VOLVER AL INICIO";
+            btnVolver.UseVisualStyleBackColor = true;
+            btnVolver.Click += btnVolver_Click;
             // 
-            // btnFiltrarGraficos
+            // sqlCommand1
             // 
-            btnFiltrarGraficos.Dock = DockStyle.Fill;
-            btnFiltrarGraficos.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
-            btnFiltrarGraficos.Location = new Point(169, 3);
-            btnFiltrarGraficos.Margin = new Padding(30, 3, 30, 3);
-            btnFiltrarGraficos.Name = "btnFiltrarGraficos";
-            btnFiltrarGraficos.Size = new Size(79, 22);
-            btnFiltrarGraficos.TabIndex = 0;
-            btnFiltrarGraficos.Text = "Filtrar";
-            btnFiltrarGraficos.UseVisualStyleBackColor = true;
-            btnFiltrarGraficos.Click += btnFiltrarGraficos_Click;
+            sqlCommand1.CommandTimeout = 30;
+            sqlCommand1.EnableOptimizedParameterBinding = false;
+            // 
+            // dgvGrilla
+            // 
+            dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvGrilla.Location = new Point(2024, -3);
+            dgvGrilla.Name = "dgvGrilla";
+            dgvGrilla.Size = new Size(380, 1227);
+            dgvGrilla.TabIndex = 17;
             // 
             // pnlInfoInicial
             // 
-            pnlInfoInicial.BackColor = SystemColors.ActiveCaption;
+            pnlInfoInicial.BackColor = SystemColors.ButtonFace;
             pnlInfoInicial.Controls.Add(tlpBaseNivel1);
             pnlInfoInicial.Controls.Add(dgvGrilla);
             pnlInfoInicial.Dock = DockStyle.Fill;
-            pnlInfoInicial.Location = new Point(0, 119);
+            pnlInfoInicial.Location = new Point(0, 118);
             pnlInfoInicial.Name = "pnlInfoInicial";
-            pnlInfoInicial.Size = new Size(1610, 871);
+            pnlInfoInicial.Size = new Size(1610, 872);
             pnlInfoInicial.TabIndex = 24;
             // 
             // tlpBaseNivel1
             // 
+            tlpBaseNivel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tlpBaseNivel1.BackColor = SystemColors.ButtonFace;
             tlpBaseNivel1.ColumnCount = 1;
             tlpBaseNivel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tlpBaseNivel1.Controls.Add(tlpArribaNivel2, 0, 0);
             tlpBaseNivel1.Controls.Add(tlpBajoNivel2, 0, 1);
-            tlpBaseNivel1.Dock = DockStyle.Top;
             tlpBaseNivel1.Location = new Point(0, 0);
             tlpBaseNivel1.Name = "tlpBaseNivel1";
             tlpBaseNivel1.RowCount = 2;
@@ -477,11 +464,11 @@
             // 
             // tlpArribaNivel2
             // 
+            tlpArribaNivel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tlpArribaNivel2.BackColor = SystemColors.ButtonFace;
             tlpArribaNivel2.ColumnCount = 1;
             tlpArribaNivel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tlpArribaNivel2.Controls.Add(tabControlGraficoArriba, 0, 0);
-            tlpArribaNivel2.Dock = DockStyle.Fill;
             tlpArribaNivel2.ForeColor = SystemColors.ButtonShadow;
             tlpArribaNivel2.Location = new Point(3, 3);
             tlpArribaNivel2.Name = "tlpArribaNivel2";
@@ -493,9 +480,9 @@
             // 
             // tabControlGraficoArriba
             // 
+            tabControlGraficoArriba.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControlGraficoArriba.Controls.Add(tabPage1);
             tabControlGraficoArriba.Controls.Add(tabPage2);
-            tabControlGraficoArriba.Dock = DockStyle.Fill;
             tabControlGraficoArriba.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             tabControlGraficoArriba.Location = new Point(3, 3);
             tabControlGraficoArriba.Name = "tabControlGraficoArriba";
@@ -560,9 +547,9 @@
             // 
             // tabControl1
             // 
+            tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControl1.Controls.Add(tabPage3);
             tabControl1.Controls.Add(tabPage4);
-            tabControl1.Dock = DockStyle.Fill;
             tabControl1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             tabControl1.Location = new Point(3, 3);
             tabControl1.Name = "tabControl1";
@@ -600,8 +587,8 @@
             // 
             // formsPlot4
             // 
+            formsPlot4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             formsPlot4.DisplayScale = 1F;
-            formsPlot4.Dock = DockStyle.Fill;
             formsPlot4.Location = new Point(795, 3);
             formsPlot4.Name = "formsPlot4";
             formsPlot4.Size = new Size(786, 446);
@@ -609,9 +596,9 @@
             // 
             // formsPlot3
             // 
+            formsPlot3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             formsPlot3.BackColor = SystemColors.ButtonFace;
             formsPlot3.DisplayScale = 1F;
-            formsPlot3.Dock = DockStyle.Fill;
             formsPlot3.Location = new Point(3, 3);
             formsPlot3.Name = "formsPlot3";
             formsPlot3.Size = new Size(786, 446);
@@ -631,13 +618,13 @@
             // 
             // tlpBajoNivel3Pagina2
             // 
-            tlpBajoNivel3Pagina2.BackColor = Color.IndianRed;
+            tlpBajoNivel3Pagina2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tlpBajoNivel3Pagina2.BackColor = Color.Transparent;
             tlpBajoNivel3Pagina2.ColumnCount = 2;
             tlpBajoNivel3Pagina2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tlpBajoNivel3Pagina2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tlpBajoNivel3Pagina2.Controls.Add(formsPlot6, 1, 0);
             tlpBajoNivel3Pagina2.Controls.Add(formsPlot5, 0, 0);
-            tlpBajoNivel3Pagina2.Dock = DockStyle.Fill;
             tlpBajoNivel3Pagina2.Location = new Point(3, 3);
             tlpBajoNivel3Pagina2.Name = "tlpBajoNivel3Pagina2";
             tlpBajoNivel3Pagina2.RowCount = 1;
@@ -648,8 +635,8 @@
             // 
             // formsPlot6
             // 
+            formsPlot6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             formsPlot6.DisplayScale = 1F;
-            formsPlot6.Dock = DockStyle.Fill;
             formsPlot6.Location = new Point(795, 3);
             formsPlot6.Name = "formsPlot6";
             formsPlot6.Size = new Size(786, 446);
@@ -657,26 +644,12 @@
             // 
             // formsPlot5
             // 
+            formsPlot5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             formsPlot5.DisplayScale = 1F;
-            formsPlot5.Dock = DockStyle.Fill;
             formsPlot5.Location = new Point(3, 3);
             formsPlot5.Name = "formsPlot5";
             formsPlot5.Size = new Size(786, 446);
             formsPlot5.TabIndex = 2;
-            // 
-            // dgvGrilla
-            // 
-            dgvGrilla.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvGrilla.Location = new Point(2024, -3);
-            dgvGrilla.Name = "dgvGrilla";
-            dgvGrilla.Size = new Size(380, 1226);
-            dgvGrilla.TabIndex = 17;
-            // 
-            // sqlCommand1
-            // 
-            sqlCommand1.CommandTimeout = 30;
-            sqlCommand1.EnableOptimizedParameterBinding = false;
             // 
             // FAdministracion
             // 
@@ -689,6 +662,7 @@
             Name = "FAdministracion";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Panel Administración";
+            WindowState = FormWindowState.Maximized;
             Load += FAdministracion_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             menuStrip1.ResumeLayout(false);
@@ -697,7 +671,7 @@
             tlpBaseFiltrado.ResumeLayout(false);
             tlpFiltradoMesYAño.ResumeLayout(false);
             tlpFiltradoMesYAño.PerformLayout();
-            tlpFiltradoBotones.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
             pnlInfoInicial.ResumeLayout(false);
             tlpBaseNivel1.ResumeLayout(false);
             tlpArribaNivel2.ResumeLayout(false);
@@ -710,7 +684,6 @@
             tlpBajoNivel3.ResumeLayout(false);
             tabPage4.ResumeLayout(false);
             tlpBajoNivel3Pagina2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvGrilla).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -740,38 +713,36 @@
         private Button btnVolver;
         private ToolStripMenuItem rOLESToolStripMenuItem;
         private ToolStripMenuItem nUEVAOFERTAToolStripMenuItem;
-        private Panel pnlInfoInicial;
-        private DataGridView dgvGrilla;
-        private TableLayoutPanel tlpBaseNivel1;
         private Microsoft.Data.SqlClient.SqlCommand sqlCommand1;
-        private TableLayoutPanel tlpArribaNivel2;
-        private TableLayoutPanel tlpBajoNivel2;
-        private TabControl tabControlGraficoArriba;
-        private TabPage tabPage1;
-        private ScottPlot.WinForms.FormsPlot formsPlot1;
-        private TabPage tabPage2;
-        private ScottPlot.WinForms.FormsPlot formsPlot2;
         private TableLayoutPanel tlpBaseFiltrado;
         private TableLayoutPanel tlpFiltradoMesYAño;
         private Label lblMesGraficos;
         private Label lblAñoGraficos;
         private ComboBox cbMesGrafico;
         private ComboBox cbAñoGraficos;
-        private TableLayoutPanel tlpFiltradoBotones;
-        private Button btnFiltrarGraficos;
-        private TabControl tabControl1;
-        private TabPage tabPage3;
-        private TabPage tabPage4;
-        private TableLayoutPanel tlpBajoNivel3;
-        private ScottPlot.WinForms.FormsPlot formsPlot3;
-        private TableLayoutPanel tlpBajoNivel3Pagina2;
-        private ScottPlot.WinForms.FormsPlot formsPlot5;
-        private ScottPlot.WinForms.FormsPlot formsPlot4;
-        private ScottPlot.WinForms.FormsPlot formsPlot6;
         private ToolStripMenuItem lOTESToolStripMenuItem;
         private ToolStripMenuItem vENTAToolStripMenuItem;
         private ToolStripMenuItem historialToolStripMenuItem;
         private ToolStripMenuItem historialVentasLibresToolStripMenuItem;
         private ToolStripMenuItem nuevaVentaLibreToolStripMenuItem;
+        private DataGridView dgvGrilla;
+        private Panel pnlInfoInicial;
+        private TableLayoutPanel tlpBaseNivel1;
+        private TableLayoutPanel tlpArribaNivel2;
+        private TabControl tabControlGraficoArriba;
+        private TabPage tabPage1;
+        private ScottPlot.WinForms.FormsPlot formsPlot1;
+        private TabPage tabPage2;
+        private ScottPlot.WinForms.FormsPlot formsPlot2;
+        private TableLayoutPanel tlpBajoNivel2;
+        private TabControl tabControl1;
+        private TabPage tabPage3;
+        private TableLayoutPanel tlpBajoNivel3;
+        private ScottPlot.WinForms.FormsPlot formsPlot4;
+        private ScottPlot.WinForms.FormsPlot formsPlot3;
+        private TabPage tabPage4;
+        private TableLayoutPanel tlpBajoNivel3Pagina2;
+        private ScottPlot.WinForms.FormsPlot formsPlot6;
+        private ScottPlot.WinForms.FormsPlot formsPlot5;
     }
 }
