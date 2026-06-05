@@ -163,7 +163,12 @@ namespace Presentacion.AccesoAlSistema
         private void LoginForm_Load(object sender, EventArgs e)
         {
             txtUsuario.Focus();
-                CargarLogoEnBase();
+            CargarLogoEnBase();
+        }
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
