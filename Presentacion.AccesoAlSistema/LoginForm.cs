@@ -42,7 +42,12 @@ namespace Presentacion.AccesoAlSistema
         {
             IngresarAlSistema();
         }
-
+        private void CargarLogoEnBase()
+        {
+            pbxLogo.Image = Constantes.Imagenes.ImgLogoCompuesto;
+            pbxLogo.Dock = DockStyle.Fill;
+            pbxLogo.SizeMode = PictureBoxSizeMode.StretchImage;
+        }
         private void IngresarAlSistema()
         {
             if (string.IsNullOrWhiteSpace(txtUsuario.Text) || string.IsNullOrWhiteSpace(txtPass.Text))
@@ -158,6 +163,12 @@ namespace Presentacion.AccesoAlSistema
         private void LoginForm_Load(object sender, EventArgs e)
         {
             txtUsuario.Focus();
+            CargarLogoEnBase();
+        }
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
