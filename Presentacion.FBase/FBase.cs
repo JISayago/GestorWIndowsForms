@@ -306,6 +306,9 @@ namespace Presentacion.FBase
             }
         }
 
+        /*
+               COMIENZO DE SECCION DE TEMA DEL SISTEMA. COLORES Y ASIGNACION DE ESTILOS A LOS CONTROLES
+         */
         protected virtual void AplicarTema(Control parent)
         {
             if (parent is Form form)
@@ -361,6 +364,9 @@ namespace Presentacion.FBase
                     case Panel pnl:
                         pnl.BackColor = TemaSistema.Fondo;
                         break;
+                    case ToolStrip ts:
+                        ConfigurarToolStrip(ts);
+                        break;
                 }
 
                 if (control.HasChildren)
@@ -371,12 +377,13 @@ namespace Presentacion.FBase
         }
         private void ConfigurarBoton(Button btn)
         {
-            btn.BackColor = TemaSistema.Primario;
-            btn.ForeColor = Color.White;
+            btn.BackColor = TemaSistema.Seleccion;
+            btn.ForeColor = Color.Black;
 
             btn.FlatStyle = FlatStyle.Flat;
-            btn.FlatAppearance.BorderSize = 0;
-            btn.Cursor = Cursors.Hand;
+
+            btn.FlatAppearance.BorderSize = 1;
+            btn.FlatAppearance.BorderColor = Color.Black;
         }
         private void ConfigurarTextBox(TextBox txt)
         {
@@ -436,6 +443,41 @@ namespace Presentacion.FBase
             dgv.RowHeadersVisible = false;
 
             dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        }
+        private void ConfigurarToolStrip(ToolStrip ts)
+        {
+            ts.BackColor = TemaSistema.Seleccion;
+            ts.ForeColor = Color.Black;
+
+            ts.Paint -= ToolStrip_PaintBorder;
+            ts.Paint += ToolStrip_PaintBorder;
+
+            foreach (ToolStripItem item in ts.Items)
+            {
+                item.BackColor = TemaSistema.Seleccion;
+                item.ForeColor = Color.Black;
+
+                if (item is ToolStripButton btn)
+                {
+                    btn.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
+
+                    btn.BackColor = TemaSistema.Seleccion;
+                    btn.ForeColor = Color.Black;
+                }
+            }
+        }
+        private void ToolStrip_PaintBorder(object sender, PaintEventArgs e)
+        {
+            var ts = (ToolStrip)sender;
+
+            using var pen = new Pen(Color.Black, 4);
+
+            e.Graphics.DrawLine(
+                pen,
+                0,
+                ts.Height - 1,
+                ts.Width,
+                ts.Height - 1);
         }
 
     }

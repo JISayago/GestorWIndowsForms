@@ -13,10 +13,17 @@ namespace Presentacion.FBase.Helpers
         public static readonly Color Oscuro = ColorTranslator.FromHtml("#020014");
         public static readonly Color Acento = ColorTranslator.FromHtml("#F4E2B6");
 
+
         // Apoyo
-        public static readonly Color Fondo = ColorTranslator.FromHtml("#F8F5EF");
-        public static readonly Color FondoControl = ColorTranslator.FromHtml("#FFFDF8");
-        public static readonly Color Borde = ColorTranslator.FromHtml("#DDD6C8");
+        public static readonly Color Fondo = ColorTranslator.FromHtml("#EAEAEA");
+        public static readonly Color FondoControl = ColorTranslator.FromHtml("#ECECEC");
+        public static readonly Color Borde = ColorTranslator.FromHtml("#A0A0A0");
+        //public static readonly Color Fondo = ColorTranslator.FromHtml("#F3F4F6");
+        //public static readonly Color FondoControl = ColorTranslator.FromHtml("#FFFFFF");
+        //public static readonly Color Borde = ColorTranslator.FromHtml("#D1D5DB");
+        //public static readonly Color Fondo = ColorTranslator.FromHtml("#F8F5EF");
+        //public static readonly Color FondoControl = ColorTranslator.FromHtml("#FFFDF8");
+        //public static readonly Color Borde = ColorTranslator.FromHtml("#DDD6C8");
         public static readonly Color Texto = ColorTranslator.FromHtml("#1F1A2B");
         public static readonly Color TextoSecundario = ColorTranslator.FromHtml("#6E687A");
         public static readonly Color Seleccion = ColorTranslator.FromHtml("#DCC7FF");
