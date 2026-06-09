@@ -1,4 +1,5 @@
-﻿using Presentacion.FBase.Helpers;
+﻿using MigraDoc.DocumentObjectModel.Internals;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.DTO;
 using System.Text.Json.Nodes;
 
@@ -21,7 +22,7 @@ namespace Presentacion.FBase
 
 
 
-               protected override void OnLoad(EventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             this.KeyPreview = true;
@@ -266,7 +267,7 @@ namespace Presentacion.FBase
             }
         }
 
-       public virtual void Control_Validated(object sender, System.EventArgs e)
+        public virtual void Control_Validated(object sender, System.EventArgs e)
         {
             if (sender is TextBox)
             {
@@ -364,8 +365,17 @@ namespace Presentacion.FBase
                     case Panel pnl:
                         pnl.BackColor = TemaSistema.Fondo;
                         break;
+
+                    case MenuStrip ms:
+                        ConfigurarMenuStrip(ms);
+                        break;
+
                     case ToolStrip ts:
                         ConfigurarToolStrip(ts);
+                        break;
+
+                    case TabControl tc:
+                        ConfigurarTabControl(tc);
                         break;
                 }
 
@@ -398,6 +408,7 @@ namespace Presentacion.FBase
         }
         private void ConfigurarComboBox(ComboBox cmb)
         {
+            cmb.FlatStyle = FlatStyle.Flat;
             cmb.BackColor = TemaSistema.FondoControl;
             cmb.ForeColor = TemaSistema.Texto;
         }
@@ -479,6 +490,78 @@ namespace Presentacion.FBase
                 ts.Width,
                 ts.Height - 1);
         }
+        private void ConfigurarMenuStrip(MenuStrip ms)
+        {
+            // Le asignamos nuestro mini-dibujante personalizado
+            ms.Renderer = new MiniRenderizadorMenu();
 
+            ms.BackColor = TemaSistema.Oscuro;
+            ms.ForeColor = TemaSistema.Acento;
+
+            foreach (ToolStripItem item in ms.Items)
+            {
+                ConfigurarItemMenu(item);
+            }
+        }
+
+        private void ConfigurarItemMenu(ToolStripItem item)
+        {
+            item.ForeColor = TemaSistema.Acento;
+            //item.Font = new Font(item.Font, FontStyle.Bold);
+
+            if (item is ToolStripMenuItem menuItem)
+            {
+                // Esto mantiene el fondo del contenedor de la lista desplegable
+                menuItem.DropDown.BackColor = TemaSistema.Oscuro;
+                menuItem.DropDown.ForeColor = TemaSistema.Acento;
+
+                // Recorremos los sub-ítems
+                foreach (ToolStripItem subItem in menuItem.DropDownItems)
+                {
+                    ConfigurarItemMenu(subItem);
+                }
+            }
+        }
+        private void ConfigurarTabControl(TabControl tc)
+        {
+            //tc.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tc.BackColor = TemaSistema.Fondo;
+            tc.ForeColor = TemaSistema.Texto;
+
+            //tc.DrawItem += (s, e) =>
+            //{
+            //    var tabPage = tc.TabPages[e.Index];
+            //    var isSelected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+            //    using var brush = new SolidBrush(isSelected ? TemaSistema.Seleccion : TemaSistema.Oscuro);
+            //    e.Graphics.FillRectangle(brush, e.Bounds);
+            //    TextRenderer.DrawText(
+            //        e.Graphics,
+            //        tabPage.Text,
+            //        tc.Font,
+            //        e.Bounds,
+            //        isSelected ? Color.Black : TemaSistema.Acento,
+            //        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+            //};
+        }
+        private class MiniRenderizadorMenu : ToolStripProfessionalRenderer
+        {
+            protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
+            {
+                // Si el mouse está arriba del ítem (Hover)
+                if (e.Item.Selected)
+                {
+                    using var brush = new SolidBrush(TemaSistema.Seleccion);
+                    e.Graphics.FillRectangle(brush, 0, 0, e.Item.Width, e.Item.Height);
+                    e.Item.ForeColor = TemaSistema.Oscuro;
+                }
+                else
+                {
+                    // Fondo normal cuando el mouse no está encima
+                    using var brush = new SolidBrush(TemaSistema.Oscuro);
+                    e.Graphics.FillRectangle(brush, 0, 0, e.Item.Width, e.Item.Height);
+                    e.Item.ForeColor = TemaSistema.Acento;
+                }
+            }
+        }
     }
 }
