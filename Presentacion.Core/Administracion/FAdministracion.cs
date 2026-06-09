@@ -319,12 +319,11 @@ namespace Presentacion.Core.Administracion
 
             // Añade el tipo de gráfico lineal
             var scatter = formsPlot1.Plot.Add.Scatter(numerosCajas, gananciasPorCaja);
+            scatter.Color = ScottPlot.Color.FromHex("#291a3e");
             // Sobrescribe los números del eje X con las etiquetas personalizadas de fechas ("A: 10/05...")
             formsPlot1.Plot.Axes.Bottom.SetTicks(numerosCajas, fechasDeCadaCaja);
             formsPlot1.Plot.Axes.AutoScale();
             formsPlot1.Refresh(); // Renderiza los cambios en pantalla
-
-            scatter.Color = ScottPlot.Color.FromHex("#291a3e");
         }
 
         /// <summary>
@@ -350,11 +349,10 @@ namespace Presentacion.Core.Administracion
             formsPlot2.Plot.YLabel("Total Ingresos");
 
             var scatter = formsPlot2.Plot.Add.Scatter(numerosDias, ingresosPorDia);
+            scatter.Color = ScottPlot.Color.FromHex("#291a3e");
             formsPlot2.Plot.Axes.Bottom.SetTicks(numerosDias, dias);
             formsPlot2.Plot.Axes.AutoScale();
             formsPlot2.Refresh();
-
-            scatter.Color = ScottPlot.Color.FromHex("#291a3e");
         }
 
         /// <summary>
@@ -394,11 +392,10 @@ namespace Presentacion.Core.Administracion
 
             // Instancia gráfico de barras nativo
             var bars = formsPlot3.Plot.Add.Bars(cantidadesGananciasPorDia);
+            bars.Color = ScottPlot.Color.FromHex("#291a3e");
             formsPlot3.Plot.Axes.Bottom.SetTicks(posicionesDiasGanancias, diaDeLasGanancias);
             formsPlot3.Plot.Axes.AutoScale();
             formsPlot3.Refresh();
-
-            bars.Color = ScottPlot.Color.FromHex("#291a3e");
         }
 
         /// <summary>
@@ -437,11 +434,10 @@ namespace Presentacion.Core.Administracion
             formsPlot4.Plot.YLabel("Total Ventas");
 
             var bars = formsPlot4.Plot.Add.Bars(cantidadesVentasPorDia);
+            bars.Color = ScottPlot.Color.FromHex("#291a3e");
             formsPlot4.Plot.Axes.Bottom.SetTicks(posicionesDiasVentas, diaDeLasVentas);
             formsPlot4.Plot.Axes.AutoScale();
             formsPlot4.Refresh();
-
-            bars.Color = ScottPlot.Color.FromHex("#291a3e");
         }
 
         /// <summary>
@@ -480,13 +476,12 @@ namespace Presentacion.Core.Administracion
             formsPlot5.Plot.YLabel("Total Ingresos");
 
             var bars = formsPlot5.Plot.Add.Bars(xs, ganaciasPorMesEjeY);
+            bars.Color = ScottPlot.Color.FromHex("#291a3e");
             formsPlot5.Plot.Axes.Bottom.SetTicks(xs, mesesPresentesEjeX);
             // Rotación visual a 45 grados de las etiquetas de texto del eje inferior para evitar solapamientos tipográficos
             formsPlot5.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
             formsPlot5.Plot.Axes.AutoScale();
             formsPlot5.Refresh();
-
-            bars.Color = ScottPlot.Color.FromHex("#291a3e");
         }
 
         /// <summary>
@@ -523,11 +518,10 @@ namespace Presentacion.Core.Administracion
             formsPlot6.Plot.YLabel("Total Ingresos");
 
             var bars = formsPlot6.Plot.Add.Bars(xsVentas, ventasPorMesEjeY);
+            bars.Color = ScottPlot.Color.FromHex("#291a3e");
             formsPlot6.Plot.Axes.Bottom.SetTicks(xsVentas, mesesVentasPresentesEjeX);
             formsPlot6.Plot.Axes.AutoScale();
             formsPlot6.Refresh();
-
-            bars.Color = ScottPlot.Color.FromHex("#291a3e");
         }
 
         private void btnFechaActualGraficos_Click(object sender, EventArgs e)

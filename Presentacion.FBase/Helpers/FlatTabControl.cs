@@ -5,10 +5,10 @@ using System.Windows.Forms;
 
 namespace Presentacion.Core.Administracion
 {
-    public class FlatTabControl : TabControl
+    public class FlatTabControl : TabControl //SE USA PARA BORRAR LOS BORDES DE LOS TAB CONTROL, HAY QUE REEMPLAZAR EN .DESIGNER POR ESTE FLATTABCONTROL
     {
         // Esta propiedad te permite elegir el color de fondo de la barra superior desde afuera
-        public Color HeaderBackColor { get; set; } = TemaSistema.Fondo;
+        public Color HeaderBackColor { get; set; } = TemaSistema.FondoControl;
 
         // TRUCO 1: Expande la página interna para "comerse" y tapar el borde gris perimetral nativo de Windows
         public override Rectangle DisplayRectangle

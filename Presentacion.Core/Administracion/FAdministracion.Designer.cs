@@ -479,7 +479,7 @@
             tlpArribaNivel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tlpArribaNivel2.Size = new Size(1604, 363);
             tlpArribaNivel2.TabIndex = 0;
-            tlpArribaNivel2.Tag = "TemaSistema";
+            tlpArribaNivel2.Tag = "";
             // 
             // tabControlGraficoArriba
             // 
@@ -512,7 +512,7 @@
             formsPlot1.Location = new Point(3, 3);
             formsPlot1.Name = "formsPlot1";
             formsPlot1.Size = new Size(1592, 329);
-            formsPlot1.TabIndex = 0;
+            formsPlot1.TabIndex = 1;
             // 
             // tabPage2
             // 
@@ -576,7 +576,7 @@
             // 
             // tlpBajoNivel3
             // 
-            tlpBajoNivel3.BackColor = SystemColors.ActiveCaption;
+            tlpBajoNivel3.BackColor = SystemColors.ButtonFace;
             tlpBajoNivel3.ColumnCount = 2;
             tlpBajoNivel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tlpBajoNivel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -738,7 +738,6 @@
         private TableLayoutPanel tlpArribaNivel2;
         private FlatTabControl tabControlGraficoArriba;
         private TabPage tabPage1;
-        private ScottPlot.WinForms.FormsPlot formsPlot1;
         private TabPage tabPage2;
         private ScottPlot.WinForms.FormsPlot formsPlot2;
         private TableLayoutPanel tlpBajoNivel2;
@@ -751,6 +750,6 @@
         private TableLayoutPanel tlpBajoNivel3Pagina2;
         private ScottPlot.WinForms.FormsPlot formsPlot6;
         private ScottPlot.WinForms.FormsPlot formsPlot5;
-        
+        private ScottPlot.WinForms.FormsPlot formsPlot1;
     }
 }

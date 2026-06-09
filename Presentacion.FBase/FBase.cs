@@ -578,16 +578,10 @@ namespace Presentacion.FBase
         private void ConfigurarFormPlot(FormsPlot fp)
         {
             fp.BackColor = TemaSistema.Fondo;
-            //fp.BorderStyle = BorderStyle.FixedSingle;
         }
         private void ConfugurarTableLayoutPanel(TableLayoutPanel tlp)
         {
-            if (tlp.Tag == "TemaSistema")
-            {
-                tlp.BackColor = TemaSistema.Fondo;
-                tlp.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
-            }
-            
+            tlp.BackColor = TemaSistema.Fondo;
         }
     }
 }
