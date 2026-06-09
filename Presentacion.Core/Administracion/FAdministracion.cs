@@ -114,6 +114,9 @@ namespace Presentacion.Core.Administracion
             cbMesGrafico.DropDownStyle = ComboBoxStyle.DropDownList;
             cbAñoGraficos.DropDownStyle = ComboBoxStyle.DropDownList;
 
+            tabControlGraficoArriba.SelectedIndexChanged += TabControlGraficos_SelectedIndexChanged;
+            tabControl1.SelectedIndexChanged += TabControl1_SelectedIndexChanged;
+
             // Ejecutamos la carga inicial dinámica analizando la base de datos de manera segura
             InicializarFiltrosCronologicos();
         }
@@ -195,15 +198,11 @@ namespace Presentacion.Core.Administracion
         /// </summary>
         private void FAdministracion_Load(object sender, EventArgs e)
         {
+            
             // Verificación tipada segura: Leemos los estados pre-calculados por los combos dinámicos en vez de usar DateTime.Now directo
             if (cbAñoGraficos.SelectedItem is int año && cbMesGrafico.SelectedValue is int mes)
             {
-                grafico1(mes, año);
-                grafico2(); // Histórico estático de los últimos 31 días agrupados
-                grafico3(mes, año);
-                grafico4(mes, año);
-                grafico5(año);
-                grafico6(año);
+                CargarGraficoActivo();
             }
             else
             {
@@ -214,6 +213,7 @@ namespace Presentacion.Core.Administracion
             // Ajuste de ejes del gráfico 6 y refresco inicial obligatorio
             formsPlot6.Plot.Axes.AutoScale();
             formsPlot6.Refresh();
+            
 
             // Vinculación de eventos de mouse para procesar la proximidad matemática y mostrar Tooltips interactivos
             formsPlot1.MouseMove += FormsPlot1_MouseMove;
@@ -701,6 +701,43 @@ namespace Presentacion.Core.Administracion
             btnComprobantes.TextImageRelation = TextImageRelation.ImageAboveText;
             // Le damos un padding superior para que el ícono no pegue contra el techo del botón
             btnComprobantes.Padding = new Padding(0, 10, 0, 0);
+        }
+        private void TabControlGraficos_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CargarGraficoActivo();
+        }
+        private void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CargarGraficoActivo();
+        }
+        private void CargarGraficoActivo()
+        {
+            // Recuperar de forma segura los valores de los filtros, con fallback por seguridad
+            int año = cbAñoGraficos.SelectedItem is int a ? a : DateTime.Now.Year;
+            int mes = cbMesGrafico.SelectedValue is int m ? m : DateTime.Now.Month;
+
+            // Evaluamos qué pestaña está mirando el usuario
+            switch (tabControlGraficoArriba.SelectedIndex)
+            {
+                case 0:
+                    grafico1(mes, año);
+                    break;
+                case 1:
+                    grafico2(); // Histórico estático de 31 días
+                    break;
+            }
+
+            switch (tabControl1.SelectedIndex)
+            {
+                case 0:
+                    grafico3(mes, año);
+                    grafico4(mes, año);
+                    break;
+                case 1:
+                    grafico5(año);
+                    grafico6(año);
+                    break;
+            }
         }
     }
 }
