@@ -39,11 +39,7 @@ namespace Presentacion.Core.Administracion
     /// Estructura auxiliar interna para mapear de forma segura los objetos de los ComboBoxes.
     /// Permite desacoplar el índice visual del control (.SelectedIndex) de los valores reales de la consulta.
     /// </summary>
-    public class MesFiltro
-    {
-        public int Numero { get; set; }    // El valor numérico real para las consultas en Base de Datos (1 al 12)
-        public string Nombre { get; set; } // El texto legible por el usuario en la interfaz ("Enero", etc.)
-    }
+
 
     /// <summary>
     /// Formulario de Administración Centralizada.
