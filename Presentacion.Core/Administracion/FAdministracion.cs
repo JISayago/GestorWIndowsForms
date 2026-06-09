@@ -227,15 +227,6 @@ namespace Presentacion.Core.Administracion
         // =================================================================================
         // CONTROLADORES DE INTERFACCIÓN Y FILTRADO CRONOLÓGICO
         // =================================================================================
-
-        private void btnFiltrarGraficos_Click(object sender, EventArgs e)
-        {
-            if (cbAñoGraficos.SelectedItem is int añoFiltrado && cbMesGrafico.SelectedValue is int mesFiltrado)
-            {
-                filtrarGraficos(añoFiltrado, mesFiltrado);
-            }
-        }
-
         private void cbAñoGraficos_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cbAñoGraficos.SelectedItem is int añoFiltrado)
