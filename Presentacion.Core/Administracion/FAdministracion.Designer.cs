@@ -67,13 +67,13 @@
             pnlInfoInicial = new Panel();
             tlpBaseNivel1 = new TableLayoutPanel();
             tlpArribaNivel2 = new TableLayoutPanel();
-            tabControlGraficoArriba = new TabControl();
+            tabControlGraficoArriba = new FlatTabControl();
             tabPage1 = new TabPage();
             formsPlot1 = new ScottPlot.WinForms.FormsPlot();
             tabPage2 = new TabPage();
             formsPlot2 = new ScottPlot.WinForms.FormsPlot();
             tlpBajoNivel2 = new TableLayoutPanel();
-            tabControl1 = new TabControl();
+            tabControl1 = new FlatTabControl();
             tabPage3 = new TabPage();
             tlpBajoNivel3 = new TableLayoutPanel();
             formsPlot4 = new ScottPlot.WinForms.FormsPlot();
@@ -235,7 +235,7 @@
             // tIPOPAGOToolStripMenuItem
             // 
             tIPOPAGOToolStripMenuItem.Name = "tIPOPAGOToolStripMenuItem";
-            tIPOPAGOToolStripMenuItem.Size = new Size(180, 24);
+            tIPOPAGOToolStripMenuItem.Size = new Size(175, 24);
             tIPOPAGOToolStripMenuItem.Text = "Tipo Pago????";
             tIPOPAGOToolStripMenuItem.Click += tIPOPAGOToolStripMenuItem_Click;
             // 
@@ -479,6 +479,7 @@
             tlpArribaNivel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tlpArribaNivel2.Size = new Size(1604, 363);
             tlpArribaNivel2.TabIndex = 0;
+            tlpArribaNivel2.Tag = "TemaSistema";
             // 
             // tabControlGraficoArriba
             // 
@@ -486,6 +487,7 @@
             tabControlGraficoArriba.Controls.Add(tabPage1);
             tabControlGraficoArriba.Controls.Add(tabPage2);
             tabControlGraficoArriba.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
+            tabControlGraficoArriba.HeaderBackColor = Color.FromArgb(234, 234, 234);
             tabControlGraficoArriba.Location = new Point(3, 3);
             tabControlGraficoArriba.Name = "tabControlGraficoArriba";
             tabControlGraficoArriba.SelectedIndex = 0;
@@ -495,10 +497,10 @@
             // tabPage1
             // 
             tabPage1.Controls.Add(formsPlot1);
-            tabPage1.Location = new Point(4, 26);
+            tabPage1.Location = new Point(0, 22);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1590, 327);
+            tabPage1.Size = new Size(1598, 335);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Cajas del Mes";
             tabPage1.UseVisualStyleBackColor = true;
@@ -509,18 +511,18 @@
             formsPlot1.Dock = DockStyle.Fill;
             formsPlot1.Location = new Point(3, 3);
             formsPlot1.Name = "formsPlot1";
-            formsPlot1.Size = new Size(1584, 321);
+            formsPlot1.Size = new Size(1592, 329);
             formsPlot1.TabIndex = 0;
             // 
             // tabPage2
             // 
             tabPage2.Controls.Add(formsPlot2);
-            tabPage2.Location = new Point(4, 26);
+            tabPage2.Location = new Point(0, 22);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1590, 327);
+            tabPage2.Size = new Size(1598, 335);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "Ultimas 50 Cajas";
+            tabPage2.Text = "Ultimas 50";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // formsPlot2
@@ -529,7 +531,7 @@
             formsPlot2.Dock = DockStyle.Fill;
             formsPlot2.Location = new Point(3, 3);
             formsPlot2.Name = "formsPlot2";
-            formsPlot2.Size = new Size(1584, 321);
+            formsPlot2.Size = new Size(1592, 329);
             formsPlot2.TabIndex = 0;
             // 
             // tlpBajoNivel2
@@ -553,6 +555,7 @@
             tabControl1.Controls.Add(tabPage3);
             tabControl1.Controls.Add(tabPage4);
             tabControl1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
+            tabControl1.HeaderBackColor = Color.FromArgb(234, 234, 234);
             tabControl1.Location = new Point(3, 3);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
@@ -563,17 +566,17 @@
             // 
             tabPage3.Controls.Add(tlpBajoNivel3);
             tabPage3.Font = new Font("Microsoft Sans Serif", 15.75F);
-            tabPage3.Location = new Point(4, 26);
+            tabPage3.Location = new Point(0, 22);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(1590, 455);
+            tabPage3.Size = new Size(1598, 463);
             tabPage3.TabIndex = 0;
             tabPage3.Text = "Por Dia";
             tabPage3.UseVisualStyleBackColor = true;
             // 
             // tlpBajoNivel3
             // 
-            tlpBajoNivel3.BackColor = SystemColors.ButtonFace;
+            tlpBajoNivel3.BackColor = SystemColors.ActiveCaption;
             tlpBajoNivel3.ColumnCount = 2;
             tlpBajoNivel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tlpBajoNivel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -584,16 +587,17 @@
             tlpBajoNivel3.Name = "tlpBajoNivel3";
             tlpBajoNivel3.RowCount = 1;
             tlpBajoNivel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpBajoNivel3.Size = new Size(1584, 449);
+            tlpBajoNivel3.Size = new Size(1592, 457);
             tlpBajoNivel3.TabIndex = 0;
+            tlpBajoNivel3.Tag = "TemaSistema";
             // 
             // formsPlot4
             // 
             formsPlot4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             formsPlot4.DisplayScale = 1F;
-            formsPlot4.Location = new Point(795, 3);
+            formsPlot4.Location = new Point(799, 3);
             formsPlot4.Name = "formsPlot4";
-            formsPlot4.Size = new Size(786, 443);
+            formsPlot4.Size = new Size(790, 451);
             formsPlot4.TabIndex = 2;
             // 
             // formsPlot3
@@ -603,17 +607,17 @@
             formsPlot3.DisplayScale = 1F;
             formsPlot3.Location = new Point(3, 3);
             formsPlot3.Name = "formsPlot3";
-            formsPlot3.Size = new Size(786, 443);
+            formsPlot3.Size = new Size(790, 451);
             formsPlot3.TabIndex = 1;
             // 
             // tabPage4
             // 
             tabPage4.Controls.Add(tlpBajoNivel3Pagina2);
             tabPage4.Font = new Font("Microsoft Sans Serif", 15.75F);
-            tabPage4.Location = new Point(4, 26);
+            tabPage4.Location = new Point(0, 22);
             tabPage4.Name = "tabPage4";
             tabPage4.Padding = new Padding(3);
-            tabPage4.Size = new Size(1590, 455);
+            tabPage4.Size = new Size(1598, 463);
             tabPage4.TabIndex = 1;
             tabPage4.Text = "Por Mes";
             tabPage4.UseVisualStyleBackColor = true;
@@ -732,13 +736,13 @@
         private Panel pnlInfoInicial;
         private TableLayoutPanel tlpBaseNivel1;
         private TableLayoutPanel tlpArribaNivel2;
-        private TabControl tabControlGraficoArriba;
+        private FlatTabControl tabControlGraficoArriba;
         private TabPage tabPage1;
         private ScottPlot.WinForms.FormsPlot formsPlot1;
         private TabPage tabPage2;
         private ScottPlot.WinForms.FormsPlot formsPlot2;
         private TableLayoutPanel tlpBajoNivel2;
-        private TabControl tabControl1;
+        private FlatTabControl tabControl1;
         private TabPage tabPage3;
         private TableLayoutPanel tlpBajoNivel3;
         private ScottPlot.WinForms.FormsPlot formsPlot4;
@@ -747,5 +751,6 @@
         private TableLayoutPanel tlpBajoNivel3Pagina2;
         private ScottPlot.WinForms.FormsPlot formsPlot6;
         private ScottPlot.WinForms.FormsPlot formsPlot5;
+        
     }
 }

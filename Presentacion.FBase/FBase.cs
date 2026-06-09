@@ -1,6 +1,7 @@
 ﻿using MigraDoc.DocumentObjectModel.Internals;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.DTO;
+using ScottPlot.WinForms;
 using System.Text.Json.Nodes;
 
 namespace Presentacion.FBase
@@ -322,6 +323,10 @@ namespace Presentacion.FBase
             {
                 switch (control)
                 {
+                    case TableLayoutPanel tlp:
+                        ConfugurarTableLayoutPanel(tlp);
+                        break;
+
                     case Button btn:
                         ConfigurarBoton(btn);
                         break;
@@ -376,6 +381,10 @@ namespace Presentacion.FBase
 
                     case TabControl tc:
                         ConfigurarTabControl(tc);
+                        break;
+
+                    case FormsPlot fp:
+                        ConfigurarFormPlot(fp);
                         break;
                 }
 
@@ -493,7 +502,7 @@ namespace Presentacion.FBase
         private void ConfigurarMenuStrip(MenuStrip ms)
         {
             // Le asignamos nuestro mini-dibujante personalizado
-            ms.Renderer = new MiniRenderizadorMenu();
+            ms.Renderer = new Presentacion.FBase.Helpers.MiniRenderizadorMenu();
 
             ms.BackColor = TemaSistema.Oscuro;
             ms.ForeColor = TemaSistema.Acento;
@@ -524,44 +533,61 @@ namespace Presentacion.FBase
         }
         private void ConfigurarTabControl(TabControl tc)
         {
-            //tc.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tc.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tc.Appearance = TabAppearance.FlatButtons; // <--- AGREGÁ ESTA LÍNEA
+            tc.SizeMode = TabSizeMode.Fixed;          // Opcional: Hace que todas midan lo mismo
+
             tc.BackColor = TemaSistema.Fondo;
             tc.ForeColor = TemaSistema.Texto;
 
-            //tc.DrawItem += (s, e) =>
-            //{
-            //    var tabPage = tc.TabPages[e.Index];
-            //    var isSelected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
-            //    using var brush = new SolidBrush(isSelected ? TemaSistema.Seleccion : TemaSistema.Oscuro);
-            //    e.Graphics.FillRectangle(brush, e.Bounds);
-            //    TextRenderer.DrawText(
-            //        e.Graphics,
-            //        tabPage.Text,
-            //        tc.Font,
-            //        e.Bounds,
-            //        isSelected ? Color.Black : TemaSistema.Acento,
-            //        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
-            //};
-        }
-        private class MiniRenderizadorMenu : ToolStripProfessionalRenderer
-        {
-            protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
+            // Evitamos duplicar eventos en memoria
+            tc.DrawItem -= TabControl_DrawItem;
+            tc.DrawItem += TabControl_DrawItem;
+
+            // Es crucial pintar el fondo de cada página individual para que se fusione con el formulario
+            foreach (TabPage page in tc.TabPages)
             {
-                // Si el mouse está arriba del ítem (Hover)
-                if (e.Item.Selected)
-                {
-                    using var brush = new SolidBrush(TemaSistema.Seleccion);
-                    e.Graphics.FillRectangle(brush, 0, 0, e.Item.Width, e.Item.Height);
-                    e.Item.ForeColor = TemaSistema.Oscuro;
-                }
-                else
-                {
-                    // Fondo normal cuando el mouse no está encima
-                    using var brush = new SolidBrush(TemaSistema.Oscuro);
-                    e.Graphics.FillRectangle(brush, 0, 0, e.Item.Width, e.Item.Height);
-                    e.Item.ForeColor = TemaSistema.Acento;
-                }
+                page.BackColor = TemaSistema.Fondo; // O TemaSistema.FondoControl según prefieras
+                page.ForeColor = TemaSistema.Texto;
             }
+        }
+
+        private void TabControl_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            var tc = (TabControl)sender;
+            var tabPage = tc.TabPages[e.Index];
+            bool isSelected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+
+            // 1. Pintamos el fondo de la pestaña (Header)
+            using var brush = new SolidBrush(isSelected ? TemaSistema.Seleccion : TemaSistema.Fondo);
+            e.Graphics.FillRectangle(brush, e.Bounds);
+
+            // 2. Pintamos el texto centrado de la pestaña
+            Color colorTexto = isSelected ? Color.Black : TemaSistema.Texto;
+
+            TextRenderer.DrawText(
+                e.Graphics,
+                tabPage.Text,
+                tc.Font,
+                e.Bounds,
+                colorTexto,
+                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+        }
+        private void ConfigurarFormPlot(FormsPlot fp)
+        {
+            fp.BackColor = TemaSistema.Fondo;
+            //fp.BorderStyle = BorderStyle.FixedSingle;
+        }
+        private void ConfugurarTableLayoutPanel(TableLayoutPanel tlp)
+        {
+            if (tlp.Tag == "TemaSistema")
+            {
+                tlp.BackColor = TemaSistema.Fondo;
+                tlp.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
+            }
+            
         }
     }
 }
