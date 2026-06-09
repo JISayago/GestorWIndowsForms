@@ -379,7 +379,7 @@ namespace Presentacion.FBase
         {
             btn.BackColor = TemaSistema.Seleccion;
             btn.ForeColor = Color.Black;
-
+            
             btn.FlatStyle = FlatStyle.Flat;
 
             btn.FlatAppearance.BorderSize = 1;

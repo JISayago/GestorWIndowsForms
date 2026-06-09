@@ -30,9 +30,6 @@
         {
             lblCantidadProductos = new Label();
             btnCargarGrupoMarca = new Button();
-            cbxMarca = new CheckBox();
-            cbxRubro = new CheckBox();
-            cbxCategoria = new CheckBox();
             lblTitulo = new Label();
             txtMarca = new TextBox();
             lblNumeroProductoAfectados = new Label();
@@ -68,19 +65,23 @@
             btnLimpiar = new Button();
             lblCodigoManual = new Label();
             btnCargarProducto = new Button();
-            cbxComboProductos = new CheckBox();
             lblTotalPrecioCosto = new Label();
             txtPrecioCostoAcumulado = new TextBox();
             lblTotalPrecioReal = new Label();
             txtPrecioVentaReal = new TextBox();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            label3 = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvProductosQuitados).BeginInit();
+            tableLayoutPanel1.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
             SuspendLayout();
             // 
             // lblCantidadProductos
             // 
             lblCantidadProductos.AutoSize = true;
-            lblCantidadProductos.Location = new Point(87, 298);
+            lblCantidadProductos.Location = new Point(585, 195);
             lblCantidadProductos.Name = "lblCantidadProductos";
             lblCantidadProductos.Size = new Size(245, 15);
             lblCantidadProductos.TabIndex = 29;
@@ -89,52 +90,19 @@
             // btnCargarGrupoMarca
             // 
             btnCargarGrupoMarca.Enabled = false;
-            btnCargarGrupoMarca.Location = new Point(210, 142);
+            btnCargarGrupoMarca.Location = new Point(3, 3);
             btnCargarGrupoMarca.Name = "btnCargarGrupoMarca";
-            btnCargarGrupoMarca.Size = new Size(161, 32);
+            btnCargarGrupoMarca.Size = new Size(142, 32);
             btnCargarGrupoMarca.TabIndex = 27;
             btnCargarGrupoMarca.Text = "Cargar Grupo";
             btnCargarGrupoMarca.UseVisualStyleBackColor = true;
             btnCargarGrupoMarca.Click += btnCargarGrupoMarca_Click;
             // 
-            // cbxMarca
-            // 
-            cbxMarca.AutoSize = true;
-            cbxMarca.Location = new Point(264, 117);
-            cbxMarca.Name = "cbxMarca";
-            cbxMarca.Size = new Size(59, 19);
-            cbxMarca.TabIndex = 30;
-            cbxMarca.Text = "Marca";
-            cbxMarca.UseVisualStyleBackColor = true;
-            cbxMarca.CheckedChanged += cbxMarca_CheckedChanged;
-            // 
-            // cbxRubro
-            // 
-            cbxRubro.AutoSize = true;
-            cbxRubro.Location = new Point(481, 116);
-            cbxRubro.Name = "cbxRubro";
-            cbxRubro.Size = new Size(58, 19);
-            cbxRubro.TabIndex = 31;
-            cbxRubro.Text = "Rubro";
-            cbxRubro.UseVisualStyleBackColor = true;
-            cbxRubro.CheckedChanged += cbxRubro_CheckedChanged;
-            // 
-            // cbxCategoria
-            // 
-            cbxCategoria.AutoSize = true;
-            cbxCategoria.Location = new Point(710, 116);
-            cbxCategoria.Name = "cbxCategoria";
-            cbxCategoria.Size = new Size(77, 19);
-            cbxCategoria.TabIndex = 32;
-            cbxCategoria.Text = "Categoria";
-            cbxCategoria.UseVisualStyleBackColor = true;
-            cbxCategoria.CheckedChanged += cbxCategoria_CheckedChanged;
-            // 
             // lblTitulo
             // 
             lblTitulo.AutoSize = true;
             lblTitulo.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblTitulo.Location = new Point(428, 32);
+            lblTitulo.Location = new Point(711, 482);
             lblTitulo.Name = "lblTitulo";
             lblTitulo.Size = new Size(611, 30);
             lblTitulo.TabIndex = 33;
@@ -143,10 +111,10 @@
             // 
             // txtMarca
             // 
-            txtMarca.Location = new Point(213, 189);
+            txtMarca.Location = new Point(3, 52);
             txtMarca.Name = "txtMarca";
             txtMarca.ReadOnly = true;
-            txtMarca.Size = new Size(158, 23);
+            txtMarca.Size = new Size(142, 23);
             txtMarca.TabIndex = 34;
             txtMarca.TextAlign = HorizontalAlignment.Center;
             // 
@@ -154,7 +122,7 @@
             // 
             lblNumeroProductoAfectados.AutoSize = true;
             lblNumeroProductoAfectados.Font = new Font("Segoe UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblNumeroProductoAfectados.Location = new Point(338, 280);
+            lblNumeroProductoAfectados.Location = new Point(854, 177);
             lblNumeroProductoAfectados.Name = "lblNumeroProductoAfectados";
             lblNumeroProductoAfectados.Size = new Size(52, 37);
             lblNumeroProductoAfectados.TabIndex = 35;
@@ -163,7 +131,7 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(594, 972);
+            btnCancelar.Location = new Point(1142, 972);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(75, 23);
             btnCancelar.TabIndex = 41;
@@ -172,7 +140,7 @@
             // 
             // btnCrear
             // 
-            btnCrear.Location = new Point(804, 972);
+            btnCrear.Location = new Point(1352, 972);
             btnCrear.Name = "btnCrear";
             btnCrear.Size = new Size(75, 23);
             btnCrear.TabIndex = 40;
@@ -183,7 +151,7 @@
             // cbxDescuentoPorcentaje
             // 
             cbxDescuentoPorcentaje.AutoSize = true;
-            cbxDescuentoPorcentaje.Location = new Point(704, 751);
+            cbxDescuentoPorcentaje.Location = new Point(1252, 751);
             cbxDescuentoPorcentaje.Name = "cbxDescuentoPorcentaje";
             cbxDescuentoPorcentaje.Size = new Size(205, 19);
             cbxDescuentoPorcentaje.TabIndex = 39;
@@ -194,7 +162,7 @@
             // cbxDescuentoPesos
             // 
             cbxDescuentoPesos.AutoSize = true;
-            cbxDescuentoPesos.Location = new Point(410, 749);
+            cbxDescuentoPesos.Location = new Point(958, 749);
             cbxDescuentoPesos.Name = "cbxDescuentoPesos";
             cbxDescuentoPesos.Size = new Size(201, 19);
             cbxDescuentoPesos.TabIndex = 38;
@@ -204,14 +172,14 @@
             // 
             // txtMontoPorcentaje
             // 
-            txtMontoPorcentaje.Location = new Point(524, 776);
+            txtMontoPorcentaje.Location = new Point(1072, 776);
             txtMontoPorcentaje.Name = "txtMontoPorcentaje";
             txtMontoPorcentaje.Size = new Size(301, 23);
             txtMontoPorcentaje.TabIndex = 37;
             // 
             // txtDescripcion
             // 
-            txtDescripcion.Location = new Point(377, 603);
+            txtDescripcion.Location = new Point(40, 945);
             txtDescripcion.Multiline = true;
             txtDescripcion.Name = "txtDescripcion";
             txtDescripcion.ReadOnly = true;
@@ -221,7 +189,7 @@
             // lbl
             // 
             lbl.AutoSize = true;
-            lbl.Location = new Point(377, 585);
+            lbl.Location = new Point(40, 927);
             lbl.Name = "lbl";
             lbl.Size = new Size(69, 15);
             lbl.TabIndex = 42;
@@ -229,7 +197,7 @@
             // 
             // txtDetalle
             // 
-            txtDetalle.Location = new Point(338, 891);
+            txtDetalle.Location = new Point(886, 891);
             txtDetalle.Multiline = true;
             txtDetalle.Name = "txtDetalle";
             txtDetalle.Size = new Size(602, 50);
@@ -238,7 +206,7 @@
             // lblDetalle
             // 
             lblDetalle.AutoSize = true;
-            lblDetalle.Location = new Point(338, 863);
+            lblDetalle.Location = new Point(886, 863);
             lblDetalle.Name = "lblDetalle";
             lblDetalle.Size = new Size(43, 15);
             lblDetalle.TabIndex = 45;
@@ -246,14 +214,14 @@
             // 
             // dtpFechaFin
             // 
-            dtpFechaFin.Location = new Point(689, 539);
+            dtpFechaFin.Location = new Point(352, 881);
             dtpFechaFin.Name = "dtpFechaFin";
             dtpFechaFin.Size = new Size(200, 23);
             dtpFechaFin.TabIndex = 51;
             // 
             // dtpFechaInicio
             // 
-            dtpFechaInicio.Location = new Point(427, 539);
+            dtpFechaInicio.Location = new Point(90, 881);
             dtpFechaInicio.Name = "dtpFechaInicio";
             dtpFechaInicio.Size = new Size(200, 23);
             dtpFechaInicio.TabIndex = 50;
@@ -261,7 +229,7 @@
             // lblFechaFin
             // 
             lblFechaFin.AutoSize = true;
-            lblFechaFin.Location = new Point(689, 521);
+            lblFechaFin.Location = new Point(352, 863);
             lblFechaFin.Name = "lblFechaFin";
             lblFechaFin.Size = new Size(57, 15);
             lblFechaFin.TabIndex = 49;
@@ -270,7 +238,7 @@
             // lblFechaInicio
             // 
             lblFechaInicio.AutoSize = true;
-            lblFechaInicio.Location = new Point(427, 521);
+            lblFechaInicio.Location = new Point(90, 863);
             lblFechaInicio.Name = "lblFechaInicio";
             lblFechaInicio.Size = new Size(70, 15);
             lblFechaInicio.TabIndex = 48;
@@ -278,19 +246,19 @@
             // 
             // txtRubro
             // 
-            txtRubro.Location = new Point(434, 188);
+            txtRubro.Location = new Point(181, 52);
             txtRubro.Name = "txtRubro";
             txtRubro.ReadOnly = true;
-            txtRubro.Size = new Size(158, 23);
+            txtRubro.Size = new Size(142, 23);
             txtRubro.TabIndex = 65;
             txtRubro.TextAlign = HorizontalAlignment.Center;
             // 
             // btnCargarGrupoRubro
             // 
             btnCargarGrupoRubro.Enabled = false;
-            btnCargarGrupoRubro.Location = new Point(431, 141);
+            btnCargarGrupoRubro.Location = new Point(181, 3);
             btnCargarGrupoRubro.Name = "btnCargarGrupoRubro";
-            btnCargarGrupoRubro.Size = new Size(161, 32);
+            btnCargarGrupoRubro.Size = new Size(142, 32);
             btnCargarGrupoRubro.TabIndex = 64;
             btnCargarGrupoRubro.Text = "Cargar Grupo";
             btnCargarGrupoRubro.UseVisualStyleBackColor = true;
@@ -298,19 +266,19 @@
             // 
             // txtCategoria
             // 
-            txtCategoria.Location = new Point(673, 188);
+            txtCategoria.Location = new Point(359, 52);
             txtCategoria.Name = "txtCategoria";
             txtCategoria.ReadOnly = true;
-            txtCategoria.Size = new Size(158, 23);
+            txtCategoria.Size = new Size(143, 23);
             txtCategoria.TabIndex = 67;
             txtCategoria.TextAlign = HorizontalAlignment.Center;
             // 
             // btnCargarGrupoCategoria
             // 
             btnCargarGrupoCategoria.Enabled = false;
-            btnCargarGrupoCategoria.Location = new Point(670, 141);
+            btnCargarGrupoCategoria.Location = new Point(359, 3);
             btnCargarGrupoCategoria.Name = "btnCargarGrupoCategoria";
-            btnCargarGrupoCategoria.Size = new Size(161, 32);
+            btnCargarGrupoCategoria.Size = new Size(143, 32);
             btnCargarGrupoCategoria.TabIndex = 66;
             btnCargarGrupoCategoria.Text = "Cargar Grupo";
             btnCargarGrupoCategoria.UseVisualStyleBackColor = true;
@@ -319,7 +287,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(90, 298);
+            label1.Location = new Point(648, 195);
             label1.Name = "label1";
             label1.Size = new Size(0, 15);
             label1.TabIndex = 70;
@@ -331,16 +299,16 @@
             dgvProductos.AllowUserToResizeRows = false;
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductos.EditMode = DataGridViewEditMode.EditProgrammatically;
-            dgvProductos.Location = new Point(12, 316);
+            dgvProductos.Location = new Point(570, 213);
             dgvProductos.MultiSelect = false;
             dgvProductos.Name = "dgvProductos";
-            dgvProductos.Size = new Size(735, 155);
+            dgvProductos.Size = new Size(278, 155);
             dgvProductos.TabIndex = 69;
             dgvProductos.RowEnter += dgvProductos_RowEnter;
             // 
             // btnQuitarProducto
             // 
-            btnQuitarProducto.Location = new Point(87, 477);
+            btnQuitarProducto.Location = new Point(645, 374);
             btnQuitarProducto.Name = "btnQuitarProducto";
             btnQuitarProducto.Size = new Size(161, 32);
             btnQuitarProducto.TabIndex = 71;
@@ -350,7 +318,7 @@
             // 
             // btnCargarProductosAlcanzados
             // 
-            btnCargarProductosAlcanzados.Location = new Point(378, 230);
+            btnCargarProductosAlcanzados.Location = new Point(3, 186);
             btnCargarProductosAlcanzados.Name = "btnCargarProductosAlcanzados";
             btnCargarProductosAlcanzados.Size = new Size(285, 32);
             btnCargarProductosAlcanzados.TabIndex = 72;
@@ -360,7 +328,7 @@
             // 
             // btnDevolverAOferta
             // 
-            btnDevolverAOferta.Location = new Point(760, 477);
+            btnDevolverAOferta.Location = new Point(1089, 401);
             btnDevolverAOferta.Name = "btnDevolverAOferta";
             btnDevolverAOferta.Size = new Size(161, 32);
             btnDevolverAOferta.TabIndex = 77;
@@ -371,7 +339,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(763, 298);
+            label2.Location = new Point(1298, 213);
             label2.Name = "label2";
             label2.Size = new Size(0, 15);
             label2.TabIndex = 76;
@@ -383,17 +351,17 @@
             dgvProductosQuitados.AllowUserToResizeRows = false;
             dgvProductosQuitados.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductosQuitados.EditMode = DataGridViewEditMode.EditProgrammatically;
-            dgvProductosQuitados.Location = new Point(756, 316);
+            dgvProductosQuitados.Location = new Point(1006, 231);
             dgvProductosQuitados.MultiSelect = false;
             dgvProductosQuitados.Name = "dgvProductosQuitados";
-            dgvProductosQuitados.Size = new Size(803, 155);
+            dgvProductosQuitados.Size = new Size(292, 155);
             dgvProductosQuitados.TabIndex = 75;
             // 
             // lblNumeroProductoQuitados
             // 
             lblNumeroProductoQuitados.AutoSize = true;
             lblNumeroProductoQuitados.Font = new Font("Segoe UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblNumeroProductoQuitados.Location = new Point(1011, 280);
+            lblNumeroProductoQuitados.Location = new Point(1314, 195);
             lblNumeroProductoQuitados.Name = "lblNumeroProductoQuitados";
             lblNumeroProductoQuitados.Size = new Size(52, 37);
             lblNumeroProductoQuitados.TabIndex = 74;
@@ -403,7 +371,7 @@
             // lblCantidadProductosQuitados
             // 
             lblCantidadProductosQuitados.AutoSize = true;
-            lblCantidadProductosQuitados.Location = new Point(760, 298);
+            lblCantidadProductosQuitados.Location = new Point(1063, 213);
             lblCantidadProductosQuitados.Name = "lblCantidadProductosQuitados";
             lblCantidadProductosQuitados.Size = new Size(229, 15);
             lblCantidadProductosQuitados.TabIndex = 73;
@@ -412,7 +380,7 @@
             // cbxLimiteCumplirStock
             // 
             cbxLimiteCumplirStock.AutoSize = true;
-            cbxLimiteCumplirStock.Location = new Point(396, 842);
+            cbxLimiteCumplirStock.Location = new Point(944, 842);
             cbxLimiteCumplirStock.Name = "cbxLimiteCumplirStock";
             cbxLimiteCumplirStock.Size = new Size(131, 19);
             cbxLimiteCumplirStock.TabIndex = 79;
@@ -423,7 +391,7 @@
             // lblLimiteStock
             // 
             lblLimiteStock.AutoSize = true;
-            lblLimiteStock.Location = new Point(542, 846);
+            lblLimiteStock.Location = new Point(1090, 846);
             lblLimiteStock.Name = "lblLimiteStock";
             lblLimiteStock.Size = new Size(140, 15);
             lblLimiteStock.TabIndex = 81;
@@ -432,14 +400,14 @@
             // txtLimiteStock
             // 
             txtLimiteStock.Enabled = false;
-            txtLimiteStock.Location = new Point(688, 843);
+            txtLimiteStock.Location = new Point(1236, 843);
             txtLimiteStock.Name = "txtLimiteStock";
             txtLimiteStock.Size = new Size(137, 23);
             txtLimiteStock.TabIndex = 80;
             // 
             // btnLimpiar
             // 
-            btnLimpiar.Location = new Point(338, 967);
+            btnLimpiar.Location = new Point(886, 967);
             btnLimpiar.Name = "btnLimpiar";
             btnLimpiar.Size = new Size(161, 32);
             btnLimpiar.TabIndex = 83;
@@ -450,7 +418,7 @@
             // lblCodigoManual
             // 
             lblCodigoManual.AutoSize = true;
-            lblCodigoManual.Location = new Point(554, 69);
+            lblCodigoManual.Location = new Point(1076, 522);
             lblCodigoManual.Name = "lblCodigoManual";
             lblCodigoManual.Size = new Size(38, 15);
             lblCodigoManual.TabIndex = 84;
@@ -459,30 +427,19 @@
             // btnCargarProducto
             // 
             btnCargarProducto.Enabled = false;
-            btnCargarProducto.Location = new Point(960, 142);
+            btnCargarProducto.Location = new Point(711, 116);
             btnCargarProducto.Name = "btnCargarProducto";
-            btnCargarProducto.Size = new Size(161, 32);
+            btnCargarProducto.Size = new Size(218, 32);
             btnCargarProducto.TabIndex = 85;
             btnCargarProducto.Text = "Cargar Producto/s";
             btnCargarProducto.UseVisualStyleBackColor = true;
             btnCargarProducto.Click += btnCargarProducto_Click;
             // 
-            // cbxComboProductos
-            // 
-            cbxComboProductos.AutoSize = true;
-            cbxComboProductos.Location = new Point(972, 116);
-            cbxComboProductos.Name = "cbxComboProductos";
-            cbxComboProductos.Size = new Size(171, 19);
-            cbxComboProductos.TabIndex = 86;
-            cbxComboProductos.Text = "Combinación de Productos";
-            cbxComboProductos.UseVisualStyleBackColor = true;
-            cbxComboProductos.CheckedChanged += cbxComboProductos_CheckedChanged;
-            // 
             // lblTotalPrecioCosto
             // 
             lblTotalPrecioCosto.AutoSize = true;
             lblTotalPrecioCosto.Enabled = false;
-            lblTotalPrecioCosto.Location = new Point(427, 668);
+            lblTotalPrecioCosto.Location = new Point(975, 668);
             lblTotalPrecioCosto.Name = "lblTotalPrecioCosto";
             lblTotalPrecioCosto.Size = new Size(139, 15);
             lblTotalPrecioCosto.TabIndex = 90;
@@ -492,7 +449,7 @@
             // txtPrecioCostoAcumulado
             // 
             txtPrecioCostoAcumulado.Enabled = false;
-            txtPrecioCostoAcumulado.Location = new Point(342, 696);
+            txtPrecioCostoAcumulado.Location = new Point(890, 696);
             txtPrecioCostoAcumulado.Name = "txtPrecioCostoAcumulado";
             txtPrecioCostoAcumulado.Size = new Size(285, 23);
             txtPrecioCostoAcumulado.TabIndex = 89;
@@ -502,7 +459,7 @@
             // 
             lblTotalPrecioReal.AutoSize = true;
             lblTotalPrecioReal.Enabled = false;
-            lblTotalPrecioReal.Location = new Point(759, 668);
+            lblTotalPrecioReal.Location = new Point(1307, 668);
             lblTotalPrecioReal.Name = "lblTotalPrecioReal";
             lblTotalPrecioReal.Size = new Size(97, 15);
             lblTotalPrecioReal.TabIndex = 88;
@@ -512,23 +469,68 @@
             // txtPrecioVentaReal
             // 
             txtPrecioVentaReal.Enabled = false;
-            txtPrecioVentaReal.Location = new Point(674, 696);
+            txtPrecioVentaReal.Location = new Point(1222, 696);
             txtPrecioVentaReal.Name = "txtPrecioVentaReal";
             txtPrecioVentaReal.Size = new Size(285, 23);
             txtPrecioVentaReal.TabIndex = 87;
             txtPrecioVentaReal.Visible = false;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 3;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel1.Controls.Add(btnCargarGrupoMarca, 0, 0);
+            tableLayoutPanel1.Controls.Add(btnCargarGrupoRubro, 1, 0);
+            tableLayoutPanel1.Controls.Add(btnCargarGrupoCategoria, 2, 0);
+            tableLayoutPanel1.Controls.Add(txtMarca, 0, 1);
+            tableLayoutPanel1.Controls.Add(txtRubro, 1, 1);
+            tableLayoutPanel1.Controls.Add(txtCategoria, 2, 1);
+            tableLayoutPanel1.Location = new Point(3, 3);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new Size(534, 98);
+            tableLayoutPanel1.TabIndex = 91;
+            // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.ColumnCount = 1;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel1, 0, 0);
+            tableLayoutPanel2.Controls.Add(btnCargarProductosAlcanzados, 0, 2);
+            tableLayoutPanel2.Controls.Add(label3, 0, 1);
+            tableLayoutPanel2.Location = new Point(12, 98);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 3;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 56.7441864F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 43.2558136F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
+            tableLayoutPanel2.Size = new Size(540, 236);
+            tableLayoutPanel2.TabIndex = 92;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(3, 104);
+            label3.Name = "label3";
+            label3.Size = new Size(394, 15);
+            label3.TabIndex = 92;
+            label3.Text = "alcance de los productos de la oferta sea un combo de los tres o de 1 solo";
             // 
             // FOfertaGrupoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1571, 1061);
+            Controls.Add(tableLayoutPanel2);
             Controls.Add(lblTotalPrecioCosto);
             Controls.Add(txtPrecioCostoAcumulado);
+            Controls.Add(btnCargarProducto);
             Controls.Add(lblTotalPrecioReal);
             Controls.Add(txtPrecioVentaReal);
-            Controls.Add(cbxComboProductos);
-            Controls.Add(btnCargarProducto);
             Controls.Add(lblCodigoManual);
             Controls.Add(btnLimpiar);
             Controls.Add(lblLimiteStock);
@@ -539,14 +541,9 @@
             Controls.Add(dgvProductosQuitados);
             Controls.Add(lblNumeroProductoQuitados);
             Controls.Add(lblCantidadProductosQuitados);
-            Controls.Add(btnCargarProductosAlcanzados);
             Controls.Add(btnQuitarProducto);
             Controls.Add(label1);
             Controls.Add(dgvProductos);
-            Controls.Add(txtCategoria);
-            Controls.Add(btnCargarGrupoCategoria);
-            Controls.Add(txtRubro);
-            Controls.Add(btnCargarGrupoRubro);
             Controls.Add(dtpFechaFin);
             Controls.Add(dtpFechaInicio);
             Controls.Add(lblFechaFin);
@@ -561,18 +558,17 @@
             Controls.Add(cbxDescuentoPesos);
             Controls.Add(txtMontoPorcentaje);
             Controls.Add(lblNumeroProductoAfectados);
-            Controls.Add(txtMarca);
             Controls.Add(lblTitulo);
-            Controls.Add(cbxCategoria);
-            Controls.Add(cbxRubro);
-            Controls.Add(cbxMarca);
             Controls.Add(lblCantidadProductos);
-            Controls.Add(btnCargarGrupoMarca);
             Name = "FOfertaGrupoABM";
             Text = "FOfertaGrupoABM";
             Load += FOfertaGrupoABM_Load;
             ((System.ComponentModel.ISupportInitialize)dgvProductos).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvProductosQuitados).EndInit();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            tableLayoutPanel2.ResumeLayout(false);
+            tableLayoutPanel2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -581,9 +577,6 @@
 
         private Label lblCantidadProductos;
         private Button btnCargarGrupoMarca;
-        private CheckBox cbxMarca;
-        private CheckBox cbxRubro;
-        private CheckBox cbxCategoria;
         private Label lblTitulo;
         private TextBox txtMarca;
         private Label lblNumeroProductoAfectados;
@@ -619,10 +612,12 @@
         private Button btnLimpiar;
         private Label lblCodigoManual;
         private Button btnCargarProducto;
-        private CheckBox cbxComboProductos;
         private Label lblTotalPrecioCosto;
         private TextBox txtPrecioCostoAcumulado;
         private Label lblTotalPrecioReal;
         private TextBox txtPrecioVentaReal;
+        private TableLayoutPanel tableLayoutPanel1;
+        private TableLayoutPanel tableLayoutPanel2;
+        private Label label3;
     }
 }
