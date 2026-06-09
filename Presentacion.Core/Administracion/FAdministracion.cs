@@ -114,6 +114,9 @@ namespace Presentacion.Core.Administracion
             cbMesGrafico.DropDownStyle = ComboBoxStyle.DropDownList;
             cbAñoGraficos.DropDownStyle = ComboBoxStyle.DropDownList;
 
+            tabControlGraficoArriba.SelectedIndexChanged += TabControlGraficos_SelectedIndexChanged;
+            tabControl1.SelectedIndexChanged += TabControl1_SelectedIndexChanged;
+
             // Ejecutamos la carga inicial dinámica analizando la base de datos de manera segura
             InicializarFiltrosCronologicos();
         }
@@ -195,15 +198,11 @@ namespace Presentacion.Core.Administracion
         /// </summary>
         private void FAdministracion_Load(object sender, EventArgs e)
         {
+            
             // Verificación tipada segura: Leemos los estados pre-calculados por los combos dinámicos en vez de usar DateTime.Now directo
             if (cbAñoGraficos.SelectedItem is int año && cbMesGrafico.SelectedValue is int mes)
             {
-                grafico1(mes, año);
-                grafico2(); // Histórico estático de los últimos 31 días agrupados
-                grafico3(mes, año);
-                grafico4(mes, año);
-                grafico5(año);
-                grafico6(año);
+                CargarGraficoActivo();
             }
             else
             {
@@ -214,6 +213,7 @@ namespace Presentacion.Core.Administracion
             // Ajuste de ejes del gráfico 6 y refresco inicial obligatorio
             formsPlot6.Plot.Axes.AutoScale();
             formsPlot6.Refresh();
+            
 
             // Vinculación de eventos de mouse para procesar la proximidad matemática y mostrar Tooltips interactivos
             formsPlot1.MouseMove += FormsPlot1_MouseMove;
@@ -227,15 +227,6 @@ namespace Presentacion.Core.Administracion
         // =================================================================================
         // CONTROLADORES DE INTERFACCIÓN Y FILTRADO CRONOLÓGICO
         // =================================================================================
-
-        private void btnFiltrarGraficos_Click(object sender, EventArgs e)
-        {
-            if (cbAñoGraficos.SelectedItem is int añoFiltrado && cbMesGrafico.SelectedValue is int mesFiltrado)
-            {
-                filtrarGraficos(añoFiltrado, mesFiltrado);
-            }
-        }
-
         private void cbAñoGraficos_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cbAñoGraficos.SelectedItem is int añoFiltrado)
@@ -318,7 +309,8 @@ namespace Presentacion.Core.Administracion
             formsPlot1.Plot.YLabel("Total Ingresos");
 
             // Añade el tipo de gráfico lineal
-            formsPlot1.Plot.Add.Scatter(numerosCajas, gananciasPorCaja);
+            var scatter = formsPlot1.Plot.Add.Scatter(numerosCajas, gananciasPorCaja);
+            scatter.Color = ScottPlot.Color.FromHex("#291a3e");
             // Sobrescribe los números del eje X con las etiquetas personalizadas de fechas ("A: 10/05...")
             formsPlot1.Plot.Axes.Bottom.SetTicks(numerosCajas, fechasDeCadaCaja);
             formsPlot1.Plot.Axes.AutoScale();
@@ -347,7 +339,8 @@ namespace Presentacion.Core.Administracion
             formsPlot2.Plot.XLabel("Fecha de las Cajas");
             formsPlot2.Plot.YLabel("Total Ingresos");
 
-            formsPlot2.Plot.Add.Scatter(numerosDias, ingresosPorDia);
+            var scatter = formsPlot2.Plot.Add.Scatter(numerosDias, ingresosPorDia);
+            scatter.Color = ScottPlot.Color.FromHex("#291a3e");
             formsPlot2.Plot.Axes.Bottom.SetTicks(numerosDias, dias);
             formsPlot2.Plot.Axes.AutoScale();
             formsPlot2.Refresh();
@@ -389,7 +382,8 @@ namespace Presentacion.Core.Administracion
             formsPlot3.Plot.YLabel("Total Ventas");
 
             // Instancia gráfico de barras nativo
-            formsPlot3.Plot.Add.Bars(cantidadesGananciasPorDia);
+            var bars = formsPlot3.Plot.Add.Bars(cantidadesGananciasPorDia);
+            bars.Color = ScottPlot.Color.FromHex("#291a3e");
             formsPlot3.Plot.Axes.Bottom.SetTicks(posicionesDiasGanancias, diaDeLasGanancias);
             formsPlot3.Plot.Axes.AutoScale();
             formsPlot3.Refresh();
@@ -430,7 +424,8 @@ namespace Presentacion.Core.Administracion
             formsPlot4.Plot.XLabel("Dias");
             formsPlot4.Plot.YLabel("Total Ventas");
 
-            formsPlot4.Plot.Add.Bars(cantidadesVentasPorDia);
+            var bars = formsPlot4.Plot.Add.Bars(cantidadesVentasPorDia);
+            bars.Color = ScottPlot.Color.FromHex("#291a3e");
             formsPlot4.Plot.Axes.Bottom.SetTicks(posicionesDiasVentas, diaDeLasVentas);
             formsPlot4.Plot.Axes.AutoScale();
             formsPlot4.Refresh();
@@ -471,7 +466,8 @@ namespace Presentacion.Core.Administracion
             formsPlot5.Plot.XLabel("Meses");
             formsPlot5.Plot.YLabel("Total Ingresos");
 
-            formsPlot5.Plot.Add.Bars(xs, ganaciasPorMesEjeY);
+            var bars = formsPlot5.Plot.Add.Bars(xs, ganaciasPorMesEjeY);
+            bars.Color = ScottPlot.Color.FromHex("#291a3e");
             formsPlot5.Plot.Axes.Bottom.SetTicks(xs, mesesPresentesEjeX);
             // Rotación visual a 45 grados de las etiquetas de texto del eje inferior para evitar solapamientos tipográficos
             formsPlot5.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
@@ -512,7 +508,8 @@ namespace Presentacion.Core.Administracion
             formsPlot6.Plot.XLabel("Meses");
             formsPlot6.Plot.YLabel("Total Ingresos");
 
-            formsPlot6.Plot.Add.Bars(xsVentas, ventasPorMesEjeY);
+            var bars = formsPlot6.Plot.Add.Bars(xsVentas, ventasPorMesEjeY);
+            bars.Color = ScottPlot.Color.FromHex("#291a3e");
             formsPlot6.Plot.Axes.Bottom.SetTicks(xsVentas, mesesVentasPresentesEjeX);
             formsPlot6.Plot.Axes.AutoScale();
             formsPlot6.Refresh();
@@ -704,6 +701,43 @@ namespace Presentacion.Core.Administracion
             btnComprobantes.TextImageRelation = TextImageRelation.ImageAboveText;
             // Le damos un padding superior para que el ícono no pegue contra el techo del botón
             btnComprobantes.Padding = new Padding(0, 10, 0, 0);
+        }
+        private void TabControlGraficos_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CargarGraficoActivo();
+        }
+        private void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CargarGraficoActivo();
+        }
+        private void CargarGraficoActivo()
+        {
+            // Recuperar de forma segura los valores de los filtros, con fallback por seguridad
+            int año = cbAñoGraficos.SelectedItem is int a ? a : DateTime.Now.Year;
+            int mes = cbMesGrafico.SelectedValue is int m ? m : DateTime.Now.Month;
+
+            // Evaluamos qué pestaña está mirando el usuario
+            switch (tabControlGraficoArriba.SelectedIndex)
+            {
+                case 0:
+                    grafico1(mes, año);
+                    break;
+                case 1:
+                    grafico2(); // Histórico estático de 31 días
+                    break;
+            }
+
+            switch (tabControl1.SelectedIndex)
+            {
+                case 0:
+                    grafico3(mes, año);
+                    grafico4(mes, año);
+                    break;
+                case 1:
+                    grafico5(año);
+                    grafico6(año);
+                    break;
+            }
         }
     }
 }

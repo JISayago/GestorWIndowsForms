@@ -35,6 +35,7 @@ namespace Presentacion.Constantes
         public static Image ImgRoles = Properties.Resources.ImagenRoles;
         public static Image ImgPromocion = Properties.Resources.ImagenPromocion;
         public static Image ImgSumar = Properties.Resources.ImagenSumar;
+        public static Image ImgDinero = Properties.Resources.ImagenDinero;
 
         public static Image ImgLogoSimple = Properties.Resources.LogoSimple;
         public static Image ImgLogoCompuesto = Properties.Resources.LogoCompuesto;

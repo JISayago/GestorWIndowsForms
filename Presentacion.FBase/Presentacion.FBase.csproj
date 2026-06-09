@@ -10,10 +10,16 @@
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="ScottPlot.WinForms" Version="5.1.57" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Presentacion.Constantes\Presentacion.Constantes.csproj" />
     <ProjectReference Include="..\Servicios\Servicios.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Helpers\FlatTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

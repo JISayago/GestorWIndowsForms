@@ -1,4 +1,6 @@
-﻿namespace Presentacion
+﻿using Presentacion.Core.Administracion;
+
+namespace Presentacion
 {
     partial class VentanaPrincipal
     {
@@ -48,7 +50,7 @@
             lblHora = new Label();
             lblHoraValor = new Label();
             tlpPanelBaseTabControlYNotis = new TableLayoutPanel();
-            tcIzquierda = new TabControl();
+            tcIzquierda = new FlatTabControl();
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
             tlpNotificaciones0 = new TableLayoutPanel();
@@ -449,7 +451,7 @@
         private Label lblNombreUsuario;
         private TableLayoutPanel tableLayoutPanel2;
         private TableLayoutPanel tlpPanelBaseTabControlYNotis;
-        private TabControl tcIzquierda;
+        private FlatTabControl tcIzquierda;
         private TabPage tabPage1;
         private TabPage tabPage2;
         private TableLayoutPanel tlpNotificaciones0;

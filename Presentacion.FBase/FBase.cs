@@ -1,5 +1,7 @@
-﻿using Presentacion.FBase.Helpers;
+﻿using MigraDoc.DocumentObjectModel.Internals;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.DTO;
+using ScottPlot.WinForms;
 using System.Text.Json.Nodes;
 
 namespace Presentacion.FBase
@@ -21,7 +23,7 @@ namespace Presentacion.FBase
 
 
 
-               protected override void OnLoad(EventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             this.KeyPreview = true;
@@ -266,7 +268,7 @@ namespace Presentacion.FBase
             }
         }
 
-       public virtual void Control_Validated(object sender, System.EventArgs e)
+        public virtual void Control_Validated(object sender, System.EventArgs e)
         {
             if (sender is TextBox)
             {
@@ -321,6 +323,10 @@ namespace Presentacion.FBase
             {
                 switch (control)
                 {
+                    case TableLayoutPanel tlp:
+                        ConfugurarTableLayoutPanel(tlp);
+                        break;
+
                     case Button btn:
                         ConfigurarBoton(btn);
                         break;
@@ -364,8 +370,21 @@ namespace Presentacion.FBase
                     case Panel pnl:
                         pnl.BackColor = TemaSistema.Fondo;
                         break;
+
+                    case MenuStrip ms:
+                        ConfigurarMenuStrip(ms);
+                        break;
+
                     case ToolStrip ts:
                         ConfigurarToolStrip(ts);
+                        break;
+
+                    case TabControl tc:
+                        ConfigurarTabControl(tc);
+                        break;
+
+                    case FormsPlot fp:
+                        ConfigurarFormPlot(fp);
                         break;
                 }
 
@@ -398,6 +417,7 @@ namespace Presentacion.FBase
         }
         private void ConfigurarComboBox(ComboBox cmb)
         {
+            cmb.FlatStyle = FlatStyle.Flat;
             cmb.BackColor = TemaSistema.FondoControl;
             cmb.ForeColor = TemaSistema.Texto;
         }
@@ -479,6 +499,89 @@ namespace Presentacion.FBase
                 ts.Width,
                 ts.Height - 1);
         }
+        private void ConfigurarMenuStrip(MenuStrip ms)
+        {
+            // Le asignamos nuestro mini-dibujante personalizado
+            ms.Renderer = new Presentacion.FBase.Helpers.MiniRenderizadorMenu();
 
+            ms.BackColor = TemaSistema.Oscuro;
+            ms.ForeColor = TemaSistema.Acento;
+
+            foreach (ToolStripItem item in ms.Items)
+            {
+                ConfigurarItemMenu(item);
+            }
+        }
+
+        private void ConfigurarItemMenu(ToolStripItem item)
+        {
+            item.ForeColor = TemaSistema.Acento;
+            //item.Font = new Font(item.Font, FontStyle.Bold);
+
+            if (item is ToolStripMenuItem menuItem)
+            {
+                // Esto mantiene el fondo del contenedor de la lista desplegable
+                menuItem.DropDown.BackColor = TemaSistema.Oscuro;
+                menuItem.DropDown.ForeColor = TemaSistema.Acento;
+
+                // Recorremos los sub-ítems
+                foreach (ToolStripItem subItem in menuItem.DropDownItems)
+                {
+                    ConfigurarItemMenu(subItem);
+                }
+            }
+        }
+        private void ConfigurarTabControl(TabControl tc)
+        {
+            tc.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tc.Appearance = TabAppearance.FlatButtons; // <--- AGREGÁ ESTA LÍNEA
+            tc.SizeMode = TabSizeMode.Fixed;          // Opcional: Hace que todas midan lo mismo
+
+            tc.BackColor = TemaSistema.Fondo;
+            tc.ForeColor = TemaSistema.Texto;
+
+            // Evitamos duplicar eventos en memoria
+            tc.DrawItem -= TabControl_DrawItem;
+            tc.DrawItem += TabControl_DrawItem;
+
+            // Es crucial pintar el fondo de cada página individual para que se fusione con el formulario
+            foreach (TabPage page in tc.TabPages)
+            {
+                page.BackColor = TemaSistema.Fondo; // O TemaSistema.FondoControl según prefieras
+                page.ForeColor = TemaSistema.Texto;
+            }
+        }
+
+        private void TabControl_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            var tc = (TabControl)sender;
+            var tabPage = tc.TabPages[e.Index];
+            bool isSelected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+
+            // 1. Pintamos el fondo de la pestaña (Header)
+            using var brush = new SolidBrush(isSelected ? TemaSistema.Seleccion : TemaSistema.Fondo);
+            e.Graphics.FillRectangle(brush, e.Bounds);
+
+            // 2. Pintamos el texto centrado de la pestaña
+            Color colorTexto = isSelected ? Color.Black : TemaSistema.Texto;
+
+            TextRenderer.DrawText(
+                e.Graphics,
+                tabPage.Text,
+                tc.Font,
+                e.Bounds,
+                colorTexto,
+                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+        }
+        private void ConfigurarFormPlot(FormsPlot fp)
+        {
+            fp.BackColor = TemaSistema.Fondo;
+        }
+        private void ConfugurarTableLayoutPanel(TableLayoutPanel tlp)
+        {
+            tlp.BackColor = TemaSistema.Fondo;
+        }
     }
 }
