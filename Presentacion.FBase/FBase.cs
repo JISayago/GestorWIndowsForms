@@ -19,14 +19,13 @@ namespace Presentacion.FBase
             _listaControlesObligatorios = new List<ControlDTO>();
             this.components = new System.ComponentModel.Container();
             this.error = new System.Windows.Forms.ErrorProvider(this.components);
-            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            //this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         }
-
-
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             this.KeyPreview = true;
             AplicarTema(this);
         }
