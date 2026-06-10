@@ -94,7 +94,6 @@ namespace Presentacion
 
             var mensajeCarga = "Preparando todo lo necesario...";
 
-            // 🔥 PANTALLA DE CARGA
             using (var pantallaCarga = new PantallaCargaEspera(mensajeCarga))
             {
                 pantallaCarga.Shown += async (s, e) =>
@@ -112,7 +111,6 @@ namespace Presentacion
                             inicializador.InicializadorDatos(progreso);
                         });
 
-                        // 🔥 DATOS YA CARGADOS
                         mensajesOfertas = inicializador.mensajes;
                         datosPantalla = inicializador.DatosPantallaPrincipal;
                         productos = inicializador.Productos;
@@ -122,6 +120,8 @@ namespace Presentacion
                         pantallaCarga.SetMensaje("Listo");
 
                         await Task.Delay(300);
+
+                        pantallaCarga.DialogResult = DialogResult.OK;
                     }
                     catch (Exception ex)
                     {
@@ -129,18 +129,17 @@ namespace Presentacion
                             "Error al inicializar datos: " + ex.Message,
                             "Error",
                             MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
-                        );
+                            MessageBoxIcon.Error);
+
+                        pantallaCarga.DialogResult = DialogResult.Cancel;
                     }
-                    finally
-                    {
-                        pantallaCarga.Close();
-                    }
+
+                    pantallaCarga.Close();
                 };
 
-                Application.Run(pantallaCarga);
+                if (pantallaCarga.ShowDialog() != DialogResult.OK)
+                    return;
             }
-
             // 🔥 MENSAJES POST CARGA
             if (mensajesOfertas != null && mensajesOfertas.Count > 0)
             {
