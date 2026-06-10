@@ -1,4 +1,5 @@
 ﻿using MigraDoc.DocumentObjectModel.Internals;
+using Presentacion.Core.Administracion;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.DTO;
 using ScottPlot.WinForms;
@@ -379,8 +380,19 @@ namespace Presentacion.FBase
                         ConfigurarToolStrip(ts);
                         break;
 
+                    case FlatTabControl flatTc:
+                        flatTc.AplicarTema();
+                        break;
+
                     case TabControl tc:
-                        ConfigurarTabControl(tc);
+                        tc.BackColor = TemaSistema.Fondo;
+                        tc.ForeColor = TemaSistema.Texto;
+
+                        foreach (TabPage page in tc.TabPages)
+                        {
+                            page.BackColor = TemaSistema.Fondo;
+                            page.ForeColor = TemaSistema.Texto;
+                        }
                         break;
 
                     case FormsPlot fp:
@@ -531,51 +543,7 @@ namespace Presentacion.FBase
                 }
             }
         }
-        private void ConfigurarTabControl(TabControl tc)
-        {
-            tc.DrawMode = TabDrawMode.OwnerDrawFixed;
-            tc.Appearance = TabAppearance.FlatButtons; // <--- AGREGÁ ESTA LÍNEA
-            tc.SizeMode = TabSizeMode.Fixed;          // Opcional: Hace que todas midan lo mismo
-
-            tc.BackColor = TemaSistema.Fondo;
-            tc.ForeColor = TemaSistema.Texto;
-
-            // Evitamos duplicar eventos en memoria
-            tc.DrawItem -= TabControl_DrawItem;
-            tc.DrawItem += TabControl_DrawItem;
-
-            // Es crucial pintar el fondo de cada página individual para que se fusione con el formulario
-            foreach (TabPage page in tc.TabPages)
-            {
-                page.BackColor = TemaSistema.Fondo; // O TemaSistema.FondoControl según prefieras
-                page.ForeColor = TemaSistema.Texto;
-            }
-        }
-
-        private void TabControl_DrawItem(object sender, DrawItemEventArgs e)
-        {
-            if (e.Index < 0) return;
-
-            var tc = (TabControl)sender;
-            var tabPage = tc.TabPages[e.Index];
-            bool isSelected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
-
-            // 1. Pintamos el fondo de la pestaña (Header)
-            using var brush = new SolidBrush(isSelected ? TemaSistema.Seleccion : TemaSistema.Fondo);
-            e.Graphics.FillRectangle(brush, e.Bounds);
-
-            // 2. Pintamos el texto centrado de la pestaña
-            Color colorTexto = isSelected ? Color.Black : TemaSistema.Texto;
-
-            TextRenderer.DrawText(
-                e.Graphics,
-                tabPage.Text,
-                tc.Font,
-                e.Bounds,
-                colorTexto,
-                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
-        }
-        private void ConfigurarFormPlot(FormsPlot fp)
+         private void ConfigurarFormPlot(FormsPlot fp)
         {
             fp.BackColor = TemaSistema.Fondo;
         }
