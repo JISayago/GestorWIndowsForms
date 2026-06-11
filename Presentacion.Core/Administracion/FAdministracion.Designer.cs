@@ -67,13 +67,13 @@
             pnlInfoInicial = new Panel();
             tlpBaseNivel1 = new TableLayoutPanel();
             tlpArribaNivel2 = new TableLayoutPanel();
-            tabControlGraficoArriba = new TabControl();
+            tabControlGraficoArriba = new FlatTabControl();
             tabPage1 = new TabPage();
             formsPlot1 = new ScottPlot.WinForms.FormsPlot();
             tabPage2 = new TabPage();
             formsPlot2 = new ScottPlot.WinForms.FormsPlot();
             tlpBajoNivel2 = new TableLayoutPanel();
-            tabControl1 = new TabControl();
+            tabControl1 = new FlatTabControl();
             tabPage3 = new TabPage();
             tlpBajoNivel3 = new TableLayoutPanel();
             formsPlot4 = new ScottPlot.WinForms.FormsPlot();
@@ -104,10 +104,12 @@
             // 
             // menuStrip1
             // 
+            menuStrip1.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             menuStrip1.Items.AddRange(new ToolStripItem[] { pRODUCTOToolStripMenuItem, eMPLEADOSToolStripMenuItem, cLIENTESToolStripMenuItem, oFERTASToolStripMenuItem, cONFIGURACIONToolStripMenuItem, vENTAToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1610, 24);
+            menuStrip1.Padding = new Padding(6, 3, 3, 3);
+            menuStrip1.Size = new Size(1610, 30);
             menuStrip1.TabIndex = 2;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -115,153 +117,153 @@
             // 
             pRODUCTOToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { sTOCKToolStripMenuItem, mARCASToolStripMenuItem, cATEGORIASToolStripMenuItem, rUBROSToolStripMenuItem, lOTESToolStripMenuItem });
             pRODUCTOToolStripMenuItem.Name = "pRODUCTOToolStripMenuItem";
-            pRODUCTOToolStripMenuItem.Size = new Size(81, 20);
+            pRODUCTOToolStripMenuItem.Size = new Size(99, 24);
             pRODUCTOToolStripMenuItem.Text = "PRODUCTO";
             // 
             // sTOCKToolStripMenuItem
             // 
             sTOCKToolStripMenuItem.Name = "sTOCKToolStripMenuItem";
-            sTOCKToolStripMenuItem.Size = new Size(143, 22);
-            sTOCKToolStripMenuItem.Text = "STOCK";
+            sTOCKToolStripMenuItem.Size = new Size(150, 24);
+            sTOCKToolStripMenuItem.Text = "Stock";
             sTOCKToolStripMenuItem.Click += sTOCKToolStripMenuItem_Click;
             // 
             // mARCASToolStripMenuItem
             // 
             mARCASToolStripMenuItem.Name = "mARCASToolStripMenuItem";
-            mARCASToolStripMenuItem.Size = new Size(143, 22);
-            mARCASToolStripMenuItem.Text = "MARCAS";
+            mARCASToolStripMenuItem.Size = new Size(150, 24);
+            mARCASToolStripMenuItem.Text = "Marcas";
             mARCASToolStripMenuItem.Click += mARCASToolStripMenuItem_Click;
             // 
             // cATEGORIASToolStripMenuItem
             // 
             cATEGORIASToolStripMenuItem.Name = "cATEGORIASToolStripMenuItem";
-            cATEGORIASToolStripMenuItem.Size = new Size(143, 22);
-            cATEGORIASToolStripMenuItem.Text = "CATEGORIAS";
+            cATEGORIASToolStripMenuItem.Size = new Size(150, 24);
+            cATEGORIASToolStripMenuItem.Text = "Categorias";
             cATEGORIASToolStripMenuItem.Click += cATEGORIASToolStripMenuItem_Click;
             // 
             // rUBROSToolStripMenuItem
             // 
             rUBROSToolStripMenuItem.Name = "rUBROSToolStripMenuItem";
-            rUBROSToolStripMenuItem.Size = new Size(143, 22);
-            rUBROSToolStripMenuItem.Text = "RUBROS";
+            rUBROSToolStripMenuItem.Size = new Size(150, 24);
+            rUBROSToolStripMenuItem.Text = "Rubros";
             rUBROSToolStripMenuItem.Click += rUBROSToolStripMenuItem_Click;
             // 
             // lOTESToolStripMenuItem
             // 
             lOTESToolStripMenuItem.Name = "lOTESToolStripMenuItem";
-            lOTESToolStripMenuItem.Size = new Size(143, 22);
-            lOTESToolStripMenuItem.Text = "LOTES";
+            lOTESToolStripMenuItem.Size = new Size(150, 24);
+            lOTESToolStripMenuItem.Text = "Lotes";
             lOTESToolStripMenuItem.Click += lOTESToolStripMenuItem_Click;
             // 
             // eMPLEADOSToolStripMenuItem
             // 
             eMPLEADOSToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOEMPLEADOSToolStripMenuItem, rOLESToolStripMenuItem });
             eMPLEADOSToolStripMenuItem.Name = "eMPLEADOSToolStripMenuItem";
-            eMPLEADOSToolStripMenuItem.Size = new Size(86, 20);
+            eMPLEADOSToolStripMenuItem.Size = new Size(107, 24);
             eMPLEADOSToolStripMenuItem.Text = "EMPLEADOS";
             // 
             // lISTADOEMPLEADOSToolStripMenuItem
             // 
             lISTADOEMPLEADOSToolStripMenuItem.Name = "lISTADOEMPLEADOSToolStripMenuItem";
-            lISTADOEMPLEADOSToolStripMenuItem.Size = new Size(190, 22);
-            lISTADOEMPLEADOSToolStripMenuItem.Text = "LISTADO EMPLEADOS";
+            lISTADOEMPLEADOSToolStripMenuItem.Size = new Size(204, 24);
+            lISTADOEMPLEADOSToolStripMenuItem.Text = "Listado Empleados";
             lISTADOEMPLEADOSToolStripMenuItem.Click += lISTADOEMPLEADOSToolStripMenuItem_Click;
             // 
             // rOLESToolStripMenuItem
             // 
             rOLESToolStripMenuItem.Name = "rOLESToolStripMenuItem";
-            rOLESToolStripMenuItem.Size = new Size(190, 22);
-            rOLESToolStripMenuItem.Text = "ROLES";
+            rOLESToolStripMenuItem.Size = new Size(204, 24);
+            rOLESToolStripMenuItem.Text = "Roles";
             rOLESToolStripMenuItem.Click += rOLESToolStripMenuItem_Click;
             // 
             // cLIENTESToolStripMenuItem
             // 
             cLIENTESToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOCLIENTESToolStripMenuItem, cUENTASCORRIENTESToolStripMenuItem });
             cLIENTESToolStripMenuItem.Name = "cLIENTESToolStripMenuItem";
-            cLIENTESToolStripMenuItem.Size = new Size(70, 20);
+            cLIENTESToolStripMenuItem.Size = new Size(85, 24);
             cLIENTESToolStripMenuItem.Text = "CLIENTES";
             // 
             // lISTADOCLIENTESToolStripMenuItem
             // 
             lISTADOCLIENTESToolStripMenuItem.Name = "lISTADOCLIENTESToolStripMenuItem";
-            lISTADOCLIENTESToolStripMenuItem.Size = new Size(196, 22);
-            lISTADOCLIENTESToolStripMenuItem.Text = "LISTADO CLIENTES";
+            lISTADOCLIENTESToolStripMenuItem.Size = new Size(206, 24);
+            lISTADOCLIENTESToolStripMenuItem.Text = "Listado Clientes";
             lISTADOCLIENTESToolStripMenuItem.Click += lISTADOCLIENTESToolStripMenuItem_Click;
             // 
             // cUENTASCORRIENTESToolStripMenuItem
             // 
             cUENTASCORRIENTESToolStripMenuItem.Name = "cUENTASCORRIENTESToolStripMenuItem";
-            cUENTASCORRIENTESToolStripMenuItem.Size = new Size(196, 22);
-            cUENTASCORRIENTESToolStripMenuItem.Text = "CUENTAS CORRIENTES";
+            cUENTASCORRIENTESToolStripMenuItem.Size = new Size(206, 24);
+            cUENTASCORRIENTESToolStripMenuItem.Text = "Cuentas Corrientes";
             cUENTASCORRIENTESToolStripMenuItem.Click += cUENTASCORRIENTESToolStripMenuItem_Click;
             // 
             // oFERTASToolStripMenuItem
             // 
             oFERTASToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOOFERTASToolStripMenuItem, aCTIVARDESACTIVARToolStripMenuItem, nUEVAOFERTAToolStripMenuItem });
             oFERTASToolStripMenuItem.Name = "oFERTASToolStripMenuItem";
-            oFERTASToolStripMenuItem.Size = new Size(66, 20);
+            oFERTASToolStripMenuItem.Size = new Size(82, 24);
             oFERTASToolStripMenuItem.Text = "OFERTAS";
             // 
             // lISTADOOFERTASToolStripMenuItem
             // 
             lISTADOOFERTASToolStripMenuItem.Name = "lISTADOOFERTASToolStripMenuItem";
-            lISTADOOFERTASToolStripMenuItem.Size = new Size(199, 22);
-            lISTADOOFERTASToolStripMenuItem.Text = "LISTADO OFERTAS";
+            lISTADOOFERTASToolStripMenuItem.Size = new Size(211, 24);
+            lISTADOOFERTASToolStripMenuItem.Text = "Listado Ofertas";
             lISTADOOFERTASToolStripMenuItem.Click += lISTADOOFERTASToolStripMenuItem_Click;
             // 
             // aCTIVARDESACTIVARToolStripMenuItem
             // 
             aCTIVARDESACTIVARToolStripMenuItem.Name = "aCTIVARDESACTIVARToolStripMenuItem";
-            aCTIVARDESACTIVARToolStripMenuItem.Size = new Size(199, 22);
-            aCTIVARDESACTIVARToolStripMenuItem.Text = "ACTIVAR / DESACTIVAR";
+            aCTIVARDESACTIVARToolStripMenuItem.Size = new Size(211, 24);
+            aCTIVARDESACTIVARToolStripMenuItem.Text = "Activar / Desactivar";
             aCTIVARDESACTIVARToolStripMenuItem.Click += aCTIVARDESACTIVARToolStripMenuItem_Click;
             // 
             // nUEVAOFERTAToolStripMenuItem
             // 
             nUEVAOFERTAToolStripMenuItem.Name = "nUEVAOFERTAToolStripMenuItem";
-            nUEVAOFERTAToolStripMenuItem.Size = new Size(199, 22);
-            nUEVAOFERTAToolStripMenuItem.Text = "NUEVA OFERTA";
+            nUEVAOFERTAToolStripMenuItem.Size = new Size(211, 24);
+            nUEVAOFERTAToolStripMenuItem.Text = "Nueva Oferta";
             nUEVAOFERTAToolStripMenuItem.Click += nUEVAOFERTAToolStripMenuItem_Click;
             // 
             // cONFIGURACIONToolStripMenuItem
             // 
             cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tIPOPAGOToolStripMenuItem });
             cONFIGURACIONToolStripMenuItem.Name = "cONFIGURACIONToolStripMenuItem";
-            cONFIGURACIONToolStripMenuItem.Size = new Size(114, 20);
+            cONFIGURACIONToolStripMenuItem.Size = new Size(141, 24);
             cONFIGURACIONToolStripMenuItem.Text = "CONFIGURACION";
             // 
             // tIPOPAGOToolStripMenuItem
             // 
             tIPOPAGOToolStripMenuItem.Name = "tIPOPAGOToolStripMenuItem";
-            tIPOPAGOToolStripMenuItem.Size = new Size(144, 22);
-            tIPOPAGOToolStripMenuItem.Text = "TIPO PAGO??";
+            tIPOPAGOToolStripMenuItem.Size = new Size(175, 24);
+            tIPOPAGOToolStripMenuItem.Text = "Tipo Pago????";
             tIPOPAGOToolStripMenuItem.Click += tIPOPAGOToolStripMenuItem_Click;
             // 
             // vENTAToolStripMenuItem
             // 
             vENTAToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { historialToolStripMenuItem, nuevaVentaLibreToolStripMenuItem, historialVentasLibresToolStripMenuItem });
             vENTAToolStripMenuItem.Name = "vENTAToolStripMenuItem";
-            vENTAToolStripMenuItem.Size = new Size(55, 20);
+            vENTAToolStripMenuItem.Size = new Size(68, 24);
             vENTAToolStripMenuItem.Text = "VENTA";
             // 
             // historialToolStripMenuItem
             // 
             historialToolStripMenuItem.Name = "historialToolStripMenuItem";
-            historialToolStripMenuItem.Size = new Size(189, 22);
+            historialToolStripMenuItem.Size = new Size(228, 24);
             historialToolStripMenuItem.Text = "Historial Ventas";
             historialToolStripMenuItem.Click += historialToolStripMenuItem_Click;
             // 
             // nuevaVentaLibreToolStripMenuItem
             // 
             nuevaVentaLibreToolStripMenuItem.Name = "nuevaVentaLibreToolStripMenuItem";
-            nuevaVentaLibreToolStripMenuItem.Size = new Size(189, 22);
+            nuevaVentaLibreToolStripMenuItem.Size = new Size(228, 24);
             nuevaVentaLibreToolStripMenuItem.Text = "Nueva Venta Libre";
             nuevaVentaLibreToolStripMenuItem.Click += nuevaVentaLibreToolStripMenuItem_Click;
             // 
             // historialVentasLibresToolStripMenuItem
             // 
             historialVentasLibresToolStripMenuItem.Name = "historialVentasLibresToolStripMenuItem";
-            historialVentasLibresToolStripMenuItem.Size = new Size(189, 22);
+            historialVentasLibresToolStripMenuItem.Size = new Size(228, 24);
             historialVentasLibresToolStripMenuItem.Text = "Historial Ventas Libres";
             historialVentasLibresToolStripMenuItem.Click += historialVentasLibresToolStripMenuItem_Click;
             // 
@@ -279,7 +281,7 @@
             tableLayoutPanel1.Controls.Add(tlpBaseFiltrado, 2, 0);
             tableLayoutPanel1.Controls.Add(btnVolver, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Top;
-            tableLayoutPanel1.Location = new Point(0, 24);
+            tableLayoutPanel1.Location = new Point(0, 30);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -432,7 +434,7 @@
             dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvGrilla.Location = new Point(2024, -3);
             dgvGrilla.Name = "dgvGrilla";
-            dgvGrilla.Size = new Size(380, 1227);
+            dgvGrilla.Size = new Size(380, 1221);
             dgvGrilla.TabIndex = 17;
             // 
             // pnlInfoInicial
@@ -441,9 +443,9 @@
             pnlInfoInicial.Controls.Add(tlpBaseNivel1);
             pnlInfoInicial.Controls.Add(dgvGrilla);
             pnlInfoInicial.Dock = DockStyle.Fill;
-            pnlInfoInicial.Location = new Point(0, 118);
+            pnlInfoInicial.Location = new Point(0, 124);
             pnlInfoInicial.Name = "pnlInfoInicial";
-            pnlInfoInicial.Size = new Size(1610, 872);
+            pnlInfoInicial.Size = new Size(1610, 866);
             pnlInfoInicial.TabIndex = 24;
             // 
             // tlpBaseNivel1
@@ -459,7 +461,7 @@
             tlpBaseNivel1.RowCount = 2;
             tlpBaseNivel1.RowStyles.Add(new RowStyle(SizeType.Percent, 42.66055F));
             tlpBaseNivel1.RowStyles.Add(new RowStyle(SizeType.Percent, 57.33945F));
-            tlpBaseNivel1.Size = new Size(1610, 872);
+            tlpBaseNivel1.Size = new Size(1610, 866);
             tlpBaseNivel1.TabIndex = 24;
             // 
             // tlpArribaNivel2
@@ -475,8 +477,9 @@
             tlpArribaNivel2.RowCount = 1;
             tlpArribaNivel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100.000008F));
             tlpArribaNivel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tlpArribaNivel2.Size = new Size(1604, 366);
+            tlpArribaNivel2.Size = new Size(1604, 363);
             tlpArribaNivel2.TabIndex = 0;
+            tlpArribaNivel2.Tag = "";
             // 
             // tabControlGraficoArriba
             // 
@@ -484,19 +487,20 @@
             tabControlGraficoArriba.Controls.Add(tabPage1);
             tabControlGraficoArriba.Controls.Add(tabPage2);
             tabControlGraficoArriba.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
+            tabControlGraficoArriba.HeaderBackColor = Color.FromArgb(234, 234, 234);
             tabControlGraficoArriba.Location = new Point(3, 3);
             tabControlGraficoArriba.Name = "tabControlGraficoArriba";
             tabControlGraficoArriba.SelectedIndex = 0;
-            tabControlGraficoArriba.Size = new Size(1598, 360);
+            tabControlGraficoArriba.Size = new Size(1598, 357);
             tabControlGraficoArriba.TabIndex = 0;
             // 
             // tabPage1
             // 
             tabPage1.Controls.Add(formsPlot1);
-            tabPage1.Location = new Point(4, 26);
+            tabPage1.Location = new Point(0, 22);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1590, 330);
+            tabPage1.Size = new Size(1598, 335);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Cajas del Mes";
             tabPage1.UseVisualStyleBackColor = true;
@@ -507,18 +511,18 @@
             formsPlot1.Dock = DockStyle.Fill;
             formsPlot1.Location = new Point(3, 3);
             formsPlot1.Name = "formsPlot1";
-            formsPlot1.Size = new Size(1584, 324);
-            formsPlot1.TabIndex = 0;
+            formsPlot1.Size = new Size(1592, 329);
+            formsPlot1.TabIndex = 1;
             // 
             // tabPage2
             // 
             tabPage2.Controls.Add(formsPlot2);
-            tabPage2.Location = new Point(4, 26);
+            tabPage2.Location = new Point(0, 22);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1590, 330);
+            tabPage2.Size = new Size(1598, 335);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "Ultimas 50 Cajas";
+            tabPage2.Text = "Ultimas 50";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // formsPlot2
@@ -527,7 +531,7 @@
             formsPlot2.Dock = DockStyle.Fill;
             formsPlot2.Location = new Point(3, 3);
             formsPlot2.Name = "formsPlot2";
-            formsPlot2.Size = new Size(1584, 324);
+            formsPlot2.Size = new Size(1592, 329);
             formsPlot2.TabIndex = 0;
             // 
             // tlpBajoNivel2
@@ -538,11 +542,11 @@
             tlpBajoNivel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
             tlpBajoNivel2.Controls.Add(tabControl1, 0, 0);
             tlpBajoNivel2.Dock = DockStyle.Fill;
-            tlpBajoNivel2.Location = new Point(3, 375);
+            tlpBajoNivel2.Location = new Point(3, 372);
             tlpBajoNivel2.Name = "tlpBajoNivel2";
             tlpBajoNivel2.RowCount = 1;
             tlpBajoNivel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpBajoNivel2.Size = new Size(1604, 494);
+            tlpBajoNivel2.Size = new Size(1604, 491);
             tlpBajoNivel2.TabIndex = 1;
             // 
             // tabControl1
@@ -551,20 +555,21 @@
             tabControl1.Controls.Add(tabPage3);
             tabControl1.Controls.Add(tabPage4);
             tabControl1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
+            tabControl1.HeaderBackColor = Color.FromArgb(234, 234, 234);
             tabControl1.Location = new Point(3, 3);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1598, 488);
+            tabControl1.Size = new Size(1598, 485);
             tabControl1.TabIndex = 0;
             // 
             // tabPage3
             // 
             tabPage3.Controls.Add(tlpBajoNivel3);
             tabPage3.Font = new Font("Microsoft Sans Serif", 15.75F);
-            tabPage3.Location = new Point(4, 26);
+            tabPage3.Location = new Point(0, 22);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(1590, 458);
+            tabPage3.Size = new Size(1598, 463);
             tabPage3.TabIndex = 0;
             tabPage3.Text = "Por Dia";
             tabPage3.UseVisualStyleBackColor = true;
@@ -582,16 +587,17 @@
             tlpBajoNivel3.Name = "tlpBajoNivel3";
             tlpBajoNivel3.RowCount = 1;
             tlpBajoNivel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpBajoNivel3.Size = new Size(1584, 452);
+            tlpBajoNivel3.Size = new Size(1592, 457);
             tlpBajoNivel3.TabIndex = 0;
+            tlpBajoNivel3.Tag = "TemaSistema";
             // 
             // formsPlot4
             // 
             formsPlot4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             formsPlot4.DisplayScale = 1F;
-            formsPlot4.Location = new Point(795, 3);
+            formsPlot4.Location = new Point(799, 3);
             formsPlot4.Name = "formsPlot4";
-            formsPlot4.Size = new Size(786, 446);
+            formsPlot4.Size = new Size(790, 451);
             formsPlot4.TabIndex = 2;
             // 
             // formsPlot3
@@ -601,17 +607,17 @@
             formsPlot3.DisplayScale = 1F;
             formsPlot3.Location = new Point(3, 3);
             formsPlot3.Name = "formsPlot3";
-            formsPlot3.Size = new Size(786, 446);
+            formsPlot3.Size = new Size(790, 451);
             formsPlot3.TabIndex = 1;
             // 
             // tabPage4
             // 
             tabPage4.Controls.Add(tlpBajoNivel3Pagina2);
             tabPage4.Font = new Font("Microsoft Sans Serif", 15.75F);
-            tabPage4.Location = new Point(4, 26);
+            tabPage4.Location = new Point(0, 22);
             tabPage4.Name = "tabPage4";
             tabPage4.Padding = new Padding(3);
-            tabPage4.Size = new Size(1590, 458);
+            tabPage4.Size = new Size(1598, 463);
             tabPage4.TabIndex = 1;
             tabPage4.Text = "Por Mes";
             tabPage4.UseVisualStyleBackColor = true;
@@ -659,6 +665,7 @@
             Controls.Add(pnlInfoInicial);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(menuStrip1);
+            ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FAdministracion";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Panel Administración";
@@ -729,13 +736,12 @@
         private Panel pnlInfoInicial;
         private TableLayoutPanel tlpBaseNivel1;
         private TableLayoutPanel tlpArribaNivel2;
-        private TabControl tabControlGraficoArriba;
+        private FlatTabControl tabControlGraficoArriba;
         private TabPage tabPage1;
-        private ScottPlot.WinForms.FormsPlot formsPlot1;
         private TabPage tabPage2;
         private ScottPlot.WinForms.FormsPlot formsPlot2;
         private TableLayoutPanel tlpBajoNivel2;
-        private TabControl tabControl1;
+        private FlatTabControl tabControl1;
         private TabPage tabPage3;
         private TableLayoutPanel tlpBajoNivel3;
         private ScottPlot.WinForms.FormsPlot formsPlot4;
@@ -744,5 +750,6 @@
         private TableLayoutPanel tlpBajoNivel3Pagina2;
         private ScottPlot.WinForms.FormsPlot formsPlot6;
         private ScottPlot.WinForms.FormsPlot formsPlot5;
+        private ScottPlot.WinForms.FormsPlot formsPlot1;
     }
 }

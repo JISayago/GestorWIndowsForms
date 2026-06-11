@@ -1,5 +1,8 @@
-﻿using Presentacion.FBase.Helpers;
+﻿using MigraDoc.DocumentObjectModel.Internals;
+using Presentacion.Core.Administracion;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.DTO;
+using ScottPlot.WinForms;
 using System.Text.Json.Nodes;
 
 namespace Presentacion.FBase
@@ -19,11 +22,10 @@ namespace Presentacion.FBase
             this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         }
 
-
-
-               protected override void OnLoad(EventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            //this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             this.KeyPreview = true;
             AplicarTema(this);
         }
@@ -266,7 +268,7 @@ namespace Presentacion.FBase
             }
         }
 
-       public virtual void Control_Validated(object sender, System.EventArgs e)
+        public virtual void Control_Validated(object sender, System.EventArgs e)
         {
             if (sender is TextBox)
             {
@@ -321,6 +323,10 @@ namespace Presentacion.FBase
             {
                 switch (control)
                 {
+                    case TableLayoutPanel tlp:
+                        ConfugurarTableLayoutPanel(tlp);
+                        break;
+
                     case Button btn:
                         ConfigurarBoton(btn);
                         break;
@@ -364,8 +370,32 @@ namespace Presentacion.FBase
                     case Panel pnl:
                         pnl.BackColor = TemaSistema.Fondo;
                         break;
+
+                    case MenuStrip ms:
+                        ConfigurarMenuStrip(ms);
+                        break;
+
                     case ToolStrip ts:
                         ConfigurarToolStrip(ts);
+                        break;
+
+                    case FlatTabControl flatTc:
+                        flatTc.AplicarTema();
+                        break;
+
+                    case TabControl tc:
+                        tc.BackColor = TemaSistema.Fondo;
+                        tc.ForeColor = TemaSistema.Texto;
+
+                        foreach (TabPage page in tc.TabPages)
+                        {
+                            page.BackColor = TemaSistema.Fondo;
+                            page.ForeColor = TemaSistema.Texto;
+                        }
+                        break;
+
+                    case FormsPlot fp:
+                        ConfigurarFormPlot(fp);
                         break;
                 }
 
@@ -398,6 +428,7 @@ namespace Presentacion.FBase
         }
         private void ConfigurarComboBox(ComboBox cmb)
         {
+            cmb.FlatStyle = FlatStyle.Flat;
             cmb.BackColor = TemaSistema.FondoControl;
             cmb.ForeColor = TemaSistema.Texto;
         }
@@ -479,6 +510,45 @@ namespace Presentacion.FBase
                 ts.Width,
                 ts.Height - 1);
         }
+        private void ConfigurarMenuStrip(MenuStrip ms)
+        {
+            // Le asignamos nuestro mini-dibujante personalizado
+            ms.Renderer = new Presentacion.FBase.Helpers.MiniRenderizadorMenu();
 
+            ms.BackColor = TemaSistema.Oscuro;
+            ms.ForeColor = TemaSistema.Acento;
+
+            foreach (ToolStripItem item in ms.Items)
+            {
+                ConfigurarItemMenu(item);
+            }
+        }
+
+        private void ConfigurarItemMenu(ToolStripItem item)
+        {
+            item.ForeColor = TemaSistema.Acento;
+            //item.Font = new Font(item.Font, FontStyle.Bold);
+
+            if (item is ToolStripMenuItem menuItem)
+            {
+                // Esto mantiene el fondo del contenedor de la lista desplegable
+                menuItem.DropDown.BackColor = TemaSistema.Oscuro;
+                menuItem.DropDown.ForeColor = TemaSistema.Acento;
+
+                // Recorremos los sub-ítems
+                foreach (ToolStripItem subItem in menuItem.DropDownItems)
+                {
+                    ConfigurarItemMenu(subItem);
+                }
+            }
+        }
+         private void ConfigurarFormPlot(FormsPlot fp)
+        {
+            fp.BackColor = TemaSistema.Fondo;
+        }
+        private void ConfugurarTableLayoutPanel(TableLayoutPanel tlp)
+        {
+            tlp.BackColor = TemaSistema.Fondo;
+        }
     }
 }

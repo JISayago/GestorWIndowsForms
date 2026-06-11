@@ -192,7 +192,7 @@ namespace Presentacion.Core.Movimiento
         {
             AgregarAccion(
                 "Ver Detalle",
-                SystemIcons.Information.ToBitmap(),
+                Constantes.Imagenes.ImgMovimiento,
                 (id) =>
                 {
                     if (!id.HasValue)

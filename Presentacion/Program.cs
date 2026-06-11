@@ -63,81 +63,42 @@ namespace Presentacion
 
             // 🔥 LOGIN
             var login = new LoginForm();
-            login.ShowDialog();
-
-            if (!login.PuedeAccederAlSistema)
-                return;
-
-            if (login._usuarioLogeado == null || string.IsNullOrEmpty(login._usuarioLogeado.Username))
-            {
-                MessageBox.Show("Error: usuario no válido.");
-                return;
-            }
-
+            login.ShowDialog(); 
+            if (!login.PuedeAccederAlSistema) return; 
+            if (login._usuarioLogeado == null || string.IsNullOrEmpty(login._usuarioLogeado.Username)) 
+            { MessageBox.Show("Error: usuario no válido."); return; } 
+            
             // 🔥 SETEAR DATOS DEL SISTEMA
-            new DatosSistema(
-                login._usuarioLogeado.PersonaId,
-                login._usuarioLogeado.Nombre,
-                login._usuarioLogeado.Apellido
-            );
-
-            var personaId = DatosSistema.UsuarioId;
-            var cajaId = DatosSistema.CajaId;
-
+            new DatosSistema( login._usuarioLogeado.PersonaId, login._usuarioLogeado.Nombre, login._usuarioLogeado.Apellido );
+            var personaId = DatosSistema.UsuarioId; var cajaId = DatosSistema.CajaId; 
             // 🔥 INICIALIZADOR COMPLETO
-            var inicializador = new InicializadorDatosObligatorios(personaId, cajaId);
-
+            var inicializador = new InicializadorDatosObligatorios(personaId, cajaId); 
             List<string> mensajesOfertas = null;
-            ElementoDePanelesPantallaPrincipal datosPantalla = null;
-            List<ProductoDTO> productos = null;
-            List<VentaDTO> ventas = null;
-
-            var mensajeCarga = "Preparando todo lo necesario...";
-
+            ElementoDePanelesPantallaPrincipal datosPantalla = null; 
+            List<ProductoDTO> productos = null; List<VentaDTO> ventas = null;
+            var mensajeCarga = "Preparando todo lo necesario..."; 
             // 🔥 PANTALLA DE CARGA
-            using (var pantallaCarga = new PantallaCargaEspera(mensajeCarga))
-            {
-                pantallaCarga.Shown += async (s, e) =>
+            using (var pantallaCarga = new PantallaCargaEspera(mensajeCarga)) 
+            { pantallaCarga.Shown += async (s, e) => 
+            { 
+                try {
+                    var progreso = new Progress<(int progreso, string mensaje)>(p => { pantallaCarga.SetProgress(p.progreso); pantallaCarga.SetMensaje(p.mensaje); });
+                    await Task.Run(() => { inicializador.InicializadorDatos(progreso); }); 
+                    // 🔥 DATOS YA CARGADOS
+                    mensajesOfertas = inicializador.mensajes;
+                    datosPantalla = inicializador.DatosPantallaPrincipal;
+                    productos = inicializador.Productos; 
+                    ventas = inicializador.Ventas; 
+                    pantallaCarga.SetProgress(100);
+                    pantallaCarga.SetMensaje("Listo");
+                    await Task.Delay(300); } 
+                catch (Exception ex) 
                 {
-                    try
-                    {
-                        var progreso = new Progress<(int progreso, string mensaje)>(p =>
-                        {
-                            pantallaCarga.SetProgress(p.progreso);
-                            pantallaCarga.SetMensaje(p.mensaje);
-                        });
-
-                        await Task.Run(() =>
-                        {
-                            inicializador.InicializadorDatos(progreso);
-                        });
-
-                        // 🔥 DATOS YA CARGADOS
-                        mensajesOfertas = inicializador.mensajes;
-                        datosPantalla = inicializador.DatosPantallaPrincipal;
-                        productos = inicializador.Productos;
-                        ventas = inicializador.Ventas;
-
-                        pantallaCarga.SetProgress(100);
-                        pantallaCarga.SetMensaje("Listo");
-
-                        await Task.Delay(300);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(
-                            "Error al inicializar datos: " + ex.Message,
-                            "Error",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
-                        );
-                    }
-                    finally
-                    {
-                        pantallaCarga.Close();
-                    }
-                };
-
+                    MessageBox.Show( "Error al inicializar datos: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                } 
+                finally { pantallaCarga.Close(); 
+                }
+            };
                 Application.Run(pantallaCarga);
             }
 
