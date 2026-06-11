@@ -18,6 +18,8 @@ using ScottPlot.WinForms;
 using Servicios.Helpers;
 using Servicios.LogicaNegocio.Caja;
 using Servicios.LogicaNegocio.Caja.DTO;
+using Servicios.LogicaNegocio.Sistema.Administracion;
+using Servicios.LogicaNegocio.Sistema.Administracion.DTO;
 using Servicios.LogicaNegocio.Venta;
 using System;
 using System.Collections.Generic;
@@ -35,16 +37,6 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Presentacion.Core.Administracion
 {
-    /// <summary>
-    /// Estructura auxiliar interna para mapear de forma segura los objetos de los ComboBoxes.
-    /// Permite desacoplar el índice visual del control (.SelectedIndex) de los valores reales de la consulta.
-    /// </summary>
-
-
-    /// <summary>
-    /// Formulario de Administración Centralizada.
-    /// Encargado de la navegación modular y el procesamiento de métricas financieras mediante gráficos estadísticos.
-    /// </summary>
     public partial class FAdministracion : FBase.FBase
     {
         // ==========================================
@@ -54,7 +46,24 @@ namespace Presentacion.Core.Administracion
         private readonly CajaServicio _cajaSerivicio;
         private readonly VentaServicio _ventaServicio;
         List<CajaDTO> todasLasCajas;
+        private readonly AdministracionGraficosServicios _graficoServicio;
+        private GraficosAdministracionDTO _graficosDTO;
+        private int? _anioCargado;
+        private int? _mesCargado;
+        private bool _graficosInicializados;
 
+        private bool _grafico1Dibujado;
+        private bool _grafico2Dibujado;
+        private bool _grafico3Dibujado;
+        private bool _grafico4Dibujado;
+        private bool _grafico5Dibujado;
+        private bool _grafico6Dibujado;
+        private bool _grafico1Construido;
+        private bool _grafico2Construido;
+        private bool _grafico3Construido;
+        private bool _grafico4Construido;
+        private bool _grafico5Construido;
+        private bool _grafico6Construido;
         // ==========================================
         // CONFIGURACIÓN DE TOOLTIPS PERSONALIZADOS
         // ==========================================
@@ -94,6 +103,7 @@ namespace Presentacion.Core.Administracion
             // Inicialización de la lógica de negocio
             _cajaSerivicio = new CajaServicio();
             _ventaServicio = new VentaServicio();
+            _graficoServicio = new AdministracionGraficosServicios();
 
             // Configuración inicial del ToolTip nativo con retardos en cero para respuesta inmediata
             _winFormsToolTip = new System.Windows.Forms.ToolTip
@@ -118,7 +128,8 @@ namespace Presentacion.Core.Administracion
             tabControl1.SelectedIndexChanged += TabControl1_SelectedIndexChanged;
 
             // Ejecutamos la carga inicial dinámica analizando la base de datos de manera segura
-            InicializarFiltrosCronologicos();
+            //InicializarFiltrosCronologicos();
+
         }
 
         /// <summary>
@@ -152,6 +163,23 @@ namespace Presentacion.Core.Administracion
             cbAñoGraficos.SelectedIndexChanged += cbAñoGraficos_SelectedIndexChanged;
             cbMesGrafico.SelectedIndexChanged += cbMesGrafico_SelectedIndexChanged;
         }
+        private async Task CargarDashboardAsync(int año, int mes)
+        {
+            if (_graficosDTO != null &&
+                _anioCargado == año &&
+                _mesCargado == mes)
+            {
+                return;
+            }
+
+            _graficosDTO = await Task.Run(() =>
+                _graficoServicio.ObtenerDatos(año, mes));
+
+            _anioCargado = año;
+            _mesCargado = mes;
+        }
+
+
 
         /// <summary>
         /// Actualiza dinámicamente el combo de meses en base al año seleccionado en el combo padre.
@@ -196,23 +224,24 @@ namespace Presentacion.Core.Administracion
         /// <summary>
         /// Evento de carga principal del formulario. Inicializa y dibuja los 6 gráficos analíticos en pantalla.
         /// </summary>
-        private void FAdministracion_Load(object sender, EventArgs e)
+        private async void FAdministracion_Load(object sender, EventArgs e)
         {
-            
-            // Verificación tipada segura: Leemos los estados pre-calculados por los combos dinámicos en vez de usar DateTime.Now directo
-            if (cbAñoGraficos.SelectedItem is int año && cbMesGrafico.SelectedValue is int mes)
+            _graficosInicializados = false;
+
+            InicializarFiltrosCronologicos();
+
+            if (cbAñoGraficos.SelectedItem is int año &&
+                cbMesGrafico.SelectedValue is int mes)
             {
+                await CargarDashboardAsync(año, mes);
+
+                _graficosInicializados = true;
                 CargarGraficoActivo();
-            }
-            else
-            {
-                // Fallback de contingencia por si falla la resolución de tipos en los combos
-                grafico1(); grafico2(); grafico3(); grafico4(); grafico5(); grafico6();
             }
 
             // Ajuste de ejes del gráfico 6 y refresco inicial obligatorio
-            formsPlot6.Plot.Axes.AutoScale();
-            formsPlot6.Refresh();
+            //formsPlot6.Plot.Axes.AutoScale();
+            //formsPlot6.Refresh();
             
 
             // Vinculación de eventos de mouse para procesar la proximidad matemática y mostrar Tooltips interactivos
@@ -227,12 +256,13 @@ namespace Presentacion.Core.Administracion
         // =================================================================================
         // CONTROLADORES DE INTERFACCIÓN Y FILTRADO CRONOLÓGICO
         // =================================================================================
-        private void cbAñoGraficos_SelectedIndexChanged(object sender, EventArgs e)
+        private async void cbAñoGraficos_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (!_graficosInicializados)
+                return;
+
             if (cbAñoGraficos.SelectedItem is int añoFiltrado)
             {
-                // Apagamos el trigger del mes intermitentemente para evitar llamadas huérfanas 
-                // con combinaciones de mes/año inexistentes durante el cambio de DataSource
                 cbMesGrafico.SelectedIndexChanged -= cbMesGrafico_SelectedIndexChanged;
 
                 ActualizarComboMeses(añoFiltrado);
@@ -241,29 +271,60 @@ namespace Presentacion.Core.Administracion
 
                 if (cbMesGrafico.SelectedValue is int mesFiltrado)
                 {
-                    filtrarGraficos(añoFiltrado, mesFiltrado);
+                    _grafico1Construido = false;
+                    _grafico2Construido = false;
+                    _grafico3Construido = false;
+                    _grafico4Construido = false;
+                    _grafico5Construido = false;
+                    _grafico6Construido = false;
+
+                    _grafico1Dibujado = false;
+                    _grafico2Dibujado = false;
+                    _grafico3Dibujado = false;
+                    _grafico4Dibujado = false;
+                    _grafico5Dibujado = false;
+                    _grafico6Dibujado = false;
+
+                    await filtrarGraficos(añoFiltrado, mesFiltrado);
                 }
             }
         }
-
-        private void cbMesGrafico_SelectedIndexChanged(object sender, EventArgs e)
+        private async void cbMesGrafico_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cbAñoGraficos.SelectedItem is int añoFiltrado && cbMesGrafico.SelectedValue is int mesFiltrado)
+            if (!_graficosInicializados)
+                return;
+
+            if (cbAñoGraficos.SelectedItem is int año &&
+                cbMesGrafico.SelectedValue is int mes)
             {
-                filtrarGraficos(añoFiltrado, mesFiltrado);
+                // Fuerza la reconstrucción de los gráficos
+                _grafico1Construido = false;
+                _grafico2Construido = false;
+                _grafico3Construido = false;
+                _grafico4Construido = false;
+                _grafico5Construido = false;
+                _grafico6Construido = false;
+
+                // Fuerza el recalculo del AutoScale
+                _grafico1Dibujado = false;
+                _grafico2Dibujado = false;
+                _grafico3Dibujado = false;
+                _grafico4Dibujado = false;
+                _grafico5Dibujado = false;
+                _grafico6Dibujado = false;
+
+                await filtrarGraficos(año, mes);
             }
         }
 
         /// <summary>
         /// Refresca en bloque los gráficos dependientes de filtros temporales.
         /// </summary>
-        private void filtrarGraficos(int año, int mes)
+        private async Task filtrarGraficos(int año, int mes)
         {
-            grafico1(mes, año);
-            grafico3(mes, año);
-            grafico4(mes, año);
-            grafico5(año);
-            grafico6(año);
+            await CargarDashboardAsync(año, mes);
+
+            CargarGraficoActivo();
         }
 
         // =================================================================================
@@ -274,47 +335,45 @@ namespace Presentacion.Core.Administracion
         /// <summary>
         /// Gráfico 1: Scatter (Puntos y Líneas) - Muestra los ingresos brutos individuales de cada caja en el mes/año provisto.
         /// </summary>
-        private void grafico1(int? mes = null, int? año = null)
+        private void grafico1()
         {
-            // 1. Obtención de datos con parámetros por defecto en caso de nulidad
-            var cajasEnUnMesXyAñoX = _cajaSerivicio.ObtenerCajasPorMesYAño(DateTime.Now.Month, DateTime.Now.Year);
+            var cajasEnUnMesXyAñoX = _graficosDTO.CajasMes;
 
-            if (mes.HasValue && año.HasValue)
-            {
-                cajasEnUnMesXyAñoX = _cajaSerivicio.ObtenerCajasPorMesYAño(mes.Value, año.Value);
-            }
+            double[] gananciasPorCaja = cajasEnUnMesXyAñoX
+                .Select(c => (double)c.TotalIngresos)
+                .ToArray();
 
-            // 2. Proyección de colecciones hacia arrays de tipos primitivos (Requerido por ScottPlot)
-            double[] gananciasPorCaja = cajasEnUnMesXyAñoX.Select(c => (double)c.TotalIngresos).ToArray();
             string[] fechasDeCadaCaja = cajasEnUnMesXyAñoX
                 .Select(c => $"A: {c.FechaInicio:dd/MM}\nC: {c.FechaFin?.ToString("dd/MM") ?? "Abierta"}")
                 .ToArray();
 
-            // El eje X requiere un array incremental secuencial (1, 2, 3...) sobre el cual mapear los Ticks textuales
-            double[] numerosCajas = Enumerable.Range(1, cajasEnUnMesXyAñoX.Count).Select(i => (double)i).ToArray();
+            double[] numerosCajas = Enumerable
+                .Range(1, cajasEnUnMesXyAñoX.Count)
+                .Select(i => (double)i)
+                .ToArray();
 
-            // 3. Resguardo de estado en variables globales de la clase para el motor de Tooltips
             _xs1 = numerosCajas;
             _ys1 = gananciasPorCaja;
             _lastIndex1 = -1;
 
-            // 4. Renderizado en el componente UI
-            formsPlot1.Plot.Clear(); // Limpieza del buffer del lienzo anterior
+            formsPlot1.Plot.Clear();
 
-            string nombreMes = mes.HasValue ? ObtenerNombreMesLocal(mes.Value) : ObtenerNombreMesLocal(DateTime.Now.Month);
-            string title = $"Cajas en {nombreMes}";
+            string title = $"Cajas en {ObtenerNombreMesLocal(_mesCargado ?? DateTime.Now.Month)}";
 
             formsPlot1.Plot.Title(title);
             formsPlot1.Plot.XLabel("Fecha de las Cajas");
             formsPlot1.Plot.YLabel("Total Ingresos");
 
-            // Añade el tipo de gráfico lineal
             var scatter = formsPlot1.Plot.Add.Scatter(numerosCajas, gananciasPorCaja);
             scatter.Color = ScottPlot.Color.FromHex("#291a3e");
-            // Sobrescribe los números del eje X con las etiquetas personalizadas de fechas ("A: 10/05...")
+
             formsPlot1.Plot.Axes.Bottom.SetTicks(numerosCajas, fechasDeCadaCaja);
-            formsPlot1.Plot.Axes.AutoScale();
-            formsPlot1.Refresh(); // Renderiza los cambios en pantalla
+            if (!_grafico1Dibujado)
+            {
+                formsPlot1.Plot.Axes.AutoScale();
+                _grafico1Dibujado = true;
+            }
+
         }
 
         /// <summary>
@@ -322,203 +381,291 @@ namespace Presentacion.Core.Administracion
         /// </summary>
         private void grafico2()
         {
-            var cajasUltimos31Dias = _cajaSerivicio.ObtenerCajasUltimosXDias(31);
-            // Agrupamiento estricto por truncamiento de fecha (.Date) para consolidar ingresos diarios
-            var cajasPorDia = cajasUltimos31Dias.GroupBy(c => c.FechaInicio.Date).OrderBy(g => g.Key).ToList();
+            var cajasUltimos31Dias = _graficosDTO.Cajas31Dias;
 
-            double[] ingresosPorDia = cajasPorDia.Select(g => (double)g.Sum(c => c.TotalIngresos)).ToArray();
-            string[] dias = cajasPorDia.Select(g => g.Key.ToString("dd/MM")).ToArray();
-            double[] numerosDias = Enumerable.Range(1, cajasPorDia.Count).Select(i => (double)i).ToArray();
+            var cajasPorDia = cajasUltimos31Dias
+                .GroupBy(c => c.FechaInicio.Date)
+                .OrderBy(g => g.Key)
+                .ToList();
+
+            double[] ingresosPorDia = cajasPorDia
+                .Select(g => (double)g.Sum(c => c.TotalIngresos))
+                .ToArray();
+
+            string[] dias = cajasPorDia
+                .Select(g => g.Key.ToString("dd/MM"))
+                .ToArray();
+
+            double[] numerosDias = Enumerable
+                .Range(1, cajasPorDia.Count)
+                .Select(i => (double)i)
+                .ToArray();
 
             _xs2 = numerosDias;
             _ys2 = ingresosPorDia;
             _lastIndex2 = -1;
 
             formsPlot2.Plot.Clear();
-            formsPlot2.Plot.Title("Cajas ultimos 31 dias agrupadas por fecha");
-            formsPlot2.Plot.XLabel("Fecha de las Cajas");
+
+            formsPlot2.Plot.Title("Cajas últimos 31 días");
+            formsPlot2.Plot.XLabel("Fecha");
             formsPlot2.Plot.YLabel("Total Ingresos");
 
             var scatter = formsPlot2.Plot.Add.Scatter(numerosDias, ingresosPorDia);
+
             scatter.Color = ScottPlot.Color.FromHex("#291a3e");
+
             formsPlot2.Plot.Axes.Bottom.SetTicks(numerosDias, dias);
-            formsPlot2.Plot.Axes.AutoScale();
-            formsPlot2.Refresh();
+            if (!_grafico2Dibujado)
+            {
+                formsPlot2.Plot.Axes.AutoScale();
+                _grafico2Dibujado = true;
+            }
         }
 
         /// <summary>
         /// Gráfico 3: Bars (Barras) - Muestra la sumatoria económica diaria total de ventas en el mes.
         /// </summary>
-        private void grafico3(int? mes = null, int? año = null)
+        private void grafico3()
         {
-            var GananciasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year);
+            var ventas = _graficosDTO.VentasMes;
 
-            if (mes.HasValue && año.HasValue)
-            {
-                GananciasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(mes.Value, año.Value);
-            }
-
-            var ganaciasAgrupadasPorFecha = GananciasMesXAñoX
+            var agrupadas = ventas
                 .GroupBy(i => i.FechaVenta.Date)
-                .Select(g => new { Fecha = g.Key, IngresoTotal = g.Sum(x => x.Total) })
+                .Select(g => new
+                {
+                    Fecha = g.Key,
+                    IngresoTotal = g.Sum(x => x.Total)
+                })
                 .OrderBy(x => x.Fecha)
                 .ToList();
 
-            string[] diaDeLasGanancias = ganaciasAgrupadasPorFecha.Select(x => x.Fecha.ToString("dd/MM")).ToArray();
-            double[] cantidadesGananciasPorDia = ganaciasAgrupadasPorFecha.Select(x => (double)x.IngresoTotal).ToArray();
-            double[] posicionesDiasGanancias = Enumerable.Range(0, diaDeLasGanancias.Length).Select(i => (double)i).ToArray();
+            string[] dias = agrupadas
+                .Select(x => x.Fecha.ToString("dd/MM"))
+                .ToArray();
 
-            _xs3 = posicionesDiasGanancias;
-            _ys3 = cantidadesGananciasPorDia;
+            double[] valores = agrupadas
+                .Select(x => (double)x.IngresoTotal)
+                .ToArray();
+
+            double[] posiciones = Enumerable
+                .Range(0, dias.Length)
+                .Select(i => (double)i)
+                .ToArray();
+
+            _xs3 = posiciones;
+            _ys3 = valores;
             _lastIndex3 = -1;
 
             formsPlot3.Plot.Clear();
 
-            string nombreMes = mes.HasValue ? ObtenerNombreMesLocal(mes.Value) : ObtenerNombreMesLocal(DateTime.Now.Month);
-            string title = $"Ganancias diarias en {nombreMes}";
+            formsPlot3.Plot.Title($"Ganancias diarias en {ObtenerNombreMesLocal(_mesCargado ?? DateTime.Now.Month)}");
 
-            formsPlot3.Plot.Title(title);
-            formsPlot3.Plot.XLabel("Dias");
+            formsPlot3.Plot.XLabel("Días");
             formsPlot3.Plot.YLabel("Total Ventas");
 
-            // Instancia gráfico de barras nativo
-            var bars = formsPlot3.Plot.Add.Bars(cantidadesGananciasPorDia);
+            var bars = formsPlot3.Plot.Add.Bars(valores);
+
             bars.Color = ScottPlot.Color.FromHex("#291a3e");
-            formsPlot3.Plot.Axes.Bottom.SetTicks(posicionesDiasGanancias, diaDeLasGanancias);
-            formsPlot3.Plot.Axes.AutoScale();
-            formsPlot3.Refresh();
+
+            formsPlot3.Plot.Axes.Bottom.SetTicks(posiciones, dias);
+            if (!_grafico3Dibujado)
+            {
+                formsPlot3.Plot.Axes.AutoScale();
+                _grafico3Dibujado = true;
+            }
+
         }
 
         /// <summary>
         /// Gráfico 4: Bars (Barras) - Cantidad transaccional de ventas brutas realizadas por día.
         /// </summary>
-        private void grafico4(int? mes = null, int? año = null)
+        private void grafico4()
         {
-            var ventasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(System.DateTime.Now.Month, System.DateTime.Now.Year);
+            var ventas = _graficosDTO.VentasMes;
 
-            if (año.HasValue && mes.HasValue)
-            {
-                ventasMesXAñoX = _ventaServicio.ObtenerVentasPorMesYAño(mes.Value, año.Value);
-            }
-
-            var ventarAgrupadasPorFecha = ventasMesXAñoX.Select(i => i.FechaVenta.Date)
-                .GroupBy(fecha => fecha)
-                .Select(g => new { Fecha = g.Key, CantidadVentas = g.Count() }) // Mapeo con .Count() en lugar de .Sum()
+            var agrupadas = ventas
+                .GroupBy(v => v.FechaVenta.Date)
+                .Select(g => new
+                {
+                    Fecha = g.Key,
+                    Cantidad = g.Count()
+                })
                 .OrderBy(x => x.Fecha)
                 .ToList();
 
-            string[] diaDeLasVentas = ventarAgrupadasPorFecha.Select(x => x.Fecha.ToString("dd/MM")).ToArray();
-            double[] cantidadesVentasPorDia = ventarAgrupadasPorFecha.Select(x => (double)x.CantidadVentas).ToArray();
-            double[] posicionesDiasVentas = Enumerable.Range(0, diaDeLasVentas.Length).Select(i => (double)i).ToArray();
+            string[] dias = agrupadas
+                .Select(x => x.Fecha.ToString("dd/MM"))
+                .ToArray();
 
-            _xs4 = posicionesDiasVentas;
-            _ys4 = cantidadesVentasPorDia;
+            double[] cantidades = agrupadas
+                .Select(x => (double)x.Cantidad)
+                .ToArray();
+
+            double[] posiciones = Enumerable
+                .Range(0, dias.Length)
+                .Select(i => (double)i)
+                .ToArray();
+
+            _xs4 = posiciones;
+            _ys4 = cantidades;
             _lastIndex4 = -1;
 
             formsPlot4.Plot.Clear();
 
-            string nombreMes = mes.HasValue ? ObtenerNombreMesLocal(mes.Value) : ObtenerNombreMesLocal(DateTime.Now.Month);
-            string title = $"Ventas diarias en {nombreMes}";
+            formsPlot4.Plot.Title($"Ventas diarias en {ObtenerNombreMesLocal(_mesCargado ?? DateTime.Now.Month)}");
 
-            formsPlot4.Plot.Title(title);
-            formsPlot4.Plot.XLabel("Dias");
-            formsPlot4.Plot.YLabel("Total Ventas");
+            formsPlot4.Plot.XLabel("Días");
+            formsPlot4.Plot.YLabel("Cantidad");
 
-            var bars = formsPlot4.Plot.Add.Bars(cantidadesVentasPorDia);
+            var bars = formsPlot4.Plot.Add.Bars(cantidades);
+
             bars.Color = ScottPlot.Color.FromHex("#291a3e");
-            formsPlot4.Plot.Axes.Bottom.SetTicks(posicionesDiasVentas, diaDeLasVentas);
-            formsPlot4.Plot.Axes.AutoScale();
-            formsPlot4.Refresh();
+
+            formsPlot4.Plot.Axes.Bottom.SetTicks(posiciones, dias);
+            if (!_grafico4Dibujado)
+            {
+                formsPlot4.Plot.Axes.AutoScale();
+                _grafico4Dibujado = true;
+            }
+
         }
 
         /// <summary>
         /// Gráfico 5: Bars (Barras) - Acumulado mensual financiero anualizado.
         /// </summary>
-        private void grafico5(int? año = null)
+        private void grafico5()
         {
-            var cajasAñoX = _cajaSerivicio.ObtenerLasCajasDeXAño(DateTime.Now.Year);
+            var cajas = _graficosDTO.CajasAnio;
 
-            if (año.HasValue)
-            {
-                cajasAñoX = _cajaSerivicio.ObtenerLasCajasDeXAño(año.Value);
-            }
-
-            // Agrupación de claves compuestas (Año y Mes) para aislar balances de periodos interanuales
-            var fechasYGanaciasAgrupadasPorMeses = cajasAñoX.GroupBy(c => new { c.FechaInicio.Year, c.FechaInicio.Month })
-                .Select(g => new { Fecha = new DateTime(g.Key.Year, g.Key.Month, 1), Balance = g.Sum(c => c.TotalIngresos) })
+            var agrupadas = cajas
+                .GroupBy(c => new { c.FechaInicio.Year, c.FechaInicio.Month })
+                .Select(g => new
+                {
+                    Fecha = new DateTime(g.Key.Year, g.Key.Month, 1),
+                    Balance = g.Sum(c => c.TotalIngresos)
+                })
                 .ToList();
 
-            string[] meses = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" };
+            string[] meses =
+            {
+        "Enero","Febrero","Marzo","Abril",
+        "Mayo","Junio","Julio","Agosto",
+        "Septiembre","Octubre","Noviembre","Diciembre"
+    };
 
-            // Desplazamiento aritmético (Month - 1) para coordinar el índice base cero de los arrays con el calendario gregoriano (1-12)
-            double[] xs = fechasYGanaciasAgrupadasPorMeses.Select(x => (double)(x.Fecha.Month - 1)).ToArray();
-            double[] ganaciasPorMesEjeY = fechasYGanaciasAgrupadasPorMeses.Select(x => (double)x.Balance).ToArray();
-            string[] mesesPresentesEjeX = fechasYGanaciasAgrupadasPorMeses.Select(x => meses[x.Fecha.Month - 1]).ToArray();
+            double[] xs = agrupadas.Select(x => (double)(x.Fecha.Month - 1)).ToArray();
+            double[] ys = agrupadas.Select(x => (double)x.Balance).ToArray();
+
+            string[] etiquetas = agrupadas
+                .Select(x => meses[x.Fecha.Month - 1])
+                .ToArray();
 
             _xs5 = xs;
-            _ys5 = ganaciasPorMesEjeY;
+            _ys5 = ys;
             _lastIndex5 = -1;
 
             formsPlot5.Plot.Clear();
-            string title = año.HasValue ? $"Ganancias en {año.Value}" : $"Ganancias en {DateTime.Now.Year}";
 
-            formsPlot5.Plot.Title(title);
+            formsPlot5.Plot.Title($"Ganancias en {_anioCargado}");
+
             formsPlot5.Plot.XLabel("Meses");
-            formsPlot5.Plot.YLabel("Total Ingresos");
+            formsPlot5.Plot.YLabel("Ingresos");
 
-            var bars = formsPlot5.Plot.Add.Bars(xs, ganaciasPorMesEjeY);
+            var bars = formsPlot5.Plot.Add.Bars(xs, ys);
+
             bars.Color = ScottPlot.Color.FromHex("#291a3e");
-            formsPlot5.Plot.Axes.Bottom.SetTicks(xs, mesesPresentesEjeX);
-            // Rotación visual a 45 grados de las etiquetas de texto del eje inferior para evitar solapamientos tipográficos
+
+            formsPlot5.Plot.Axes.Bottom.SetTicks(xs, etiquetas);
             formsPlot5.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
-            formsPlot5.Plot.Axes.AutoScale();
-            formsPlot5.Refresh();
+            if (!_grafico5Dibujado)
+            {
+                formsPlot5.Plot.Axes.AutoScale();
+                _grafico5Dibujado = true;
+            }
+
         }
 
         /// <summary>
         /// Gráfico 6: Bars (Barras) - Volumen total de operaciones comerciales anualizado por mes.
         /// </summary>
-        private void grafico6(int? año = null)
+        private void grafico6()
         {
-            var ventasAñoX = _ventaServicio.ObtenerVentasPorMesYAño(0, 2026);
+            var ventas = _graficosDTO.VentasAnio;
 
-            if (año.HasValue)
-            {
-                ventasAñoX = _ventaServicio.ObtenerVentasPorMesYAño(0, año.Value);
-            }
-
-            var fechasYVentasAgrupadasPorMeses = ventasAñoX.GroupBy(c => new { c.FechaVenta.Year, c.FechaVenta.Month })
-                .Select(g => new { Fecha = new DateTime(g.Key.Year, g.Key.Month, 1), QuantityVentas = g.Count() })
+            var agrupadas = ventas
+                .GroupBy(v => new { v.FechaVenta.Year, v.FechaVenta.Month })
+                .Select(g => new
+                {
+                    Fecha = new DateTime(g.Key.Year, g.Key.Month, 1),
+                    Cantidad = g.Count()
+                })
                 .ToList();
 
-            string[] mesesVentas = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" };
+            string[] meses =
+            {
+        "Enero","Febrero","Marzo","Abril",
+        "Mayo","Junio","Julio","Agosto",
+        "Septiembre","Octubre","Noviembre","Diciembre"
+    };
 
-            double[] xsVentas = fechasYVentasAgrupadasPorMeses.Select(x => (double)(x.Fecha.Month - 1)).ToArray();
-            double[] ventasPorMesEjeY = fechasYVentasAgrupadasPorMeses.Select(x => (double)x.QuantityVentas).ToArray();
-            string[] mesesVentasPresentesEjeX = fechasYVentasAgrupadasPorMeses.Select(x => mesesVentas[x.Fecha.Month - 1]).ToArray();
+            double[] xs = agrupadas.Select(x => (double)(x.Fecha.Month - 1)).ToArray();
 
-            _xs6 = xsVentas;
-            _ys6 = ventasPorMesEjeY;
+            double[] ys = agrupadas.Select(x => (double)x.Cantidad).ToArray();
+
+            string[] etiquetas = agrupadas
+                .Select(x => meses[x.Fecha.Month - 1])
+                .ToArray();
+
+            _xs6 = xs;
+            _ys6 = ys;
             _lastIndex6 = -1;
 
             formsPlot6.Plot.Clear();
-            string title = año.HasValue ? $"Ventas en {año.Value}" : $"Ventas in {DateTime.Now.Year}";
 
-            formsPlot6.Plot.Title(title);
+            formsPlot6.Plot.Title($"Ventas en {_anioCargado}");
+
             formsPlot6.Plot.XLabel("Meses");
-            formsPlot6.Plot.YLabel("Total Ingresos");
+            formsPlot6.Plot.YLabel("Cantidad");
 
-            var bars = formsPlot6.Plot.Add.Bars(xsVentas, ventasPorMesEjeY);
+            var bars = formsPlot6.Plot.Add.Bars(xs, ys);
+
             bars.Color = ScottPlot.Color.FromHex("#291a3e");
-            formsPlot6.Plot.Axes.Bottom.SetTicks(xsVentas, mesesVentasPresentesEjeX);
-            formsPlot6.Plot.Axes.AutoScale();
-            formsPlot6.Refresh();
+
+            formsPlot6.Plot.Axes.Bottom.SetTicks(xs, etiquetas);
+            if (!_grafico6Dibujado)
+            {
+                formsPlot6.Plot.Axes.AutoScale();
+                _grafico6Dibujado = true;
+            }
+
         }
 
-        private void btnFechaActualGraficos_Click(object sender, EventArgs e)
+        private async void btnFechaActualGraficos_Click(object sender, EventArgs e)
         {
-            // Resetea y sincroniza visualmente el estado del dashboard a la fecha real de hoy
             InicializarFiltrosCronologicos();
+
+            if (cbAñoGraficos.SelectedItem is int año &&
+                cbMesGrafico.SelectedValue is int mes)
+            {
+                _anioCargado = null;
+                _mesCargado = null;
+                _grafico1Construido = false;
+                _grafico2Construido = false;
+                _grafico3Construido = false;
+                _grafico4Construido = false;
+                _grafico5Construido = false;
+                _grafico6Construido = false;
+
+                _grafico1Dibujado = false;
+                _grafico2Dibujado = false;
+                _grafico3Dibujado = false;
+                _grafico4Dibujado = false;
+                _grafico5Dibujado = false;
+                _grafico6Dibujado = false;
+
+                await filtrarGraficos(año, mes);
+            }
         }
 
         // =================================================================================
@@ -712,30 +859,65 @@ namespace Presentacion.Core.Administracion
         }
         private void CargarGraficoActivo()
         {
-            // Recuperar de forma segura los valores de los filtros, con fallback por seguridad
-            int año = cbAñoGraficos.SelectedItem is int a ? a : DateTime.Now.Year;
-            int mes = cbMesGrafico.SelectedValue is int m ? m : DateTime.Now.Month;
-
-            // Evaluamos qué pestaña está mirando el usuario
             switch (tabControlGraficoArriba.SelectedIndex)
             {
                 case 0:
-                    grafico1(mes, año);
+                    if (!_grafico1Construido)
+                    {
+                        grafico1();
+                        _grafico1Construido = true;
+                    formsPlot1.Refresh();
+                    }
+
                     break;
+
                 case 1:
-                    grafico2(); // Histórico estático de 31 días
+                    if (!_grafico2Construido)
+                    {
+                        grafico2();
+                        _grafico2Construido = true;
+                    formsPlot2.Refresh();
+                    }
+
                     break;
             }
 
             switch (tabControl1.SelectedIndex)
             {
                 case 0:
-                    grafico3(mes, año);
-                    grafico4(mes, año);
+                    if (!_grafico3Construido)
+                    {
+                        grafico3();
+                        _grafico3Construido = true;
+                    formsPlot3.Refresh();
+                    }
+
+
+                    if (!_grafico4Construido)
+                    {
+                        grafico4();
+                        _grafico4Construido = true;
+                    formsPlot4.Refresh();
+                    }
+
                     break;
+
                 case 1:
-                    grafico5(año);
-                    grafico6(año);
+                    if (!_grafico5Construido)
+                    {
+                        grafico5();
+                        _grafico5Construido = true;
+                    formsPlot5.Refresh();
+                    }
+
+
+                    if (!_grafico6Construido)
+                    {
+                        grafico6();
+                        _grafico6Construido = true;
+                    formsPlot6.Refresh();
+                    }
+
                     break;
             }
         }
