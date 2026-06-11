@@ -293,9 +293,26 @@ namespace Presentacion.Core.Administracion
         {
             if (!_graficosInicializados)
                 return;
+
             if (cbAñoGraficos.SelectedItem is int año &&
                 cbMesGrafico.SelectedValue is int mes)
             {
+                // Fuerza la reconstrucción de los gráficos
+                _grafico1Construido = false;
+                _grafico2Construido = false;
+                _grafico3Construido = false;
+                _grafico4Construido = false;
+                _grafico5Construido = false;
+                _grafico6Construido = false;
+
+                // Fuerza el recalculo del AutoScale
+                _grafico1Dibujado = false;
+                _grafico2Dibujado = false;
+                _grafico3Dibujado = false;
+                _grafico4Dibujado = false;
+                _grafico5Dibujado = false;
+                _grafico6Dibujado = false;
+
                 await filtrarGraficos(año, mes);
             }
         }
