@@ -13,10 +13,10 @@ namespace AccesoDatos.Entidades
         public string Descripcion { get; set; }
         public string Mensaje { get; set; }
         public long EmpleadoId { get; set; }
+        //public DateTime FechaVencimiento { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaConfirmacion { get; set; }
         public bool EstaLeida { get; set; }
-
         public Empleado Empleado { get; set; }
     }
 }

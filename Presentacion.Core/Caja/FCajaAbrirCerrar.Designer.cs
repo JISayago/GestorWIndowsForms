@@ -40,7 +40,7 @@
             // txtMontoApertura
             // 
             txtMontoApertura.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            txtMontoApertura.Location = new Point(142, 121);
+            txtMontoApertura.Location = new Point(142, 116);
             txtMontoApertura.Name = "txtMontoApertura";
             txtMontoApertura.Size = new Size(100, 25);
             txtMontoApertura.TabIndex = 0;
@@ -51,11 +51,11 @@
             // 
             lblMontoApertura.AutoSize = true;
             lblMontoApertura.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblMontoApertura.Location = new Point(29, 122);
+            lblMontoApertura.Location = new Point(29, 119);
             lblMontoApertura.Name = "lblMontoApertura";
-            lblMontoApertura.Size = new Size(107, 17);
+            lblMontoApertura.Size = new Size(110, 17);
             lblMontoApertura.TabIndex = 1;
-            lblMontoApertura.Text = "Monto Apertura";
+            lblMontoApertura.Text = "Monto Apertura:";
             // 
             // btnAbrirCaja
             // 
@@ -71,6 +71,7 @@
             // 
             lblUsuarioLogeado.AutoSize = true;
             lblUsuarioLogeado.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            lblUsuarioLogeado.ForeColor = Color.Green;
             lblUsuarioLogeado.Location = new Point(22, 33);
             lblUsuarioLogeado.Name = "lblUsuarioLogeado";
             lblUsuarioLogeado.Size = new Size(54, 21);
@@ -91,7 +92,7 @@
             // 
             lblConfirmacion.AutoSize = true;
             lblConfirmacion.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblConfirmacion.Location = new Point(12, 101);
+            lblConfirmacion.Location = new Point(12, 86);
             lblConfirmacion.Name = "lblConfirmacion";
             lblConfirmacion.Size = new Size(51, 21);
             lblConfirmacion.TabIndex = 5;

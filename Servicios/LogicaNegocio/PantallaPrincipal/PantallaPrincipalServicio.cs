@@ -1,4 +1,5 @@
-﻿using AccesoDatos.Entidades;
+﻿using AccesoDatos;
+using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.LogicaNegocio.Caja;
 using Servicios.LogicaNegocio.CuentaCorriente;
@@ -36,31 +37,87 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             //_cajaServicio = new CajaServicio();
         }
 
-        public List<NotificacionDTO> NotifiacionesProductosVencidos(int cantidadDiasABuscar)
+        /// <summary>
+        /// Función auxiliar para determinar la urgencia según los días restantes del lote
+        /// </summary>
+        private int CalcularNivelUrgencia(DateTime? fechaVencimiento)
         {
-            //usar el service de lotes para obtener los productos que estan vencidos y crear una notificacion para cada uno de ellos
-            var productosNotificar = _loteServicio.ObtenerLotesVencidos(cantidadDiasABuscar);
-
-            return productosNotificar.Select(p => new NotificacionDTO
+            if (!fechaVencimiento.HasValue)
             {
-                NotificacionId = p.Id, //o algun id unico para la notificacion
-                Titulo = $"Producto: {p.NombreProducto}  ",
-                Descripcion = $"Lote: {p.NumeroLote} con fecha de vencimiento: {p.FechaVencimiento?.ToString("dd/MM/yyyy")}.",
-                FechaNotificacion = DateTime.Now,
-                Leida = false,
-                NivelUrgencia = (int)(p.FechaVencimiento.HasValue
-                    ? (p.FechaVencimiento.Value.Date < DateTime.Now.Date
-                        ? Helpers.Sistema.NivelUrgencia.Alta
-                        : (p.FechaVencimiento.Value.Date <= DateTime.Now.Date.AddDays(3)
-                            ? Helpers.Sistema.NivelUrgencia.Media
-                            : Helpers.Sistema.NivelUrgencia.Baja))
-                    : Helpers.Sistema.NivelUrgencia.Baja) // Si no tiene fecha de vencimiento, se considera baja urgencia
-            }).ToList();
+                return (int)Helpers.Sistema.NivelUrgencia.Baja;
+            }
+
+            int diasRestantes = (fechaVencimiento.Value.Date - DateTime.Now.Date).Days;
+
+            if (diasRestantes < 0)
+            {
+                return (int)Helpers.Sistema.NivelUrgencia.Alta; // Ya se venció
+            }
+            if (diasRestantes <= 3)
+            {
+                return (int)Helpers.Sistema.NivelUrgencia.Media; // Vence en 3 días o menos
+            }
+
+            return (int)Helpers.Sistema.NivelUrgencia.Baja; // Falta más de una semana
         }
 
-        public List<NotificacionDTO> NotifiacionesOfertasVencidas(int cantidadDiasABuscar)
+        public List<NotificacionDTO> NotifiacionesProductosVencidos()
         {
-            var promocionesNotificar = _ofertaServicio.ObtenerOfertasVencidas(cantidadDiasABuscar);
+            // 1. Obtenemos los lotes por vencer desde el servicio
+            var productosNotificar = _loteServicio.ObtenerLotesPorVencer(7);
+
+            if (productosNotificar == null || productosNotificar.Count == 0)
+            {
+                return new List<NotificacionDTO>();
+            }
+
+            // 2. Creamos una estructura intermedia para no perder la relación Lote <-> Entidad
+            var mapaNotificaciones = productosNotificar.Select(p => new
+            {
+                Lote = p,
+                Entidad = new Notificacion
+                {
+                    Titulo = $"Lote por vencer: {p.NombreProducto}",
+                    Descripcion = $"El producto {p.NombreProducto} - Lote {p.NumeroLote} registra vencimiento el {p.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "N/A"}.",
+                    Mensaje = p.EstaVencidoDescripcion, // Aprovechamos la propiedad calculada de tu LoteDTO
+                    FechaCreacion = DateTime.Now,
+                    FechaConfirmacion = DateTime.Now,
+                    EstaLeida = false
+                }
+            }).ToList();
+
+            //// 3. Extraemos solo las entidades puras para persistir en Entity Framework
+            var entidadesBD = mapaNotificaciones.Select(x => x.Entidad).ToList();
+
+            //using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            //{
+            //    context.AddRange(entidadesBD);
+            //    context.SaveChanges(); // La BD genera los NotificacionId reales acá
+            //}
+
+            // 4. Construimos la lista de DTOs cruzando los datos de la Entidad (BD) y del Lote original
+            var resultadoDTO = mapaNotificaciones.Select(x => new NotificacionDTO
+            {
+                NotificacionId = x.Entidad.NotificacionId, // ID asignado por la BD
+                Titulo = x.Entidad.Titulo,
+                Descripcion = x.Entidad.Descripcion,
+                Mensaje = x.Entidad.Mensaje,
+                EmpleadoId = x.Entidad.EmpleadoId,
+                FechaCreacion = x.Entidad.FechaCreacion,
+                FechaConfirmacion = x.Entidad.FechaConfirmacion,
+                Leida = x.Entidad.EstaLeida, // Mapeo de EstaLeida -> Leida
+
+                // Información calculada que requiere el DTO mapeada desde el Lote original
+                FechaNotificacion = x.Lote.FechaVencimiento ?? DateTime.Now,
+                NivelUrgencia = CalcularNivelUrgencia(x.Lote.FechaVencimiento)
+            }).ToList();
+
+            return resultadoDTO;
+        }
+
+        public List<NotificacionDTO> NotifiacionesOfertasVencidas()
+        {
+            var promocionesNotificar = _ofertaServicio.ObtenerOfertasVencidas(7);
 
             return promocionesNotificar.Select(p => new NotificacionDTO
             {
@@ -79,9 +136,9 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             }).ToList();
         }
 
-        public List<NotificacionDTO> NotifiacionesCtaCteVencidas(int cantidadDiasABuscar)
+        public List<NotificacionDTO> NotifiacionesCtaCteVencidas()
         {
-            var productosNotificar = _cuentaCorrienteServicio.ObtenerCtaCteVencidas(cantidadDiasABuscar);
+            var productosNotificar = _cuentaCorrienteServicio.ObtenerCtaCteVencidas(7);
 
             return productosNotificar.Select(p => new NotificacionDTO
             {

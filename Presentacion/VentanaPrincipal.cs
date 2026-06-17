@@ -303,7 +303,7 @@ namespace Presentacion
             notiProdVencidos.Width = flowLayoutNotificaciones.Width - 25;
             flowLayoutNotificaciones.Controls.Add(notiProdVencidos);
 
-            var listaLotesNotificar = mockDatosNotificaciones("Lote");
+            var listaLotesNotificar = _pantallaPrincipalServicio.NotifiacionesProductosVencidos();
             notiProdVencidos.SetData(listaLotesNotificar, "Lotes Vencidos");
         }
 

@@ -11,7 +11,11 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal.DTO
         public long NotificacionId { get; set; }
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
+        public string Mensaje { get; set; }
+        public long EmpleadoId { get; set; }
         public DateTime FechaNotificacion { get; set; }
+        public DateTime FechaCreacion { get; set; }
+        public DateTime FechaConfirmacion { get; set; }
         public bool Leida { get; set; }
         public int NivelUrgencia { get; set; }
     }
