@@ -77,11 +77,10 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
                 Lote = p,
                 Entidad = new Notificacion
                 {
-                    Titulo = $"Lote por vencer: {p.NombreProducto}",
-                    Descripcion = $"El producto {p.NombreProducto} - Lote {p.NumeroLote} registra vencimiento el {p.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "N/A"}.",
+                    Titulo = $"Lote por vencer: {p.NumeroLote} ",
+                    Descripcion = $"El producto {p.NombreProducto} - Registra vencimiento el {p.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "N/A"}.",
                     Mensaje = p.EstaVencidoDescripcion, // Aprovechamos la propiedad calculada de tu LoteDTO
                     FechaCreacion = DateTime.Now,
-                    FechaConfirmacion = DateTime.Now,
                     EstaLeida = false
                 }
             }).ToList();
@@ -89,11 +88,11 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             //// 3. Extraemos solo las entidades puras para persistir en Entity Framework
             var entidadesBD = mapaNotificaciones.Select(x => x.Entidad).ToList();
 
-            //using (var context = new GestorContextDBFactory().CreateDbContext(null))
-            //{
-            //    context.AddRange(entidadesBD);
-            //    context.SaveChanges(); // La BD genera los NotificacionId reales acá
-            //}
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                context.AddRange(entidadesBD);
+                context.SaveChanges(); // La BD genera los NotificacionId reales acá
+            }
 
             // 4. Construimos la lista de DTOs cruzando los datos de la Entidad (BD) y del Lote original
             var resultadoDTO = mapaNotificaciones.Select(x => new NotificacionDTO
@@ -102,10 +101,9 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
                 Titulo = x.Entidad.Titulo,
                 Descripcion = x.Entidad.Descripcion,
                 Mensaje = x.Entidad.Mensaje,
-                EmpleadoId = x.Entidad.EmpleadoId,
                 FechaCreacion = x.Entidad.FechaCreacion,
-                FechaConfirmacion = x.Entidad.FechaConfirmacion,
                 Leida = x.Entidad.EstaLeida, // Mapeo de EstaLeida -> Leida
+
 
                 // Información calculada que requiere el DTO mapeada desde el Lote original
                 FechaNotificacion = x.Lote.FechaVencimiento ?? DateTime.Now,
