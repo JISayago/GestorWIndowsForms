@@ -686,7 +686,7 @@ namespace Presentacion.Core.Administracion
         private void btnMovimientos_Click(object sender, EventArgs e) => new FMovimientoConsulta().Show();
         private void tIPOPAGOToolStripMenuItem_Click(object sender, EventArgs e) => new FTipoPagoConsulta().Show();
         private void rOLESToolStripMenuItem_Click(object sender, EventArgs e) => new FRolConsulta().Show();
-        private void nUEVAOFERTAToolStripMenuItem_Click(object sender, EventArgs e) => new FOfertaGrupoABM().ShowDialog();
+        private void nUEVAOFERTAToolStripMenuItem_Click(object sender, EventArgs e) => new FOfertaABM().ShowDialog();
         private void btnGasto_Click(object sender, EventArgs e) => new Gasto.FGastoConsulta(_logeadoId).Show();
         private void historialToolStripMenuItem_Click(object sender, EventArgs e) => new FVentaConsulta().Show();
         private void historialVentasLibresToolStripMenuItem_Click(object sender, EventArgs e) => new FVentaLibreConsulta().Show();

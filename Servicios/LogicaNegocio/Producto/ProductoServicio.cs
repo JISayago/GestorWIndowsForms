@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Helpers.Venta.Oferta;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Producto.Lote;
 using Servicios.LogicaNegocio.Venta.DTO;
@@ -696,8 +697,8 @@ namespace Servicios.LogicaNegocio.Producto
                 PageSize = filtros.PageSize
             };
         }
-        public IEnumerable<ProductoDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(
-    long? MarcaId = null, long? RubroId = null, long? CategoriaId = null)
+        public IEnumerable<ProductoOfertaDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(
+     FiltroBusquedaComboGrupo filtroGrupo)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
@@ -708,17 +709,25 @@ namespace Servicios.LogicaNegocio.Producto
                 .Include(p => p.CategoriasProductos)
                 .Where(p => !p.EstaEliminado);
 
-            if (MarcaId.HasValue)
-                query = query.Where(p => p.IdMarca == MarcaId.Value);
+            if (filtroGrupo.IdMarca.HasValue)
+            {
+                query = query.Where(p => p.IdMarca == filtroGrupo.IdMarca.Value);
+            }
 
-            if (RubroId.HasValue)
-                query = query.Where(p => p.IdRubro == RubroId.Value);
+            if (filtroGrupo.IdRubro.HasValue)
+            {
+                query = query.Where(p => p.IdRubro == filtroGrupo.IdRubro.Value);
+            }
 
-            if (CategoriaId.HasValue)
-                query = query.Where(p => p.CategoriasProductos.Any(cp => cp.IdCategoria == CategoriaId.Value));
+            if (filtroGrupo.IdCategorias.Any())
+            {
+                query = query.Where(p =>
+                    p.CategoriasProductos.Any(cp =>
+                        filtroGrupo.IdCategorias.Contains(cp.IdCategoria)));
+            }
 
             return query
-                .Select(p => new ProductoDTO
+                .Select(p => new ProductoOfertaDTO
                 {
                     ProductoId = p.ProductoId,
                     IdMarca = p.IdMarca,
@@ -744,7 +753,6 @@ namespace Servicios.LogicaNegocio.Producto
                 })
                 .ToList();
         }
-
         public EstadoOperacion AgregarQuitarStock(MovilizacionStockDTO mStockDTO)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);

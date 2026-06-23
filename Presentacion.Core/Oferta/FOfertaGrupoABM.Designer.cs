@@ -146,7 +146,6 @@
             btnCrear.TabIndex = 40;
             btnCrear.Text = "Crear";
             btnCrear.UseVisualStyleBackColor = true;
-            btnCrear.Click += btnCrear_Click;
             // 
             // cbxDescuentoPorcentaje
             // 
@@ -386,7 +385,6 @@
             cbxLimiteCumplirStock.TabIndex = 79;
             cbxLimiteCumplirStock.Text = "Hasta cumplir stock";
             cbxLimiteCumplirStock.UseVisualStyleBackColor = true;
-            cbxLimiteCumplirStock.CheckedChanged += cbxLimiteCumplirStock_CheckedChanged;
             // 
             // lblLimiteStock
             // 
@@ -413,7 +411,6 @@
             btnLimpiar.TabIndex = 83;
             btnLimpiar.Text = "Limpiar";
             btnLimpiar.UseVisualStyleBackColor = true;
-            btnLimpiar.Click += btnLimpiar_Click;
             // 
             // lblCodigoManual
             // 
