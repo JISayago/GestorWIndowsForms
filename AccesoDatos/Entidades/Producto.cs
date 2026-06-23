@@ -35,6 +35,8 @@ namespace AccesoDatos.Entidades
         public ICollection<CategoriaProducto> CategoriasProductos { get; set; }
         public ICollection<DetallesVenta> DetallesVentas { get; set; }
         public ICollection<DetalleVentaLote> DetalleVentaLotes { get; set; }
+        public ICollection<ProductosEnOfertaDescuentos> Ofertas { get; set; }
+        public ICollection<OfertaProductoEstadistica> EstadisticasOferta { get; set; }
         public List<Lote> Lotes { get; set; }
     }
 }

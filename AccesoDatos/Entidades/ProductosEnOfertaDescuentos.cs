@@ -9,21 +9,19 @@ namespace AccesoDatos.Entidades
 {
     public class ProductosEnOfertaDescuentos
     {
-        [Key]
-        public long ProductosEnOfertaDescuentosId { get; set; }
-
-        public long OfertaId { get; set; }
-        public OfertaDescuento Oferta { get; set; }
-
         public long ProductoId { get; set; }
+        public long OfertaDescuentoId { get; set; }
+
+        public decimal CantidadRequerida { get; set; }
+        public decimal PrecioVentaBase { get; set; }
+
+        public decimal PrecioCostoBase { get; set; }
+
+        public decimal? PrecioOfertaBase { get; set; }
+        public decimal? LimiteVentaProducto { get; set; }
+
         public Producto Producto { get; set; }
+        public OfertaDescuento OfertaDescuento { get; set; }
 
-        public decimal Cantidad { get; set; }
-
-        public decimal? CantidadVendidaPorLimite { get; set; }
-
-        public decimal PrecioOrginal { get; set; }
-        public decimal PrecioConDescuento { get; set; }
-
-        }
+    }
 }
