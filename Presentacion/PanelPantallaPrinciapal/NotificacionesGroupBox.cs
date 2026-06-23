@@ -1,4 +1,5 @@
-﻿using Servicios.Helpers.Sistema;
+﻿using Presentacion.FBase.Helpers;
+using Servicios.Helpers.Sistema;
 using Servicios.LogicaNegocio.PantallaPrincipal;
 using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using System;
@@ -35,7 +36,7 @@ public class NotificationGroupBox : GroupBox
     private readonly Color COLOR_TEXTO_SECUNDARIO = Color.FromArgb(100, 100, 100); // Gris medio (Descripción)
 
     // --- Sección: Botón Expandir/Contraer ---
-    private readonly Color COLOR_BTN_FONDO = Color.FromArgb(230, 230, 230); // Fondo del botón de la flecha
+    private readonly Color COLOR_BTN_FONDO = TemaSistema.Seleccion; // Fondo del botón de la flecha
     private readonly Color COLOR_BTN_BORDE = Color.Black;                  // Borde del botón de la flecha
     private readonly Color COLOR_BTN_TEXTO = Color.Black;                  // Color de la flecha (▲/▼)
 

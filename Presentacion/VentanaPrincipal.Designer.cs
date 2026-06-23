@@ -49,13 +49,13 @@ namespace Presentacion
             flowLayoutPanel3 = new FlowLayoutPanel();
             lblHora = new Label();
             lblHoraValor = new Label();
-            btnRefresh = new Button();
             tlpPanelBaseTabControlYNotis = new TableLayoutPanel();
             tcIzquierda = new FlatTabControl();
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
             tlpNotificaciones0 = new TableLayoutPanel();
             flowLayoutNotificaciones = new FlowLayoutPanel();
+            btnRefresh = new Button();
             panel1 = new Panel();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             PnlBotones.SuspendLayout();
@@ -284,7 +284,6 @@ namespace Presentacion
             // 
             flowLayoutPanel3.Controls.Add(lblHora);
             flowLayoutPanel3.Controls.Add(lblHoraValor);
-            flowLayoutPanel3.Controls.Add(btnRefresh);
             flowLayoutPanel3.Dock = DockStyle.Right;
             error.SetIconAlignment(flowLayoutPanel3, ErrorIconAlignment.MiddleLeft);
             flowLayoutPanel3.Location = new Point(907, 3);
@@ -313,17 +312,6 @@ namespace Presentacion
             lblHoraValor.Size = new Size(97, 30);
             lblHoraValor.TabIndex = 25;
             lblHoraValor.Text = "00:00:00";
-            // 
-            // btnRefresh
-            // 
-            btnRefresh.Dock = DockStyle.Right;
-            btnRefresh.Location = new Point(175, 3);
-            btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(75, 24);
-            btnRefresh.TabIndex = 28;
-            btnRefresh.Text = "RECARGAR ";
-            btnRefresh.UseVisualStyleBackColor = true;
-            btnRefresh.Click += btnRefresh_Click;
             // 
             // tlpPanelBaseTabControlYNotis
             // 
@@ -385,11 +373,12 @@ namespace Presentacion
             tlpNotificaciones0.ColumnCount = 1;
             tlpNotificaciones0.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tlpNotificaciones0.Controls.Add(flowLayoutNotificaciones, 0, 1);
+            tlpNotificaciones0.Controls.Add(btnRefresh, 0, 0);
             tlpNotificaciones0.Dock = DockStyle.Fill;
             tlpNotificaciones0.Location = new Point(789, 3);
             tlpNotificaciones0.Name = "tlpNotificaciones0";
             tlpNotificaciones0.RowCount = 2;
-            tlpNotificaciones0.RowStyles.Add(new RowStyle(SizeType.Absolute, 8F));
+            tlpNotificaciones0.RowStyles.Add(new RowStyle(SizeType.Absolute, 31F));
             tlpNotificaciones0.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tlpNotificaciones0.Size = new Size(467, 648);
             tlpNotificaciones0.TabIndex = 1;
@@ -401,11 +390,23 @@ namespace Presentacion
             flowLayoutNotificaciones.BackColor = SystemColors.ButtonFace;
             flowLayoutNotificaciones.Dock = DockStyle.Fill;
             flowLayoutNotificaciones.FlowDirection = FlowDirection.TopDown;
-            flowLayoutNotificaciones.Location = new Point(3, 11);
+            flowLayoutNotificaciones.Location = new Point(3, 34);
             flowLayoutNotificaciones.Name = "flowLayoutNotificaciones";
-            flowLayoutNotificaciones.Size = new Size(461, 634);
+            flowLayoutNotificaciones.Size = new Size(461, 611);
             flowLayoutNotificaciones.TabIndex = 0;
             flowLayoutNotificaciones.WrapContents = false;
+            // 
+            // btnRefresh
+            // 
+            btnRefresh.Dock = DockStyle.Right;
+            btnRefresh.Location = new Point(319, 3);
+            btnRefresh.Margin = new Padding(3, 3, 25, 3);
+            btnRefresh.Name = "btnRefresh";
+            btnRefresh.Size = new Size(123, 25);
+            btnRefresh.TabIndex = 28;
+            btnRefresh.Text = "RECARGAR ";
+            btnRefresh.UseVisualStyleBackColor = true;
+            btnRefresh.Click += btnRefresh_Click;
             // 
             // panel1
             // 

@@ -449,7 +449,13 @@ namespace Presentacion
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
+            //flowLayoutNotificaciones.SuspendLayout();
             flowLayoutNotificaciones.Controls.Clear();
+
+            tabPage1.Controls.Clear();
+           
+            crearPanelDatosAdicionales();
+
             crearNotificacionesLotes();
             crearNotificacionesPromociones();
             crearNotificacionesCuentaCorriente();
