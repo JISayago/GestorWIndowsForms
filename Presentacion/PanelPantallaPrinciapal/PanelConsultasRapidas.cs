@@ -1,6 +1,7 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.Core.Movimiento;
 using Presentacion.Core.Producto;
+using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
@@ -8,9 +9,11 @@ using Servicios.LogicaNegocio.Venta;
 using Servicios.LogicaNegocio.Venta.DTO;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Presentacion.Notificaciones
 {
@@ -50,7 +53,6 @@ namespace Presentacion.Notificaciones
         // ===========================================================================
         public void CargarConsultasRapidas(Control contenedorPadre)
         {
-            // Usamos colores neutros de sistema
             contenedorPadre.BackColor = SystemColors.Control;
 
             TableLayoutPanel mainLayout = new TableLayoutPanel
@@ -72,9 +74,50 @@ namespace Presentacion.Notificaciones
             ConfigurarEstiloGrid(dgvProds);
             ConfigurarEstiloGrid(dgvVentas);
 
+            ConfigurarColoresGrid(dgvProds);
+            ConfigurarColoresGrid(dgvVentas);
+
             RefrescarProductos();
             RefrescarVentas();
+        }
 
+        // ===========================================================================
+        // CONFIGURACIÓN DE COLORES ESTILIZADOS - GRILLAS
+        // ===========================================================================
+        private void ConfigurarColoresGrid(DataGridView dgv)
+        {
+            dgv.BackgroundColor = TemaSistema.FondoControl;
+            dgv.BorderStyle = BorderStyle.None;
+
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = TemaSistema.Oscuro;
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = TemaSistema.Acento;
+            dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = TemaSistema.Oscuro;
+
+            dgv.DefaultCellStyle.BackColor = TemaSistema.FondoControl;
+            dgv.DefaultCellStyle.ForeColor = TemaSistema.Texto;
+
+            dgv.DefaultCellStyle.SelectionBackColor = TemaSistema.Seleccion;
+            dgv.DefaultCellStyle.SelectionForeColor = TemaSistema.Oscuro;
+
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = TemaSistema.Alternado;
+
+            dgv.GridColor = TemaSistema.Borde;
+            dgv.RowHeadersVisible = false;
+            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        }
+
+        // ===========================================================================
+        // 🎨 NUEVA SECCIÓN: CONFIGURACIÓN DE COLORES ESTILIZADOS - BOTONES
+        // ===========================================================================
+        private void ConfigurarColoresBotones(Button btn, bool esPrimario = false)
+        {
+            btn.BackColor = TemaSistema.Seleccion;
+            btn.ForeColor = Color.Black;
+
+            btn.FlatStyle = FlatStyle.Flat;
+
+            btn.FlatAppearance.BorderSize = 1;
+            btn.FlatAppearance.BorderColor = Color.Black;
         }
 
         // ===========================================================================
@@ -82,28 +125,21 @@ namespace Presentacion.Notificaciones
         // ===========================================================================
         private void ConfigurarEstiloGrid(DataGridView dgv)
         {
-            // 1. BLOQUEAR RESIZE (Columnas y Filas)
             dgv.AllowUserToResizeRows = false;
             dgv.AllowUserToResizeColumns = false;
             dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
 
-            // 2. CONFIGURACIÓN DE EDICIÓN Y SELECCIÓN
             dgv.ReadOnly = true;
             dgv.SelectionMode = DataGridViewSelectionMode.CellSelect;
             dgv.MultiSelect = false;
-
-            // --- SOLUCIÓN 1: Evitar que el Ctrl+C nativo sobrescriba nuestro copiado ---
             dgv.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
 
-            // 3. LÓGICA DE COPIADO AL PORTAPAPELES
             dgv.CellClick += (sender, e) => {
-                // Validamos que no sea el encabezado (RowIndex -1)
                 if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
                 {
                     DataGridView grid = (DataGridView)sender;
                     string nombreColumna = grid.Columns[e.ColumnIndex].Name;
 
-                    // Definimos qué columnas permiten copiado (ajustado a tus nombres de grilla)
                     bool esColumnaCopiable =
                         nombreColumna.Equals("Id", StringComparison.OrdinalIgnoreCase) ||
                         nombreColumna.Equals("Codigo", StringComparison.OrdinalIgnoreCase) ||
@@ -116,29 +152,23 @@ namespace Presentacion.Notificaciones
                         {
                             string textoACopiar = valor.ToString();
 
-                            // LÓGICA DE FORMATEO
                             if (nombreColumna.Equals("Id", StringComparison.OrdinalIgnoreCase) || nombreColumna.Contains("Comprobante"))
                             {
                                 string[] partes = textoACopiar.Split('-');
                                 if (partes.Length >= 2)
                                 {
-                                    textoACopiar = partes[1]; // Nos quedamos con "20260427"
+                                    textoACopiar = partes[1];
                                 }
                             }
 
-                            // --- SOLUCIÓN 2: Blindar el portapapeles ---
-                            // El portapapeles falla si le pasas un texto vacío o si otro proceso lo está leyendo
                             if (!string.IsNullOrWhiteSpace(textoACopiar))
                             {
                                 try
                                 {
-                                    // Intento normal
                                     Clipboard.SetText(textoACopiar);
                                 }
                                 catch (System.Runtime.InteropServices.ExternalException)
                                 {
-                                    // Si falla porque Windows lo tiene bloqueado, forzamos la inserción con reintentos
-                                    // SetDataObject(datos, mantener_al_cerrar_app, reintentos, delay_ms)
                                     Clipboard.SetDataObject(textoACopiar, true, 5, 100);
                                 }
                             }
@@ -162,26 +192,14 @@ namespace Presentacion.Notificaciones
             dgvVentas.Columns.Add("Detalle", "Detalle");
             dgvVentas.Columns.Add("Total", "Total $");
 
-            // Footter para VENTAS
-            var footer = CrearFooterPaginado(out btnPrevVenta, out btnNextVenta, out lblPaginaInfoVenta, () => {
-                // Lógica de cambio de página para ventas
-                // El botón presionado se detecta indirectamente o por lógica simple:
-                // Nota: Para hacerlo más simple, puedes mover el _paginaActual++ dentro de los clicks en el footer 
-                // o manejarlo aquí.
-            });
+            var footer = CrearFooterPaginado(out btnPrevVenta, out btnNextVenta, out lblPaginaInfoVenta, () => { });
 
-            // Suscribimos los eventos manualmente para mayor claridad:
             btnPrevVenta.Click += (s, e) => { if (_paginaActualV > 1) { _paginaActualV--; RefrescarVentas(); } };
             btnNextVenta.Click += (s, e) => { if (_paginaActualV < _totalPaginasV) { _paginaActualV++; RefrescarVentas(); } };
             btnVerMas.Click += (s, e) => {
-                // Aquí podrías abrir un nuevo formulario con una grilla completa o aplicar un filtro más amplio
                 var movimientosVenta = new FMovimientoConsulta();
-                {
-
-                };
                 movimientosVenta.ShowDialog();
             };
-
 
             p.Controls.Add(dgvVentas);
             p.Controls.Add(lbl);
@@ -205,7 +223,6 @@ namespace Presentacion.Notificaciones
                 Font = new Font("Segoe UI", 10, FontStyle.Bold)
             };
 
-            // Buscador
             txtBuscador = new TextBox
             {
                 Width = 350,
@@ -214,7 +231,6 @@ namespace Presentacion.Notificaciones
                 PlaceholderText = "Buscar por nombre..."
             };
 
-            // Evento búsqueda
             txtBuscador.TextChanged += (s, e) =>
             {
                 _paginaActual = 1;
@@ -224,14 +240,12 @@ namespace Presentacion.Notificaciones
             pHeader.Controls.Add(lbl);
             pHeader.Controls.Add(txtBuscador);
 
-            // Grilla
             dgvProds = ConfigurarGridSimple();
             dgvProds.Columns.Add("Codigo", "Código");
             dgvProds.Columns.Add("Nombre", "Descripción");
             dgvProds.Columns.Add("Precio", "Precio $");
             dgvProds.Columns.Add("Stock", "Stock");
 
-            // Footer
             var footer = CrearFooterPaginado(out btnPrevProd, out btnNextProd, out lblPaginaInfo, () => { });
 
             btnPrevProd.Click += (s, e) =>
@@ -280,14 +294,11 @@ namespace Presentacion.Notificaciones
                 AllowUserToAddRows = false,
                 ReadOnly = true,
                 RowHeadersVisible = false,
-                ColumnHeadersHeight = 35, // Un poco más alto para el encabezado
-                EnableHeadersVisualStyles = false // Permite personalizar mejor el estilo
+                ColumnHeadersHeight = 35,
+                EnableHeadersVisualStyles = false
             };
 
-            // --- EL CAMBIO CLAVE AQUÍ ---
-            dgv.RowTemplate.Height = 28; // Cambia 35 por el valor que prefieras (ej. 40 o 45)
-
-            // Alineación vertical centrada para que el texto no quede arriba
+            dgv.RowTemplate.Height = 28;
             dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dgv.Margin = new Padding(0, 0, 0, 8);
             return dgv;
@@ -302,7 +313,7 @@ namespace Presentacion.Notificaciones
             {
                 Dock = DockStyle.Bottom,
                 Height = 50,
-                Padding = new Padding(0, 15, 0, 0) // separación superior
+                Padding = new Padding(0, 15, 0, 0)
             };
 
             btnPrev = new Button { Text = "<", Width = 40, Dock = DockStyle.Left };
@@ -314,6 +325,11 @@ namespace Presentacion.Notificaciones
             btnPrev.Click += (s, e) => onRefresh();
             btnNext.Click += (s, e) => onRefresh();
 
+            // 🎨 NUEVO: Aplicación automática de estilos a los controles del footer creado
+            ConfigurarColoresBotones(btnPrev, esPrimario: false);
+            ConfigurarColoresBotones(btnNext, esPrimario: false);
+            ConfigurarColoresBotones(btnVerMas, esPrimario: true);
+
             pNav.Controls.Add(lblInfo);
             pNav.Controls.Add(btnNext);
             pNav.Controls.Add(btnPrev);
@@ -323,26 +339,22 @@ namespace Presentacion.Notificaciones
         }
 
         // ===========================================================================
-        // METODO PARA CARGAR VENTAS Y PRODUCTOS
+        // METODOS PARA CARGAR VENTAS Y PRODUCTOS
         // ===========================================================================
-        // Método para cargar Ventas
         public void ActualizarTablaVentas(IEnumerable<VentaDTO> listaVentas)
         {
-            dgvVentas.Rows.Clear(); // Limpiamos datos viejos
+            dgvVentas.Rows.Clear();
             foreach (var v in listaVentas)
             {
-                // El orden debe coincidir con las columnas: Id, Fecha, Cliente, Total
                 dgvVentas.Rows.Add(v.NumeroVenta, v.FechaVenta.ToString("G"), v.Detalle, v.Total.ToString("C2"));
             }
         }
 
-        // Método para cargar Productos
         public void ActualizarTablaProductos(IEnumerable<ProductoDTO> listaProds)
         {
             dgvProds.Rows.Clear();
             foreach (var p in listaProds)
             {
-                // El orden debe coincidir con: Codigo, Nombre, Precio, Stock
                 dgvProds.Rows.Add(p.Codigo, p.Descripcion, p.PrecioVenta.ToString("C2"), p.Stock);
             }
         }
@@ -352,55 +364,28 @@ namespace Presentacion.Notificaciones
         // ===========================================================================
         private void RefrescarProductos()
         {
-            // 🔎 FILTRO
             var filtro = new FiltroConsulta
             {
                 TextoBuscar = txtBuscador.Text,
-
                 Page = _paginaActual,
                 PageSize = _pageSize,
-
-                // 🔹 nuevos filtros
-                Filtro1 = "Descripcion",
-                Filtro2 = null,
-                Filtro3 = null,
-
-                Bool1 = false,
-                Bool2 = false,
-
-                FechaDesde = null,
-                FechaHasta = null
+                Filtro1 = "Descripcion"
             };
 
-            // 📦 SERVICE
             var resultado = _productoService.ObtenerProductos(filtro);
-
-            // 🧹 LIMPIAR
             dgvProds.Rows.Clear();
 
-            // 📄 CARGAR
             foreach (var p in resultado.Items)
             {
-                dgvProds.Rows.Add(
-                    p.Codigo,
-                    p.Descripcion,
-                    p.PrecioVenta.ToString("C2"),
-                    p.Stock
-                );
+                dgvProds.Rows.Add(p.Codigo, p.Descripcion, p.PrecioVenta.ToString("C2"), p.Stock);
             }
 
-            // 📊 PAGINACION
             _totalPaginas = resultado.TotalPaginas;
             _paginaActual = resultado.Page;
 
-            lblPaginaInfo.Text =
-                $"Página {_paginaActual} de {_totalPaginas}";
-
-            btnPrevProd.Enabled =
-                _paginaActual > 1;
-
-            btnNextProd.Enabled =
-                _paginaActual < _totalPaginas;
+            lblPaginaInfo.Text = $"Página {_paginaActual} de {_totalPaginas}";
+            btnPrevProd.Enabled = _paginaActual > 1;
+            btnNextProd.Enabled = _paginaActual < _totalPaginas;
         }
 
         public void RefrescarVentas()
@@ -409,47 +394,23 @@ namespace Presentacion.Notificaciones
             {
                 Page = _paginaActualV,
                 PageSize = _pageSizeV,
-
-                TextoBuscar = "",
-
-                // 🔹 nuevos filtros
-                Filtro1 = null,
-                Filtro2 = null,
-                Filtro3 = null,
-
-                Bool1 = false,
-                Bool2 = false,
-
-                FechaDesde = null,
-                FechaHasta = null
+                TextoBuscar = ""
             };
 
             var resultado = _ventaService.ObtenerVentas(filtroVentas);
-
             dgvVentas.Rows.Clear();
 
             foreach (var v in resultado.Items)
             {
-                dgvVentas.Rows.Add(
-                    v.NumeroVenta,
-                    v.FechaVenta.ToString("g"),
-                    v.Detalle,
-                    v.Total.ToString("C2")
-                );
+                dgvVentas.Rows.Add(v.NumeroVenta, v.FechaVenta.ToString("g"), v.Detalle, v.Total.ToString("C2"));
             }
 
-            // 🔹 PAGINACION
             _totalPaginasV = resultado.TotalPaginas;
             _paginaActualV = resultado.Page;
 
-            lblPaginaInfoVenta.Text =
-                $"Página {_paginaActualV} de {_totalPaginasV}";
-
-            btnPrevVenta.Enabled =
-                _paginaActualV > 1;
-
-            btnNextVenta.Enabled =
-                _paginaActualV < _totalPaginasV;
+            lblPaginaInfoVenta.Text = $"Página {_paginaActualV} de {_totalPaginasV}";
+            btnPrevVenta.Enabled = _paginaActualV > 1;
+            btnNextVenta.Enabled = _paginaActualV < _totalPaginasV;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Presentacion.Core.Movimiento;
+using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Caja;
 using System;
@@ -13,7 +14,7 @@ using System.Windows.Forms;
 
 namespace Presentacion.Core.Caja
 {
-    public partial class FCaja : Form
+    public partial class FCaja : FBase.FBase
     {
         public CajaServicio cajaServicio;
 
@@ -33,7 +34,7 @@ namespace Presentacion.Core.Caja
                 MessageBox.Show("No Cuenta con las credenciales necesarias para abrir la caja");
                 return;
             }
-            var FCajaAbrir = new FCajaAbrir();
+            var FCajaAbrir = new FCajaAbrir(TipoOperacion.Abrir);
 
             var result = FCajaAbrir.ShowDialog();
             if (result == DialogResult.OK)
@@ -49,7 +50,7 @@ namespace Presentacion.Core.Caja
                 MessageBox.Show("No Cuenta con las credenciales necesarias para cerrar la caja");
                 return;
             }
-            var FCerrarCaja = new FCerrarCaja();
+            var FCerrarCaja = new FCajaAbrir(TipoOperacion.Cerrar);
 
             var result = FCerrarCaja.ShowDialog();
             if (result == DialogResult.OK)

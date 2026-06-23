@@ -663,16 +663,19 @@ namespace Servicios.LogicaNegocio.Producto.Lote
             }
         }
 
-        public List<LoteDTO> ObtenerLotesVencidos(int diasHaciaAtras)
+        public List<LoteDTO> ObtenerLotesPorVencer(int diasHaciaAdelante)
         {
             using (var context = new GestorContextDBFactory().CreateDbContext(null))
             {
-                // Calculamos la fecha límite: hoy menos la cantidad de días
-                // Si quieres los vencidos hace 5 días, restamos 5 a la fecha actual.
-                DateTime fechaLimite = DateTime.Now.AddDays(-diasHaciaAtras);
+                DateTime hoy = DateTime.Now;
+                // Sumamos los días para mirar hacia el futuro (ej: hoy + 7 días)
+                DateTime fechaLimite = hoy.AddDays(diasHaciaAdelante);
 
                 return context.Lotes
-                    .Where(x => x.FechaVencimiento < fechaLimite && x.EstaActivo && !x.EstaEliminado)
+                    .Where(x => x.FechaVencimiento >= hoy
+                             && x.FechaVencimiento <= fechaLimite // Ventana de tiempo hacia el futuro
+                             && x.EstaActivo
+                             && !x.EstaEliminado)
                     .Select(x => new LoteDTO
                     {
                         Id = x.LoteId,

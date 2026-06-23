@@ -55,6 +55,7 @@ namespace Presentacion
             tabPage2 = new TabPage();
             tlpNotificaciones0 = new TableLayoutPanel();
             flowLayoutNotificaciones = new FlowLayoutPanel();
+            btnRefresh = new Button();
             panel1 = new Panel();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             PnlBotones.SuspendLayout();
@@ -330,23 +331,27 @@ namespace Presentacion
             // 
             // tcIzquierda
             // 
+            tcIzquierda.Appearance = TabAppearance.FlatButtons;
             tcIzquierda.Controls.Add(tabPage1);
             tcIzquierda.Controls.Add(tabPage2);
             tcIzquierda.Dock = DockStyle.Fill;
+            tcIzquierda.DrawMode = TabDrawMode.OwnerDrawFixed;
             tcIzquierda.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
+            tcIzquierda.HeaderBackColor = Color.FromArgb(236, 236, 236);
             tcIzquierda.Location = new Point(3, 3);
             tcIzquierda.Name = "tcIzquierda";
             tcIzquierda.SelectedIndex = 0;
             tcIzquierda.Size = new Size(780, 648);
+            tcIzquierda.SizeMode = TabSizeMode.Fixed;
             tcIzquierda.TabIndex = 0;
             // 
             // tabPage1
             // 
             tabPage1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            tabPage1.Location = new Point(4, 26);
+            tabPage1.Location = new Point(0, 25);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(772, 618);
+            tabPage1.Size = new Size(780, 623);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Acceso Rapido";
             tabPage1.UseVisualStyleBackColor = true;
@@ -354,10 +359,10 @@ namespace Presentacion
             // tabPage2
             // 
             tabPage2.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
-            tabPage2.Location = new Point(4, 26);
+            tabPage2.Location = new Point(0, 25);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(772, 618);
+            tabPage2.Size = new Size(780, 623);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Info Turno";
             tabPage2.UseVisualStyleBackColor = true;
@@ -368,11 +373,12 @@ namespace Presentacion
             tlpNotificaciones0.ColumnCount = 1;
             tlpNotificaciones0.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tlpNotificaciones0.Controls.Add(flowLayoutNotificaciones, 0, 1);
+            tlpNotificaciones0.Controls.Add(btnRefresh, 0, 0);
             tlpNotificaciones0.Dock = DockStyle.Fill;
             tlpNotificaciones0.Location = new Point(789, 3);
             tlpNotificaciones0.Name = "tlpNotificaciones0";
             tlpNotificaciones0.RowCount = 2;
-            tlpNotificaciones0.RowStyles.Add(new RowStyle(SizeType.Absolute, 8F));
+            tlpNotificaciones0.RowStyles.Add(new RowStyle(SizeType.Absolute, 31F));
             tlpNotificaciones0.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tlpNotificaciones0.Size = new Size(467, 648);
             tlpNotificaciones0.TabIndex = 1;
@@ -384,11 +390,23 @@ namespace Presentacion
             flowLayoutNotificaciones.BackColor = SystemColors.ButtonFace;
             flowLayoutNotificaciones.Dock = DockStyle.Fill;
             flowLayoutNotificaciones.FlowDirection = FlowDirection.TopDown;
-            flowLayoutNotificaciones.Location = new Point(3, 11);
+            flowLayoutNotificaciones.Location = new Point(3, 34);
             flowLayoutNotificaciones.Name = "flowLayoutNotificaciones";
-            flowLayoutNotificaciones.Size = new Size(461, 634);
+            flowLayoutNotificaciones.Size = new Size(461, 611);
             flowLayoutNotificaciones.TabIndex = 0;
             flowLayoutNotificaciones.WrapContents = false;
+            // 
+            // btnRefresh
+            // 
+            btnRefresh.Dock = DockStyle.Right;
+            btnRefresh.Location = new Point(319, 3);
+            btnRefresh.Margin = new Padding(3, 3, 25, 3);
+            btnRefresh.Name = "btnRefresh";
+            btnRefresh.Size = new Size(123, 25);
+            btnRefresh.TabIndex = 28;
+            btnRefresh.Text = "RECARGAR ";
+            btnRefresh.UseVisualStyleBackColor = true;
+            btnRefresh.Click += btnRefresh_Click;
             // 
             // panel1
             // 
@@ -457,5 +475,6 @@ namespace Presentacion
         private TableLayoutPanel tlpNotificaciones0;
         private FlowLayoutPanel flowLayoutNotificaciones;
         private TableLayoutPanel tableLayoutPanel3;
+        private Button btnRefresh;
     }
 }

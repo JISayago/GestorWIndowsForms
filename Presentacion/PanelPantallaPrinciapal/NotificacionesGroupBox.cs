@@ -1,5 +1,7 @@
-﻿using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
+﻿using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Sistema;
+using Servicios.LogicaNegocio.PantallaPrincipal;
+using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,6 +14,9 @@ public class NotificationGroupBox : GroupBox
     private FlowLayoutPanel panelItems;
     private bool expanded = false;
     private string _tituloVisual = "";
+    private readonly IPantallaPrincipalServicio _pantallaPrincipalServicio;
+
+    public event EventHandler NotificacionCambiada;
 
     // ===========================================================================
     // CONFIGURACIÓN DE COLORES (Modificar aquí para Temas Claro/Oscuro)
@@ -31,7 +36,7 @@ public class NotificationGroupBox : GroupBox
     private readonly Color COLOR_TEXTO_SECUNDARIO = Color.FromArgb(100, 100, 100); // Gris medio (Descripción)
 
     // --- Sección: Botón Expandir/Contraer ---
-    private readonly Color COLOR_BTN_FONDO = Color.FromArgb(230, 230, 230); // Fondo del botón de la flecha
+    private readonly Color COLOR_BTN_FONDO = TemaSistema.Seleccion; // Fondo del botón de la flecha
     private readonly Color COLOR_BTN_BORDE = Color.Black;                  // Borde del botón de la flecha
     private readonly Color COLOR_BTN_TEXTO = Color.Black;                  // Color de la flecha (▲/▼)
 
@@ -42,6 +47,7 @@ public class NotificationGroupBox : GroupBox
         // Espaciado interno para evitar que los ítems toquen el marco
         this.Padding = new Padding(12, 45, 12, 12);
         this.DoubleBuffered = true;
+        _pantallaPrincipalServicio = new PantallaPrincipalServicio();
         InicializarComponentes();
     }
 
@@ -213,14 +219,18 @@ public class NotificationGroupBox : GroupBox
         {
             if (e.Button == MouseButtons.Left)
             {
-                OnItemClick(item);
+                //OnItemClick(item);
             }
-            else if (e.Button == MouseButtons.Right)
+            else if (e.Button == MouseButtons.Right) // Click Derecho
             {
                 if (!item.Leida)
                 {
                     item.Leida = true;
+                    _pantallaPrincipalServicio.MarcarNotificacionComoLeida(item.NotificacionId);
                     panelItem.BackColor = COLOR_ITEM_FONDO_LEIDO;
+
+                    // 🌟 NUEVO: Disparamos el evento si el formulario padre está escuchando
+                    NotificacionCambiada?.Invoke(this, EventArgs.Empty);
                 }
             }
         };
