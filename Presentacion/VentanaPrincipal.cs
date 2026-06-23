@@ -299,31 +299,37 @@ namespace Presentacion
 
         private void crearNotificacionesLotes()
         {
+            _pantallaPrincipalServicio.NotifiacionesProductosVencidos();
+
             var notiProdVencidos = new NotificationGroupBox();
             notiProdVencidos.Width = flowLayoutNotificaciones.Width - 25;
             flowLayoutNotificaciones.Controls.Add(notiProdVencidos);
 
-            var listaLotesNotificar = _pantallaPrincipalServicio.NotifiacionesProductosVencidos();
+            var listaLotesNotificar = _pantallaPrincipalServicio.ObtenerNotificacionesProdutosVencidos();
             notiProdVencidos.SetData(listaLotesNotificar, "Lotes Vencidos");
         }
 
         private void crearNotificacionesPromociones()
         {
+            _pantallaPrincipalServicio.NotificacionesOfertasVencidas();
+
             var notifOferVencidos = new NotificationGroupBox();
             notifOferVencidos.Width = flowLayoutNotificaciones.Width - 25;
             flowLayoutNotificaciones.Controls.Add(notifOferVencidos);
 
-            var listaOfertasVencidas = mockDatosNotificaciones("Oferta");
+            var listaOfertasVencidas = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasVencidas();
             notifOferVencidos.SetData(listaOfertasVencidas, "Ofertas Vencidas");
         }
 
         private void crearNotificacionesCuentaCorriente()
         {
+            _pantallaPrincipalServicio.NotificacionesCtaCteVencidas();
+
             var notifCuentasCorrientesVencidas = new NotificationGroupBox();
             notifCuentasCorrientesVencidas.Width = flowLayoutNotificaciones.Width - 25;
             flowLayoutNotificaciones.Controls.Add(notifCuentasCorrientesVencidas);
 
-            var listaCuentasCorrientes = mockDatosNotificaciones("CtaCte");
+            var listaCuentasCorrientes = _pantallaPrincipalServicio.ObtenerNotificacionesCtaCteVencidas();
             notifCuentasCorrientesVencidas.SetData(listaCuentasCorrientes, "Cuentas Corrientes Vencidas");
         }
 

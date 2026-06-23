@@ -41,6 +41,7 @@ namespace AccesoDatos
         public DbSet<NotaRapida> NotasRapidas { get; set; }
         public DbSet<Permiso> Permisos { get; set; }
         public DbSet<RolPermiso> RolesPermisos { get; set; }
+        public DbSet<Notificacion> Notificaciones { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
