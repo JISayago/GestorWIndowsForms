@@ -49,6 +49,7 @@ namespace Presentacion
             flowLayoutPanel3 = new FlowLayoutPanel();
             lblHora = new Label();
             lblHoraValor = new Label();
+            btnRefresh = new Button();
             tlpPanelBaseTabControlYNotis = new TableLayoutPanel();
             tcIzquierda = new FlatTabControl();
             tabPage1 = new TabPage();
@@ -283,6 +284,7 @@ namespace Presentacion
             // 
             flowLayoutPanel3.Controls.Add(lblHora);
             flowLayoutPanel3.Controls.Add(lblHoraValor);
+            flowLayoutPanel3.Controls.Add(btnRefresh);
             flowLayoutPanel3.Dock = DockStyle.Right;
             error.SetIconAlignment(flowLayoutPanel3, ErrorIconAlignment.MiddleLeft);
             flowLayoutPanel3.Location = new Point(907, 3);
@@ -312,6 +314,17 @@ namespace Presentacion
             lblHoraValor.TabIndex = 25;
             lblHoraValor.Text = "00:00:00";
             // 
+            // btnRefresh
+            // 
+            btnRefresh.Dock = DockStyle.Right;
+            btnRefresh.Location = new Point(175, 3);
+            btnRefresh.Name = "btnRefresh";
+            btnRefresh.Size = new Size(75, 24);
+            btnRefresh.TabIndex = 28;
+            btnRefresh.Text = "RECARGAR ";
+            btnRefresh.UseVisualStyleBackColor = true;
+            btnRefresh.Click += btnRefresh_Click;
+            // 
             // tlpPanelBaseTabControlYNotis
             // 
             tlpPanelBaseTabControlYNotis.BackColor = SystemColors.ButtonFace;
@@ -330,23 +343,27 @@ namespace Presentacion
             // 
             // tcIzquierda
             // 
+            tcIzquierda.Appearance = TabAppearance.FlatButtons;
             tcIzquierda.Controls.Add(tabPage1);
             tcIzquierda.Controls.Add(tabPage2);
             tcIzquierda.Dock = DockStyle.Fill;
+            tcIzquierda.DrawMode = TabDrawMode.OwnerDrawFixed;
             tcIzquierda.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
+            tcIzquierda.HeaderBackColor = Color.FromArgb(236, 236, 236);
             tcIzquierda.Location = new Point(3, 3);
             tcIzquierda.Name = "tcIzquierda";
             tcIzquierda.SelectedIndex = 0;
             tcIzquierda.Size = new Size(780, 648);
+            tcIzquierda.SizeMode = TabSizeMode.Fixed;
             tcIzquierda.TabIndex = 0;
             // 
             // tabPage1
             // 
             tabPage1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            tabPage1.Location = new Point(4, 26);
+            tabPage1.Location = new Point(0, 25);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(772, 618);
+            tabPage1.Size = new Size(780, 623);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Acceso Rapido";
             tabPage1.UseVisualStyleBackColor = true;
@@ -354,10 +371,10 @@ namespace Presentacion
             // tabPage2
             // 
             tabPage2.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
-            tabPage2.Location = new Point(4, 26);
+            tabPage2.Location = new Point(0, 25);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(772, 618);
+            tabPage2.Size = new Size(780, 623);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Info Turno";
             tabPage2.UseVisualStyleBackColor = true;
@@ -457,5 +474,6 @@ namespace Presentacion
         private TableLayoutPanel tlpNotificaciones0;
         private FlowLayoutPanel flowLayoutNotificaciones;
         private TableLayoutPanel tableLayoutPanel3;
+        private Button btnRefresh;
     }
 }

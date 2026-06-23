@@ -16,6 +16,7 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
         void NotifiacionesProductosVencidos();
         void NotificacionesOfertasVencidas();
         void NotificacionesCtaCteVencidas();
+        void MarcarNotificacionComoLeida(long notificacionId);
         DatosTurnoDTO ObtenerDatosTurno(long? cajaId, long usuarioId);
         DatosTurnoDTO ObtenerActualizarDatosCaja(long? cajaId, DatosTurnoDTO datosTurno);
         void GuardarNotasRapidas(string textoLimpio, string nombreUsuario);

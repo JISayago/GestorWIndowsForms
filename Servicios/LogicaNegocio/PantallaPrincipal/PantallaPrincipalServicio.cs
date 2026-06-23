@@ -37,9 +37,6 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             //_cajaServicio = new CajaServicio();
         }
 
-        /// <summary>
-        /// Función auxiliar para determinar la urgencia según los días restantes del lote
-        /// </summary>
         private int CalcularNivelUrgencia(DateTime? fechaVencimiento)
         {
             if (!fechaVencimiento.HasValue)
@@ -300,6 +297,18 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             {
                 context.AddRange(entidadesBD);
                 context.SaveChanges();
+            }
+        }
+        public void MarcarNotificacionComoLeida(long notificacionId)
+        {
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                var notificacion = context.Notificaciones.FirstOrDefault(n => n.NotificacionId == notificacionId);
+                if (notificacion != null)
+                {
+                    notificacion.EstaLeida = true;
+                    context.SaveChanges();
+                }
             }
         }
 
