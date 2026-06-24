@@ -47,383 +47,383 @@ namespace Servicios.LogicaNegocio.Venta
         }
 
 
-        public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto, TipoMovimientoDetalle movimientoDetalle, long? ventdaIdOriginalParaCancerlar = null)
-        {
-            //Debug.WriteLine("1 - Inicio CrearVentaInterna");
-
-            try
-            {
-                //Debug.WriteLine("1.5 - Montos para ctacte o caja");
-
-                decimal montoParaCtaCte = 0;
-                decimal montoParaCaja = 0;
-
-                // Buscamos si en los tipos de pago seleccionados se usó Cuenta Corriente (Valor 3)
-                var pagoCtaCte = ventaDto.TiposDePagoSeleccionado?.FirstOrDefault(p => Convert.ToInt32(p.TipoDePago.Value) == (int)TipoDePago.CtaCte);
-
-                if (pagoCtaCte != null)
-                {
-                    // Usamos Math.Abs para asegurarnos de trabajar con el valor absoluto primero
-                    montoParaCtaCte = Math.Abs(pagoCtaCte.Monto);
-                    montoParaCaja = Math.Abs(ventaDto.Total) - montoParaCtaCte;
-                }
-                else
-                {
-                    montoParaCaja = Math.Abs(ventaDto.Total);
-                }
-
-                //Debug.WriteLine("2 - Obtener caja");
-
-                var cajaServicio = new Caja.CajaServicio();
-                var cajaId = cajaServicio.ObtenerIdDeEña(context); // Mantenemos tu método original
-
-                if (!cajaId.HasValue)
-                    throw new Exception("No hay una caja abierta. No se puede registrar la venta.");
-
-                //Debug.WriteLine("3 - Generar número venta");
-
-                var fecha = DateTime.Today;
-                var prefijo = ventaDto.Estado == (int)EstadoVenta.CancelacionVenta ? "CAN" : "VEN";
-
-                var cantidadHoy = context.Ventas.Count(v =>
-                    v.NumeroVenta.StartsWith($"{prefijo}-{fecha:yyyyMMdd}")
-                );
-
-                ventaDto.NumeroVenta = GeneradorNumeroComprobante.Generar(
-                    prefijo,
-                    fecha,
-                    cantidadHoy
-                );
-
-                //Debug.WriteLine("4 - Crear entidad venta");
-
-                // 🌟 CAMBIO: Mapeamos los montos reales del DTO en lugar de hardcodearlos en 0 y Total
-                var venta = new AccesoDatos.Entidades.Venta
-                {
-                    NumeroVenta = ventaDto.NumeroVenta,
-                    IdEmpleado = ventaDto.IdEmpleado,
-                    IdVendedor = ventaDto.IdVendedor,
-                    IdCliente = ventaDto.IdCliente,
-                    FechaVenta = ventaDto.FechaVenta,
-                    Total = ventaDto.Total,
-                    TotalSinDescuento = ventaDto.TotalSinDescuento,
-                    Descuento = ventaDto.Descuento,
-                    Estado = ventaDto.Estado,
-                    Detalle = ventaDto.Detalle,
-                    MontoAdeudado = montoParaCtaCte, // Asigna lo que va a la cuenta corriente
-                    MontoPagado = montoParaCaja    // Asigna lo que se pagó en efectivo/tarjeta
-                };
-
-                //Debug.WriteLine("5 - Add venta");
-                context.Ventas.Add(venta);
-
-                //Debug.WriteLine("6 - SaveChanges venta");
-                context.SaveChanges();
-
-                //Debug.WriteLine("7 - Venta guardada ID: " + venta.VentaId);
-
-                //Debug.WriteLine("8 - Crear movimiento");
-                var movimientoServicio = new Movimiento.MovimientoServicio();
-                movimientoServicio.CrearMovimientoVenta(
-                   venta.VentaId,
-                   venta.Total,
-                   venta.Estado,
-                   movimientoDetalle,
-                   TipoEntidadMovimiento.Venta,
-                   context
-                );
-
-                //Debug.WriteLine("9 - Movimiento creado");
-
-                //Debug.WriteLine("10 - Actualizar caja");
-                // 🌟 CAMBIO: La caja física solo debe enterarse de transacciones con dinero real (MontoPagado)
-                if (venta.MontoPagado != 0)
-                {
-                    cajaServicio.RegistrarTransaccion(
-                        context,
-                        venta.MontoPagado,
-                        venta.MontoPagado >= 0 ? TipoMovimiento.Ingreso : TipoMovimiento.Egreso,
-                        cajaId.Value
-                    );
-                }
-                //Debug.WriteLine("11 - Caja actualizada");
-
-                // =========================================================================
-                // 🌟 PASO 11b - NUEVO: IMPACTAR CUENTA CORRIENTE (VENTA O CANCELACIÓN)
-                // =========================================================================
-                //Debug.WriteLine("11b - Procesar Cuenta Corriente");
-                if (venta.MontoAdeudado != 0)
-                {
-                    if (!venta.IdCliente.HasValue)
-                        throw new Exception("No se puede registrar un movimiento de Cuenta Corriente sin un Cliente asignado.");
-
-                    var ctaCteServicio = new CuentaCorrienteServicio();
-                    var ctaCteDto = ctaCteServicio.ObtenerCuentaCorrientePorClienteId(venta.IdCliente.Value);
-
-                    if (ctaCteDto == null)
-                        throw new Exception("El cliente seleccionado no posee una Cuenta Corriente activa.");
-
-                    if (ventaDto.Estado == (int)EstadoVenta.Confirmada)
-                    {
-                        // FLUJO VENTA: Genera deuda (Resta saldo)
-                        var resCtaCte = ctaCteServicio.RegistrarCompra(
-                            ctaCteDto.CuentaCorrienteId,
-                            venta.MontoAdeudado,
-                            cajaId.Value,
-                            $"Cargo por Venta Interna N° {venta.NumeroVenta}"
-                        );
-
-                        if (!resCtaCte.Exitoso)
-                            throw new Exception(resCtaCte.Mensaje);
-                    }
-                    else
-                    {
-                        // FLUJO CANCELACIÓN: Revierte deuda (Suma saldo usando valor absoluto)
-                        decimal montoDevolucion = Math.Abs(venta.MontoAdeudado);
-                        var resCtaCte = ctaCteServicio.RegistrarDevolucionOAnulacion(
-                            ctaCteDto.CuentaCorrienteId,
-                            montoDevolucion,
-                            cajaId.Value,
-                            $"Crédito por Anulación de Venta N° {venta.NumeroVenta}"
-                        );
-
-                        if (!resCtaCte.Exitoso)
-                            throw new Exception(resCtaCte.Mensaje);
-                    }
-                }
-                //Debug.WriteLine("11c - Cuenta Corriente procesada");
-
-                //Debug.WriteLine("12 - Procesar items");
-                if (ventaDto.Items != null && ventaDto.Items.Any())
-                {
-                    //Debug.WriteLine("13 - Items detectados");
-                    var itemsStock = new List<ItemVentaDTO>();
-
-                    foreach (var item in ventaDto.Items)
-                    {
-                        //Debug.WriteLine($"14 - Item: {item.ItemId} | EsOferta:{item.EsOferta} | Grupo:{item.EsOfertaPorGrupo}");
-
-                        // 🔹 1. PRODUCTO NORMAL
-                        if (!item.EsOferta)
-                        {
-                            //Debug.WriteLine("15 - Producto normal");
-                            itemsStock.Add(new ItemVentaDTO
-                            {
-                                ItemId = item.ItemId,
-                                Cantidad = item.Cantidad
-                            });
-                            continue;
-                        }
-
-                        // 🔹 2. PRODUCTO CON DESCUENTO (POR GRUPO)
-                        if (item.EsOfertaPorGrupo)
-                        {
-                            //Debug.WriteLine("16 - Producto con descuento por grupo");
-                            var existeProducto = context.Productos.Any(p => p.ProductoId == item.ItemId);
-
-                            if (!existeProducto)
-                                throw new Exception($"Producto con descuento inválido. Id: {item.ItemId}");
-
-                            itemsStock.Add(new ItemVentaDTO
-                            {
-                                ItemId = item.ItemId,
-                                Cantidad = item.Cantidad
-                            });
-                            continue;
-                        }
-
-                        // 🔹 3. OFERTA COMBO
-                        //Debug.WriteLine("17 - Buscar oferta combo");
-                        var oferta = context.OfertasDescuentos.FirstOrDefault(o => o.OfertaDescuentoId == item.ItemId);
-
-                        if (oferta == null)
-                            throw new Exception($"Oferta combo inválida. Id: {item.ItemId}");
-
-                        //Debug.WriteLine("18 - Oferta encontrada");
-                        var productosOferta = context.ProductosEnOfertasDescuentos
-                            .Where(x => x.OfertaId == oferta.OfertaDescuentoId)
-                            .ToList();
-
-                        if (!productosOferta.Any())
-                            throw new Exception($"La oferta {oferta.Descripcion} no tiene productos asociados.");
-
-                        //Debug.WriteLine("19 - Productos de oferta cargados");
-                        foreach (var po in productosOferta)
-                        {
-                            itemsStock.Add(new ItemVentaDTO
-                            {
-                                ItemId = po.ProductoId,
-                                Cantidad = po.Cantidad * item.Cantidad
-                            });
-                        }
-                    }
-
-                    //Debug.WriteLine("20 - Actualizar stock"); con control de cancealcion de venta por estado no por < 0
-                    var detallesLotesUsado = new List<DetalleVentaLoteDTO>();
-                    bool esCancelacion = ventaDto.Estado == (int)EstadoVenta.CancelacionVenta;
-
-                    if (esCancelacion)
-                    {
-                        _productoServicio.RestaurarStockProductos(
-                            itemsStock,
-                            context,
-                            ventdaIdOriginalParaCancerlar
-                                ?? throw new Exception("No se recibió el Id de la venta original para restaurar stock.")
-                        );
-                    }
-                    else
-                    {
-                        detallesLotesUsado = _productoServicio.DescontarStockProductos(
-                            itemsStock,
-                            context
-                        );
-                    }
-
-                    // CREAR DETALLE VENTA LOTE
-                    if (detallesLotesUsado.Any())
-                    {
-                        var detallesLotes = detallesLotesUsado.Select(d => new DetalleVentaLote
-                        {
-                            IdVenta = venta.VentaId,
-                            IdProducto = d.IdProducto,
-                            IdLote = d.IdLote,
-                            Cantidad = d.Cantidad
-                        }).ToList();
-
-                        context.DetalleVentaLotes.AddRange(detallesLotes);
-                    }
-
-                    //Debug.WriteLine("21 - Stock actualizado");
-
-                    var detalles = new List<DetallesVenta>();
-                    foreach (var i in ventaDto.Items)
-                    {
-                        //Debug.WriteLine($"22 - Crear detalle item | Id: {i.ItemId} | EsOferta: {i.EsOferta}");
-
-                        var precioOriginal = i.PrecioVenta;
-                        var precioFinal = i.EsOferta ? i.PrecioOferta : i.PrecioVenta;
-
-                        var detalle = new DetallesVenta
-                        {
-                            IdVenta = venta.VentaId,
-                            IdProducto = i.EsOferta && !i.EsOfertaPorGrupo ? null : i.ItemId,
-                            IdOfertaDescuento = i.EsOferta && !i.EsOfertaPorGrupo ? i.ItemId : null,
-                            Cantidad = i.Cantidad,
-                            PrecioUnitarioOriginal = precioOriginal,
-                            PrecioUnitarioFinal = precioFinal,
-                            Subtotal = precioFinal * i.Cantidad,
-                            EsOferta = i.EsOferta,
-                            EsOfertaPorGrupo = i.EsOfertaPorGrupo,
-                            Descripcion = i.Descripcion ?? string.Empty
-                        };
-
-                        detalles.Add(detalle);
-                    }
-
-                    //Debug.WriteLine("23 - Agregar detalles");
-                    context.DetallesVentas.AddRange(detalles);
-                }
-
-                //Debug.WriteLine("24 - Procesar pagos");
-                if (ventaDto.TiposDePagoSeleccionado != null && ventaDto.TiposDePagoSeleccionado.Any())
-                {
-                    var servicioTP = new TipoPagoServicio();
-
-                    var pagos = ventaDto.TiposDePagoSeleccionado.Select(p => new VentaPagoDetalle
-                    {
-                        IdVenta = venta.VentaId,
-                        IdTipoPago = servicioTP.ObtenerTipoPagoPorNumero(context, Convert.ToInt32(p.TipoDePago.Value)).TipoPagoId,
-                        Monto = p.Monto,
-                        ExtraDescripcionPago = p.DatosExtra ?? "Sin especificar"
-                    }).ToList();
-
-
-                    context.VentaPagosDetalles.AddRange(pagos);
-                }
-
-                var cambios = context.ChangeTracker.Entries()
-                   .Select(e => new
-                   {
-                       Entidad = e.Entity.GetType().Name,
-                       Estado = e.State
-                   }).ToList();
-
-                foreach (var c in cambios)
-                {
-                    Debug.WriteLine($"{c.Entidad} - {c.Estado}");
-                }
-
-                context.SaveChanges();
-                //Debug.WriteLine("26 - SaveChanges final OK");
-
-                return venta;
-            }
-            catch (Exception ex)
-            {
-                //Debug.WriteLine("=================================");
-                //Debug.WriteLine("ERROR EN PASO");
-                //Debug.WriteLine(ex.ToString());
-                //Debug.WriteLine("=================================");
-                throw;
-            }
-        }
-
-        public EstadoOperacion NuevaVenta(VentaDTO ventaDto)
-        {
-            //Debug.WriteLine("A - Inicio NuevaVenta");
-
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-            //Debug.WriteLine("B - Context creado");
-
-            using var transaction = context.Database.BeginTransaction();
-            //Debug.WriteLine("C - Transacción iniciada");
-
-            try
-            {
-                //Debug.WriteLine("D - Antes CrearVentaInterna");
-
-                var venta = CrearVentaInterna(context, ventaDto, TipoMovimientoDetalle.Venta);
-
-                //Debug.WriteLine("E - Antes Commit");
-
-                transaction.Commit();
-
-                _productoServicio.ModificarEstadoStockProductos(context);
-
-                try
-                {
-                //Debug.WriteLine("F - Commit realizado");
-                    GeneracionComprobanteVenta(context, venta);
-                }
-                catch (Exception ex)
-                {
-                    //Debug.WriteLine("Error generando PDF: " + ex.Message);
-                    // no cortás la venta por un PDF
-                }
-
-
-                return new EstadoOperacion
-                {
-                    Exitoso = true,
-                    Mensaje = "Venta registrada correctamente."
-                };
-            }
-            catch (Exception ex)
-            {
-                //Debug.WriteLine("=================================");
-                //Debug.WriteLine("ERROR EN NUEVA VENTA");
-                //Debug.WriteLine(ex.ToString());
-                //Debug.WriteLine("=================================");
-
-                transaction.Rollback();
-
-                return new EstadoOperacion
-                {
-                    Exitoso = false,
-                    Mensaje = ex.ToString()
-                };
-            }
-        }
+        //public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto, TipoMovimientoDetalle movimientoDetalle, long? ventdaIdOriginalParaCancerlar = null)
+        //{
+        //    //Debug.WriteLine("1 - Inicio CrearVentaInterna");
+
+        //    try
+        //    {
+        //        //Debug.WriteLine("1.5 - Montos para ctacte o caja");
+
+        //        decimal montoParaCtaCte = 0;
+        //        decimal montoParaCaja = 0;
+
+        //        // Buscamos si en los tipos de pago seleccionados se usó Cuenta Corriente (Valor 3)
+        //        var pagoCtaCte = ventaDto.TiposDePagoSeleccionado?.FirstOrDefault(p => Convert.ToInt32(p.TipoDePago.Value) == (int)TipoDePago.CtaCte);
+
+        //        if (pagoCtaCte != null)
+        //        {
+        //            // Usamos Math.Abs para asegurarnos de trabajar con el valor absoluto primero
+        //            montoParaCtaCte = Math.Abs(pagoCtaCte.Monto);
+        //            montoParaCaja = Math.Abs(ventaDto.Total) - montoParaCtaCte;
+        //        }
+        //        else
+        //        {
+        //            montoParaCaja = Math.Abs(ventaDto.Total);
+        //        }
+
+        //        //Debug.WriteLine("2 - Obtener caja");
+
+        //        var cajaServicio = new Caja.CajaServicio();
+        //        var cajaId = cajaServicio.ObtenerIdDeEña(context); // Mantenemos tu método original
+
+        //        if (!cajaId.HasValue)
+        //            throw new Exception("No hay una caja abierta. No se puede registrar la venta.");
+
+        //        //Debug.WriteLine("3 - Generar número venta");
+
+        //        var fecha = DateTime.Today;
+        //        var prefijo = ventaDto.Estado == (int)EstadoVenta.CancelacionVenta ? "CAN" : "VEN";
+
+        //        var cantidadHoy = context.Ventas.Count(v =>
+        //            v.NumeroVenta.StartsWith($"{prefijo}-{fecha:yyyyMMdd}")
+        //        );
+
+        //        ventaDto.NumeroVenta = GeneradorNumeroComprobante.Generar(
+        //            prefijo,
+        //            fecha,
+        //            cantidadHoy
+        //        );
+
+        //        //Debug.WriteLine("4 - Crear entidad venta");
+
+        //        // 🌟 CAMBIO: Mapeamos los montos reales del DTO en lugar de hardcodearlos en 0 y Total
+        //        var venta = new AccesoDatos.Entidades.Venta
+        //        {
+        //            NumeroVenta = ventaDto.NumeroVenta,
+        //            IdEmpleado = ventaDto.IdEmpleado,
+        //            IdVendedor = ventaDto.IdVendedor,
+        //            IdCliente = ventaDto.IdCliente,
+        //            FechaVenta = ventaDto.FechaVenta,
+        //            Total = ventaDto.Total,
+        //            TotalSinDescuento = ventaDto.TotalSinDescuento,
+        //            Descuento = ventaDto.Descuento,
+        //            Estado = ventaDto.Estado,
+        //            Detalle = ventaDto.Detalle,
+        //            MontoAdeudado = montoParaCtaCte, // Asigna lo que va a la cuenta corriente
+        //            MontoPagado = montoParaCaja    // Asigna lo que se pagó en efectivo/tarjeta
+        //        };
+
+        //        //Debug.WriteLine("5 - Add venta");
+        //        context.Ventas.Add(venta);
+
+        //        //Debug.WriteLine("6 - SaveChanges venta");
+        //        context.SaveChanges();
+
+        //        //Debug.WriteLine("7 - Venta guardada ID: " + venta.VentaId);
+
+        //        //Debug.WriteLine("8 - Crear movimiento");
+        //        var movimientoServicio = new Movimiento.MovimientoServicio();
+        //        movimientoServicio.CrearMovimientoVenta(
+        //           venta.VentaId,
+        //           venta.Total,
+        //           venta.Estado,
+        //           movimientoDetalle,
+        //           TipoEntidadMovimiento.Venta,
+        //           context
+        //        );
+
+        //        //Debug.WriteLine("9 - Movimiento creado");
+
+        //        //Debug.WriteLine("10 - Actualizar caja");
+        //        // 🌟 CAMBIO: La caja física solo debe enterarse de transacciones con dinero real (MontoPagado)
+        //        if (venta.MontoPagado != 0)
+        //        {
+        //            cajaServicio.RegistrarTransaccion(
+        //                context,
+        //                venta.MontoPagado,
+        //                venta.MontoPagado >= 0 ? TipoMovimiento.Ingreso : TipoMovimiento.Egreso,
+        //                cajaId.Value
+        //            );
+        //        }
+        //        //Debug.WriteLine("11 - Caja actualizada");
+
+        //        // =========================================================================
+        //        // 🌟 PASO 11b - NUEVO: IMPACTAR CUENTA CORRIENTE (VENTA O CANCELACIÓN)
+        //        // =========================================================================
+        //        //Debug.WriteLine("11b - Procesar Cuenta Corriente");
+        //        if (venta.MontoAdeudado != 0)
+        //        {
+        //            if (!venta.IdCliente.HasValue)
+        //                throw new Exception("No se puede registrar un movimiento de Cuenta Corriente sin un Cliente asignado.");
+
+        //            var ctaCteServicio = new CuentaCorrienteServicio();
+        //            var ctaCteDto = ctaCteServicio.ObtenerCuentaCorrientePorClienteId(venta.IdCliente.Value);
+
+        //            if (ctaCteDto == null)
+        //                throw new Exception("El cliente seleccionado no posee una Cuenta Corriente activa.");
+
+        //            if (ventaDto.Estado == (int)EstadoVenta.Confirmada)
+        //            {
+        //                // FLUJO VENTA: Genera deuda (Resta saldo)
+        //                var resCtaCte = ctaCteServicio.RegistrarCompra(
+        //                    ctaCteDto.CuentaCorrienteId,
+        //                    venta.MontoAdeudado,
+        //                    cajaId.Value,
+        //                    $"Cargo por Venta Interna N° {venta.NumeroVenta}"
+        //                );
+
+        //                if (!resCtaCte.Exitoso)
+        //                    throw new Exception(resCtaCte.Mensaje);
+        //            }
+        //            else
+        //            {
+        //                // FLUJO CANCELACIÓN: Revierte deuda (Suma saldo usando valor absoluto)
+        //                decimal montoDevolucion = Math.Abs(venta.MontoAdeudado);
+        //                var resCtaCte = ctaCteServicio.RegistrarDevolucionOAnulacion(
+        //                    ctaCteDto.CuentaCorrienteId,
+        //                    montoDevolucion,
+        //                    cajaId.Value,
+        //                    $"Crédito por Anulación de Venta N° {venta.NumeroVenta}"
+        //                );
+
+        //                if (!resCtaCte.Exitoso)
+        //                    throw new Exception(resCtaCte.Mensaje);
+        //            }
+        //        }
+        //        //Debug.WriteLine("11c - Cuenta Corriente procesada");
+
+        //        //Debug.WriteLine("12 - Procesar items");
+        //        if (ventaDto.Items != null && ventaDto.Items.Any())
+        //        {
+        //            //Debug.WriteLine("13 - Items detectados");
+        //            var itemsStock = new List<ItemVentaDTO>();
+
+        //            foreach (var item in ventaDto.Items)
+        //            {
+        //                //Debug.WriteLine($"14 - Item: {item.ItemId} | EsOferta:{item.EsOferta} | Grupo:{item.EsOfertaPorGrupo}");
+
+        //                // 🔹 1. PRODUCTO NORMAL
+        //                if (!item.EsOferta)
+        //                {
+        //                    //Debug.WriteLine("15 - Producto normal");
+        //                    itemsStock.Add(new ItemVentaDTO
+        //                    {
+        //                        ItemId = item.ItemId,
+        //                        Cantidad = item.Cantidad
+        //                    });
+        //                    continue;
+        //                }
+
+        //                // 🔹 2. PRODUCTO CON DESCUENTO (POR GRUPO)
+        //                if (item.EsOfertaPorGrupo)
+        //                {
+        //                    //Debug.WriteLine("16 - Producto con descuento por grupo");
+        //                    var existeProducto = context.Productos.Any(p => p.ProductoId == item.ItemId);
+
+        //                    if (!existeProducto)
+        //                        throw new Exception($"Producto con descuento inválido. Id: {item.ItemId}");
+
+        //                    itemsStock.Add(new ItemVentaDTO
+        //                    {
+        //                        ItemId = item.ItemId,
+        //                        Cantidad = item.Cantidad
+        //                    });
+        //                    continue;
+        //                }
+
+        //                // 🔹 3. OFERTA COMBO
+        //                //Debug.WriteLine("17 - Buscar oferta combo");
+        //                var oferta = context.OfertasDescuentos.FirstOrDefault(o => o.OfertaDescuentoId == item.ItemId);
+
+        //                if (oferta == null)
+        //                    throw new Exception($"Oferta combo inválida. Id: {item.ItemId}");
+
+        //                //Debug.WriteLine("18 - Oferta encontrada");
+        //                var productosOferta = context.ProductosEnOfertasDescuentos
+        //                    .Where(x => x.OfertaId == oferta.OfertaDescuentoId)
+        //                    .ToList();
+
+        //                if (!productosOferta.Any())
+        //                    throw new Exception($"La oferta {oferta.Descripcion} no tiene productos asociados.");
+
+        //                //Debug.WriteLine("19 - Productos de oferta cargados");
+        //                foreach (var po in productosOferta)
+        //                {
+        //                    itemsStock.Add(new ItemVentaDTO
+        //                    {
+        //                        ItemId = po.ProductoId,
+        //                        Cantidad = po.Cantidad * item.Cantidad
+        //                    });
+        //                }
+        //            }
+
+        //            //Debug.WriteLine("20 - Actualizar stock"); con control de cancealcion de venta por estado no por < 0
+        //            var detallesLotesUsado = new List<DetalleVentaLoteDTO>();
+        //            bool esCancelacion = ventaDto.Estado == (int)EstadoVenta.CancelacionVenta;
+
+        //            if (esCancelacion)
+        //            {
+        //                _productoServicio.RestaurarStockProductos(
+        //                    itemsStock,
+        //                    context,
+        //                    ventdaIdOriginalParaCancerlar
+        //                        ?? throw new Exception("No se recibió el Id de la venta original para restaurar stock.")
+        //                );
+        //            }
+        //            else
+        //            {
+        //                detallesLotesUsado = _productoServicio.DescontarStockProductos(
+        //                    itemsStock,
+        //                    context
+        //                );
+        //            }
+
+        //            // CREAR DETALLE VENTA LOTE
+        //            if (detallesLotesUsado.Any())
+        //            {
+        //                var detallesLotes = detallesLotesUsado.Select(d => new DetalleVentaLote
+        //                {
+        //                    IdVenta = venta.VentaId,
+        //                    IdProducto = d.IdProducto,
+        //                    IdLote = d.IdLote,
+        //                    Cantidad = d.Cantidad
+        //                }).ToList();
+
+        //                context.DetalleVentaLotes.AddRange(detallesLotes);
+        //            }
+
+        //            //Debug.WriteLine("21 - Stock actualizado");
+
+        //            var detalles = new List<DetallesVenta>();
+        //            foreach (var i in ventaDto.Items)
+        //            {
+        //                //Debug.WriteLine($"22 - Crear detalle item | Id: {i.ItemId} | EsOferta: {i.EsOferta}");
+
+        //                var precioOriginal = i.PrecioVenta;
+        //                var precioFinal = i.EsOferta ? i.PrecioOferta : i.PrecioVenta;
+
+        //                var detalle = new DetallesVenta
+        //                {
+        //                    IdVenta = venta.VentaId,
+        //                    IdProducto = i.EsOferta && !i.EsOfertaPorGrupo ? null : i.ItemId,
+        //                    IdOfertaDescuento = i.EsOferta && !i.EsOfertaPorGrupo ? i.ItemId : null,
+        //                    Cantidad = i.Cantidad,
+        //                    PrecioUnitarioOriginal = precioOriginal,
+        //                    PrecioUnitarioFinal = precioFinal,
+        //                    Subtotal = precioFinal * i.Cantidad,
+        //                    EsOferta = i.EsOferta,
+        //                    EsOfertaPorGrupo = i.EsOfertaPorGrupo,
+        //                    Descripcion = i.Descripcion ?? string.Empty
+        //                };
+
+        //                detalles.Add(detalle);
+        //            }
+
+        //            //Debug.WriteLine("23 - Agregar detalles");
+        //            context.DetallesVentas.AddRange(detalles);
+        //        }
+
+        //        //Debug.WriteLine("24 - Procesar pagos");
+        //        if (ventaDto.TiposDePagoSeleccionado != null && ventaDto.TiposDePagoSeleccionado.Any())
+        //        {
+        //            var servicioTP = new TipoPagoServicio();
+
+        //            var pagos = ventaDto.TiposDePagoSeleccionado.Select(p => new VentaPagoDetalle
+        //            {
+        //                IdVenta = venta.VentaId,
+        //                IdTipoPago = servicioTP.ObtenerTipoPagoPorNumero(context, Convert.ToInt32(p.TipoDePago.Value)).TipoPagoId,
+        //                Monto = p.Monto,
+        //                ExtraDescripcionPago = p.DatosExtra ?? "Sin especificar"
+        //            }).ToList();
+
+
+        //            context.VentaPagosDetalles.AddRange(pagos);
+        //        }
+
+        //        var cambios = context.ChangeTracker.Entries()
+        //           .Select(e => new
+        //           {
+        //               Entidad = e.Entity.GetType().Name,
+        //               Estado = e.State
+        //           }).ToList();
+
+        //        foreach (var c in cambios)
+        //        {
+        //            Debug.WriteLine($"{c.Entidad} - {c.Estado}");
+        //        }
+
+        //        context.SaveChanges();
+        //        //Debug.WriteLine("26 - SaveChanges final OK");
+
+        //        return venta;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //Debug.WriteLine("=================================");
+        //        //Debug.WriteLine("ERROR EN PASO");
+        //        //Debug.WriteLine(ex.ToString());
+        //        //Debug.WriteLine("=================================");
+        //        throw;
+        //    }
+        //}
+
+        //public EstadoOperacion NuevaVenta(VentaDTO ventaDto)
+        //{
+        //    //Debug.WriteLine("A - Inicio NuevaVenta");
+
+        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
+        //    //Debug.WriteLine("B - Context creado");
+
+        //    using var transaction = context.Database.BeginTransaction();
+        //    //Debug.WriteLine("C - Transacción iniciada");
+
+        //    try
+        //    {
+        //        //Debug.WriteLine("D - Antes CrearVentaInterna");
+
+        //        var venta = CrearVentaInterna(context, ventaDto, TipoMovimientoDetalle.Venta);
+
+        //        //Debug.WriteLine("E - Antes Commit");
+
+        //        transaction.Commit();
+
+        //        _productoServicio.ModificarEstadoStockProductos(context);
+
+        //        try
+        //        {
+        //        //Debug.WriteLine("F - Commit realizado");
+        //            GeneracionComprobanteVenta(context, venta);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            //Debug.WriteLine("Error generando PDF: " + ex.Message);
+        //            // no cortás la venta por un PDF
+        //        }
+
+
+        //        return new EstadoOperacion
+        //        {
+        //            Exitoso = true,
+        //            Mensaje = "Venta registrada correctamente."
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //Debug.WriteLine("=================================");
+        //        //Debug.WriteLine("ERROR EN NUEVA VENTA");
+        //        //Debug.WriteLine(ex.ToString());
+        //        //Debug.WriteLine("=================================");
+
+        //        transaction.Rollback();
+
+        //        return new EstadoOperacion
+        //        {
+        //            Exitoso = false,
+        //            Mensaje = ex.ToString()
+        //        };
+        //    }
+        //}
 
         private void GeneracionComprobanteVenta(GestorContextDB context, AccesoDatos.Entidades.Venta venta)
         {
@@ -838,121 +838,121 @@ namespace Servicios.LogicaNegocio.Venta
 
             _pdf.GenerarCancelacionVenta(ventaCompleta);
         }
-        public EstadoOperacion CancelacionVentaPorId(long ventaId)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-            using var transaction = context.Database.BeginTransaction();
+        //public EstadoOperacion CancelacionVentaPorId(long ventaId)
+        //{
+        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
+        //    using var transaction = context.Database.BeginTransaction();
 
-            try
-            {
-                var ventaOriginal = context.Ventas
-                    .Include(v => v.DetallesVentas)
-                    .Include(v => v.VentaPagoDetalles)
-                    .FirstOrDefault(v => v.VentaId == ventaId);
+        //    try
+        //    {
+        //        var ventaOriginal = context.Ventas
+        //            .Include(v => v.DetallesVentas)
+        //            .Include(v => v.VentaPagoDetalles)
+        //            .FirstOrDefault(v => v.VentaId == ventaId);
 
-                if (ventaOriginal == null)
-                    return new EstadoOperacion { Exitoso = false, Mensaje = "La venta no existe." };
+        //        if (ventaOriginal == null)
+        //            return new EstadoOperacion { Exitoso = false, Mensaje = "La venta no existe." };
 
-                if (ventaOriginal.Estado == (int)EstadoVenta.Cancelada)
-                    return new EstadoOperacion { Exitoso = false, Mensaje = "La venta ya está cancelada." };
+        //        if (ventaOriginal.Estado == (int)EstadoVenta.Cancelada)
+        //            return new EstadoOperacion { Exitoso = false, Mensaje = "La venta ya está cancelada." };
 
-                ventaOriginal.Estado = (int)EstadoVenta.Cancelada;
+        //        ventaOriginal.Estado = (int)EstadoVenta.Cancelada;
 
-                var ventaCancelacionDto = new VentaDTO
-                {
-                    IdEmpleado = ventaOriginal.IdEmpleado,
-                    IdVendedor = ventaOriginal.IdVendedor,
-                    IdCliente = ventaOriginal.IdCliente,
-                    FechaVenta = DateTime.Now,
-                    // se cambia el negativo de la oferta cancelada, solo va a filtrar en caso de estado 99 (cancelado.) pero los montos son iguales a lo de la venta en positivo.
-                    Total = ventaOriginal.Total,
-                    TotalSinDescuento = ventaOriginal.TotalSinDescuento,
-                    Descuento = ventaOriginal.Descuento,
+        //        var ventaCancelacionDto = new VentaDTO
+        //        {
+        //            IdEmpleado = ventaOriginal.IdEmpleado,
+        //            IdVendedor = ventaOriginal.IdVendedor,
+        //            IdCliente = ventaOriginal.IdCliente,
+        //            FechaVenta = DateTime.Now,
+        //            // se cambia el negativo de la oferta cancelada, solo va a filtrar en caso de estado 99 (cancelado.) pero los montos son iguales a lo de la venta en positivo.
+        //            Total = ventaOriginal.Total,
+        //            TotalSinDescuento = ventaOriginal.TotalSinDescuento,
+        //            Descuento = ventaOriginal.Descuento,
 
-                    Estado = (int)EstadoVenta.CancelacionVenta,
-                    Detalle = $"Cancelación de venta N° {ventaOriginal.NumeroVenta}",
+        //            Estado = (int)EstadoVenta.CancelacionVenta,
+        //            Detalle = $"Cancelación de venta N° {ventaOriginal.NumeroVenta}",
 
-                    Items = ventaOriginal.DetallesVentas.Select(d =>
-                    {
-                        long itemId;
+        //            Items = ventaOriginal.DetallesVentas.Select(d =>
+        //            {
+        //                long itemId;
 
-                        if (d.EsOferta && !d.EsOfertaPorGrupo)
-                        {
-                            if (!d.IdOfertaDescuento.HasValue)
-                                throw new Exception($"Detalle inconsistente: falta IdOfertaDescuento en DetalleVentaId {d.DetalleVentaId}");
+        //                if (d.EsOferta && !d.EsOfertaPorGrupo)
+        //                {
+        //                    if (!d.IdOfertaDescuento.HasValue)
+        //                        throw new Exception($"Detalle inconsistente: falta IdOfertaDescuento en DetalleVentaId {d.DetalleVentaId}");
 
-                            itemId = d.IdOfertaDescuento.Value;
-                        }
-                        else
-                        {
-                            if (!d.IdProducto.HasValue)
-                                throw new Exception($"Detalle inconsistente: falta IdProducto en DetalleVentaId {d.DetalleVentaId}");
+        //                    itemId = d.IdOfertaDescuento.Value;
+        //                }
+        //                else
+        //                {
+        //                    if (!d.IdProducto.HasValue)
+        //                        throw new Exception($"Detalle inconsistente: falta IdProducto en DetalleVentaId {d.DetalleVentaId}");
 
-                            itemId = d.IdProducto.Value;
-                        }
+        //                    itemId = d.IdProducto.Value;
+        //                }
 
-                        return new ItemVentaDTO
-                        {
-                            ItemId = itemId,
+        //                return new ItemVentaDTO
+        //                {
+        //                    ItemId = itemId,
 
-                            Cantidad = d.Cantidad,
+        //                    Cantidad = d.Cantidad,
 
-                            // 🔥 precios correctos
-                            PrecioVenta = d.PrecioUnitarioOriginal,
-                            PrecioOferta = d.PrecioUnitarioFinal,
-                            PrecioOriginalOferta = d.PrecioUnitarioOriginal,
+        //                    // 🔥 precios correctos
+        //                    PrecioVenta = d.PrecioUnitarioOriginal,
+        //                    PrecioOferta = d.PrecioUnitarioFinal,
+        //                    PrecioOriginalOferta = d.PrecioUnitarioOriginal,
 
-                            // 🔥 flags correctos
-                            EsOferta = d.EsOferta,
-                            EsOfertaPorGrupo = d.EsOfertaPorGrupo,
+        //                    // 🔥 flags correctos
+        //                    EsOferta = d.EsOferta,
+        //                    EsOfertaPorGrupo = d.EsOfertaPorGrupo,
 
-                            Descripcion = d.Descripcion ?? string.Empty
-                        };
-                    }).ToList(),
+        //                    Descripcion = d.Descripcion ?? string.Empty
+        //                };
+        //            }).ToList(),
 
                     
-                    TiposDePagoSeleccionado = ventaOriginal.VentaPagoDetalles.Select(p => new FormaPago
-                    {
-                        TipoDePago = (TipoDePago)p.IdTipoPago,
-                        Monto = -p.Monto
-                    }).ToList()
-                }; //AGREGAR DETALLEVENTALOTE EN EL CASO QUE EXISTA if(ventaOriginal.DetallesVentasLotes.any()), cargar en el dto 
+        //            TiposDePagoSeleccionado = ventaOriginal.VentaPagoDetalles.Select(p => new FormaPago
+        //            {
+        //                TipoDePago = (TipoDePago)p.IdTipoPago,
+        //                Monto = -p.Monto
+        //            }).ToList()
+        //        }; //AGREGAR DETALLEVENTALOTE EN EL CASO QUE EXISTA if(ventaOriginal.DetallesVentasLotes.any()), cargar en el dto 
 
-                var ventaCancelacion = CrearVentaInterna(context, ventaCancelacionDto, TipoMovimientoDetalle.Cancelacion, ventaId);
+        //        var ventaCancelacion = CrearVentaInterna(context, ventaCancelacionDto, TipoMovimientoDetalle.Cancelacion, ventaId);
 
-                _productoServicio.ModificarEstadoStockProductos(context);
-                context.SaveChanges();
-
-
-                transaction.Commit();
+        //        _productoServicio.ModificarEstadoStockProductos(context);
+        //        context.SaveChanges();
 
 
-                try
-                {
-                    GeneracionComprobanteCancelacion(context, ventaCancelacion);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("Error generando PDF cancelación: " + ex.Message);
-                }
-                ;
+        //        transaction.Commit();
 
-                return new EstadoOperacion
-                {
-                    Exitoso = true,
-                    Mensaje = "Venta cancelada y contraventa generada correctamente."
-                };
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
 
-                return new EstadoOperacion
-                {
-                    Exitoso = false,
-                    Mensaje = "Error al cancelar la venta: " + ex.Message
-                };
-            }
-        }
+        //        try
+        //        {
+        //            GeneracionComprobanteCancelacion(context, ventaCancelacion);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Debug.WriteLine("Error generando PDF cancelación: " + ex.Message);
+        //        }
+        //        ;
+
+        //        return new EstadoOperacion
+        //        {
+        //            Exitoso = true,
+        //            Mensaje = "Venta cancelada y contraventa generada correctamente."
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        transaction.Rollback();
+
+        //        return new EstadoOperacion
+        //        {
+        //            Exitoso = false,
+        //            Mensaje = "Error al cancelar la venta: " + ex.Message
+        //        };
+        //    }
+        //}
     }
 }

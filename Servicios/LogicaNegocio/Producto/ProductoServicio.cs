@@ -20,122 +20,122 @@ namespace Servicios.LogicaNegocio.Producto
 {
     public class ProductoServicio : IProductoServicio
     {
-        public ProductosEnOfertaDescuentosDTO?  ControlarProductoEstaEnOfertaPorId(long productoId)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
+        //public ProductosEnOfertaDescuentosDTO?  ControlarProductoEstaEnOfertaPorId(long productoId)
+        //{
+        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-            // Intentamos buscar primero la relación producto-en-oferta (puede ser null)
-            var prodOfer = context.ProductosEnOfertasDescuentos
-                .AsNoTracking()
-                .Include(x => x.Producto)
-                .Include(x => x.Oferta)
-                .FirstOrDefault(x => x.ProductoId == productoId && !x.Producto.EstaEliminado && x.Oferta.EstaActiva);
+        //    // Intentamos buscar primero la relación producto-en-oferta (puede ser null)
+        //    var prodOfer = context.ProductosEnOfertasDescuentos
+        //        .AsNoTracking()
+        //        .Include(x => x.Producto)
+        //        .Include(x => x.Oferta)
+        //        .FirstOrDefault(x => x.ProductoId == productoId && !x.Producto.EstaEliminado && x.Oferta.EstaActiva);
 
-            // Si no hay relación, traigo el producto directamente (con sus navegaciones necesarias)
-            var producto = prodOfer?.Producto
-                           ?? context.Productos
-                                .Include(x => x.Marca)
-                                .Include(x => x.Rubro)
-                                .Include(x => x.CategoriasProductos)
-                                .AsNoTracking()
-                                .FirstOrDefault(p => p.ProductoId == productoId && !p.EstaEliminado);
+        //    // Si no hay relación, traigo el producto directamente (con sus navegaciones necesarias)
+        //    var producto = prodOfer?.Producto
+        //                   ?? context.Productos
+        //                        .Include(x => x.Marca)
+        //                        .Include(x => x.Rubro)
+        //                        .Include(x => x.CategoriasProductos)
+        //                        .AsNoTracking()
+        //                        .FirstOrDefault(p => p.ProductoId == productoId && !p.EstaEliminado);
 
-            if (producto == null)
-                return null; // No existe el producto
+        //    if (producto == null)
+        //        return null; // No existe el producto
 
-            // Solo busco la oferta si prodOfer existe y tiene un Id de oferta válido
-            OfertaDescuento? oferta = null;
+        //    // Solo busco la oferta si prodOfer existe y tiene un Id de oferta válido
+        //    OfertaDescuento? oferta = null;
 
-            if (prodOfer != null && prodOfer.OfertaId > 0) // ajuste según el tipo real de OfertaId
-            {
-                oferta = context.OfertasDescuentos
-                    .Include(o => o.Marca)
-                    .Include(o => o.Rubro)
-                    .Include(o => o.Categoria)
-                    .AsNoTracking()
-                    .FirstOrDefault(o => o.OfertaDescuentoId == prodOfer.OfertaId);
-            }
+        //    if (prodOfer != null && prodOfer.OfertaId > 0) // ajuste según el tipo real de OfertaId
+        //    {
+        //        oferta = context.OfertasDescuentos
+        //            .Include(o => o.Marca)
+        //            .Include(o => o.Rubro)
+        //            .Include(o => o.Categoria)
+        //            .AsNoTracking()
+        //            .FirstOrDefault(o => o.OfertaDescuentoId == prodOfer.OfertaId);
+        //    }
 
-            // Aquí NO fallamos si oferta == null: devolvemos el DTO con Oferta = null
-            var dto = new ProductosEnOfertaDescuentosDTO
-            {
-                // Si prodOfer es null usamos el id del producto; si existe, usamos los valores de prodOfer
-                ProductoOfertaId = prodOfer?.ProductoId ?? producto.ProductoId,
-                Cantidad = prodOfer?.Cantidad ?? 0m,
-                PrecioEnOferta = prodOfer?.PrecioConDescuento ?? 0m,
-                Oferta = oferta == null ? null : new OfertaDTO
-                {
-                    OfertaDescuentoId = oferta.OfertaDescuentoId,
-                    Descripcion = oferta.Descripcion,
-                    PrecioFinal = oferta.PrecioFinal,
-                    PrecioOriginal = oferta.PrecioOriginal,
-                    DescuentoTotalFinal = oferta.DescuentoTotalFinal,
-                    PorcentajeDescuento = oferta.PorcentajeDescuento,
-                    FechaInicio = oferta.FechaInicio,
-                    FechaFin = oferta.FechaFin,
-                    CantidadProductosDentroOferta = oferta.CantidadProductosDentroOferta,
-                    EstaActiva = oferta.EstaActiva,
-                    EsUnSoloProducto = oferta.EsUnSoloProducto,
-                    Detalle = oferta.Detalle,
-                    Codigo = oferta.Codigo,
-                    esOfertaPorGrupo = oferta.esOfertaPorGrupo,
-                    TieneLimiteDeStock = oferta.TieneLimiteDeStock,
-                    CantidadLimiteDeStock = oferta.CantidadLimiteDeStock,
-                    IdMarca = oferta.IdMarca,
-                    IdRubro = oferta.IdRubro,
-                    IdCategoria = oferta.IdCategoria,
-                    GrupoNombre = oferta.GrupoNombre,
-                },
-                Producto = new ProductoDTO
-                {
-                    ProductoId = producto.ProductoId,
-                    IdMarca = producto.IdMarca,
-                    IdRubro = producto.IdRubro,
-                    Stock = producto.Stock,
-                    PrecioCosto = producto.PrecioCosto,
-                    PrecioVenta = producto.PrecioVenta,
-                    Descripcion = producto.Descripcion,
-                    EstaEliminado = producto.EstaEliminado,
-                    Estado = producto.Estado,
-                    Medida = producto.Medida,
-                    UnidadMedida = producto.UnidadMedida,
-                    Codigo = producto.Codigo,
-                    CodigoBarra = producto.CodigoBarra,
-                    IvaIncluidoPrecioFinal = producto.IvaIncluidoPrecioFinal,
-                    MarcaNombre = producto.Marca?.Nombre,
-                    RubroNombre = producto.Rubro?.Nombre,
-                    EsFraccionable = producto.EsFraccionable,
-                    CategoriaIds = producto.CategoriasProductos?.Select(c => c.IdCategoria).ToList() ?? new List<long>()
-                }
-            };
+        //    // Aquí NO fallamos si oferta == null: devolvemos el DTO con Oferta = null
+        //    var dto = new ProductosEnOfertaDescuentosDTO
+        //    {
+        //        // Si prodOfer es null usamos el id del producto; si existe, usamos los valores de prodOfer
+        //        ProductoOfertaId = prodOfer?.ProductoId ?? producto.ProductoId,
+        //        Cantidad = prodOfer?.Cantidad ?? 0m,
+        //        PrecioEnOferta = prodOfer?.PrecioConDescuento ?? 0m,
+        //        Oferta = oferta == null ? null : new OfertaDTO
+        //        {
+        //            OfertaDescuentoId = oferta.OfertaDescuentoId,
+        //            Descripcion = oferta.Descripcion,
+        //            PrecioFinal = oferta.PrecioFinal,
+        //            PrecioOriginal = oferta.PrecioOriginal,
+        //            DescuentoTotalFinal = oferta.DescuentoTotalFinal,
+        //            PorcentajeDescuento = oferta.PorcentajeDescuento,
+        //            FechaInicio = oferta.FechaInicio,
+        //            FechaFin = oferta.FechaFin,
+        //            CantidadProductosDentroOferta = oferta.CantidadProductosDentroOferta,
+        //            EstaActiva = oferta.EstaActiva,
+        //            EsUnSoloProducto = oferta.EsUnSoloProducto,
+        //            Detalle = oferta.Detalle,
+        //            Codigo = oferta.Codigo,
+        //            esOfertaPorGrupo = oferta.esOfertaPorGrupo,
+        //            TieneLimiteDeStock = oferta.TieneLimiteDeStock,
+        //            CantidadLimiteDeStock = oferta.CantidadLimiteDeStock,
+        //            IdMarca = oferta.IdMarca,
+        //            IdRubro = oferta.IdRubro,
+        //            IdCategoria = oferta.IdCategoria,
+        //            GrupoNombre = oferta.GrupoNombre,
+        //        },
+        //        Producto = new ProductoDTO
+        //        {
+        //            ProductoId = producto.ProductoId,
+        //            IdMarca = producto.IdMarca,
+        //            IdRubro = producto.IdRubro,
+        //            Stock = producto.Stock,
+        //            PrecioCosto = producto.PrecioCosto,
+        //            PrecioVenta = producto.PrecioVenta,
+        //            Descripcion = producto.Descripcion,
+        //            EstaEliminado = producto.EstaEliminado,
+        //            Estado = producto.Estado,
+        //            Medida = producto.Medida,
+        //            UnidadMedida = producto.UnidadMedida,
+        //            Codigo = producto.Codigo,
+        //            CodigoBarra = producto.CodigoBarra,
+        //            IvaIncluidoPrecioFinal = producto.IvaIncluidoPrecioFinal,
+        //            MarcaNombre = producto.Marca?.Nombre,
+        //            RubroNombre = producto.Rubro?.Nombre,
+        //            EsFraccionable = producto.EsFraccionable,
+        //            CategoriaIds = producto.CategoriasProductos?.Select(c => c.IdCategoria).ToList() ?? new List<long>()
+        //        }
+        //    };
 
-            return dto;
-        }
+        //    return dto;
+        //}
 
-        public List<DetalleVentaLoteDTO> DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context)
-        {
-            //DEVUELO DETALLEVENTALOTEDTO PORQUE NO PUEDO CREAR DVL EN LOTE SERVICE, TENGO QUE HACERLO EN VENTAINTERNA
-            var detallesLotesUsados = new List<DetalleVentaLoteDTO>();
+        //public List<DetalleVentaLoteDTO> DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context)
+        //{
+        //    //DEVUELO DETALLEVENTALOTEDTO PORQUE NO PUEDO CREAR DVL EN LOTE SERVICE, TENGO QUE HACERLO EN VENTAINTERNA
+        //    var detallesLotesUsados = new List<DetalleVentaLoteDTO>();
 
-            if (items == null || !items.Any())
-                return detallesLotesUsados;
+        //    if (items == null || !items.Any())
+        //        return detallesLotesUsados;
 
-            foreach (var item in items)
-            {
-                if (item.EsOferta)
-                {
-                    DescontarStockOferta(item, context);
-                }
-                else
-                {
-                    detallesLotesUsados = DescontarStockProducto(item, context);
+        //    foreach (var item in items)
+        //    {
+        //        if (item.EsOferta)
+        //        {
+        //            DescontarStockOferta(item, context);
+        //        }
+        //        else
+        //        {
+        //            detallesLotesUsados = DescontarStockProducto(item, context);
                     
                     
-                }
-            }
-            ModificarEstadoStockProductos(context);
-            return detallesLotesUsados;
-        }
+        //        }
+        //    }
+        //    ModificarEstadoStockProductos(context);
+        //    return detallesLotesUsados;
+        //}
      
         private List<DetalleVentaLoteDTO> DescontarStockProducto(ItemVentaDTO item, GestorContextDB context)
         {
@@ -170,38 +170,38 @@ namespace Servicios.LogicaNegocio.Producto
             return detallesLotesUsados;
         }
 
-        private void DescontarStockOferta(ItemVentaDTO item, GestorContextDB context)
-        {
-            var productosOferta = context.ProductosEnOfertasDescuentos
-                .Where(x => x.OfertaId == item.ItemId)
-                .ToList();
+        //private void DescontarStockOferta(ItemVentaDTO item, GestorContextDB context)
+        //{
+        //    var productosOferta = context.ProductosEnOfertasDescuentos
+        //        .Where(x => x.OfertaId == item.ItemId)
+        //        .ToList();
 
-            if (!productosOferta.Any())
-                throw new Exception($"La oferta {item.Descripcion} no tiene productos asociados.");
+        //    if (!productosOferta.Any())
+        //        throw new Exception($"La oferta {item.Descripcion} no tiene productos asociados.");
 
-            foreach (var prodOferta in productosOferta)
-            {
-                var producto = context.Productos
-                    .FirstOrDefault(p => p.ProductoId == prodOferta.ProductoId);
+        //    foreach (var prodOferta in productosOferta)
+        //    {
+        //        var producto = context.Productos
+        //            .FirstOrDefault(p => p.ProductoId == prodOferta.ProductoId);
 
-                if (producto == null)
-                    throw new Exception($"Producto asociado a oferta no encontrado. Codigo: {prodOferta.Producto.Codigo}");
+        //        if (producto == null)
+        //            throw new Exception($"Producto asociado a oferta no encontrado. Codigo: {prodOferta.Producto.Codigo}");
 
-                // cantidad real a descontar
-                var cantidadADescontar = prodOferta.Cantidad * item.Cantidad;
+        //        // cantidad real a descontar
+        //        var cantidadADescontar = prodOferta.Cantidad * item.Cantidad;
 
-                if (producto.Stock < cantidadADescontar)
-                    throw new Exception(
-                        $"Stock insuficiente para {producto.Descripcion}. Stock actual: {producto.Stock}"
-                    );
+        //        if (producto.Stock < cantidadADescontar)
+        //            throw new Exception(
+        //                $"Stock insuficiente para {producto.Descripcion}. Stock actual: {producto.Stock}"
+        //            );
 
-                producto.Stock -= cantidadADescontar;
+        //        producto.Stock -= cantidadADescontar;
 
-                context.Productos.Update(producto);
-            }
+        //        context.Productos.Update(producto);
+        //    }
 
-            ModificarEstadoStockProductos(context);
-        }
+        //    ModificarEstadoStockProductos(context);
+        //}
         public void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context, long ventdaId)
         {
             if (items == null || !items.Any())

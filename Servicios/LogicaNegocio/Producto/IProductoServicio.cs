@@ -18,7 +18,7 @@ namespace Servicios.LogicaNegocio.Producto
     {
         ResultadoPaginacion<ProductoDTO> ObtenerProductos(FiltroConsulta filtros);
         ProductoDTO ObtenerProductoPorId(long productoId);
-        ProductosEnOfertaDescuentosDTO ControlarProductoEstaEnOfertaPorId(long productoId);
+        //ProductosEnOfertaDescuentosDTO ControlarProductoEstaEnOfertaPorId(long productoId);
 
         EstadoOperacion AgregarQuitarStock(MovilizacionStockDTO mStockDTO);
         EstadoOperacion Insertar(ProductoDTO productoDto);
@@ -26,7 +26,7 @@ namespace Servicios.LogicaNegocio.Producto
         EstadoOperacion Eliminar(long productoId);
 
         IEnumerable<ProductoOfertaDTO> ObtenerProductosPorMarcaRubroCategoriaParaOferta(FiltroBusquedaComboGrupo filtroGrupo);
-        List<DetalleVentaLoteDTO> DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context);
+        //List<DetalleVentaLoteDTO> DescontarStockProductos(List<ItemVentaDTO> items, GestorContextDB context);
         void RestaurarStockProductos(List<ItemVentaDTO> items, GestorContextDB context, long ventdaId);
         void ModificarEstadoStockProductos(GestorContextDB context);
     }

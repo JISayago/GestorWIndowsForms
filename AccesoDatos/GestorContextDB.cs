@@ -194,6 +194,11 @@ namespace AccesoDatos
           .WithOne(x => x.Producto)
           .HasForeignKey(x => x.ProductoId)
           .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasMany(p => p.ProductosEnOfertaDescuentos)
+    .WithOne(x => x.Producto)
+    .HasForeignKey(x => x.ProductoId);
+
             });
 
 
@@ -726,7 +731,7 @@ namespace AccesoDatos
                         .HasColumnType("decimal(18,2)");
 
                     entity.HasOne(x => x.Producto)
-                        .WithMany()
+                        .WithMany(p => p.ProductosEnOfertaDescuentos)
                         .HasForeignKey(x => x.ProductoId)
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -734,6 +739,8 @@ namespace AccesoDatos
                         .WithMany(x => x.Productos)
                         .HasForeignKey(x => x.OfertaDescuentoId)
                         .OnDelete(DeleteBehavior.Cascade);
+
+
 
                     entity.HasIndex(x => x.ProductoId);
 
@@ -796,7 +803,7 @@ namespace AccesoDatos
 
                     // Relación con Producto
                     entity.HasOne(x => x.Producto)
-                        .WithMany()
+                        .WithMany(p => p.EstadisticasOferta)
                         .HasForeignKey(x => x.ProductoId)
                         .OnDelete(DeleteBehavior.Restrict);
                 });

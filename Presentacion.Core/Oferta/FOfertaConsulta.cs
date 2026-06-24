@@ -75,18 +75,18 @@ public partial class FOfertaConsulta : FBaseConsulta
 
     private void ActivarDesactivarOferta(long? id)
     {
-        if (!id.HasValue)
-        {
-            MessageBox.Show("Seleccione una oferta.");
-            return;
-        }
+        //if (!id.HasValue)
+        //{
+        //    MessageBox.Show("Seleccione una oferta.");
+        //    return;
+        //}
 
-        var ofertaAD = _ofertaServicio.ActivarDesactivar(id.Value);
+        //var ofertaAD = _ofertaServicio.ActivarDesactivar(id.Value);
 
-        if (ofertaAD.OfertaDescuentoId != null)
-            MessageBox.Show($"La oferta {ofertaAD.Codigo} cambió su estado.");
-        else
-            MessageBox.Show("No se pudo cambiar el estado.");
+        //if (ofertaAD.OfertaDescuentoId != null)
+        //    MessageBox.Show($"La oferta {ofertaAD.Codigo} cambió su estado.");
+        //else
+        //    MessageBox.Show("No se pudo cambiar el estado.");
 
         RefrescarGrilla();
     }
@@ -124,20 +124,20 @@ public partial class FOfertaConsulta : FBaseConsulta
     {
         base.ActualizarDatos(dgv, filtros);
 
-        var resultado = _ofertaServicio.ObtenerOfertas(filtros, _vieneDeVenta);
+        //var resultado = _ofertaServicio.ObtenerOfertas(filtros, _vieneDeVenta);
 
-        dgv.DataSource = resultado.Items;
+        //dgv.DataSource = resultado.Items;
 
-        ResetearGrilla(dgv);
+        //ResetearGrilla(dgv);
 
-        var paginacion = new DatosPaginacion
-        {
-            PaginaActual = resultado.Page,
-            PageSize = resultado.PageSize,
-            CantidadRegistros = resultado.TotalRegistros
-        };
+        //var paginacion = new DatosPaginacion
+        //{
+        //    PaginaActual = resultado.Page,
+        //    PageSize = resultado.PageSize,
+        //    CantidadRegistros = resultado.TotalRegistros
+        //};
 
-        ActualizarPaginacionUI(paginacion);
+        //ActualizarPaginacionUI(paginacion);
     }
 
     #endregion

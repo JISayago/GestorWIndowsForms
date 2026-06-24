@@ -368,30 +368,30 @@ namespace Presentacion.Core.Venta
 
                 frmProcesando.ActualizarEstado("Registrando venta...");
 
-                var m = await Task.Run(() =>
-                    _ventaServicio.NuevaVenta(_venta));
+                //var m = await Task.Run(() =>
+                //    _ventaServicio.NuevaVenta(_venta));
 
                 frmProcesando.Close();
 
-                if (m.Exitoso)
-                {
-                    MessageBox.Show(
-                        "Venta confirmada exitosamente.",
-                        "Éxito",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                //if (m.Exitoso)
+                //{
+                //    MessageBox.Show(
+                //        "Venta confirmada exitosamente.",
+                //        "Éxito",
+                //        MessageBoxButtons.OK,
+                //        MessageBoxIcon.Information);
 
-                    DialogResult = DialogResult.OK;
-                    Close();
-                }
-                else
-                {
-                    MessageBox.Show(
-                        $"Hubo un error al finalizar la venta: {m.Mensaje}",
-                        "Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                }
+                //    DialogResult = DialogResult.OK;
+                //    Close();
+                //}
+                //else
+                //{
+                //    MessageBox.Show(
+                //        $"Hubo un error al finalizar la venta: {m.Mensaje}",
+                //        "Error",
+                //        MessageBoxButtons.OK,
+                //        MessageBoxIcon.Error);
+                //}
             }
             finally
             {
@@ -441,72 +441,72 @@ namespace Presentacion.Core.Venta
 
         private void btnCargarProducto_Click(object sender, EventArgs e)
         {
-            var fProductos = new FProductoConsulta(true);
+            //var fProductos = new FProductoConsulta(true);
 
-            if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
-            {
-                var idProducto = fProductos.productoSeleccionado.Value;
-                decimal cantidad = 0m;
+            //if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
+            //{
+            //    var idProducto = fProductos.productoSeleccionado.Value;
+            //    decimal cantidad = 0m;
 
-                var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
+            //    var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
 
-                if (ofertaDesc == null)
-                {
-                    MessageBox.Show("El producto seleccionado no está disponible.");
-                    return;
-                }
+            //    if (ofertaDesc == null)
+            //    {
+            //        MessageBox.Show("El producto seleccionado no está disponible.");
+            //        return;
+            //    }
 
-                var producto = ofertaDesc.Producto;
-                var oferta = ofertaDesc.Oferta;
+            //    var producto = ofertaDesc.Producto;
+            //    var oferta = ofertaDesc.Oferta;
 
-                bool tieneOferta = oferta != null;
-                bool esOfertaPorGrupo = tieneOferta && oferta.esOfertaPorGrupo;
+            //    bool tieneOferta = oferta != null;
+            //    bool esOfertaPorGrupo = tieneOferta && oferta.esOfertaPorGrupo;
 
-                var fCantidad = new FCantidadItem();
+            //    var fCantidad = new FCantidadItem();
 
-                if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
-                {
-                    cantidad = fCantidad.cantidad > producto.Stock
-                        ? producto.Stock
-                        : fCantidad.cantidad;
+            //    if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
+            //    {
+            //        cantidad = fCantidad.cantidad > producto.Stock
+            //            ? producto.Stock
+            //            : fCantidad.cantidad;
 
-                    if (fCantidad.cantidad > producto.Stock)
-                    {
-                        MessageBox.Show($"Stock insuficiente. Se ajusta a {cantidad}.");
-                    }
+            //        if (fCantidad.cantidad > producto.Stock)
+            //        {
+            //            MessageBox.Show($"Stock insuficiente. Se ajusta a {cantidad}.");
+            //        }
 
-                    var itemVenta = new ItemVentaDTO
-                    {
-                        ItemId = producto.ProductoId,
-                        Descripcion = producto.Descripcion,
+            //        var itemVenta = new ItemVentaDTO
+            //        {
+            //            ItemId = producto.ProductoId,
+            //            Descripcion = producto.Descripcion,
 
-                        Cantidad = cantidad,
+            //            Cantidad = cantidad,
 
-                        PrecioVenta = producto.PrecioVenta,
-                        PrecioOferta = esOfertaPorGrupo
-                            ? ofertaDesc.PrecioEnOferta
-                            : producto.PrecioVenta,
+            //            PrecioVenta = producto.PrecioVenta,
+            //            PrecioOferta = esOfertaPorGrupo
+            //                ? ofertaDesc.PrecioEnOferta
+            //                : producto.PrecioVenta,
 
-                        PrecioOriginalOferta = producto.PrecioVenta,
+            //            PrecioOriginalOferta = producto.PrecioVenta,
 
-                        Medida = producto.Medida,
-                        UnidadMedida = producto.UnidadMedida,
+            //            Medida = producto.Medida,
+            //            UnidadMedida = producto.UnidadMedida,
 
-                        EsOferta = esOfertaPorGrupo,          // 🔥 SOLO si hay descuento real
-                        EsOfertaPorGrupo = esOfertaPorGrupo   // 🔥 clave para lógica después
-                    };
+            //            EsOferta = esOfertaPorGrupo,          // 🔥 SOLO si hay descuento real
+            //            EsOfertaPorGrupo = esOfertaPorGrupo   // 🔥 clave para lógica después
+            //        };
 
-                    itemsVenta.Add(itemVenta);
+            //        itemsVenta.Add(itemVenta);
 
-                    if (cbxDescEfectivo.Checked)
-                    {
-                        ValidarCantidadySiEsOferta();
-                        AplicarDescuentoEfectivo();
-                    }
+            //        if (cbxDescEfectivo.Checked)
+            //        {
+            //            ValidarCantidadySiEsOferta();
+            //            AplicarDescuentoEfectivo();
+            //        }
 
-                    CalcularTotal();
-                }
-            }
+            //        CalcularTotal();
+            //    }
+            //}
         }
         private void CalcularTotal()
         {
@@ -776,8 +776,8 @@ namespace Presentacion.Core.Venta
 
         private void CancelarVenta(long? VenId)
         {
-            var respuesta = _ventaServicio.CancelacionVentaPorId((long)VenId);
-            MessageBox.Show(respuesta.Mensaje);
+            //var respuesta = _ventaServicio.CancelacionVentaPorId((long)VenId);
+            //MessageBox.Show(respuesta.Mensaje);
         }
 
         private void InicializarYLimpiarCampos(long? ventaId)
@@ -1018,39 +1018,39 @@ namespace Presentacion.Core.Venta
 
                 var cantidad = 0.0m;
 
-                var Oferta = _ofertaServicio.ObtenerOfertaActivaPorId(idOferta);
-                if (Oferta == null)
-                {
-                    MessageBox.Show("La oferta seleccionada esta Inactiva. Si se trata de un error comunicarse con un Administrador para activarla.");
+                //var Oferta = _ofertaServicio.ObtenerOfertaActivaPorId(idOferta);
+                //if (Oferta == null)
+                //{
+                //    MessageBox.Show("La oferta seleccionada esta Inactiva. Si se trata de un error comunicarse con un Administrador para activarla.");
 
-                }
-                else
-                {
-                    var fCantidad = new FCantidadItem();
+                //}
+                //else
+                //{
+                //    var fCantidad = new FCantidadItem();
 
-                    if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
-                    {
-                        cantidad = fCantidad.cantidad;
+                //    if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
+                //    {
+                //        cantidad = fCantidad.cantidad;
 
-                        var ofertaVenta = new ItemVentaDTO
-                        {
-                            ItemId = Oferta.OfertaDescuentoId,
-                            Descripcion = Oferta.Descripcion,
-                            PrecioVenta = Oferta.PrecioOriginal,
-                            PrecioOferta = Oferta.PrecioFinal,
-                            Cantidad = cantidad,
-                            Medida = string.Empty,
-                            UnidadMedida = string.Empty,
-                            EsOferta = true,
-                            EsOfertaPorGrupo = Oferta.esOfertaPorGrupo
-                        };
+                //        var ofertaVenta = new ItemVentaDTO
+                //        {
+                //            ItemId = Oferta.OfertaDescuentoId,
+                //            Descripcion = Oferta.Descripcion,
+                //            PrecioVenta = Oferta.PrecioOriginal,
+                //            PrecioOferta = Oferta.PrecioFinal,
+                //            Cantidad = cantidad,
+                //            Medida = string.Empty,
+                //            UnidadMedida = string.Empty,
+                //            EsOferta = true,
+                //            EsOfertaPorGrupo = Oferta.esOfertaPorGrupo
+                //        };
 
-                        itemsVenta.Add(ofertaVenta);
+                //        itemsVenta.Add(ofertaVenta);
 
-                        ValidarCantidadySiEsOferta();
-                        CalcularTotal();
-                    }
-                }
+                //        ValidarCantidadySiEsOferta();
+                //        CalcularTotal();
+                //    }
+                //}
             }
         }
 
