@@ -8,6 +8,8 @@ using Presentacion.Core.Venta;
 using Servicios.Helpers.Venta.Oferta;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Venta.Oferta;
+using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -560,11 +562,12 @@ namespace Presentacion.Core.Oferta
             grillaProductosOferta.Columns["CantidadItemEnOferta"].Visible = true;
             grillaProductosOferta.Columns["CantidadItemEnOferta"].Width = 80;
             grillaProductosOferta.Columns["CantidadItemEnOferta"].DisplayIndex = 6;
-            grillaProductosOferta.Columns["CantidadItemEnOferta"].HeaderText = "Cantidad";
+            grillaProductosOferta.Columns["CantidadItemEnOferta"].HeaderText = "Cantidad en oferta";
 
             grillaProductosOferta.Columns["LimiteEnOferta"].Visible = true;
             grillaProductosOferta.Columns["LimiteEnOferta"].Width = 100;
             grillaProductosOferta.Columns["LimiteEnOferta"].DisplayIndex = 7;
+            grillaProductosOferta.Columns["LimiteEnOferta"].HeaderText = "Cantidad Limite";
 
             grillaProductosOferta.Columns["ConLimiteEnOferta"].Visible = false;
 
@@ -1155,9 +1158,123 @@ namespace Presentacion.Core.Oferta
 
         private void btnCrearOferta_Click(object sender, EventArgs e)
         {
-
+            CrearOferta();
         }
 
+        private void CrearOferta()
+        {
+            if (!_productosParaOfertaDTO.Any())
+            {
+                MessageBox.Show(
+                    "Debe agregar al menos un producto a la oferta.",
+                    "Validación",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            if (!ValidarDescuento())
+                return;
+
+            decimal? porcentajeDescuento = null;
+            decimal? precioFinal = null;
+
+            if (decimal.TryParse(txtPorcentajeDescuento.Text, out var porcentaje))
+                porcentajeDescuento = porcentaje;
+
+            if (decimal.TryParse(txtPrecioFinal.Text, out var precio))
+                precioFinal = precio;
+
+            var ofertaDto = new OfertaDTO
+            {
+                Descripcion = txtDescripcion.Text.Trim(),
+                Codigo = txtCodigo.Text.Trim(),
+                FechaInicio = dtpFechaInicio.Value,
+                FechaFin = dtpFechaFin.Value,
+                EstaActiva = true,
+                TipoOferta = (int)_tipoOferta,
+                PorcentajeDescuento = porcentajeDescuento,
+                PrecioFinal = precioFinal,
+
+                Productos = _productosParaOfertaDTO
+               .Select(x => new ProductosEnOfertaDescuentosDTO
+               {
+                   ProductoId = x.ProductoId,
+
+                   CantidadRequerida =
+                       x.CantidadItemEnOferta ?? 1,
+
+                   PrecioCostoBase =
+                       x.PrecioCosto,
+
+                   PrecioVentaBase =
+                       x.PrecioVenta,
+
+                   PrecioOfertaBase =
+                       CalcularPrecioOfertaProducto(
+                           x,
+                           porcentajeDescuento,
+                           precioFinal),
+
+                   LimiteVentaProducto =
+                       x.ConLimiteEnOferta
+                           ? x.LimiteEnOferta
+                           : null
+               })
+               .ToList()
+            };
+
+            var servicio = new OfertaServicio();
+
+            var resultado = servicio.Insertar(ofertaDto);
+
+            if (resultado.Exitoso)
+            {
+                MessageBox.Show(
+                    resultado.Mensaje,
+                    "Información",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                Close();
+            }
+            else
+            {
+                MessageBox.Show(
+                    resultado.Mensaje,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private decimal? CalcularPrecioOfertaProducto(
+    ProductoOfertaDTO producto,
+    decimal? porcentaje,
+    decimal? precioFinal)
+{
+    if (_tipoOferta == TipoOferta.Grupo)
+        return null;
+
+    if (_tipoOferta == TipoOferta.DosPorUno)
+    {
+        return producto.PrecioVenta / 2m;
+    }
+
+    if (porcentaje.HasValue)
+    {
+        return producto.PrecioVenta -
+               (producto.PrecioVenta * porcentaje.Value / 100m);
+    }
+
+    if (precioFinal.HasValue)
+    {
+        return precioFinal.Value;
+    }
+
+    return producto.PrecioVenta;
+}
         private void btnLimpiarCampos_Click(object sender, EventArgs e)
         {
 

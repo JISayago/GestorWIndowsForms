@@ -216,7 +216,6 @@
             aCTIVARDESACTIVARToolStripMenuItem.Name = "aCTIVARDESACTIVARToolStripMenuItem";
             aCTIVARDESACTIVARToolStripMenuItem.Size = new Size(211, 24);
             aCTIVARDESACTIVARToolStripMenuItem.Text = "Activar / Desactivar";
-            aCTIVARDESACTIVARToolStripMenuItem.Click += aCTIVARDESACTIVARToolStripMenuItem_Click;
             // 
             // nUEVAOFERTAToolStripMenuItem
             // 

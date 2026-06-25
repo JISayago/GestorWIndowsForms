@@ -10,7 +10,7 @@ public partial class FOfertaConsulta : FBaseConsulta
     public long? ofertaSeleccionada = null;
 
     private bool _vieneDeVenta = false;
-    private bool activarDesactivar = false;
+    private bool activarDesactivar = true;
 
     public FOfertaConsulta()
     {
@@ -20,14 +20,11 @@ public partial class FOfertaConsulta : FBaseConsulta
     public FOfertaConsulta(bool vieneDeVenta) : this()
     {
         _vieneDeVenta = vieneDeVenta;
+        activarDesactivar = !vieneDeVenta;
 
         MessageBox.Show("Seleccione la oferta que desea aplicar a la venta.");
     }
 
-    public FOfertaConsulta(bool activarDesactivar, string a) : this()
-    {
-        this.activarDesactivar = activarDesactivar;
-    }
 
     #region CONFIG FILTROS
 
@@ -75,13 +72,14 @@ public partial class FOfertaConsulta : FBaseConsulta
 
     private void ActivarDesactivarOferta(long? id)
     {
-        //if (!id.HasValue)
-        //{
-        //    MessageBox.Show("Seleccione una oferta.");
-        //    return;
-        //}
+        if (!id.HasValue)
+        {
+            MessageBox.Show("Seleccione una oferta.");
+            return;
+        }
 
         //var ofertaAD = _ofertaServicio.ActivarDesactivar(id.Value);
+        MessageBox.Show($"Funcionalidad de activar/desactivar oferta no implementada en el servicio.{entidadID}/{id}");
 
         //if (ofertaAD.OfertaDescuentoId != null)
         //    MessageBox.Show($"La oferta {ofertaAD.Codigo} cambió su estado.");
@@ -96,7 +94,7 @@ public partial class FOfertaConsulta : FBaseConsulta
         if (!id.HasValue)
             return;
 
-        ofertaSeleccionada = id;
+        ofertaSeleccionada = entidadID;
 
         DialogResult = DialogResult.OK;
 
@@ -124,20 +122,20 @@ public partial class FOfertaConsulta : FBaseConsulta
     {
         base.ActualizarDatos(dgv, filtros);
 
-        //var resultado = _ofertaServicio.ObtenerOfertas(filtros, _vieneDeVenta);
+        var resultado = _ofertaServicio.ObtenerOfertas(filtros, _vieneDeVenta);
 
-        //dgv.DataSource = resultado.Items;
+        dgv.DataSource = resultado.Items;
 
-        //ResetearGrilla(dgv);
+        ResetearGrilla(dgv);
 
-        //var paginacion = new DatosPaginacion
-        //{
-        //    PaginaActual = resultado.Page,
-        //    PageSize = resultado.PageSize,
-        //    CantidadRegistros = resultado.TotalRegistros
-        //};
+        var paginacion = new DatosPaginacion
+        {
+            PaginaActual = resultado.Page,
+            PageSize = resultado.PageSize,
+            CantidadRegistros = resultado.TotalRegistros
+        };
 
-        //ActualizarPaginacionUI(paginacion);
+        ActualizarPaginacionUI(paginacion);
     }
 
     #endregion
@@ -165,27 +163,20 @@ public partial class FOfertaConsulta : FBaseConsulta
             grilla.Columns["OfertaDescuentoId"].Visible = false;
             grilla.Columns["OfertaDescuentoId"].Name = "Id";
         }
-
+        if (grilla.Columns.Contains("Codigo"))
+        {
+            grilla.Columns["Codigo"].Visible = true;
+            grilla.Columns["Codigo"].HeaderText = "Código";
+            grilla.Columns["Codigo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            grilla.Columns["Codigo"].Width = 180;
+        }
         if (grilla.Columns.Contains("Descripcion"))
         {
             grilla.Columns["Descripcion"].Visible = true;
             grilla.Columns["Descripcion"].HeaderText = "Descripción";
             grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
         }
-
-        if (grilla.Columns.Contains("Codigo"))
-        {
-            grilla.Columns["Codigo"].Visible = true;
-            grilla.Columns["Codigo"].HeaderText = "Código";
-            grilla.Columns["Codigo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-        }
-
-        if (grilla.Columns.Contains("GrupoNombre"))
-        {
-            grilla.Columns["GrupoNombre"].Visible = true;
-            grilla.Columns["GrupoNombre"].HeaderText = "Grupo";
-            grilla.Columns["GrupoNombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-        }
+     
 
         if (grilla.Columns.Contains("FechaInicio"))
         {
@@ -203,11 +194,54 @@ public partial class FOfertaConsulta : FBaseConsulta
             grilla.Columns["FechaFin"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
         }
 
+        // Ocultar propiedad bool
         if (grilla.Columns.Contains("EstaActiva"))
         {
-            grilla.Columns["EstaActiva"].Visible = true;
-            grilla.Columns["EstaActiva"].HeaderText = "Estado";
-            grilla.Columns["EstaActiva"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            grilla.Columns["EstaActiva"].Visible = false;
+        }
+
+        // Mostrar descripción del estado
+        if (grilla.Columns.Contains("DescripcionEstado"))
+        {
+            grilla.Columns["DescripcionEstado"].Visible = true;
+            grilla.Columns["DescripcionEstado"].HeaderText = "Estado";
+            grilla.Columns["DescripcionEstado"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        }
+
+        // Ocultar int
+        if (grilla.Columns.Contains("TipoOferta"))
+        {
+            grilla.Columns["TipoOferta"].Visible = false;
+        }
+
+        // Mostrar descripción
+        if (grilla.Columns.Contains("DescripcionTipoOferta"))
+        {
+            grilla.Columns["DescripcionTipoOferta"].Visible = true;
+            grilla.Columns["DescripcionTipoOferta"].HeaderText = "Tipo Oferta";
+            grilla.Columns["DescripcionTipoOferta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        }
+
+        if (grilla.Columns.Contains("PorcentajeDescuento"))
+        {
+            grilla.Columns["PorcentajeDescuento"].Visible = true;
+            grilla.Columns["PorcentajeDescuento"].HeaderText = "% Desc.";
+            grilla.Columns["PorcentajeDescuento"].DefaultCellStyle.Format = "N2";
+            grilla.Columns["PorcentajeDescuento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        }
+
+        if (grilla.Columns.Contains("PrecioFinal"))
+        {
+            grilla.Columns["PrecioFinal"].Visible = true;
+            grilla.Columns["PrecioFinal"].HeaderText = "Precio Oferta";
+            grilla.Columns["PrecioFinal"].DefaultCellStyle.Format = "C2";
+            grilla.Columns["PrecioFinal"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        }
+
+        // Ocultar navegación
+        if (grilla.Columns.Contains("Productos"))
+        {
+            grilla.Columns["Productos"].Visible = false;
         }
     }
 

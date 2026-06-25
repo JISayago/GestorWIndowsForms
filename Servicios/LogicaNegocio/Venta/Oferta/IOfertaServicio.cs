@@ -13,8 +13,10 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
 {
     public interface IOfertaServicio
     {
+        ResultadoPaginacion<OfertaDTO> ObtenerOfertas(FiltroConsulta filtros, bool vieneDeVenta);
+        public EstadoOperacion Insertar(OfertaDTO dto);
+
         //public InfoOfertaDTO ObtenerInfoOferta();
-        //public EstadoOperacion Insertar(OfertaDTO dto);
         //public List<OfertaDTO> ObtenerOfertasActivas(string cadenaBuscar);
         //public List<OfertaDTO> ObtenerOfertasActivasCompuestas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
         //public List<OfertaDTO> ObtenerOfertasInactivas(string cadenaBuscar);
@@ -22,14 +24,9 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         //public List<InformacionExistenciaOfertaDescuentoProducto> ObtenerProductosEnOferta(List<ProductoDTO> productosDentroOferta);
         //public OfertaDTO ObtenerOfertaPorId(long idOFerta);
         //public OfertaDTO ObtenerOfertaActivaPorId(long idOFerta);
-
-
         //public List<OfertaDTO> ObtenerOfertasActivasInactivas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
-
         //public OfertaDTO? ActivarDesactivar(long ofertaId);
-        //ResultadoPaginacion<OfertaDTO> ObtenerOfertas(FiltroConsulta filtros, bool vieneDeVenta);
         //public bool ExisteOfertaPorCodigo(string codigo);
-
         //public List<OfertaDTO> ObtenerOfertasVencidas(int cantidadDiasABuscar);
     }
 }

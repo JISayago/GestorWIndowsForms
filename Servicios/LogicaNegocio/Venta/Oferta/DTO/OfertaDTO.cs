@@ -1,37 +1,40 @@
-﻿using AccesoDatos.Entidades;
-using Servicios.LogicaNegocio.Articulo.Categoria.DTO;
-using Servicios.LogicaNegocio.Articulo.Marca.DTO;
-using Servicios.LogicaNegocio.Producto.DTO;
-using Servicios.LogicaNegocio.Producto.Rubro.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 
-namespace Servicios.LogicaNegocio.Venta.Oferta.DTO
+public class OfertaDTO
 {
-    public class OfertaDTO
-    {
-        public long OfertaDescuentoId { get; set; }
+    public long OfertaDescuentoId { get; set; }
 
-        public string Descripcion { get; set; }
+    public string Descripcion { get; set; }
 
-        public string Codigo { get; set; }
+    public string Codigo { get; set; }
 
-        public DateTime FechaInicio { get; set; }
+    public DateTime FechaInicio { get; set; }
 
-        public DateTime? FechaFin { get; set; }
+    public DateTime? FechaFin { get; set; }
 
-        public bool EstaActiva { get; set; }
+    public bool EstaActiva { get; set; }
 
-        public int TipoOferta { get; set; }
+    public string DescripcionEstado =>
+        EstaActiva
+            ? "Activa"
+            : "Inactiva";
 
-        public decimal? PorcentajeDescuento { get; set; }
+    public int TipoOferta { get; set; }
 
-        public decimal? PrecioFinal { get; set; }
+    public string DescripcionTipoOferta =>
+        TipoOferta switch
+        {
+            (int)Servicios.Helpers.Venta.Oferta.TipoOferta.Producto => "Producto",
+            (int)Servicios.Helpers.Venta.Oferta.TipoOferta.Combo => "Combo",
+            (int)Servicios.Helpers.Venta.Oferta.TipoOferta.DosPorUno => "2x1",
+            (int)Servicios.Helpers.Venta.Oferta.TipoOferta.Grupo => "Grupo",
+            _ => "Desconocido"
+        };
 
-        public ICollection<OfertaProductoDTO> Productos { get; set; }
-            = new List<OfertaProductoDTO>();
-    }
+    public decimal? PorcentajeDescuento { get; set; }
+
+    public decimal? PrecioFinal { get; set; }
+
+    public ICollection<ProductosEnOfertaDescuentosDTO> Productos { get; set; }
+        = new List<ProductosEnOfertaDescuentosDTO>();
 }
