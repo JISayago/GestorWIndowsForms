@@ -7,6 +7,7 @@ using Servicios.Helpers.OpcionesPagos;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Extras;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Helpers.Venta.Oferta;
 using Servicios.Helpers.VentaEnum;
 using Servicios.Infraestructura;
 using Servicios.LogicaNegocio.Caja;
@@ -45,8 +46,528 @@ namespace Servicios.LogicaNegocio.Venta
                 _ => _pdf.GenerarVenta(venta)
             };
         }
+        public AccesoDatos.Entidades.Venta CrearVentaInterna( GestorContextDB context, VentaDTO ventaDto, TipoMovimientoDetalle movimientoDetalle,long? ventaIdOriginalParaCancelar = null)
+        {
+            try
+            {
+                var montos = CalcularMontosVenta(ventaDto);
 
+                var cajaId = ObtenerCajaAbierta(context);
 
+                GenerarNumeroVenta(context, ventaDto);
+
+                var venta = CrearEntidadVenta(ventaDto, montos.MontoCaja, montos.MontoCtaCte);
+
+                GuardarCabeceraVenta(venta, context);
+
+                RegistrarMovimientoVenta( venta, movimientoDetalle,context);
+
+                RegistrarMovimientoCaja(venta, cajaId, context);
+
+                RegistrarMovimientoCuentaCorriente(venta,ventaDto,cajaId,context);
+
+                var resultado = ProcesarItemsVenta( venta, ventaDto, context, ventaIdOriginalParaCancelar);
+                if (!resultado.Exitoso)
+                {
+                    throw new Exception(resultado.Mensaje);
+                }
+
+                RegistrarPagos(venta, ventaDto,context);
+
+                context.SaveChanges();
+
+                return venta;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        private (decimal MontoCaja, decimal MontoCtaCte) CalcularMontosVenta(VentaDTO ventaDto)
+        {
+            decimal montoCaja = 0;
+            decimal montoCtaCte = 0;
+
+            var pagoCtaCte = ventaDto.TiposDePagoSeleccionado?
+                .FirstOrDefault(x =>
+                    Convert.ToInt32(x.TipoDePago.Value) == (int)TipoDePago.CtaCte);
+
+            if (pagoCtaCte != null)
+            {
+                montoCtaCte = Math.Abs(pagoCtaCte.Monto);
+                montoCaja = Math.Abs(ventaDto.Total) - montoCtaCte;
+            }
+            else
+            {
+                montoCaja = Math.Abs(ventaDto.Total);
+            }
+
+            return (montoCaja, montoCtaCte);
+        }
+        private long ObtenerCajaAbierta(GestorContextDB context)
+        {
+            var cajaServicio = new Caja.CajaServicio();
+
+            var cajaId = cajaServicio.ObtenerIdDeEña(context);
+
+            if (!cajaId.HasValue)
+                throw new Exception(
+                    "No hay una caja abierta. No se puede registrar la venta.");
+
+            return cajaId.Value;
+        }
+        private void GenerarNumeroVenta(GestorContextDB context, VentaDTO ventaDto)
+        {
+            var fecha = DateTime.Today;
+
+            var prefijo =
+                ventaDto.Estado == (int)EstadoVenta.CancelacionVenta
+                    ? "CAN"
+                    : "VEN";
+
+            var cantidadHoy = context.Ventas.Count(v =>
+                v.NumeroVenta.StartsWith($"{prefijo}-{fecha:yyyyMMdd}"));
+
+            ventaDto.NumeroVenta = GeneradorNumeroComprobante.Generar(prefijo,fecha,cantidadHoy);
+        }
+        private AccesoDatos.Entidades.Venta CrearEntidadVenta(VentaDTO ventaDto, decimal montoCaja, decimal montoCtaCte)
+        {
+            return new AccesoDatos.Entidades.Venta
+            {
+                NumeroVenta = ventaDto.NumeroVenta,
+                IdEmpleado = ventaDto.IdEmpleado,
+                IdVendedor = ventaDto.IdVendedor,
+                IdCliente = ventaDto.IdCliente,
+                FechaVenta = ventaDto.FechaVenta,
+                Total = ventaDto.Total,
+                TotalSinDescuento = ventaDto.TotalSinDescuento,
+                Descuento = ventaDto.Descuento,
+                Estado = ventaDto.Estado,
+                Detalle = ventaDto.Detalle,
+                MontoPagado = montoCaja,
+                MontoAdeudado = montoCtaCte
+            };
+        }
+        private void GuardarCabeceraVenta(AccesoDatos.Entidades.Venta venta,GestorContextDB context)
+        {
+            context.Ventas.Add(venta);
+            context.SaveChanges();
+        }
+        private void RegistrarMovimientoVenta(AccesoDatos.Entidades.Venta venta,TipoMovimientoDetalle movimientoDetalle,GestorContextDB context)
+        {
+            var movimientoServicio = new Movimiento.MovimientoServicio();
+
+            movimientoServicio.CrearMovimientoVenta(venta.VentaId,venta.Total,venta.Estado,movimientoDetalle,TipoEntidadMovimiento.Venta,context);
+        }
+        private void RegistrarMovimientoCaja(AccesoDatos.Entidades.Venta venta,long cajaId, GestorContextDB context)
+        {
+            if (venta.MontoPagado == 0)
+                return;
+
+            var cajaServicio = new Caja.CajaServicio();
+
+            cajaServicio.RegistrarTransaccion(context,venta.MontoPagado,venta.MontoPagado >= 0 ? TipoMovimiento.Ingreso : TipoMovimiento.Egreso, cajaId);
+        }
+        private void RegistrarMovimientoCuentaCorriente(AccesoDatos.Entidades.Venta venta,VentaDTO ventaDto,long cajaId,GestorContextDB context)
+        {
+            if (venta.MontoAdeudado == 0)
+                return;
+
+            if (!venta.IdCliente.HasValue)
+                throw new Exception(
+                    "No se puede registrar un movimiento de Cuenta Corriente sin un Cliente asignado.");
+
+            var servicio = new CuentaCorrienteServicio();
+
+            var cuenta =
+                servicio.ObtenerCuentaCorrientePorClienteId(venta.IdCliente.Value);
+
+            if (cuenta == null)
+                throw new Exception(
+                    "El cliente seleccionado no posee una Cuenta Corriente activa.");
+
+            if (ventaDto.Estado == (int)EstadoVenta.Confirmada)
+            {
+                var resultado = servicio.RegistrarCompra(cuenta.CuentaCorrienteId,venta.MontoAdeudado,cajaId,$"Cargo por Venta Interna N° {venta.NumeroVenta}");
+
+                if (!resultado.Exitoso)
+                    throw new Exception(resultado.Mensaje);
+            }
+            else
+            {
+                var resultado = servicio.RegistrarDevolucionOAnulacion(cuenta.CuentaCorrienteId,Math.Abs(venta.MontoAdeudado), cajaId, $"Crédito por Anulación de Venta N° {venta.NumeroVenta}");
+
+                if (!resultado.Exitoso)
+                    throw new Exception(resultado.Mensaje);
+            }
+        }
+        private EstadoOperacion ProcesarItemsVenta(AccesoDatos.Entidades.Venta venta,VentaDTO ventaDto,GestorContextDB context,long? ventaOriginal)
+        {
+            if (ventaDto.Items == null || !ventaDto.Items.Any())
+                return new EstadoOperacion { Exitoso = true };
+
+            var itemsStock = ObtenerItemsParaStock(ventaDto.Items, context);
+
+            bool esCancelacion = ventaDto.Estado == (int)EstadoVenta.CancelacionVenta;
+
+            if (!esCancelacion)
+            {
+                var resultado = ValidarLimitesOfertas(ventaDto.Items,context);
+
+                if (!resultado.Exitoso)
+                    return resultado;
+            }
+            ActualizarStock(ventaDto, venta, itemsStock, context, ventaOriginal);
+            ActualizarEstadisticasOfertas(ventaDto,context);
+            DesactivarOfertasSinStockDisponible(ventaDto.Items.Where(x => x.EsOferta), context);
+            CrearDetallesVenta(venta, ventaDto.Items, context);
+            return new EstadoOperacion
+            {
+                Exitoso = true
+            };
+        }
+        private void DesactivarOfertasSinStockDisponible(IEnumerable<ItemVentaDTO> items, GestorContextDB context)
+        {
+            foreach (var item in items)
+            {
+                var oferta = context.OfertasDescuentos
+                    .Include(x => x.Productos)
+                    .Include(x => x.Estadisticas)
+                    .First(x => x.OfertaDescuentoId == item.ItemId);
+
+                if (OfertaAlcanzoLimite(oferta))
+                    oferta.EstaActiva = false;
+            }
+        }
+        private bool OfertaAlcanzoLimite(OfertaDescuento oferta)
+        {
+            foreach (var producto in oferta.Productos)
+            {
+                if (!producto.LimiteVentaProducto.HasValue)
+                    continue;
+
+                var estadistica = oferta.Estadisticas.FirstOrDefault(x =>
+                    x.ProductoId == producto.ProductoId);
+
+                decimal vendido = estadistica?.CantidadVendida ?? 0;
+
+                if (vendido < producto.LimiteVentaProducto.Value)
+                    return false;
+            }
+
+            return oferta.Productos.Any(x => x.LimiteVentaProducto.HasValue);
+        }
+        private EstadoOperacion ValidarLimitesOfertas(List<ItemVentaDTO> items, GestorContextDB context)
+        {
+            foreach (var item in items.Where(x => x.EsOferta))
+            {
+                var resultado = ValidarLimiteOferta(item,context);
+
+                if (!resultado.Exitoso)
+                    return resultado;
+            }
+
+            return new EstadoOperacion
+            {
+                Exitoso = true
+            };
+        }
+        private EstadoOperacion ValidarLimiteOferta(ItemVentaDTO item,GestorContextDB context)
+        {
+            var productosOferta = context.ProductosEnOfertasDescuentos
+                .Where(x => x.OfertaDescuentoId == item.ItemId)
+                .ToList();
+
+            foreach (var producto in productosOferta)
+            {
+                var resultado = ValidarLimiteProductoOferta(producto,item,context);
+
+                if (!resultado.Exitoso)
+                    return resultado;
+            }
+
+            return new EstadoOperacion
+            {
+                Exitoso = true
+            };
+        }
+        private EstadoOperacion ValidarLimiteProductoOferta(ProductosEnOfertaDescuentos productoOferta,ItemVentaDTO itemVenta,GestorContextDB context)
+        {
+            if (!productoOferta.LimiteVentaProducto.HasValue)
+                return new EstadoOperacion {
+                Exitoso = true 
+                };
+
+            var estadistica = context.OfertaProductoEstadisticas
+                .FirstOrDefault(x =>
+                    x.OfertaDescuentoId == productoOferta.OfertaDescuentoId &&
+                    x.ProductoId == productoOferta.ProductoId);
+            decimal vendido = estadistica?.CantidadVendida ?? 0m;
+
+            decimal cantidadLuegoVenta = vendido + (productoOferta.CantidadRequerida * itemVenta.Cantidad);
+
+            if (cantidadLuegoVenta > productoOferta.LimiteVentaProducto.Value)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = $"La oferta '{itemVenta.Descripcion}' alcanzó el límite de ventas."
+                };
+            }
+
+            return new EstadoOperacion
+            {
+                Exitoso = true
+            };
+        }
+        private void ActualizarEstadisticasOfertas(VentaDTO ventaDto,GestorContextDB context)
+        {
+            bool esCancelacion =
+                ventaDto.Estado == (int)EstadoVenta.CancelacionVenta;
+
+            foreach (var item in ventaDto.Items.Where(x => x.EsOferta))
+            {
+                ActualizarEstadisticaOferta(item,context,esCancelacion);
+            }
+        }
+        private void ActualizarEstadisticaOferta(ItemVentaDTO item,GestorContextDB context,bool esCancelacion)
+        {
+            var productosOferta = context.ProductosEnOfertasDescuentos
+                .Where(x => x.OfertaDescuentoId == item.ItemId)
+                .ToList();
+
+            foreach (var producto in productosOferta)
+            {
+                ActualizarEstadisticaProductoOferta(producto,item,context,esCancelacion);
+            }
+        }
+        private void ActualizarEstadisticaProductoOferta(ProductosEnOfertaDescuentos productoOferta,ItemVentaDTO itemVenta,GestorContextDB context,bool esCancelacion)
+        {
+            var estadistica = context.OfertaProductoEstadisticas
+                .FirstOrDefault(x =>
+                    x.OfertaDescuentoId == productoOferta.OfertaDescuentoId &&
+                    x.ProductoId == productoOferta.ProductoId);
+
+            if (estadistica == null)
+            {
+                estadistica = new OfertaProductoEstadistica
+                {
+                    OfertaDescuentoId = productoOferta.OfertaDescuentoId,
+                    ProductoId = productoOferta.ProductoId,
+                    CantidadVendida = 0,
+                    TotalCostoAcumulado = 0,
+                    TotalVentaAcumulado = 0,
+                    TotalOfertaAcumulado = 0
+                };
+
+                context.OfertaProductoEstadisticas.Add(estadistica);
+            }
+
+            decimal cantidadVendida =
+                productoOferta.CantidadRequerida * itemVenta.Cantidad;
+
+            if (esCancelacion)
+                cantidadVendida *= -1;
+
+            estadistica.CantidadVendida += cantidadVendida;
+
+            decimal precioOferta =
+                productoOferta.PrecioOfertaBase ??
+                productoOferta.PrecioVentaBase;
+
+            estadistica.TotalCostoAcumulado +=
+                productoOferta.PrecioCostoBase * cantidadVendida;
+
+            estadistica.TotalVentaAcumulado +=
+                productoOferta.PrecioVentaBase * cantidadVendida;
+
+            estadistica.TotalOfertaAcumulado +=
+                precioOferta * cantidadVendida;
+
+            estadistica.FechaUltimaVenta = DateTime.Now;
+
+            ValidarLimiteVentaProducto(productoOferta,estadistica,esCancelacion);
+        }
+        private void ValidarLimiteVentaProducto(ProductosEnOfertaDescuentos productoOferta,OfertaProductoEstadistica estadistica,bool esCancelacion)
+        {
+            if (!productoOferta.LimiteVentaProducto.HasValue)
+                return;
+
+            if (esCancelacion)
+                return;
+
+            if (estadistica.CantidadVendida >=
+                productoOferta.LimiteVentaProducto.Value)
+            {
+                productoOferta.OfertaDescuento.EstaActiva = false;
+            }
+        }
+        private List<ItemVentaDTO> ObtenerItemsParaStock(List<ItemVentaDTO> items, GestorContextDB context)
+        {
+            var itemsStock = new List<ItemVentaDTO>();
+
+            foreach (var item in items)
+            {
+                // Producto normal
+                if (!item.EsOferta)
+                {
+                    itemsStock.Add(new ItemVentaDTO
+                    {
+                        ItemId = item.ItemId,
+                        Cantidad = item.Cantidad,
+                        EsOferta = item.EsOferta,
+                    });
+
+                    continue;
+                }
+
+                // Producto con descuento por grupo
+                if (item.TipoOferta == (int)TipoOferta.Grupo)
+                {
+                    var existeProducto = context.Productos.Any(p =>
+                        p.ProductoId == item.ItemId);
+
+                    if (!existeProducto)
+                        throw new Exception(
+                            $"Producto con descuento inválido. Id: {item.ItemId}");
+
+                    itemsStock.Add(new ItemVentaDTO
+                    {
+                        ItemId = item.ItemId,
+                        Cantidad = item.Cantidad,
+                        EsOferta = item.EsOferta,
+                    });
+
+                    continue;
+                }
+
+                // Oferta (Combo / 2x1)
+                var oferta = context.OfertasDescuentos
+                    .FirstOrDefault(o => o.OfertaDescuentoId == item.ItemId);
+
+                if (oferta == null)
+                    throw new Exception(
+                        $"Oferta combo inválida. Id: {item.ItemId}");
+
+                var productosOferta = context.ProductosEnOfertasDescuentos
+                    .Where(x => x.OfertaDescuentoId == oferta.OfertaDescuentoId)
+                    .ToList();
+
+                if (!productosOferta.Any())
+                    throw new Exception(
+                        $"La oferta {oferta.Descripcion} no tiene productos asociados.");
+
+                foreach (var po in productosOferta)
+                {
+                    itemsStock.Add(new ItemVentaDTO
+                    {
+                        ItemId = po.ProductoId,
+                        Cantidad = po.CantidadRequerida * item.Cantidad,
+                        EsOferta = item.EsOferta,
+                    });
+                }
+            }
+
+            return itemsStock;
+        }
+        private void ActualizarStock( VentaDTO ventaDto, AccesoDatos.Entidades.Venta venta, List<ItemVentaDTO> itemsStock, GestorContextDB context, long? ventaOriginal)
+        {
+            var detallesLotesUsado = new List<DetalleVentaLoteDTO>();
+
+            bool esCancelacion =
+                ventaDto.Estado == (int)EstadoVenta.CancelacionVenta;
+
+            if (esCancelacion)
+            {
+                _productoServicio.RestaurarStockProductos(itemsStock,context,ventaOriginal ?? throw new Exception("No se recibió el Id de la venta original para restaurar stock."));
+            }
+            else
+            {
+                detallesLotesUsado = _productoServicio.DescontarStockProductos(itemsStock, context);
+            }
+
+            if (!detallesLotesUsado.Any())
+                return;
+
+            var detallesLotes = detallesLotesUsado
+                .Select(d => new DetalleVentaLote
+                {
+                    IdVenta = venta.VentaId,
+                    IdProducto = d.IdProducto,
+                    IdLote = d.IdLote,
+                    Cantidad = d.Cantidad
+                })
+                .ToList();
+
+            context.DetalleVentaLotes.AddRange(detallesLotes);
+        }
+        private void CrearDetallesVenta(AccesoDatos.Entidades.Venta venta, List<ItemVentaDTO> items, GestorContextDB context)
+        {
+            var detalles = new List<DetallesVenta>();
+
+            foreach (var i in items)
+            {
+                var precioOriginal = i.PrecioVenta;
+                var precioFinal = i.EsOferta
+                    ? i.PrecioOferta
+                    : i.PrecioVenta;
+
+                detalles.Add(new DetallesVenta
+                {
+                    IdVenta = venta.VentaId,
+
+                    IdProducto =
+                        i.EsOferta && (i.TipoOferta == (int)TipoOferta.DosPorUno || i.TipoOferta == (int)TipoOferta.Combo)
+                            ? null
+                            : i.ItemId,
+
+                    IdOfertaDescuento =
+                        i.EsOferta && (i.TipoOferta == (int)TipoOferta.DosPorUno || i.TipoOferta == (int)TipoOferta.Combo)
+                            ? i.ItemId
+                            : null,
+
+                    Cantidad = i.Cantidad,
+
+                    PrecioUnitarioOriginal = precioOriginal,
+                    PrecioUnitarioFinal = precioFinal,
+                    Subtotal = precioFinal * i.Cantidad,
+
+                    EsOferta = i.EsOferta,
+                    EsOfertaPorGrupo = i.TipoOferta == (int)TipoOferta.Grupo,
+
+                    Descripcion = i.Descripcion ?? string.Empty
+                });
+            }
+
+            context.DetallesVentas.AddRange(detalles);
+        }
+        private void RegistrarPagos(AccesoDatos.Entidades.Venta venta, VentaDTO ventaDto, GestorContextDB context)
+        {
+            if (ventaDto.TiposDePagoSeleccionado == null ||
+                !ventaDto.TiposDePagoSeleccionado.Any())
+                return;
+
+            var servicioTP = new TipoPagoServicio();
+
+            var pagos =
+                ventaDto.TiposDePagoSeleccionado
+                .Select(p => new VentaPagoDetalle
+                {
+                    IdVenta = venta.VentaId,
+                    IdTipoPago =
+                        servicioTP.ObtenerTipoPagoPorNumero(
+                            context,
+                            Convert.ToInt32(p.TipoDePago.Value))
+                        .TipoPagoId,
+
+                    Monto = p.Monto,
+
+                    ExtraDescripcionPago =
+                        p.DatosExtra ?? "Sin especificar"
+                });
+
+            context.VentaPagosDetalles.AddRange(pagos);
+        }
         //public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto, TipoMovimientoDetalle movimientoDetalle, long? ventdaIdOriginalParaCancerlar = null)
         //{
         //    //Debug.WriteLine("1 - Inicio CrearVentaInterna");
@@ -368,62 +889,48 @@ namespace Servicios.LogicaNegocio.Venta
         //    }
         //}
 
-        //public EstadoOperacion NuevaVenta(VentaDTO ventaDto)
-        //{
-        //    //Debug.WriteLine("A - Inicio NuevaVenta");
+        public EstadoOperacion NuevaVenta(VentaDTO ventaDto)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            using var transaction = context.Database.BeginTransaction();
 
-        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
-        //    //Debug.WriteLine("B - Context creado");
+            try
+            {
+                var venta = CrearVentaInterna(
+                    context,
+                    ventaDto,
+                    TipoMovimientoDetalle.Venta);
 
-        //    using var transaction = context.Database.BeginTransaction();
-        //    //Debug.WriteLine("C - Transacción iniciada");
+                transaction.Commit();
 
-        //    try
-        //    {
-        //        //Debug.WriteLine("D - Antes CrearVentaInterna");
+                _productoServicio.ModificarEstadoStockProductos(context);
 
-        //        var venta = CrearVentaInterna(context, ventaDto, TipoMovimientoDetalle.Venta);
+                try
+                {
+                    GeneracionComprobanteVenta(context, venta);
+                }
+                catch
+                {
+                    // No se cancela la venta por un error al generar el comprobante.
+                }
 
-        //        //Debug.WriteLine("E - Antes Commit");
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "Venta registrada correctamente."
+                };
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
 
-        //        transaction.Commit();
-
-        //        _productoServicio.ModificarEstadoStockProductos(context);
-
-        //        try
-        //        {
-        //        //Debug.WriteLine("F - Commit realizado");
-        //            GeneracionComprobanteVenta(context, venta);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            //Debug.WriteLine("Error generando PDF: " + ex.Message);
-        //            // no cortás la venta por un PDF
-        //        }
-
-
-        //        return new EstadoOperacion
-        //        {
-        //            Exitoso = true,
-        //            Mensaje = "Venta registrada correctamente."
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        //Debug.WriteLine("=================================");
-        //        //Debug.WriteLine("ERROR EN NUEVA VENTA");
-        //        //Debug.WriteLine(ex.ToString());
-        //        //Debug.WriteLine("=================================");
-
-        //        transaction.Rollback();
-
-        //        return new EstadoOperacion
-        //        {
-        //            Exitoso = false,
-        //            Mensaje = ex.ToString()
-        //        };
-        //    }
-        //}
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = ex.Message
+                };
+            }
+        }
 
         private void GeneracionComprobanteVenta(GestorContextDB context, AccesoDatos.Entidades.Venta venta)
         {

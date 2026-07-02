@@ -32,6 +32,7 @@ namespace Presentacion.Core.Venta
         private readonly IOfertaServicio _ofertaServicio;
         private readonly IMovimientoServicio _movimientoServicio;
         private readonly IClienteServicio _clienteServicio;
+        private readonly IProductoServicio _productoServicio;
 
 
         private long? VENTAID = null;
@@ -70,6 +71,7 @@ namespace Presentacion.Core.Venta
             _empleadoServicio = new EmpleadoServicio();
             _ofertaServicio = new OfertaServicio();
             _clienteServicio = new ClienteServicio();
+            _productoServicio = new ProductoServicio();
 
             VENTAID = VentaId;
 
@@ -309,30 +311,37 @@ namespace Presentacion.Core.Venta
         }
         private void CargarInfoOfertas()
         {
-            if (itemsVenta?.Any(iv => iv.EsOferta) == true)
-            {
-                _cuerpoDetalleVenta.ofertaIncluidas = true;
+            var ofertas = itemsVenta
+                .Where(x => x.EsOferta)
+                .ToList();
 
-                var descripciones = itemsVenta
-                    .Where(iv => iv.EsOferta)
-                    .Select(iv => new
-                    {
-                        iv.Descripcion,
-                        iv.EsOfertaPorGrupo
-                    })
-                    .Distinct()
-                    .Select(o => o.EsOfertaPorGrupo
-                        ? $"Descuento: {o.Descripcion}"
-                        : $"Combo: {o.Descripcion}")
-                    .ToList();
-
-                _cuerpoDetalleVenta.descripcionOferta = string.Join(", ", descripciones);
-            }
-            else
+            if (!ofertas.Any())
             {
                 _cuerpoDetalleVenta.ofertaIncluidas = false;
                 _cuerpoDetalleVenta.descripcionOferta = string.Empty;
+                return;
             }
+
+            _cuerpoDetalleVenta.ofertaIncluidas = true;
+
+            var descripciones = ofertas
+                .Select(o =>
+                {
+                    var tipo = o.TipoOferta switch
+                    {
+                        (int)Servicios.Helpers.Venta.Oferta.TipoOferta.Producto => "Producto",
+                        (int)Servicios.Helpers.Venta.Oferta.TipoOferta.Grupo => "Descuento",
+                        (int)Servicios.Helpers.Venta.Oferta.TipoOferta.Combo => "Combo",
+                        (int)Servicios.Helpers.Venta.Oferta.TipoOferta.DosPorUno => "2x1",
+                        _ => "Oferta"
+                    };
+
+                    return $"{tipo}: {o.Descripcion}";
+                })
+                .Distinct()
+                .ToList();
+
+            _cuerpoDetalleVenta.descripcionOferta = string.Join(", ", descripciones);
         }
         private async Task FinalizacionVenta()
         {
@@ -368,30 +377,30 @@ namespace Presentacion.Core.Venta
 
                 frmProcesando.ActualizarEstado("Registrando venta...");
 
-                //var m = await Task.Run(() =>
-                //    _ventaServicio.NuevaVenta(_venta));
+                var m = await Task.Run(() =>
+                    _ventaServicio.NuevaVenta(_venta));
 
                 frmProcesando.Close();
 
-                //if (m.Exitoso)
-                //{
-                //    MessageBox.Show(
-                //        "Venta confirmada exitosamente.",
-                //        "Éxito",
-                //        MessageBoxButtons.OK,
-                //        MessageBoxIcon.Information);
+                if (m.Exitoso)
+                {
+                    MessageBox.Show(
+                        "Venta confirmada exitosamente.",
+                        "Éxito",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
 
-                //    DialogResult = DialogResult.OK;
-                //    Close();
-                //}
-                //else
-                //{
-                //    MessageBox.Show(
-                //        $"Hubo un error al finalizar la venta: {m.Mensaje}",
-                //        "Error",
-                //        MessageBoxButtons.OK,
-                //        MessageBoxIcon.Error);
-                //}
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+                else
+                {
+                    MessageBox.Show(
+                        $"Hubo un error al finalizar la venta: {m.Mensaje}",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
             }
             finally
             {
@@ -441,73 +450,48 @@ namespace Presentacion.Core.Venta
 
         private void btnCargarProducto_Click(object sender, EventArgs e)
         {
-            //var fProductos = new FProductoConsulta(true);
+            var fProductos = new FProductoConsulta(true);
 
-            //if (fProductos.ShowDialog() == DialogResult.OK && fProductos.productoSeleccionado.HasValue)
-            //{
-            //    var idProducto = fProductos.productoSeleccionado.Value;
-            //    decimal cantidad = 0m;
+            if (fProductos.ShowDialog() != DialogResult.OK ||
+                !fProductos.productoSeleccionado.HasValue)
+                return;
 
-            //    var ofertaDesc = new ProductoServicio().ControlarProductoEstaEnOfertaPorId(idProducto);
+            var itemVenta = _productoServicio.ObtenerItemVenta(
+                fProductos.productoSeleccionado.Value);
 
-            //    if (ofertaDesc == null)
-            //    {
-            //        MessageBox.Show("El producto seleccionado no está disponible.");
-            //        return;
-            //    }
+            if (itemVenta == null)
+            {
+                MessageBox.Show("El producto seleccionado no está disponible.");
+                return;
+            }
 
-            //    var producto = ofertaDesc.Producto;
-            //    var oferta = ofertaDesc.Oferta;
+            var fCantidad = new FCantidadItem();
 
-            //    bool tieneOferta = oferta != null;
-            //    bool esOfertaPorGrupo = tieneOferta && oferta.esOfertaPorGrupo;
+            if (fCantidad.ShowDialog() != DialogResult.OK ||
+                fCantidad.cantidad <= 0)
+                return;
 
-            //    var fCantidad = new FCantidadItem();
+            if (fCantidad.cantidad > itemVenta.Stock)
+            {
+                MessageBox.Show($"Stock insuficiente. Se ajusta a {itemVenta.Stock}.");
 
-            //    if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
-            //    {
-            //        cantidad = fCantidad.cantidad > producto.Stock
-            //            ? producto.Stock
-            //            : fCantidad.cantidad;
+                itemVenta.Cantidad = itemVenta.Stock;
+            }
+            else
+            {
+                itemVenta.Cantidad = fCantidad.cantidad;
+            }
 
-            //        if (fCantidad.cantidad > producto.Stock)
-            //        {
-            //            MessageBox.Show($"Stock insuficiente. Se ajusta a {cantidad}.");
-            //        }
+            itemsVenta.Add(itemVenta);
 
-            //        var itemVenta = new ItemVentaDTO
-            //        {
-            //            ItemId = producto.ProductoId,
-            //            Descripcion = producto.Descripcion,
+            ValidarCantidadySiEsOferta();
 
-            //            Cantidad = cantidad,
-
-            //            PrecioVenta = producto.PrecioVenta,
-            //            PrecioOferta = esOfertaPorGrupo
-            //                ? ofertaDesc.PrecioEnOferta
-            //                : producto.PrecioVenta,
-
-            //            PrecioOriginalOferta = producto.PrecioVenta,
-
-            //            Medida = producto.Medida,
-            //            UnidadMedida = producto.UnidadMedida,
-
-            //            EsOferta = esOfertaPorGrupo,          // 🔥 SOLO si hay descuento real
-            //            EsOfertaPorGrupo = esOfertaPorGrupo   // 🔥 clave para lógica después
-            //        };
-
-            //        itemsVenta.Add(itemVenta);
-
-            //        if (cbxDescEfectivo.Checked)
-            //        {
-            //            ValidarCantidadySiEsOferta();
-            //            AplicarDescuentoEfectivo();
-            //        }
-
-            //        CalcularTotal();
-            //    }
-            //}
+            if (cbxDescEfectivo.Checked)
+                AplicarDescuentoEfectivo();
+            else
+                CalcularTotal();
         }
+      
         private void CalcularTotal()
         {
             decimal totalFinal = 0m;
@@ -585,9 +569,9 @@ namespace Presentacion.Core.Venta
             // 🔖 Estado oferta (string en el DTO)
             grilla.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "EstadoOferta",
-                HeaderText = "Oferta",
-                DataPropertyName = "EstadoOferta",
+                Name = "CodigoOferta",
+                HeaderText = "Codigo Oferta",
+                DataPropertyName = "CodigoOferta",
                 Width = 180
             });
 
@@ -1010,48 +994,39 @@ namespace Presentacion.Core.Venta
 
         private void btnCargarOferta_Click(object sender, EventArgs e)
         {
-            var Fofertas = new FOfertaConsulta(true);
+            var fOfertas = new FOfertaConsulta(true);
 
-            if (Fofertas.ShowDialog() == DialogResult.OK && Fofertas.ofertaSeleccionada.HasValue)
+            if (fOfertas.ShowDialog() != DialogResult.OK ||
+                !fOfertas.ofertaSeleccionada.HasValue)
+                return;
+
+            var itemVenta = _ofertaServicio.ObtenerItemVentaOferta(
+                fOfertas.ofertaSeleccionada.Value);
+
+            if (itemVenta == null)
             {
-                var idOferta = Fofertas.ofertaSeleccionada.Value;
-
-                var cantidad = 0.0m;
-
-                //var Oferta = _ofertaServicio.ObtenerOfertaActivaPorId(idOferta);
-                //if (Oferta == null)
-                //{
-                //    MessageBox.Show("La oferta seleccionada esta Inactiva. Si se trata de un error comunicarse con un Administrador para activarla.");
-
-                //}
-                //else
-                //{
-                //    var fCantidad = new FCantidadItem();
-
-                //    if (fCantidad.ShowDialog() == DialogResult.OK && fCantidad.cantidad > 0)
-                //    {
-                //        cantidad = fCantidad.cantidad;
-
-                //        var ofertaVenta = new ItemVentaDTO
-                //        {
-                //            ItemId = Oferta.OfertaDescuentoId,
-                //            Descripcion = Oferta.Descripcion,
-                //            PrecioVenta = Oferta.PrecioOriginal,
-                //            PrecioOferta = Oferta.PrecioFinal,
-                //            Cantidad = cantidad,
-                //            Medida = string.Empty,
-                //            UnidadMedida = string.Empty,
-                //            EsOferta = true,
-                //            EsOfertaPorGrupo = Oferta.esOfertaPorGrupo
-                //        };
-
-                //        itemsVenta.Add(ofertaVenta);
-
-                //        ValidarCantidadySiEsOferta();
-                //        CalcularTotal();
-                //    }
-                //}
+                MessageBox.Show("La oferta seleccionada ya no se encuentra activa.");
+                return;
             }
+
+            var fCantidad = new FCantidadItem();
+
+            if (fCantidad.ShowDialog() != DialogResult.OK ||
+                fCantidad.cantidad <= 0)
+                return;
+
+            itemVenta.Cantidad = fCantidad.cantidad;
+
+            itemsVenta.Add(itemVenta);
+
+            ValidarCantidadySiEsOferta();
+
+            if (cbxDescEfectivo.Checked)
+                AplicarDescuentoEfectivo();
+            else
+                CalcularTotal();
+
+            dgvProductos.Refresh();
         }
 
         private void dgvProductos_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)

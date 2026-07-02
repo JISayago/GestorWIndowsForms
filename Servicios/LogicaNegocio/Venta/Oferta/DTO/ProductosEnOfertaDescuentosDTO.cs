@@ -10,6 +10,7 @@ namespace Servicios.LogicaNegocio.Venta.Oferta.DTO
     public class ProductosEnOfertaDescuentosDTO
     {
         public long ProductoId { get; set; }
+        public long OfertaId { get; set; }
 
         public decimal CantidadRequerida { get; set; }
 

@@ -7,6 +7,7 @@ using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.Venta;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Venta.Oferta;
 using Servicios.LogicaNegocio.Articulo.Categoria;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using Servicios.LogicaNegocio.Empleado.Rol.DTO;

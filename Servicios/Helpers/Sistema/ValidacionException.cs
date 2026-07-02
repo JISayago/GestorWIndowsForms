@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Servicios.Helpers.Sistema
 {
-    public enum TipoOferta
+    public class ValidacionException : Exception
     {
-        Grupo = 1,
-        Compuesta = 2
+        public ValidacionException(string mensaje) : base(mensaje)
+        {
+        }
     }
 }

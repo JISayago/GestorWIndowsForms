@@ -197,7 +197,7 @@
             btnCargarProducto.Name = "btnCargarProducto";
             btnCargarProducto.Size = new Size(218, 32);
             btnCargarProducto.TabIndex = 104;
-            btnCargarProducto.Text = "Cargar Producto/s";
+            btnCargarProducto.Text = "Cargar Producto/s para Combo";
             btnCargarProducto.UseVisualStyleBackColor = true;
             btnCargarProducto.Click += btnCargarProducto_Click;
             // 

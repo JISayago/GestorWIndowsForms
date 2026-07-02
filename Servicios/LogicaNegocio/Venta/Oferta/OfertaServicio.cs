@@ -7,6 +7,7 @@ using Servicios.Helpers.Sistema.Admin;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.Helpers.Venta.Oferta;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
 using System.Collections.Generic;
@@ -68,21 +69,33 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 context.SaveChanges();
 
                 var productosOferta = dto.Productos
-                    .Select(x => new ProductosEnOfertaDescuentos
-                    {
-                        OfertaDescuentoId = oferta.OfertaDescuentoId,
-                        ProductoId = x.ProductoId,
+       .Select(x =>
+       {
+           decimal? precioOferta = x.PrecioOfertaBase;
 
-                        CantidadRequerida = x.CantidadRequerida,
+           // Si no vino un precio específico, lo calculo
+           if (!precioOferta.HasValue && dto.PorcentajeDescuento.HasValue)
+           {
+               precioOferta = x.PrecioVentaBase -
+                              (x.PrecioVentaBase * dto.PorcentajeDescuento.Value / 100m);
+           }
 
-                        PrecioVentaBase = x.PrecioVentaBase,
-                        PrecioCostoBase = x.PrecioCostoBase,
+           return new ProductosEnOfertaDescuentos
+           {
+               OfertaDescuentoId = oferta.OfertaDescuentoId,
+               ProductoId = x.ProductoId,
 
-                        PrecioOfertaBase = x.PrecioOfertaBase,
+               CantidadRequerida = x.CantidadRequerida,
 
-                        LimiteVentaProducto = x.LimiteVentaProducto
-                    })
-                    .ToList();
+               PrecioVentaBase = x.PrecioVentaBase,
+               PrecioCostoBase = x.PrecioCostoBase,
+
+               PrecioOfertaBase = precioOferta,
+
+               LimiteVentaProducto = x.LimiteVentaProducto
+           };
+       })
+       .ToList();
 
                 context.ProductosEnOfertasDescuentos.AddRange(productosOferta);
 
@@ -773,44 +786,102 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         //        return null;
         //    }
         //}
+        public ItemVentaDTO? ObtenerItemVentaOferta(long ofertaId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-        //public OfertaDTO ObtenerOfertaActivaPorId(long idOFerta)
+            var oferta = context.OfertasDescuentos
+                .AsNoTracking()
+                .Where(x =>
+                    x.OfertaDescuentoId == ofertaId &&
+                    x.EstaActiva)
+                .Select(x => new
+                {
+                    x.OfertaDescuentoId,
+                    x.Descripcion,
+                    x.TipoOferta,
+                    x.PrecioFinal,
+                    x.PorcentajeDescuento,
+                    x.Codigo,
+
+                    Productos = x.Productos.Select(p => new
+                    {
+                        p.CantidadRequerida,
+                        p.PrecioVentaBase
+                    })
+                })
+                .FirstOrDefault();
+
+            if (oferta == null)
+                return null;
+
+            decimal precioOriginal = oferta.Productos
+                .Sum(x => x.PrecioVentaBase * x.CantidadRequerida);
+
+            decimal precioOferta = oferta.PrecioFinal ?? precioOriginal;
+
+            return new ItemVentaDTO
+            {
+                ItemId = oferta.OfertaDescuentoId,
+
+                Descripcion = oferta.Descripcion,
+                CodigoOferta = oferta.Codigo ?? "Sin Oferta",
+                PrecioVenta = precioOriginal,
+
+                PrecioOferta = precioOferta,
+
+                Medida = string.Empty,
+                UnidadMedida = string.Empty,
+
+                EsOferta = true,
+
+                TipoOferta = oferta.TipoOferta,
+
+                Cantidad = 0
+            };
+        }
+        //public OfertaDTO ObtenerOfertaActivaPorId(long idOferta)
         //{
-        //    {
-        //        using var context = new GestorContextDBFactory().CreateDbContext(null);
-        //        var oferta = context.OfertasDescuentos
-        //            .Include(o => o.Productos)
-        //            .Where(o => o.OfertaDescuentoId == idOFerta && o.EstaActiva)
-        //            .Select(x => new OfertaDTO
-        //            {
-        //                OfertaDescuentoId = x.OfertaDescuentoId,
-        //                Descripcion = x.Descripcion,
-        //                PrecioFinal = x.PrecioFinal,
-        //                PrecioOriginal = x.PrecioOriginal,
-        //                DescuentoTotalFinal = x.DescuentoTotalFinal,
-        //                PorcentajeDescuento = x.PorcentajeDescuento,
-        //                FechaInicio = x.FechaInicio,
-        //                FechaFin = x.FechaFin,
-        //                CantidadProductosDentroOferta = x.CantidadProductosDentroOferta,
-        //                EstaActiva = x.EstaActiva,
-        //                EsUnSoloProducto = x.EsUnSoloProducto,
-        //                Detalle = x.Detalle,
-        //                Codigo = x.Codigo,
-        //                esOfertaPorGrupo = x.esOfertaPorGrupo,
-        //                TieneLimiteDeStock = x.TieneLimiteDeStock,
-        //                CantidadLimiteDeStock = x.CantidadLimiteDeStock,
-        //                IdMarca = x.IdMarca,
-        //                IdRubro = x.IdRubro,
-        //                IdCategoria = x.IdCategoria,
-        //                GrupoNombre = x.GrupoNombre,
-        //                Productos = x.Productos.Select(p => new ProductoDTO
+        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+        //    return context.OfertasDescuentos
+        //        .AsNoTracking()
+        //        .Where(x =>
+        //            x.OfertaDescuentoId == idOferta &&
+        //            x.EstaActiva)
+        //        .Select(x => new OfertaDTO
+        //        {
+        //            OfertaDescuentoId = x.OfertaDescuentoId,
+        //            Codigo = x.Codigo,
+        //            Descripcion = x.Descripcion,
+
+        //            FechaInicio = x.FechaInicio,
+        //            FechaFin = x.FechaFin,
+
+        //            EstaActiva = x.EstaActiva,
+
+        //            TipoOferta = x.TipoOferta,
+
+        //            PorcentajeDescuento = x.PorcentajeDescuento,
+        //            PrecioFinal = x.PrecioFinal,
+
+        //            Productos = x.Productos
+        //                .Select(p => new ProductosEnOfertaDescuentosDTO
         //                {
         //                    ProductoId = p.ProductoId,
-        //                    PrecioVenta = p.PrecioOrginal
-        //                }).ToList()
-        //            }).FirstOrDefault();
-        //        return oferta;
-        //    }
+
+        //                    CantidadRequerida = p.CantidadRequerida,
+
+        //                    PrecioVentaBase = p.PrecioVentaBase,
+        //                    PrecioCostoBase = p.PrecioCostoBase,
+
+        //                    PrecioOfertaBase = p.PrecioOfertaBase,
+
+        //                    LimiteVentaProducto = p.LimiteVentaProducto
+        //                })
+        //                .ToList()
+        //        })
+        //        .FirstOrDefault();
         //}
 
         //public InfoOfertaDTO ObtenerInfoOferta()
