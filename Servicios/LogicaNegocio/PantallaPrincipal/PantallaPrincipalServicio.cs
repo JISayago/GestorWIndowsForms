@@ -171,54 +171,54 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             return resultadoDTO;
         }
 
-        public void NotificacionesOfertasVencidas()
-        {
-            // 1. Obtenemos las ofertas vencidas desde el servicio
-            var promocionesNotificar = _ofertaServicio.ObtenerOfertasVencidas(7);
+        //public void NotificacionesOfertasVencidas()
+        //{
+        //    // 1. Obtenemos las ofertas vencidas desde el servicio
+        //    var promocionesNotificar = _ofertaServicio.ObtenerOfertasVencidas(7);
 
-            if (promocionesNotificar == null || !promocionesNotificar.Any()) return;
+        //    if (promocionesNotificar == null || !promocionesNotificar.Any()) return;
 
-            // 2. Generamos títulos únicos basados en el código de oferta para controlar duplicados
-            var titulosPotenciales = promocionesNotificar
-                .Select(p => $"Oferta vencida: {p.Codigo}")
-                .Distinct()
-                .ToList();
+        //    // 2. Generamos títulos únicos basados en el código de oferta para controlar duplicados
+        //    var titulosPotenciales = promocionesNotificar
+        //        .Select(p => $"Oferta vencida: {p.Codigo}")
+        //        .Distinct()
+        //        .ToList();
 
-            List<string> titulosExistentes;
-            using (var context = new GestorContextDBFactory().CreateDbContext(null))
-            {
-                titulosExistentes = context.Notificaciones
-                    .Where(n => titulosPotenciales.Contains(n.Titulo))
-                    .Select(n => n.Titulo)
-                    .ToList();
-            }
+        //    List<string> titulosExistentes;
+        //    using (var context = new GestorContextDBFactory().CreateDbContext(null))
+        //    {
+        //        titulosExistentes = context.Notificaciones
+        //            .Where(n => titulosPotenciales.Contains(n.Titulo))
+        //            .Select(n => n.Titulo)
+        //            .ToList();
+        //    }
 
-            // Filtramos para dejar solo las que no se guardaron todavía
-            var promocionesNuevas = promocionesNotificar
-                .Where(p => !titulosExistentes.Contains($"Oferta vencida: {p.Codigo}"))
-                .ToList();
+        //    // Filtramos para dejar solo las que no se guardaron todavía
+        //    var promocionesNuevas = promocionesNotificar
+        //        .Where(p => !titulosExistentes.Contains($"Oferta vencida: {p.Codigo}"))
+        //        .ToList();
 
-            if (!promocionesNuevas.Any()) return;
+        //    if (!promocionesNuevas.Any()) return;
 
-            // 3. Mapeo a la entidad base de la base de datos
-            var entidadesBD = promocionesNuevas.Select(p => new Notificacion
-            {
-                Titulo = $"Oferta vencida: {p.Codigo}",
-                Descripcion = $"La oferta {p.Codigo} - {p.Descripcion} venció el {p.FechaFin?.ToString("dd/MM/yyyy") ?? "N/A"}.",
-                Mensaje = "La promoción ha cumplido su fecha límite de vigencia.",
-                FechaCreacion = DateTime.Now,
-                FechaVencimiento = p.FechaFin, // Seteamos el DateTime? para calcular la urgencia después
-                EstaLeida = false,
-                EmpleadoId = null // Alerta general del sistema
-            }).ToList();
+        //    // 3. Mapeo a la entidad base de la base de datos
+        //    var entidadesBD = promocionesNuevas.Select(p => new Notificacion
+        //    {
+        //        Titulo = $"Oferta vencida: {p.Codigo}",
+        //        Descripcion = $"La oferta {p.Codigo} - {p.Descripcion} venció el {p.FechaFin?.ToString("dd/MM/yyyy") ?? "N/A"}.",
+        //        Mensaje = "La promoción ha cumplido su fecha límite de vigencia.",
+        //        FechaCreacion = DateTime.Now,
+        //        FechaVencimiento = p.FechaFin, // Seteamos el DateTime? para calcular la urgencia después
+        //        EstaLeida = false,
+        //        EmpleadoId = null // Alerta general del sistema
+        //    }).ToList();
 
-            // 4. Guardamos en lote
-            using (var context = new GestorContextDBFactory().CreateDbContext(null))
-            {
-                context.AddRange(entidadesBD);
-                context.SaveChanges();
-            }
-        }
+        //    // 4. Guardamos en lote
+        //    using (var context = new GestorContextDBFactory().CreateDbContext(null))
+        //    {
+        //        context.AddRange(entidadesBD);
+        //        context.SaveChanges();
+        //    }
+        //}
 
         public List<NotificacionDTO> ObtenerNotificacionesCtaCteVencidas()
         {

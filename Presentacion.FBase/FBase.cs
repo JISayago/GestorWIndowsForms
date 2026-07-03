@@ -25,7 +25,7 @@ namespace Presentacion.FBase
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            //this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             this.KeyPreview = true;
             AplicarTema(this);
         }
