@@ -14,10 +14,10 @@ namespace Servicios.LogicaNegocio.Venta
 {
     public interface IVentaServicio
     {
-        EstadoOperacion NuevaVenta (VentaDTO ventaDto);
+        EstadoOperacion NuevaVenta(VentaDTO ventaDto);
         List<long> ObtenerVentasParaCancelacion(DateTime fecha, string filtroNumero = null);
         public List<VentaDTO> ObtenerVentasPorIds(List<long> ventaIds);
-        EstadoOperacion CancelacionVentaPorId(long ventaId);
+        //EstadoOperacion CancelacionVentaPorId(long ventaId);
         VentaDTO ObtenerVentaDetalle(long Ventaid);
         ResultadoPaginacion<VentaDTO> ObtenerVentas(FiltroConsulta filtros);
 

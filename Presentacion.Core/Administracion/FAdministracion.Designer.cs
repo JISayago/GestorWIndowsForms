@@ -216,7 +216,6 @@
             aCTIVARDESACTIVARToolStripMenuItem.Name = "aCTIVARDESACTIVARToolStripMenuItem";
             aCTIVARDESACTIVARToolStripMenuItem.Size = new Size(211, 24);
             aCTIVARDESACTIVARToolStripMenuItem.Text = "Activar / Desactivar";
-            aCTIVARDESACTIVARToolStripMenuItem.Click += aCTIVARDESACTIVARToolStripMenuItem_Click;
             // 
             // nUEVAOFERTAToolStripMenuItem
             // 
@@ -484,23 +483,26 @@
             // tabControlGraficoArriba
             // 
             tabControlGraficoArriba.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tabControlGraficoArriba.Appearance = TabAppearance.FlatButtons;
             tabControlGraficoArriba.Controls.Add(tabPage1);
             tabControlGraficoArriba.Controls.Add(tabPage2);
+            tabControlGraficoArriba.DrawMode = TabDrawMode.OwnerDrawFixed;
             tabControlGraficoArriba.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             tabControlGraficoArriba.HeaderBackColor = Color.FromArgb(234, 234, 234);
             tabControlGraficoArriba.Location = new Point(3, 3);
             tabControlGraficoArriba.Name = "tabControlGraficoArriba";
             tabControlGraficoArriba.SelectedIndex = 0;
             tabControlGraficoArriba.Size = new Size(1598, 357);
+            tabControlGraficoArriba.SizeMode = TabSizeMode.Fixed;
             tabControlGraficoArriba.TabIndex = 0;
             // 
             // tabPage1
             // 
             tabPage1.Controls.Add(formsPlot1);
-            tabPage1.Location = new Point(0, 22);
+            tabPage1.Location = new Point(0, 25);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1598, 335);
+            tabPage1.Size = new Size(1598, 332);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Cajas del Mes";
             tabPage1.UseVisualStyleBackColor = true;
@@ -511,16 +513,16 @@
             formsPlot1.Dock = DockStyle.Fill;
             formsPlot1.Location = new Point(3, 3);
             formsPlot1.Name = "formsPlot1";
-            formsPlot1.Size = new Size(1592, 329);
+            formsPlot1.Size = new Size(1592, 326);
             formsPlot1.TabIndex = 1;
             // 
             // tabPage2
             // 
             tabPage2.Controls.Add(formsPlot2);
-            tabPage2.Location = new Point(0, 22);
+            tabPage2.Location = new Point(0, 25);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1598, 335);
+            tabPage2.Size = new Size(1598, 332);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Ultimas 50";
             tabPage2.UseVisualStyleBackColor = true;
@@ -531,7 +533,7 @@
             formsPlot2.Dock = DockStyle.Fill;
             formsPlot2.Location = new Point(3, 3);
             formsPlot2.Name = "formsPlot2";
-            formsPlot2.Size = new Size(1592, 329);
+            formsPlot2.Size = new Size(1592, 326);
             formsPlot2.TabIndex = 0;
             // 
             // tlpBajoNivel2
@@ -552,24 +554,27 @@
             // tabControl1
             // 
             tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tabControl1.Appearance = TabAppearance.FlatButtons;
             tabControl1.Controls.Add(tabPage3);
             tabControl1.Controls.Add(tabPage4);
+            tabControl1.DrawMode = TabDrawMode.OwnerDrawFixed;
             tabControl1.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             tabControl1.HeaderBackColor = Color.FromArgb(234, 234, 234);
             tabControl1.Location = new Point(3, 3);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(1598, 485);
+            tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.TabIndex = 0;
             // 
             // tabPage3
             // 
             tabPage3.Controls.Add(tlpBajoNivel3);
             tabPage3.Font = new Font("Microsoft Sans Serif", 15.75F);
-            tabPage3.Location = new Point(0, 22);
+            tabPage3.Location = new Point(0, 25);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(1598, 463);
+            tabPage3.Size = new Size(1598, 460);
             tabPage3.TabIndex = 0;
             tabPage3.Text = "Por Dia";
             tabPage3.UseVisualStyleBackColor = true;
@@ -587,7 +592,7 @@
             tlpBajoNivel3.Name = "tlpBajoNivel3";
             tlpBajoNivel3.RowCount = 1;
             tlpBajoNivel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpBajoNivel3.Size = new Size(1592, 457);
+            tlpBajoNivel3.Size = new Size(1592, 454);
             tlpBajoNivel3.TabIndex = 0;
             tlpBajoNivel3.Tag = "TemaSistema";
             // 
@@ -597,7 +602,7 @@
             formsPlot4.DisplayScale = 1F;
             formsPlot4.Location = new Point(799, 3);
             formsPlot4.Name = "formsPlot4";
-            formsPlot4.Size = new Size(790, 451);
+            formsPlot4.Size = new Size(790, 448);
             formsPlot4.TabIndex = 2;
             // 
             // formsPlot3
@@ -607,17 +612,17 @@
             formsPlot3.DisplayScale = 1F;
             formsPlot3.Location = new Point(3, 3);
             formsPlot3.Name = "formsPlot3";
-            formsPlot3.Size = new Size(790, 451);
+            formsPlot3.Size = new Size(790, 448);
             formsPlot3.TabIndex = 1;
             // 
             // tabPage4
             // 
             tabPage4.Controls.Add(tlpBajoNivel3Pagina2);
             tabPage4.Font = new Font("Microsoft Sans Serif", 15.75F);
-            tabPage4.Location = new Point(0, 22);
+            tabPage4.Location = new Point(0, 25);
             tabPage4.Name = "tabPage4";
             tabPage4.Padding = new Padding(3);
-            tabPage4.Size = new Size(1598, 463);
+            tabPage4.Size = new Size(1598, 460);
             tabPage4.TabIndex = 1;
             tabPage4.Text = "Por Mes";
             tabPage4.UseVisualStyleBackColor = true;

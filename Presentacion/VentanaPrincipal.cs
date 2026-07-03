@@ -102,7 +102,7 @@ namespace Presentacion
 
             // 4. Cargar Notificaciones
             crearNotificacionesLotes();
-            crearNotificacionesPromociones();
+            //crearNotificacionesPromociones();
             crearNotificacionesCuentaCorriente();
         }
 
@@ -313,21 +313,21 @@ namespace Presentacion
             notiProdVencidos.SetData(listaLotesNotificar, "Lotes Vencidos");
         }
 
-        private void crearNotificacionesPromociones()
-        {
-            _pantallaPrincipalServicio.NotificacionesOfertasVencidas();
+        //private void crearNotificacionesPromociones()
+        //{
+        //    _pantallaPrincipalServicio.NotificacionesOfertasVencidas();
 
-            var notifOferVencidos = new NotificationGroupBox();
-            notifOferVencidos.Width = flowLayoutNotificaciones.Width - 25;
+        //    var notifOferVencidos = new NotificationGroupBox();
+        //    notifOferVencidos.Width = flowLayoutNotificaciones.Width - 25;
 
-            // 🌟 NUEVO: Suscripción al evento
-            notifOferVencidos.NotificacionCambiada += (s, e) => RecargarSeccionNotificaciones();
+        //    // 🌟 NUEVO: Suscripción al evento
+        //    notifOferVencidos.NotificacionCambiada += (s, e) => RecargarSeccionNotificaciones();
 
-            flowLayoutNotificaciones.Controls.Add(notifOferVencidos);
+        //    flowLayoutNotificaciones.Controls.Add(notifOferVencidos);
 
-            var listaOfertasVencidas = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasVencidas();
-            notifOferVencidos.SetData(listaOfertasVencidas, "Ofertas Vencidas");
-        }
+        //    var listaOfertasVencidas = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasVencidas();
+        //    notifOferVencidos.SetData(listaOfertasVencidas, "Ofertas Vencidas");
+        //}
 
         private void crearNotificacionesCuentaCorriente()
         {
@@ -457,7 +457,7 @@ namespace Presentacion
             crearPanelDatosAdicionales();
 
             crearNotificacionesLotes();
-            crearNotificacionesPromociones();
+            //crearNotificacionesPromociones();
             crearNotificacionesCuentaCorriente();
         }
 
@@ -471,7 +471,7 @@ namespace Presentacion
 
             // Volvemos a generar los tres bloques con datos frescos de la BD
             crearNotificacionesLotes();
-            crearNotificacionesPromociones();
+            //crearNotificacionesPromociones();
             crearNotificacionesCuentaCorriente();
 
             flowLayoutNotificaciones.ResumeLayout(true);

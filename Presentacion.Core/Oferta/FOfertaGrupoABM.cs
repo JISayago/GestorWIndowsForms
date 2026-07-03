@@ -7,6 +7,7 @@ using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.Venta;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Venta.Oferta;
 using Servicios.LogicaNegocio.Articulo.Categoria;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using Servicios.LogicaNegocio.Empleado.Rol.DTO;
@@ -76,46 +77,7 @@ namespace Presentacion.Core.Oferta
             _ofertaServicio = new OfertaServicio();
         }
 
-        private void cbxMarca_CheckedChanged(object sender, EventArgs e)
-        {
-            _esMarca = cbxMarca.Checked;
-            if (_esMarca)
-            {
-                btnCargarGrupoMarca.Enabled = true;
-            }
-            else
-            {
-                btnCargarGrupoMarca.Enabled = false;
-            }
-        }
 
-        private void cbxRubro_CheckedChanged(object sender, EventArgs e)
-        {
-            _esRubro = cbxRubro.Checked;
-            if (_esRubro)
-            {
-                btnCargarGrupoRubro.Enabled = true;
-            }
-            else
-            {
-                btnCargarGrupoRubro.Enabled = false;
-            }
-
-
-        }
-
-        private void cbxCategoria_CheckedChanged(object sender, EventArgs e)
-        {
-            _esCategoria = cbxCategoria.Checked;
-            if (_esCategoria)
-            {
-                btnCargarGrupoCategoria.Enabled = true;
-            }
-            else
-            {
-                btnCargarGrupoCategoria.Enabled = false;
-            }
-        }
 
         private void btnCargarGrupoMarca_Click(object sender, EventArgs e)
         {
@@ -248,17 +210,17 @@ namespace Presentacion.Core.Oferta
                 // terminamos — en modo "un solo producto" no ejecutamos la carga masiva
                 return;
             }
-            var productosOfertasDto = _productoServicio.ObtenerProductosPorMarcaRubroCategoriaParaOferta(_marcaId, _rubroId, _categoriaId);
+            //var productosOfertasDto = _productoServicio.ObtenerProductosPorMarcaRubroCategoriaParaOferta(_marcaId, _rubroId, _categoriaId);
 
-            _productosParaOfertaDTO = new BindingList<ProductoDTO>(productosOfertasDto.ToList());
-            dgvProductos.DataSource = _productosParaOfertaDTO;
-            cantidadTotalEnOferta = _productosParaOfertaDTO.Count();
-            cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO.Count();
-            lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
-            lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
-            _codigoOferta = _codigoOferta + $"({_descripcion} M-{_marcaN}C-{_categoriaN})_{cantidadTotalEnOferta}_";
-            _descripcion = $"({_descripcion} M-{_marcaN}C-{_categoriaN}) + cant{cantidadTotalEnOferta}";
-            txtDescripcion.Text = _descripcion;
+            //_productosParaOfertaDTO = new BindingList<ProductoDTO>(productosOfertasDto.ToList());
+            //dgvProductos.DataSource = _productosParaOfertaDTO;
+            //cantidadTotalEnOferta = _productosParaOfertaDTO.Count();
+            //cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO.Count();
+            //lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
+            //lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
+            //_codigoOferta = _codigoOferta + $"({_descripcion} M-{_marcaN}C-{_categoriaN})_{cantidadTotalEnOferta}_";
+            //_descripcion = $"({_descripcion} M-{_marcaN}C-{_categoriaN}) + cant{cantidadTotalEnOferta}";
+            //txtDescripcion.Text = _descripcion;
 
 
         }
@@ -481,48 +443,42 @@ namespace Presentacion.Core.Oferta
         }
 
 
-        private void btnCrear_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                btnCrear.Enabled = false;
+        //private void btnCrear_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        btnCrear.Enabled = false;
 
-                if (!ValidarFormulario())
-                    return;
+        //        if (!ValidarFormulario())
+        //            return;
 
-                var ofertaDto = ConstruirOfertaDto();
+        //        //var ofertaDto = ConstruirOfertaDto();
 
-                var resultado = _ofertaServicio.Insertar(ofertaDto);
+        //        //var resultado = _ofertaServicio.Insertar(ofertaDto);
 
-                if (resultado == null || !resultado.Exitoso)
-                {
-                    MessageBox.Show(resultado?.Mensaje ?? "Error al crear la oferta.",
-                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+        //        if (resultado == null || !resultado.Exitoso)
+        //        {
+        //            MessageBox.Show(resultado?.Mensaje ?? "Error al crear la oferta.",
+        //                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            return;
+        //        }
 
-                MessageBox.Show(resultado.Mensaje ?? "Oferta creada correctamente.",
-                    "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ocurrió un error inesperado: " + ex.Message,
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                btnCrear.Enabled = true;
-            }
-        }
+        //        MessageBox.Show(resultado.Mensaje ?? "Oferta creada correctamente.",
+        //            "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Ocurrió un error inesperado: " + ex.Message,
+        //            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //    finally
+        //    {
+        //        btnCrear.Enabled = true;
+        //    }
+        //}
 
         private bool ValidarFormulario()
         {
-            if (cbxComboProductos.Checked &&
-                (_productosParaOfertaDTO == null || !_productosParaOfertaDTO.Any()))
-            {
-                MessageBox.Show("Debe agregar al menos un producto.");
-                return false;
-            }
 
             if (!cbxDescuentoPorcentaje.Checked && !cbxDescuentoPesos.Checked)
             {
@@ -554,135 +510,129 @@ namespace Presentacion.Core.Oferta
             return true;
         }
 
-        private (decimal precioOriginal, decimal precioFinal, decimal descuento, decimal porcentaje)
-            CalcularDescuento()
-        {
-            decimal precioOriginal;
-            if (cbxComboProductos.Checked)
-                precioOriginal = _productosParaOfertaDTO
-                    .Sum(p => p.PrecioVenta * (decimal)p.CantidadItemEnOferta);
-            else
-                precioOriginal = _productosParaOfertaDTO
-                    .Sum(p => p.PrecioVenta);
+        //private (decimal precioOriginal, decimal precioFinal, decimal descuento, decimal porcentaje)
+        //    CalcularDescuento()
+        //{
+        //    decimal precioOriginal;
 
-            decimal valorIngresado = Convert.ToDecimal(txtMontoPorcentaje.Text);
+        //    decimal valorIngresado = Convert.ToDecimal(txtMontoPorcentaje.Text);
 
-            decimal precioFinal = precioOriginal;
-            decimal descuento = 0;
-            decimal porcentaje = 0;
+        //    //decimal precioFinal = precioOriginal;
+        //    decimal descuento = 0;
+        //    decimal porcentaje = 0;
 
-            if (cbxDescuentoPorcentaje.Checked)
-            {
-                porcentaje = valorIngresado;
-                descuento = precioOriginal * (porcentaje / 100m);
-                precioFinal = precioOriginal - descuento;
-            }
-            else
-            {
-                precioFinal = valorIngresado;
-                descuento = precioOriginal - precioFinal;
-                porcentaje = (descuento / precioOriginal) * 100m;
-            }
+        //    if (cbxDescuentoPorcentaje.Checked)
+        //    {
+        //        porcentaje = valorIngresado;
+        //        descuento = precioOriginal * (porcentaje / 100m);
+        //        precioFinal = precioOriginal - descuento;
+        //    }
+        //    else
+        //    {
+        //        precioFinal = valorIngresado;
+        //        descuento = precioOriginal - precioFinal;
+        //        porcentaje = (descuento / precioOriginal) * 100m;
+        //    }
 
-            return (precioOriginal, precioFinal, descuento, porcentaje);
-        }
+        //    return (precioOriginal, precioFinal, descuento, porcentaje);
+        //}
 
-        private OfertaDTO ConstruirOfertaDto()
-        {
-            var calculo = CalcularDescuento();
-            var hora = DateTime.Now;
-            _ofertaActiva  = MessageBox.Show(
-                "¿Desea activar la oferta ahora? (Si no la activa, podrá activarla manualmente más adelante, pero no se ejecutará automáticamente en la fecha de inicio).",
-                "Activar oferta",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question) == DialogResult.Yes;
+        //private OfertaDTO ConstruirOfertaDto()
+        //{
+        //    var calculo = CalcularDescuento();
+        //    var hora = DateTime.Now;
+        //    _ofertaActiva  = MessageBox.Show(
+        //        "¿Desea activar la oferta ahora? (Si no la activa, podrá activarla manualmente más adelante, pero no se ejecutará automáticamente en la fecha de inicio).",
+        //        "Activar oferta",
+        //        MessageBoxButtons.YesNo,
+        //        MessageBoxIcon.Question) == DialogResult.Yes;
 
-            var ofertaDto = new OfertaDTO
-            {
-                Descripcion = $"{txtDescripcion.Text?.Trim()} {hora}",
-                PrecioOriginal = calculo.precioOriginal,
-                PrecioFinal = calculo.precioFinal,
-                Productos = _productosParaOfertaDTO?.ToList(),
-                DescuentoTotalFinal = calculo.descuento,
-                PorcentajeDescuento = calculo.porcentaje,
-                FechaInicio = dtpFechaInicio.Value,
-                FechaFin = dtpFechaFin.Value,
-                Detalle = txtDetalle.Text?.Trim(),
-                Codigo = _codigoN,
-                EstaActiva = _ofertaActiva,
-                EsUnSoloProducto = (_productosParaOfertaDTO?.Count ?? 0) == 1,
-                CantidadProductosDentroOferta =
-                    _productosParaOfertaDTO?.Sum(p => p.CantidadItemEnOferta) ?? 0,
-                TieneLimiteDeStock = cbxLimiteCumplirStock.Checked,
-                CantidadLimiteDeStock = cbxLimiteCumplirStock.Checked
-                    ? Convert.ToDecimal(txtLimiteStock.Text)
-                    : -1
-            };
+        //    var ofertaDto = new OfertaDTO
+        //    {
+        //        Descripcion = $"{txtDescripcion.Text?.Trim()} {hora}",
+        //        PrecioOriginal = calculo.precioOriginal,
+        //        PrecioFinal = calculo.precioFinal,
+        //        Productos = _productosParaOfertaDTO?.ToList(),
+        //        DescuentoTotalFinal = calculo.descuento,
+        //        PorcentajeDescuento = calculo.porcentaje,
+        //        FechaInicio = dtpFechaInicio.Value,
+        //        FechaFin = dtpFechaFin.Value,
+        //        Detalle = txtDetalle.Text?.Trim(),
+        //        Codigo = _codigoN,
+        //        EstaActiva = _ofertaActiva,
+        //        EsUnSoloProducto = (_productosParaOfertaDTO?.Count ?? 0) == 1,
+        //        CantidadProductosDentroOferta =
+        //            _productosParaOfertaDTO?.Sum(p => p.CantidadItemEnOferta) ?? 0,
+        //        TieneLimiteDeStock = cbxLimiteCumplirStock.Checked,
+        //        CantidadLimiteDeStock = cbxLimiteCumplirStock.Checked
+        //            ? Convert.ToDecimal(txtLimiteStock.Text)
+        //            : -1
+        //    };
 
-            if (cbxComboProductos.Checked)
-            {
-                ofertaDto.esOfertaPorGrupo = false;
-                ofertaDto.IdMarca = null;
-                ofertaDto.IdRubro = null;
-                ofertaDto.IdCategoria = null;
-                ofertaDto.GrupoNombre = string.Empty;
+        //    if (cbxComboProductos.Checked)
+        //    {
+        //        ofertaDto.esOfertaPorGrupo = false;
+        //        ofertaDto.IdMarca = null;
+        //        ofertaDto.IdRubro = null;
+        //        ofertaDto.IdCategoria = null;
+        //        ofertaDto.GrupoNombre = string.Empty;
                 
-            }
-            else
-            {
-                ofertaDto.esOfertaPorGrupo = true;
-                ofertaDto.IdMarca = _marcaId;
-                ofertaDto.IdRubro = _rubroId;
-                ofertaDto.IdCategoria = _categoriaId;
-                ofertaDto.GrupoNombre = $"{_marcaN}-{_rubroN}-{_categoriaN}";
-            }
+        //    }
+        //    else
+        //    {
+        //        ofertaDto.esOfertaPorGrupo = true;
+        //        ofertaDto.IdMarca = _marcaId;
+        //        ofertaDto.IdRubro = _rubroId;
+        //        ofertaDto.IdCategoria = _categoriaId;
+        //        ofertaDto.GrupoNombre = $"{_marcaN}-{_rubroN}-{_categoriaN}";
+        //    }
 
-            return ofertaDto;
-        }
+        //    return ofertaDto;
+        //}
 
-        private void cbxEsUnProducto_CheckedChanged(object sender, EventArgs e)
-        {
-            _esUnSoloProducto = _productosParaOfertaDTO.Count() > 1 ? false : true;
-            btnCargarProductosAlcanzados.Text = _esUnSoloProducto ? "Cargar Producto" : "Cargar Productos Alcanzados";
-            cbxCategoria.Checked = false;
-            cbxCategoria.Enabled = !_esUnSoloProducto;
-            cbxMarca.Checked = false;
-            cbxMarca.Enabled = !_esUnSoloProducto;
-            cbxRubro.Checked = false;
-            cbxRubro.Enabled = !_esUnSoloProducto;
-            btnQuitarProducto.Enabled = !_esUnSoloProducto;
-            btnDevolverAOferta.Enabled = !_esUnSoloProducto;
-            dgvProductosQuitados.Enabled = !_esUnSoloProducto;
-        }
+        //private void cbxEsUnProducto_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    _esUnSoloProducto = _productosParaOfertaDTO.Count() > 1 ? false : true;
+        //    btnCargarProductosAlcanzados.Text = _esUnSoloProducto ? "Cargar Producto" : "Cargar Productos Alcanzados";
+        //    cbxCategoria.Checked = false;
+        //    cbxCategoria.Enabled = !_esUnSoloProducto;
+        //    cbxMarca.Checked = false;
+        //    cbxMarca.Enabled = !_esUnSoloProducto;
+        //    cbxRubro.Checked = false;
+        //    cbxRubro.Enabled = !_esUnSoloProducto;
+        //    btnQuitarProducto.Enabled = !_esUnSoloProducto;
+        //    btnDevolverAOferta.Enabled = !_esUnSoloProducto;
+        //    dgvProductosQuitados.Enabled = !_esUnSoloProducto;
+        //}
 
-        private void cbxLimiteCumplirStock_CheckedChanged(object sender, EventArgs e)
-        {
-            _hastaCumplirStock = cbxLimiteCumplirStock.Checked;
-            txtLimiteStock.Enabled = _hastaCumplirStock;
-        }
+        //private void cbxLimiteCumplirStock_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    _hastaCumplirStock = cbxLimiteCumplirStock.Checked;
+        //    txtLimiteStock.Enabled = _hastaCumplirStock;
+        //}
 
-        private void btnLimpiar_Click(object sender, EventArgs e)
-        {
-            cbxCategoria.Checked = false;
-            cbxMarca.Checked = false;
-            cbxRubro.Checked = false;
-            _productosParaOfertaDTO = new BindingList<ProductoDTO>();
-            _productosParaQuitarDeOfertaDTO = new BindingList<ProductoDTO>();
-            cantidadTotalEnOferta = 0.0m;
-            cantidadTotalFueraOferta = 0.0m;
-            lblCantidadProductos.Text = "0";
-            lblCantidadProductosQuitados.Text = "0";
-            txtDescripcion.Text = string.Empty;
-            txtDetalle.Text = string.Empty;
-            txtMontoPorcentaje.Text = string.Empty;
-            txtMarca.Text = string.Empty;
-            txtRubro.Text = string.Empty;
-            txtCategoria.Text = string.Empty;
-            cbxDescuentoPesos.Checked = false;
-            cbxDescuentoPorcentaje.Checked = false;
+        //private void btnLimpiar_Click(object sender, EventArgs e)
+        //{
+        //    cbxCategoria.Checked = false;
+        //    cbxMarca.Checked = false;
+        //    cbxRubro.Checked = false;
+        //    _productosParaOfertaDTO = new BindingList<ProductoDTO>();
+        //    _productosParaQuitarDeOfertaDTO = new BindingList<ProductoDTO>();
+        //    cantidadTotalEnOferta = 0.0m;
+        //    cantidadTotalFueraOferta = 0.0m;
+        //    lblCantidadProductos.Text = "0";
+        //    lblCantidadProductosQuitados.Text = "0";
+        //    txtDescripcion.Text = string.Empty;
+        //    txtDetalle.Text = string.Empty;
+        //    txtMontoPorcentaje.Text = string.Empty;
+        //    txtMarca.Text = string.Empty;
+        //    txtRubro.Text = string.Empty;
+        //    txtCategoria.Text = string.Empty;
+        //    cbxDescuentoPesos.Checked = false;
+        //    cbxDescuentoPorcentaje.Checked = false;
 
-            ActualizarGrillas();
-        }
+        //    ActualizarGrillas();
+        //}
 
         private void cbxDescuentoPesos_CheckedChanged(object sender, EventArgs e)
         {
@@ -694,26 +644,26 @@ namespace Presentacion.Core.Oferta
             cbxDescuentoPesos.Checked = false;
         }
 
-        private void cbxComboProductos_CheckedChanged(object sender, EventArgs e)
-        {
-            cbxCategoria.Enabled = !cbxComboProductos.Checked;
-            cbxMarca.Enabled = !cbxComboProductos.Checked;
-            cbxRubro.Enabled = !cbxComboProductos.Checked;
-            cbxDescuentoPorcentaje.Enabled = !cbxComboProductos.Checked;
-            cbxDescuentoPesos.Checked = cbxComboProductos.Checked;
-            cbxDescuentoPesos.Enabled = !cbxComboProductos.Checked;
-            btnCargarProductosAlcanzados.Enabled = !cbxComboProductos.Checked;
-            btnCargarProducto.Enabled = cbxComboProductos.Checked;
-            dgvProductosQuitados.Enabled = !cbxComboProductos.Checked;
-            btnDevolverAOferta.Enabled = !cbxComboProductos.Checked;
-            lblTotalPrecioCosto.Enabled = cbxComboProductos.Checked;
-            lblTotalPrecioCosto.Visible = cbxComboProductos.Checked;
-            txtPrecioCostoAcumulado.Visible = cbxComboProductos.Checked;
-            lblTotalPrecioReal.Enabled = cbxComboProductos.Checked;
-            lblTotalPrecioReal.Visible = cbxComboProductos.Checked;
-            txtPrecioVentaReal.Visible = cbxComboProductos.Checked;
+        //private void cbxComboProductos_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    cbxCategoria.Enabled = !cbxComboProductos.Checked;
+        //    cbxMarca.Enabled = !cbxComboProductos.Checked;
+        //    cbxRubro.Enabled = !cbxComboProductos.Checked;
+        //    cbxDescuentoPorcentaje.Enabled = !cbxComboProductos.Checked;
+        //    cbxDescuentoPesos.Checked = cbxComboProductos.Checked;
+        //    cbxDescuentoPesos.Enabled = !cbxComboProductos.Checked;
+        //    btnCargarProductosAlcanzados.Enabled = !cbxComboProductos.Checked;
+        //    btnCargarProducto.Enabled = cbxComboProductos.Checked;
+        //    dgvProductosQuitados.Enabled = !cbxComboProductos.Checked;
+        //    btnDevolverAOferta.Enabled = !cbxComboProductos.Checked;
+        //    lblTotalPrecioCosto.Enabled = cbxComboProductos.Checked;
+        //    lblTotalPrecioCosto.Visible = cbxComboProductos.Checked;
+        //    txtPrecioCostoAcumulado.Visible = cbxComboProductos.Checked;
+        //    lblTotalPrecioReal.Enabled = cbxComboProductos.Checked;
+        //    lblTotalPrecioReal.Visible = cbxComboProductos.Checked;
+        //    txtPrecioVentaReal.Visible = cbxComboProductos.Checked;
 
-        }
+        //}
 
         private void btnCargarProducto_Click(object sender, EventArgs e)
         {
