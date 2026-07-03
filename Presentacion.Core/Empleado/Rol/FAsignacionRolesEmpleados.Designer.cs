@@ -110,8 +110,9 @@
             Controls.Add(dgvRolesAsignados);
             Controls.Add(dgvRolesDisponibles);
             Controls.Add(cbxEmpleado);
+            ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FAsignacionRolesEmpleados";
-            Text = "FAsignacionRolesEmpleados";
+            Text = "Asignacion Roles a Empleados";
             Load += FAsignacionRolesEmpleados_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvRolesDisponibles).EndInit();

@@ -197,7 +197,7 @@
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = SystemColors.Window;
             dataGridViewCellStyle2.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ActiveCaptionText;
+            dataGridViewCellStyle2.ForeColor = Color.FromArgb(31, 26, 43);
             dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
@@ -797,9 +797,10 @@
             AutoSize = true;
             ClientSize = new Size(1125, 818);
             Controls.Add(tableLayoutPanel8);
+            ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FVenta";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "FVenta";
+            Text = "Venta";
             WindowState = FormWindowState.Maximized;
             Load += FVenta_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();

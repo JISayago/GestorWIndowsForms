@@ -224,7 +224,7 @@
             ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FCuentaCorrienteABM";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "FCuentaCorrienteABM";
+            Text = "ABM Cuenta Corriente";
             Load += FCuentaCorrienteABM_Load;
             Controls.SetChildIndex(lblccorriente, 0);
             Controls.SetChildIndex(lblSaldo, 0);

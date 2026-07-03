@@ -273,8 +273,9 @@
             Controls.Add(lblApellido);
             Controls.Add(lblFechaIngreso);
             Controls.Add(lblLegajo);
+            ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FEmpleadoABM";
-            Text = "FEmpleadoABM";
+            Text = "ABM Empleado";
             Controls.SetChildIndex(lblLegajo, 0);
             Controls.SetChildIndex(lblFechaIngreso, 0);
             Controls.SetChildIndex(lblApellido, 0);

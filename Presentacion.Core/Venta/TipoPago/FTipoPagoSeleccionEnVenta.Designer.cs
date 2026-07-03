@@ -120,8 +120,9 @@
             Controls.Add(btnCredito);
             Controls.Add(btnTransferencia);
             Controls.Add(btnEfectivo);
+            ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FTipoPagoSeleccionEnVenta";
-            Text = "FTipoPagoSeleccionEnVenta";
+            Text = "Seleccion Tipo Pago";
             Load += FTipoPagoSeleccionEnVenta_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);

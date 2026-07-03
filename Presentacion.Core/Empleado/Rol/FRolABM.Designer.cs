@@ -102,8 +102,9 @@
             Controls.Add(lblNombre);
             Controls.Add(lblDescripcion);
             Controls.Add(lblCodigoRol);
+            ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FRolABM";
-            Text = "FRolABM";
+            Text = "ABM Rol";
             Load += FRolABM_Load;
             Controls.SetChildIndex(lblCodigoRol, 0);
             Controls.SetChildIndex(lblDescripcion, 0);
