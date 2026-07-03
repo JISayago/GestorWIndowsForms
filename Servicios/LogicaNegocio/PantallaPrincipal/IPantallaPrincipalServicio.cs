@@ -10,9 +10,13 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
 {
     public interface IPantallaPrincipalServicio
     {
-        List<NotificacionDTO> NotifiacionesProductosVencidos(int cantidadDiasABuscar);
-        //List<NotificacionDTO> NotifiacionesOfertasVencidas(int cantidadDiasABuscar);
-        List<NotificacionDTO> NotifiacionesCtaCteVencidas(int cantidadDiasABuscar);
+        List<NotificacionDTO> ObtenerNotificacionesProdutosVencidos();
+        List<NotificacionDTO> ObtenerNotificacionesCtaCteVencidas();
+        List<NotificacionDTO> ObtenerNotificacionesOfertasVencidas();
+        void NotifiacionesProductosVencidos();
+        void NotificacionesOfertasVencidas();
+        void NotificacionesCtaCteVencidas();
+        void MarcarNotificacionComoLeida(long notificacionId);
         DatosTurnoDTO ObtenerDatosTurno(long? cajaId, long usuarioId);
         DatosTurnoDTO ObtenerActualizarDatosCaja(long? cajaId, DatosTurnoDTO datosTurno);
         void GuardarNotasRapidas(string textoLimpio, string nombreUsuario);

@@ -1,4 +1,5 @@
-﻿using AccesoDatos.Entidades;
+﻿using AccesoDatos;
+using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.LogicaNegocio.Caja;
 using Servicios.LogicaNegocio.CuentaCorriente;
@@ -36,68 +37,279 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             //_cajaServicio = new CajaServicio();
         }
 
-        public List<NotificacionDTO> NotifiacionesProductosVencidos(int cantidadDiasABuscar)
+        private int CalcularNivelUrgencia(DateTime? fechaVencimiento)
         {
-            //usar el service de lotes para obtener los productos que estan vencidos y crear una notificacion para cada uno de ellos
-            var productosNotificar = _loteServicio.ObtenerLotesVencidos(cantidadDiasABuscar);
-
-            return productosNotificar.Select(p => new NotificacionDTO
+            if (!fechaVencimiento.HasValue)
             {
-                NotificacionId = p.Id, //o algun id unico para la notificacion
-                Titulo = $"Producto: {p.NombreProducto}  ",
-                Descripcion = $"Lote: {p.NumeroLote} con fecha de vencimiento: {p.FechaVencimiento?.ToString("dd/MM/yyyy")}.",
-                FechaNotificacion = DateTime.Now,
-                Leida = false,
-                NivelUrgencia = (int)(p.FechaVencimiento.HasValue
-                    ? (p.FechaVencimiento.Value.Date < DateTime.Now.Date
-                        ? Helpers.Sistema.NivelUrgencia.Alta
-                        : (p.FechaVencimiento.Value.Date <= DateTime.Now.Date.AddDays(3)
-                            ? Helpers.Sistema.NivelUrgencia.Media
-                            : Helpers.Sistema.NivelUrgencia.Baja))
-                    : Helpers.Sistema.NivelUrgencia.Baja) // Si no tiene fecha de vencimiento, se considera baja urgencia
-            }).ToList();
+                return (int)Helpers.Sistema.NivelUrgencia.Baja;
+            }
+
+            int diasRestantes = (fechaVencimiento.Value.Date - DateTime.Now.Date).Days;
+
+            if (diasRestantes < 0)
+            {
+                return (int)Helpers.Sistema.NivelUrgencia.Alta; // Ya se venció
+            }
+            if (diasRestantes <= 3)
+            {
+                return (int)Helpers.Sistema.NivelUrgencia.Media; // Vence en 3 días o menos
+            }
+
+            return (int)Helpers.Sistema.NivelUrgencia.Baja; // Falta más de una semana
         }
 
-        //public List<NotificacionDTO> NotifiacionesOfertasVencidas(int cantidadDiasABuscar)
-        //{
-        //    var promocionesNotificar = _ofertaServicio.ObtenerOfertasVencidas(cantidadDiasABuscar);
-
-        //    return promocionesNotificar.Select(p => new NotificacionDTO
-        //    {
-        //        NotificacionId = p.OfertaDescuentoId, // o algún ID único para la notificación
-        //        Titulo = "Oferta Vencida",
-        //        Descripcion = $"La oferta {p.Codigo} - {p.Descripcion} venció el {p.FechaFin.Value:dd/MM/yyyy}.",
-        //        FechaNotificacion = DateTime.Now,
-        //        Leida = false,
-        //        NivelUrgencia = (int)(p.FechaFin.HasValue
-        //            ? (p.FechaFin.Value.Date < DateTime.Now.Date
-        //                ? Helpers.Sistema.NivelUrgencia.Alta
-        //                : (p.FechaFin.Value.Date <= DateTime.Now.Date.AddDays(3)
-        //                    ? Helpers.Sistema.NivelUrgencia.Media
-        //                    : Helpers.Sistema.NivelUrgencia.Baja))
-        //            : Helpers.Sistema.NivelUrgencia.Baja) // Si no tiene fecha de vencimiento, se considera baja urgencia
-        //    }).ToList();
-        //}
-
-        public List<NotificacionDTO> NotifiacionesCtaCteVencidas(int cantidadDiasABuscar)
+        public List<NotificacionDTO> ObtenerNotificacionesProdutosVencidos()
         {
-            var productosNotificar = _cuentaCorrienteServicio.ObtenerCtaCteVencidas(cantidadDiasABuscar);
-
-            return productosNotificar.Select(p => new NotificacionDTO
+            var notis = new List<Notificacion>();
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
             {
-                NotificacionId = p.CuentaCorrienteId, //o algun id unico para la notificacion
-                Titulo = $"Nombre Ctate: {p.NombreCuentaCorriente}  ",
-                Descripcion = $"Del Clientes: {p.NombreCliente} con fecha de vencimiento: {p.FechaVencimiento?.ToString("dd/MM/yyyy")}.",
-                FechaNotificacion = DateTime.Now,
-                Leida = false,
-                NivelUrgencia = (int)(p.FechaVencimiento.HasValue
-                    ? (p.FechaVencimiento.Value.Date < DateTime.Now.Date
-                        ? Helpers.Sistema.NivelUrgencia.Alta
-                        : (p.FechaVencimiento.Value.Date <= DateTime.Now.Date.AddDays(3)
-                            ? Helpers.Sistema.NivelUrgencia.Media
-                            : Helpers.Sistema.NivelUrgencia.Baja))
-                    : Helpers.Sistema.NivelUrgencia.Baja) // Si no tiene fecha de vencimiento, se considera baja urgencia
+                notis = context.Notificaciones
+                    .AsNoTracking()
+                    .Where(x => x.EstaLeida != true && x.Titulo.Contains("Lote por vencer:"))
+                    .OrderByDescending(n => n.FechaCreacion)
+                    .ToList();
+            }
+
+            if (notis == null || !notis.Any())
+            {
+                return new List<NotificacionDTO>();
+            }
+
+            var resultadoDTO = notis.Select(x => new NotificacionDTO
+            {
+                NotificacionId = x.NotificacionId,
+                Titulo = x.Titulo,
+                Descripcion = x.Descripcion,
+                Mensaje = x.Mensaje,
+                FechaCreacion = x.FechaCreacion,
+                Leida = x.EstaLeida,
+                FechaNotificacion = x.FechaVencimiento ?? DateTime.Now,
+                NivelUrgencia = CalcularNivelUrgencia(x.FechaVencimiento)
             }).ToList();
+
+            return resultadoDTO;
+        }
+
+        public void NotifiacionesProductosVencidos()
+        {
+            // 1. Obtenemos los lotes por vencer desde el servicio
+            var productosNotificar = _loteServicio.ObtenerLotesPorVencer(7);
+
+            if (productosNotificar == null || !productosNotificar.Any()) return;
+
+            // 2. Validar cuáles notificaciones ya existen en la BD por su Título
+            var titulosPotenciales = productosNotificar
+                .Select(p => $"Lote por vencer: {p.NumeroLote} ")
+                .Distinct()
+                .ToList();
+
+            List<string> titulosExistentes;
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                titulosExistentes = context.Notificaciones
+                    .Where(n => titulosPotenciales.Contains(n.Titulo))
+                    .Select(n => n.Titulo)
+                    .ToList();
+            }
+
+            // Filtramos la lista original para quedarnos solo con los que NO existen en la BD
+            var productosNuevos = productosNotificar
+                .Where(p => !titulosExistentes.Contains($"Lote por vencer: {p.NumeroLote} "))
+                .ToList();
+
+            if (!productosNuevos.Any()) return;
+
+            // 3. Mapeamos DIRECTO a la entidad Notificacion (Chau paso intermedio innecesario)
+            var entidadesBD = productosNuevos.Select(p => new Notificacion
+            {
+                Titulo = $"Lote por vencer: {p.NumeroLote} ",
+                Descripcion = $"El producto {p.NombreProducto} - Registra vencimiento el {p.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "N/A"}.",
+                Mensaje = p.EstaVencidoDescripcion,
+                FechaCreacion = DateTime.Now,
+                FechaVencimiento = p.FechaVencimiento,
+                EstaLeida = false,
+                EmpleadoId = null // Ahora que es nullable, entra como alerta general del sistema
+            }).ToList();
+
+            // 4. Persistencia en la base de datos
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                context.AddRange(entidadesBD);
+                context.SaveChanges();
+            }
+        }
+
+        public List<NotificacionDTO> ObtenerNotificacionesOfertasVencidas()
+        {
+            var notis = new List<Notificacion>();
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                notis = context.Notificaciones
+                    .AsNoTracking()
+                    .Where(x => x.EstaLeida != true && x.Titulo.Contains("Oferta vencida:"))
+                    .OrderByDescending(n => n.FechaCreacion)
+                    .ToList();
+            }
+
+            if (notis == null || !notis.Any())
+            {
+                return new List<NotificacionDTO>();
+            }
+
+            var resultadoDTO = notis.Select(x => new NotificacionDTO
+            {
+                NotificacionId = x.NotificacionId,
+                Titulo = x.Titulo,
+                Descripcion = x.Descripcion,
+                Mensaje = x.Mensaje,
+                FechaCreacion = x.FechaCreacion,
+                Leida = x.EstaLeida,
+                FechaNotificacion = x.FechaVencimiento ?? DateTime.Now,
+                NivelUrgencia = CalcularNivelUrgencia(x.FechaVencimiento) // Reutiliza tu lógica centralizada
+            }).ToList();
+
+            return resultadoDTO;
+        }
+
+        public void NotificacionesOfertasVencidas()
+        {
+            // 1. Obtenemos las ofertas vencidas desde el servicio
+            var promocionesNotificar = _ofertaServicio.ObtenerOfertasVencidas(7);
+
+            if (promocionesNotificar == null || !promocionesNotificar.Any()) return;
+
+            // 2. Generamos títulos únicos basados en el código de oferta para controlar duplicados
+            var titulosPotenciales = promocionesNotificar
+                .Select(p => $"Oferta vencida: {p.Codigo}")
+                .Distinct()
+                .ToList();
+
+            List<string> titulosExistentes;
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                titulosExistentes = context.Notificaciones
+                    .Where(n => titulosPotenciales.Contains(n.Titulo))
+                    .Select(n => n.Titulo)
+                    .ToList();
+            }
+
+            // Filtramos para dejar solo las que no se guardaron todavía
+            var promocionesNuevas = promocionesNotificar
+                .Where(p => !titulosExistentes.Contains($"Oferta vencida: {p.Codigo}"))
+                .ToList();
+
+            if (!promocionesNuevas.Any()) return;
+
+            // 3. Mapeo a la entidad base de la base de datos
+            var entidadesBD = promocionesNuevas.Select(p => new Notificacion
+            {
+                Titulo = $"Oferta vencida: {p.Codigo}",
+                Descripcion = $"La oferta {p.Codigo} - {p.Descripcion} venció el {p.FechaFin?.ToString("dd/MM/yyyy") ?? "N/A"}.",
+                Mensaje = "La promoción ha cumplido su fecha límite de vigencia.",
+                FechaCreacion = DateTime.Now,
+                FechaVencimiento = p.FechaFin, // Seteamos el DateTime? para calcular la urgencia después
+                EstaLeida = false,
+                EmpleadoId = null // Alerta general del sistema
+            }).ToList();
+
+            // 4. Guardamos en lote
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                context.AddRange(entidadesBD);
+                context.SaveChanges();
+            }
+        }
+
+        public List<NotificacionDTO> ObtenerNotificacionesCtaCteVencidas()
+        {
+            var notis = new List<Notificacion>();
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                notis = context.Notificaciones
+                    .AsNoTracking()
+                    .Where(x => x.EstaLeida != true && x.Titulo.Contains("CtaCte vencida:"))
+                    .OrderByDescending(n => n.FechaCreacion)
+                    .ToList();
+            }
+
+            if (notis == null || !notis.Any())
+            {
+                return new List<NotificacionDTO>();
+            }
+
+            var resultadoDTO = notis.Select(x => new NotificacionDTO
+            {
+                NotificacionId = x.NotificacionId,
+                Titulo = x.Titulo,
+                Descripcion = x.Descripcion,
+                Mensaje = x.Mensaje,
+                FechaCreacion = x.FechaCreacion,
+                Leida = x.EstaLeida,
+                FechaNotificacion = x.FechaVencimiento ?? DateTime.Now,
+                NivelUrgencia = CalcularNivelUrgencia(x.FechaVencimiento)
+            }).ToList();
+
+            return resultadoDTO;
+        }
+
+        public void NotificacionesCtaCteVencidas()
+        {
+            // 1. Obtenemos las cuentas vencidas desde el servicio
+            var cuentasNotificar = _cuentaCorrienteServicio.ObtenerCtaCteVencidas(7);
+
+            if (cuentasNotificar == null || !cuentasNotificar.Any()) return;
+
+            // 2. Títulos únicos por nombre de cuenta corriente
+            var titulosPotenciales = cuentasNotificar
+                .Select(p => $"CtaCte vencida: {p.NombreCuentaCorriente}")
+                .Distinct()
+                .ToList();
+
+            List<string> titulosExistentes;
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                titulosExistentes = context.Notificaciones
+                    .Where(n => titulosPotenciales.Contains(n.Titulo))
+                    .Select(n => n.Titulo)
+                    .ToList();
+            }
+
+            var cuentasNuevas = cuentasNotificar
+                .Where(p => !titulosExistentes.Contains($"CtaCte vencida: {p.NombreCuentaCorriente}"))
+                .ToList();
+
+            if (!cuentasNuevas.Any()) return;
+
+            // 3. Mapeo a la entidad limpia
+            var entidadesBD = cuentasNuevas.Select(p => new Notificacion
+            {
+                Titulo = $"CtaCte vencida: {p.NombreCuentaCorriente}",
+                Descripcion = $"Cuenta corriente de {p.NombreCliente} registra fecha de vencimiento el {p.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "N/A"}.",
+                Mensaje = "Revisar saldo pendiente e historial de pagos del cliente.",
+                FechaCreacion = DateTime.Now,
+                FechaVencimiento = p.FechaVencimiento,
+                EstaLeida = false,
+                EmpleadoId = null // Alerta general de administración
+            }).ToList();
+
+            // 4. Persistencia
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                context.AddRange(entidadesBD);
+                context.SaveChanges();
+            }
+        }
+        public void MarcarNotificacionComoLeida(long notificacionId)
+        {
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                var notificacion = context.Notificaciones.FirstOrDefault(n => n.NotificacionId == notificacionId);
+                if (notificacion != null)
+                {
+                    notificacion.EstaLeida = true;
+                    context.SaveChanges();
+                }
+            }
         }
 
         public DatosTurnoDTO ObtenerDatosTurno(long? cajaId, long usuarioId)

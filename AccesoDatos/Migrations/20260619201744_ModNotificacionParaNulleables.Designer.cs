@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20260619201744_ModNotificacionParaNulleables")]
+    partial class ModNotificacionParaNulleables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -708,6 +711,109 @@ namespace AccesoDatos.Migrations
                     b.ToTable("Notificaciones", (string)null);
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.OfertaDescuento", b =>
+                {
+                    b.Property<long>("OfertaDescuentoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_OfertaDescuento");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("OfertaDescuentoId"));
+
+                    b.Property<decimal?>("CantidadLimiteDeStock")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("cantidad_limite_de_stock");
+
+                    b.Property<decimal?>("CantidadProductosDentroOferta")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("cantidad_productos_dentro_oferta");
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)")
+                        .HasColumnName("codigo");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("descripcion");
+
+                    b.Property<decimal?>("DescuentoTotalFinal")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("descuento_total_final");
+
+                    b.Property<string>("Detalle")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("detalle");
+
+                    b.Property<bool>("EsUnSoloProducto")
+                        .HasColumnType("bit")
+                        .HasColumnName("es_un_solo_producto");
+
+                    b.Property<bool>("EstaActiva")
+                        .HasColumnType("bit")
+                        .HasColumnName("esta_activa");
+
+                    b.Property<DateTime?>("FechaFin")
+                        .HasColumnType("date")
+                        .HasColumnName("fecha_fin");
+
+                    b.Property<DateTime>("FechaInicio")
+                        .HasColumnType("date")
+                        .HasColumnName("fecha_inicio");
+
+                    b.Property<string>("GrupoNombre")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("grupo_nombre");
+
+                    b.Property<long?>("IdCategoria")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_categoria");
+
+                    b.Property<long?>("IdMarca")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_marca");
+
+                    b.Property<long?>("IdRubro")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_rubro");
+
+                    b.Property<decimal?>("PorcentajeDescuento")
+                        .HasColumnType("decimal(5,2)")
+                        .HasColumnName("porcentaje_descuento");
+
+                    b.Property<decimal>("PrecioFinal")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("precio_final");
+
+                    b.Property<decimal>("PrecioOriginal")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("precio_original");
+
+                    b.Property<bool>("TieneLimiteDeStock")
+                        .HasColumnType("bit")
+                        .HasColumnName("tiene_limite_de_stock");
+
+                    b.Property<bool>("esOfertaPorGrupo")
+                        .HasColumnType("bit")
+                        .HasColumnName("es_oferta_por_grupo");
+
+                    b.HasKey("OfertaDescuentoId");
+
+                    b.HasIndex("IdCategoria");
+
+                    b.HasIndex("IdMarca");
+
+                    b.HasIndex("IdRubro");
+
+                    b.ToTable("OfertasDescuentos", (string)null);
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.Permiso", b =>
                 {
                     b.Property<long>("PermisoId")
@@ -887,37 +993,40 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.ProductosEnOfertaDescuentos", b =>
                 {
+                    b.Property<long>("ProductosEnOfertaDescuentosId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_ProductosEnOfertaDescuento");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ProductosEnOfertaDescuentosId"));
+
+                    b.Property<decimal>("Cantidad")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("cantidad");
+
+                    b.Property<decimal>("CantidadVendidaPorLimite")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("cantidad_vendida_por_limite");
+
+                    b.Property<long>("OfertaId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_OfertaDescuento");
+
+                    b.Property<decimal>("PrecioConDescuento")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("precio_con_descuento");
+
+                    b.Property<decimal>("PrecioOrginal")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("precio_original");
+
                     b.Property<long>("ProductoId")
                         .HasColumnType("bigint")
                         .HasColumnName("id_Producto");
 
-                    b.Property<long>("OfertaDescuentoId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_OfertaDescuento");
+                    b.HasKey("ProductosEnOfertaDescuentosId");
 
-                    b.Property<decimal>("CantidadRequerida")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("cantidad_requerida");
-
-                    b.Property<decimal?>("LimiteVentaProducto")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("limite_venta_producto");
-
-                    b.Property<decimal>("PrecioCostoBase")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_costo_base");
-
-                    b.Property<decimal?>("PrecioOfertaBase")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_oferta_base");
-
-                    b.Property<decimal>("PrecioVentaBase")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_venta_base");
-
-                    b.HasKey("ProductoId", "OfertaDescuentoId");
-
-                    b.HasIndex("OfertaDescuentoId");
+                    b.HasIndex("OfertaId");
 
                     b.HasIndex("ProductoId");
 
@@ -1253,96 +1362,6 @@ namespace AccesoDatos.Migrations
                     b.ToTable("VentaPagoDetalles", (string)null);
                 });
 
-            modelBuilder.Entity("OfertaDescuento", b =>
-                {
-                    b.Property<long>("OfertaDescuentoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_OfertaDescuento");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("OfertaDescuentoId"));
-
-                    b.Property<string>("Codigo")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("codigo");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("descripcion");
-
-                    b.Property<bool>("EstaActiva")
-                        .HasColumnType("bit")
-                        .HasColumnName("esta_activa");
-
-                    b.Property<DateTime?>("FechaFin")
-                        .HasColumnType("date")
-                        .HasColumnName("fecha_fin");
-
-                    b.Property<DateTime>("FechaInicio")
-                        .HasColumnType("date")
-                        .HasColumnName("fecha_inicio");
-
-                    b.Property<decimal?>("PorcentajeDescuento")
-                        .HasColumnType("decimal(5,2)")
-                        .HasColumnName("porcentaje_descuento");
-
-                    b.Property<decimal?>("PrecioFinal")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("precio_final");
-
-                    b.Property<int>("TipoOferta")
-                        .HasColumnType("int")
-                        .HasColumnName("tipo_oferta");
-
-                    b.HasKey("OfertaDescuentoId");
-
-                    b.ToTable("OfertasDescuentos", (string)null);
-                });
-
-            modelBuilder.Entity("OfertaProductoEstadistica", b =>
-                {
-                    b.Property<long>("OfertaDescuentoId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_OfertaDescuento");
-
-                    b.Property<long>("ProductoId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_Producto");
-
-                    b.Property<decimal>("CantidadVendida")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("cantidad_vendida");
-
-                    b.Property<DateTime?>("FechaUltimaVenta")
-                        .HasColumnType("datetime")
-                        .HasColumnName("fecha_ultima_venta");
-
-                    b.Property<decimal>("TotalCostoAcumulado")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("total_costo_acumulado");
-
-                    b.Property<decimal>("TotalOfertaAcumulado")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("total_oferta_acumulado");
-
-                    b.Property<decimal>("TotalVentaAcumulado")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("total_venta_acumulado");
-
-                    b.HasKey("OfertaDescuentoId", "ProductoId");
-
-                    b.HasIndex("ProductoId");
-
-                    b.HasIndex("OfertaDescuentoId", "ProductoId")
-                        .IsUnique();
-
-                    b.ToTable("OfertaProductoEstadisticas", (string)null);
-                });
-
             modelBuilder.Entity("AccesoDatos.Entidades.CategoriaProducto", b =>
                 {
                     b.HasOne("AccesoDatos.Entidades.Categoria", "Categoria")
@@ -1433,7 +1452,7 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.DetallesVenta", b =>
                 {
-                    b.HasOne("OfertaDescuento", "OfertaDescuento")
+                    b.HasOne("AccesoDatos.Entidades.OfertaDescuento", "OfertaDescuento")
                         .WithMany("DetallesVentas")
                         .HasForeignKey("IdOfertaDescuento")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -1518,6 +1537,30 @@ namespace AccesoDatos.Migrations
                     b.Navigation("Empleado");
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.OfertaDescuento", b =>
+                {
+                    b.HasOne("AccesoDatos.Entidades.Categoria", "Categoria")
+                        .WithMany()
+                        .HasForeignKey("IdCategoria")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("AccesoDatos.Entidades.Marca", "Marca")
+                        .WithMany()
+                        .HasForeignKey("IdMarca")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("AccesoDatos.Entidades.Rubro", "Rubro")
+                        .WithMany()
+                        .HasForeignKey("IdRubro")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Categoria");
+
+                    b.Navigation("Marca");
+
+                    b.Navigation("Rubro");
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.Producto", b =>
                 {
                     b.HasOne("AccesoDatos.Entidades.Marca", "Marca")
@@ -1539,19 +1582,19 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.ProductosEnOfertaDescuentos", b =>
                 {
-                    b.HasOne("OfertaDescuento", "OfertaDescuento")
+                    b.HasOne("AccesoDatos.Entidades.OfertaDescuento", "Oferta")
                         .WithMany("Productos")
-                        .HasForeignKey("OfertaDescuentoId")
+                        .HasForeignKey("OfertaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("AccesoDatos.Entidades.Producto", "Producto")
-                        .WithMany("ProductosEnOfertaDescuentos")
+                        .WithMany()
                         .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("OfertaDescuento");
+                    b.Navigation("Oferta");
 
                     b.Navigation("Producto");
                 });
@@ -1670,25 +1713,6 @@ namespace AccesoDatos.Migrations
                     b.Navigation("VentaLibre");
                 });
 
-            modelBuilder.Entity("OfertaProductoEstadistica", b =>
-                {
-                    b.HasOne("OfertaDescuento", "OfertaDescuento")
-                        .WithMany("Estadisticas")
-                        .HasForeignKey("OfertaDescuentoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AccesoDatos.Entidades.Producto", "Producto")
-                        .WithMany("EstadisticasOferta")
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("OfertaDescuento");
-
-                    b.Navigation("Producto");
-                });
-
             modelBuilder.Entity("AccesoDatos.Entidades.Categoria", b =>
                 {
                     b.Navigation("CategoriasProductos");
@@ -1735,6 +1759,13 @@ namespace AccesoDatos.Migrations
                     b.Navigation("Productos");
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.OfertaDescuento", b =>
+                {
+                    b.Navigation("DetallesVentas");
+
+                    b.Navigation("Productos");
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.Producto", b =>
                 {
                     b.Navigation("CategoriasProductos");
@@ -1743,11 +1774,7 @@ namespace AccesoDatos.Migrations
 
                     b.Navigation("DetallesVentas");
 
-                    b.Navigation("EstadisticasOferta");
-
                     b.Navigation("Lotes");
-
-                    b.Navigation("ProductosEnOfertaDescuentos");
                 });
 
             modelBuilder.Entity("AccesoDatos.Entidades.Rol", b =>
@@ -1774,15 +1801,6 @@ namespace AccesoDatos.Migrations
             modelBuilder.Entity("AccesoDatos.Entidades.VentaLibre", b =>
                 {
                     b.Navigation("VentaPagoDetalles");
-                });
-
-            modelBuilder.Entity("OfertaDescuento", b =>
-                {
-                    b.Navigation("DetallesVentas");
-
-                    b.Navigation("Estadisticas");
-
-                    b.Navigation("Productos");
                 });
 #pragma warning restore 612, 618
         }

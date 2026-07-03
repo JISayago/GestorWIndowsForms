@@ -43,6 +43,7 @@ namespace AccesoDatos
         public DbSet<NotaRapida> NotasRapidas { get; set; }
         public DbSet<Permiso> Permisos { get; set; }
         public DbSet<RolPermiso> RolesPermisos { get; set; }
+        public DbSet<Notificacion> Notificaciones { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1295,9 +1296,9 @@ namespace AccesoDatos
                         .HasColumnName("id_notificacion")
                         .ValueGeneratedOnAdd();
 
-                    entity.Property(e => e.EmpleadoId)
-                        .HasColumnName("empleado_id")
-                        .IsRequired();
+                entity.Property(e => e.EmpleadoId)
+                    .HasColumnName("empleado_id")
+                    .IsRequired(false);
 
                     entity.Property(e => e.Titulo)
                         .HasColumnName("titulo")
@@ -1314,26 +1315,31 @@ namespace AccesoDatos
                         .HasMaxLength(500)
                         .IsRequired();
 
-                    entity.Property(e => e.FechaCreacion)
-                        .HasColumnName("fecha_creacion")
-                        .HasColumnType("datetime")
-                        .IsRequired();
+                entity.Property(e => e.FechaVencimiento)
+                    .HasColumnName("fecha_vencimiento")
+                    .HasColumnType("datetime")
+                    .IsRequired(false);
 
-                    entity.Property(e => e.FechaConfirmacion)
-                        .HasColumnName("fecha_confirmacion")
-                        .HasColumnType("datetime")
-                        .IsRequired();
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnName("fecha_creacion")
+                    .HasColumnType("datetime")
+                    .IsRequired();
+
+                entity.Property(e => e.FechaConfirmacion)
+                    .HasColumnName("fecha_confirmacion")
+                    .HasColumnType("datetime")
+                    .IsRequired(false);
 
                     entity.Property(e => e.EstaLeida)
                         .HasColumnName("esta_leida")
                         .IsRequired();
 
-                    // Relación con Usuario
-                    entity.HasOne<Empleado>()
-                        .WithMany(u => u.Notificaciones)
-                        .HasForeignKey(e => e.EmpleadoId)
-                        .OnDelete(DeleteBehavior.NoAction);
-                });
+                // Relación con Usuario
+                entity.HasOne(e => e.Empleado)
+                    .WithMany(u => u.Notificaciones)
+                    .HasForeignKey(e => e.EmpleadoId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
         }
     }
 }
