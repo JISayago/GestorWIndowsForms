@@ -1,6 +1,8 @@
 ﻿using Presentacion.Core.Oferta;
+using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Helpers.Venta.Oferta;
 using Servicios.LogicaNegocio.Venta.Oferta;
 
 public partial class FOfertaConsulta : FBaseConsulta
@@ -25,28 +27,163 @@ public partial class FOfertaConsulta : FBaseConsulta
         MessageBox.Show("Seleccione la oferta que desea aplicar a la venta.");
     }
 
+    #region INIT
 
-    #region CONFIG FILTROS
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
 
-    protected override bool UsarCheck1 => false;
+        ConfigurarFormulario();
+    }
+
+    private void ConfigurarFormulario()
+    {
+        Text = _vieneDeVenta
+            ? "Seleccionar Oferta"
+            : "Consulta de Ofertas";
+    }
+
+    #endregion
+    #region FILTROS
+
+    protected override bool UsarCheck1 => true;
+    protected override bool UsarCheck2 => true;
+
+    protected override bool EsModoSoloLectura(FiltroConsulta filtro)
+    {
+        return true;
+    }
 
     protected override void ConfigurarFiltrosUI()
     {
         base.ConfigurarFiltrosUI();
 
-        ActivarFiltroFechas("Filtrar por fecha");
-    }
-
-    protected override void ActualizarTextosLabels()
+        // Buscar por
+        var opcionesBusqueda = new List<OpcionFiltro>
     {
-        base.ActualizarTextosLabels();
+        new OpcionFiltro { Texto = "Todos", Valor = "" },
+        new OpcionFiltro { Texto = "Código", Valor = "Codigo" },
+        new OpcionFiltro { Texto = "Descripción", Valor = "Descripcion" },
+        new OpcionFiltro { Texto = "Producto", Valor = "Producto" }
+    };
 
+        ActivarCombo(
+            cbx1,
+            lblcbx1,
+            opcionesBusqueda,
+            "Texto",
+            "Valor",
+            "Buscar por"
+        );
+
+        // Tipo de oferta
+        var opcionesTipoOferta = new List<OpcionFiltro>
+    {
+        new OpcionFiltro { Texto = "Todos", Valor = "" },
+        new OpcionFiltro { Texto = "Grupo", Valor = ((int)TipoOferta.Grupo).ToString() },
+        new OpcionFiltro { Texto = "Producto", Valor = ((int)TipoOferta.Producto).ToString() },
+        new OpcionFiltro { Texto = "Combo", Valor = ((int)TipoOferta.Combo).ToString() },
+        new OpcionFiltro { Texto = "2x1", Valor = ((int)TipoOferta.DosPorUno).ToString() }
+    };
+
+        ActivarCombo(
+            cbx2,
+            lblcbx2,
+            opcionesTipoOferta,
+            "Texto",
+            "Valor",
+            "Tipo de Oferta"
+        );
+
+        // Fecha
+        var opcionFecha = new List<OpcionFiltro>
+    {
+        new OpcionFiltro { Texto = "Todos", Valor = "" },
+        new OpcionFiltro { Texto = "Fecha de Inicio", Valor = "FechaInicio" },
+        new OpcionFiltro { Texto = "Fecha de Fin", Valor = "FechaFin" }
+    };
+
+        ActivarCombo(
+            cbx3,
+            lblcbx3,
+            opcionFecha,
+            "Texto",
+            "Valor",
+            "Fecha"
+        );
+
+        ActivarFiltroFechas("Filtrar por fecha");
+
+        ActivarCheck(chkBool1, "Ver ofertas inactivas");
+        ActivarCheck(chkBool2, "Ver ofertas (últimos 6 meses)");
+
+        cbx1.SelectedValue = "";
+        cbx2.SelectedValue = "";
+        cbx3.SelectedValue = "";
     }
 
+    protected override string TextoLblBuscar
+    => "Buscar Oferta:";
+
+    protected override string TextoLblCbx1
+        => "Buscar por";
+
+    protected override string TextoLblCbx2
+        => "Tipo de Oferta";
+
+    protected override string TextoLblCbx3
+        => "Fecha";
+
+    protected override string TextoTitular
+        => "Listado de Ofertas";
     #endregion
-
     #region ACCIONES DINAMICAS
+    protected override void AccionCheck1()
+    {
+        if (chkBool1.Checked)
+        {
+            _actualizandoFiltros = true;
+            chkBool2.Checked = false;
+            _actualizandoFiltros = false;
 
+            LimpiarFiltrosParaTodos();
+        }
+
+        paginaActual = 1;
+    }
+
+    protected override void AccionCheck2()
+    {
+        if (chkBool2.Checked)
+        {
+            _actualizandoFiltros = true;
+            chkBool1.Checked = false;
+            _actualizandoFiltros = false;
+
+            LimpiarFiltrosParaTodos();
+        }
+
+        paginaActual = 1;
+    }
+    private void LimpiarFiltrosParaTodos()
+    {
+        _actualizandoFiltros = true;
+
+        txtBuscar.Clear();
+
+        if (cbx1.Enabled)
+            cbx1.SelectedIndex = 0;
+
+        if (cbx2.Enabled)
+            cbx2.SelectedIndex = 0;
+
+        if (cbx3.Enabled)
+            cbx3.SelectedIndex = 0;
+
+        chkUsarFecha.Checked = false;
+
+        _actualizandoFiltros = false;
+    }
     protected override void ConfigurarAccionesPersonalizadas()
     {
         if (activarDesactivar)

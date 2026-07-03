@@ -1446,7 +1446,79 @@ namespace Presentacion.Core.Oferta
 }
         private void btnLimpiarCampos_Click(object sender, EventArgs e)
         {
+            var respuesta = MessageBox.Show(
+                "Se perderán todos los datos cargados.\n\n¿Desea continuar?",
+                "Limpiar formulario",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
 
+            if (respuesta != DialogResult.Yes)
+                return;
+
+            LimpiarFormulario();
+        }
+        private void LimpiarFormulario()
+        {
+            _tipoOferta = TipoOferta.Grupo;
+
+            _productoId = null;
+            _prefijoCodigoOferta = null;
+            _codigoOferta = string.Empty;
+
+            _descripcionMarca = string.Empty;
+            _descripcionRubro = string.Empty;
+            _descripcionCategorias.Clear();
+
+            cantidadTotalEnOferta = 0;
+            cantidadTotalFueraOferta = 0;
+
+            _actualizandoDescuento = true;
+            txtPorcentajeDescuento.Clear();
+            txtPrecioFinal.Clear();
+            _actualizandoDescuento = false;
+
+            txtCategorias.Text = _descripcionCategorias.ToString();
+            txtMarca.Text = _descripcionMarca;
+            txtRubro.Text = _descripcionRubro;
+
+            LimpiarCargaPorGrupo();
+            LimpiarDatosGrilla();
+            LimpiarCodigoYDescripcion();
+
+            ResetearFechas();
+            ResetearStock();
+            ResetearResumen();
+
+            RefrescarOferta();
+        }
+        private void ResetearFechas()
+        {
+            FInicio = DateTime.Now;
+            FFin = DateTime.Now.AddDays(1);
+
+            dtpFechaInicio.Value = FInicio;
+            dtpFechaFin.Value = FFin;
+        }
+
+        private void ResetearStock()
+        {
+            _usarLimiteStock = false;
+            _limiteStock = null;
+
+            cbxLimiteCumplirStock.Checked = false;
+            txtLimiteStock.Clear();
+            txtLimiteStock.Enabled = false;
+        }
+
+        private void ResetearResumen()
+        {
+            lblNumeroProductoAfectados.Text = "0";
+            lblNumeroProductoQuitados.Text = "0";
+
+            lblTotalAcumuladoReal.Text = "Monto acumulado de precio Costo: $0,00";
+            lblTotalAcumuladoVenta.Text = "Monto acumulado de precio Venta: $0,00";
+            lblTotalFinal.Text = "Sin descuento configurado";
+            lblTotalPerdidoConREspectoAlVentayREal.Text = "Sin descuento configurado";
         }
     }
 }
