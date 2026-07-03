@@ -46,13 +46,13 @@ namespace Presentacion.Core.Gasto
         {
             AgregarAccion(
                 "Anular",
-                Constantes.Imagenes.ImgEliminar,
+                Constantes.Imagenes.ImgDinero,
                 AnularGasto,
                 true
             );
             AgregarAccion(
                "Pagar",
-               Constantes.Imagenes.ImgEliminar,
+               Constantes.Imagenes.ImgDinero,
                MarcarComoPagada,
                true
            );

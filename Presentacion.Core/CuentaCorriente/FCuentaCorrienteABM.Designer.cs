@@ -181,7 +181,7 @@
             // 
             lblCliente.AutoSize = true;
             lblCliente.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblCliente.Location = new Point(69, 67);
+            lblCliente.Location = new Point(47, 67);
             lblCliente.Name = "lblCliente";
             lblCliente.Size = new Size(96, 32);
             lblCliente.TabIndex = 20;
@@ -192,7 +192,7 @@
             // 
             lblNombreCliente.AutoSize = true;
             lblNombreCliente.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblNombreCliente.Location = new Point(171, 67);
+            lblNombreCliente.Location = new Point(149, 67);
             lblNombreCliente.Name = "lblNombreCliente";
             lblNombreCliente.Size = new Size(114, 32);
             lblNombreCliente.TabIndex = 21;
@@ -221,6 +221,7 @@
             Controls.Add(label1);
             Controls.Add(lblSaldo);
             Controls.Add(lblccorriente);
+            ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FCuentaCorrienteABM";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FCuentaCorrienteABM";

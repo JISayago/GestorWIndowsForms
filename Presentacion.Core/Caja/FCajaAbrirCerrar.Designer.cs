@@ -33,27 +33,33 @@
             btnAbrirCaja = new Button();
             lblUsuarioLogeado = new Label();
             lblUsuario = new Label();
+            lblConfirmacion = new Label();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
             // txtMontoApertura
             // 
-            txtMontoApertura.Location = new Point(124, 56);
+            txtMontoApertura.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            txtMontoApertura.Location = new Point(142, 116);
             txtMontoApertura.Name = "txtMontoApertura";
-            txtMontoApertura.Size = new Size(100, 23);
+            txtMontoApertura.Size = new Size(100, 25);
             txtMontoApertura.TabIndex = 0;
+            txtMontoApertura.TextChanged += txtMontoApertura_TextChanged;
+            txtMontoApertura.KeyPress += txtMontoApertura_KeyPress;
             // 
             // lblMontoApertura
             // 
             lblMontoApertura.AutoSize = true;
-            lblMontoApertura.Location = new Point(13, 59);
+            lblMontoApertura.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblMontoApertura.Location = new Point(29, 119);
             lblMontoApertura.Name = "lblMontoApertura";
-            lblMontoApertura.Size = new Size(92, 15);
+            lblMontoApertura.Size = new Size(110, 17);
             lblMontoApertura.TabIndex = 1;
-            lblMontoApertura.Text = "Monto Apertura";
+            lblMontoApertura.Text = "Monto Apertura:";
             // 
             // btnAbrirCaja
             // 
-            btnAbrirCaja.Location = new Point(61, 103);
+            btnAbrirCaja.Location = new Point(98, 150);
             btnAbrirCaja.Name = "btnAbrirCaja";
             btnAbrirCaja.Size = new Size(95, 23);
             btnAbrirCaja.TabIndex = 2;
@@ -64,34 +70,49 @@
             // lblUsuarioLogeado
             // 
             lblUsuarioLogeado.AutoSize = true;
-            lblUsuarioLogeado.Location = new Point(12, 33);
+            lblUsuarioLogeado.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            lblUsuarioLogeado.ForeColor = Color.Green;
+            lblUsuarioLogeado.Location = new Point(22, 33);
             lblUsuarioLogeado.Name = "lblUsuarioLogeado";
-            lblUsuarioLogeado.Size = new Size(38, 15);
+            lblUsuarioLogeado.Size = new Size(54, 21);
             lblUsuarioLogeado.TabIndex = 4;
             lblUsuarioLogeado.Text = "label2";
             // 
             // lblUsuario
             // 
             lblUsuario.AutoSize = true;
-            lblUsuario.Location = new Point(12, 9);
+            lblUsuario.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            lblUsuario.Location = new Point(22, 9);
             lblUsuario.Name = "lblUsuario";
-            lblUsuario.Size = new Size(96, 15);
+            lblUsuario.Size = new Size(134, 21);
             lblUsuario.TabIndex = 3;
-            lblUsuario.Text = "Usuario Logeado";
+            lblUsuario.Text = "Usuario logeado:";
+            // 
+            // lblConfirmacion
+            // 
+            lblConfirmacion.AutoSize = true;
+            lblConfirmacion.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblConfirmacion.Location = new Point(12, 86);
+            lblConfirmacion.Name = "lblConfirmacion";
+            lblConfirmacion.Size = new Size(51, 21);
+            lblConfirmacion.TabIndex = 5;
+            lblConfirmacion.Text = "label1";
             // 
             // FCajaAbrir
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(245, 138);
+            ClientSize = new Size(297, 185);
+            Controls.Add(lblConfirmacion);
             Controls.Add(lblUsuarioLogeado);
             Controls.Add(lblUsuario);
             Controls.Add(btnAbrirCaja);
             Controls.Add(lblMontoApertura);
             Controls.Add(txtMontoApertura);
+            ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FCajaAbrir";
-            StartPosition = FormStartPosition.CenterParent;
             Text = "FCajaAbrir";
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -103,5 +124,6 @@
         private Button btnAbrirCaja;
         private Label lblUsuarioLogeado;
         private Label lblUsuario;
+        private Label lblConfirmacion;
     }
 }

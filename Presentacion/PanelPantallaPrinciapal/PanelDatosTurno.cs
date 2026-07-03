@@ -1,4 +1,5 @@
-﻿using Servicios.LogicaNegocio.PantallaPrincipal;
+﻿using Presentacion.FBase.Helpers;
+using Servicios.LogicaNegocio.PantallaPrincipal;
 using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,23 @@ namespace Presentacion.Notificaciones
 {
     public class PanelDatosTurno : UserControl
     {
+        #region Configuración de Colores (Temas)
+
+        // Modifica estos valores por defecto o cámbialos desde afuera antes de llamar a CargarResumenTurno
+        public Color ColorFondoContenedor { get; set; } = TemaSistema.Fondo;
+        public Color ColorTarjetaFondo { get; set; } = TemaSistema.Fondo;
+        public Color ColorTextoPrincipal { get; set; } = TemaSistema.Texto;
+        public Color ColorTextoSecundario { get; set; } = TemaSistema.TextoSecundario;
+        public Color ColorTextoGrisClaro { get; set; } = Color.Gray;
+
+        // Colores de acento o indicadores laterales
+        public Color ColorIndicadorCaja { get; set; } = TemaSistema.Fondo;
+        public Color ColorIndicadorSesion { get; set; } = TemaSistema.Fondo;
+        public Color ColorBotonGuardarFondo { get; set; } = TemaSistema.Seleccion;
+        public Color ColorBotonGuardarTexto { get; set; } = Color.Black;
+
+        #endregion
+
         #region Campos y Propiedades
 
         private IPantallaPrincipalServicio _pantallaPrincipalServicio;
@@ -37,7 +55,7 @@ namespace Presentacion.Notificaciones
             _pantallaPrincipalServicio = new PantallaPrincipalServicio();
             _datosTurno = datosTurno;
 
-            contenedorPadre.BackColor = SystemColors.ButtonFace;
+            contenedorPadre.BackColor = this.ColorFondoContenedor;
             contenedorPadre.Controls.Clear();
 
             // Configuración del FlowLayout Principal
@@ -55,10 +73,7 @@ namespace Presentacion.Notificaciones
             Label lblSeccion = new Label
             {
                 Text = "RESUMEN DEL TURNO ACTUAL",
-
-                // CAMBIO: De Color.White a un gris muy oscuro
-                ForeColor = Color.FromArgb(40, 40, 40),
-
+                ForeColor = this.ColorTextoPrincipal,
                 Font = new Font("Segoe UI", 16, FontStyle.Bold),
                 Margin = new Padding(0, 0, 0, 20),
                 AutoSize = true
@@ -75,7 +90,7 @@ namespace Presentacion.Notificaciones
             var tarjetaSesion = CrearTarjeta(
                 "SESIÓN ACTIVA",
                 ObtenerTextoSesion(),
-                Color.DodgerBlue,
+                this.ColorIndicadorSesion,
                 420
             );
 
@@ -116,11 +131,12 @@ namespace Presentacion.Notificaciones
             var tarjeta = CrearTarjeta(
                 "ESTADO DE CAJA",
                 ObtenerTextoCaja(datosTurno),
-                Color.SeaGreen,
+                this.ColorIndicadorCaja,
                 420
             );
 
-            // Botón de Ocultar/Mostrar (Ubicado arriba a la derecha)
+            // Replace this incorrect object initializer usage inside CrearTarjetaCaja:
+
             Button btnCensura = new Button
             {
                 Text = "*",
@@ -129,12 +145,14 @@ namespace Presentacion.Notificaciones
                 Location = new Point(tarjeta.Width - 35, 5),
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand,
-                BackColor = Color.White,
-                ForeColor = Color.Gray,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right
+                BackColor = TemaSistema.Seleccion,
+                ForeColor = Color.Black,
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
             };
 
-            btnCensura.FlatAppearance.BorderSize = 0;
+            // Set FlatAppearance.BorderSize after construction:
+            btnCensura.FlatAppearance.BorderSize = 1;
+            btnCensura.FlatAppearance.BorderColor = Color.Black;
 
             btnCensura.Click += (s, e) =>
             {
@@ -159,7 +177,7 @@ namespace Presentacion.Notificaciones
             {
                 Width = ancho,
                 Height = 130,
-                BackColor = Color.White,
+                BackColor = this.ColorTarjetaFondo,
                 Margin = new Padding(0, 0, 20, 20)
             };
 
@@ -179,7 +197,7 @@ namespace Presentacion.Notificaciones
                 Left = 25,
                 AutoSize = true,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                ForeColor = Color.Gray
+                ForeColor = this.ColorTextoGrisClaro
             };
 
             // Label de Contenido (Valores numéricos)
@@ -191,7 +209,7 @@ namespace Presentacion.Notificaciones
                 Width = ancho - 50,
                 Height = 80,
                 Font = new Font("Consolas", 13f, FontStyle.Bold),
-                ForeColor = Color.FromArgb(40, 40, 40)
+                ForeColor = this.ColorTextoPrincipal
             };
 
             p.Controls.Add(lblC);
@@ -213,10 +231,7 @@ namespace Presentacion.Notificaciones
             lblNotas = new Label
             {
                 Text = "NOTAS PARA EL SIGUIENTE TURNO",
-
-                // CAMBIO: De Color.LightGray a DimGray (gris medio-oscuro)
-                ForeColor = Color.DimGray,
-
+                ForeColor = this.ColorTextoSecundario,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 Top = 10,
                 Left = 20,
@@ -233,10 +248,10 @@ namespace Presentacion.Notificaciones
                 ScrollBars = ScrollBars.Vertical,
                 AcceptsReturn = true,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-                // Al iniciar, si no hay nada, ponemos el primer guion
                 Text = string.IsNullOrWhiteSpace(_datosTurno.NotasTurno) ? "- " : _datosTurno.NotasTurno,
                 BorderStyle = BorderStyle.FixedSingle,
-                BackColor = Color.White
+                BackColor = this.ColorTarjetaFondo,
+                ForeColor = this.ColorTextoPrincipal
             };
 
             // --- EVENTO DE FORMATEO EN VIVO ---
@@ -244,17 +259,10 @@ namespace Presentacion.Notificaciones
             {
                 if (e.KeyCode == Keys.Enter)
                 {
-                    // Evitamos el sonido de "beep" de Windows al presionar Enter
                     e.SuppressKeyPress = true;
-
-                    // Añadimos una nueva línea y el guion automáticamente
                     string nuevaLinea = Environment.NewLine + "- ";
                     int seleccionIndex = txtNotas.SelectionStart;
-
-                    // Insertar el guion en la posición actual del cursor
                     txtNotas.Text = txtNotas.Text.Insert(seleccionIndex, nuevaLinea);
-
-                    // Reposicionar el cursor al final del nuevo guion
                     txtNotas.SelectionStart = seleccionIndex + nuevaLinea.Length;
                 }
             };
@@ -265,15 +273,14 @@ namespace Presentacion.Notificaciones
                 Width = 200,
                 Height = 40,
                 FlatStyle = FlatStyle.Flat,
-                BackColor = Color.SeaGreen,
-                ForeColor = Color.White,
+                BackColor = this.ColorBotonGuardarFondo,
+                ForeColor = this.ColorBotonGuardarTexto,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 Cursor = Cursors.Hand
             };
 
             btnGuardarNotas.Click += (s, e) =>
             {
-                // Limpiamos las líneas: quitamos espacios, y filtramos las que solo sean un "-" o estén vacías
                 var lineasValidas = txtNotas.Lines
                     .Select(l => l.Trim())
                     .Where(l => !string.IsNullOrWhiteSpace(l) && l != "-")
@@ -282,11 +289,9 @@ namespace Presentacion.Notificaciones
 
                 string textoLimpio = string.Join(Environment.NewLine, lineasValidas);
 
-                // Actualizamos la UI para que el usuario vea la "limpieza"
                 txtNotas.Text = string.IsNullOrEmpty(textoLimpio) ? "- " : textoLimpio;
                 _datosTurno.NotasTurno = textoLimpio;
 
-                // Guardar en DB
                 _pantallaPrincipalServicio.GuardarNotasRapidas(textoLimpio, _datosTurno.UsuarioLogeado);
 
                 MessageBox.Show("Nota guardada.");
@@ -297,7 +302,7 @@ namespace Presentacion.Notificaciones
             pNotasContainer.Controls.Add(btnGuardarNotas);
 
             var notasGuardadas = _pantallaPrincipalServicio.ObtenerNotasRapidas();
-            if(notasGuardadas != null && !string.IsNullOrWhiteSpace(notasGuardadas.ToString()))
+            if (notasGuardadas != null && !string.IsNullOrWhiteSpace(notasGuardadas.ToString()))
             {
                 txtNotas.Text = notasGuardadas.ToString();
             }
@@ -322,15 +327,12 @@ namespace Presentacion.Notificaciones
 
         public string ObtenerTextoCaja(DatosTurnoDTO datos)
         {
-            // Lógica de censura de montos
             string mInicial = _informacionCensurada ? "****" : datos.MontoInicial.ToString("N2");
             string mIngresos = _informacionCensurada ? "****" : datos.Ingresos.ToString("N2");
             string mTotal = _informacionCensurada ? "****" : datos.TotalCaja.ToString("N2");
-            //string mEgresos = _informacionCensurada ? "****" : datos.Egresos.ToString("N2");
 
             return $"Monto Inicial:    $ {mInicial}\n" +
                    $"Total Ingresos:   $ {mIngresos}\n" +
-                   //$"Total Egresos:    $ {mEgresos}\n" +
                    $"TOTAL CAJA:       $ {mTotal}";
         }
 

@@ -11,6 +11,8 @@ namespace Presentacion.FormulariosBase.Helpers
         Nuevo = 1,
         Eliminar = 2,
         Modificar = 3,
-        Imprimir = 4
+        Imprimir = 4,
+        Abrir = 5,
+        Cerrar = 6
     }
 }

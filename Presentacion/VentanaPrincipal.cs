@@ -56,7 +56,7 @@ namespace Presentacion
 
         #region Constructores
 
-        public VentanaPrincipal( UsuarioLogeado usuarioLogeado, ElementoDePanelesPantallaPrincipal datosIniciales, List<ProductoDTO> productosIniciales, List<VentaDTO> ventasIniciales)
+        public VentanaPrincipal(UsuarioLogeado usuarioLogeado, ElementoDePanelesPantallaPrincipal datosIniciales, List<ProductoDTO> productosIniciales, List<VentaDTO> ventasIniciales)
         {
             InitializeComponent();
             DibujarBotones();
@@ -299,31 +299,49 @@ namespace Presentacion
 
         private void crearNotificacionesLotes()
         {
+            _pantallaPrincipalServicio.NotifiacionesProductosVencidos();
+
             var notiProdVencidos = new NotificationGroupBox();
             notiProdVencidos.Width = flowLayoutNotificaciones.Width - 25;
+
+            // 🌟 NUEVO: Si cambia una notificación acá, se refresca todo el panel
+            notiProdVencidos.NotificacionCambiada += (s, e) => RecargarSeccionNotificaciones();
+
             flowLayoutNotificaciones.Controls.Add(notiProdVencidos);
 
-            var listaLotesNotificar = mockDatosNotificaciones("Lote");
+            var listaLotesNotificar = _pantallaPrincipalServicio.ObtenerNotificacionesProdutosVencidos();
             notiProdVencidos.SetData(listaLotesNotificar, "Lotes Vencidos");
         }
 
         private void crearNotificacionesPromociones()
         {
+            _pantallaPrincipalServicio.NotificacionesOfertasVencidas();
+
             var notifOferVencidos = new NotificationGroupBox();
             notifOferVencidos.Width = flowLayoutNotificaciones.Width - 25;
+
+            // 🌟 NUEVO: Suscripción al evento
+            notifOferVencidos.NotificacionCambiada += (s, e) => RecargarSeccionNotificaciones();
+
             flowLayoutNotificaciones.Controls.Add(notifOferVencidos);
 
-            var listaOfertasVencidas = mockDatosNotificaciones("Oferta");
+            var listaOfertasVencidas = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasVencidas();
             notifOferVencidos.SetData(listaOfertasVencidas, "Ofertas Vencidas");
         }
 
         private void crearNotificacionesCuentaCorriente()
         {
+            _pantallaPrincipalServicio.NotificacionesCtaCteVencidas();
+
             var notifCuentasCorrientesVencidas = new NotificationGroupBox();
             notifCuentasCorrientesVencidas.Width = flowLayoutNotificaciones.Width - 25;
+
+            // 🌟 NUEVO: Suscripción al evento
+            notifCuentasCorrientesVencidas.NotificacionCambiada += (s, e) => RecargarSeccionNotificaciones();
+
             flowLayoutNotificaciones.Controls.Add(notifCuentasCorrientesVencidas);
 
-            var listaCuentasCorrientes = mockDatosNotificaciones("CtaCte");
+            var listaCuentasCorrientes = _pantallaPrincipalServicio.ObtenerNotificacionesCtaCteVencidas();
             notifCuentasCorrientesVencidas.SetData(listaCuentasCorrientes, "Cuentas Corrientes Vencidas");
         }
 
@@ -427,6 +445,36 @@ namespace Presentacion
             // Le damos un padding superior para que el ícono no pegue contra el techo del botón
             btnVenta.Padding = new Padding(0, 10, 0, 0);
 
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            //flowLayoutNotificaciones.SuspendLayout();
+            flowLayoutNotificaciones.Controls.Clear();
+
+            tabPage1.Controls.Clear();
+           
+            crearPanelDatosAdicionales();
+
+            crearNotificacionesLotes();
+            crearNotificacionesPromociones();
+            crearNotificacionesCuentaCorriente();
+        }
+
+        private void RecargarSeccionNotificaciones()
+        {
+            // Congelamos el diseño para evitar parpadeos visuales
+            flowLayoutNotificaciones.SuspendLayout();
+
+            // Limpiamos por completo los GroupBox anteriores
+            flowLayoutNotificaciones.Controls.Clear();
+
+            // Volvemos a generar los tres bloques con datos frescos de la BD
+            crearNotificacionesLotes();
+            crearNotificacionesPromociones();
+            crearNotificacionesCuentaCorriente();
+
+            flowLayoutNotificaciones.ResumeLayout(true);
         }
     }
 }
