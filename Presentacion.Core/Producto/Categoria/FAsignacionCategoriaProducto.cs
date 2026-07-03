@@ -25,6 +25,7 @@ namespace Presentacion.Core.Producto.Categoria
         private readonly ICategoriaServicio _categoriaServicio;
         private List<CategoriaDTO> _categoriasDisponibles;
         protected long? EntidadID;
+        public List<string> descripcionCategorias = new List<string>();
         public List<long> CategoriasSeleccionadas { get; private set; } = new List<long>();
 
         public FAsignacionCategoriaProducto()
@@ -128,6 +129,7 @@ namespace Presentacion.Core.Producto.Categoria
                     if (dto != null)
                     {
                         CategoriasSeleccionadas.Add(dto.Id); // o dto.CategoriaId según tu DTO
+                        descripcionCategorias.Add(dto.Nombre); // o dto.CategoriaNombre según tu DTO
                     }
                 }
             }

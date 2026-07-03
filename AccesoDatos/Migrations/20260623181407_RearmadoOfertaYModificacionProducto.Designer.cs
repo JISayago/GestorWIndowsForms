@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20260623181407_RearmadoOfertaYModificacionProducto")]
+    partial class RearmadoOfertaYModificacionProducto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -669,25 +672,24 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("descripcion");
 
-                    b.Property<long?>("EmpleadoId")
+                    b.Property<long>("EmpleadoId")
                         .HasColumnType("bigint")
                         .HasColumnName("empleado_id");
+
+                    b.Property<long>("EmpleadoPersonaId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("EstaLeida")
                         .HasColumnType("bit")
                         .HasColumnName("esta_leida");
 
-                    b.Property<DateTime?>("FechaConfirmacion")
+                    b.Property<DateTime>("FechaConfirmacion")
                         .HasColumnType("datetime")
                         .HasColumnName("fecha_confirmacion");
 
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime")
                         .HasColumnName("fecha_creacion");
-
-                    b.Property<DateTime?>("FechaVencimiento")
-                        .HasColumnType("datetime")
-                        .HasColumnName("fecha_vencimiento");
 
                     b.Property<string>("Mensaje")
                         .IsRequired()
@@ -704,6 +706,8 @@ namespace AccesoDatos.Migrations
                     b.HasKey("NotificacionId");
 
                     b.HasIndex("EmpleadoId");
+
+                    b.HasIndex("EmpleadoPersonaId");
 
                     b.ToTable("Notificaciones", (string)null);
                 });
@@ -1510,10 +1514,17 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.Notificacion", b =>
                 {
-                    b.HasOne("AccesoDatos.Entidades.Empleado", "Empleado")
+                    b.HasOne("AccesoDatos.Entidades.Empleado", null)
                         .WithMany("Notificaciones")
                         .HasForeignKey("EmpleadoId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("AccesoDatos.Entidades.Empleado", "Empleado")
+                        .WithMany()
+                        .HasForeignKey("EmpleadoPersonaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Empleado");
                 });

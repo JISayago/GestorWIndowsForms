@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Servicios.Helpers.DatosObligatorios
 {
@@ -13,126 +11,173 @@ namespace Servicios.Helpers.DatosObligatorios
     {
         public static List<string> Inicializar(GestorContextDB context)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
 
             var now = DateTime.Now;
 
-            // Buscar solo las ofertas que podrían cambiar de estado
-            var candidatas = context.OfertasDescuentos
+            // =========================================================
+            // DESACTIVAR OFERTAS VENCIDAS
+            // =========================================================
+
+            var ofertasVencidas = context.OfertasDescuentos
                 .Where(o =>
-                    (!o.EstaActiva && o.FechaInicio <= now && (o.FechaFin == null || o.FechaFin >= now)) ||
-                    (o.EstaActiva && o.FechaFin != null && o.FechaFin < now)
-                )
-                .Include(o => o.Productos)
+                    o.EstaActiva &&
+                    o.FechaFin.HasValue &&
+                    o.FechaFin.Value < now)
                 .ToList();
 
-            if (!candidatas.Any())
-                return new List<string>();
-
-            // Actualizar estado de cada oferta según corresponda (en memoria)
-            foreach (var oferta in candidatas)
+            foreach (var oferta in ofertasVencidas)
             {
-                var dentroRango = oferta.FechaInicio <= now && (oferta.FechaFin == null || oferta.FechaFin >= now);
-                oferta.EstaActiva = dentroRango;
+                oferta.EstaActiva = false;
+
+                // TODO:
+                // Crear notificación:
+                // "La oferta {oferta.Codigo} fue desactivada porque finalizó su vigencia."
             }
 
-            context.ChangeTracker.DetectChanges();
+            // =========================================================
+            // CARGAR OFERTAS ACTIVAS
+            // =========================================================
 
-            // Cargar todas las ofertas con sus productos para detectar conflictos entre las activas
-            var todasOfertas = context.OfertasDescuentos
+            var ofertasActivas = context.OfertasDescuentos
+                .Where(o => o.EstaActiva)
                 .Include(o => o.Productos)
+                .Include(o => o.Estadisticas)
                 .ToList();
 
-            // Filtrar ofertas activas que tengan productos
-            var ofertasActivasConProductos = todasOfertas
-                .Where(o => o.EstaActiva && o.Productos != null && o.Productos.Any())
+            // =========================================================
+            // DESACTIVAR OFERTAS QUE ALCANZARON EL LÍMITE
+            // =========================================================
+
+            foreach (var oferta in ofertasActivas)
+            {
+                if (!OfertaAlcanzoLimite(oferta))
+                    continue;
+
+                oferta.EstaActiva = false;
+
+                // TODO:
+                // Crear notificación:
+                // "La oferta {oferta.Codigo} fue desactivada porque alcanzó el límite de ventas."
+            }
+
+            // =========================================================
+            // QUEDARSE SOLO CON LAS OFERTAS ACTIVAS
+            // =========================================================
+
+            var ofertasActivasConProductos = ofertasActivas
+                .Where(o => o.EstaActiva && o.Productos.Any())
                 .ToList();
 
-            // Crear pares (productoId, oferta)
-            var paresProductoOferta = ofertasActivasConProductos
-                .SelectMany(o => o.Productos.Select(p => new { Oferta = o, ProductoId = p.ProductoId }))
-                .ToList();
+            // =========================================================
+            // DETECTAR CONFLICTOS
+            // =========================================================
 
-            // Agrupar por producto y quedarnos con aquellos que aparecen en >1 oferta activa
-            var conflictosPorProducto = paresProductoOferta
+            var conflictosPorProducto = ofertasActivasConProductos
+                .SelectMany(o => o.Productos.Select(p => new
+                {
+                    Oferta = o,
+                    p.ProductoId
+                }))
                 .GroupBy(x => x.ProductoId)
-                .Where(g => g.Select(x => x.Oferta.OfertaDescuentoId).Distinct().Count() > 1)
+                .Where(g => g
+                    .Select(x => x.Oferta.OfertaDescuentoId)
+                    .Distinct()
+                    .Count() > 1)
                 .ToList();
 
-            // Si no hay conflictos, guardar cambios y salir
             if (!conflictosPorProducto.Any())
             {
                 context.SaveChanges();
                 return new List<string>();
             }
 
-            // Mantener el conjunto de ofertas elegidas (puede ser más de una si hay conflictos distintos)
-            var ofertasElegidasIds = new HashSet<long>();
+            // =========================================================
+            // RESOLVER CONFLICTOS
+            // =========================================================
+
             var ofertasElegidasCodigos = new HashSet<string>();
+            var conjuntosProcesados = new HashSet<string>();
 
-            // Para evitar procesar el mismo conjunto de ofertas varias veces, usamos una clave por conjunto (opcional)
-            var procesadosConjuntos = new HashSet<string>();
-
-            foreach (var grupo in conflictosPorProducto)
+            foreach (var conflicto in conflictosPorProducto)
             {
-                var ofertasEnConflicto = grupo.Select(x => x.Oferta).Distinct().ToList();
+                var ofertas = conflicto
+                    .Select(x => x.Oferta)
+                    .Distinct()
+                    .ToList();
 
-                // clave única del conjunto de ofertas (ordenada)
-                var key = string.Join("_", ofertasEnConflicto.Select(o => o.OfertaDescuentoId).OrderBy(id => id));
-                if (procesadosConjuntos.Contains(key))
-                    continue; // ya procesamos este conjunto de ofertas en otro producto
+                var clave = string.Join("_",
+                    ofertas
+                        .Select(x => x.OfertaDescuentoId)
+                        .OrderBy(x => x));
 
-                procesadosConjuntos.Add(key);
+                if (!conjuntosProcesados.Add(clave))
+                    continue;
 
-                // Regla de desempate:
-                // 1) mayor PorcentajeDescuento
-                // 2) fecha de inicio más temprana
-                // 3) menor id (fallback)
-                var ofertaElegida = ofertasEnConflicto
-                    .OrderByDescending(o => o.PorcentajeDescuento ?? 0m)
-                    .ThenBy(o => o.FechaInicio)
-                    .ThenBy(o => o.OfertaDescuentoId)
+                var ofertaGanadora = ofertas
+                    .OrderByDescending(x => x.PorcentajeDescuento ?? 0m)
+                    .ThenBy(x => x.FechaInicio)
+                    .ThenBy(x => x.OfertaDescuentoId)
                     .First();
 
-                // Desactivar las otras ofertas
-                foreach (var o in ofertasEnConflicto.Where(o => o.OfertaDescuentoId != ofertaElegida.OfertaDescuentoId))
+                foreach (var oferta in ofertas.Where(x =>
+                             x.OfertaDescuentoId != ofertaGanadora.OfertaDescuentoId))
                 {
-                    o.EstaActiva = false;
+                    oferta.EstaActiva = false;
+
+                    // TODO:
+                    // Crear notificación:
+                    // "La oferta {oferta.Codigo} fue desactivada por conflicto con la oferta {ofertaGanadora.Codigo}."
                 }
 
-                ofertasElegidasIds.Add(ofertaElegida.OfertaDescuentoId);
-                if (!string.IsNullOrEmpty(ofertaElegida.Codigo))
-                    ofertasElegidasCodigos.Add(ofertaElegida.Codigo);
+                if (!string.IsNullOrWhiteSpace(ofertaGanadora.Codigo))
+                    ofertasElegidasCodigos.Add(ofertaGanadora.Codigo);
             }
 
-            // Guardar los cambios realizados
+            // =========================================================
+            // GUARDAR CAMBIOS
+            // =========================================================
+
             context.SaveChanges();
 
-            // Construir un único mensaje de advertencia si hubo conflictos
+            // =========================================================
+            // MENSAJES
+            // =========================================================
+
             var mensajes = new List<string>();
+
             if (ofertasElegidasCodigos.Any())
             {
                 var codigos = string.Join(", ", ofertasElegidasCodigos);
-                if (ofertasElegidasCodigos.Count == 1)
-                {
-                    mensajes.Add($"Conflictos con productos en múltiples ofertas. Se activa la oferta {codigos}; las demás se desactivaron. Para mayor control usar ventana de ofertas.");
-                }
-                else
-                {
-                    mensajes.Add($"Conflictos con productos en múltiples ofertas. Se activaron las ofertas {codigos}; las demás se desactivaron. Para mayor control usar ventana de ofertas.");
-                }
-            }
-            else
-            {
-                // Si no hay códigos (caso raro), devolvemos un mensaje genérico
-                mensajes.Add("Conflictos con productos en múltiples ofertas. Se ajustaron las activaciones/desactivaciones. Para mayor control usar ventana de ofertas.");
+
+                mensajes.Add(
+                    ofertasElegidasCodigos.Count == 1
+                        ? $"Conflictos con productos en múltiples ofertas. Se activó la oferta {codigos}; las demás se desactivaron. Para mayor control usar la ventana de ofertas."
+                        : $"Conflictos con productos en múltiples ofertas. Se activaron las ofertas {codigos}; las demás se desactivaron. Para mayor control usar la ventana de ofertas.");
             }
 
-            // Devolver solo UN mensaje (o ninguno si no hubo conflictos)
             return mensajes;
         }
 
+        private static bool OfertaAlcanzoLimite(OfertaDescuento oferta)
+        {
+            if (!oferta.Productos.Any() || !oferta.Estadisticas.Any())
+                return false;
 
+            foreach (var producto in oferta.Productos)
+            {
+                var estadistica = oferta.Estadisticas
+                    .FirstOrDefault(e => e.ProductoId == producto.ProductoId);
 
+                if (estadistica == null)
+                    continue;
+
+                if (estadistica.CantidadVendida >= producto.LimiteVentaProducto.GetValueOrDefault())
+                    return true;
+            }
+
+            return false;
+        }
     }
 }

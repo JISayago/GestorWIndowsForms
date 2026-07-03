@@ -411,7 +411,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                                 PrecioOferta = i.PrecioUnitarioFinal,
                                 Descripcion = i.Descripcion,
                                 EsOferta = i.EsOferta,
-                                EsOfertaPorGrupo = i.EsOfertaPorGrupo
+                                //EsOfertaPorGrupo = i.EsOfertaPorGrupo
                                 // Nota: Si 'Medida' o 'UnidadMedida' están en Producto, 
                                 // deberías acceder via i.Producto.Medida si tienes el Include o la relación.
                             }).ToList()
@@ -511,7 +511,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                                     PrecioOferta = i.PrecioUnitarioFinal,
                                     Descripcion = i.Descripcion,
                                     EsOferta = i.EsOferta,
-                                    EsOfertaPorGrupo = i.EsOfertaPorGrupo
+                                    //EsOfertaPorGrupo = i.EsOfertaPorGrupo
                                 }).ToList()
                             }).FirstOrDefault()
                         : null,

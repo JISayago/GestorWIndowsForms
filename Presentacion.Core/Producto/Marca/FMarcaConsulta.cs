@@ -16,6 +16,7 @@ namespace Presentacion.Core.Articulo.Marca
         private readonly IMarcaServicio _marcaServicio;
 
         public long? marcaSeleccionada = null;
+        public string descripcionMarca = null;
 
         private bool vieneDeCargaMarca = true;
 
@@ -71,6 +72,7 @@ namespace Presentacion.Core.Articulo.Marca
                 return;
 
             marcaSeleccionada = id;
+            descripcionMarca = dgvGrilla.CurrentRow.Cells["Nombre"].Value.ToString();
 
             DialogResult = DialogResult.OK;
 
