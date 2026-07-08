@@ -1,6 +1,7 @@
 ﻿using AccesoDatos;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
@@ -220,17 +221,15 @@ namespace Servicios.LogicaNegocio.Producto
             if (items == null || !items.Any())
                 return;
 
-            foreach (var item in items)
+            foreach (var item in items
+                    .GroupBy(x => x.ItemId)
+                    .Select(g => new ItemVentaDTO
+                    {
+                        ItemId = g.Key,
+                        Cantidad = g.Sum(x => x.Cantidad)
+                    }))
             {
-                if (item.EsOferta)
-                {
-                    // RestaurarStockOferta(item, context);
-                    bool esoferta = true;
-                }
-                else
-                {
-                    RestaurarStockProducto(item, context, ventdaId);
-                }
+                RestaurarStockProducto(item, context, ventdaId);
             }
 
             ModificarEstadoStockProductos(context);
@@ -247,7 +246,9 @@ namespace Servicios.LogicaNegocio.Producto
             if(producto.ControlPorLote)
             {
                 var lotesUsadosEnVenta = context.DetalleVentaLotes
-                    .Where(dvl => dvl.IdVenta == ventaId)
+                    .Where(dvl =>
+                        dvl.IdVenta == ventaId &&
+                        dvl.IdProducto == item.ItemId)
                     .ToList();
 
                 var idsLotes = lotesUsadosEnVenta.Select(x => x.IdLote).ToList();
@@ -269,7 +270,8 @@ namespace Servicios.LogicaNegocio.Producto
 
             context.Productos.Update(producto);
 
-            ModificarEstadoStockProductos(context);
+            //ModificarEstadoStockProductos(context);
+
 
         }
 

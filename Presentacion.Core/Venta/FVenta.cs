@@ -760,8 +760,9 @@ namespace Presentacion.Core.Venta
 
         private void CancelarVenta(long? VenId)
         {
-            //var respuesta = _ventaServicio.CancelacionVentaPorId((long)VenId);
-            //MessageBox.Show(respuesta.Mensaje);
+            var respuesta = _ventaServicio.CancelacionVentaPorId((long)VenId);
+            MessageBox.Show(respuesta.Mensaje);
+            return;
         }
 
         private void InicializarYLimpiarCampos(long? ventaId)
