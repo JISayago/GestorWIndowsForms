@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FOfertaABM));
             tableLayoutPanel2 = new TableLayoutPanel();
             tableLayoutPanel1 = new TableLayoutPanel();
             btnCargarGrupoMarca = new Button();
@@ -1113,6 +1114,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FOfertaABM";
             Text = "FOfertaABM";
             WindowState = FormWindowState.Maximized;

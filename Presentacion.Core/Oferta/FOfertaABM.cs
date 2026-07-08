@@ -149,7 +149,6 @@ namespace Presentacion.Core.Oferta
 
             RefrescarOferta();
 
-            ActualizarIdentidadOferta();
 
 
         }
@@ -178,36 +177,34 @@ namespace Presentacion.Core.Oferta
         }
         private SugerenciaOfertaDTO GenerarSugerenciaOferta()
         {
-            var codigoPartes = new List<string>();
-            var descripcionPartes = new List<string>();
+            var codigo = new List<string>();
+            var descripcion = new List<string>();
 
-            codigoPartes.Add(ObtenerPrefijo());
+            codigo.Add(ObtenerPrefijo());
 
             switch (_tipoOferta)
             {
                 case TipoOferta.Grupo:
 
-                    descripcionPartes.Add("Oferta por grupo");
+                    descripcion.Add("Oferta por grupo.");
 
                     if (!string.IsNullOrWhiteSpace(_descripcionMarca))
                     {
-                        codigoPartes.Add(Abreviar(_descripcionMarca));
-
-                        descripcionPartes.Add($"Marca: {_descripcionMarca}");
+                        codigo.Add(Abreviar(_descripcionMarca));
+                        descripcion.Add($"Marca: {_descripcionMarca}");
                     }
 
                     if (!string.IsNullOrWhiteSpace(_descripcionRubro))
                     {
-                        codigoPartes.Add(Abreviar(_descripcionRubro));
-
-                        descripcionPartes.Add($"Rubro: {_descripcionRubro}");
+                        codigo.Add(Abreviar(_descripcionRubro));
+                        descripcion.Add($"Rubro: {_descripcionRubro}");
                     }
 
                     if (_descripcionCategorias.Any())
                     {
-                        codigoPartes.Add($"C{_descripcionCategorias.Count}");
+                        codigo.Add($"CAT{_descripcionCategorias.Count}");
 
-                        descripcionPartes.Add(
+                        descripcion.Add(
                             $"Categorías: {string.Join(", ", _descripcionCategorias)}");
                     }
 
@@ -215,29 +212,23 @@ namespace Presentacion.Core.Oferta
 
                 case TipoOferta.Producto:
 
-                    var prod = _productosParaOfertaDTO.First();
+                    var producto = _productosParaOfertaDTO.First();
 
-                    codigoPartes.Add(Abreviar(prod.Descripcion));
+                    codigo.Add(Abreviar(producto.Descripcion));
 
-                    descripcionPartes.Add(
-                        $"Oferta individual para {prod.Descripcion}");
+                    descripcion.Add(
+                        $"Descuento sobre el producto {producto.Descripcion}.");
 
                     break;
 
                 case TipoOferta.Combo:
 
-                    descripcionPartes.Add("Pack promocional compuesto por");
+                    descripcion.Add("Combo compuesto por:");
 
-                    foreach (var producto in _productosParaOfertaDTO.Take(3))
+                    foreach (var p in _productosParaOfertaDTO)
                     {
-                        codigoPartes.Add(Abreviar(producto.Descripcion));
-
-                        descripcionPartes.Add(producto.Descripcion);
-                    }
-
-                    if (_productosParaOfertaDTO.Count > 3)
-                    {
-                        codigoPartes.Add($"P{_productosParaOfertaDTO.Count}");
+                        codigo.Add(Abreviar(p.Descripcion));
+                        descripcion.Add($"• {p.Descripcion}");
                     }
 
                     break;
@@ -246,20 +237,23 @@ namespace Presentacion.Core.Oferta
 
                     var prod2x1 = _productosParaOfertaDTO.First();
 
-                    codigoPartes.Add(Abreviar(prod2x1.Descripcion));
+                    codigo.Add(Abreviar(prod2x1.Descripcion));
 
-                    descripcionPartes.Add(
-                        $"Promoción 2x1 sobre {prod2x1.Descripcion}");
+                    descripcion.Add(
+                        $"Promoción 2x1 sobre {prod2x1.Descripcion}.");
 
                     break;
             }
 
-            codigoPartes.Add(_productosParaOfertaDTO.Count.ToString());
+            codigo.Add(DateTime.Now.ToString("ddMMyy-HHmm"));
+
+            descripcion.Add($"Productos alcanzados: {_productosParaOfertaDTO.Count}");
+            descripcion.Add($"Creación: {DateTime.Now.ToString("dd/MM/yyyy | HH:mm:ss")}");
 
             return new SugerenciaOfertaDTO
             {
-                Codigo = string.Join("-", codigoPartes),
-                Descripcion = $"{string.Join(" | ", descripcionPartes)}. Productos alcanzados: {_productosParaOfertaDTO.Count}."
+                Codigo = string.Join("-", codigo),
+                Descripcion = string.Join(Environment.NewLine, descripcion)
             };
         }
         private bool TieneCargaManualProductos()
@@ -463,7 +457,6 @@ namespace Presentacion.Core.Oferta
             lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
 
             RefrescarOferta();
-            ActualizarIdentidadOferta();
         }
         private void ActualizarTipoOfertaPorProductos()
         {

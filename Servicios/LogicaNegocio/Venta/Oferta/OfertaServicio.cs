@@ -27,12 +27,12 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
             try
             {
                 if (context.OfertasDescuentos.Any(x =>
-                    x.Descripcion == dto.Descripcion))
+                    x.Codigo == dto.Codigo))
                 {
                     return new EstadoOperacion
                     {
                         Exitoso = false,
-                        Mensaje = "Ya existe una oferta con la misma descripción."
+                        Mensaje = "Ya existe una oferta con el mismo código."
                     };
                 }
 
