@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace Servicios.LogicaNegocio.Venta.Oferta.DTO
 {
-    public class ProductosEnOfertaDescuentosDTO
+    public class ProductoEnOfertaDTO
     {
         public long ProductoId { get; set; }
-        public long OfertaId { get; set; }
+
+        public long OfertaDescuentoId { get; set; }
 
         public decimal CantidadRequerida { get; set; }
 
@@ -24,5 +25,4 @@ namespace Servicios.LogicaNegocio.Venta.Oferta.DTO
 
         public ProductoDTO? Producto { get; set; }
     }
-
 }

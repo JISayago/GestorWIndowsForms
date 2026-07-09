@@ -288,7 +288,7 @@
             // 
             // btnConfirmarYFPago
             // 
-            btnConfirmarYFPago.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnConfirmarYFPago.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnConfirmarYFPago.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnConfirmarYFPago.Location = new Point(75, 3);
             btnConfirmarYFPago.Name = "btnConfirmarYFPago";
@@ -300,7 +300,7 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnCancelar.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnCancelar.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCancelar.Location = new Point(241, 3);
             btnCancelar.Name = "btnCancelar";
@@ -587,7 +587,7 @@
             tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel7.Controls.Add(dgvProductos, 0, 1);
             tableLayoutPanel7.Controls.Add(tableLayoutPanel6, 0, 0);
-            tableLayoutPanel7.Location = new Point(3, 73);
+            tableLayoutPanel7.Location = new Point(3, 76);
             tableLayoutPanel7.Name = "tableLayoutPanel7";
             tableLayoutPanel7.RowCount = 2;
             tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 19.4968548F));
@@ -614,7 +614,7 @@
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 18.8055916F));
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 23F));
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 8F));
-            tableLayoutPanel8.Size = new Size(1101, 787);
+            tableLayoutPanel8.Size = new Size(1101, 797);
             tableLayoutPanel8.TabIndex = 45;
             // 
             // tableLayoutPanel10
@@ -626,11 +626,11 @@
             tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
             tableLayoutPanel10.Controls.Add(tableLayoutPanel12, 0, 0);
             tableLayoutPanel10.Controls.Add(tableLayoutPanel13, 2, 0);
-            tableLayoutPanel10.Location = new Point(3, 726);
+            tableLayoutPanel10.Location = new Point(3, 734);
             tableLayoutPanel10.Name = "tableLayoutPanel10";
             tableLayoutPanel10.RowCount = 1;
             tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel10.Size = new Size(1095, 58);
+            tableLayoutPanel10.Size = new Size(1095, 60);
             tableLayoutPanel10.TabIndex = 46;
             // 
             // tableLayoutPanel12
@@ -644,7 +644,7 @@
             tableLayoutPanel12.Name = "tableLayoutPanel12";
             tableLayoutPanel12.RowCount = 1;
             tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel12.Size = new Size(286, 52);
+            tableLayoutPanel12.Size = new Size(286, 54);
             tableLayoutPanel12.TabIndex = 46;
             // 
             // tableLayoutPanel13
@@ -658,18 +658,18 @@
             tableLayoutPanel13.Name = "tableLayoutPanel13";
             tableLayoutPanel13.RowCount = 1;
             tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel13.Size = new Size(432, 52);
+            tableLayoutPanel13.Size = new Size(432, 54);
             tableLayoutPanel13.TabIndex = 46;
             // 
             // flowLayoutPanel10
             // 
-            flowLayoutPanel10.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            flowLayoutPanel10.Anchor = AnchorStyles.Right;
             flowLayoutPanel10.Controls.Add(btnCancelar);
             flowLayoutPanel10.Controls.Add(btnConfirmarYFPago);
             flowLayoutPanel10.FlowDirection = FlowDirection.RightToLeft;
             flowLayoutPanel10.Location = new Point(3, 3);
             flowLayoutPanel10.Name = "flowLayoutPanel10";
-            flowLayoutPanel10.Size = new Size(404, 46);
+            flowLayoutPanel10.Size = new Size(404, 48);
             flowLayoutPanel10.TabIndex = 47;
             // 
             // tableLayoutPanel9
@@ -683,11 +683,11 @@
             tableLayoutPanel9.Controls.Add(flowLayoutPanel8, 2, 0);
             tableLayoutPanel9.Controls.Add(flowLayoutPanel7, 1, 0);
             tableLayoutPanel9.Controls.Add(flowLayoutPanel6, 0, 0);
-            tableLayoutPanel9.Location = new Point(3, 397);
+            tableLayoutPanel9.Location = new Point(3, 402);
             tableLayoutPanel9.Name = "tableLayoutPanel9";
             tableLayoutPanel9.RowCount = 1;
             tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel9.Size = new Size(1095, 142);
+            tableLayoutPanel9.Size = new Size(1095, 143);
             tableLayoutPanel9.TabIndex = 46;
             // 
             // flowLayoutPanel8
@@ -782,11 +782,11 @@
             txtAreaDetallesVenta.BorderStyle = BorderStyle.FixedSingle;
             tableLayoutPanel8.SetColumnSpan(txtAreaDetallesVenta, 4);
             txtAreaDetallesVenta.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtAreaDetallesVenta.Location = new Point(3, 545);
+            txtAreaDetallesVenta.Location = new Point(3, 551);
             txtAreaDetallesVenta.Multiline = true;
             txtAreaDetallesVenta.Name = "txtAreaDetallesVenta";
             txtAreaDetallesVenta.ScrollBars = ScrollBars.Vertical;
-            txtAreaDetallesVenta.Size = new Size(1095, 175);
+            txtAreaDetallesVenta.Size = new Size(1095, 177);
             txtAreaDetallesVenta.TabIndex = 47;
             // 
             // FVenta

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Presentacion.FBase.Helpers;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -6,7 +7,8 @@ namespace Presentacion
 {
     public partial class PantallaCargaEspera : Form
     {
-        private ProgressBar progressBarCarga;
+        private Panel barraFondo;
+        private Panel barraProgreso;
         private Label lblMensaje;
         private Label lblPorcentaje;
 
@@ -19,9 +21,10 @@ namespace Presentacion
 
         private void InitializeControls()
         {
-            progressBarCarga = new ProgressBar();
             lblMensaje = new Label();
             lblPorcentaje = new Label();
+            barraFondo = new Panel();
+            barraProgreso = new Panel();
 
             // Form
             this.FormBorderStyle = FormBorderStyle.None;
@@ -33,7 +36,6 @@ namespace Presentacion
             this.Height = 220;
             this.BackColor = Color.White;
 
-            // Contenedor simple
             var panel = new Panel
             {
                 Dock = DockStyle.Fill,
@@ -57,15 +59,21 @@ namespace Presentacion
             lblPorcentaje.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
             lblPorcentaje.ForeColor = Color.DimGray;
 
-            // Barra
-            progressBarCarga.Dock = DockStyle.Bottom;
-            progressBarCarga.Height = 25;
-            progressBarCarga.Minimum = 0;
-            progressBarCarga.Maximum = 100;
-            progressBarCarga.Value = 0;
-            progressBarCarga.Style = ProgressBarStyle.Continuous;
+            // Fondo de barra
+            barraFondo.Dock = DockStyle.Bottom;
+            barraFondo.Height = 25;
+            barraFondo.BackColor = Color.Gainsboro;
+            barraFondo.Padding = new Padding(0);
+            barraFondo.Margin = new Padding(0);
 
-            panel.Controls.Add(progressBarCarga);
+            // Progreso
+            barraProgreso.Dock = DockStyle.Left;
+            barraProgreso.Width = 0;
+            barraProgreso.BackColor = ColorTranslator.FromHtml("#291a3e"); 
+
+            barraFondo.Controls.Add(barraProgreso);
+
+            panel.Controls.Add(barraFondo);
             panel.Controls.Add(lblPorcentaje);
             panel.Controls.Add(lblMensaje);
 
@@ -82,18 +90,27 @@ namespace Presentacion
             if (value < 0) value = 0;
             if (value > 100) value = 100;
 
-            progressBarCarga.Value = value;
+            int anchoTotal = barraFondo.ClientSize.Width;
+            barraProgreso.Width = (anchoTotal * value) / 100;
+
             lblPorcentaje.Text = $"{value}%";
             Application.DoEvents();
         }
 
-        // Evitar cerrar con Alt+F4
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == (Keys.Alt | Keys.F4))
                 return true;
 
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            var txt = lblPorcentaje?.Text ?? "0%";
+            if (!int.TryParse(txt.Replace("%",""), out var p)) p = 0;
+            barraProgreso.Width = (barraFondo.ClientSize.Width * p) / 100;
         }
     }
 }

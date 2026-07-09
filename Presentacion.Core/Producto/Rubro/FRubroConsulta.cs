@@ -16,6 +16,8 @@ namespace Presentacion.Core.Producto.Rubro
 
         public long? rubroSeleccionado = null;
 
+        public string descripcionRubro = null;
+
         private bool vieneDeCargaRubro = true;
 
         public FRubroConsulta(bool vieneDeCargaRubro = true)
@@ -250,6 +252,7 @@ namespace Presentacion.Core.Producto.Rubro
             }
 
             rubroSeleccionado = entidadID;
+            descripcionRubro= dgvGrilla.CurrentRow.Cells["Nombre"].Value.ToString();
 
             DialogResult = DialogResult.OK;
 

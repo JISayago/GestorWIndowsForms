@@ -2,6 +2,7 @@
 using Servicios.Helpers.Sistema.Admin;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta.DTO;
 using System;
 using System.Collections.Generic;
@@ -13,23 +14,21 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
 {
     public interface IOfertaServicio
     {
-        public InfoOfertaDTO ObtenerInfoOferta();
-        public EstadoOperacion Insertar(OfertaDTO dto);
-        //public List<OfertaDTO> ObtenerOfertasActivas(string cadenaBuscar);
-        public List<OfertaDTO> ObtenerOfertasActivasCompuestas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
-        //public List<OfertaDTO> ObtenerOfertasInactivas(string cadenaBuscar);
-        public List<OfertaDTO> ObtenerOfertasInactivasCompuesta(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
-        public List<InformacionExistenciaOfertaDescuentoProducto> ObtenerProductosEnOferta(List<ProductoDTO> productosDentroOferta);
-        public OfertaDTO ObtenerOfertaPorId(long idOFerta);
-        public OfertaDTO ObtenerOfertaActivaPorId(long idOFerta);
-
-
-        public List<OfertaDTO> ObtenerOfertasActivasInactivas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
-
-        public OfertaDTO? ActivarDesactivar(long ofertaId);
         ResultadoPaginacion<OfertaDTO> ObtenerOfertas(FiltroConsulta filtros, bool vieneDeVenta);
-        public bool ExisteOfertaPorCodigo(string codigo);
+        public EstadoOperacion Insertar(OfertaDTO dto);
+        //public OfertaDTO ObtenerOfertaActivaPorId(long idOFerta);
+        ItemVentaDTO? ObtenerItemVentaOferta(long ofertaId);
 
-        public List<OfertaDTO> ObtenerOfertasVencidas(int cantidadDiasABuscar);
+        //public InfoOfertaDTO ObtenerInfoOferta();
+        //public List<OfertaDTO> ObtenerOfertasActivas(string cadenaBuscar);
+        //public List<OfertaDTO> ObtenerOfertasActivasCompuestas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
+        //public List<OfertaDTO> ObtenerOfertasInactivas(string cadenaBuscar);
+        //public List<OfertaDTO> ObtenerOfertasInactivasCompuesta(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
+        //public List<InformacionExistenciaOfertaDescuentoProducto> ObtenerProductosEnOferta(List<ProductoDTO> productosDentroOferta);
+        //public OfertaDTO ObtenerOfertaPorId(long idOFerta);
+        //public List<OfertaDTO> ObtenerOfertasActivasInactivas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
+        //public OfertaDTO? ActivarDesactivar(long ofertaId);
+        //public bool ExisteOfertaPorCodigo(string codigo);
+        //public List<OfertaDTO> ObtenerOfertasVencidas(int cantidadDiasABuscar);
     }
 }
