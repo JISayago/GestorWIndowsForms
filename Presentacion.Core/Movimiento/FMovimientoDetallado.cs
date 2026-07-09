@@ -172,5 +172,10 @@ namespace TuProyecto.Presentacion
             };
             _pnlContenedorDinamico.Controls.Add(lblAviso);
         }
+
+        private void InitializeComponent()
+        {
+
+        }
     }
 }

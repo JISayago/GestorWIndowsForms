@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FProductoABM));
             lblDescripcion = new Label();
             lblMarca = new Label();
             lblPrecioCosto = new Label();
@@ -322,8 +323,10 @@
             Controls.Add(lblPrecioCosto);
             Controls.Add(lblMarca);
             Controls.Add(lblDescripcion);
+            ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FProductoABM";
-            Text = "FProductoABM";
+            Text = "ABM Producto";
             Controls.SetChildIndex(lblDescripcion, 0);
             Controls.SetChildIndex(lblMarca, 0);
             Controls.SetChildIndex(lblPrecioCosto, 0);
