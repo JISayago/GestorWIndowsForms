@@ -72,7 +72,6 @@
             btnLimpiarCampos = new Button();
             btnCancelarYSalir = new Button();
             lblTotalFinal = new Label();
-            tableLayoutPanel3 = new TableLayoutPanel();
             tableLayoutPanel21 = new TableLayoutPanel();
             btnCargarProducto = new Button();
             textBox1 = new TextBox();
@@ -81,11 +80,9 @@
             tableLayoutPanel5 = new TableLayoutPanel();
             tableLayoutPanel6 = new TableLayoutPanel();
             flowLayoutPanel1 = new FlowLayoutPanel();
-            tableLayoutPanel7 = new TableLayoutPanel();
             tableLayoutPanel8 = new TableLayoutPanel();
             flowLayoutPanel2 = new FlowLayoutPanel();
             tableLayoutPanel9 = new TableLayoutPanel();
-            tableLayoutPanel10 = new TableLayoutPanel();
             tableLayoutPanel11 = new TableLayoutPanel();
             tableLayoutPanel12 = new TableLayoutPanel();
             tableLayoutPanel13 = new TableLayoutPanel();
@@ -94,32 +91,19 @@
             tableLayoutPanel18 = new TableLayoutPanel();
             tableLayoutPanel15 = new TableLayoutPanel();
             tableLayoutPanel16 = new TableLayoutPanel();
-            tableLayoutPanel17 = new TableLayoutPanel();
-            tableLayoutPanel20 = new TableLayoutPanel();
-            tableLayoutPanel22 = new TableLayoutPanel();
-            tableLayoutPanel23 = new TableLayoutPanel();
-            tableLayoutPanel24 = new TableLayoutPanel();
-            tableLayoutPanel25 = new TableLayoutPanel();
-            tableLayoutPanel26 = new TableLayoutPanel();
-            tableLayoutPanel27 = new TableLayoutPanel();
-            label4 = new Label();
-            label5 = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvProductosQuitados).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
-            tableLayoutPanel3.SuspendLayout();
             tableLayoutPanel21.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
             tableLayoutPanel6.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
-            tableLayoutPanel7.SuspendLayout();
             tableLayoutPanel8.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
             tableLayoutPanel9.SuspendLayout();
-            tableLayoutPanel10.SuspendLayout();
             tableLayoutPanel11.SuspendLayout();
             tableLayoutPanel12.SuspendLayout();
             tableLayoutPanel13.SuspendLayout();
@@ -128,14 +112,6 @@
             tableLayoutPanel18.SuspendLayout();
             tableLayoutPanel15.SuspendLayout();
             tableLayoutPanel16.SuspendLayout();
-            tableLayoutPanel17.SuspendLayout();
-            tableLayoutPanel20.SuspendLayout();
-            tableLayoutPanel22.SuspendLayout();
-            tableLayoutPanel23.SuspendLayout();
-            tableLayoutPanel24.SuspendLayout();
-            tableLayoutPanel25.SuspendLayout();
-            tableLayoutPanel26.SuspendLayout();
-            tableLayoutPanel27.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel2
@@ -146,13 +122,13 @@
             tableLayoutPanel2.Controls.Add(tableLayoutPanel1, 0, 0);
             tableLayoutPanel2.Controls.Add(btnCargarProductosAlcanzados, 0, 1);
             tableLayoutPanel2.Controls.Add(lblDetalleGruposFiltro, 0, 2);
-            tableLayoutPanel2.Location = new Point(3, 3);
+            tableLayoutPanel2.Location = new Point(571, 36);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 3;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 52.8409081F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 26.704546F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel2.Size = new Size(430, 180);
+            tableLayoutPanel2.Size = new Size(430, 143);
             tableLayoutPanel2.TabIndex = 93;
             // 
             // tableLayoutPanel1
@@ -173,7 +149,7 @@
             tableLayoutPanel1.RowCount = 2;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
-            tableLayoutPanel1.Size = new Size(424, 89);
+            tableLayoutPanel1.Size = new Size(424, 69);
             tableLayoutPanel1.TabIndex = 91;
             // 
             // btnCargarGrupoMarca
@@ -182,7 +158,7 @@
             btnCargarGrupoMarca.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCargarGrupoMarca.Location = new Point(3, 3);
             btnCargarGrupoMarca.Name = "btnCargarGrupoMarca";
-            btnCargarGrupoMarca.Size = new Size(135, 47);
+            btnCargarGrupoMarca.Size = new Size(135, 35);
             btnCargarGrupoMarca.TabIndex = 27;
             btnCargarGrupoMarca.Text = "Cargar Marca";
             btnCargarGrupoMarca.UseVisualStyleBackColor = true;
@@ -194,7 +170,7 @@
             btnCargarGrupoRubro.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCargarGrupoRubro.Location = new Point(144, 3);
             btnCargarGrupoRubro.Name = "btnCargarGrupoRubro";
-            btnCargarGrupoRubro.Size = new Size(135, 47);
+            btnCargarGrupoRubro.Size = new Size(135, 35);
             btnCargarGrupoRubro.TabIndex = 64;
             btnCargarGrupoRubro.Text = "Cargar Rubro";
             btnCargarGrupoRubro.UseVisualStyleBackColor = true;
@@ -206,7 +182,7 @@
             btnCargarGrupoCategoria.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCargarGrupoCategoria.Location = new Point(285, 3);
             btnCargarGrupoCategoria.Name = "btnCargarGrupoCategoria";
-            btnCargarGrupoCategoria.Size = new Size(136, 47);
+            btnCargarGrupoCategoria.Size = new Size(136, 35);
             btnCargarGrupoCategoria.TabIndex = 66;
             btnCargarGrupoCategoria.Text = "Cargar Categorias";
             btnCargarGrupoCategoria.UseVisualStyleBackColor = true;
@@ -216,7 +192,7 @@
             // 
             txtMarca.Anchor = AnchorStyles.Top;
             txtMarca.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtMarca.Location = new Point(3, 56);
+            txtMarca.Location = new Point(3, 44);
             txtMarca.Name = "txtMarca";
             txtMarca.ReadOnly = true;
             txtMarca.Size = new Size(135, 27);
@@ -227,7 +203,7 @@
             // 
             txtRubro.Anchor = AnchorStyles.Top;
             txtRubro.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtRubro.Location = new Point(144, 56);
+            txtRubro.Location = new Point(144, 44);
             txtRubro.Name = "txtRubro";
             txtRubro.ReadOnly = true;
             txtRubro.Size = new Size(135, 27);
@@ -238,7 +214,7 @@
             // 
             txtCategorias.Anchor = AnchorStyles.Top;
             txtCategorias.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtCategorias.Location = new Point(285, 56);
+            txtCategorias.Location = new Point(285, 44);
             txtCategorias.Name = "txtCategorias";
             txtCategorias.ReadOnly = true;
             txtCategorias.Size = new Size(136, 27);
@@ -249,7 +225,7 @@
             // 
             btnCargarProductosAlcanzados.Anchor = AnchorStyles.None;
             btnCargarProductosAlcanzados.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnCargarProductosAlcanzados.Location = new Point(72, 103);
+            btnCargarProductosAlcanzados.Location = new Point(72, 78);
             btnCargarProductosAlcanzados.Name = "btnCargarProductosAlcanzados";
             btnCargarProductosAlcanzados.Size = new Size(285, 32);
             btnCargarProductosAlcanzados.TabIndex = 72;
@@ -262,7 +238,7 @@
             lblDetalleGruposFiltro.Anchor = AnchorStyles.None;
             lblDetalleGruposFiltro.AutoSize = true;
             lblDetalleGruposFiltro.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblDetalleGruposFiltro.Location = new Point(28, 151);
+            lblDetalleGruposFiltro.Location = new Point(28, 118);
             lblDetalleGruposFiltro.Name = "lblDetalleGruposFiltro";
             lblDetalleGruposFiltro.Size = new Size(373, 20);
             lblDetalleGruposFiltro.TabIndex = 92;
@@ -272,7 +248,7 @@
             // 
             btnDevolverAOferta.Anchor = AnchorStyles.Bottom;
             btnDevolverAOferta.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnDevolverAOferta.Location = new Point(444, 95);
+            btnDevolverAOferta.Location = new Point(444, 24);
             btnDevolverAOferta.Name = "btnDevolverAOferta";
             btnDevolverAOferta.Size = new Size(161, 32);
             btnDevolverAOferta.TabIndex = 103;
@@ -296,10 +272,10 @@
             dgvProductosQuitados.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvProductosQuitados.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductosQuitados.EditMode = DataGridViewEditMode.EditProgrammatically;
-            dgvProductosQuitados.Location = new Point(3, 139);
+            dgvProductosQuitados.Location = new Point(685, 279);
             dgvProductosQuitados.MultiSelect = false;
             dgvProductosQuitados.Name = "dgvProductosQuitados";
-            dgvProductosQuitados.Size = new Size(618, 223);
+            dgvProductosQuitados.Size = new Size(618, 103);
             dgvProductosQuitados.TabIndex = 101;
             // 
             // lblNumeroProductoQuitados
@@ -327,7 +303,7 @@
             // 
             btnQuitarProducto.Anchor = AnchorStyles.Bottom;
             btnQuitarProducto.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnQuitarProducto.Location = new Point(444, 95);
+            btnQuitarProducto.Location = new Point(444, 62);
             btnQuitarProducto.Name = "btnQuitarProducto";
             btnQuitarProducto.Size = new Size(161, 32);
             btnQuitarProducto.TabIndex = 98;
@@ -351,10 +327,10 @@
             dgvProductos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductos.EditMode = DataGridViewEditMode.EditProgrammatically;
-            dgvProductos.Location = new Point(3, 139);
+            dgvProductos.Location = new Point(46, 314);
             dgvProductos.MultiSelect = false;
             dgvProductos.Name = "dgvProductos";
-            dgvProductos.Size = new Size(618, 223);
+            dgvProductos.Size = new Size(618, 167);
             dgvProductos.TabIndex = 96;
             dgvProductos.CellMouseDown += dgvProductos_CellMouseDown_1;
             // 
@@ -382,9 +358,9 @@
             // txtCodigo
             // 
             txtCodigo.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtCodigo.Location = new Point(3, 42);
+            txtCodigo.Location = new Point(3, 35);
             txtCodigo.Name = "txtCodigo";
-            txtCodigo.Size = new Size(235, 27);
+            txtCodigo.Size = new Size(220, 27);
             txtCodigo.TabIndex = 105;
             // 
             // lblCodigoOf
@@ -392,7 +368,7 @@
             lblCodigoOf.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             lblCodigoOf.AutoSize = true;
             lblCodigoOf.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCodigoOf.Location = new Point(3, 18);
+            lblCodigoOf.Location = new Point(3, 11);
             lblCodigoOf.Name = "lblCodigoOf";
             lblCodigoOf.Size = new Size(60, 21);
             lblCodigoOf.TabIndex = 106;
@@ -412,11 +388,11 @@
             // 
             txtDescripcion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             txtDescripcion.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtDescripcion.Location = new Point(3, 27);
+            txtDescripcion.Location = new Point(3, 24);
             txtDescripcion.Multiline = true;
             txtDescripcion.Name = "txtDescripcion";
             txtDescripcion.ReadOnly = true;
-            txtDescripcion.Size = new Size(612, 53);
+            txtDescripcion.Size = new Size(447, 46);
             txtDescripcion.TabIndex = 108;
             // 
             // lblTotalAcumuladoReal
@@ -436,7 +412,7 @@
             lblTotalAcumuladoVenta.Anchor = AnchorStyles.Top;
             lblTotalAcumuladoVenta.AutoSize = true;
             lblTotalAcumuladoVenta.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotalAcumuladoVenta.Location = new Point(128, 30);
+            lblTotalAcumuladoVenta.Location = new Point(128, 40);
             lblTotalAcumuladoVenta.Name = "lblTotalAcumuladoVenta";
             lblTotalAcumuladoVenta.Size = new Size(367, 25);
             lblTotalAcumuladoVenta.TabIndex = 110;
@@ -448,7 +424,7 @@
             lblTotalPerdidoConREspectoAlVentayREal.Anchor = AnchorStyles.Top;
             lblTotalPerdidoConREspectoAlVentayREal.AutoSize = true;
             lblTotalPerdidoConREspectoAlVentayREal.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotalPerdidoConREspectoAlVentayREal.Location = new Point(192, 60);
+            lblTotalPerdidoConREspectoAlVentayREal.Location = new Point(192, 80);
             lblTotalPerdidoConREspectoAlVentayREal.Name = "lblTotalPerdidoConREspectoAlVentayREal";
             lblTotalPerdidoConREspectoAlVentayREal.Size = new Size(240, 25);
             lblTotalPerdidoConREspectoAlVentayREal.TabIndex = 111;
@@ -458,7 +434,7 @@
             // 
             txtPorcentajeDescuento.Anchor = AnchorStyles.Top;
             txtPorcentajeDescuento.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtPorcentajeDescuento.Location = new Point(3, 37);
+            txtPorcentajeDescuento.Location = new Point(58, 37);
             txtPorcentajeDescuento.Name = "txtPorcentajeDescuento";
             txtPorcentajeDescuento.Size = new Size(300, 35);
             txtPorcentajeDescuento.TabIndex = 112;
@@ -469,7 +445,7 @@
             lblDescuentoPor.Anchor = AnchorStyles.None;
             lblDescuentoPor.AutoSize = true;
             lblDescuentoPor.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblDescuentoPor.Location = new Point(91, 4);
+            lblDescuentoPor.Location = new Point(146, 4);
             lblDescuentoPor.Name = "lblDescuentoPor";
             lblDescuentoPor.Size = new Size(124, 25);
             lblDescuentoPor.TabIndex = 113;
@@ -480,7 +456,7 @@
             label3.Anchor = AnchorStyles.None;
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label3.Location = new Point(112, 4);
+            label3.Location = new Point(167, 4);
             label3.Name = "label3";
             label3.Size = new Size(81, 25);
             label3.TabIndex = 115;
@@ -490,7 +466,7 @@
             // 
             txtPrecioFinal.Anchor = AnchorStyles.Top;
             txtPrecioFinal.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtPrecioFinal.Location = new Point(3, 37);
+            txtPrecioFinal.Location = new Point(58, 37);
             txtPrecioFinal.Name = "txtPrecioFinal";
             txtPrecioFinal.Size = new Size(300, 35);
             txtPrecioFinal.TabIndex = 114;
@@ -500,7 +476,7 @@
             // 
             dtpFechaInicio.Anchor = AnchorStyles.Top;
             dtpFechaInicio.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dtpFechaInicio.Location = new Point(87, 29);
+            dtpFechaInicio.Location = new Point(87, 47);
             dtpFechaInicio.Name = "dtpFechaInicio";
             dtpFechaInicio.Size = new Size(447, 33);
             dtpFechaInicio.TabIndex = 116;
@@ -510,7 +486,7 @@
             // 
             dtpFechaFin.Anchor = AnchorStyles.Top;
             dtpFechaFin.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dtpFechaFin.Location = new Point(94, 29);
+            dtpFechaFin.Location = new Point(94, 50);
             dtpFechaFin.Name = "dtpFechaFin";
             dtpFechaFin.Size = new Size(433, 33);
             dtpFechaFin.TabIndex = 117;
@@ -543,9 +519,9 @@
             lblLimiteStock.Anchor = AnchorStyles.Right;
             lblLimiteStock.AutoSize = true;
             lblLimiteStock.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblLimiteStock.Location = new Point(12, 0);
+            lblLimiteStock.Location = new Point(23, 9);
             lblLimiteStock.Name = "lblLimiteStock";
-            lblLimiteStock.Size = new Size(58, 49);
+            lblLimiteStock.Size = new Size(75, 30);
             lblLimiteStock.TabIndex = 122;
             lblLimiteStock.Text = "Limite ";
             lblLimiteStock.TextAlign = ContentAlignment.MiddleRight;
@@ -555,7 +531,7 @@
             txtLimiteStock.Anchor = AnchorStyles.Left;
             txtLimiteStock.Enabled = false;
             txtLimiteStock.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtLimiteStock.Location = new Point(76, 7);
+            txtLimiteStock.Location = new Point(104, 7);
             txtLimiteStock.Name = "txtLimiteStock";
             txtLimiteStock.Size = new Size(68, 35);
             txtLimiteStock.TabIndex = 121;
@@ -566,9 +542,9 @@
             cbxLimiteCumplirStock.Anchor = AnchorStyles.Right;
             cbxLimiteCumplirStock.AutoSize = true;
             cbxLimiteCumplirStock.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            cbxLimiteCumplirStock.Location = new Point(3, 107);
+            cbxLimiteCumplirStock.Location = new Point(65, 108);
             cbxLimiteCumplirStock.Name = "cbxLimiteCumplirStock";
-            cbxLimiteCumplirStock.Size = new Size(306, 34);
+            cbxLimiteCumplirStock.Size = new Size(354, 34);
             cbxLimiteCumplirStock.TabIndex = 120;
             cbxLimiteCumplirStock.Text = "Agregar limite general a productos";
             cbxLimiteCumplirStock.UseVisualStyleBackColor = true;
@@ -578,7 +554,7 @@
             // 
             btnControlStockDisponible.Anchor = AnchorStyles.None;
             btnControlStockDisponible.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnControlStockDisponible.Location = new Point(161, 8);
+            btnControlStockDisponible.Location = new Point(244, 9);
             btnControlStockDisponible.Name = "btnControlStockDisponible";
             btnControlStockDisponible.Size = new Size(136, 40);
             btnControlStockDisponible.TabIndex = 123;
@@ -590,7 +566,7 @@
             // 
             btnCrearOferta.Anchor = AnchorStyles.None;
             btnCrearOferta.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnCrearOferta.Location = new Point(1064, 5);
+            btnCrearOferta.Location = new Point(1094, 927);
             btnCrearOferta.Name = "btnCrearOferta";
             btnCrearOferta.Size = new Size(140, 55);
             btnCrearOferta.TabIndex = 124;
@@ -602,7 +578,7 @@
             // 
             btnLimpiarCampos.Anchor = AnchorStyles.Right;
             btnLimpiarCampos.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnLimpiarCampos.Location = new Point(865, 5);
+            btnLimpiarCampos.Location = new Point(933, 927);
             btnLimpiarCampos.Name = "btnLimpiarCampos";
             btnLimpiarCampos.Size = new Size(140, 55);
             btnLimpiarCampos.TabIndex = 125;
@@ -614,7 +590,7 @@
             // 
             btnCancelarYSalir.Anchor = AnchorStyles.None;
             btnCancelarYSalir.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnCancelarYSalir.Location = new Point(56, 4);
+            btnCancelarYSalir.Location = new Point(777, 927);
             btnCancelarYSalir.Name = "btnCancelarYSalir";
             btnCancelarYSalir.Size = new Size(140, 56);
             btnCancelarYSalir.TabIndex = 126;
@@ -627,26 +603,11 @@
             lblTotalFinal.Anchor = AnchorStyles.Top;
             lblTotalFinal.AutoSize = true;
             lblTotalFinal.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotalFinal.Location = new Point(192, 103);
+            lblTotalFinal.Location = new Point(192, 123);
             lblTotalFinal.Name = "lblTotalFinal";
             lblTotalFinal.Size = new Size(240, 25);
             lblTotalFinal.TabIndex = 127;
             lblTotalFinal.Text = "Sin descuento configurado";
-            // 
-            // tableLayoutPanel3
-            // 
-            tableLayoutPanel3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel3.ColumnCount = 2;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            tableLayoutPanel3.Controls.Add(tableLayoutPanel21, 1, 0);
-            tableLayoutPanel3.Controls.Add(tableLayoutPanel2, 0, 0);
-            tableLayoutPanel3.Location = new Point(3, 3);
-            tableLayoutPanel3.Name = "tableLayoutPanel3";
-            tableLayoutPanel3.RowCount = 1;
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.Size = new Size(624, 186);
-            tableLayoutPanel3.TabIndex = 128;
             // 
             // tableLayoutPanel21
             // 
@@ -655,12 +616,12 @@
             tableLayoutPanel21.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel21.Controls.Add(btnCargarProducto, 0, 0);
             tableLayoutPanel21.Controls.Add(textBox1, 0, 1);
-            tableLayoutPanel21.Location = new Point(439, 3);
+            tableLayoutPanel21.Location = new Point(1037, 31);
             tableLayoutPanel21.Name = "tableLayoutPanel21";
             tableLayoutPanel21.RowCount = 2;
             tableLayoutPanel21.RowStyles.Add(new RowStyle(SizeType.Percent, 31.25F));
             tableLayoutPanel21.RowStyles.Add(new RowStyle(SizeType.Percent, 68.75F));
-            tableLayoutPanel21.Size = new Size(182, 180);
+            tableLayoutPanel21.Size = new Size(182, 143);
             tableLayoutPanel21.TabIndex = 148;
             // 
             // btnCargarProducto
@@ -670,7 +631,7 @@
             btnCargarProducto.Location = new Point(3, 5);
             btnCargarProducto.Margin = new Padding(3, 5, 3, 3);
             btnCargarProducto.Name = "btnCargarProducto";
-            btnCargarProducto.Size = new Size(176, 47);
+            btnCargarProducto.Size = new Size(176, 36);
             btnCargarProducto.TabIndex = 104;
             btnCargarProducto.Text = "Cargar Producto/s para Combo";
             btnCargarProducto.UseVisualStyleBackColor = true;
@@ -680,7 +641,7 @@
             // 
             textBox1.Anchor = AnchorStyles.Top;
             textBox1.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox1.Location = new Point(3, 59);
+            textBox1.Location = new Point(3, 47);
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;
             textBox1.Size = new Size(176, 27);
@@ -696,19 +657,19 @@
             tableLayoutPanel4.Controls.Add(lblCodigoOf, 0, 0);
             tableLayoutPanel4.Controls.Add(txtCodigo, 0, 1);
             tableLayoutPanel4.Controls.Add(cbxCodigoAutomatico, 1, 1);
-            tableLayoutPanel4.Location = new Point(3, 102);
+            tableLayoutPanel4.Location = new Point(3, 82);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(618, 78);
+            tableLayoutPanel4.Size = new Size(453, 64);
             tableLayoutPanel4.TabIndex = 129;
             // 
             // cbxCodigoAutomatico
             // 
             cbxCodigoAutomatico.AutoSize = true;
             cbxCodigoAutomatico.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            cbxCodigoAutomatico.Location = new Point(312, 42);
+            cbxCodigoAutomatico.Location = new Point(229, 35);
             cbxCodigoAutomatico.Name = "cbxCodigoAutomatico";
             cbxCodigoAutomatico.Size = new Size(218, 25);
             cbxCodigoAutomatico.TabIndex = 107;
@@ -727,7 +688,7 @@
             tableLayoutPanel5.RowCount = 2;
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 30F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 70F));
-            tableLayoutPanel5.Size = new Size(618, 83);
+            tableLayoutPanel5.Size = new Size(453, 73);
             tableLayoutPanel5.TabIndex = 130;
             // 
             // tableLayoutPanel6
@@ -737,12 +698,12 @@
             tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel6.Controls.Add(tableLayoutPanel5, 0, 0);
             tableLayoutPanel6.Controls.Add(tableLayoutPanel4, 0, 1);
-            tableLayoutPanel6.Location = new Point(633, 3);
+            tableLayoutPanel6.Location = new Point(24, 31);
             tableLayoutPanel6.Name = "tableLayoutPanel6";
             tableLayoutPanel6.RowCount = 2;
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 53.2258072F));
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 46.7741928F));
-            tableLayoutPanel6.Size = new Size(624, 186);
+            tableLayoutPanel6.Size = new Size(459, 149);
             tableLayoutPanel6.TabIndex = 131;
             // 
             // flowLayoutPanel1
@@ -750,25 +711,10 @@
             flowLayoutPanel1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             flowLayoutPanel1.Controls.Add(lblCantidadProductos);
             flowLayoutPanel1.Controls.Add(lblNumeroProductoAfectados);
-            flowLayoutPanel1.Location = new Point(3, 92);
+            flowLayoutPanel1.Location = new Point(3, 59);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
             flowLayoutPanel1.Size = new Size(426, 35);
             flowLayoutPanel1.TabIndex = 132;
-            // 
-            // tableLayoutPanel7
-            // 
-            tableLayoutPanel7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel7.ColumnCount = 1;
-            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel7.Controls.Add(tableLayoutPanel8, 0, 0);
-            tableLayoutPanel7.Controls.Add(dgvProductos, 0, 1);
-            tableLayoutPanel7.Location = new Point(3, 3);
-            tableLayoutPanel7.Name = "tableLayoutPanel7";
-            tableLayoutPanel7.RowCount = 2;
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 37.5F));
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 62.5F));
-            tableLayoutPanel7.Size = new Size(624, 365);
-            tableLayoutPanel7.TabIndex = 133;
             // 
             // tableLayoutPanel8
             // 
@@ -778,11 +724,11 @@
             tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
             tableLayoutPanel8.Controls.Add(btnQuitarProducto, 1, 0);
             tableLayoutPanel8.Controls.Add(flowLayoutPanel1, 0, 0);
-            tableLayoutPanel8.Location = new Point(3, 3);
+            tableLayoutPanel8.Location = new Point(40, 197);
             tableLayoutPanel8.Name = "tableLayoutPanel8";
             tableLayoutPanel8.RowCount = 1;
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel8.Size = new Size(618, 130);
+            tableLayoutPanel8.Size = new Size(618, 97);
             tableLayoutPanel8.TabIndex = 134;
             // 
             // flowLayoutPanel2
@@ -790,7 +736,7 @@
             flowLayoutPanel2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             flowLayoutPanel2.Controls.Add(lblCantidadProductosQuitados);
             flowLayoutPanel2.Controls.Add(lblNumeroProductoQuitados);
-            flowLayoutPanel2.Location = new Point(3, 92);
+            flowLayoutPanel2.Location = new Point(3, 21);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
             flowLayoutPanel2.Size = new Size(426, 35);
             flowLayoutPanel2.TabIndex = 134;
@@ -803,27 +749,12 @@
             tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
             tableLayoutPanel9.Controls.Add(flowLayoutPanel2, 0, 0);
             tableLayoutPanel9.Controls.Add(btnDevolverAOferta, 1, 0);
-            tableLayoutPanel9.Location = new Point(3, 3);
+            tableLayoutPanel9.Location = new Point(698, 207);
             tableLayoutPanel9.Name = "tableLayoutPanel9";
             tableLayoutPanel9.RowCount = 1;
             tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel9.Size = new Size(618, 130);
+            tableLayoutPanel9.Size = new Size(618, 59);
             tableLayoutPanel9.TabIndex = 135;
-            // 
-            // tableLayoutPanel10
-            // 
-            tableLayoutPanel10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel10.ColumnCount = 1;
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel10.Controls.Add(tableLayoutPanel9, 0, 0);
-            tableLayoutPanel10.Controls.Add(dgvProductosQuitados, 0, 1);
-            tableLayoutPanel10.Location = new Point(633, 3);
-            tableLayoutPanel10.Name = "tableLayoutPanel10";
-            tableLayoutPanel10.RowCount = 2;
-            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 37.5F));
-            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 62.5F));
-            tableLayoutPanel10.Size = new Size(624, 365);
-            tableLayoutPanel10.TabIndex = 136;
             // 
             // tableLayoutPanel11
             // 
@@ -834,14 +765,14 @@
             tableLayoutPanel11.Controls.Add(lblTotalAcumuladoVenta, 0, 1);
             tableLayoutPanel11.Controls.Add(lblTotalPerdidoConREspectoAlVentayREal, 0, 2);
             tableLayoutPanel11.Controls.Add(lblTotalFinal, 0, 3);
-            tableLayoutPanel11.Location = new Point(633, 3);
+            tableLayoutPanel11.Location = new Point(658, 711);
             tableLayoutPanel11.Name = "tableLayoutPanel11";
             tableLayoutPanel11.RowCount = 4;
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Absolute, 43F));
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Absolute, 53F));
-            tableLayoutPanel11.Size = new Size(624, 156);
+            tableLayoutPanel11.Size = new Size(624, 176);
             tableLayoutPanel11.TabIndex = 137;
             // 
             // tableLayoutPanel12
@@ -851,12 +782,12 @@
             tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel12.Controls.Add(lblDescuentoPor, 0, 0);
             tableLayoutPanel12.Controls.Add(txtPorcentajeDescuento, 0, 1);
-            tableLayoutPanel12.Location = new Point(315, 3);
+            tableLayoutPanel12.Location = new Point(425, 3);
             tableLayoutPanel12.Name = "tableLayoutPanel12";
             tableLayoutPanel12.RowCount = 2;
             tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
             tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
-            tableLayoutPanel12.Size = new Size(306, 87);
+            tableLayoutPanel12.Size = new Size(417, 87);
             tableLayoutPanel12.TabIndex = 138;
             // 
             // tableLayoutPanel13
@@ -871,7 +802,7 @@
             tableLayoutPanel13.RowCount = 2;
             tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
             tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
-            tableLayoutPanel13.Size = new Size(306, 87);
+            tableLayoutPanel13.Size = new Size(416, 87);
             tableLayoutPanel13.TabIndex = 139;
             // 
             // tableLayoutPanel14
@@ -884,12 +815,12 @@
             tableLayoutPanel14.Controls.Add(tableLayoutPanel19, 1, 1);
             tableLayoutPanel14.Controls.Add(tableLayoutPanel13, 0, 0);
             tableLayoutPanel14.Controls.Add(tableLayoutPanel12, 1, 0);
-            tableLayoutPanel14.Location = new Point(3, 3);
+            tableLayoutPanel14.Location = new Point(99, 548);
             tableLayoutPanel14.Name = "tableLayoutPanel14";
             tableLayoutPanel14.RowCount = 2;
             tableLayoutPanel14.RowStyles.Add(new RowStyle(SizeType.Percent, 59.86842F));
             tableLayoutPanel14.RowStyles.Add(new RowStyle(SizeType.Percent, 40.13158F));
-            tableLayoutPanel14.Size = new Size(624, 156);
+            tableLayoutPanel14.Size = new Size(845, 157);
             tableLayoutPanel14.TabIndex = 140;
             // 
             // tableLayoutPanel19
@@ -900,11 +831,11 @@
             tableLayoutPanel19.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel19.Controls.Add(tableLayoutPanel18, 0, 0);
             tableLayoutPanel19.Controls.Add(btnControlStockDisponible, 1, 0);
-            tableLayoutPanel19.Location = new Point(315, 96);
+            tableLayoutPanel19.Location = new Point(425, 96);
             tableLayoutPanel19.Name = "tableLayoutPanel19";
             tableLayoutPanel19.RowCount = 1;
             tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel19.Size = new Size(306, 57);
+            tableLayoutPanel19.Size = new Size(417, 58);
             tableLayoutPanel19.TabIndex = 145;
             // 
             // tableLayoutPanel18
@@ -919,7 +850,7 @@
             tableLayoutPanel18.Name = "tableLayoutPanel18";
             tableLayoutPanel18.RowCount = 1;
             tableLayoutPanel18.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel18.Size = new Size(147, 49);
+            tableLayoutPanel18.Size = new Size(202, 49);
             tableLayoutPanel18.TabIndex = 144;
             // 
             // tableLayoutPanel15
@@ -929,12 +860,12 @@
             tableLayoutPanel15.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel15.Controls.Add(lblFechaInicio, 0, 0);
             tableLayoutPanel15.Controls.Add(dtpFechaInicio, 0, 1);
-            tableLayoutPanel15.Location = new Point(3, 3);
+            tableLayoutPanel15.Location = new Point(12, 789);
             tableLayoutPanel15.Name = "tableLayoutPanel15";
             tableLayoutPanel15.RowCount = 2;
             tableLayoutPanel15.RowStyles.Add(new RowStyle(SizeType.Percent, 45F));
             tableLayoutPanel15.RowStyles.Add(new RowStyle(SizeType.Percent, 55F));
-            tableLayoutPanel15.Size = new Size(621, 59);
+            tableLayoutPanel15.Size = new Size(621, 98);
             tableLayoutPanel15.TabIndex = 141;
             // 
             // tableLayoutPanel16
@@ -944,173 +875,33 @@
             tableLayoutPanel16.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel16.Controls.Add(lblFechaFin, 0, 0);
             tableLayoutPanel16.Controls.Add(dtpFechaFin, 0, 1);
-            tableLayoutPanel16.Location = new Point(630, 3);
+            tableLayoutPanel16.Location = new Point(12, 893);
             tableLayoutPanel16.Name = "tableLayoutPanel16";
             tableLayoutPanel16.RowCount = 2;
             tableLayoutPanel16.RowStyles.Add(new RowStyle(SizeType.Percent, 45F));
             tableLayoutPanel16.RowStyles.Add(new RowStyle(SizeType.Percent, 55F));
-            tableLayoutPanel16.Size = new Size(621, 59);
+            tableLayoutPanel16.Size = new Size(621, 106);
             tableLayoutPanel16.TabIndex = 142;
-            // 
-            // tableLayoutPanel17
-            // 
-            tableLayoutPanel17.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel17.ColumnCount = 2;
-            tableLayoutPanel17.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel17.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel17.Controls.Add(tableLayoutPanel15, 0, 0);
-            tableLayoutPanel17.Controls.Add(tableLayoutPanel16, 1, 0);
-            tableLayoutPanel17.Location = new Point(3, 3);
-            tableLayoutPanel17.Name = "tableLayoutPanel17";
-            tableLayoutPanel17.RowCount = 1;
-            tableLayoutPanel17.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel17.Size = new Size(1254, 65);
-            tableLayoutPanel17.TabIndex = 143;
-            // 
-            // tableLayoutPanel20
-            // 
-            tableLayoutPanel20.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel20.ColumnCount = 5;
-            tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel20.Controls.Add(btnCancelarYSalir, 0, 0);
-            tableLayoutPanel20.Controls.Add(btnCrearOferta, 4, 0);
-            tableLayoutPanel20.Controls.Add(btnLimpiarCampos, 3, 0);
-            tableLayoutPanel20.Location = new Point(3, 902);
-            tableLayoutPanel20.Name = "tableLayoutPanel20";
-            tableLayoutPanel20.RowCount = 1;
-            tableLayoutPanel20.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel20.Size = new Size(1260, 65);
-            tableLayoutPanel20.TabIndex = 146;
-            // 
-            // tableLayoutPanel22
-            // 
-            tableLayoutPanel22.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel22.ColumnCount = 2;
-            tableLayoutPanel22.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel22.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel22.Controls.Add(tableLayoutPanel7, 0, 0);
-            tableLayoutPanel22.Controls.Add(tableLayoutPanel10, 1, 0);
-            tableLayoutPanel22.Location = new Point(3, 280);
-            tableLayoutPanel22.Name = "tableLayoutPanel22";
-            tableLayoutPanel22.RowCount = 1;
-            tableLayoutPanel22.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel22.Size = new Size(1260, 371);
-            tableLayoutPanel22.TabIndex = 147;
-            // 
-            // tableLayoutPanel23
-            // 
-            tableLayoutPanel23.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel23.ColumnCount = 2;
-            tableLayoutPanel23.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel23.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel23.Controls.Add(tableLayoutPanel14, 0, 0);
-            tableLayoutPanel23.Controls.Add(tableLayoutPanel11, 1, 0);
-            tableLayoutPanel23.Location = new Point(3, 657);
-            tableLayoutPanel23.Name = "tableLayoutPanel23";
-            tableLayoutPanel23.RowCount = 1;
-            tableLayoutPanel23.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel23.Size = new Size(1260, 162);
-            tableLayoutPanel23.TabIndex = 148;
-            // 
-            // tableLayoutPanel24
-            // 
-            tableLayoutPanel24.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel24.ColumnCount = 1;
-            tableLayoutPanel24.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel24.Controls.Add(tableLayoutPanel17, 0, 0);
-            tableLayoutPanel24.Location = new Point(3, 825);
-            tableLayoutPanel24.Name = "tableLayoutPanel24";
-            tableLayoutPanel24.RowCount = 1;
-            tableLayoutPanel24.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel24.Size = new Size(1260, 71);
-            tableLayoutPanel24.TabIndex = 149;
-            // 
-            // tableLayoutPanel25
-            // 
-            tableLayoutPanel25.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel25.ColumnCount = 2;
-            tableLayoutPanel25.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel25.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel25.Controls.Add(tableLayoutPanel6, 1, 0);
-            tableLayoutPanel25.Controls.Add(tableLayoutPanel3, 0, 0);
-            tableLayoutPanel25.Location = new Point(3, 82);
-            tableLayoutPanel25.Name = "tableLayoutPanel25";
-            tableLayoutPanel25.RowCount = 1;
-            tableLayoutPanel25.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel25.Size = new Size(1260, 192);
-            tableLayoutPanel25.TabIndex = 150;
-            // 
-            // tableLayoutPanel26
-            // 
-            tableLayoutPanel26.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel26.BackColor = Color.Transparent;
-            tableLayoutPanel26.ColumnCount = 1;
-            tableLayoutPanel26.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel26.Controls.Add(tableLayoutPanel27, 0, 0);
-            tableLayoutPanel26.Controls.Add(tableLayoutPanel20, 0, 5);
-            tableLayoutPanel26.Controls.Add(tableLayoutPanel24, 0, 4);
-            tableLayoutPanel26.Controls.Add(tableLayoutPanel23, 0, 3);
-            tableLayoutPanel26.Controls.Add(tableLayoutPanel22, 0, 2);
-            tableLayoutPanel26.Controls.Add(tableLayoutPanel25, 0, 1);
-            tableLayoutPanel26.Location = new Point(12, 12);
-            tableLayoutPanel26.Name = "tableLayoutPanel26";
-            tableLayoutPanel26.RowCount = 6;
-            tableLayoutPanel26.RowStyles.Add(new RowStyle(SizeType.Percent, 8.188332F));
-            tableLayoutPanel26.RowStyles.Add(new RowStyle(SizeType.Percent, 20.470829F));
-            tableLayoutPanel26.RowStyles.Add(new RowStyle(SizeType.Percent, 38.8945732F));
-            tableLayoutPanel26.RowStyles.Add(new RowStyle(SizeType.Percent, 17.4002037F));
-            tableLayoutPanel26.RowStyles.Add(new RowStyle(SizeType.Percent, 8.024565F));
-            tableLayoutPanel26.RowStyles.Add(new RowStyle(SizeType.Percent, 7.02149439F));
-            tableLayoutPanel26.Size = new Size(1266, 970);
-            tableLayoutPanel26.TabIndex = 151;
-            // 
-            // tableLayoutPanel27
-            // 
-            tableLayoutPanel27.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel27.ColumnCount = 1;
-            tableLayoutPanel27.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel27.Controls.Add(label4, 0, 0);
-            tableLayoutPanel27.Controls.Add(label5, 0, 1);
-            tableLayoutPanel27.Location = new Point(3, 3);
-            tableLayoutPanel27.Name = "tableLayoutPanel27";
-            tableLayoutPanel27.RowCount = 2;
-            tableLayoutPanel27.RowStyles.Add(new RowStyle(SizeType.Percent, 58.90411F));
-            tableLayoutPanel27.RowStyles.Add(new RowStyle(SizeType.Percent, 41.09589F));
-            tableLayoutPanel27.Size = new Size(1260, 73);
-            tableLayoutPanel27.TabIndex = 152;
-            // 
-            // label4
-            // 
-            label4.Anchor = AnchorStyles.Top;
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(513, 0);
-            label4.Name = "label4";
-            label4.Size = new Size(234, 40);
-            label4.TabIndex = 151;
-            label4.Text = "Creacion Oferta";
-            // 
-            // label5
-            // 
-            label5.Anchor = AnchorStyles.Bottom;
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(4, 43);
-            label5.Name = "label5";
-            label5.Size = new Size(1252, 30);
-            label5.TabIndex = 152;
-            label5.Text = "En este formulario se puede realizar el armado de oferta. Abarcndo porductos por grupo (Marca, Categoria y/o Rubro). Tambien, se pueden armar oferta tipo combo (2x1, combos de productos.)";
             // 
             // FOfertaABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1279, 994);
-            Controls.Add(tableLayoutPanel26);
+            Controls.Add(btnCrearOferta);
+            Controls.Add(btnCancelarYSalir);
+            Controls.Add(btnLimpiarCampos);
+            Controls.Add(tableLayoutPanel16);
+            Controls.Add(tableLayoutPanel15);
+            Controls.Add(tableLayoutPanel11);
+            Controls.Add(tableLayoutPanel14);
+            Controls.Add(tableLayoutPanel9);
+            Controls.Add(dgvProductos);
+            Controls.Add(dgvProductosQuitados);
+            Controls.Add(tableLayoutPanel8);
+            Controls.Add(tableLayoutPanel6);
+            Controls.Add(tableLayoutPanel2);
+            Controls.Add(tableLayoutPanel21);
             Controls.Add(label2);
             Controls.Add(label1);
             ForeColor = Color.FromArgb(31, 26, 43);
@@ -1126,7 +917,6 @@
             tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvProductosQuitados).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).EndInit();
-            tableLayoutPanel3.ResumeLayout(false);
             tableLayoutPanel21.ResumeLayout(false);
             tableLayoutPanel21.PerformLayout();
             tableLayoutPanel4.ResumeLayout(false);
@@ -1136,12 +926,10 @@
             tableLayoutPanel6.ResumeLayout(false);
             flowLayoutPanel1.ResumeLayout(false);
             flowLayoutPanel1.PerformLayout();
-            tableLayoutPanel7.ResumeLayout(false);
             tableLayoutPanel8.ResumeLayout(false);
             flowLayoutPanel2.ResumeLayout(false);
             flowLayoutPanel2.PerformLayout();
             tableLayoutPanel9.ResumeLayout(false);
-            tableLayoutPanel10.ResumeLayout(false);
             tableLayoutPanel11.ResumeLayout(false);
             tableLayoutPanel11.PerformLayout();
             tableLayoutPanel12.ResumeLayout(false);
@@ -1157,15 +945,6 @@
             tableLayoutPanel15.PerformLayout();
             tableLayoutPanel16.ResumeLayout(false);
             tableLayoutPanel16.PerformLayout();
-            tableLayoutPanel17.ResumeLayout(false);
-            tableLayoutPanel20.ResumeLayout(false);
-            tableLayoutPanel22.ResumeLayout(false);
-            tableLayoutPanel23.ResumeLayout(false);
-            tableLayoutPanel24.ResumeLayout(false);
-            tableLayoutPanel25.ResumeLayout(false);
-            tableLayoutPanel26.ResumeLayout(false);
-            tableLayoutPanel27.ResumeLayout(false);
-            tableLayoutPanel27.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1215,37 +994,24 @@
         private Button btnLimpiarCampos;
         private Button btnCancelarYSalir;
         private Label lblTotalFinal;
-        private TableLayoutPanel tableLayoutPanel3;
         private TableLayoutPanel tableLayoutPanel4;
         private TableLayoutPanel tableLayoutPanel5;
         private CheckBox cbxCodigoAutomatico;
         private TableLayoutPanel tableLayoutPanel6;
         private Button btnCargarProducto;
         private FlowLayoutPanel flowLayoutPanel1;
-        private TableLayoutPanel tableLayoutPanel7;
         private TableLayoutPanel tableLayoutPanel8;
         private FlowLayoutPanel flowLayoutPanel2;
         private TableLayoutPanel tableLayoutPanel9;
-        private TableLayoutPanel tableLayoutPanel10;
         private TableLayoutPanel tableLayoutPanel11;
         private TableLayoutPanel tableLayoutPanel12;
         private TableLayoutPanel tableLayoutPanel13;
         private TableLayoutPanel tableLayoutPanel14;
         private TableLayoutPanel tableLayoutPanel15;
         private TableLayoutPanel tableLayoutPanel16;
-        private TableLayoutPanel tableLayoutPanel17;
         private TableLayoutPanel tableLayoutPanel18;
         private TableLayoutPanel tableLayoutPanel19;
-        private TableLayoutPanel tableLayoutPanel20;
         private TableLayoutPanel tableLayoutPanel21;
         private TextBox textBox1;
-        private TableLayoutPanel tableLayoutPanel22;
-        private TableLayoutPanel tableLayoutPanel23;
-        private TableLayoutPanel tableLayoutPanel24;
-        private TableLayoutPanel tableLayoutPanel25;
-        private TableLayoutPanel tableLayoutPanel26;
-        private Label label4;
-        private TableLayoutPanel tableLayoutPanel27;
-        private Label label5;
     }
 }
