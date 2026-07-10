@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FGestionStockLotes));
             lblTituloLotes = new Label();
             lblNombreProducto = new Label();
             label2 = new Label();
@@ -193,8 +194,10 @@
             Controls.Add(label2);
             Controls.Add(lblNombreProducto);
             Controls.Add(lblTituloLotes);
+            ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FGestionStockLotes";
-            Text = "FGestionStockLotes";
+            Text = "ABM Lote";
             Load += FGestionStockLotes_Load;
             Controls.SetChildIndex(lblTituloLotes, 0);
             Controls.SetChildIndex(lblNombreProducto, 0);

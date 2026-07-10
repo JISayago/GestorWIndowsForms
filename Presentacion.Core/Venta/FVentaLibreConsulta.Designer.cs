@@ -28,7 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.BackColor = Color.FromArgb(234, 234, 234);
+            panel1.Size = new Size(1363, 450);
+            // 
+            // chkBool1
+            // 
+            chkBool1.ForeColor = Color.FromArgb(31, 26, 43);
+            chkBool1.Size = new Size(17, 1);
+            // 
+            // btnBuscar
+            // 
+            btnBuscar.BackColor = Color.FromArgb(220, 199, 255);
+            btnBuscar.FlatAppearance.BorderColor = Color.Black;
+            btnBuscar.FlatStyle = FlatStyle.Flat;
+            btnBuscar.ForeColor = Color.Black;
+            btnBuscar.Location = new Point(26, 3);
+            btnBuscar.Size = new Size(305, 18);
+            btnBuscar.UseVisualStyleBackColor = false;
+            // 
+            // lblTotalRegistros
+            // 
+            lblTotalRegistros.Location = new Point(145, 4);
             // 
             // FVentaLibreConsulta
             // 
@@ -36,8 +61,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1363, 450);
             Name = "FVentaLibreConsulta";
-            Text = "FVentaLibreConsulta";
+            Text = "Consulta Ventas Libres";
             Load += FVentaLibreConsulta_Load;
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
         }
 

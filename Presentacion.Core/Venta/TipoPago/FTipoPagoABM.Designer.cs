@@ -102,8 +102,9 @@
             Controls.Add(lblNombre);
             Controls.Add(lblDescripcion);
             Controls.Add(lblCodigo);
+            ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FTipoPagoABM";
-            Text = "FTipoPagoABM";
+            Text = "ABM Tipo Pago";
             Controls.SetChildIndex(lblCodigo, 0);
             Controls.SetChildIndex(lblDescripcion, 0);
             Controls.SetChildIndex(lblNombre, 0);

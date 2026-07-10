@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FGastoABM));
             txtMontoPago = new TextBox();
             txtDetalle = new TextBox();
             label1 = new Label();
@@ -163,8 +164,10 @@
             Controls.Add(label1);
             Controls.Add(txtDetalle);
             Controls.Add(txtMontoPago);
+            ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FGastoABM";
-            Text = "FGastoABM";
+            Text = "ABM Gasto";
             Load += FGastoABM_Load;
             Controls.SetChildIndex(txtMontoPago, 0);
             Controls.SetChildIndex(txtDetalle, 0);
