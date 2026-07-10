@@ -39,7 +39,6 @@
             txtCategorias = new TextBox();
             btnCargarProductosAlcanzados = new Button();
             lblDetalleGruposFiltro = new Label();
-            btnDevolverAOferta = new Button();
             label2 = new Label();
             lblNumeroProductoQuitados = new Label();
             lblCantidadProductosQuitados = new Label();
@@ -89,6 +88,7 @@
             tableLayoutPanel15 = new TableLayoutPanel();
             tableLayoutPanel16 = new TableLayoutPanel();
             pnlExcluidos = new Panel();
+            tableLayoutPanel3 = new TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -119,11 +119,12 @@
             tableLayoutPanel2.Controls.Add(lblDetalleGruposFiltro, 0, 2);
             tableLayoutPanel2.Location = new Point(430, 12);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 3;
+            tableLayoutPanel2.RowCount = 4;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 52.8409081F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 26.704546F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel2.Size = new Size(430, 143);
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel2.Size = new Size(430, 215);
             tableLayoutPanel2.TabIndex = 93;
             // 
             // tableLayoutPanel1
@@ -144,7 +145,7 @@
             tableLayoutPanel1.RowCount = 2;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
-            tableLayoutPanel1.Size = new Size(424, 69);
+            tableLayoutPanel1.Size = new Size(424, 97);
             tableLayoutPanel1.TabIndex = 91;
             // 
             // btnCargarGrupoMarca
@@ -153,7 +154,7 @@
             btnCargarGrupoMarca.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCargarGrupoMarca.Location = new Point(3, 3);
             btnCargarGrupoMarca.Name = "btnCargarGrupoMarca";
-            btnCargarGrupoMarca.Size = new Size(135, 35);
+            btnCargarGrupoMarca.Size = new Size(135, 52);
             btnCargarGrupoMarca.TabIndex = 27;
             btnCargarGrupoMarca.Text = "Cargar Marca";
             btnCargarGrupoMarca.UseVisualStyleBackColor = true;
@@ -165,7 +166,7 @@
             btnCargarGrupoRubro.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCargarGrupoRubro.Location = new Point(144, 3);
             btnCargarGrupoRubro.Name = "btnCargarGrupoRubro";
-            btnCargarGrupoRubro.Size = new Size(135, 35);
+            btnCargarGrupoRubro.Size = new Size(135, 52);
             btnCargarGrupoRubro.TabIndex = 64;
             btnCargarGrupoRubro.Text = "Cargar Rubro";
             btnCargarGrupoRubro.UseVisualStyleBackColor = true;
@@ -177,7 +178,7 @@
             btnCargarGrupoCategoria.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCargarGrupoCategoria.Location = new Point(285, 3);
             btnCargarGrupoCategoria.Name = "btnCargarGrupoCategoria";
-            btnCargarGrupoCategoria.Size = new Size(136, 35);
+            btnCargarGrupoCategoria.Size = new Size(136, 52);
             btnCargarGrupoCategoria.TabIndex = 66;
             btnCargarGrupoCategoria.Text = "Cargar Categorias";
             btnCargarGrupoCategoria.UseVisualStyleBackColor = true;
@@ -187,7 +188,7 @@
             // 
             txtMarca.Anchor = AnchorStyles.Top;
             txtMarca.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtMarca.Location = new Point(3, 44);
+            txtMarca.Location = new Point(3, 61);
             txtMarca.Name = "txtMarca";
             txtMarca.ReadOnly = true;
             txtMarca.Size = new Size(135, 27);
@@ -198,7 +199,7 @@
             // 
             txtRubro.Anchor = AnchorStyles.Top;
             txtRubro.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtRubro.Location = new Point(144, 44);
+            txtRubro.Location = new Point(144, 61);
             txtRubro.Name = "txtRubro";
             txtRubro.ReadOnly = true;
             txtRubro.Size = new Size(135, 27);
@@ -209,7 +210,7 @@
             // 
             txtCategorias.Anchor = AnchorStyles.Top;
             txtCategorias.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtCategorias.Location = new Point(285, 44);
+            txtCategorias.Location = new Point(285, 61);
             txtCategorias.Name = "txtCategorias";
             txtCategorias.ReadOnly = true;
             txtCategorias.Size = new Size(136, 27);
@@ -220,7 +221,7 @@
             // 
             btnCargarProductosAlcanzados.Anchor = AnchorStyles.None;
             btnCargarProductosAlcanzados.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnCargarProductosAlcanzados.Location = new Point(72, 78);
+            btnCargarProductosAlcanzados.Location = new Point(72, 113);
             btnCargarProductosAlcanzados.Name = "btnCargarProductosAlcanzados";
             btnCargarProductosAlcanzados.Size = new Size(285, 32);
             btnCargarProductosAlcanzados.TabIndex = 72;
@@ -233,27 +234,16 @@
             lblDetalleGruposFiltro.Anchor = AnchorStyles.None;
             lblDetalleGruposFiltro.AutoSize = true;
             lblDetalleGruposFiltro.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblDetalleGruposFiltro.Location = new Point(28, 118);
+            lblDetalleGruposFiltro.Location = new Point(28, 164);
             lblDetalleGruposFiltro.Name = "lblDetalleGruposFiltro";
             lblDetalleGruposFiltro.Size = new Size(373, 20);
             lblDetalleGruposFiltro.TabIndex = 92;
             lblDetalleGruposFiltro.Text = "Productos alcanzados por: Marca - Categoria - Rubro";
             // 
-            // btnDevolverAOferta
-            // 
-            btnDevolverAOferta.Anchor = AnchorStyles.Bottom;
-            btnDevolverAOferta.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnDevolverAOferta.Location = new Point(839, 594);
-            btnDevolverAOferta.Name = "btnDevolverAOferta";
-            btnDevolverAOferta.Size = new Size(161, 32);
-            btnDevolverAOferta.TabIndex = 103;
-            btnDevolverAOferta.Text = "Volver a Oferta";
-            btnDevolverAOferta.UseVisualStyleBackColor = true;
-            // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(1070, 609);
+            label2.Location = new Point(976, 736);
             label2.Name = "label2";
             label2.Size = new Size(0, 15);
             label2.TabIndex = 102;
@@ -262,7 +252,7 @@
             // 
             lblNumeroProductoQuitados.AutoSize = true;
             lblNumeroProductoQuitados.Font = new Font("Segoe UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblNumeroProductoQuitados.Location = new Point(1094, 538);
+            lblNumeroProductoQuitados.Location = new Point(1000, 665);
             lblNumeroProductoQuitados.Name = "lblNumeroProductoQuitados";
             lblNumeroProductoQuitados.Size = new Size(52, 37);
             lblNumeroProductoQuitados.TabIndex = 100;
@@ -273,7 +263,7 @@
             // 
             lblCantidadProductosQuitados.AutoSize = true;
             lblCantidadProductosQuitados.Font = new Font("Segoe UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCantidadProductosQuitados.Location = new Point(766, 538);
+            lblCantidadProductosQuitados.Location = new Point(672, 665);
             lblCantidadProductosQuitados.Name = "lblCantidadProductosQuitados";
             lblCantidadProductosQuitados.Size = new Size(321, 37);
             lblCantidadProductosQuitados.TabIndex = 99;
@@ -372,7 +362,7 @@
             txtDescripcion.Multiline = true;
             txtDescripcion.Name = "txtDescripcion";
             txtDescripcion.ReadOnly = true;
-            txtDescripcion.Size = new Size(266, 46);
+            txtDescripcion.Size = new Size(347, 46);
             txtDescripcion.TabIndex = 108;
             // 
             // lblTotalAcumuladoReal
@@ -642,16 +632,16 @@
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(272, 64);
+            tableLayoutPanel4.Size = new Size(353, 64);
             tableLayoutPanel4.TabIndex = 129;
             // 
             // cbxCodigoAutomatico
             // 
             cbxCodigoAutomatico.AutoSize = true;
             cbxCodigoAutomatico.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            cbxCodigoAutomatico.Location = new Point(139, 35);
+            cbxCodigoAutomatico.Location = new Point(179, 35);
             cbxCodigoAutomatico.Name = "cbxCodigoAutomatico";
-            cbxCodigoAutomatico.Size = new Size(130, 25);
+            cbxCodigoAutomatico.Size = new Size(171, 25);
             cbxCodigoAutomatico.TabIndex = 107;
             cbxCodigoAutomatico.Text = "Generar código automático";
             cbxCodigoAutomatico.UseVisualStyleBackColor = true;
@@ -668,7 +658,7 @@
             tableLayoutPanel5.RowCount = 2;
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 30F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 70F));
-            tableLayoutPanel5.Size = new Size(272, 73);
+            tableLayoutPanel5.Size = new Size(353, 73);
             tableLayoutPanel5.TabIndex = 130;
             // 
             // tableLayoutPanel6
@@ -683,7 +673,7 @@
             tableLayoutPanel6.RowCount = 2;
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 53.2258072F));
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 46.7741928F));
-            tableLayoutPanel6.Size = new Size(278, 219);
+            tableLayoutPanel6.Size = new Size(359, 219);
             tableLayoutPanel6.TabIndex = 131;
             // 
             // flowLayoutPanel1
@@ -845,6 +835,25 @@
             pnlExcluidos.Size = new Size(404, 126);
             pnlExcluidos.TabIndex = 149;
             // 
+            // tableLayoutPanel3
+            // 
+            tableLayoutPanel3.ColumnCount = 5;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.Location = new Point(631, 465);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 5;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.Size = new Size(463, 191);
+            tableLayoutPanel3.TabIndex = 93;
+            // 
             // FOfertaABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -852,8 +861,8 @@
             ClientSize = new Size(1279, 994);
             Controls.Add(pnlExcluidos);
             Controls.Add(lblNumeroProductoQuitados);
-            Controls.Add(btnDevolverAOferta);
             Controls.Add(lblCantidadProductosQuitados);
+            Controls.Add(tableLayoutPanel3);
             Controls.Add(btnCrearOferta);
             Controls.Add(btnCancelarYSalir);
             Controls.Add(btnLimpiarCampos);
@@ -919,7 +928,6 @@
         private TextBox txtCategorias;
         private Button btnCargarProductosAlcanzados;
         private Label lblDetalleGruposFiltro;
-        private Button btnDevolverAOferta;
         private Label label2;
         private Label lblNumeroProductoQuitados;
         private Label lblCantidadProductosQuitados;
@@ -971,5 +979,6 @@
         private TableLayoutPanel tableLayoutPanel21;
         private TextBox textBox1;
         private Panel pnlExcluidos;
+        private TableLayoutPanel tableLayoutPanel3;
     }
 }
