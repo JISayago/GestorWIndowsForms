@@ -101,7 +101,7 @@
             Controls.Add(lblDni);
             Controls.Add(btnVerificar);
             Name = "FCuentaCorrienteValidacion";
-            Text = "FCuentaCorrienteValidacion";
+            Text = "Validacion DNI CtaCte";
             ResumeLayout(false);
             PerformLayout();
         }

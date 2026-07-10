@@ -230,8 +230,9 @@
             Controls.Add(lblNombre);
             Controls.Add(lblDni);
             Controls.Add(lblApellido);
+            ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FClienteABM";
-            Text = "FClienteABM";
+            Text = "ABM Cliente";
             Controls.SetChildIndex(lblApellido, 0);
             Controls.SetChildIndex(lblDni, 0);
             Controls.SetChildIndex(lblNombre, 0);

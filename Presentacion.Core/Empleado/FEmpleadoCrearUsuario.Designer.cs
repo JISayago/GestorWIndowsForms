@@ -70,8 +70,9 @@
             Controls.Add(cbxHabilitarEdicionNombre);
             Controls.Add(txtNombreUsuario);
             Controls.Add(btnCrearUsuario);
+            ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FEmpleadoCrearUsuario";
-            Text = "FEmpleadoCrearUsuario";
+            Text = "Asignar Nombre Usuario";
             Load += FEmpleadoCrearUsuario_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);

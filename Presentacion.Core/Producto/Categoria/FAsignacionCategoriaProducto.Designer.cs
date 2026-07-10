@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FAsignacionCategoriaProducto));
             dvgCategoriasProducto = new DataGridView();
             btnAceptar = new Button();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
@@ -59,8 +60,10 @@
             ClientSize = new Size(335, 291);
             Controls.Add(btnAceptar);
             Controls.Add(dvgCategoriasProducto);
+            ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FAsignacionCategoriaProducto";
-            Text = "FAsignacionCategoriaProducto";
+            Text = "Asignar Categorias";
             Load += FAsignacionCategoriaProducto_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ((System.ComponentModel.ISupportInitialize)dvgCategoriasProducto).EndInit();
