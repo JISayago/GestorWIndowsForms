@@ -1,5 +1,6 @@
 ﻿using AccesoDatos.Entidades;
 using Microsoft.IdentityModel.Tokens;
+using MigraDoc.DocumentObjectModel.Internals;
 using Presentacion.Core.Articulo.Marca;
 using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.Core.Producto;
@@ -43,24 +44,29 @@ namespace Presentacion.Core.Oferta
         private int? _limiteStock;
         private ContextMenuStrip _menuLimiteProducto;
         private bool _actualizandoDescuento;
+        private Label lblTituloExcluidos;
+        private Label lblCantidadExcluidos;
+        private Button btnVerExcluidos;
+        private Button btnRestaurarTodos;
 
         public FOfertaABM()
         {
             InitializeComponent();
-
             _filtroGrupos = new FiltroBusquedaComboGrupo();
             _productoServicio = new ProductoServicio();
         }
         private void FOfertaABM_Load(object sender, EventArgs e)
         {
             dgvProductos.AllowUserToAddRows = false;
-            dgvProductosQuitados.AllowUserToAddRows = false;
+            //dgvProductosQuitados.AllowUserToAddRows = false;
 
             _productosParaOfertaDTO = new BindingList<ProductoOfertaDTO>();
             _productosParaQuitarDeOfertaDTO = new BindingList<ProductoOfertaDTO>();
-
+            
+            InicializarPanelExcluidos();
             ActualizarGrillas();
-            ResetearGrillas(dgvProductos, dgvProductosQuitados);
+            ResetearGrillas(dgvProductos);
+            //ResetearGrillas(dgvProductos, dgvProductosQuitados);
             dtpFechaInicio.Value = FInicio;
             dtpFechaFin.Value = FFin;
             txtLimiteStock.Enabled = false;
@@ -386,7 +392,7 @@ namespace Presentacion.Core.Oferta
                 CategoriaIds = producto.CategoriaIds,
                 CantidadItemEnOferta = cantidad
             };
-            if(_productosParaOfertaDTO.Count() < 2)
+            if (_productosParaOfertaDTO.Count() < 2)
             {
                 MessageBox.Show("Recuerde que se debe cargar al menos 2 unidades del mismo producto o un producto extra para poder crear la oferta.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
@@ -394,9 +400,9 @@ namespace Presentacion.Core.Oferta
             {
                 if (_productosParaOfertaDTO.Count() == 1)
                 {
-                   if (_productosParaOfertaDTO.First().CantidadItemEnOferta < 2)
-                   {
-                       MessageBox.Show("Recuerde que se debe cargar al menos 2 unidades del mismo producto o un producto extra para poder crear la oferta.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    if (_productosParaOfertaDTO.First().CantidadItemEnOferta < 2)
+                    {
+                        MessageBox.Show("Recuerde que se debe cargar al menos 2 unidades del mismo producto o un producto extra para poder crear la oferta.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                     else
                     {
@@ -409,8 +415,8 @@ namespace Presentacion.Core.Oferta
                 }
             }
 
-                var existente = _productosParaOfertaDTO
-                    .FirstOrDefault(x => x.ProductoId == productoOfertaDto.ProductoId);
+            var existente = _productosParaOfertaDTO
+                .FirstOrDefault(x => x.ProductoId == productoOfertaDto.ProductoId);
 
             if (existente != null)
             {
@@ -450,11 +456,7 @@ namespace Presentacion.Core.Oferta
             _productosParaOfertaDTO.Add(productoOfertaDto);
             ActualizarTipoOfertaPorProductos();
 
-            cantidadTotalEnOferta = _productosParaOfertaDTO.Count;
-            cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO.Count;
-
-            lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
-            lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
+            ActualizarResumenProductos();
 
             RefrescarOferta();
         }
@@ -482,7 +484,7 @@ namespace Presentacion.Core.Oferta
 
             var cantidadTotal = _productosParaOfertaDTO
                 .Sum(x => x.CantidadItemEnOferta ?? 1);
-           
+
         }
         private void ActualizarDetalleGruposFiltro()
         {
@@ -514,17 +516,103 @@ namespace Presentacion.Core.Oferta
                 grilla.Columns[i].Visible = false;
             }
         }
-        private void ResetearGrillas(DataGridView grillaProductosOferta, DataGridView grillaProductosQuitados)
+        //private void ResetearGrillas(DataGridView grillaProductosOferta, DataGridView grillaProductosQuitados)
+        //{
+        //    foreach (DataGridViewColumn col in grillaProductosOferta.Columns)
+        //    {
+        //        col.Visible = false;
+        //    }
+
+        //    foreach (DataGridViewColumn col in grillaProductosQuitados.Columns)
+        //    {
+        //        col.Visible = false;
+        //    }
+        //    //dentro de la oferta
+        //    grillaProductosOferta.Columns["ProductoId"].Visible = false;
+        //    grillaProductosOferta.Columns["ProductoId"].DisplayIndex = 0;
+
+        //    grillaProductosOferta.Columns["Descripcion"].Visible = true;
+        //    grillaProductosOferta.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        //    grillaProductosOferta.Columns["Descripcion"].DisplayIndex = 1;
+        //    grillaProductosOferta.Columns["Descripcion"].HeaderText = "Descripción";
+
+        //    grillaProductosOferta.Columns["Stock"].Visible = true;
+        //    grillaProductosOferta.Columns["Stock"].Width = 100;
+        //    grillaProductosOferta.Columns["Stock"].DisplayIndex = 2;
+        //    grillaProductosOferta.Columns["Stock"].HeaderText = "Cantidad disponible";
+
+        //    grillaProductosOferta.Columns["Codigo"].Visible = true;
+        //    grillaProductosOferta.Columns["Codigo"].Width = 100;
+        //    grillaProductosOferta.Columns["Codigo"].DisplayIndex = 2;
+        //    grillaProductosOferta.Columns["Codigo"].HeaderText = "Código";
+
+        //    grillaProductosOferta.Columns["PrecioVenta"].Visible = true;
+        //    grillaProductosOferta.Columns["PrecioVenta"].Width = 100;
+        //    grillaProductosOferta.Columns["PrecioVenta"].DisplayIndex = 5;
+        //    grillaProductosOferta.Columns["PrecioVenta"].HeaderText = "Precio Venta";
+
+        //    grillaProductosOferta.Columns["PrecioCosto"].Visible = true;
+        //    grillaProductosOferta.Columns["PrecioCosto"].Width = 100;
+        //    grillaProductosOferta.Columns["PrecioCosto"].DisplayIndex = 5;
+        //    grillaProductosOferta.Columns["PrecioCosto"].HeaderText = "Precio Costo";
+
+        //    grillaProductosOferta.Columns["CantidadItemEnOferta"].Visible = true;
+        //    grillaProductosOferta.Columns["CantidadItemEnOferta"].Width = 80;
+        //    grillaProductosOferta.Columns["CantidadItemEnOferta"].DisplayIndex = 6;
+        //    grillaProductosOferta.Columns["CantidadItemEnOferta"].HeaderText = "Cantidad en oferta";
+
+        //    grillaProductosOferta.Columns["LimiteEnOferta"].Visible = true;
+        //    grillaProductosOferta.Columns["LimiteEnOferta"].Width = 100;
+        //    grillaProductosOferta.Columns["LimiteEnOferta"].DisplayIndex = 7;
+        //    grillaProductosOferta.Columns["LimiteEnOferta"].HeaderText = "Cantidad Limite";
+
+        //    grillaProductosOferta.Columns["ConLimiteEnOferta"].Visible = false;
+
+        //    grillaProductosOferta.Columns["DescripcionLimiteEnOferta"].Visible = true;
+        //    grillaProductosOferta.Columns["DescripcionLimiteEnOferta"].Width = 150;
+        //    grillaProductosOferta.Columns["DescripcionLimiteEnOferta"].DisplayIndex = 8;
+        //    grillaProductosOferta.Columns["DescripcionLimiteEnOferta"].HeaderText = "Límite en Oferta";
+
+        //    //quitados de la oferta
+
+
+        //    grillaProductosQuitados.Columns["ProductoId"].Visible = false;
+        //    grillaProductosQuitados.Columns["ProductoId"].DisplayIndex = 0;
+
+        //    grillaProductosQuitados.Columns["Descripcion"].Visible = true;
+        //    grillaProductosQuitados.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        //    grillaProductosQuitados.Columns["Descripcion"].DisplayIndex = 1;
+        //    grillaProductosQuitados.Columns["Descripcion"].HeaderText = "Descripción";
+
+        //    grillaProductosQuitados.Columns["Stock"].Visible = true;
+        //    grillaProductosQuitados.Columns["Stock"].Width = 100;
+        //    grillaProductosQuitados.Columns["Stock"].DisplayIndex = 2;
+        //    grillaProductosQuitados.Columns["Stock"].HeaderText = "Cantidad disponible";
+
+        //    grillaProductosQuitados.Columns["Codigo"].Visible = true;
+        //    grillaProductosQuitados.Columns["Codigo"].Width = 100;
+        //    grillaProductosQuitados.Columns["Codigo"].DisplayIndex = 2;
+        //    grillaProductosQuitados.Columns["Codigo"].HeaderText = "Código";
+
+        //    grillaProductosQuitados.Columns["PrecioVenta"].Visible = true;
+        //    grillaProductosQuitados.Columns["PrecioVenta"].Width = 100;
+        //    grillaProductosQuitados.Columns["PrecioVenta"].DisplayIndex = 5;
+        //    grillaProductosQuitados.Columns["PrecioVenta"].HeaderText = "Precio Venta"; ;
+
+        //    grillaProductosQuitados.Columns["PrecioCosto"].Visible = true;
+        //    grillaProductosQuitados.Columns["PrecioCosto"].Width = 100;
+        //    grillaProductosQuitados.Columns["PrecioCosto"].DisplayIndex = 5;
+        //    grillaProductosQuitados.Columns["PrecioCosto"].HeaderText = "Precio Costo";
+
+        ////}
+        private void ResetearGrillas(DataGridView grillaProductosOferta)
         {
             foreach (DataGridViewColumn col in grillaProductosOferta.Columns)
             {
                 col.Visible = false;
             }
 
-            foreach (DataGridViewColumn col in grillaProductosQuitados.Columns)
-            {
-                col.Visible = false;
-            }
+           
             //dentro de la oferta
             grillaProductosOferta.Columns["ProductoId"].Visible = false;
             grillaProductosOferta.Columns["ProductoId"].DisplayIndex = 0;
@@ -570,38 +658,6 @@ namespace Presentacion.Core.Oferta
             grillaProductosOferta.Columns["DescripcionLimiteEnOferta"].Width = 150;
             grillaProductosOferta.Columns["DescripcionLimiteEnOferta"].DisplayIndex = 8;
             grillaProductosOferta.Columns["DescripcionLimiteEnOferta"].HeaderText = "Límite en Oferta";
-
-            //quitados de la oferta
-
-
-            grillaProductosQuitados.Columns["ProductoId"].Visible = false;
-            grillaProductosQuitados.Columns["ProductoId"].DisplayIndex = 0;
-
-            grillaProductosQuitados.Columns["Descripcion"].Visible = true;
-            grillaProductosQuitados.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            grillaProductosQuitados.Columns["Descripcion"].DisplayIndex = 1;
-            grillaProductosQuitados.Columns["Descripcion"].HeaderText = "Descripción";
-
-            grillaProductosQuitados.Columns["Stock"].Visible = true;
-            grillaProductosQuitados.Columns["Stock"].Width = 100;
-            grillaProductosQuitados.Columns["Stock"].DisplayIndex = 2;
-            grillaProductosQuitados.Columns["Stock"].HeaderText = "Cantidad disponible";
-
-            grillaProductosQuitados.Columns["Codigo"].Visible = true;
-            grillaProductosQuitados.Columns["Codigo"].Width = 100;
-            grillaProductosQuitados.Columns["Codigo"].DisplayIndex = 2;
-            grillaProductosQuitados.Columns["Codigo"].HeaderText = "Código";
-
-            grillaProductosQuitados.Columns["PrecioVenta"].Visible = true;
-            grillaProductosQuitados.Columns["PrecioVenta"].Width = 100;
-            grillaProductosQuitados.Columns["PrecioVenta"].DisplayIndex = 5;
-            grillaProductosQuitados.Columns["PrecioVenta"].HeaderText = "Precio Venta"; ;
-
-            grillaProductosQuitados.Columns["PrecioCosto"].Visible = true;
-            grillaProductosQuitados.Columns["PrecioCosto"].Width = 100;
-            grillaProductosQuitados.Columns["PrecioCosto"].DisplayIndex = 5;
-            grillaProductosQuitados.Columns["PrecioCosto"].HeaderText = "Precio Costo";
-
         }
         private void dgvProductos_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -648,9 +704,10 @@ namespace Presentacion.Core.Oferta
             dgvProductos.DataSource = null;
             dgvProductos.DataSource = _productosParaOfertaDTO;
 
-            dgvProductosQuitados.DataSource = null;
-            dgvProductosQuitados.DataSource = _productosParaQuitarDeOfertaDTO;
-            ResetearGrillas(dgvProductos, dgvProductosQuitados);
+            //dgvProductosQuitados.DataSource = null;
+            //dgvProductosQuitados.DataSource = _productosParaQuitarDeOfertaDTO;
+            //ResetearGrillas(dgvProductos, dgvProductosQuitados);
+            ResetearGrillas(dgvProductos);
         }
         private ProductoOfertaDTO ObtenerProducto(DataGridView grillaProductosOferta)
         {
@@ -703,51 +760,47 @@ namespace Presentacion.Core.Oferta
             cm2.Refresh();
             ActualizarIdentidadOferta();
         }
-        private void btnDevolverAOferta_Click_1(object sender, EventArgs e)
-        {
-            var productoSeleccionado = ObtenerProducto(dgvProductosQuitados);
-            if (productoSeleccionado == null)
-            {
-                MessageBox.Show("Por favor seleccione un producto disponible para devolver a la oferta.", "Atención!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
+        //private void btnDevolverAOferta_Click_1(object sender, EventArgs e)
+        //{
+        //    var productoSeleccionado = ObtenerProducto(dgvProductosQuitados);
+        //    if (productoSeleccionado == null)
+        //    {
+        //        MessageBox.Show("Por favor seleccione un producto disponible para devolver a la oferta.", "Atención!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        //        return;
+        //    }
 
-            var respuesta = MessageBox.Show($"¿Esta seguro que desea quitar el producto {productoSeleccionado.Descripcion.ToUpper()} del alcance de la oferta?",
-           "Confirmar acción",
-            MessageBoxButtons.YesNo,
-            MessageBoxIcon.Question);
+        //    var respuesta = MessageBox.Show($"¿Esta seguro que desea quitar el producto {productoSeleccionado.Descripcion.ToUpper()} del alcance de la oferta?",
+        //   "Confirmar acción",
+        //    MessageBoxButtons.YesNo,
+        //    MessageBoxIcon.Question);
 
-            if (respuesta != DialogResult.Yes) return;
+        //    if (respuesta != DialogResult.Yes) return;
 
-            // Buscar el elemento real en la lista por ID (evita problemas de referencia)
-            var productoEnListaParaDevolver = _productosParaQuitarDeOfertaDTO
-                .FirstOrDefault(p => p.ProductoId == productoSeleccionado.ProductoId);
+        //    // Buscar el elemento real en la lista por ID (evita problemas de referencia)
+        //    var productoEnListaParaDevolver = _productosParaQuitarDeOfertaDTO
+        //        .FirstOrDefault(p => p.ProductoId == productoSeleccionado.ProductoId);
 
 
-            if (productoEnListaParaDevolver == null)
-            {
-                MessageBox.Show("No se encontró el producto en la lista principal (probable problema de referencia).", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+        //    if (productoEnListaParaDevolver == null)
+        //    {
+        //        MessageBox.Show("No se encontró el producto en la lista principal (probable problema de referencia).", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //        return;
+        //    }
 
-            // Mover entre listas
-            _productosParaQuitarDeOfertaDTO.Remove(productoEnListaParaDevolver);
-            _productosParaOfertaDTO.Add(productoEnListaParaDevolver);
+        //    // Mover entre listas
+        //    _productosParaQuitarDeOfertaDTO.Remove(productoEnListaParaDevolver);
+        //    _productosParaOfertaDTO.Add(productoEnListaParaDevolver);
 
-            RefrescarOferta();
+        //    RefrescarOferta();
 
-            cantidadTotalEnOferta = _productosParaOfertaDTO.Count();
-            cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO.Count();
-
-            lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
-            lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
-            // Forzar refresco si fuera necesario (normalmente no hace falta)
-            var cm = (CurrencyManager)BindingContext[_productosParaOfertaDTO];
-            var cm2 = (CurrencyManager)BindingContext[_productosParaQuitarDeOfertaDTO];
-            cm.Refresh();
-            cm2.Refresh();
-            ActualizarIdentidadOferta();
-        }
+        //ActualizarResumenProductos();
+        //    // Forzar refresco si fuera necesario (normalmente no hace falta)
+        //    var cm = (CurrencyManager)BindingContext[_productosParaOfertaDTO];
+        //    var cm2 = (CurrencyManager)BindingContext[_productosParaQuitarDeOfertaDTO];
+        //    cm.Refresh();
+        //    cm2.Refresh();
+        //    ActualizarIdentidadOferta();
+        //}
         private void ActualizarIdentidadOferta()
         {
             // Oferta por grupo
@@ -884,11 +937,7 @@ namespace Presentacion.Core.Oferta
         {
             ActualizarGrillas();
 
-            cantidadTotalEnOferta = _productosParaOfertaDTO.Count;
-            cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO.Count;
-
-            lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
-            lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
+           ActualizarResumenProductos();
 
             ActualizarIdentidadOferta();
             ActualizarResumenEconomico();
@@ -1414,29 +1463,29 @@ namespace Presentacion.Core.Oferta
 
             return true;
         }
-        private decimal? CalcularPrecioOfertaProducto(ProductoOfertaDTO producto,decimal? porcentaje,decimal? precioFinal)
-{
-    if (_tipoOferta == TipoOferta.Grupo)
-        return null;
+        private decimal? CalcularPrecioOfertaProducto(ProductoOfertaDTO producto, decimal? porcentaje, decimal? precioFinal)
+        {
+            if (_tipoOferta == TipoOferta.Grupo)
+                return null;
 
-    if (_tipoOferta == TipoOferta.DosPorUno)
-    {
-        return producto.PrecioVenta / 2m;
-    }
+            if (_tipoOferta == TipoOferta.DosPorUno)
+            {
+                return producto.PrecioVenta / 2m;
+            }
 
-    if (porcentaje.HasValue)
-    {
-        return producto.PrecioVenta -
-               (producto.PrecioVenta * porcentaje.Value / 100m);
-    }
+            if (porcentaje.HasValue)
+            {
+                return producto.PrecioVenta -
+                       (producto.PrecioVenta * porcentaje.Value / 100m);
+            }
 
-    if (precioFinal.HasValue)
-    {
-        return precioFinal.Value;
-    }
+            if (precioFinal.HasValue)
+            {
+                return precioFinal.Value;
+            }
 
-    return producto.PrecioVenta;
-}
+            return producto.PrecioVenta;
+        }
         private void btnLimpiarCampos_Click(object sender, EventArgs e)
         {
             var respuesta = MessageBox.Show(
@@ -1512,6 +1561,125 @@ namespace Presentacion.Core.Oferta
             lblTotalAcumuladoVenta.Text = "Monto acumulado de precio Venta: $0,00";
             lblTotalFinal.Text = "Sin descuento configurado";
             lblTotalPerdidoConREspectoAlVentayREal.Text = "Sin descuento configurado";
+        }
+
+        private void InicializarPanelExcluidos()
+        {
+            lblTituloExcluidos = new Label
+            {
+                AutoSize = true,
+                Text = "Productos excluidos",
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                ForeColor = Color.Black,
+                Location = new Point(10, 10)
+            };
+
+            lblCantidadExcluidos = new Label
+            {
+                AutoSize = true,
+                Font = new Font("Segoe UI", 9F),
+                ForeColor = Color.DimGray,
+                Location = new Point(10, 40)
+            };
+
+            btnVerExcluidos = new Button
+            {
+                Width = 140,
+                Height = 30,
+                Text = "Ver productos",
+                FlatStyle = FlatStyle.Flat,
+                Location = new Point(10, 75)
+            };
+
+            btnVerExcluidos.FlatAppearance.BorderColor =
+                ColorTranslator.FromHtml("#291a3e");
+
+            btnVerExcluidos.Click += BtnVerExcluidos_Click;
+
+            btnRestaurarTodos = new Button
+            {
+                Width = 140,
+                Height = 30,
+                Text = "Restaurar todos",
+                FlatStyle = FlatStyle.Flat,
+                Location = new Point(160, 75)
+            };
+
+            btnRestaurarTodos.FlatAppearance.BorderColor =
+                ColorTranslator.FromHtml("#291a3e");
+
+            //btnRestaurarTodos.Click += BtnRestaurarTodos_Click;
+
+
+            pnlExcluidos.Controls.Add(lblTituloExcluidos);
+            pnlExcluidos.Controls.Add(lblCantidadExcluidos);
+            pnlExcluidos.Controls.Add(btnVerExcluidos);
+            pnlExcluidos.Controls.Add(btnRestaurarTodos);
+
+            ActualizarPanelExcluidos();
+        }
+        private void ActualizarPanelExcluidos()
+        {
+            int cantidad = _productosParaQuitarDeOfertaDTO.Count;
+
+            if (cantidad == 0)
+            {
+                lblCantidadExcluidos.Text =
+                    "No existen productos excluidos.";
+
+                btnVerExcluidos.Enabled = false;
+                btnRestaurarTodos.Enabled = false;
+
+                return;
+            }
+
+            lblCantidadExcluidos.Text =
+                $"{cantidad} producto{(cantidad == 1 ? "" : "s")} excluido{(cantidad == 1 ? "" : "s")}.";
+
+            btnVerExcluidos.Enabled = true;
+            btnRestaurarTodos.Enabled = true;
+        }
+        private void ActualizarResumenProductos()
+        {
+            lblCantidadProductos.Text =
+                $"Productos alcanzados: {_productosParaOfertaDTO.Count}";
+
+            lblCantidadExcluidos.Text =
+                $"Excluidos: {_productosParaQuitarDeOfertaDTO.Count}";
+
+            btnVerExcluidos.Enabled =
+                _productosParaQuitarDeOfertaDTO.Any();
+        }
+        private void BtnVerExcluidos_Click(object sender, EventArgs e)
+        {
+            using var frm = new FProductosExcluidosDeOferta(_productosParaQuitarDeOfertaDTO);
+
+            if (frm.ShowDialog() != DialogResult.OK)
+                return;
+
+            foreach (var producto in frm.ProductosRestaurados)
+            {
+                _productosParaQuitarDeOfertaDTO.Remove(producto);
+                _productosParaOfertaDTO.Add(producto);
+            }
+
+            RefrescarOferta();
+            ActualizarResumenProductos();
+            ActualizarIdentidadOferta();
+        }
+        public List<ProductoOfertaDTO> ProductosRestaurados { get; }
+    = new();
+
+        private void btnRestaurar_Click(object sender, EventArgs e)
+        {
+            if (dgvProductos.CurrentRow == null)
+                return;
+
+            var producto = (ProductoOfertaDTO)dgvProductos.CurrentRow.DataBoundItem;
+
+            ProductosRestaurados.Add(producto);
+
+            _productosParaOfertaDTO.Remove(producto);
         }
     }
 }

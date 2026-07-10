@@ -41,7 +41,6 @@
             lblDetalleGruposFiltro = new Label();
             btnDevolverAOferta = new Button();
             label2 = new Label();
-            dgvProductosQuitados = new DataGridView();
             lblNumeroProductoQuitados = new Label();
             lblCantidadProductosQuitados = new Label();
             btnQuitarProducto = new Button();
@@ -81,8 +80,6 @@
             tableLayoutPanel6 = new TableLayoutPanel();
             flowLayoutPanel1 = new FlowLayoutPanel();
             tableLayoutPanel8 = new TableLayoutPanel();
-            flowLayoutPanel2 = new FlowLayoutPanel();
-            tableLayoutPanel9 = new TableLayoutPanel();
             tableLayoutPanel11 = new TableLayoutPanel();
             tableLayoutPanel12 = new TableLayoutPanel();
             tableLayoutPanel13 = new TableLayoutPanel();
@@ -91,10 +88,10 @@
             tableLayoutPanel18 = new TableLayoutPanel();
             tableLayoutPanel15 = new TableLayoutPanel();
             tableLayoutPanel16 = new TableLayoutPanel();
+            pnlExcluidos = new Panel();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvProductosQuitados).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
             tableLayoutPanel21.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
@@ -102,8 +99,6 @@
             tableLayoutPanel6.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             tableLayoutPanel8.SuspendLayout();
-            flowLayoutPanel2.SuspendLayout();
-            tableLayoutPanel9.SuspendLayout();
             tableLayoutPanel11.SuspendLayout();
             tableLayoutPanel12.SuspendLayout();
             tableLayoutPanel13.SuspendLayout();
@@ -122,7 +117,7 @@
             tableLayoutPanel2.Controls.Add(tableLayoutPanel1, 0, 0);
             tableLayoutPanel2.Controls.Add(btnCargarProductosAlcanzados, 0, 1);
             tableLayoutPanel2.Controls.Add(lblDetalleGruposFiltro, 0, 2);
-            tableLayoutPanel2.Location = new Point(571, 36);
+            tableLayoutPanel2.Location = new Point(430, 12);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 3;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 52.8409081F));
@@ -248,41 +243,26 @@
             // 
             btnDevolverAOferta.Anchor = AnchorStyles.Bottom;
             btnDevolverAOferta.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnDevolverAOferta.Location = new Point(444, 24);
+            btnDevolverAOferta.Location = new Point(839, 594);
             btnDevolverAOferta.Name = "btnDevolverAOferta";
             btnDevolverAOferta.Size = new Size(161, 32);
             btnDevolverAOferta.TabIndex = 103;
             btnDevolverAOferta.Text = "Volver a Oferta";
             btnDevolverAOferta.UseVisualStyleBackColor = true;
-            btnDevolverAOferta.Click += btnDevolverAOferta_Click_1;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(1187, 279);
+            label2.Location = new Point(1070, 609);
             label2.Name = "label2";
             label2.Size = new Size(0, 15);
             label2.TabIndex = 102;
-            // 
-            // dgvProductosQuitados
-            // 
-            dgvProductosQuitados.AllowUserToAddRows = false;
-            dgvProductosQuitados.AllowUserToDeleteRows = false;
-            dgvProductosQuitados.AllowUserToResizeRows = false;
-            dgvProductosQuitados.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dgvProductosQuitados.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvProductosQuitados.EditMode = DataGridViewEditMode.EditProgrammatically;
-            dgvProductosQuitados.Location = new Point(685, 279);
-            dgvProductosQuitados.MultiSelect = false;
-            dgvProductosQuitados.Name = "dgvProductosQuitados";
-            dgvProductosQuitados.Size = new Size(618, 103);
-            dgvProductosQuitados.TabIndex = 101;
             // 
             // lblNumeroProductoQuitados
             // 
             lblNumeroProductoQuitados.AutoSize = true;
             lblNumeroProductoQuitados.Font = new Font("Segoe UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblNumeroProductoQuitados.Location = new Point(330, 0);
+            lblNumeroProductoQuitados.Location = new Point(1094, 538);
             lblNumeroProductoQuitados.Name = "lblNumeroProductoQuitados";
             lblNumeroProductoQuitados.Size = new Size(52, 37);
             lblNumeroProductoQuitados.TabIndex = 100;
@@ -293,7 +273,7 @@
             // 
             lblCantidadProductosQuitados.AutoSize = true;
             lblCantidadProductosQuitados.Font = new Font("Segoe UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCantidadProductosQuitados.Location = new Point(3, 0);
+            lblCantidadProductosQuitados.Location = new Point(766, 538);
             lblCantidadProductosQuitados.Name = "lblCantidadProductosQuitados";
             lblCantidadProductosQuitados.Size = new Size(321, 37);
             lblCantidadProductosQuitados.TabIndex = 99;
@@ -303,7 +283,7 @@
             // 
             btnQuitarProducto.Anchor = AnchorStyles.Bottom;
             btnQuitarProducto.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnQuitarProducto.Location = new Point(444, 62);
+            btnQuitarProducto.Location = new Point(444, 8);
             btnQuitarProducto.Name = "btnQuitarProducto";
             btnQuitarProducto.Size = new Size(161, 32);
             btnQuitarProducto.TabIndex = 98;
@@ -327,10 +307,10 @@
             dgvProductos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductos.EditMode = DataGridViewEditMode.EditProgrammatically;
-            dgvProductos.Location = new Point(46, 314);
+            dgvProductos.Location = new Point(27, 388);
             dgvProductos.MultiSelect = false;
             dgvProductos.Name = "dgvProductos";
-            dgvProductos.Size = new Size(618, 167);
+            dgvProductos.Size = new Size(519, 92);
             dgvProductos.TabIndex = 96;
             dgvProductos.CellMouseDown += dgvProductos_CellMouseDown_1;
             // 
@@ -360,7 +340,7 @@
             txtCodigo.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtCodigo.Location = new Point(3, 35);
             txtCodigo.Name = "txtCodigo";
-            txtCodigo.Size = new Size(220, 27);
+            txtCodigo.Size = new Size(130, 27);
             txtCodigo.TabIndex = 105;
             // 
             // lblCodigoOf
@@ -392,7 +372,7 @@
             txtDescripcion.Multiline = true;
             txtDescripcion.Name = "txtDescripcion";
             txtDescripcion.ReadOnly = true;
-            txtDescripcion.Size = new Size(447, 46);
+            txtDescripcion.Size = new Size(266, 46);
             txtDescripcion.TabIndex = 108;
             // 
             // lblTotalAcumuladoReal
@@ -400,7 +380,7 @@
             lblTotalAcumuladoReal.Anchor = AnchorStyles.Top;
             lblTotalAcumuladoReal.AutoSize = true;
             lblTotalAcumuladoReal.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotalAcumuladoReal.Location = new Point(128, 0);
+            lblTotalAcumuladoReal.Location = new Point(106, 0);
             lblTotalAcumuladoReal.Name = "lblTotalAcumuladoReal";
             lblTotalAcumuladoReal.Size = new Size(367, 25);
             lblTotalAcumuladoReal.TabIndex = 109;
@@ -412,7 +392,7 @@
             lblTotalAcumuladoVenta.Anchor = AnchorStyles.Top;
             lblTotalAcumuladoVenta.AutoSize = true;
             lblTotalAcumuladoVenta.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotalAcumuladoVenta.Location = new Point(128, 40);
+            lblTotalAcumuladoVenta.Location = new Point(106, 41);
             lblTotalAcumuladoVenta.Name = "lblTotalAcumuladoVenta";
             lblTotalAcumuladoVenta.Size = new Size(367, 25);
             lblTotalAcumuladoVenta.TabIndex = 110;
@@ -424,7 +404,7 @@
             lblTotalPerdidoConREspectoAlVentayREal.Anchor = AnchorStyles.Top;
             lblTotalPerdidoConREspectoAlVentayREal.AutoSize = true;
             lblTotalPerdidoConREspectoAlVentayREal.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotalPerdidoConREspectoAlVentayREal.Location = new Point(192, 80);
+            lblTotalPerdidoConREspectoAlVentayREal.Location = new Point(170, 82);
             lblTotalPerdidoConREspectoAlVentayREal.Name = "lblTotalPerdidoConREspectoAlVentayREal";
             lblTotalPerdidoConREspectoAlVentayREal.Size = new Size(240, 25);
             lblTotalPerdidoConREspectoAlVentayREal.TabIndex = 111;
@@ -434,9 +414,9 @@
             // 
             txtPorcentajeDescuento.Anchor = AnchorStyles.Top;
             txtPorcentajeDescuento.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtPorcentajeDescuento.Location = new Point(58, 37);
+            txtPorcentajeDescuento.Location = new Point(3, 27);
             txtPorcentajeDescuento.Name = "txtPorcentajeDescuento";
-            txtPorcentajeDescuento.Size = new Size(300, 35);
+            txtPorcentajeDescuento.Size = new Size(240, 35);
             txtPorcentajeDescuento.TabIndex = 112;
             txtPorcentajeDescuento.TextChanged += txtPorcentajeDescuento_TextChanged;
             // 
@@ -445,9 +425,9 @@
             lblDescuentoPor.Anchor = AnchorStyles.None;
             lblDescuentoPor.AutoSize = true;
             lblDescuentoPor.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblDescuentoPor.Location = new Point(146, 4);
+            lblDescuentoPor.Location = new Point(61, 0);
             lblDescuentoPor.Name = "lblDescuentoPor";
-            lblDescuentoPor.Size = new Size(124, 25);
+            lblDescuentoPor.Size = new Size(124, 24);
             lblDescuentoPor.TabIndex = 113;
             lblDescuentoPor.Text = "Descuento %";
             // 
@@ -456,9 +436,9 @@
             label3.Anchor = AnchorStyles.None;
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label3.Location = new Point(167, 4);
+            label3.Location = new Point(82, 0);
             label3.Name = "label3";
-            label3.Size = new Size(81, 25);
+            label3.Size = new Size(81, 24);
             label3.TabIndex = 115;
             label3.Text = "Precio $";
             // 
@@ -466,9 +446,9 @@
             // 
             txtPrecioFinal.Anchor = AnchorStyles.Top;
             txtPrecioFinal.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtPrecioFinal.Location = new Point(58, 37);
+            txtPrecioFinal.Location = new Point(3, 27);
             txtPrecioFinal.Name = "txtPrecioFinal";
-            txtPrecioFinal.Size = new Size(300, 35);
+            txtPrecioFinal.Size = new Size(240, 35);
             txtPrecioFinal.TabIndex = 114;
             txtPrecioFinal.TextChanged += txtPrecioFinal_TextChanged;
             // 
@@ -519,9 +499,9 @@
             lblLimiteStock.Anchor = AnchorStyles.Right;
             lblLimiteStock.AutoSize = true;
             lblLimiteStock.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblLimiteStock.Location = new Point(23, 9);
+            lblLimiteStock.Location = new Point(4, 0);
             lblLimiteStock.Name = "lblLimiteStock";
-            lblLimiteStock.Size = new Size(75, 30);
+            lblLimiteStock.Size = new Size(51, 34);
             lblLimiteStock.TabIndex = 122;
             lblLimiteStock.Text = "Limite ";
             lblLimiteStock.TextAlign = ContentAlignment.MiddleRight;
@@ -531,9 +511,9 @@
             txtLimiteStock.Anchor = AnchorStyles.Left;
             txtLimiteStock.Enabled = false;
             txtLimiteStock.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtLimiteStock.Location = new Point(104, 7);
+            txtLimiteStock.Location = new Point(61, 3);
             txtLimiteStock.Name = "txtLimiteStock";
-            txtLimiteStock.Size = new Size(68, 35);
+            txtLimiteStock.Size = new Size(53, 35);
             txtLimiteStock.TabIndex = 121;
             txtLimiteStock.TextChanged += txtLimiteStock_TextChanged;
             // 
@@ -542,9 +522,9 @@
             cbxLimiteCumplirStock.Anchor = AnchorStyles.Right;
             cbxLimiteCumplirStock.AutoSize = true;
             cbxLimiteCumplirStock.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            cbxLimiteCumplirStock.Location = new Point(65, 108);
+            cbxLimiteCumplirStock.Location = new Point(3, 74);
             cbxLimiteCumplirStock.Name = "cbxLimiteCumplirStock";
-            cbxLimiteCumplirStock.Size = new Size(354, 34);
+            cbxLimiteCumplirStock.Size = new Size(246, 34);
             cbxLimiteCumplirStock.TabIndex = 120;
             cbxLimiteCumplirStock.Text = "Agregar limite general a productos";
             cbxLimiteCumplirStock.UseVisualStyleBackColor = true;
@@ -554,9 +534,9 @@
             // 
             btnControlStockDisponible.Anchor = AnchorStyles.None;
             btnControlStockDisponible.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnControlStockDisponible.Location = new Point(244, 9);
+            btnControlStockDisponible.Location = new Point(126, 3);
             btnControlStockDisponible.Name = "btnControlStockDisponible";
-            btnControlStockDisponible.Size = new Size(136, 40);
+            btnControlStockDisponible.Size = new Size(117, 34);
             btnControlStockDisponible.TabIndex = 123;
             btnControlStockDisponible.Text = "Aplicar límite";
             btnControlStockDisponible.UseVisualStyleBackColor = true;
@@ -603,7 +583,7 @@
             lblTotalFinal.Anchor = AnchorStyles.Top;
             lblTotalFinal.AutoSize = true;
             lblTotalFinal.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotalFinal.Location = new Point(192, 123);
+            lblTotalFinal.Location = new Point(170, 125);
             lblTotalFinal.Name = "lblTotalFinal";
             lblTotalFinal.Size = new Size(240, 25);
             lblTotalFinal.TabIndex = 127;
@@ -657,21 +637,21 @@
             tableLayoutPanel4.Controls.Add(lblCodigoOf, 0, 0);
             tableLayoutPanel4.Controls.Add(txtCodigo, 0, 1);
             tableLayoutPanel4.Controls.Add(cbxCodigoAutomatico, 1, 1);
-            tableLayoutPanel4.Location = new Point(3, 82);
+            tableLayoutPanel4.Location = new Point(3, 119);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(453, 64);
+            tableLayoutPanel4.Size = new Size(272, 64);
             tableLayoutPanel4.TabIndex = 129;
             // 
             // cbxCodigoAutomatico
             // 
             cbxCodigoAutomatico.AutoSize = true;
             cbxCodigoAutomatico.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            cbxCodigoAutomatico.Location = new Point(229, 35);
+            cbxCodigoAutomatico.Location = new Point(139, 35);
             cbxCodigoAutomatico.Name = "cbxCodigoAutomatico";
-            cbxCodigoAutomatico.Size = new Size(218, 25);
+            cbxCodigoAutomatico.Size = new Size(130, 25);
             cbxCodigoAutomatico.TabIndex = 107;
             cbxCodigoAutomatico.Text = "Generar código automático";
             cbxCodigoAutomatico.UseVisualStyleBackColor = true;
@@ -688,7 +668,7 @@
             tableLayoutPanel5.RowCount = 2;
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 30F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 70F));
-            tableLayoutPanel5.Size = new Size(453, 73);
+            tableLayoutPanel5.Size = new Size(272, 73);
             tableLayoutPanel5.TabIndex = 130;
             // 
             // tableLayoutPanel6
@@ -703,7 +683,7 @@
             tableLayoutPanel6.RowCount = 2;
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 53.2258072F));
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 46.7741928F));
-            tableLayoutPanel6.Size = new Size(459, 149);
+            tableLayoutPanel6.Size = new Size(278, 219);
             tableLayoutPanel6.TabIndex = 131;
             // 
             // flowLayoutPanel1
@@ -711,7 +691,7 @@
             flowLayoutPanel1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             flowLayoutPanel1.Controls.Add(lblCantidadProductos);
             flowLayoutPanel1.Controls.Add(lblNumeroProductoAfectados);
-            flowLayoutPanel1.Location = new Point(3, 59);
+            flowLayoutPanel1.Location = new Point(3, 5);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
             flowLayoutPanel1.Size = new Size(426, 35);
             flowLayoutPanel1.TabIndex = 132;
@@ -724,37 +704,12 @@
             tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
             tableLayoutPanel8.Controls.Add(btnQuitarProducto, 1, 0);
             tableLayoutPanel8.Controls.Add(flowLayoutPanel1, 0, 0);
-            tableLayoutPanel8.Location = new Point(40, 197);
+            tableLayoutPanel8.Location = new Point(24, 292);
             tableLayoutPanel8.Name = "tableLayoutPanel8";
             tableLayoutPanel8.RowCount = 1;
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel8.Size = new Size(618, 97);
+            tableLayoutPanel8.Size = new Size(618, 43);
             tableLayoutPanel8.TabIndex = 134;
-            // 
-            // flowLayoutPanel2
-            // 
-            flowLayoutPanel2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            flowLayoutPanel2.Controls.Add(lblCantidadProductosQuitados);
-            flowLayoutPanel2.Controls.Add(lblNumeroProductoQuitados);
-            flowLayoutPanel2.Location = new Point(3, 21);
-            flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(426, 35);
-            flowLayoutPanel2.TabIndex = 134;
-            // 
-            // tableLayoutPanel9
-            // 
-            tableLayoutPanel9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel9.ColumnCount = 2;
-            tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
-            tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            tableLayoutPanel9.Controls.Add(flowLayoutPanel2, 0, 0);
-            tableLayoutPanel9.Controls.Add(btnDevolverAOferta, 1, 0);
-            tableLayoutPanel9.Location = new Point(698, 207);
-            tableLayoutPanel9.Name = "tableLayoutPanel9";
-            tableLayoutPanel9.RowCount = 1;
-            tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel9.Size = new Size(618, 59);
-            tableLayoutPanel9.TabIndex = 135;
             // 
             // tableLayoutPanel11
             // 
@@ -765,14 +720,14 @@
             tableLayoutPanel11.Controls.Add(lblTotalAcumuladoVenta, 0, 1);
             tableLayoutPanel11.Controls.Add(lblTotalPerdidoConREspectoAlVentayREal, 0, 2);
             tableLayoutPanel11.Controls.Add(lblTotalFinal, 0, 3);
-            tableLayoutPanel11.Location = new Point(658, 711);
+            tableLayoutPanel11.Location = new Point(702, 739);
             tableLayoutPanel11.Name = "tableLayoutPanel11";
             tableLayoutPanel11.RowCount = 4;
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Absolute, 43F));
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Absolute, 53F));
-            tableLayoutPanel11.Size = new Size(624, 176);
+            tableLayoutPanel11.Size = new Size(580, 179);
             tableLayoutPanel11.TabIndex = 137;
             // 
             // tableLayoutPanel12
@@ -782,12 +737,12 @@
             tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel12.Controls.Add(lblDescuentoPor, 0, 0);
             tableLayoutPanel12.Controls.Add(txtPorcentajeDescuento, 0, 1);
-            tableLayoutPanel12.Location = new Point(425, 3);
+            tableLayoutPanel12.Location = new Point(255, 3);
             tableLayoutPanel12.Name = "tableLayoutPanel12";
             tableLayoutPanel12.RowCount = 2;
             tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
             tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
-            tableLayoutPanel12.Size = new Size(417, 87);
+            tableLayoutPanel12.Size = new Size(246, 62);
             tableLayoutPanel12.TabIndex = 138;
             // 
             // tableLayoutPanel13
@@ -802,7 +757,7 @@
             tableLayoutPanel13.RowCount = 2;
             tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
             tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
-            tableLayoutPanel13.Size = new Size(416, 87);
+            tableLayoutPanel13.Size = new Size(246, 62);
             tableLayoutPanel13.TabIndex = 139;
             // 
             // tableLayoutPanel14
@@ -815,12 +770,12 @@
             tableLayoutPanel14.Controls.Add(tableLayoutPanel19, 1, 1);
             tableLayoutPanel14.Controls.Add(tableLayoutPanel13, 0, 0);
             tableLayoutPanel14.Controls.Add(tableLayoutPanel12, 1, 0);
-            tableLayoutPanel14.Location = new Point(99, 548);
+            tableLayoutPanel14.Location = new Point(99, 591);
             tableLayoutPanel14.Name = "tableLayoutPanel14";
             tableLayoutPanel14.RowCount = 2;
             tableLayoutPanel14.RowStyles.Add(new RowStyle(SizeType.Percent, 59.86842F));
             tableLayoutPanel14.RowStyles.Add(new RowStyle(SizeType.Percent, 40.13158F));
-            tableLayoutPanel14.Size = new Size(845, 157);
+            tableLayoutPanel14.Size = new Size(504, 114);
             tableLayoutPanel14.TabIndex = 140;
             // 
             // tableLayoutPanel19
@@ -831,11 +786,11 @@
             tableLayoutPanel19.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel19.Controls.Add(tableLayoutPanel18, 0, 0);
             tableLayoutPanel19.Controls.Add(btnControlStockDisponible, 1, 0);
-            tableLayoutPanel19.Location = new Point(425, 96);
+            tableLayoutPanel19.Location = new Point(255, 71);
             tableLayoutPanel19.Name = "tableLayoutPanel19";
             tableLayoutPanel19.RowCount = 1;
             tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel19.Size = new Size(417, 58);
+            tableLayoutPanel19.Size = new Size(246, 40);
             tableLayoutPanel19.TabIndex = 145;
             // 
             // tableLayoutPanel18
@@ -846,11 +801,11 @@
             tableLayoutPanel18.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel18.Controls.Add(txtLimiteStock, 1, 0);
             tableLayoutPanel18.Controls.Add(lblLimiteStock, 0, 0);
-            tableLayoutPanel18.Location = new Point(3, 4);
+            tableLayoutPanel18.Location = new Point(3, 3);
             tableLayoutPanel18.Name = "tableLayoutPanel18";
             tableLayoutPanel18.RowCount = 1;
             tableLayoutPanel18.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel18.Size = new Size(202, 49);
+            tableLayoutPanel18.Size = new Size(117, 34);
             tableLayoutPanel18.TabIndex = 144;
             // 
             // tableLayoutPanel15
@@ -883,11 +838,22 @@
             tableLayoutPanel16.Size = new Size(621, 106);
             tableLayoutPanel16.TabIndex = 142;
             // 
+            // pnlExcluidos
+            // 
+            pnlExcluidos.Location = new Point(718, 292);
+            pnlExcluidos.Name = "pnlExcluidos";
+            pnlExcluidos.Size = new Size(404, 126);
+            pnlExcluidos.TabIndex = 149;
+            // 
             // FOfertaABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1279, 994);
+            Controls.Add(pnlExcluidos);
+            Controls.Add(lblNumeroProductoQuitados);
+            Controls.Add(btnDevolverAOferta);
+            Controls.Add(lblCantidadProductosQuitados);
             Controls.Add(btnCrearOferta);
             Controls.Add(btnCancelarYSalir);
             Controls.Add(btnLimpiarCampos);
@@ -895,9 +861,7 @@
             Controls.Add(tableLayoutPanel15);
             Controls.Add(tableLayoutPanel11);
             Controls.Add(tableLayoutPanel14);
-            Controls.Add(tableLayoutPanel9);
             Controls.Add(dgvProductos);
-            Controls.Add(dgvProductosQuitados);
             Controls.Add(tableLayoutPanel8);
             Controls.Add(tableLayoutPanel6);
             Controls.Add(tableLayoutPanel2);
@@ -915,7 +879,6 @@
             tableLayoutPanel2.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvProductosQuitados).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).EndInit();
             tableLayoutPanel21.ResumeLayout(false);
             tableLayoutPanel21.PerformLayout();
@@ -927,9 +890,6 @@
             flowLayoutPanel1.ResumeLayout(false);
             flowLayoutPanel1.PerformLayout();
             tableLayoutPanel8.ResumeLayout(false);
-            flowLayoutPanel2.ResumeLayout(false);
-            flowLayoutPanel2.PerformLayout();
-            tableLayoutPanel9.ResumeLayout(false);
             tableLayoutPanel11.ResumeLayout(false);
             tableLayoutPanel11.PerformLayout();
             tableLayoutPanel12.ResumeLayout(false);
@@ -961,7 +921,6 @@
         private Label lblDetalleGruposFiltro;
         private Button btnDevolverAOferta;
         private Label label2;
-        private DataGridView dgvProductosQuitados;
         private Label lblNumeroProductoQuitados;
         private Label lblCantidadProductosQuitados;
         private Button btnQuitarProducto;
@@ -1001,8 +960,6 @@
         private Button btnCargarProducto;
         private FlowLayoutPanel flowLayoutPanel1;
         private TableLayoutPanel tableLayoutPanel8;
-        private FlowLayoutPanel flowLayoutPanel2;
-        private TableLayoutPanel tableLayoutPanel9;
         private TableLayoutPanel tableLayoutPanel11;
         private TableLayoutPanel tableLayoutPanel12;
         private TableLayoutPanel tableLayoutPanel13;
@@ -1013,5 +970,6 @@
         private TableLayoutPanel tableLayoutPanel19;
         private TableLayoutPanel tableLayoutPanel21;
         private TextBox textBox1;
+        private Panel pnlExcluidos;
     }
 }
