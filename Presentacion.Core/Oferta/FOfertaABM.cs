@@ -62,7 +62,7 @@ namespace Presentacion.Core.Oferta
 
             _productosParaOfertaDTO = new BindingList<ProductoOfertaDTO>();
             _productosParaQuitarDeOfertaDTO = new BindingList<ProductoOfertaDTO>();
-            
+
             InicializarPanelExcluidos();
             ActualizarGrillas();
             ResetearGrillas(dgvProductos);
@@ -318,7 +318,7 @@ namespace Presentacion.Core.Oferta
             cantidadTotalFueraOferta = 0;
 
             lblNumeroProductoAfectados.Text = "0";
-            lblNumeroProductoQuitados.Text = "0";
+            //lblNumeroProductoQuitados.Text = "0";
         }
         private void LimpiarCodigoYDescripcion()
         {
@@ -612,7 +612,7 @@ namespace Presentacion.Core.Oferta
                 col.Visible = false;
             }
 
-           
+
             //dentro de la oferta
             grillaProductosOferta.Columns["ProductoId"].Visible = false;
             grillaProductosOferta.Columns["ProductoId"].DisplayIndex = 0;
@@ -752,7 +752,7 @@ namespace Presentacion.Core.Oferta
             cantidadTotalEnOferta = _productosParaOfertaDTO.Count();
             cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO.Count();
             lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
-            lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
+            //lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
             // Forzar refresco si fuera necesario (normalmente no hace falta)
             var cm = (CurrencyManager)BindingContext[_productosParaOfertaDTO];
             var cm2 = (CurrencyManager)BindingContext[_productosParaQuitarDeOfertaDTO];
@@ -937,7 +937,7 @@ namespace Presentacion.Core.Oferta
         {
             ActualizarGrillas();
 
-           ActualizarResumenProductos();
+            ActualizarResumenProductos();
 
             ActualizarIdentidadOferta();
             ActualizarResumenEconomico();
@@ -1555,7 +1555,7 @@ namespace Presentacion.Core.Oferta
         private void ResetearResumen()
         {
             lblNumeroProductoAfectados.Text = "0";
-            lblNumeroProductoQuitados.Text = "0";
+            //lblNumeroProductoQuitados.Text = "0";
 
             lblTotalAcumuladoReal.Text = "Monto acumulado de precio Costo: $0,00";
             lblTotalAcumuladoVenta.Text = "Monto acumulado de precio Venta: $0,00";
@@ -1681,5 +1681,6 @@ namespace Presentacion.Core.Oferta
 
             _productosParaOfertaDTO.Remove(producto);
         }
+
     }
 }
