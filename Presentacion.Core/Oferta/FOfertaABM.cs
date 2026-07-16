@@ -48,7 +48,11 @@ namespace Presentacion.Core.Oferta
         private Label lblCantidadExcluidos;
         private Button btnVerExcluidos;
         private Button btnRestaurarTodos;
-
+        private bool ofertaEsPorGrupo = false;
+        private bool ofertaEsPorCombo = false;
+        private bool ofertaEsDosPorUno = false;
+        private bool esUnCombo = false;
+        private bool esSinEspecificarPorCombo = true;
         public FOfertaABM()
         {
             InitializeComponent();
@@ -70,7 +74,7 @@ namespace Presentacion.Core.Oferta
             dtpFechaInicio.Value = FInicio;
             dtpFechaFin.Value = FFin;
             txtLimiteStock.Enabled = false;
-
+            cbxSinEspecificar.Checked = esSinEspecificarPorCombo;
             _menuLimiteProducto = new ContextMenuStrip();
 
             _menuLimiteProducto.Items.Add(
@@ -79,6 +83,46 @@ namespace Presentacion.Core.Oferta
                 AsignarLimiteParticular_Click);
 
             dgvProductos.ContextMenuStrip = _menuLimiteProducto;
+            CamposHabilitadosDeshabilitadosArmado();
+        }
+        private void CamposHabilitadosDeshabilitadosArmado()
+        {
+            CamposHDOfertaGrupo();
+            CamposHDOfertaCombo();
+        }
+        private void CamposHDOfertaGrupo()
+        {
+            if (!ofertaEsPorGrupo)
+            {
+                btnCargarGrupoMarca.Enabled = false;
+                btnCargarGrupoRubro.Enabled = false;
+                btnCargarGrupoCategoria.Enabled = false;
+                btnCargarProductosAlcanzados.Enabled = false;
+            }
+            else
+            {
+                btnCargarGrupoMarca.Enabled = true;
+                btnCargarGrupoRubro.Enabled = true;
+                btnCargarGrupoCategoria.Enabled = true;
+                btnCargarProductosAlcanzados.Enabled = true;
+            }
+        }
+        private void CamposHDOfertaCombo()
+        {
+            if (!ofertaEsPorCombo)
+            {
+                btnCargarProducto.Enabled = false;
+                cbxSinEspecificar.Enabled = false;
+                cbx2x1.Enabled = false;
+                cbxCombo.Enabled = false;
+            }
+            else
+            {
+                btnCargarProducto.Enabled = true;
+                cbxSinEspecificar.Enabled = true;
+                cbxCombo.Enabled = true;
+                cbx2x1.Enabled = true;
+            }
         }
         private void btnCargarGrupoMarca_Click(object sender, EventArgs e)
         {
@@ -92,8 +136,7 @@ namespace Presentacion.Core.Oferta
             if (fMarca.ShowDialog() == DialogResult.OK)
             {
                 _filtroGrupos.IdMarca = fMarca.marcaSeleccionada;
-                txtMarca.Text = fMarca.descripcionMarca;
-
+                
                 _descripcionMarca = fMarca.descripcionMarca;
 
                 ActualizarDetalleGruposFiltro();
@@ -111,7 +154,6 @@ namespace Presentacion.Core.Oferta
             if (fRubro.ShowDialog() == DialogResult.OK)
             {
                 _filtroGrupos.IdRubro = fRubro.rubroSeleccionado;
-                txtRubro.Text = fRubro.descripcionRubro;
                 _descripcionRubro = fRubro.descripcionRubro;
                 ActualizarDetalleGruposFiltro();
             }
@@ -129,7 +171,6 @@ namespace Presentacion.Core.Oferta
                 _filtroGrupos.IdCategorias =
                     fCategoriaProducto.CategoriasSeleccionadas.ToList();
 
-                txtCategorias.Text = string.Join(",", fCategoriaProducto.descripcionCategorias);
                 _descripcionCategorias = fCategoriaProducto.descripcionCategorias;
                 ActualizarDetalleGruposFiltro();
             }
@@ -299,11 +340,6 @@ namespace Presentacion.Core.Oferta
             _descripcionRubro = string.Empty;
             _descripcionCategorias.Clear();
 
-            // Limpiar controles
-            txtMarca.Clear();
-            txtRubro.Clear();
-            txtCategorias.Clear();
-
             ActualizarDetalleGruposFiltro();
         }
         private void LimpiarDatosGrilla()
@@ -317,7 +353,7 @@ namespace Presentacion.Core.Oferta
             cantidadTotalEnOferta = 0;
             cantidadTotalFueraOferta = 0;
 
-            lblNumeroProductoAfectados.Text = "0";
+            //lblNumeroProductoAfectados.Text = "0";
             //lblNumeroProductoQuitados.Text = "0";
         }
         private void LimpiarCodigoYDescripcion()
@@ -505,8 +541,11 @@ namespace Presentacion.Core.Oferta
                 detalles.Add($"Categorías: {string.Join(", ", _descripcionCategorias)}");
             }
 
-            lblDetalleGruposFiltro.Text = detalles.Any()
-                ? $"Grupos de Filtro: {string.Join(" | ", detalles)}"
+            //lblDetalleGruposFiltro.Text = detalles.Any()
+            //    ? $"Grupos de Filtro: {string.Join(" | ", detalles)}"
+            //    : "Sin filtros seleccionados";
+            lblAgrupadosPor.Text = detalles.Any()
+                ? $"Agrupados por: {string.Join(" | ", detalles)}"
                 : "Sin filtros seleccionados";
         }
         public virtual void IniciarGrilla(DataGridView grilla)
@@ -751,7 +790,7 @@ namespace Presentacion.Core.Oferta
 
             cantidadTotalEnOferta = _productosParaOfertaDTO.Count();
             cantidadTotalFueraOferta = _productosParaQuitarDeOfertaDTO.Count();
-            lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
+            //lblNumeroProductoAfectados.Text = cantidadTotalEnOferta.ToString();
             //lblNumeroProductoQuitados.Text = cantidadTotalFueraOferta.ToString();
             // Forzar refresco si fuera necesario (normalmente no hace falta)
             var cm = (CurrencyManager)BindingContext[_productosParaOfertaDTO];
@@ -1519,10 +1558,6 @@ namespace Presentacion.Core.Oferta
             txtPrecioFinal.Clear();
             _actualizandoDescuento = false;
 
-            txtCategorias.Text = _descripcionCategorias.ToString();
-            txtMarca.Text = _descripcionMarca;
-            txtRubro.Text = _descripcionRubro;
-
             LimpiarCargaPorGrupo();
             LimpiarDatosGrilla();
             LimpiarCodigoYDescripcion();
@@ -1554,7 +1589,7 @@ namespace Presentacion.Core.Oferta
 
         private void ResetearResumen()
         {
-            lblNumeroProductoAfectados.Text = "0";
+            //lblNumeroProductoAfectados.Text = "0";
             //lblNumeroProductoQuitados.Text = "0";
 
             lblTotalAcumuladoReal.Text = "Monto acumulado de precio Costo: $0,00";
@@ -1682,5 +1717,48 @@ namespace Presentacion.Core.Oferta
             _productosParaOfertaDTO.Remove(producto);
         }
 
+        private void cbxCrearOfertaGrupo_CheckedChanged(object sender, EventArgs e)
+        {
+            ofertaEsPorGrupo = cbxCrearOfertaGrupo.Checked;
+            cbxCrearOfertaPorCombo.Checked = !cbxCrearOfertaGrupo.Checked;
+            CamposHabilitadosDeshabilitadosArmado();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)//combo check
+        {
+            ofertaEsPorCombo = cbxCrearOfertaPorCombo.Checked;
+            cbxCrearOfertaGrupo.Checked = !cbxCrearOfertaPorCombo.Checked;
+            CamposHabilitadosDeshabilitadosArmado();
+        }
+
+        private void cbx2x1_CheckedChanged(object sender, EventArgs e)
+        {
+            ofertaEsDosPorUno = cbx2x1.Checked;
+            cbxSinEspecificar.Checked = !cbx2x1.Checked;
+            cbxCombo.Checked = !cbx2x1.Checked;
+            CamposHabilitadosDeshabilitadosArmado();
+        }
+
+        private void cbxCombo_CheckedChanged(object sender, EventArgs e)
+        {
+            esUnCombo = cbxCombo.Checked;
+            cbx2x1.Checked = !cbxCombo.Checked;
+            cbxSinEspecificar.Checked = !cbxCombo.Checked;
+            CamposHabilitadosDeshabilitadosArmado();
+        }
+
+        private void cbxSinEspecificar_CheckedChanged(object sender, EventArgs e)
+        {
+            esSinEspecificarPorCombo = cbxSinEspecificar.Checked;
+            cbx2x1.Checked = !cbxSinEspecificar.Checked;
+            cbxCombo.Checked = !cbxSinEspecificar.Checked;
+            CamposHabilitadosDeshabilitadosArmado();
+
+        }
+
+        private void cbxCodigoAutomatico_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
