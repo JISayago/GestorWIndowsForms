@@ -53,6 +53,9 @@ namespace Presentacion.Core.Oferta
         private bool ofertaEsDosPorUno = false;
         private bool esUnCombo = false;
         private bool esSinEspecificarPorCombo = true;
+        private bool generacionCodigoOferta = true;
+        private bool aplicarMontoFinalEnPorcentaje = false;
+        private bool aplicarMontoFinalEnPesos = false;
         public FOfertaABM()
         {
             InitializeComponent();
@@ -74,7 +77,18 @@ namespace Presentacion.Core.Oferta
             dtpFechaInicio.Value = FInicio;
             dtpFechaFin.Value = FFin;
             txtLimiteStock.Enabled = false;
-            cbxSinEspecificar.Checked = esSinEspecificarPorCombo;
+            rbSinEspecificar.Checked = true;
+            cbxCodigoAutomatico.Checked = generacionCodigoOferta;
+            ActualizarModoOferta();
+            if(generacionCodigoOferta) 
+            {
+                txtCodigo.Enabled = false;
+            }
+            else
+            {
+                txtCodigo.Enabled = true;
+            }
+
             _menuLimiteProducto = new ContextMenuStrip();
 
             _menuLimiteProducto.Items.Add(
@@ -83,12 +97,17 @@ namespace Presentacion.Core.Oferta
                 AsignarLimiteParticular_Click);
 
             dgvProductos.ContextMenuStrip = _menuLimiteProducto;
+            txtPrecioFinal.Enabled = false;
+            txtPorcentajeDescuento.Enabled = false;
+            btnCargarProducto.Enabled = false;
+            checkBox1.Checked = false;
+            checkBox2.Checked = false;
+
             CamposHabilitadosDeshabilitadosArmado();
         }
         private void CamposHabilitadosDeshabilitadosArmado()
         {
             CamposHDOfertaGrupo();
-            CamposHDOfertaCombo();
         }
         private void CamposHDOfertaGrupo()
         {
@@ -107,23 +126,6 @@ namespace Presentacion.Core.Oferta
                 btnCargarProductosAlcanzados.Enabled = true;
             }
         }
-        private void CamposHDOfertaCombo()
-        {
-            if (!ofertaEsPorCombo)
-            {
-                btnCargarProducto.Enabled = false;
-                cbxSinEspecificar.Enabled = false;
-                cbx2x1.Enabled = false;
-                cbxCombo.Enabled = false;
-            }
-            else
-            {
-                btnCargarProducto.Enabled = true;
-                cbxSinEspecificar.Enabled = true;
-                cbxCombo.Enabled = true;
-                cbx2x1.Enabled = true;
-            }
-        }
         private void btnCargarGrupoMarca_Click(object sender, EventArgs e)
         {
             if (!ConfirmarCambioDesdeProductosAGrupos())
@@ -136,7 +138,7 @@ namespace Presentacion.Core.Oferta
             if (fMarca.ShowDialog() == DialogResult.OK)
             {
                 _filtroGrupos.IdMarca = fMarca.marcaSeleccionada;
-                
+
                 _descripcionMarca = fMarca.descripcionMarca;
 
                 ActualizarDetalleGruposFiltro();
@@ -490,38 +492,67 @@ namespace Presentacion.Core.Oferta
             }
 
             _productosParaOfertaDTO.Add(productoOfertaDto);
-            ActualizarTipoOfertaPorProductos();
-
+            if (rbSinEspecificar.Checked)
+            {
+                ActualizarTipoOfertaPorProductos();
+            }
+            else
+            {
+                ActualizarTipoOfertaRadios();
+            }
             ActualizarResumenProductos();
-
             RefrescarOferta();
         }
         private void ActualizarTipoOfertaPorProductos()
         {
-            // Si la oferta se arma por grupo nunca se cambia el tipo.
-            if (_filtroGrupos.IdMarca.HasValue
-                || _filtroGrupos.IdRubro.HasValue
-                || _filtroGrupos.IdCategorias.Any())
-            {
-                _tipoOferta = TipoOferta.Grupo;
+            if (!rbSinEspecificar.Checked)
                 return;
-            }
 
-            if (!_productosParaOfertaDTO.Any())
-            {
-                _tipoOferta = TipoOferta.Producto;
-                return;
-            }
-
-            var productosDistintos = _productosParaOfertaDTO
+            var distintos = _productosParaOfertaDTO
                 .Select(x => x.ProductoId)
                 .Distinct()
                 .Count();
 
-            var cantidadTotal = _productosParaOfertaDTO
-                .Sum(x => x.CantidadItemEnOferta ?? 1);
-
+            if (distintos == 1 &&
+                _productosParaOfertaDTO.First().CantidadItemEnOferta >= 2)
+            {
+                _tipoOferta = TipoOferta.DosPorUno;
+            }
+            else if (distintos > 1)
+            {
+                _tipoOferta = TipoOferta.Combo;
+            }
+            else
+            {
+                _tipoOferta = TipoOferta.Producto;
+            }
         }
+        //private void ActualizarTipoOfertaPorProductos()
+        //{
+        //    // Si la oferta se arma por grupo nunca se cambia el tipo.
+        //    if (_filtroGrupos.IdMarca.HasValue
+        //        || _filtroGrupos.IdRubro.HasValue
+        //        || _filtroGrupos.IdCategorias.Any())
+        //    {
+        //        _tipoOferta = TipoOferta.Grupo;
+        //        return;
+        //    }
+
+        //    if (!_productosParaOfertaDTO.Any())
+        //    {
+        //        _tipoOferta = TipoOferta.Producto;
+        //        return;
+        //    }
+
+        //    var productosDistintos = _productosParaOfertaDTO
+        //        .Select(x => x.ProductoId)
+        //        .Distinct()
+        //        .Count();
+
+        //    var cantidadTotal = _productosParaOfertaDTO
+        //        .Sum(x => x.CantidadItemEnOferta ?? 1);
+
+        //}
         private void ActualizarDetalleGruposFiltro()
         {
             var detalles = new List<string>();
@@ -1719,46 +1750,159 @@ namespace Presentacion.Core.Oferta
 
         private void cbxCrearOfertaGrupo_CheckedChanged(object sender, EventArgs e)
         {
-            ofertaEsPorGrupo = cbxCrearOfertaGrupo.Checked;
-            cbxCrearOfertaPorCombo.Checked = !cbxCrearOfertaGrupo.Checked;
-            CamposHabilitadosDeshabilitadosArmado();
+            if (!cbxCrearOfertaGrupo.Checked)
+                return;
+
+            cbxCrearOfertaPorCombo.Checked = false;
+
+            ActualizarModoOferta();
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)//combo check
         {
-            ofertaEsPorCombo = cbxCrearOfertaPorCombo.Checked;
-            cbxCrearOfertaGrupo.Checked = !cbxCrearOfertaPorCombo.Checked;
-            CamposHabilitadosDeshabilitadosArmado();
-        }
+            if (!cbxCrearOfertaPorCombo.Checked)
+                return;
 
-        private void cbx2x1_CheckedChanged(object sender, EventArgs e)
+            cbxCrearOfertaGrupo.Checked = false;
+
+            ActualizarModoOferta();
+        }
+        private void ActualizarModoOferta()
         {
-            ofertaEsDosPorUno = cbx2x1.Checked;
-            cbxSinEspecificar.Checked = !cbx2x1.Checked;
-            cbxCombo.Checked = !cbx2x1.Checked;
-            CamposHabilitadosDeshabilitadosArmado();
+            bool esGrupo = cbxCrearOfertaGrupo.Checked;
+
+            rbSinEspecificar.Enabled = !esGrupo;
+            rbCombo.Enabled = !esGrupo;
+            rbDosPorUno.Enabled = !esGrupo;
+
+            if (esGrupo)
+            {
+                _tipoOferta = TipoOferta.Grupo;
+
+                rbSinEspecificar.Checked = false;
+                rbCombo.Checked = false;
+                rbDosPorUno.Checked = false;
+                btnCargarGrupoCategoria.Enabled = true;
+                btnCargarGrupoMarca.Enabled = true;
+                btnCargarGrupoRubro.Enabled = true;
+                btnCargarProductosAlcanzados.Enabled = true;
+                btnCargarProducto.Enabled = false;
+            }
+            else
+            {
+                if (!rbSinEspecificar.Checked && !rbCombo.Checked && !rbDosPorUno.Checked)
+                {
+                    rbSinEspecificar.Checked = true;
+                    btnCargarGrupoCategoria.Enabled = false;
+                    btnCargarGrupoMarca.Enabled = false;
+                    btnCargarGrupoRubro.Enabled = false;
+                    btnCargarProductosAlcanzados.Enabled = false;
+                btnCargarProducto.Enabled = true;
+                }
+
+                ActualizarTipoOfertaRadios();
+            }
         }
-
-        private void cbxCombo_CheckedChanged(object sender, EventArgs e)
-        {
-            esUnCombo = cbxCombo.Checked;
-            cbx2x1.Checked = !cbxCombo.Checked;
-            cbxSinEspecificar.Checked = !cbxCombo.Checked;
-            CamposHabilitadosDeshabilitadosArmado();
-        }
-
-        private void cbxSinEspecificar_CheckedChanged(object sender, EventArgs e)
-        {
-            esSinEspecificarPorCombo = cbxSinEspecificar.Checked;
-            cbx2x1.Checked = !cbxSinEspecificar.Checked;
-            cbxCombo.Checked = !cbxSinEspecificar.Checked;
-            CamposHabilitadosDeshabilitadosArmado();
-
-        }
-
         private void cbxCodigoAutomatico_CheckedChanged(object sender, EventArgs e)
         {
+            if (cbxCodigoAutomatico.Checked) return;
 
+            var opcion = MessageBox.Show(
+                "Si Desactiva la generación automática de código, se reemplazará por el código ingresado manualmente.\n\n¿Desea continuar?",
+                "Generación automática de código",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+            if (opcion == DialogResult.Yes)
+            {
+
+                generacionCodigoOferta = cbxCodigoAutomatico.Checked;
+
+                if (generacionCodigoOferta)
+                {
+                    txtCodigo.Enabled = false;
+                }
+                else
+                {
+                    txtCodigo.Enabled = true;
+                }
+            }
+        }
+
+        private void rbSinEspecificar_CheckedChanged(object sender, EventArgs e)
+        {
+            ActualizarTipoOfertaRadios();
+        }
+
+        private void rbCombo_CheckedChanged(object sender, EventArgs e)
+        {
+            ActualizarTipoOfertaRadios();
+        }
+
+        private void rbDosPorUno_CheckedChanged(object sender, EventArgs e)
+        {
+            ActualizarTipoOfertaRadios();
+        }
+        private void ActualizarTipoOfertaRadios()
+        {
+            if (cbxCrearOfertaGrupo.Checked)
+            {
+                _tipoOferta = TipoOferta.Grupo;
+                return;
+            }
+
+            if (rbDosPorUno.Checked)
+            {
+                _tipoOferta = TipoOferta.DosPorUno;
+                return;
+            }
+
+            if (rbCombo.Checked)
+            {
+                _tipoOferta = TipoOferta.Combo;
+                return;
+            }
+
+            _tipoOferta = TipoOferta.Producto;
+        }
+
+        private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                checkBox2.Checked = false;
+
+                txtPrecioFinal.Enabled = true;
+                txtPorcentajeDescuento.Enabled = false;
+                txtPorcentajeDescuento.Clear();
+            }
+            else
+            {
+                txtPrecioFinal.Enabled = false;
+                txtPrecioFinal.Clear();
+            }
+
+            aplicarMontoFinalEnPesos = checkBox1.Checked;
+            aplicarMontoFinalEnPorcentaje = checkBox2.Checked;
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox2.Checked)
+            {
+                checkBox1.Checked = false;
+
+                txtPorcentajeDescuento.Enabled = true;
+                txtPrecioFinal.Enabled = false;
+                txtPrecioFinal.Clear();
+            }
+            else
+            {
+                txtPorcentajeDescuento.Enabled = false;
+                txtPorcentajeDescuento.Clear();
+            }
+
+            aplicarMontoFinalEnPesos = checkBox1.Checked;
+            aplicarMontoFinalEnPorcentaje = checkBox2.Checked;
         }
     }
 }
