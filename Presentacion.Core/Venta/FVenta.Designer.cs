@@ -800,7 +800,7 @@
             ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FVenta";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "FVenta";
+            Text = "Venta";
             WindowState = FormWindowState.Maximized;
             Load += FVenta_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();

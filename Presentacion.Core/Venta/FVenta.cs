@@ -11,6 +11,7 @@ using Presentacion.Core.Venta.HelpersVenta.Servicios.Helpers.Venta;
 using Presentacion.FBase.Helpers;
 using Presentacion.Formularios;
 using Servicios.Helpers.OpcionesPagos;
+using Servicios.Helpers.Sistema;
 using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.Cliente.DTO;
 using Servicios.LogicaNegocio.CuentaCorriente;
@@ -746,9 +747,18 @@ namespace Presentacion.Core.Venta
                     frmProcesando.Show();
                     frmProcesando.ActualizarEstado("Cancelando venta...");
 
-                    await Task.Run(() => CancelarVenta(VENTAID));
+                    var respuesta = await Task.Run(() => CancelarVenta(VENTAID));
 
                     frmProcesando.Close();
+
+                    if (respuesta.Exitoso)
+                    {
+                        MessageBox.Show("Venta cancelada con éxito.");
+                    }
+                    else
+                    {
+                        MessageBox.Show(respuesta.Mensaje);
+                    }
                 }
             }
             else
@@ -758,10 +768,10 @@ namespace Presentacion.Core.Venta
             }
         }
 
-        private void CancelarVenta(long? VenId)
+        private EstadoOperacion CancelarVenta(long? VenId)
         {
-            //var respuesta = _ventaServicio.CancelacionVentaPorId((long)VenId);
-            //MessageBox.Show(respuesta.Mensaje);
+            var respuesta = _ventaServicio.CancelacionVentaPorId((long)VenId);
+            return respuesta;   
         }
 
         private void InicializarYLimpiarCampos(long? ventaId)

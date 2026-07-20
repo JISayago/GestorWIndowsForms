@@ -28,7 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.BackColor = Color.FromArgb(234, 234, 234);
+            panel1.Size = new Size(1297, 450);
+            // 
+            // chkBool1
+            // 
+            chkBool1.ForeColor = Color.FromArgb(31, 26, 43);
+            chkBool1.Size = new Size(17, 1);
+            // 
+            // btnBuscar
+            // 
+            btnBuscar.BackColor = Color.FromArgb(220, 199, 255);
+            btnBuscar.FlatAppearance.BorderColor = Color.Black;
+            btnBuscar.FlatStyle = FlatStyle.Flat;
+            btnBuscar.ForeColor = Color.Black;
+            btnBuscar.Location = new Point(10, 3);
+            btnBuscar.Size = new Size(305, 18);
+            btnBuscar.UseVisualStyleBackColor = false;
+            // 
+            // lblTotalRegistros
+            // 
+            lblTotalRegistros.Location = new Point(136, 4);
             // 
             // FCuentaCorrienteConsulta
             // 
@@ -36,7 +61,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1297, 450);
             Name = "FCuentaCorrienteConsulta";
-            Text = "FCuentaCorrienteConsulta";
+            Text = "Consulta Cuentas Corrientes";
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
         }
 

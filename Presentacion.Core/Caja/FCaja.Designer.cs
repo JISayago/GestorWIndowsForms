@@ -34,6 +34,7 @@
             btnAbrirCaja = new Button();
             lblEstadoCaja = new Label();
             lblSaldoCaja = new Label();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
             // btnConsultarMovimientos
@@ -109,10 +110,12 @@
             Controls.Add(btnConsultarCajas);
             Controls.Add(btnCerrarCaja);
             Controls.Add(btnAbrirCaja);
+            ForeColor = Color.FromArgb(31, 26, 43);
             Name = "FCaja";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "FCaja";
+            Text = "Caja";
             Load += FCaja_Load;
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }

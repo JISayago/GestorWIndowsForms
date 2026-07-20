@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FMarcaABM));
             label3 = new Label();
             txtMarca = new TextBox();
             lblMarca = new Label();
@@ -71,8 +72,10 @@
             Controls.Add(label3);
             Controls.Add(txtMarca);
             Controls.Add(lblMarca);
+            ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FMarcaABM";
-            Text = "FMarcaABM";
+            Text = "ABM Marca";
             Controls.SetChildIndex(lblMarca, 0);
             Controls.SetChildIndex(txtMarca, 0);
             Controls.SetChildIndex(label3, 0);

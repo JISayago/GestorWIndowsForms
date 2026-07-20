@@ -121,7 +121,7 @@
             MinimizeBox = false;
             Name = "FCodigoRecuperacion";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "FCodigoRecuperacion";
+            Text = "Codigo de Recuperacion";
             ResumeLayout(false);
             PerformLayout();
         }

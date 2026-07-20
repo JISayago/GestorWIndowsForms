@@ -219,7 +219,10 @@ namespace Servicios.LogicaNegocio.Venta
             }
             ActualizarStock(ventaDto, venta, itemsStock, context, ventaOriginal);
             ActualizarEstadisticasOfertas(ventaDto,context);
+            if (!esCancelacion)
+            {
             DesactivarOfertasSinStockDisponible(ventaDto.Items.Where(x => x.EsOferta), context);
+            }
             CrearDetallesVenta(venta, ventaDto.Items, context);
             return new EstadoOperacion
             {
@@ -347,6 +350,7 @@ namespace Servicios.LogicaNegocio.Venta
         private void ActualizarEstadisticaOferta(ItemVentaDTO item,GestorContextDB context,bool esCancelacion)
         {
             var productosOferta = context.ProductosEnOfertasDescuentos
+                .Include(x => x.OfertaDescuento)
                 .Where(x => x.OfertaDescuentoId == item.ItemId)
                 .ToList();
 
@@ -367,11 +371,7 @@ namespace Servicios.LogicaNegocio.Venta
                 estadistica = new OfertaProductoEstadistica
                 {
                     OfertaDescuentoId = productoOferta.OfertaDescuentoId,
-                    ProductoId = productoOferta.ProductoId,
-                    CantidadVendida = 0,
-                    TotalCostoAcumulado = 0,
-                    TotalVentaAcumulado = 0,
-                    TotalOfertaAcumulado = 0
+                    ProductoId = productoOferta.ProductoId
                 };
 
                 context.OfertaProductoEstadisticas.Add(estadistica);
@@ -384,6 +384,9 @@ namespace Servicios.LogicaNegocio.Venta
                 cantidadVendida *= -1;
 
             estadistica.CantidadVendida += cantidadVendida;
+
+            if (estadistica.CantidadVendida < 0)
+                estadistica.CantidadVendida = 0;
 
             decimal precioOferta =
                 productoOferta.PrecioOfertaBase ??
@@ -398,6 +401,15 @@ namespace Servicios.LogicaNegocio.Venta
             estadistica.TotalOfertaAcumulado +=
                 precioOferta * cantidadVendida;
 
+            if (estadistica.TotalCostoAcumulado < 0)
+                estadistica.TotalCostoAcumulado = 0;
+
+            if (estadistica.TotalVentaAcumulado < 0)
+                estadistica.TotalVentaAcumulado = 0;
+
+            if (estadistica.TotalOfertaAcumulado < 0)
+                estadistica.TotalOfertaAcumulado = 0;
+
             estadistica.FechaUltimaVenta = DateTime.Now;
 
             ValidarLimiteVentaProducto(productoOferta,estadistica,esCancelacion);
@@ -405,9 +417,6 @@ namespace Servicios.LogicaNegocio.Venta
         private void ValidarLimiteVentaProducto(ProductosEnOfertaDescuentos productoOferta,OfertaProductoEstadistica estadistica,bool esCancelacion)
         {
             if (!productoOferta.LimiteVentaProducto.HasValue)
-                return;
-
-            if (esCancelacion)
                 return;
 
             if (estadistica.CantidadVendida >=
@@ -515,45 +524,53 @@ namespace Servicios.LogicaNegocio.Venta
 
             context.DetalleVentaLotes.AddRange(detallesLotes);
         }
-        private void CrearDetallesVenta(AccesoDatos.Entidades.Venta venta, List<ItemVentaDTO> items, GestorContextDB context)
+        private void CrearDetallesVenta(AccesoDatos.Entidades.Venta venta,List<ItemVentaDTO> items,GestorContextDB context)
         {
             var detalles = new List<DetallesVenta>();
 
-            foreach (var i in items)
+            foreach (var item in items)
             {
-                var precioOriginal = i.PrecioVenta;
-                var precioFinal = i.EsOferta
-                    ? i.PrecioOferta
-                    : i.PrecioVenta;
+                bool esOfertaCompuesta = EsOfertaCompuesta(item);
+
+                decimal precioFinal = item.EsOferta
+                    ? item.PrecioOferta
+                    : item.PrecioVenta;
 
                 detalles.Add(new DetallesVenta
                 {
                     IdVenta = venta.VentaId,
 
-                    IdProducto =
-                        i.EsOferta && (i.TipoOferta == (int)TipoOferta.DosPorUno || i.TipoOferta == (int)TipoOferta.Combo)
-                            ? null
-                            : i.ItemId,
+                    IdProducto = esOfertaCompuesta
+                        ? null
+                        : item.ItemId,
 
-                    IdOfertaDescuento =
-                        i.EsOferta && (i.TipoOferta == (int)TipoOferta.DosPorUno || i.TipoOferta == (int)TipoOferta.Combo)
-                            ? i.ItemId
-                            : null,
+                    IdOfertaDescuento = esOfertaCompuesta
+                        ? item.ItemId
+                        : null,
 
-                    Cantidad = i.Cantidad,
+                    Cantidad = item.Cantidad,
 
-                    PrecioUnitarioOriginal = precioOriginal,
+                    PrecioUnitarioOriginal = item.PrecioVenta,
                     PrecioUnitarioFinal = precioFinal,
-                    Subtotal = precioFinal * i.Cantidad,
 
-                    EsOferta = i.EsOferta,
-                    EsOfertaPorGrupo = i.TipoOferta == (int)TipoOferta.Grupo,
+                    Subtotal = precioFinal * item.Cantidad,
 
-                    Descripcion = i.Descripcion ?? string.Empty
+                    EsOferta = item.EsOferta,
+
+                    EsOfertaPorGrupo =
+                        item.TipoOferta == (int)TipoOferta.Grupo,
+
+                    Descripcion = item.Descripcion ?? string.Empty
                 });
             }
 
             context.DetallesVentas.AddRange(detalles);
+        }
+        private static bool EsOfertaCompuesta(ItemVentaDTO item)
+        {
+            return item.EsOferta &&
+                   (item.TipoOferta == (int)TipoOferta.Combo ||
+                    item.TipoOferta == (int)TipoOferta.DosPorUno);
         }
         private void RegistrarPagos(AccesoDatos.Entidades.Venta venta, VentaDTO ventaDto, GestorContextDB context)
         {
@@ -1359,121 +1376,137 @@ namespace Servicios.LogicaNegocio.Venta
 
             _pdf.GenerarCancelacionVenta(ventaCompleta);
         }
-        //public EstadoOperacion CancelacionVentaPorId(long ventaId)
-        //{
-        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
-        //    using var transaction = context.Database.BeginTransaction();
+        public EstadoOperacion CancelacionVentaPorId(long ventaId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            using var transaction = context.Database.BeginTransaction();
 
-        //    try
-        //    {
-        //        var ventaOriginal = context.Ventas
-        //            .Include(v => v.DetallesVentas)
-        //            .Include(v => v.VentaPagoDetalles)
-        //            .FirstOrDefault(v => v.VentaId == ventaId);
+            try
+            {
+                var ventaOriginal = context.Ventas
+                    .Include(v => v.DetallesVentas)
+                    .Include(v => v.VentaPagoDetalles)
+                    .FirstOrDefault(v => v.VentaId == ventaId);
 
-        //        if (ventaOriginal == null)
-        //            return new EstadoOperacion { Exitoso = false, Mensaje = "La venta no existe." };
+                if (ventaOriginal == null)
+                    return new EstadoOperacion { Exitoso = false, Mensaje = "La venta no existe." };
 
-        //        if (ventaOriginal.Estado == (int)EstadoVenta.Cancelada)
-        //            return new EstadoOperacion { Exitoso = false, Mensaje = "La venta ya está cancelada." };
+                if (ventaOriginal.Estado == (int)EstadoVenta.Cancelada)
+                    return new EstadoOperacion { Exitoso = false, Mensaje = "La venta ya está cancelada." };
 
-        //        ventaOriginal.Estado = (int)EstadoVenta.Cancelada;
+                ventaOriginal.Estado = (int)EstadoVenta.Cancelada;
 
-        //        var ventaCancelacionDto = new VentaDTO
-        //        {
-        //            IdEmpleado = ventaOriginal.IdEmpleado,
-        //            IdVendedor = ventaOriginal.IdVendedor,
-        //            IdCliente = ventaOriginal.IdCliente,
-        //            FechaVenta = DateTime.Now,
-        //            // se cambia el negativo de la oferta cancelada, solo va a filtrar en caso de estado 99 (cancelado.) pero los montos son iguales a lo de la venta en positivo.
-        //            Total = ventaOriginal.Total,
-        //            TotalSinDescuento = ventaOriginal.TotalSinDescuento,
-        //            Descuento = ventaOriginal.Descuento,
+                // Traigo una sola vez los tipos de oferta necesarios
+                var ofertasIds = ventaOriginal.DetallesVentas
+                    .Where(d => d.IdOfertaDescuento.HasValue)
+                    .Select(d => d.IdOfertaDescuento!.Value)
+                    .Distinct()
+                    .ToList();
 
-        //            Estado = (int)EstadoVenta.CancelacionVenta,
-        //            Detalle = $"Cancelación de venta N° {ventaOriginal.NumeroVenta}",
+                var tiposOferta = context.OfertasDescuentos
+                    .Where(o => ofertasIds.Contains(o.OfertaDescuentoId))
+                    .ToDictionary(
+                        o => o.OfertaDescuentoId,
+                        o => o.TipoOferta);
 
-        //            Items = ventaOriginal.DetallesVentas.Select(d =>
-        //            {
-        //                long itemId;
+                var ventaCancelacionDto = new VentaDTO
+                {
+                    IdEmpleado = ventaOriginal.IdEmpleado,
+                    IdVendedor = ventaOriginal.IdVendedor,
+                    IdCliente = ventaOriginal.IdCliente,
+                    FechaVenta = DateTime.Now,
+                    // se cambia el negativo de la oferta cancelada, solo va a filtrar en caso de estado 99 (cancelado.) pero los montos son iguales a lo de la venta en positivo.
+                    Total = ventaOriginal.Total,
+                    TotalSinDescuento = ventaOriginal.TotalSinDescuento,
+                    Descuento = ventaOriginal.Descuento,
 
-        //                if (d.EsOferta && !d.EsOfertaPorGrupo)
-        //                {
-        //                    if (!d.IdOfertaDescuento.HasValue)
-        //                        throw new Exception($"Detalle inconsistente: falta IdOfertaDescuento en DetalleVentaId {d.DetalleVentaId}");
+                    Estado = (int)EstadoVenta.CancelacionVenta,
+                    Detalle = $"Cancelación de venta N° {ventaOriginal.NumeroVenta}",
 
-        //                    itemId = d.IdOfertaDescuento.Value;
-        //                }
-        //                else
-        //                {
-        //                    if (!d.IdProducto.HasValue)
-        //                        throw new Exception($"Detalle inconsistente: falta IdProducto en DetalleVentaId {d.DetalleVentaId}");
+                    Items = ventaOriginal.DetallesVentas.Select(d =>
+                    {
+                        long itemId;
+                        int tipoOferta = 0;
 
-        //                    itemId = d.IdProducto.Value;
-        //                }
+                        if (d.IdOfertaDescuento.HasValue)
+                        {
+                            itemId = d.IdOfertaDescuento.Value;
 
-        //                return new ItemVentaDTO
-        //                {
-        //                    ItemId = itemId,
+                            tiposOferta.TryGetValue(itemId, out tipoOferta);
+                        }
+                        else
+                        {
+                            if (!d.IdProducto.HasValue)
+                                throw new Exception(
+                                    $"Detalle inconsistente: falta IdProducto en DetalleVentaId {d.DetalleVentaId}");
 
-        //                    Cantidad = d.Cantidad,
+                            itemId = d.IdProducto.Value;
+                        }
 
-        //                    // 🔥 precios correctos
-        //                    PrecioVenta = d.PrecioUnitarioOriginal,
-        //                    PrecioOferta = d.PrecioUnitarioFinal,
-        //                    PrecioOriginalOferta = d.PrecioUnitarioOriginal,
+                        return new ItemVentaDTO
+                        {
+                            ItemId = itemId,
 
-        //                    // 🔥 flags correctos
-        //                    EsOferta = d.EsOferta,
-        //                    EsOfertaPorGrupo = d.EsOfertaPorGrupo,
+                            Cantidad = d.Cantidad,
 
-        //                    Descripcion = d.Descripcion ?? string.Empty
-        //                };
-        //            }).ToList(),
+                            PrecioVenta = d.PrecioUnitarioOriginal,
+                            PrecioOferta = d.PrecioUnitarioFinal,
 
-                    
-        //            TiposDePagoSeleccionado = ventaOriginal.VentaPagoDetalles.Select(p => new FormaPago
-        //            {
-        //                TipoDePago = (TipoDePago)p.IdTipoPago,
-        //                Monto = -p.Monto
-        //            }).ToList()
-        //        }; //AGREGAR DETALLEVENTALOTE EN EL CASO QUE EXISTA if(ventaOriginal.DetallesVentasLotes.any()), cargar en el dto 
+                            EsOferta = d.EsOferta,
+                            TipoOferta = tipoOferta,
 
-        //        var ventaCancelacion = CrearVentaInterna(context, ventaCancelacionDto, TipoMovimientoDetalle.Cancelacion, ventaId);
+                            Descripcion = d.Descripcion ?? string.Empty,
 
-        //        _productoServicio.ModificarEstadoStockProductos(context);
-        //        context.SaveChanges();
+                            CodigoOferta = string.Empty,
+                            Medida = string.Empty,
+                            UnidadMedida = string.Empty,
+                            Stock = 0
+                        };
+                    }).ToList(),
 
 
-        //        transaction.Commit();
+                    TiposDePagoSeleccionado = ventaOriginal.VentaPagoDetalles.Select(p => new FormaPago
+                    {
+                        TipoDePago = (TipoDePago)p.IdTipoPago,
+                        Monto = -p.Monto
+                    }).ToList()
+                }; //AGREGAR DETALLEVENTALOTE EN EL CASO QUE EXISTA if(ventaOriginal.DetallesVentasLotes.any()), cargar en el dto 
+
+                var ventaCancelacion = CrearVentaInterna(context, ventaCancelacionDto, TipoMovimientoDetalle.Cancelacion, ventaId);
+
+                _productoServicio.ModificarEstadoStockProductos(context);
+                context.SaveChanges();
 
 
-        //        try
-        //        {
-        //            GeneracionComprobanteCancelacion(context, ventaCancelacion);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Debug.WriteLine("Error generando PDF cancelación: " + ex.Message);
-        //        }
-        //        ;
+                transaction.Commit();
 
-        //        return new EstadoOperacion
-        //        {
-        //            Exitoso = true,
-        //            Mensaje = "Venta cancelada y contraventa generada correctamente."
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        transaction.Rollback();
 
-        //        return new EstadoOperacion
-        //        {
-        //            Exitoso = false,
-        //            Mensaje = "Error al cancelar la venta: " + ex.Message
-        //        };
-        //    }
-        //}
+                try
+                {
+                    GeneracionComprobanteCancelacion(context, ventaCancelacion);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error generando PDF cancelación: " + ex.Message);
+                }
+                ;
+
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "Venta cancelada y contraventa generada correctamente."
+                };
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Error al cancelar la venta: " + ex.Message
+                };
+            }
+        }
     }
 }

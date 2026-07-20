@@ -107,7 +107,7 @@
             Controls.Add(dgvPermisosDisponibles);
             Controls.Add(cbxRol);
             Name = "FAsignacionPermisosRol";
-            Text = "FAsignacionPermisosRol";
+            Text = "Asignacion Permisos de Roles";
             ((System.ComponentModel.ISupportInitialize)dgvPermisosAsignadas).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvPermisosDisponibles).EndInit();
             ResumeLayout(false);
