@@ -230,11 +230,25 @@ namespace Servicios.LogicaNegocio.Venta
         {
             foreach (var item in items)
             {
-                var oferta = context.OfertasDescuentos
+                var oferta = new OfertaDescuento();
+                if (item.TipoOferta == (int)TipoOferta.Grupo)
+                {
+                    var productoenOferta = context.ProductosEnOfertasDescuentos
+                        .Include(x => x.Producto)
+                        .Include(x => x.OfertaDescuento)
+                        .First(x => x.ProductoId == item.ItemId && x.OfertaDescuento.EstaActiva);
+                    oferta = context.OfertasDescuentos
+                   .Include(x => x.Productos)
+                   .Include(x => x.Estadisticas)
+                   .First(x => x.OfertaDescuentoId == productoenOferta.OfertaDescuentoId);
+                }
+                else
+                {
+                    oferta = context.OfertasDescuentos
                     .Include(x => x.Productos)
                     .Include(x => x.Estadisticas)
                     .First(x => x.OfertaDescuentoId == item.ItemId);
-
+                }
                 if (OfertaAlcanzoLimite(oferta))
                     oferta.EstaActiva = false;
             }
