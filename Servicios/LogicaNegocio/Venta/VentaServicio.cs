@@ -1269,7 +1269,7 @@ namespace Servicios.LogicaNegocio.Venta
                 FechaVenta = venta.FechaVenta,
                 Total = venta.Total,
                 TotalSinDescuento = venta.TotalSinDescuento,
-                Descuento = venta.Descuento,
+                Descuento = venta.Descuento,// no lo estatomando
                 Estado = venta.Estado,
                 Detalle = venta.Detalle,
 
@@ -1300,7 +1300,8 @@ namespace Servicios.LogicaNegocio.Venta
                         descripcion = d.OfertaDescuento.Descripcion;
                     }
 
-                    return new ItemVentaDTO
+                    return new ItemVentaDTO // aca hay que armarlo al producto para mostrarlo en la grilla correctamente. faltan datos y se asigna el total con el subtotal de la oferta.
+                    // en la venta de arriba estan todos los detalles correctos.
                     {
                         ItemId = esOferta
                             ? (esOfertaPorGrupo
