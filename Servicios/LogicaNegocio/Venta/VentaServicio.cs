@@ -1513,7 +1513,7 @@ namespace Servicios.LogicaNegocio.Venta
                         {
                             if (!d.IdProducto.HasValue)
                                 throw new Exception(
-                                    $"Detalle inconsistente: falta IdProducto en DetalleVentaId {d.DetalleVentaId}");
+                                    $"Detalles incosistentes: no se encontro un producto asociado.");
 
                             itemId = d.IdProducto.Value;
                             if(d.EsOferta && d.EsOfertaPorGrupo) { tipoOferta = (int)TipoOferta.Grupo; }
