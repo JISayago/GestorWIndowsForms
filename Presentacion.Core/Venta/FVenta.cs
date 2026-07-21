@@ -66,6 +66,7 @@ namespace Presentacion.Core.Venta
         public FVenta(long UsuarioLogeadoId, long? VentaId = null)
         {
             InitializeComponent();
+            
             _ventaServicio = new VentaServicio();
             _movimientoServicio = new MovimientoServicio();
             _usuarioLogeadoID = UsuarioLogeadoId;
@@ -552,7 +553,10 @@ namespace Presentacion.Core.Venta
 
         private void ResetearGrilla(DataGridView grilla)
         {
+            grilla.DataSource = null;
+
             grilla.Columns.Clear();
+
             grilla.AutoGenerateColumns = false;
 
             // 🔒 ID interno (oculto)
@@ -781,10 +785,10 @@ namespace Presentacion.Core.Venta
 
         private void InicializarYLimpiarCampos(long? ventaId)
         {
-
             if (ventaId != null)
             {
                 itemsVenta = new BindingList<ItemVentaDTO>(VENTAELIMINAR.Items);
+                ResetearGrilla(dgvProductos);
                 dgvProductos.DataSource = itemsVenta;
                 var usuarioLogeado = _empleadoServicio.ObtenerEmpleadoPorId(VENTAELIMINAR.IdEmpleado);
                 if (VENTAELIMINAR.IdCliente != null)
@@ -809,7 +813,7 @@ namespace Presentacion.Core.Venta
                 //esConsumidorFinal = true;
                 //esUsuarioLogeado = true;
                 idVendedor = VENTAELIMINAR.IdVendedor; // Asignamos el ID del usuario logueado como vendedor por defecto
-                ResetearGrilla(dgvProductos);
+                //ResetearGrilla(dgvProductos);
                 ActualizarCamposInicio(VENTAID);
                 txtTotal.Text = VENTAELIMINAR.Total.ToString("C2");
                 txtSubtotalSinDescuento.Text = VENTAELIMINAR.TotalSinDescuento.ToString("C2");
@@ -861,8 +865,11 @@ namespace Presentacion.Core.Venta
                     Apellido = clienteDefault.Apellido
                 };
                 itemsVenta = new BindingList<ItemVentaDTO>();
-                dgvProductos.DataSource = itemsVenta;  // bind directo
+
                 ResetearGrilla(dgvProductos);
+
+                dgvProductos.DataSource = itemsVenta;
+                //ResetearGrilla(dgvProductos);
                 ActualizarCamposInicio(VENTAID);
                 CalcularTotal();
                 //_ventaServicio.GenerateNextNumeroVenta();
