@@ -233,11 +233,25 @@ namespace Servicios.LogicaNegocio.Venta
         {
             foreach (var item in items)
             {
-                var oferta = context.OfertasDescuentos
+                var oferta = new OfertaDescuento();
+                if (item.TipoOferta == (int)TipoOferta.Grupo)
+                {
+                    var productoenOferta = context.ProductosEnOfertasDescuentos
+                        .Include(x => x.Producto)
+                        .Include(x => x.OfertaDescuento)
+                        .First(x => x.ProductoId == item.ItemId && x.OfertaDescuento.EstaActiva);
+                    oferta = context.OfertasDescuentos
+                   .Include(x => x.Productos)
+                   .Include(x => x.Estadisticas)
+                   .First(x => x.OfertaDescuentoId == productoenOferta.OfertaDescuentoId);
+                }
+                else
+                {
+                    oferta = context.OfertasDescuentos
                     .Include(x => x.Productos)
                     .Include(x => x.Estadisticas)
                     .First(x => x.OfertaDescuentoId == item.ItemId);
-
+                }
                 if (OfertaAlcanzoLimite(oferta))
                     oferta.EstaActiva = false;
             }
@@ -335,14 +349,40 @@ namespace Servicios.LogicaNegocio.Venta
         }
         private void ActualizarEstadisticaOferta(ItemVentaDTO item,GestorContextDB context,bool esCancelacion)
         {
-            var productosOferta = context.ProductosEnOfertasDescuentos
-                .Include(x => x.OfertaDescuento)
-                .Where(x => x.OfertaDescuentoId == item.ItemId)
-                .ToList();
+            List<ProductosEnOfertaDescuentos> productosOferta;
+
+            switch ((TipoOferta)item.TipoOferta)
+            {
+                case TipoOferta.Grupo:
+
+                    productosOferta = context.ProductosEnOfertasDescuentos
+                        .Include(x => x.OfertaDescuento)
+                        .Where(x => x.ProductoId == item.ItemId && x.OfertaDescuento.EstaActiva)
+                        .ToList();
+
+                    break;
+
+                case TipoOferta.Combo:
+                case TipoOferta.DosPorUno:
+
+                    productosOferta = context.ProductosEnOfertasDescuentos
+                        .Include(x => x.OfertaDescuento)
+                        .Where(x => x.OfertaDescuentoId == item.ItemId && x.OfertaDescuento.EstaActiva)
+                        .ToList();
+
+                    break;
+
+                default:
+                    return;
+            }
+
+            if (!productosOferta.Any())
+                throw new Exception(
+                    $"No se encontraron productos asociados para el item {item.ItemId}.");
 
             foreach (var producto in productosOferta)
             {
-                ActualizarEstadisticaProductoOferta(producto,item,context,esCancelacion);
+                ActualizarEstadisticaProductoOferta( producto, item, context, esCancelacion);
             }
         }
         private void ActualizarEstadisticaProductoOferta(ProductosEnOfertaDescuentos productoOferta,ItemVentaDTO itemVenta,GestorContextDB context,bool esCancelacion)
@@ -363,38 +403,27 @@ namespace Servicios.LogicaNegocio.Venta
                 context.OfertaProductoEstadisticas.Add(estadistica);
             }
 
-            decimal cantidadVendida =
-                productoOferta.CantidadRequerida * itemVenta.Cantidad;
+            decimal cantidadVendida = productoOferta.CantidadRequerida * itemVenta.Cantidad;
 
-            if (esCancelacion)
-                cantidadVendida *= -1;
+            if (esCancelacion)  cantidadVendida *= -1;
 
             estadistica.CantidadVendida += cantidadVendida;
 
-            if (estadistica.CantidadVendida < 0)
-                estadistica.CantidadVendida = 0;
+            if (estadistica.CantidadVendida < 0)  estadistica.CantidadVendida = 0;
 
-            decimal precioOferta =
-                productoOferta.PrecioOfertaBase ??
-                productoOferta.PrecioVentaBase;
+            decimal precioOferta = productoOferta.PrecioOfertaBase ?? productoOferta.PrecioVentaBase;
 
-            estadistica.TotalCostoAcumulado +=
-                productoOferta.PrecioCostoBase * cantidadVendida;
+            estadistica.TotalCostoAcumulado += productoOferta.PrecioCostoBase * cantidadVendida;
 
-            estadistica.TotalVentaAcumulado +=
-                productoOferta.PrecioVentaBase * cantidadVendida;
+            estadistica.TotalVentaAcumulado += productoOferta.PrecioVentaBase * cantidadVendida;
 
-            estadistica.TotalOfertaAcumulado +=
-                precioOferta * cantidadVendida;
+            estadistica.TotalOfertaAcumulado += precioOferta * cantidadVendida;
 
-            if (estadistica.TotalCostoAcumulado < 0)
-                estadistica.TotalCostoAcumulado = 0;
+            if (estadistica.TotalCostoAcumulado < 0) estadistica.TotalCostoAcumulado = 0;
 
-            if (estadistica.TotalVentaAcumulado < 0)
-                estadistica.TotalVentaAcumulado = 0;
+            if (estadistica.TotalVentaAcumulado < 0) estadistica.TotalVentaAcumulado = 0;
 
-            if (estadistica.TotalOfertaAcumulado < 0)
-                estadistica.TotalOfertaAcumulado = 0;
+            if (estadistica.TotalOfertaAcumulado < 0) estadistica.TotalOfertaAcumulado = 0;
 
             estadistica.FechaUltimaVenta = DateTime.Now;
 
@@ -431,7 +460,7 @@ namespace Servicios.LogicaNegocio.Venta
                 }
 
                 // Producto con descuento por grupo
-                if (item.TipoOferta == (int)TipoOferta.Grupo)
+                if ((item.TipoOferta == (int)TipoOferta.Grupo))
                 {
                     var existeProducto = context.Productos.Any(p =>
                         p.ProductoId == item.ItemId);
@@ -445,6 +474,7 @@ namespace Servicios.LogicaNegocio.Venta
                         ItemId = item.ItemId,
                         Cantidad = item.Cantidad,
                         EsOferta = item.EsOferta,
+                        TipoOferta = item.TipoOferta
                     });
 
                     continue;
@@ -473,6 +503,7 @@ namespace Servicios.LogicaNegocio.Venta
                         ItemId = po.ProductoId,
                         Cantidad = po.CantidadRequerida * item.Cantidad,
                         EsOferta = item.EsOferta,
+                        TipoOferta = item.TipoOferta
                     });
                 }
             }
@@ -513,10 +544,14 @@ namespace Servicios.LogicaNegocio.Venta
         private void CrearDetallesVenta(AccesoDatos.Entidades.Venta venta,List<ItemVentaDTO> items,GestorContextDB context)
         {
             var detalles = new List<DetallesVenta>();
+           
 
             foreach (var item in items)
             {
                 bool esOfertaCompuesta = EsOfertaCompuesta(item);
+                bool esOfertaPorGrupo = item.TipoOferta == (int)TipoOferta.Grupo;
+
+                long? ofertaGrupoId= esOfertaPorGrupo ? ObtenerOfertaGrupoId(item,context) : null;
 
                 decimal precioFinal = item.EsOferta
                     ? item.PrecioOferta
@@ -530,9 +565,7 @@ namespace Servicios.LogicaNegocio.Venta
                         ? null
                         : item.ItemId,
 
-                    IdOfertaDescuento = esOfertaCompuesta
-                        ? item.ItemId
-                        : null,
+                    IdOfertaDescuento = esOfertaCompuesta ? item.ItemId : esOfertaPorGrupo ? ofertaGrupoId : null,
 
                     Cantidad = item.Cantidad,
 
@@ -551,6 +584,19 @@ namespace Servicios.LogicaNegocio.Venta
             }
 
             context.DetallesVentas.AddRange(detalles);
+        }
+        private static long? ObtenerOfertaGrupoId(ItemVentaDTO item, GestorContextDB context)
+        {
+            if(item.EsOferta && (item.TipoOferta == (int)TipoOferta.Grupo))
+            {
+                var productoEnOferta = context.ProductosEnOfertasDescuentos
+                    .FirstOrDefault(x => x.ProductoId == item.ItemId && x.OfertaDescuento.EstaActiva);
+                if (productoEnOferta != null)
+                {
+                    return productoEnOferta.OfertaDescuentoId;
+                }
+            }
+            return null;
         }
         private static bool EsOfertaCompuesta(ItemVentaDTO item)
         {
@@ -1196,7 +1242,23 @@ namespace Servicios.LogicaNegocio.Venta
                     .ThenInclude(d => d.Producto)
                 .Include(v => v.DetallesVentas)
                     .ThenInclude(d => d.OfertaDescuento)
+                    .ThenInclude(d => d.Productos)
                 .First(v => v.VentaId == ventaId);
+
+                        var productosOfertaGrupo = venta.DetallesVentas
+                .Where(d => d.EsOferta && d.EsOfertaPorGrupo)
+                .Select(d => d.IdProducto!.Value)
+                .Distinct()
+                .ToList();
+                
+                        var descripcionesOfertaGrupo = context.ProductosEnOfertasDescuentos
+                .Where(x => productosOfertaGrupo.Contains(x.ProductoId))
+                .Include(x => x.OfertaDescuento)
+                .GroupBy(x => x.ProductoId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.First().OfertaDescuento.Descripcion);
+                
             var ventaDto = new VentaDTO
             {
                 VentaId = venta.VentaId,
@@ -1207,7 +1269,7 @@ namespace Servicios.LogicaNegocio.Venta
                 FechaVenta = venta.FechaVenta,
                 Total = venta.Total,
                 TotalSinDescuento = venta.TotalSinDescuento,
-                Descuento = venta.Descuento,
+                Descuento = venta.Descuento,// no lo estatomando
                 Estado = venta.Estado,
                 Detalle = venta.Detalle,
 
@@ -1219,18 +1281,46 @@ namespace Servicios.LogicaNegocio.Venta
 
                 Items = venta.DetallesVentas.Select(d =>
                 {
-                    var esOferta = d.IdProducto == null;
+                    var esOferta = d.EsOferta;
+                    var esOfertaPorGrupo = d.EsOfertaPorGrupo;
+                    //var tipoOferta = d.OfertaDescuento.TipoOferta;
 
-                    return new ItemVentaDTO
+                    string descripcion;
+
+                    if (!esOferta)
+                    {
+                        descripcion = d.Producto.Descripcion;
+                    }
+                    else if (esOfertaPorGrupo)
+                    {
+                        descripcion = descripcionesOfertaGrupo[d.IdProducto.Value];
+                    }
+                    else
+                    {
+                        descripcion = d.OfertaDescuento.Descripcion;
+                    }
+
+                    return new ItemVentaDTO // aca hay que armarlo al producto para mostrarlo en la grilla correctamente. faltan datos y se asigna el total con el subtotal de la oferta.
+                    // en la venta de arriba estan todos los detalles correctos.
                     {
                         ItemId = esOferta
-                            ? d.IdOfertaDescuento.Value
+                            ? (esOfertaPorGrupo
+                                ? d.IdProducto.Value
+                                : d.IdOfertaDescuento.Value)
                             : d.IdProducto.Value,
 
                         EsOferta = esOferta,
+                        
+                        TipoOferta = esOferta
+                            ? (esOfertaPorGrupo
+                                ? (int)TipoOferta.Grupo
+                                : (int)d.OfertaDescuento.TipoOferta)
+                            : 0,
 
                         Descripcion = esOferta
-                            ? d.OfertaDescuento.Descripcion
+                            ? (esOfertaPorGrupo
+                                ? descripcionesOfertaGrupo[d.IdProducto!.Value]
+                                : d.OfertaDescuento.Descripcion)
                             : d.Producto.Descripcion,
 
                         Cantidad = d.Cantidad,
@@ -1412,9 +1502,9 @@ namespace Servicios.LogicaNegocio.Venta
                     Items = ventaOriginal.DetallesVentas.Select(d =>
                     {
                         long itemId;
-                        int tipoOferta = 0;
+                        int tipoOferta = 0; // rompiendo toda cancelacion de producto en oferta grupo
 
-                        if (d.IdOfertaDescuento.HasValue)
+                        if (d.IdOfertaDescuento.HasValue && !d.EsOfertaPorGrupo)
                         {
                             itemId = d.IdOfertaDescuento.Value;
 
@@ -1424,9 +1514,10 @@ namespace Servicios.LogicaNegocio.Venta
                         {
                             if (!d.IdProducto.HasValue)
                                 throw new Exception(
-                                    $"Detalle inconsistente: falta IdProducto en DetalleVentaId {d.DetalleVentaId}");
+                                    $"Detalles incosistentes: no se encontro un producto asociado.");
 
                             itemId = d.IdProducto.Value;
+                            if(d.EsOferta && d.EsOfertaPorGrupo) { tipoOferta = (int)TipoOferta.Grupo; }
                         }
 
                         return new ItemVentaDTO
