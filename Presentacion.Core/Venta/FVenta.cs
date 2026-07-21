@@ -111,7 +111,12 @@ namespace Presentacion.Core.Venta
                             ItemId = i.ItemId,
                             Cantidad = i.Cantidad,
                             PrecioVenta = i.PrecioVenta,
-                            Descripcion = i.Descripcion
+                            PrecioOferta = i.PrecioOferta,
+                            Descripcion = i.Descripcion,
+                            EsOferta = i.EsOferta,
+                            TipoOferta = i.TipoOferta,
+                            CodigoOferta = i.CodigoOferta,
+
                         }).ToList()
                 };
                 itemsVenta = new BindingList<ItemVentaDTO>(ventaCargada.Items);
