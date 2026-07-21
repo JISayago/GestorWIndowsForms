@@ -349,14 +349,40 @@ namespace Servicios.LogicaNegocio.Venta
         }
         private void ActualizarEstadisticaOferta(ItemVentaDTO item,GestorContextDB context,bool esCancelacion)
         {
-            var productosOferta = context.ProductosEnOfertasDescuentos
-                .Include(x => x.OfertaDescuento)
-                .Where(x => x.OfertaDescuentoId == item.ItemId)
-                .ToList();
+            List<ProductosEnOfertaDescuentos> productosOferta;
+
+            switch ((TipoOferta)item.TipoOferta)
+            {
+                case TipoOferta.Grupo:
+
+                    productosOferta = context.ProductosEnOfertasDescuentos
+                        .Include(x => x.OfertaDescuento)
+                        .Where(x => x.ProductoId == item.ItemId && x.OfertaDescuento.EstaActiva)
+                        .ToList();
+
+                    break;
+
+                case TipoOferta.Combo:
+                case TipoOferta.DosPorUno:
+
+                    productosOferta = context.ProductosEnOfertasDescuentos
+                        .Include(x => x.OfertaDescuento)
+                        .Where(x => x.OfertaDescuentoId == item.ItemId && x.OfertaDescuento.EstaActiva)
+                        .ToList();
+
+                    break;
+
+                default:
+                    return;
+            }
+
+            if (!productosOferta.Any())
+                throw new Exception(
+                    $"No se encontraron productos asociados para el item {item.ItemId}.");
 
             foreach (var producto in productosOferta)
             {
-                ActualizarEstadisticaProductoOferta(producto,item,context,esCancelacion);
+                ActualizarEstadisticaProductoOferta( producto, item, context, esCancelacion);
             }
         }
         private void ActualizarEstadisticaProductoOferta(ProductosEnOfertaDescuentos productoOferta,ItemVentaDTO itemVenta,GestorContextDB context,bool esCancelacion)
@@ -377,38 +403,27 @@ namespace Servicios.LogicaNegocio.Venta
                 context.OfertaProductoEstadisticas.Add(estadistica);
             }
 
-            decimal cantidadVendida =
-                productoOferta.CantidadRequerida * itemVenta.Cantidad;
+            decimal cantidadVendida = productoOferta.CantidadRequerida * itemVenta.Cantidad;
 
-            if (esCancelacion)
-                cantidadVendida *= -1;
+            if (esCancelacion)  cantidadVendida *= -1;
 
             estadistica.CantidadVendida += cantidadVendida;
 
-            if (estadistica.CantidadVendida < 0)
-                estadistica.CantidadVendida = 0;
+            if (estadistica.CantidadVendida < 0)  estadistica.CantidadVendida = 0;
 
-            decimal precioOferta =
-                productoOferta.PrecioOfertaBase ??
-                productoOferta.PrecioVentaBase;
+            decimal precioOferta = productoOferta.PrecioOfertaBase ?? productoOferta.PrecioVentaBase;
 
-            estadistica.TotalCostoAcumulado +=
-                productoOferta.PrecioCostoBase * cantidadVendida;
+            estadistica.TotalCostoAcumulado += productoOferta.PrecioCostoBase * cantidadVendida;
 
-            estadistica.TotalVentaAcumulado +=
-                productoOferta.PrecioVentaBase * cantidadVendida;
+            estadistica.TotalVentaAcumulado += productoOferta.PrecioVentaBase * cantidadVendida;
 
-            estadistica.TotalOfertaAcumulado +=
-                precioOferta * cantidadVendida;
+            estadistica.TotalOfertaAcumulado += precioOferta * cantidadVendida;
 
-            if (estadistica.TotalCostoAcumulado < 0)
-                estadistica.TotalCostoAcumulado = 0;
+            if (estadistica.TotalCostoAcumulado < 0) estadistica.TotalCostoAcumulado = 0;
 
-            if (estadistica.TotalVentaAcumulado < 0)
-                estadistica.TotalVentaAcumulado = 0;
+            if (estadistica.TotalVentaAcumulado < 0) estadistica.TotalVentaAcumulado = 0;
 
-            if (estadistica.TotalOfertaAcumulado < 0)
-                estadistica.TotalOfertaAcumulado = 0;
+            if (estadistica.TotalOfertaAcumulado < 0) estadistica.TotalOfertaAcumulado = 0;
 
             estadistica.FechaUltimaVenta = DateTime.Now;
 
@@ -575,7 +590,7 @@ namespace Servicios.LogicaNegocio.Venta
             if(item.EsOferta && (item.TipoOferta == (int)TipoOferta.Grupo))
             {
                 var productoEnOferta = context.ProductosEnOfertasDescuentos
-                    .FirstOrDefault(x => x.ProductoId == item.ItemId);
+                    .FirstOrDefault(x => x.ProductoId == item.ItemId && x.OfertaDescuento.EstaActiva);
                 if (productoEnOferta != null)
                 {
                     return productoEnOferta.OfertaDescuentoId;
@@ -1488,7 +1503,7 @@ namespace Servicios.LogicaNegocio.Venta
                         long itemId;
                         int tipoOferta = 0; // rompiendo toda cancelacion de producto en oferta grupo
 
-                        if (d.IdOfertaDescuento.HasValue)
+                        if (d.IdOfertaDescuento.HasValue && !d.EsOfertaPorGrupo)
                         {
                             itemId = d.IdOfertaDescuento.Value;
 
@@ -1501,6 +1516,7 @@ namespace Servicios.LogicaNegocio.Venta
                                     $"Detalle inconsistente: falta IdProducto en DetalleVentaId {d.DetalleVentaId}");
 
                             itemId = d.IdProducto.Value;
+                            if(d.EsOferta && d.EsOfertaPorGrupo) { tipoOferta = (int)TipoOferta.Grupo; }
                         }
 
                         return new ItemVentaDTO
