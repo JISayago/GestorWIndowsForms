@@ -166,7 +166,7 @@ namespace Servicios.LogicaNegocio.Venta
 
             var cajaServicio = new Caja.CajaServicio();
 
-            cajaServicio.RegistrarTransaccion(context,venta.MontoPagado,venta.MontoPagado >= 0 ? TipoMovimiento.Ingreso : TipoMovimiento.Egreso, cajaId);
+            cajaServicio.RegistrarTransaccion(context,venta.MontoPagado,venta.Estado == (int)EstadoVenta.Confirmada ? TipoMovimiento.Ingreso : TipoMovimiento.Egreso, cajaId);
         }
         private void RegistrarMovimientoCuentaCorriente(AccesoDatos.Entidades.Venta venta,VentaDTO ventaDto,long cajaId,GestorContextDB context)
         {
