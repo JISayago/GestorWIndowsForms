@@ -458,7 +458,7 @@ namespace Presentacion.Core.Cliente
             }
 
             AgregarAccion(
-            "Seleccionar Cliente para CtaCte",
+            "Asignar Cta Cte",
             Constantes.Imagenes.ImgNuevo,
             SeleccionarClienteParaCtaCte,
             true

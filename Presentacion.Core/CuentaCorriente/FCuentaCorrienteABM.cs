@@ -76,6 +76,10 @@ namespace Presentacion.Core.CuentaCorriente
 
             lblNombreCliente.Text = cliente.NombreCompleto;
 
+            if(cliente != null && !string.IsNullOrEmpty(cliente.Dni))
+            {
+                _dnisAutorizadosLista.Add(long.Parse(cliente.Dni));
+            }
 
             AgregarControlesObligatorios(txtNombreCC, "Nombre Cuenta Corriente");
             AgregarControlesObligatorios(txtSaldo, "Saldo");
