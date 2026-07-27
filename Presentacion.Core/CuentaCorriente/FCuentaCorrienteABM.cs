@@ -54,6 +54,7 @@ namespace Presentacion.Core.CuentaCorriente
                 btnAgregarDni.Enabled = false;
                 btnEliminarDni.Enabled = false;
             }
+            txtLimiteDeuda.Enabled = false; // Deshabilitar el TextBox de límite de deuda al inicio
 
             dtpFechaVencimiento.MinDate = DateTime.Now;
 
