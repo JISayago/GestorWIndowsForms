@@ -56,6 +56,9 @@ namespace Servicios.Helpers.DatosObligatorios
                 progress?.Report((60, "Procesando ofertas..."));
                 mensajes = RetornarMensajeOfertasActivadasDesactivadasConflictos();
 
+                progress?.Report((70, "Controlando vencimiento de lotes..."));
+                ControlarVencimientoLotes();
+
                 // 🔥 NUEVO BLOQUE (lo importante para vos)
                 progress?.Report((80, "Cargando datos de pantalla principal..."));
                 InicializarDatosPantallaPrincipal();
@@ -93,7 +96,10 @@ namespace Servicios.Helpers.DatosObligatorios
         {
             UsuarioInicial.Inicializar(Context);
         }
-
+        private void ControlarVencimientoLotes()
+        {
+            ControlVencimientoLotes.Inicializar(Context);
+        }
         private void IniciarTiposDePago()
         {
             TipoDePagoInicial.Inicializar(Context);

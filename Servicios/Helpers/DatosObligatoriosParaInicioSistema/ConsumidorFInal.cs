@@ -16,7 +16,7 @@ namespace Servicios.Helpers.DatosObligatorios
         private readonly static IClienteServicio _clienteServicio = new ClienteServicio();
         public static void Inicializar(GestorContextDB context)
         {
-            if (context.Cliente.Any(e => e.NumeroCliente == "00000000"))
+            if (context.Cliente.Any(e => e.NumeroCliente == "0"))
                 return;
            
 
