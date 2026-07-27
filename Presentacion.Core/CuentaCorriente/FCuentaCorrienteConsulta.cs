@@ -190,6 +190,7 @@ namespace Presentacion.Core.CuentaCorriente
 
             var tipoFecha = new List<OpcionFiltro>
             {
+                new OpcionFiltro { Texto = "Todos", Valor = "" },
                 new OpcionFiltro { Texto = "Fecha de vencimiento", Valor = "vto" }
             };
 
@@ -197,7 +198,7 @@ namespace Presentacion.Core.CuentaCorriente
 
             cbx1.SelectedValue = "";
             cbx2.SelectedValue = "";
-            cbx3.SelectedValue = "vto";
+            cbx3.SelectedValue = "";
         }
 
         protected override void AccionCheck2()

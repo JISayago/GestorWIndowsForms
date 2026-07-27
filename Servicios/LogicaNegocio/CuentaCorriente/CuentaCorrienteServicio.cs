@@ -258,7 +258,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             // =========================================================
 
             var filtroFecha = filtros.Filtro3?.ToString();
-
+            if (filtroFecha != "vto") filtroFecha = "vto"; // default agregar el otro filtro si correspnde
             if (filtroFecha == "vto")
             {
                 if (filtros.FechaDesde.HasValue)
@@ -276,6 +276,10 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                         x.FechaVencimiento.HasValue &&
                         x.FechaVencimiento.Value < hasta);
                 }
+            }
+            else
+            {
+                //FILTRAR POR ALTA CUANDO SE AGREGUE A LA TABLA CUENTA CORRIENTE LA FECHA DE ALTA, POR AHORA SE COMENTA
             }
 
             // =========================================================
