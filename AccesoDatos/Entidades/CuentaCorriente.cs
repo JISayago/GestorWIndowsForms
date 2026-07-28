@@ -19,6 +19,8 @@ namespace AccesoDatos.Entidades
         public bool LimiteDeudaActivo { get; set; } // Indica si el límite de deuda está activo
         public DateTime? FechaVencimiento { get; set; } //venciemiento de la cuenta corriente
         public int EstadoCuentaCorriente { get; set; } = 0; // 
+        public DateTime? FechaCreacion { get; set; }
+        public DateTime? FechaActivacion { get; set; }
 
         public Cliente Cliente { get; set; } 
        // public ICollection<Movimiento> Movimientos { get; set; }
