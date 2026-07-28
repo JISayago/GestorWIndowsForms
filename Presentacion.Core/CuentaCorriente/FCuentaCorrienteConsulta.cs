@@ -54,7 +54,18 @@ namespace Presentacion.Core.CuentaCorriente
                 grilla.Columns["FechaVencimiento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 grilla.Columns["FechaVencimiento"].HeaderText = "Fecha Vencimiento";
             }
-
+            if (grilla.Columns.Contains("FechaActivacion"))
+            {
+                grilla.Columns["FechaActivacion"].Visible = true;
+                grilla.Columns["FechaActivacion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                grilla.Columns["FechaActivacion"].HeaderText = "Fecha Activación";
+            }
+            if (grilla.Columns.Contains("FechaCreacion"))
+            {
+                grilla.Columns["FechaCreacion"].Visible = true;
+                grilla.Columns["FechaCreacion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                grilla.Columns["FechaCreacion"].HeaderText = "Fecha Creación";
+            }
             // 🔹 MODIFICACIÓN: Ocultamos el entero EstadoCtaCte para que no ensucie la grilla
             if (grilla.Columns.Contains("EstadoCtaCte"))
             {

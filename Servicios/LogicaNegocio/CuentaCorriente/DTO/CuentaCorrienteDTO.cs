@@ -17,6 +17,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente.DTO
         public bool EstaEliminado { get; set; }
         public bool LimiteDeudaActivo { get; set; } // Indica si el límite de deuda está activo
         public DateTime? FechaVencimiento { get; set; }
+        public DateTime? FechaCreacion { get; set; }
+        public DateTime? FechaActivacion { get; set; }
         public int EstadoCtaCte { get; set; } //
         public string EstadoDescripcionCtaCte =>
          EstadoCtaCte switch

@@ -64,6 +64,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     LimiteDeuda = cuentacorrienteDto.LimiteDeuda,
                     LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo,
                     FechaVencimiento = cuentacorrienteDto.FechaVencimiento,
+                    FechaActivacion = cuentacorrienteDto.FechaActivacion,// de momento automatico, pero lo dejamos por si en el futuro se quiere usar
+                    FechaCreacion = cuentacorrienteDto.FechaCreacion,
                     EstaEliminado = false,
                     ClienteId = cuentacorrienteDto.ClienteId,
                     CuentaCorrienteAutorizado = cuentacorrienteDto.DniAutorizados
@@ -151,6 +153,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             cuentacorrienteEditar.LimiteDeuda = cuentacorrienteDto.LimiteDeuda;
             cuentacorrienteEditar.LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo;
             cuentacorrienteEditar.FechaVencimiento = cuentacorrienteDto.FechaVencimiento;
+            
 
             cuentacorrienteEditar.CuentaCorrienteAutorizado.Clear();
 
@@ -185,6 +188,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 NombreCuentaCorriente = cuentacorrienteBusqueda.NombreCuentaCorriente,
                 LimiteDeudaActivo = cuentacorrienteBusqueda.LimiteDeudaActivo,
                 FechaVencimiento = cuentacorrienteBusqueda.FechaVencimiento,
+                FechaCreacion = cuentacorrienteBusqueda.FechaCreacion,
+                FechaActivacion = cuentacorrienteBusqueda.FechaActivacion,
                 CuentaCorrienteId = cuentacorrienteBusqueda.CuentaCorrienteId,
                 DniAutorizados = cuentacorrienteBusqueda.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
             };
@@ -258,7 +263,6 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             // =========================================================
 
             var filtroFecha = filtros.Filtro3?.ToString();
-            if (filtroFecha != "vto") filtroFecha = "vto"; // default agregar el otro filtro si correspnde
             if (filtroFecha == "vto")
             {
                 if (filtros.FechaDesde.HasValue)
@@ -279,7 +283,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             }
             else
             {
-                //FILTRAR POR ALTA CUANDO SE AGREGUE A LA TABLA CUENTA CORRIENTE LA FECHA DE ALTA, POR AHORA SE COMENTA
+                query = query.Where(x=> x.FechaCreacion >= filtros.FechaDesde &&
+                    x.FechaCreacion <= filtros.FechaHasta);
             }
 
             // =========================================================
@@ -326,6 +331,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     LimiteDeudaActivo = x.LimiteDeudaActivo,
                     FechaVencimiento = x.FechaVencimiento,
                     EstadoCtaCte = x.EstadoCuentaCorriente,
+                    FechaActivacion = x.FechaActivacion,
+                    FechaCreacion = x.FechaCreacion,
 
                     DniAutorizados = x.CuentaCorrienteAutorizado
                         .Select(a => a.Dni)
@@ -475,6 +482,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 LimiteDeuda = x.LimiteDeuda,
                 LimiteDeudaActivo = x.LimiteDeudaActivo,
                 FechaVencimiento = x.FechaVencimiento,
+                FechaCreacion = x.FechaCreacion,
+                FechaActivacion = x.FechaActivacion,
                 EstadoCtaCte = x.EstadoCuentaCorriente,
                 DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
             };
@@ -495,6 +504,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     NombreCuentaCorriente = x.NombreCuentaCorriente,
                     LimiteDeudaActivo = x.LimiteDeudaActivo,
                     FechaVencimiento = x.FechaVencimiento,
+                    FechaCreacion = x.FechaCreacion,
+                    FechaActivacion = x.FechaActivacion,
                     CuentaCorrienteId = x.CuentaCorrienteId,
                     NombreCliente = $"{x.Cliente.Persona.Nombre} {x.Cliente.Persona.Apellido}",
                     DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()

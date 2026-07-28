@@ -167,6 +167,8 @@ namespace Presentacion.Core.CuentaCorriente
                 FechaVencimiento = dtpFechaVencimiento.Value,
                 LimiteDeudaActivo = chkLimiteDeuda.Checked,
                 LimiteDeuda = Convert.ToDecimal(txtLimiteDeuda.Text),
+                FechaCreacion = DateTime.Now,
+                FechaActivacion = DateTime.Now,// evaluar si va con creacion activacion automatica o no, por ahora lo dejamos asi
 
                 // 🔹 Directamente le pasamos la lista limpia convertida a List<long>
                 DniAutorizados = _dnisAutorizadosLista.ToList(),
