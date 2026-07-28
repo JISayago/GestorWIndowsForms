@@ -401,13 +401,9 @@ namespace Presentacion.Core.Cliente
         public override void EjecutarBtnNuevo()
         {
             var f = new FClienteABM(TipoOperacion.Nuevo);
-
             f.ShowDialog();
-
-
             if (f.RealizoAlgunaOperacion)
-                f.Close();
-                RefrescarGrilla();
+            RefrescarGrilla();
         }
 
         public override void EjecutarBtnModificar()
@@ -503,12 +499,11 @@ namespace Presentacion.Core.Cliente
             }
 
             var fCtacte = new FCuentaCorrienteABM(TipoOperacion.Nuevo, clienteSeleccionado);
-            fCtacte.Show();
 
-            if (fCtacte.RealizoAlgunaOperacion)
+            if (fCtacte.ShowDialog() == DialogResult.OK &&
+                fCtacte.RealizoAlgunaOperacion)
             {
-                DialogResult = DialogResult.OK;
-                Close();
+                RefrescarGrilla();
             }
         }
 

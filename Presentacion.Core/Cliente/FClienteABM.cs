@@ -102,7 +102,7 @@ namespace Presentacion.Core.Cliente
                 FechaNacimiento = dtpFNacimiento.Value,
                 Telefono2 = txtCelular.Text,
                 NumeroCliente = string.Empty, //Asignar un valor adecuado si es necesario
-                Estado = 1, //Activo por defecto
+                Estado = 1, //Activo por defecto pensar la logica de creacion si entra activa o no
                 //CuentaCorrienteId = cmbCuentaCorriente.SelectedValue != null ? (long?)cmbCuentaCorriente.SelectedValue : null,
                 EstaEliminado = false,
             };
@@ -113,12 +113,16 @@ namespace Presentacion.Core.Cliente
             {
                 MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                    MessageBoxIcon.Information);
+                RealizoAlgunaOperacion = true;
+                this.Close();
                 return true;
             }
             else
             {
                 MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                    MessageBoxIcon.Error);
+                RealizoAlgunaOperacion  = false;
+                this.Close();
                 return false;
             }
         }
