@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AccesoDatos.Migrations
 {
     /// <inheritdoc />
-    public partial class AddFechasExtraCtaCte : Migration
+    public partial class FixCtaCteFechas : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,13 +14,13 @@ namespace AccesoDatos.Migrations
             migrationBuilder.AddColumn<DateTime>(
                 name: "fecha_activacion",
                 table: "CuentasCorrientes",
-                type: "datetime",
+                type: "date",
                 nullable: true);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "fecha_creacion",
                 table: "CuentasCorrientes",
-                type: "datetime",
+                type: "date",
                 nullable: true);
         }
 

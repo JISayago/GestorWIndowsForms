@@ -64,8 +64,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     LimiteDeuda = cuentacorrienteDto.LimiteDeuda,
                     LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo,
                     FechaVencimiento = cuentacorrienteDto.FechaVencimiento,
-                    FechaActivacion = cuentacorrienteDto.FechaActivacion,// de momento automatico, pero lo dejamos por si en el futuro se quiere usar
-                    FechaCreacion = cuentacorrienteDto.FechaCreacion,
+                    //FechaActivacion = cuentacorrienteDto.FechaActivacion,// de momento automatico, pero lo dejamos por si en el futuro se quiere usar
+                    //FechaCreacion = cuentacorrienteDto.FechaCreacion,
                     EstaEliminado = false,
                     ClienteId = cuentacorrienteDto.ClienteId,
                     CuentaCorrienteAutorizado = cuentacorrienteDto.DniAutorizados
@@ -188,8 +188,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 NombreCuentaCorriente = cuentacorrienteBusqueda.NombreCuentaCorriente,
                 LimiteDeudaActivo = cuentacorrienteBusqueda.LimiteDeudaActivo,
                 FechaVencimiento = cuentacorrienteBusqueda.FechaVencimiento,
-                FechaCreacion = cuentacorrienteBusqueda.FechaCreacion,
-                FechaActivacion = cuentacorrienteBusqueda.FechaActivacion,
+                //FechaCreacion = cuentacorrienteBusqueda.FechaCreacion,
+                //FechaActivacion = cuentacorrienteBusqueda.FechaActivacion,
                 CuentaCorrienteId = cuentacorrienteBusqueda.CuentaCorrienteId,
                 DniAutorizados = cuentacorrienteBusqueda.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
             };
@@ -283,8 +283,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             }
             else
             {
-                query = query.Where(x=> x.FechaCreacion >= filtros.FechaDesde &&
-                    x.FechaCreacion <= filtros.FechaHasta);
+                //query = query.Where(x=> x.FechaCreacion >= filtros.FechaDesde &&
+                //    x.FechaCreacion <= filtros.FechaHasta);
             }
 
             // =========================================================
@@ -331,8 +331,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     LimiteDeudaActivo = x.LimiteDeudaActivo,
                     FechaVencimiento = x.FechaVencimiento,
                     EstadoCtaCte = x.EstadoCuentaCorriente,
-                    FechaActivacion = x.FechaActivacion,
-                    FechaCreacion = x.FechaCreacion,
+                    //FechaActivacion = x.FechaActivacion,
+                    //FechaCreacion = x.FechaCreacion,
 
                     DniAutorizados = x.CuentaCorrienteAutorizado
                         .Select(a => a.Dni)

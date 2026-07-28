@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    [Migration("20260728150458_AddFechasExtraCtaCte")]
-    partial class AddFechasExtraCtaCte
+    [Migration("20260728231917_FixCtaCteFechas")]
+    partial class FixCtaCteFechas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -75,6 +75,13 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("total_ingresos");
 
                     b.HasKey("CajaId");
+
+                    b.HasIndex("EstaCerrada")
+                        .HasDatabaseName("IX_Cajas_EstaCerrada");
+
+                    b.HasIndex("FechaInicio")
+                        .IsDescending()
+                        .HasDatabaseName("IX_Cajas_FechaInicio_Desc");
 
                     b.ToTable("Cajas", (string)null);
                 });
@@ -220,11 +227,11 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("FechaActivacion")
-                        .HasColumnType("datetime")
+                        .HasColumnType("date")
                         .HasColumnName("fecha_activacion");
 
                     b.Property<DateTime?>("FechaCreacion")
-                        .HasColumnType("datetime")
+                        .HasColumnType("date")
                         .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime?>("FechaVencimiento")
@@ -500,7 +507,10 @@ namespace AccesoDatos.Migrations
 
                     b.HasIndex("CategoriaGasto");
 
-                    b.HasIndex("EstadoGasto");
+                    b.HasIndex("EstadoGasto")
+                        .HasDatabaseName("IX_Gastos_EstadoGasto");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("EstadoGasto"), new[] { "FechaGasto", "FechaRegistro", "NumeroGasto", "IdEmpleado", "MontoTotal", "MontoPagado", "CategoriaGasto" });
 
                     b.HasIndex("FechaGasto");
 
@@ -634,6 +644,10 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("tipo_movimiento_detalle");
 
                     b.HasKey("MovimientoId");
+
+                    b.HasIndex("FechaMovimiento")
+                        .IsDescending()
+                        .HasDatabaseName("IX_Movimientos_FechaMovimiento_Desc");
 
                     b.ToTable("Movimientos", (string)null);
                 });
@@ -1144,11 +1158,23 @@ namespace AccesoDatos.Migrations
 
                     b.HasKey("VentaId");
 
+                    b.HasIndex("FechaVenta")
+                        .IsDescending()
+                        .HasDatabaseName("IX_Ventas_FechaVenta_Desc");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("FechaVenta"), new[] { "Estado", "NumeroVenta", "Total", "Detalle", "IdCliente" });
+
                     b.HasIndex("IdCliente");
 
                     b.HasIndex("IdEmpleado");
 
                     b.HasIndex("IdVendedor");
+
+                    b.HasIndex("NumeroVenta")
+                        .HasDatabaseName("IX_Ventas_NumeroVenta");
+
+                    b.HasIndex("Estado", "FechaVenta")
+                        .HasDatabaseName("IX_Ventas_Estado_FechaVenta");
 
                     b.ToTable("Ventas", (string)null);
                 });
@@ -1207,6 +1233,12 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("total");
 
                     b.HasKey("VentaLibreId");
+
+                    b.HasIndex("FechaVenta")
+                        .IsDescending()
+                        .HasDatabaseName("IX_VentasLibres_FechaVenta_Desc");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("FechaVenta"), new[] { "Estado", "NumeroVenta", "Total", "IdCliente" });
 
                     b.HasIndex("IdCliente");
 

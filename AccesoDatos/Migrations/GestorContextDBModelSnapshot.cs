@@ -224,10 +224,12 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("FechaActivacion")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date")
+                        .HasColumnName("fecha_activacion");
 
                     b.Property<DateTime?>("FechaCreacion")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date")
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime?>("FechaVencimiento")
                         .HasColumnType("date")
