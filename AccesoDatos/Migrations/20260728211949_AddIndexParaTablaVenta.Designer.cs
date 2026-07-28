@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20260728211949_AddIndexParaTablaVenta")]
+    partial class AddIndexParaTablaVenta
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,13 +75,6 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("total_ingresos");
 
                     b.HasKey("CajaId");
-
-                    b.HasIndex("EstaCerrada")
-                        .HasDatabaseName("IX_Cajas_EstaCerrada");
-
-                    b.HasIndex("FechaInicio")
-                        .IsDescending()
-                        .HasDatabaseName("IX_Cajas_FechaInicio_Desc");
 
                     b.ToTable("Cajas", (string)null);
                 });
@@ -224,10 +220,12 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("FechaActivacion")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime")
+                        .HasColumnName("fecha_activacion");
 
                     b.Property<DateTime?>("FechaCreacion")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime")
+                        .HasColumnName("fecha_creacion");
 
                     b.Property<DateTime?>("FechaVencimiento")
                         .HasColumnType("date")
@@ -502,10 +500,7 @@ namespace AccesoDatos.Migrations
 
                     b.HasIndex("CategoriaGasto");
 
-                    b.HasIndex("EstadoGasto")
-                        .HasDatabaseName("IX_Gastos_EstadoGasto");
-
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("EstadoGasto"), new[] { "FechaGasto", "FechaRegistro", "NumeroGasto", "IdEmpleado", "MontoTotal", "MontoPagado", "CategoriaGasto" });
+                    b.HasIndex("EstadoGasto");
 
                     b.HasIndex("FechaGasto");
 
@@ -639,10 +634,6 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("tipo_movimiento_detalle");
 
                     b.HasKey("MovimientoId");
-
-                    b.HasIndex("FechaMovimiento")
-                        .IsDescending()
-                        .HasDatabaseName("IX_Movimientos_FechaMovimiento_Desc");
 
                     b.ToTable("Movimientos", (string)null);
                 });
@@ -1154,10 +1145,7 @@ namespace AccesoDatos.Migrations
                     b.HasKey("VentaId");
 
                     b.HasIndex("FechaVenta")
-                        .IsDescending()
-                        .HasDatabaseName("IX_Ventas_FechaVenta_Desc");
-
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("FechaVenta"), new[] { "Estado", "NumeroVenta", "Total", "Detalle", "IdCliente" });
+                        .HasDatabaseName("IX_Ventas_FechaVenta");
 
                     b.HasIndex("IdCliente");
 
@@ -1228,12 +1216,6 @@ namespace AccesoDatos.Migrations
                         .HasColumnName("total");
 
                     b.HasKey("VentaLibreId");
-
-                    b.HasIndex("FechaVenta")
-                        .IsDescending()
-                        .HasDatabaseName("IX_VentasLibres_FechaVenta_Desc");
-
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("FechaVenta"), new[] { "Estado", "NumeroVenta", "Total", "IdCliente" });
 
                     b.HasIndex("IdCliente");
 

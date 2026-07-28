@@ -360,6 +360,32 @@ namespace AccesoDatos
                         .HasForeignKey(e => e.IdCliente)
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    // 🔥 Índices para performance de ObtenerVentas (filtros, orden y paginación)
+
+                    // Descendente para calzar EXACTO con ORDER BY FechaVenta DESC,
+                    // y cubriente (INCLUDE) para que SQL Server no necesite key lookups
+                    // al recorrer/descartar filas durante el Skip. Esto es lo que evita
+                    // el sort-spill a tempdb que se activaba a partir de cierta página.
+                    entity.HasIndex(e => e.FechaVenta)
+                        .HasDatabaseName("IX_Ventas_FechaVenta_Desc")
+                        .IsDescending(true)
+                        .IncludeProperties(e => new
+                        {
+                            e.Estado,
+                            e.NumeroVenta,
+                            e.Total,
+                            e.Detalle,
+                            e.IdCliente
+                        });
+
+                    // Compuesto: útil para el caso "Estado = X" exacto (cbx2) + rango de fecha
+                    entity.HasIndex(e => new { e.Estado, e.FechaVenta })
+                        .HasDatabaseName("IX_Ventas_Estado_FechaVenta");
+
+                    // Cubre: búsqueda por NumeroVenta
+                    entity.HasIndex(e => e.NumeroVenta)
+                        .HasDatabaseName("IX_Ventas_NumeroVenta");
+
                     entity.HasMany(e => e.DetallesVentas)
                         .WithOne(dv => dv.Venta)
                         .HasForeignKey(dv => dv.IdVenta)
@@ -445,6 +471,19 @@ namespace AccesoDatos
                         .WithOne(vp => vp.VentaLibre)
                         .HasForeignKey(vp => vp.IdVentaLibre)
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    // Mismo patrón que Ventas: la pantalla de consulta pagina
+                    // ordenando por FechaVenta DESC
+                    entity.HasIndex(e => e.FechaVenta)
+                        .HasDatabaseName("IX_VentasLibres_FechaVenta_Desc")
+                        .IsDescending()
+                        .IncludeProperties(e => new
+                        {
+                            e.Estado,
+                            e.NumeroVenta,
+                            e.Total,
+                            e.IdCliente
+                        });
                 });
 
                 //VENTA PAGO DETALLE
@@ -841,13 +880,13 @@ namespace AccesoDatos
                           .HasColumnName("esta_eliminado")
                           .IsRequired();
                     entity.Property(cc => cc.FechaCreacion)
-                          .HasColumnName("fecha_creacion")
-                          .HasColumnType("datetime");
+                           .HasColumnName("fecha_creacion")
+                           .HasColumnType("datetime");
                     entity.Property(cc => cc.FechaActivacion)
                           .HasColumnName("fecha_activacion")
                           .HasColumnType("datetime");
                     // Relación uno a uno con Cliente
-        entity.HasOne(cc => cc.Cliente)
+                    entity.HasOne(cc => cc.Cliente)
                           .WithOne(c => c.CuentaCorriente)
                           .HasForeignKey<Cliente>(c => c.CuentaCorrienteId)
                           .OnDelete(DeleteBehavior.Restrict);
@@ -955,6 +994,15 @@ namespace AccesoDatos
                             .HasColumnName("esta_cerrada")
                             .IsRequired();
 
+                    // Se consulta constantemente ordenando por FechaInicio DESC
+                    // (turno actual, historial de cajas, cierre de caja)
+                    entity.HasIndex(c => c.FechaInicio)
+                        .HasDatabaseName("IX_Cajas_FechaInicio_Desc")
+                        .IsDescending();
+
+                    // Caso muy frecuente: "traer la caja abierta" -> EstaCerrada = false
+                    entity.HasIndex(c => c.EstaCerrada)
+                        .HasDatabaseName("IX_Cajas_EstaCerrada");
 
                 });
 
@@ -1001,6 +1049,11 @@ namespace AccesoDatos
                     entity.Property(e => e.TipoEntidad)
                         .HasColumnName("tipo_entidad")
                         .IsRequired(false);
+
+                    // Mismo patrón: consulta de movimientos ordena por FechaMovimiento DESC
+                    entity.HasIndex(e => e.FechaMovimiento)
+                        .HasDatabaseName("IX_Movimientos_FechaMovimiento_Desc")
+                        .IsDescending();
                 });
 
                 //GASTO
@@ -1066,9 +1119,27 @@ namespace AccesoDatos
                         .OnDelete(DeleteBehavior.Restrict);
 
                     // Índices
+                    // Nota: el ORDER BY de ObtenerGastos usa una expresión calculada
+                    // (EstadoGasto == Pagado, luego COALESCE(FechaGasto, FechaRegistro)),
+                    // así que ningún índice evita el Sort acá. Estos índices sirven para
+                    // que el filtro (WHERE) y el sort no necesiten ir a buscar cada fila
+                    // a la tabla (cubrientes), pero si Gastos crece mucho el Sort puede
+                    // volver a ser un cuello de botella igual que pasó en Ventas.
+                    entity.HasIndex(e => e.EstadoGasto)
+                        .HasDatabaseName("IX_Gastos_EstadoGasto")
+                        .IncludeProperties(e => new
+                        {
+                            e.FechaGasto,
+                            e.FechaRegistro,
+                            e.NumeroGasto,
+                            e.IdEmpleado,
+                            e.MontoTotal,
+                            e.MontoPagado,
+                            e.CategoriaGasto
+                        });
+
                     entity.HasIndex(e => e.FechaGasto);
                     entity.HasIndex(e => e.CategoriaGasto);
-                    entity.HasIndex(e => e.EstadoGasto);
                 });
 
                 //LOTES
