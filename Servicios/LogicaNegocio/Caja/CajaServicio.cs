@@ -14,6 +14,7 @@ namespace Servicios.LogicaNegocio.Caja
 {
     public class CajaServicio : ICajaServicio
     {
+        public decimal saldoFinalAlCierre { get; private set; }
         public void AbrirCaja(decimal montoInicial, long empleadoId)
         {
             var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
@@ -51,6 +52,7 @@ namespace Servicios.LogicaNegocio.Caja
                 caja.EstaCerrada = true;
                 caja.EmpleadoCierre = empleadoId; //asignar el empleado que cierra la caja
                 caja.BalanceFinal = caja.SaldoActual;
+                saldoFinalAlCierre = caja.BalanceFinal;
                 // Asignar otros valores finales como TotalIngresos, TotalEgresos, BalanceFinal si es necesario
                 context.SaveChanges();
             }

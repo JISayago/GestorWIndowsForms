@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FCuentaCorrienteABM));
             lblccorriente = new Label();
             lblSaldo = new Label();
             label1 = new Label();
@@ -60,11 +61,11 @@
             // lblSaldo
             // 
             lblSaldo.AutoSize = true;
-            lblSaldo.Location = new Point(47, 164);
+            lblSaldo.Location = new Point(39, 167);
             lblSaldo.Name = "lblSaldo";
-            lblSaldo.Size = new Size(37, 15);
+            lblSaldo.Size = new Size(76, 15);
             lblSaldo.TabIndex = 1;
-            lblSaldo.Text = "Saldo";
+            lblSaldo.Text = "Saldo a favor";
             // 
             // label1
             // 
@@ -203,7 +204,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(736, 428);
+            ClientSize = new Size(732, 418);
             Controls.Add(lblNombreCliente);
             Controls.Add(lblCliente);
             Controls.Add(btnEliminarDni);
@@ -222,6 +223,7 @@
             Controls.Add(lblSaldo);
             Controls.Add(lblccorriente);
             ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FCuentaCorrienteABM";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "ABM Cuenta Corriente";

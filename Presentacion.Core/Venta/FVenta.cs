@@ -12,6 +12,7 @@ using Presentacion.FBase.Helpers;
 using Presentacion.Formularios;
 using Servicios.Helpers.OpcionesPagos;
 using Servicios.Helpers.Sistema;
+using Servicios.Helpers.Venta.Oferta;
 using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.Cliente.DTO;
 using Servicios.LogicaNegocio.CuentaCorriente;
@@ -478,18 +479,60 @@ namespace Presentacion.Core.Venta
                 fCantidad.cantidad <= 0)
                 return;
 
-            if (fCantidad.cantidad > itemVenta.Stock)
-            {
-                MessageBox.Show($"Stock insuficiente. Se ajusta a {itemVenta.Stock}.");
+            var cantidadSolicitada = fCantidad.cantidad;
 
-                itemVenta.Cantidad = itemVenta.Stock;
+            // Buscar si el mismo item ya fue agregado
+            var itemExistente = itemsVenta
+                .FirstOrDefault(x => EsMismoItem(x, itemVenta));
+
+            if (itemExistente != null)
+            {
+                var respuesta = MessageBox.Show(
+                    $"'{itemVenta.Descripcion}' ya fue agregado.\n\n" +
+                    "¿Desea sumar la cantidad ingresada a la existente?",
+                    "Elemento repetido",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (respuesta == DialogResult.No)
+                    return;
+
+                var nuevaCantidad = itemExistente.Cantidad + cantidadSolicitada;
+
+                if (nuevaCantidad > itemVenta.Stock)
+                {
+                    MessageBox.Show(
+                        $"No hay stock suficiente.\n" +
+                        $"Stock disponible: {itemVenta.Stock}.\n" +
+                        $"La cantidad será ajustada al máximo disponible.",
+                        "Stock insuficiente",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+
+                    nuevaCantidad = itemVenta.Stock;
+                }
+
+                itemExistente.Cantidad = nuevaCantidad;
             }
             else
             {
-                itemVenta.Cantidad = fCantidad.cantidad;
+                if (cantidadSolicitada > itemVenta.Stock)
+                {
+                    MessageBox.Show(
+                        $"Stock insuficiente. Se ajusta a {itemVenta.Stock}.",
+                        "Advertencia",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+
+                    cantidadSolicitada = itemVenta.Stock;
+                }
+
+                itemVenta.Cantidad = cantidadSolicitada;
+
+                itemsVenta.Add(itemVenta);
             }
 
-            itemsVenta.Add(itemVenta);
+            dgvProductos.Refresh();
 
             ValidarCantidadySiEsOferta();
 
@@ -498,7 +541,32 @@ namespace Presentacion.Core.Venta
             else
                 CalcularTotal();
         }
-      
+        private bool EsMismoItem(ItemVentaDTO actual, ItemVentaDTO nuevo)
+        {
+            // Producto normal
+            if (!actual.EsOferta && !nuevo.EsOferta)
+                return actual.ItemId == nuevo.ItemId;
+
+            // Oferta por grupo (ItemId = ProductoId)
+            if (actual.EsOferta && nuevo.EsOferta &&
+                actual.TipoOferta == (int)TipoOferta.Grupo &&
+                nuevo.TipoOferta == (int)TipoOferta.Grupo)
+            {
+                return actual.ItemId == nuevo.ItemId;
+            }
+
+            // Combo / 2x1 (ItemId = OfertaId)
+            if (actual.EsOferta && nuevo.EsOferta &&
+                (actual.TipoOferta == (int)TipoOferta.Combo ||
+                 actual.TipoOferta == (int)TipoOferta.DosPorUno) &&
+                (nuevo.TipoOferta == (int)TipoOferta.Combo ||
+                 nuevo.TipoOferta == (int)TipoOferta.DosPorUno))
+            {
+                return actual.ItemId == nuevo.ItemId;
+            }
+
+            return false;
+        }
         private void CalcularTotal()
         {
             decimal totalFinal = 0m;
@@ -1037,9 +1105,62 @@ namespace Presentacion.Core.Venta
                 fCantidad.cantidad <= 0)
                 return;
 
-            itemVenta.Cantidad = fCantidad.cantidad;
+            var cantidadSolicitada = fCantidad.cantidad;
 
-            itemsVenta.Add(itemVenta);
+            // Buscar si la oferta ya fue agregada
+            var ofertaExistente = itemsVenta.FirstOrDefault(x =>
+             x.EsOferta &&
+             x.TipoOferta == itemVenta.TipoOferta &&
+             x.ItemId == itemVenta.ItemId);
+
+            if (ofertaExistente != null)
+            {
+                var respuesta = MessageBox.Show(
+                    $"La oferta '{itemVenta.Descripcion}' ya fue agregada.\n\n" +
+                    "¿Desea sumar la cantidad ingresada a la existente?",
+                    "Oferta repetida",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (respuesta == DialogResult.No)
+                    return;
+
+                var nuevaCantidad = ofertaExistente.Cantidad + cantidadSolicitada;
+
+                //if (nuevaCantidad > itemVenta.Stock)
+                //{
+                //    MessageBox.Show(
+                //        $"No hay stock suficiente.\n" +
+                //        $"Stock disponible: {itemVenta.Stock}.\n" +
+                //        $"La cantidad será ajustada al máximo disponible.",
+                //        "Stock insuficiente",
+                //        MessageBoxButtons.OK,
+                //        MessageBoxIcon.Warning);
+
+                //    nuevaCantidad = itemVenta.Stock;
+                //}
+
+                ofertaExistente.Cantidad = nuevaCantidad;
+            }
+            else
+            {
+                //if (cantidadSolicitada > itemVenta.Stock)
+                //{
+                //    MessageBox.Show(
+                //        $"Stock insuficiente. Se ajusta a {itemVenta.Stock}.",
+                //        "Advertencia",
+                //        MessageBoxButtons.OK,
+                //        MessageBoxIcon.Warning);
+
+                //    cantidadSolicitada = itemVenta.Stock;
+                //}
+
+                itemVenta.Cantidad = cantidadSolicitada;
+
+                itemsVenta.Add(itemVenta);
+            }
+
+            dgvProductos.Refresh();
 
             ValidarCantidadySiEsOferta();
 
@@ -1047,10 +1168,7 @@ namespace Presentacion.Core.Venta
                 AplicarDescuentoEfectivo();
             else
                 CalcularTotal();
-
-            dgvProductos.Refresh();
         }
-
         private void dgvProductos_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             var grilla = (DataGridView)sender;

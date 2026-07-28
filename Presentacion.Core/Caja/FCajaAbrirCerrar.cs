@@ -19,6 +19,8 @@ namespace Presentacion.Core.Caja
     {
         //private readonly ICajaServicio _cajaServicio;
         public CajaServicio cajaServicio;
+        public decimal SaldoApertura { get; private set; }
+        public decimal SaldoFinal { get; private set; }
 
         public FCajaAbrir(TipoOperacion tipo)
         {
@@ -58,22 +60,20 @@ namespace Presentacion.Core.Caja
             if (estadoCaja)
             {
                 cajaServicio.CerrarCaja(DatosSistema.UsuarioId);
-
                 DatosSistema.EstaCajaAbierta = false;
                 DatosSistema.CajaId = null;
                 DatosSistema.EstaCajaAbierta = false;
-
+                SaldoFinal = cajaServicio.saldoFinalAlCierre;
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             else
             {
                 cajaServicio.AbrirCaja(montoApertura, DatosSistema.UsuarioId);
-
                 DatosSistema.EstaCajaAbierta = true;
                 DatosSistema.CajaId = cajaServicio.ObtenerIdCajaAbierta().Value;                
                 DatosSistema.EstaCajaAbierta = true;
-                
+                SaldoApertura = montoApertura;
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }

@@ -54,6 +54,7 @@ namespace Presentacion.Core.CuentaCorriente
                 btnAgregarDni.Enabled = false;
                 btnEliminarDni.Enabled = false;
             }
+            txtLimiteDeuda.Enabled = false; // Deshabilitar el TextBox de límite de deuda al inicio
 
             dtpFechaVencimiento.MinDate = DateTime.Now;
 
@@ -76,6 +77,10 @@ namespace Presentacion.Core.CuentaCorriente
 
             lblNombreCliente.Text = cliente.NombreCompleto;
 
+            if(cliente != null && !string.IsNullOrEmpty(cliente.Dni))
+            {
+                _dnisAutorizadosLista.Add(long.Parse(cliente.Dni));
+            }
 
             AgregarControlesObligatorios(txtNombreCC, "Nombre Cuenta Corriente");
             AgregarControlesObligatorios(txtSaldo, "Saldo");
@@ -153,15 +158,24 @@ namespace Presentacion.Core.CuentaCorriente
                 MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
+            if (!decimal.TryParse(txtSaldo.Text?.Trim(), out var saldo))
+            {
+                MessageBox.Show("Saldo inválido.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            decimal.TryParse(txtLimiteDeuda.Text?.Trim(), out var limiteDeuda); // devuelve 0 si falla
+
 
             var nuevoCuentaCorriente = new CuentaCorrienteDTO
             {
                 ClienteId = EntidadID.Value, // Asumimos que el ID del cliente se pasa al formulario y se usa para crear la cuenta corriente
                 NombreCuentaCorriente = txtNombreCC.Text,
-                Saldo = Convert.ToDecimal(txtSaldo.Text),
+                Saldo = saldo,
                 FechaVencimiento = dtpFechaVencimiento.Value,
                 LimiteDeudaActivo = chkLimiteDeuda.Checked,
-                LimiteDeuda = Convert.ToDecimal(txtLimiteDeuda.Text),
+                LimiteDeuda = chkLimiteDeuda.Checked && decimal.TryParse(txtLimiteDeuda.Text, out var l) ? l : 0m,
+                FechaCreacion = DateTime.Now,
+                FechaActivacion = DateTime.Now,// evaluar si va con creacion activacion automatica o no, por ahora lo dejamos asi
 
                 // 🔹 Directamente le pasamos la lista limpia convertida a List<long>
                 DniAutorizados = _dnisAutorizadosLista.ToList(),
@@ -173,12 +187,20 @@ namespace Presentacion.Core.CuentaCorriente
             if (response.Exitoso)
             {
                 MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                RealizoAlgunaOperacion = true;
+                DialogResult = DialogResult.OK;
+                this.Close();
                 return true;
+
             }
             else
             {
                 MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                RealizoAlgunaOperacion = false;
+                DialogResult = DialogResult.Cancel;
+                this.Close();
                 return false;
+
             }
         }
 

@@ -840,8 +840,14 @@ namespace AccesoDatos
                     entity.Property(cc => cc.EstaEliminado)
                           .HasColumnName("esta_eliminado")
                           .IsRequired();
+                    entity.Property(cc => cc.FechaCreacion)
+                          .HasColumnName("fecha_creacion")
+                          .HasColumnType("datetime");
+                    entity.Property(cc => cc.FechaActivacion)
+                          .HasColumnName("fecha_activacion")
+                          .HasColumnType("datetime");
                     // Relación uno a uno con Cliente
-                    entity.HasOne(cc => cc.Cliente)
+        entity.HasOne(cc => cc.Cliente)
                           .WithOne(c => c.CuentaCorriente)
                           .HasForeignKey<Cliente>(c => c.CuentaCorrienteId)
                           .OnDelete(DeleteBehavior.Restrict);
