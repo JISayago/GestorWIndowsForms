@@ -23,6 +23,7 @@ namespace Presentacion.Core.CuentaCorriente
     {
         private readonly ICuentaCorrienteServicio _cuentacorrienteServicio;
         private readonly IClienteServicio _clienteServicio;
+        private long ClienteID;
 
         // 🔹 Reemplazamos el DataGridView por una BindingList en memoria
         private BindingList<long> _dnisAutorizadosLista;
@@ -38,7 +39,7 @@ namespace Presentacion.Core.CuentaCorriente
             InitializeComponent();
             _cuentacorrienteServicio = new CuentaCorrienteServicio();
             _clienteServicio = new ClienteServicio();
-
+            ClienteID = entidadID ?? 0; // Asignar un valor predeterminado si es null
             InicializarListaDni();
 
             if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
@@ -58,34 +59,40 @@ namespace Presentacion.Core.CuentaCorriente
 
             dtpFechaVencimiento.MinDate = DateTime.Now;
 
-            //var filtros = new FiltroConsulta
-            //{
-            //    TextoBuscar = null,
-            //    Filtro1 = null,
-            //    Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(),
-            //    Bool1 = false,
-            //    Bool2 = false,
-            //    FechaDesde = null,
-            //    FechaHasta = null,
-            //    Filtro3 = null,
-            //    Page = 1,
-            //    PageSize = 50
-            //};
-
             //var clientes = _clienteServicio.ObtenerClientes(filtros).Items;
-            var cliente = _clienteServicio.ObtenerClientePorId(entidadID.Value);
-
-            lblNombreCliente.Text = cliente.NombreCompleto;
-
-            if(cliente != null && !string.IsNullOrEmpty(cliente.Dni))
-            {
-                _dnisAutorizadosLista.Add(long.Parse(cliente.Dni));
-            }
+          
+           
 
             AgregarControlesObligatorios(txtNombreCC, "Nombre Cuenta Corriente");
             AgregarControlesObligatorios(txtSaldo, "Saldo");
         }
+        private void FCuentaCorrienteABM_Load(object sender, EventArgs e)
+        {
+            var cliente = _clienteServicio.ObtenerClientePorId(ClienteID);
 
+            lblNombreCliente.Text = cliente.NombreCompleto;
+
+            if (cliente != null)
+            {
+                var inicialNombre = string.IsNullOrWhiteSpace(cliente.Nombre)
+     ? ""
+     : cliente.Nombre.Trim()[0].ToString().ToUpper();
+
+                var apellido = (cliente.Apellido ?? "")
+                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                    .FirstOrDefault() ?? "";
+
+                var codigo = DateTime.Now.ToString("HHmmss");
+
+                txtNombreCC.Text = $"{inicialNombre}{apellido} - {codigo}";
+            }
+
+            if (cliente != null && !string.IsNullOrEmpty(cliente.Dni))
+            {
+
+                _dnisAutorizadosLista.Add(long.Parse(cliente.Dni));
+            }
+        }
         // 🔹 Método para enlazar la lista al ListBox
         private void InicializarListaDni()
         {
@@ -118,23 +125,6 @@ namespace Presentacion.Core.CuentaCorriente
             }
 
             var cuentacorriente = _cuentacorrienteServicio.ObtenerCuentaCorrientePorId(entidadId.Value);
-            //var filtros = new FiltroConsulta
-            //{
-            //    TextoBuscar = null,
-            //    Filtro1 = null,
-            //    Filtro2 = ((int)TipoFiltroCliente.Activo).ToString(),
-            //    Bool1 = false,
-            //    Bool2 = false,
-            //    FechaDesde = null,
-            //    FechaHasta = null,
-            //    Filtro3 = null,
-            //    Page = 1,
-            //    PageSize = 50
-            //};
-
-            //var resultado = _clienteServicio.ObtenerClientes(filtros);
-            //var clienteDeCuentaCorriente = resultado.Items.FirstOrDefault();
-
 
             txtNombreCC.Text = cuentacorriente.NombreCuentaCorriente;
             txtSaldo.Text = cuentacorriente.Saldo.ToString();
@@ -316,8 +306,6 @@ namespace Presentacion.Core.CuentaCorriente
             }
         }
 
-        private void FCuentaCorrienteABM_Load(object sender, EventArgs e)
-        {
-        }
+       
     }
 }
