@@ -31,14 +31,12 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FCuentaCorrienteABM));
             lblccorriente = new Label();
             lblSaldo = new Label();
-            label1 = new Label();
             lblLimiteCuenta = new Label();
             lblFechaVencimiento = new Label();
             chkLimiteDeuda = new CheckBox();
             txtNombreCC = new TextBox();
             txtLimiteDeuda = new TextBox();
             txtSaldo = new TextBox();
-            dtpFechaVencimiento = new DateTimePicker();
             lblDni = new Label();
             lstDnis = new ListBox();
             txtNuevoDni = new TextBox();
@@ -46,13 +44,21 @@
             btnEliminarDni = new Button();
             lblCliente = new Label();
             lblNombreCliente = new Label();
+            groupBox1 = new GroupBox();
+            rbVencimientoManual = new RadioButton();
+            rbVencimientoMensual = new RadioButton();
+            nudCantidadMeses = new NumericUpDown();
+            lblFechaVTO = new Label();
+            label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
+            groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudCantidadMeses).BeginInit();
             SuspendLayout();
             // 
             // lblccorriente
             // 
             lblccorriente.AutoSize = true;
-            lblccorriente.Location = new Point(47, 117);
+            lblccorriente.Location = new Point(47, 120);
             lblccorriente.Name = "lblccorriente";
             lblccorriente.Size = new Size(68, 15);
             lblccorriente.TabIndex = 0;
@@ -61,34 +67,25 @@
             // lblSaldo
             // 
             lblSaldo.AutoSize = true;
-            lblSaldo.Location = new Point(39, 167);
+            lblSaldo.Location = new Point(452, 294);
             lblSaldo.Name = "lblSaldo";
             lblSaldo.Size = new Size(76, 15);
             lblSaldo.TabIndex = 1;
             lblSaldo.Text = "Saldo a favor";
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(83, 446);
-            label1.Name = "label1";
-            label1.Size = new Size(37, 15);
-            label1.TabIndex = 2;
-            label1.Text = "label1";
-            // 
             // lblLimiteCuenta
             // 
             lblLimiteCuenta.AutoSize = true;
-            lblLimiteCuenta.Location = new Point(371, 167);
+            lblLimiteCuenta.Location = new Point(406, 330);
             lblLimiteCuenta.Name = "lblLimiteCuenta";
-            lblLimiteCuenta.Size = new Size(92, 15);
+            lblLimiteCuenta.Size = new Size(142, 15);
             lblLimiteCuenta.TabIndex = 3;
-            lblLimiteCuenta.Text = "Limite de deuda";
+            lblLimiteCuenta.Text = "Deuda máxima permitida";
             // 
             // lblFechaVencimiento
             // 
             lblFechaVencimiento.AutoSize = true;
-            lblFechaVencimiento.Location = new Point(371, 117);
+            lblFechaVencimiento.Location = new Point(491, 199);
             lblFechaVencimiento.Name = "lblFechaVencimiento";
             lblFechaVencimiento.Size = new Size(107, 15);
             lblFechaVencimiento.TabIndex = 5;
@@ -97,46 +94,39 @@
             // chkLimiteDeuda
             // 
             chkLimiteDeuda.AutoSize = true;
-            chkLimiteDeuda.Location = new Point(484, 193);
+            chkLimiteDeuda.Location = new Point(554, 356);
             chkLimiteDeuda.Name = "chkLimiteDeuda";
-            chkLimiteDeuda.Size = new Size(146, 19);
+            chkLimiteDeuda.Size = new Size(104, 19);
             chkLimiteDeuda.TabIndex = 7;
-            chkLimiteDeuda.Text = "Limite de deuda activo";
+            chkLimiteDeuda.Text = "Permitir deuda";
             chkLimiteDeuda.UseVisualStyleBackColor = true;
             chkLimiteDeuda.CheckedChanged += chkbLimiteDeuda_CheckedChanged;
             // 
             // txtNombreCC
             // 
-            txtNombreCC.Location = new Point(129, 114);
+            txtNombreCC.Location = new Point(129, 117);
             txtNombreCC.Name = "txtNombreCC";
             txtNombreCC.Size = new Size(200, 23);
             txtNombreCC.TabIndex = 8;
             // 
             // txtLimiteDeuda
             // 
-            txtLimiteDeuda.Location = new Point(484, 164);
+            txtLimiteDeuda.Location = new Point(554, 327);
             txtLimiteDeuda.Name = "txtLimiteDeuda";
             txtLimiteDeuda.Size = new Size(200, 23);
             txtLimiteDeuda.TabIndex = 9;
             // 
             // txtSaldo
             // 
-            txtSaldo.Location = new Point(129, 161);
+            txtSaldo.Location = new Point(544, 286);
             txtSaldo.Name = "txtSaldo";
             txtSaldo.Size = new Size(200, 23);
             txtSaldo.TabIndex = 10;
             // 
-            // dtpFechaVencimiento
-            // 
-            dtpFechaVencimiento.Location = new Point(484, 114);
-            dtpFechaVencimiento.Name = "dtpFechaVencimiento";
-            dtpFechaVencimiento.Size = new Size(200, 23);
-            dtpFechaVencimiento.TabIndex = 11;
-            // 
             // lblDni
             // 
             lblDni.AutoSize = true;
-            lblDni.Location = new Point(227, 233);
+            lblDni.Location = new Point(47, 228);
             lblDni.Name = "lblDni";
             lblDni.Size = new Size(246, 15);
             lblDni.TabIndex = 13;
@@ -146,21 +136,21 @@
             // 
             lstDnis.FormattingEnabled = true;
             lstDnis.ItemHeight = 15;
-            lstDnis.Location = new Point(227, 293);
+            lstDnis.Location = new Point(47, 288);
             lstDnis.Name = "lstDnis";
             lstDnis.Size = new Size(282, 109);
             lstDnis.TabIndex = 19;
             // 
             // txtNuevoDni
             // 
-            txtNuevoDni.Location = new Point(227, 258);
+            txtNuevoDni.Location = new Point(47, 253);
             txtNuevoDni.Name = "txtNuevoDni";
             txtNuevoDni.Size = new Size(160, 23);
             txtNuevoDni.TabIndex = 16;
             // 
             // btnAgregarDni
             // 
-            btnAgregarDni.Location = new Point(393, 257);
+            btnAgregarDni.Location = new Point(213, 252);
             btnAgregarDni.Name = "btnAgregarDni";
             btnAgregarDni.Size = new Size(55, 25);
             btnAgregarDni.TabIndex = 17;
@@ -170,7 +160,7 @@
             // 
             // btnEliminarDni
             // 
-            btnEliminarDni.Location = new Point(454, 257);
+            btnEliminarDni.Location = new Point(274, 252);
             btnEliminarDni.Name = "btnEliminarDni";
             btnEliminarDni.Size = new Size(55, 25);
             btnEliminarDni.TabIndex = 18;
@@ -200,11 +190,74 @@
             lblNombreCliente.Tag = "NoModificarConBase";
             lblNombreCliente.Text = "**********";
             // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(rbVencimientoManual);
+            groupBox1.Controls.Add(rbVencimientoMensual);
+            groupBox1.Location = new Point(391, 103);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(333, 51);
+            groupBox1.TabIndex = 24;
+            groupBox1.TabStop = false;
+            // 
+            // rbVencimientoManual
+            // 
+            rbVencimientoManual.AutoSize = true;
+            rbVencimientoManual.Location = new Point(188, 22);
+            rbVencimientoManual.Name = "rbVencimientoManual";
+            rbVencimientoManual.Size = new Size(135, 19);
+            rbVencimientoManual.TabIndex = 1;
+            rbVencimientoManual.TabStop = true;
+            rbVencimientoManual.Text = "Vencimiento manual";
+            rbVencimientoManual.UseVisualStyleBackColor = true;
+            rbVencimientoManual.CheckedChanged += rbVencimientoManual_CheckedChanged;
+            // 
+            // rbVencimientoMensual
+            // 
+            rbVencimientoMensual.AutoSize = true;
+            rbVencimientoMensual.Location = new Point(7, 22);
+            rbVencimientoMensual.Name = "rbVencimientoMensual";
+            rbVencimientoMensual.Size = new Size(158, 19);
+            rbVencimientoMensual.TabIndex = 0;
+            rbVencimientoMensual.TabStop = true;
+            rbVencimientoMensual.Text = "Vencimiento fijo por mes";
+            rbVencimientoMensual.UseVisualStyleBackColor = true;
+            rbVencimientoMensual.CheckedChanged += rbVencimientoMensual_CheckedChanged;
+            // 
+            // nudCantidadMeses
+            // 
+            nudCantidadMeses.Location = new Point(604, 160);
+            nudCantidadMeses.Name = "nudCantidadMeses";
+            nudCantidadMeses.Size = new Size(120, 23);
+            nudCantidadMeses.TabIndex = 25;
+            // 
+            // lblFechaVTO
+            // 
+            lblFechaVTO.AutoSize = true;
+            lblFechaVTO.Location = new Point(605, 199);
+            lblFechaVTO.Name = "lblFechaVTO";
+            lblFechaVTO.Size = new Size(53, 15);
+            lblFechaVTO.TabIndex = 26;
+            lblFechaVTO.Text = "xx/xx/xx";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(389, 168);
+            label2.Name = "label2";
+            label2.Size = new Size(209, 15);
+            label2.TabIndex = 27;
+            label2.Text = "Cantidad de Meses (para vencimiento)";
+            // 
             // FCuentaCorrienteABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(732, 418);
+            ClientSize = new Size(781, 478);
+            Controls.Add(label2);
+            Controls.Add(lblFechaVTO);
+            Controls.Add(nudCantidadMeses);
+            Controls.Add(groupBox1);
             Controls.Add(lblNombreCliente);
             Controls.Add(lblCliente);
             Controls.Add(btnEliminarDni);
@@ -212,14 +265,12 @@
             Controls.Add(txtNuevoDni);
             Controls.Add(lstDnis);
             Controls.Add(lblDni);
-            Controls.Add(dtpFechaVencimiento);
             Controls.Add(txtSaldo);
             Controls.Add(txtLimiteDeuda);
             Controls.Add(txtNombreCC);
             Controls.Add(chkLimiteDeuda);
             Controls.Add(lblFechaVencimiento);
             Controls.Add(lblLimiteCuenta);
-            Controls.Add(label1);
             Controls.Add(lblSaldo);
             Controls.Add(lblccorriente);
             ForeColor = Color.FromArgb(31, 26, 43);
@@ -230,14 +281,12 @@
             Load += FCuentaCorrienteABM_Load;
             Controls.SetChildIndex(lblccorriente, 0);
             Controls.SetChildIndex(lblSaldo, 0);
-            Controls.SetChildIndex(label1, 0);
             Controls.SetChildIndex(lblLimiteCuenta, 0);
             Controls.SetChildIndex(lblFechaVencimiento, 0);
             Controls.SetChildIndex(chkLimiteDeuda, 0);
             Controls.SetChildIndex(txtNombreCC, 0);
             Controls.SetChildIndex(txtLimiteDeuda, 0);
             Controls.SetChildIndex(txtSaldo, 0);
-            Controls.SetChildIndex(dtpFechaVencimiento, 0);
             Controls.SetChildIndex(lblDni, 0);
             Controls.SetChildIndex(lstDnis, 0);
             Controls.SetChildIndex(txtNuevoDni, 0);
@@ -245,7 +294,14 @@
             Controls.SetChildIndex(btnEliminarDni, 0);
             Controls.SetChildIndex(lblCliente, 0);
             Controls.SetChildIndex(lblNombreCliente, 0);
+            Controls.SetChildIndex(groupBox1, 0);
+            Controls.SetChildIndex(nudCantidadMeses, 0);
+            Controls.SetChildIndex(lblFechaVTO, 0);
+            Controls.SetChildIndex(label2, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudCantidadMeses).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -254,14 +310,12 @@
 
         private Label lblccorriente;
         private Label lblSaldo;
-        private Label label1;
         private Label lblLimiteCuenta;
         private Label lblFechaVencimiento;
         private CheckBox chkLimiteDeuda;
         private TextBox txtNombreCC;
         private TextBox txtLimiteDeuda;
         private TextBox txtSaldo;
-        private DateTimePicker dtpFechaVencimiento;
         private Label lblDni;
 
         // 🔹 Nuevos controles incorporados para la lista de DNIs
@@ -271,5 +325,11 @@
         private Button btnEliminarDni;
         private Label lblCliente;
         private Label lblNombreCliente;
+        private GroupBox groupBox1;
+        private RadioButton rbVencimientoManual;
+        private RadioButton rbVencimientoMensual;
+        private NumericUpDown nudCantidadMeses;
+        private Label lblFechaVTO;
+        private Label label2;
     }
 }

@@ -2,6 +2,7 @@
 using Presentacion.FBase;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers.Cliente;
+using Servicios.Helpers.Cliente.CtaCte;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.CuentaCorriente;
@@ -57,11 +58,11 @@ namespace Presentacion.Core.CuentaCorriente
             }
             txtLimiteDeuda.Enabled = false; // Deshabilitar el TextBox de límite de deuda al inicio
 
-            dtpFechaVencimiento.MinDate = DateTime.Now;
+            lblFechaVTO.Text = DateTime.Now.ToString();
 
             //var clientes = _clienteServicio.ObtenerClientes(filtros).Items;
-          
-           
+
+
 
             AgregarControlesObligatorios(txtNombreCC, "Nombre Cuenta Corriente");
             AgregarControlesObligatorios(txtSaldo, "Saldo");
@@ -128,7 +129,7 @@ namespace Presentacion.Core.CuentaCorriente
 
             txtNombreCC.Text = cuentacorriente.NombreCuentaCorriente;
             txtSaldo.Text = cuentacorriente.Saldo.ToString();
-            dtpFechaVencimiento.Value = (DateTime)cuentacorriente.FechaVencimiento;
+            //dtpFechaVencimiento.Value = (DateTime)cuentacorriente.FechaVencimiento;
             chkLimiteDeuda.Checked = cuentacorriente.LimiteDeudaActivo;
             txtLimiteDeuda.Text = cuentacorriente.LimiteDeuda.ToString();
             txtLimiteDeuda.Enabled = cuentacorriente.LimiteDeudaActivo;
@@ -156,12 +157,20 @@ namespace Presentacion.Core.CuentaCorriente
             decimal.TryParse(txtLimiteDeuda.Text?.Trim(), out var limiteDeuda); // devuelve 0 si falla
 
 
+            var tipoVencimiento = rbVencimientoMensual.Checked
+                ? TipoVencimientoCuentaCorriente.Mensual
+                : TipoVencimientoCuentaCorriente.Manual;
+
+            var cantidadMeses = rbVencimientoMensual.Checked
+                ? 1
+                : (int)nudCantidadMeses.Value;
+
             var nuevoCuentaCorriente = new CuentaCorrienteDTO
             {
                 ClienteId = EntidadID.Value, // Asumimos que el ID del cliente se pasa al formulario y se usa para crear la cuenta corriente
                 NombreCuentaCorriente = txtNombreCC.Text,
                 Saldo = saldo,
-                FechaVencimiento = dtpFechaVencimiento.Value,
+                //FechaVencimiento = dtpFechaVencimiento.Value,
                 LimiteDeudaActivo = chkLimiteDeuda.Checked,
                 LimiteDeuda = chkLimiteDeuda.Checked && decimal.TryParse(txtLimiteDeuda.Text, out var l) ? l : 0m,
                 FechaCreacion = DateTime.Now,
@@ -231,7 +240,7 @@ namespace Presentacion.Core.CuentaCorriente
                 {
                     NombreCuentaCorriente = txtNombreCC.Text,
                     Saldo = Convert.ToDecimal(txtSaldo.Text),
-                    FechaVencimiento = dtpFechaVencimiento.Value,
+                    //FechaVencimiento = dtpFechaVencimiento.Value,
                     LimiteDeudaActivo = chkLimiteDeuda.Checked,
                     LimiteDeuda = Convert.ToDecimal(txtLimiteDeuda.Text),
 
@@ -306,6 +315,25 @@ namespace Presentacion.Core.CuentaCorriente
             }
         }
 
-       
+        private void rbVencimientoMensual_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!rbVencimientoMensual.Checked)
+                return;
+
+            nudCantidadMeses.Enabled = false;
+            nudCantidadMeses.Value = 1;
+        }
+
+        private void rbVencimientoManual_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!rbVencimientoManual.Checked)
+                return;
+
+            nudCantidadMeses.Enabled = true;
+
+            if (nudCantidadMeses.Value < 2)
+                nudCantidadMeses.Value = 2;
+
+        }
     }
 }

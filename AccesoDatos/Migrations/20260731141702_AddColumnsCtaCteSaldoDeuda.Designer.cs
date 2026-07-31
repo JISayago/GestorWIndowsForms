@@ -4,6 +4,7 @@ using AccesoDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccesoDatos.Migrations
 {
     [DbContext(typeof(GestorContextDB))]
-    partial class GestorContextDBModelSnapshot : ModelSnapshot
+    [Migration("20260731141702_AddColumnsCtaCteSaldoDeuda")]
+    partial class AddColumnsCtaCteSaldoDeuda
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -222,7 +225,7 @@ namespace AccesoDatos.Migrations
 
                     b.Property<bool>("ConDeuda")
                         .HasColumnType("bit")
-                        .HasColumnName("con_deuda");
+                        .HasColumnName("permitir_vencimiento_negativo");
 
                     b.Property<bool>("EstaEliminado")
                         .HasColumnType("bit")
