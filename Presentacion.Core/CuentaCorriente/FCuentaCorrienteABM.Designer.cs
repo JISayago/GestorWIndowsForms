@@ -50,6 +50,9 @@
             nudCantidadMeses = new NumericUpDown();
             lblFechaVTO = new Label();
             label2 = new Label();
+            button3 = new Button();
+            button2 = new Button();
+            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudCantidadMeses).BeginInit();
@@ -67,7 +70,7 @@
             // lblSaldo
             // 
             lblSaldo.AutoSize = true;
-            lblSaldo.Location = new Point(452, 294);
+            lblSaldo.Location = new Point(442, 241);
             lblSaldo.Name = "lblSaldo";
             lblSaldo.Size = new Size(76, 15);
             lblSaldo.TabIndex = 1;
@@ -76,7 +79,7 @@
             // lblLimiteCuenta
             // 
             lblLimiteCuenta.AutoSize = true;
-            lblLimiteCuenta.Location = new Point(406, 330);
+            lblLimiteCuenta.Location = new Point(376, 277);
             lblLimiteCuenta.Name = "lblLimiteCuenta";
             lblLimiteCuenta.Size = new Size(142, 15);
             lblLimiteCuenta.TabIndex = 3;
@@ -85,7 +88,7 @@
             // lblFechaVencimiento
             // 
             lblFechaVencimiento.AutoSize = true;
-            lblFechaVencimiento.Location = new Point(491, 199);
+            lblFechaVencimiento.Location = new Point(391, 199);
             lblFechaVencimiento.Name = "lblFechaVencimiento";
             lblFechaVencimiento.Size = new Size(107, 15);
             lblFechaVencimiento.TabIndex = 5;
@@ -94,13 +97,13 @@
             // chkLimiteDeuda
             // 
             chkLimiteDeuda.AutoSize = true;
-            chkLimiteDeuda.Location = new Point(554, 356);
+            chkLimiteDeuda.Location = new Point(524, 317);
             chkLimiteDeuda.Name = "chkLimiteDeuda";
             chkLimiteDeuda.Size = new Size(104, 19);
             chkLimiteDeuda.TabIndex = 7;
             chkLimiteDeuda.Text = "Permitir deuda";
             chkLimiteDeuda.UseVisualStyleBackColor = true;
-            chkLimiteDeuda.CheckedChanged += chkbLimiteDeuda_CheckedChanged;
+            chkLimiteDeuda.CheckedChanged += chkLimiteDeuda_CheckedChanged_1;
             // 
             // txtNombreCC
             // 
@@ -111,14 +114,14 @@
             // 
             // txtLimiteDeuda
             // 
-            txtLimiteDeuda.Location = new Point(554, 327);
+            txtLimiteDeuda.Location = new Point(524, 274);
             txtLimiteDeuda.Name = "txtLimiteDeuda";
             txtLimiteDeuda.Size = new Size(200, 23);
             txtLimiteDeuda.TabIndex = 9;
             // 
             // txtSaldo
             // 
-            txtSaldo.Location = new Point(544, 286);
+            txtSaldo.Location = new Point(524, 233);
             txtSaldo.Name = "txtSaldo";
             txtSaldo.Size = new Size(200, 23);
             txtSaldo.TabIndex = 10;
@@ -126,7 +129,7 @@
             // lblDni
             // 
             lblDni.AutoSize = true;
-            lblDni.Location = new Point(47, 228);
+            lblDni.Location = new Point(47, 167);
             lblDni.Name = "lblDni";
             lblDni.Size = new Size(246, 15);
             lblDni.TabIndex = 13;
@@ -136,21 +139,21 @@
             // 
             lstDnis.FormattingEnabled = true;
             lstDnis.ItemHeight = 15;
-            lstDnis.Location = new Point(47, 288);
+            lstDnis.Location = new Point(47, 227);
             lstDnis.Name = "lstDnis";
             lstDnis.Size = new Size(282, 109);
             lstDnis.TabIndex = 19;
             // 
             // txtNuevoDni
             // 
-            txtNuevoDni.Location = new Point(47, 253);
+            txtNuevoDni.Location = new Point(47, 192);
             txtNuevoDni.Name = "txtNuevoDni";
             txtNuevoDni.Size = new Size(160, 23);
             txtNuevoDni.TabIndex = 16;
             // 
             // btnAgregarDni
             // 
-            btnAgregarDni.Location = new Point(213, 252);
+            btnAgregarDni.Location = new Point(213, 191);
             btnAgregarDni.Name = "btnAgregarDni";
             btnAgregarDni.Size = new Size(55, 25);
             btnAgregarDni.TabIndex = 17;
@@ -160,7 +163,7 @@
             // 
             // btnEliminarDni
             // 
-            btnEliminarDni.Location = new Point(274, 252);
+            btnEliminarDni.Location = new Point(274, 191);
             btnEliminarDni.Name = "btnEliminarDni";
             btnEliminarDni.Size = new Size(55, 25);
             btnEliminarDni.TabIndex = 18;
@@ -226,15 +229,16 @@
             // 
             // nudCantidadMeses
             // 
-            nudCantidadMeses.Location = new Point(604, 160);
+            nudCantidadMeses.Location = new Point(689, 165);
             nudCantidadMeses.Name = "nudCantidadMeses";
-            nudCantidadMeses.Size = new Size(120, 23);
+            nudCantidadMeses.Size = new Size(35, 23);
             nudCantidadMeses.TabIndex = 25;
+            nudCantidadMeses.ValueChanged += nudCantidadMeses_ValueChanged_1;
             // 
             // lblFechaVTO
             // 
             lblFechaVTO.AutoSize = true;
-            lblFechaVTO.Location = new Point(605, 199);
+            lblFechaVTO.Location = new Point(505, 199);
             lblFechaVTO.Name = "lblFechaVTO";
             lblFechaVTO.Size = new Size(53, 15);
             lblFechaVTO.TabIndex = 26;
@@ -249,11 +253,41 @@
             label2.TabIndex = 27;
             label2.Text = "Cantidad de Meses (para vencimiento)";
             // 
+            // button3
+            // 
+            button3.Location = new Point(304, 367);
+            button3.Name = "button3";
+            button3.Size = new Size(127, 54);
+            button3.TabIndex = 34;
+            button3.Text = "Activar";
+            button3.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(471, 367);
+            button2.Name = "button2";
+            button2.Size = new Size(127, 54);
+            button2.TabIndex = 33;
+            button2.Text = "Cerrar Cuenta";
+            button2.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(145, 367);
+            button1.Name = "button1";
+            button1.Size = new Size(127, 54);
+            button1.TabIndex = 32;
+            button1.Text = "Cargar Saldo";
+            button1.UseVisualStyleBackColor = true;
+            // 
             // FCuentaCorrienteABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(781, 478);
+            ClientSize = new Size(781, 433);
+            Controls.Add(button3);
+            Controls.Add(button2);
+            Controls.Add(button1);
             Controls.Add(label2);
             Controls.Add(lblFechaVTO);
             Controls.Add(nudCantidadMeses);
@@ -298,6 +332,9 @@
             Controls.SetChildIndex(nudCantidadMeses, 0);
             Controls.SetChildIndex(lblFechaVTO, 0);
             Controls.SetChildIndex(label2, 0);
+            Controls.SetChildIndex(button1, 0);
+            Controls.SetChildIndex(button2, 0);
+            Controls.SetChildIndex(button3, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
@@ -331,5 +368,8 @@
         private NumericUpDown nudCantidadMeses;
         private Label lblFechaVTO;
         private Label label2;
+        private Button button3;
+        private Button button2;
+        private Button button1;
     }
 }

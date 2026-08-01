@@ -2,8 +2,10 @@
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
+using Servicios.LogicaNegocio.Movimiento.DTO;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +15,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
     public interface ICuentaCorrienteServicio
     {
         ResultadoPaginacion<CuentaCorrienteDTO> ObtenerCuentaCorrientes(FiltroConsulta filtros);
+
+        ResultadoPaginacion<MovimientoDTO> ObtenerMovimientosPorCuentaCorriente(long cuentaCorrienteId, FiltroConsulta filtros);
         CuentaCorrienteDTO ObtenerCuentaCorrientePorId(long cuentacorrienteId);
         EstadoOperacion Insertar(CuentaCorrienteDTO cuentacorrienteDto);
         EstadoOperacion Modificar(CuentaCorrienteDTO cuentacorrienteDto, long? cuentacorrienteId);

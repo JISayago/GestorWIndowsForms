@@ -459,6 +459,12 @@ namespace Presentacion.Core.Cliente
             SeleccionarClienteParaCtaCte,
             true
             );
+            AgregarAccion(
+            "Detalles Cta Cte",
+            Constantes.Imagenes.ImgMovimiento,
+            AbrirDetalleCtaCte,
+            true
+            );
         }
 
         private void SeleccionarCliente(long? id)
@@ -473,6 +479,31 @@ namespace Presentacion.Core.Cliente
             DialogResult = DialogResult.OK;
 
             Close();
+        }
+        private void AbrirDetalleCtaCte(long? id)
+        {
+            clienteSeleccionado = id;
+            if(clienteSeleccionado == null)
+            {
+                MessageBox.Show("Seleccione un cliente para ver los detalles de su cuenta corriente.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            else
+            {
+
+                var response = _clienteServicio.ObtenerCtaCteIdPorClienteId((long)clienteSeleccionado);
+            if(!response.Exitoso)
+            {
+                MessageBox.Show("El cliente seleccionado no tiene una cuenta corriente asociada.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            else
+            {
+                var fCtacte = new FDetallesCtaCte(response.EntidadId.Value);
+                fCtacte.CargarDatos();
+                fCtacte.ShowDialog();
+            }
+            }
         }
 
         private void SeleccionarClienteParaCtaCte(long? id)

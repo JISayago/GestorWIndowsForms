@@ -7,7 +7,9 @@ using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
 using Servicios.LogicaNegocio.Movimiento;
+using Servicios.LogicaNegocio.Movimiento.DTO;
 using Servicios.LogicaNegocio.Producto.DTO;
+using System.ComponentModel;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Servicios.LogicaNegocio.CuentaCorriente
@@ -531,6 +533,131 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             {
                 cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Activa;
             }
+        }
+
+
+        public ResultadoPaginacion<MovimientoDTO> ObtenerMovimientosPorCuentaCorriente(long cuentaCorrienteId,FiltroConsulta filtros)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var query = context.Movimientos
+            .Where(x =>
+                x.TipoMovimientoDetalle == (int)TipoMovimientoDetalle.CuentaCorriente &&
+                x.TipoEntidad == (int)TipoEntidadMovimiento.CuentaCorriente &&
+                x.EntidadId == cuentaCorrienteId)
+            .AsNoTracking()
+            .AsQueryable();
+
+            //==========================================
+            // ELIMINADOS
+            //==========================================
+
+            if (filtros.Bool2)
+            {
+                // Histórico
+            }
+            else if (filtros.Bool1)
+            {
+                query = query.Where(x => x.EstaEliminado);
+            }
+            else
+            {
+                query = query.Where(x => !x.EstaEliminado);
+            }
+
+            //==========================================
+            // BUSQUEDA
+            //==========================================
+
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                var texto = filtros.TextoBuscar.Trim();
+
+                query = query.Where(x =>
+                    x.NumeroMovimiento.Contains(texto));
+            }
+
+            //==========================================
+            // FECHA
+            //==========================================
+
+            bool hayFiltroFecha =
+                filtros.FechaDesde.HasValue ||
+                filtros.FechaHasta.HasValue;
+
+            if (hayFiltroFecha)
+            {
+                if (filtros.FechaDesde.HasValue)
+                {
+                    query = query.Where(x =>
+                        x.FechaMovimiento >= filtros.FechaDesde.Value);
+                }
+
+                if (filtros.FechaHasta.HasValue)
+                {
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
+
+                    query = query.Where(x =>
+                        x.FechaMovimiento < hasta);
+                }
+            }
+            else
+            {
+                var fechaLimite = filtros.Bool2
+                    ? DateTime.Now.AddMonths(-6)
+                    : DateTime.Now.AddMonths(-2);
+
+                query = query.Where(x =>
+                    x.FechaMovimiento >= fechaLimite);
+            }
+
+            //==========================================
+            // TOTAL
+            //==========================================
+
+            var total = query.Count();
+
+            var totalPaginas =
+                (int)Math.Ceiling((double)total / filtros.PageSize);
+
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            //==========================================
+            // DATOS
+            //==========================================
+
+            var data = query
+                .OrderByDescending(x => x.FechaMovimiento)
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
+                .Select(x => new MovimientoDTO
+                {
+                    MovimientoId = x.MovimientoId,
+                    NumeroMovimiento = x.NumeroMovimiento,
+                    TipoMovimiento = x.TipoMovimiento,
+                    TipoMovimientoDetalle = x.TipoMovimientoDetalle,
+                    Monto = x.Monto,
+                    FechaMovimiento = x.FechaMovimiento,
+                    EstaEliminado = x.EstaEliminado,
+                    EntidadId = x.EntidadId,
+                    TipoEntidad = x.TipoEntidad
+                })
+                .ToList();
+
+            return new ResultadoPaginacion<MovimientoDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
         }
     }
 }
