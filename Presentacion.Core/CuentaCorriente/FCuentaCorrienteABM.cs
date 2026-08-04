@@ -17,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TuProyecto.Presentacion;
 
 namespace Presentacion.Core.CuentaCorriente
 {
@@ -24,11 +25,21 @@ namespace Presentacion.Core.CuentaCorriente
     {
         private readonly ICuentaCorrienteServicio _cuentacorrienteServicio;
         private readonly IClienteServicio _clienteServicio;
-        private long ClienteID;
+        private long? CuentaCorrienteId;
+        private long? ClienteID;
         private decimal saldoInicial = 0; // Variable para almacenar el saldo actual del cliente
         private decimal limiteDeuda = 0; // Variable para almacenar el límite de deuda del cliente
-        private bool EsCuentaNueva => TipoOperacion == TipoOperacion.Nuevo;
-        private bool CuentaCreada => !EsCuentaNueva;
+        private CuentaCorrienteDTO _cuentaCorriente;
+        private long? movimientoId;
+        private bool EsCuentaNueva =>
+      TipoOperacion == TipoOperacion.Nuevo;
+
+        private bool CuentaCreada =>
+            CuentaCorrienteId.HasValue;
+        private int paginaActual = 1;
+        private int totalPaginas = 1;
+        private int totalRegistros = 0;
+        private const int PageSize = 20;
 
         // 🔹 Reemplazamos el DataGridView por una BindingList en memoria
         private BindingList<long> _dnisAutorizadosLista;
@@ -38,81 +49,74 @@ namespace Presentacion.Core.CuentaCorriente
             InitializeComponent();
             InicializarListaDni();
         }
-
-        public FCuentaCorrienteABM(TipoOperacion tipoOperacion, long? entidadID = null) : base(tipoOperacion, entidadID)
+        private void InicializarListaDni()
         {
+            _dnisAutorizadosLista = new BindingList<long>();
+            lstDnis.DataSource = _dnisAutorizadosLista;
+        }
+
+        public FCuentaCorrienteABM(
+  TipoOperacion tipoOperacion,
+  long? clienteId = null,
+  long? ctacteId = null)
+  : base(tipoOperacion, null)
+        {
+            if (tipoOperacion == TipoOperacion.Nuevo && !clienteId.HasValue)
+                throw new ArgumentException("Para crear una cuenta es obligatorio indicar el cliente.");
+
+            if (tipoOperacion != TipoOperacion.Nuevo && !ctacteId.HasValue)
+                throw new ArgumentException("Para modificar o eliminar es obligatorio indicar la cuenta corriente.");
             InitializeComponent();
+
             _cuentacorrienteServicio = new CuentaCorrienteServicio();
             _clienteServicio = new ClienteServicio();
-            ClienteID = entidadID ?? 0; // Asignar un valor predeterminado si es null
+
             InicializarListaDni();
 
-            if (tipoOperacion == TipoOperacion.Eliminar || tipoOperacion == TipoOperacion.Modificar)
+            if (clienteId.HasValue)
             {
-                CargarDatos(entidadID);
+                ClienteID = clienteId.Value;
             }
 
-            if (tipoOperacion == TipoOperacion.Eliminar)
+            if (ctacteId.HasValue)
             {
-                DesactivarControles(this);
-                // Deshabilitar controles de carga de DNI en modo eliminación
-                txtNuevoDni.Enabled = false;
-                btnAgregarDni.Enabled = false;
-                btnEliminarDni.Enabled = false;
+                CuentaCorrienteId = ctacteId.Value;
             }
-
-            //txtLimiteDeuda.Enabled = false; // Deshabilitar el TextBox de límite de deuda al inicio
-
-            //lblFechaVTO.Text = DateTime.Now.ToString();
-
-            //var clientes = _clienteServicio.ObtenerClientes(filtros).Items;
-
-
 
             AgregarControlesObligatorios(txtNombreCC, "Nombre Cuenta Corriente");
-            //AgregarControlesObligatorios(txtSaldo, "Saldo");
         }
         private void FCuentaCorrienteABM_Load(object sender, EventArgs e)
         {
-            var cliente = _clienteServicio.ObtenerClientePorId(ClienteID);
+            ConfigurarFormulario();
 
-            lblNombreCliente.Text = cliente.NombreCompleto;
-
-            if (cliente != null)
+            if (CuentaCreada)
             {
-                var inicialNombre = string.IsNullOrWhiteSpace(cliente.Nombre)
-     ? ""
-     : cliente.Nombre.Trim()[0].ToString().ToUpper();
-
-                var apellido = (cliente.Apellido ?? "")
-                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                    .FirstOrDefault() ?? "";
-
-                var codigo = DateTime.Now.ToString("HHmmss");
-
-                txtNombreCC.Text = $"{inicialNombre}{apellido} - {codigo}";
+                CargarDatosCuenta();
+                CargarMovimientos();
             }
 
-            if (cliente != null && !string.IsNullOrEmpty(cliente.Dni))
-            {
-
-                _dnisAutorizadosLista.Add(long.Parse(cliente.Dni));
-            }
-            btnCargarLimite.Enabled = false; // Deshabilitar el botón de cargar límite de deuda al inicio
             ActualizarPantalla();
         }
 
         private void ConfigurarFormulario()
         {
             ConfigurarTabs();
-            ConfigurarControlesConfiguracion();
-            ConfigurarControlesMovimientos();
-            ConfigurarControlesDnis();
+            ConfigurarTabConfiguracion();
+            ConfigurarTabMovimientos();
+            ConfigurarTabDnis();
+            ConfigurarBotones();
         }
 
-        private void ConfigurarControlesConfiguracion()
+        private void ConfigurarTabs()
         {
-            bool creada = !EsCuentaNueva;
+            tbpMovimientos.Parent = EsCuentaNueva ? null : tbcBase;
+
+            // Yo esta la dejaría siempre
+            tbpDnis.Parent = tbcBase;
+        }
+        private void ConfigurarTabConfiguracion()
+        {
+            bool creada = CuentaCreada;
 
             lblSaldo.Visible = creada;
             btnCargarSaldoCtaCte.Visible = creada;
@@ -120,66 +124,64 @@ namespace Presentacion.Core.CuentaCorriente
             lblEstado.Visible = creada;
             lblEstadoTitulo.Visible = creada;
 
-            lblFechaAlta.Visible = creada;
-            lblFechaAltaTitulo.Visible = creada;
+            lblFechaCreacion.Visible = creada;
+            lblFechaCreacionTitulo.Visible = creada;
+
+            lblFechaVencimiento.Visible = creada;
+            lblFechaVencimientoTitulo.Visible = creada;
+
+            btnActivar.Visible = creada;
         }
-        // 🔹 Método para enlazar la lista al ListBox
-        private void InicializarListaDni()
+        private void ConfigurarTabMovimientos()
         {
-            _dnisAutorizadosLista = new BindingList<long>();
-            lstDnis.DataSource = _dnisAutorizadosLista;
+            dgvGrilla.Enabled = !EsCuentaNueva;
+
+            btnAnterior.Enabled = !EsCuentaNueva;
+            btnSiguiente.Enabled = !EsCuentaNueva;
+
+            lblPagina.Visible = !EsCuentaNueva;
+            lblTotalRegistros.Visible = !EsCuentaNueva;
         }
 
-        public override void FBaseABM_Load(object sender, EventArgs e)
+        private void ConfigurarBotones()
         {
-            base.FBaseABM_Load(sender, e);
-            Inicializador(EntidadID);
+            ActualizarBotones();
         }
-
-        public override void Inicializador(long? entidadId)
+        private void CargarDatosCuenta()
         {
-        }
-
-        public override void CargarDatos(long? entidadId)
-        {
-            if (!entidadId.HasValue)
+            if (CuentaCorrienteId == null)
             {
                 MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 this.Close();
                 return;
             }
 
-            if (TipoOperacion == TipoOperacion.Eliminar)
-            {
-                btnLimpiar.Enabled = false;
-            }
+            _cuentaCorriente = _cuentacorrienteServicio.ObtenerCuentaCorrientePorId(CuentaCorrienteId.Value);
 
-            var cuentacorriente = _cuentacorrienteServicio.ObtenerCuentaCorrientePorId(entidadId.Value);
+            saldoInicial = _cuentaCorriente.Saldo;
+            limiteDeuda = _cuentaCorriente.LimiteDeuda;
 
-            saldoInicial = cuentacorriente.Saldo;
-            limiteDeuda = cuentacorriente.LimiteDeuda;
-
-            txtNombreCC.Text = cuentacorriente.NombreCuentaCorriente;
+            txtNombreCC.Text = _cuentaCorriente.NombreCuentaCorriente;
             lblSaldo.Text = saldoInicial.ToString("C");
             lblLimiteDeuda.Text = limiteDeuda.ToString("C");
-            chkLimiteDeuda.Checked = cuentacorriente.LimiteDeudaActivo;
-            lblLimiteDeuda.Text = cuentacorriente.LimiteDeuda.ToString();
-            btnCargarLimite.Enabled = cuentacorriente.LimiteDeudaActivo;
+            chkLimiteDeuda.Checked = _cuentaCorriente.LimiteDeudaActivo;
+            btnCargarLimite.Enabled = _cuentaCorriente.LimiteDeudaActivo;
 
-          
 
-            rbVencimientoMensual.Checked = cuentacorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Mensual;
-            rbVencimientoManual.Checked = cuentacorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Manual;
+
+            rbVencimientoMensual.Checked = _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Mensual;
+            rbVencimientoManual.Checked = _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Manual;
 
             nudCantidadMeses.Value =
-                cuentacorriente.CantidadMesesVencimiento;
+                _cuentaCorriente.CantidadMesesVencimiento;
             // 🔹 Mapeo directo a la lista del ListBox sin dar vueltas con celdas
             _dnisAutorizadosLista.Clear();
-            foreach (var dni in cuentacorriente.DniAutorizados)
+
+            foreach (var dni in _cuentaCorriente.DniAutorizados)
             {
                 _dnisAutorizadosLista.Add(dni);
             }
-            ActualizarPantalla();
+
         }
 
         public override bool EjecutarComandoNuevo()
@@ -190,6 +192,16 @@ namespace Presentacion.Core.CuentaCorriente
                 return false;
             }
 
+            if (!ClienteID.HasValue)
+            {
+                MessageBox.Show(
+                    "No se encontró el cliente.",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
+            }
             var tipoVencimiento = rbVencimientoMensual.Checked
                 ? TipoVencimientoCuentaCorriente.Mensual
                 : TipoVencimientoCuentaCorriente.Manual;
@@ -202,7 +214,7 @@ namespace Presentacion.Core.CuentaCorriente
                 return false;
             var nuevoCuentaCorriente = new CuentaCorrienteDTO
             {
-                ClienteId = EntidadID.Value, // Asumimos que el ID del cliente se pasa al formulario y se usa para crear la cuenta corriente
+                ClienteId = ClienteID.Value, // Asumimos que el ID del cliente se pasa al formulario y se usa para crear la cuenta corriente
                 NombreCuentaCorriente = txtNombreCC.Text,
                 Saldo = saldoInicial,
                 TipoVencimiento = (int)tipoVencimiento,
@@ -241,14 +253,14 @@ namespace Presentacion.Core.CuentaCorriente
 
         public override bool EjecutarComandoEliminar()
         {
-            if (!EntidadID.HasValue)
+            if (CuentaCorrienteId == null)
             {
                 MessageBox.Show(@"´Por favor seleccione un cuentacorriente válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
             }
             if (TipoOperacion == TipoOperacion.Eliminar)
             {
-                var response = _cuentacorrienteServicio.Eliminar((long)EntidadID);
+                var response = _cuentacorrienteServicio.Eliminar(CuentaCorrienteId.Value);
                 if (response.Exitoso)
                 {
                     MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -265,7 +277,7 @@ namespace Presentacion.Core.CuentaCorriente
 
         public override bool EjecutarComandoModificar()
         {
-            if (!EntidadID.HasValue)
+            if (CuentaCorrienteId==null)
             {
                 MessageBox.Show(@"´Por favor seleccione un cuentacorriente válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
@@ -283,8 +295,6 @@ namespace Presentacion.Core.CuentaCorriente
                ? 1
                : (int)nudCantidadMeses.Value;
 
-            decimal? limite = null;
-
 
             if (TipoOperacion == TipoOperacion.Modificar)
             {
@@ -294,7 +304,7 @@ namespace Presentacion.Core.CuentaCorriente
                     Saldo = saldoInicial,
                     //FechaVencimiento = dtpFechaVencimiento.Value,
                     LimiteDeudaActivo = chkLimiteDeuda.Checked,
-                    LimiteDeuda = limite ?? 0,
+                    LimiteDeuda = limiteDeuda,
                     TipoVencimiento = (int)tipoVencimiento,
                     CantidadMesesVencimiento = cantidadMeses,
 
@@ -303,7 +313,7 @@ namespace Presentacion.Core.CuentaCorriente
                     EstaEliminado = false
                 };
 
-                var response = _cuentacorrienteServicio.Modificar(cuentacorrienteEditar, EntidadID);
+                var response = _cuentacorrienteServicio.Modificar(cuentacorrienteEditar, CuentaCorrienteId.Value);    
 
                 if (response.Exitoso)
                 {
@@ -356,6 +366,8 @@ namespace Presentacion.Core.CuentaCorriente
 
         private void ActualizarProximoVencimiento()
         {
+            if (CuentaCreada)
+                return;
             int meses = rbVencimientoMensual.Checked
                 ? 1
                 : (int)nudCantidadMeses.Value;
@@ -364,37 +376,74 @@ namespace Presentacion.Core.CuentaCorriente
 
             var proximo = fechaBase.AddMonths(meses);
 
-            lblFechaVTO.Text = $"Próximo vencimiento: {proximo:dd/MM/yyyy}";
+            lblFechaVencimiento.Text = $"Próximo vencimiento: {proximo:dd/MM/yyyy}";
         }
         private void ActualizarPantalla()
         {
-            btnCargarLimite.Enabled = chkLimiteDeuda.Checked;
-            nudCantidadMeses.Enabled = rbVencimientoManual.Checked;
+            ActualizarSaldo();
 
-            nudCantidadMeses.Minimum = rbVencimientoMensual.Checked ? 1 : 2;
+            ActualizarLimite();
 
-            if (rbVencimientoMensual.Checked)
-            {
-                nudCantidadMeses.Value = 1;
-            }
-            else if (nudCantidadMeses.Value < 2)
-            {
-                nudCantidadMeses.Value = 2;
-            }
+            ActualizarEstado();
 
             ActualizarProximoVencimiento();
-        }
 
+            ActualizarBotones();
+
+        }
         private void rbVencimientoMensual_CheckedChanged(object sender, EventArgs e)
         {
             ActualizarPantalla();
         }
 
+        private void ConfigurarTabDnis()
+        {
+            lstDnis.Enabled = TipoOperacion != TipoOperacion.Eliminar;
+
+            txtNuevoDni.Enabled = TipoOperacion != TipoOperacion.Eliminar;
+
+            btnAgregarDni.Enabled = TipoOperacion != TipoOperacion.Eliminar;
+            btnEliminarDni.Enabled = TipoOperacion != TipoOperacion.Eliminar;
+        }
         private void rbVencimientoManual_CheckedChanged(object sender, EventArgs e)
         {
             ActualizarPantalla();
         }
+        private void ActualizarSaldo()
+        {
+            lblSaldo.Text = saldoInicial.ToString("C");
+        }
+        private void ActualizarLimite()
+        {
+            btnCargarLimite.Enabled = chkLimiteDeuda.Checked;
 
+            lblLimiteDeuda.Text = chkLimiteDeuda.Checked
+                ? limiteDeuda.ToString("C")
+                : "Sin límite";
+        }
+
+        private void ActualizarEstado()
+        {
+            if (EsCuentaNueva)
+            {
+                lblEstado.Text = "Pendiente de creación";
+                lblFechaCreacion.Text = "-";
+                lblFechaVencimiento.Text = "-";
+                return;
+            }
+
+            lblEstado.Text = _cuentaCorriente.EstadoDescripcionCtaCte;
+
+            lblFechaCreacion.Text =
+                _cuentaCorriente.FechaCreacion.HasValue
+                    ? _cuentaCorriente.FechaCreacion.Value.ToString("dd/MM/yyyy")
+                    : "-";
+
+            lblFechaVencimiento.Text =
+                _cuentaCorriente.FechaVencimiento.HasValue
+                    ? _cuentaCorriente.FechaVencimiento.Value.ToString("dd/MM/yyyy")
+                    : "-";
+        }
 
         private bool ValidarSaldoYLimite()
         {
@@ -451,7 +500,6 @@ namespace Presentacion.Core.CuentaCorriente
                 lblSaldo.Text = saldoInicial.ToString("C");
             }
         }
-
         private void btnCargarLimite_Click(object sender, EventArgs e)
         {
             using (var f = new FCargaSaldoCtaCte(
@@ -466,5 +514,265 @@ namespace Presentacion.Core.CuentaCorriente
                 lblLimiteDeuda.Text = limiteDeuda.ToString("C");
             }
         }
+
+        private void CargarMovimientos()
+        {
+            if (!CuentaCorrienteId.HasValue)
+                return;
+
+            var filtros = new FiltroConsulta
+            {
+                Page = paginaActual,
+                PageSize = PageSize,
+
+                Bool1 = false,
+                Bool2 = false,
+
+                TextoBuscar = string.Empty,
+
+                FechaDesde = null,
+                FechaHasta = null,
+
+                Filtro1 = null,
+                Filtro2 = null,
+                Filtro3 = null
+            };
+            var resultado = _cuentacorrienteServicio.ObtenerMovimientosPorCuentaCorriente(CuentaCorrienteId.Value, filtros);
+
+            dgvGrilla.DataSource = resultado.Items;
+
+            ResetearGrilla(dgvGrilla);
+
+            totalRegistros = resultado.TotalRegistros;
+
+            totalPaginas = Math.Max(1,(int)Math.Ceiling((double)totalRegistros / resultado.PageSize));
+
+            ActualizarBotones();
+        }
+        private void DgvGrilla_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            RowEnter(e);
+        }
+        public virtual void RowEnter(DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                movimientoId = null;
+
+                if (e.RowIndex < 0 || dgvGrilla.RowCount == 0)
+                    return;
+
+                if (!dgvGrilla.Columns.Contains("Id"))
+                    return;
+
+                var fila = dgvGrilla.Rows[e.RowIndex];
+
+                if (fila?.Cells["Id"].Value == null)
+                    return;
+
+                movimientoId = Convert.ToInt64(fila.Cells["Id"].Value);
+            }
+            catch
+            {
+                movimientoId = null;
+            }
+
+        }
+
+        private void DgvGrilla_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+        }
+
+        private void EjecutarClickDerechoFila(long? id, Point posicionMouse)
+        {
+            if (!id.HasValue)
+                return;
+
+            ContextMenuStrip menu = new ContextMenuStrip();
+
+            menu.Items.Add("Ver Detalle", null, (s, e) =>
+            {
+                if (!id.HasValue)
+                    return;
+
+                var f = new FMovimientoDetallado(id.Value);
+
+                f.ShowDialog();
+            });
+
+
+            menu.Show(dgvGrilla, posicionMouse);
+        }
+
+
+
+        public virtual void ResetearGrilla(DataGridView grilla)
+        {
+            for (int i = 0; i < grilla.ColumnCount; i++)
+                grilla.Columns[i].Visible = false;
+
+            if (grilla.Columns.Count == 0)
+                return;
+
+            grilla.ReadOnly = true;
+
+            // IMPORTANTE: usar Fill real
+            grilla.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            // =========================================
+            // ID (OCULTO)
+            // =========================================
+            if (grilla.Columns.Contains("MovimientoId"))
+            {
+                grilla.Columns["MovimientoId"].Visible = false;
+                grilla.Columns["MovimientoId"].Name = "Id";
+            }
+
+            // =========================================
+            // NUMERO (GRANDE)
+            // =========================================
+            if (grilla.Columns.Contains("NumeroMovimiento"))
+            {
+                var col = grilla.Columns["NumeroMovimiento"];
+
+                col.Visible = true;
+                col.HeaderText = "Número";
+
+                col.FillWeight = 150;   // 🔥 grande
+                //col.MinimumWidth = 130;
+            }
+
+            // =========================================
+            // FECHA (MEDIO)
+            // =========================================
+            if (grilla.Columns.Contains("FechaMovimiento"))
+            {
+                var col = grilla.Columns["FechaMovimiento"];
+
+                col.Visible = true;
+                col.HeaderText = "Fecha";
+
+                col.DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+
+                col.FillWeight = 150;
+                //col.MinimumWidth = 130;
+            }
+
+            // =========================================
+            // MOVIMIENTO (CHICO)
+            // =========================================
+            if (grilla.Columns.Contains("TipoMovimientoDescripcion"))
+            {
+                var col = grilla.Columns["TipoMovimientoDescripcion"];
+
+                col.Visible = true;
+                col.HeaderText = "Movimiento";
+
+                col.FillWeight = 100;
+                //col.MinimumWidth = 90;
+            }
+
+            if (grilla.Columns.Contains("TipoMovimiento"))
+            {
+                grilla.Columns["TipoMovimiento"].Visible = false;
+            }
+
+            // =========================================
+            // TIPO DETALLE (MEDIO)
+            // =========================================
+            if (grilla.Columns.Contains("TipoMovimientoDetalleDescripcion"))
+            {
+                grilla.Columns["TipoMovimientoDetalleDescripcion"].Visible = false;
+            }
+
+            if (grilla.Columns.Contains("TipoMovimientoDetalle"))
+            {
+                grilla.Columns["TipoMovimientoDetalle"].Visible = false;
+            }
+
+            // =========================================
+            // MONTO (GRANDE)
+            // =========================================
+            if (grilla.Columns.Contains("Monto"))
+            {
+                var col = grilla.Columns["Monto"];
+
+                col.Visible = true;
+                col.HeaderText = "Monto";
+
+                col.DefaultCellStyle.Format = "C2";
+
+                col.FillWeight = 150;   // 🔥 grande
+                //col.MinimumWidth = 150;
+            }
+
+            // =========================================
+            // OCULTOS
+            // =========================================
+            if (grilla.Columns.Contains("EntidadId"))
+                grilla.Columns["EntidadId"].Visible = false;
+
+            if (grilla.Columns.Contains("TipoEntidad"))
+                grilla.Columns["TipoEntidad"].Visible = false;
+
+            if (grilla.Columns.Contains("EstaEliminado"))
+                grilla.Columns["EstaEliminado"].Visible = false;
+        }
+        private void ActualizarBotones()
+        {
+            btnCargarSaldoCtaCte.Enabled =
+               CuentaCreada;
+
+            btnCargarLimite.Enabled =
+                CuentaCreada && chkLimiteDeuda.Checked;
+
+            lblPagina.Text = $"Página {paginaActual} de {totalPaginas}";
+            lblTotalRegistros.Text = $"Total: {totalRegistros}";
+
+            btnAnterior.Enabled = paginaActual > 1;
+            btnSiguiente.Enabled = paginaActual < totalPaginas;
+        }
+
+        private void btnAnterior_Click(object sender, EventArgs e)
+        {
+            if (paginaActual <= 1)
+                return;
+
+            paginaActual--;
+
+            CargarMovimientos();
+        }
+
+        private void btnSiguiente_Click(object sender, EventArgs e)
+        {
+            if (paginaActual >= totalPaginas)
+                return;
+
+            paginaActual++;
+
+            CargarMovimientos();
+        }
+
+        private void dgvGrilla_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right)
+                return;
+
+            var hit = dgvGrilla.HitTest(e.X, e.Y);
+
+            if (hit.RowIndex >= 0)
+            {
+                dgvGrilla.ClearSelection();
+
+                dgvGrilla.Rows[hit.RowIndex].Selected = true;
+
+                RowEnter(new DataGridViewCellEventArgs(0, hit.RowIndex));
+
+                EjecutarClickDerechoFila(movimientoId, e.Location);
+            }
+        }
+
     }
 }

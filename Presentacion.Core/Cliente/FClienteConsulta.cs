@@ -1,4 +1,5 @@
-﻿using Presentacion.Core.CuentaCorriente;
+﻿using AccesoDatos.Entidades;
+using Presentacion.Core.CuentaCorriente;
 using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
@@ -499,10 +500,12 @@ namespace Presentacion.Core.Cliente
             }
             else
             {
-                var fCtacte = new FDetallesCtaCte(response.EntidadId.Value);
-                fCtacte.CargarDatos();
-                fCtacte.ShowDialog();
-            }
+                    using (var f = new FCuentaCorrienteABM(
+             TipoOperacion.Modificar,null,response.EntidadId))
+                    {
+                        f.ShowDialog();
+                    }
+                }
             }
         }
 
@@ -529,7 +532,7 @@ namespace Presentacion.Core.Cliente
                 return;
             }
 
-            var fCtacte = new FCuentaCorrienteABM(TipoOperacion.Nuevo, clienteSeleccionado);
+            var fCtacte = new FCuentaCorrienteABM(TipoOperacion.Nuevo, clienteSeleccionado,null);
 
             if (fCtacte.ShowDialog() == DialogResult.OK &&
                 fCtacte.RealizoAlgunaOperacion)
