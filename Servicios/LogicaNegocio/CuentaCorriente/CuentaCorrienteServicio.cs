@@ -66,12 +66,16 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     LimiteDeuda = cuentacorrienteDto.LimiteDeuda,
                     LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo,
                     FechaVencimiento = cuentacorrienteDto.FechaVencimiento,
-                    //FechaActivacion = cuentacorrienteDto.FechaActivacion,// de momento automatico, pero lo dejamos por si en el futuro se quiere usar
-                    //FechaCreacion = cuentacorrienteDto.FechaCreacion,
+                    FechaActivacion = cuentacorrienteDto.FechaActivacion,// de momento automatico, pero lo dejamos por si en el futuro se quiere usar
+                    FechaCreacion = cuentacorrienteDto.FechaCreacion,
+                    TipoVencimiento = cuentacorrienteDto.TipoVencimiento,
                     EstaEliminado = false,
+                    EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Activa, // Por defecto al crearla, está activa
+                    ConDeuda = cuentacorrienteDto.Saldo < 0,
+                    CantidadMesesVencimiento = cuentacorrienteDto.CantidadMesesVencimiento,
                     ClienteId = cuentacorrienteDto.ClienteId,
                     CuentaCorrienteAutorizado = cuentacorrienteDto.DniAutorizados
-                        .Select(dni => new CuentaCorrienteAutorizado { Dni = dni })
+                        .Select(dni => new CuentaCorrienteAutorizado { Dni = long.Parse(dni)})
                         .ToList()
                 };
 
@@ -155,12 +159,14 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             cuentacorrienteEditar.LimiteDeuda = cuentacorrienteDto.LimiteDeuda;
             cuentacorrienteEditar.LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo;
             cuentacorrienteEditar.FechaVencimiento = cuentacorrienteDto.FechaVencimiento;
-            
+            cuentacorrienteEditar.CantidadMesesVencimiento = cuentacorrienteDto.CantidadMesesVencimiento;
+            cuentacorrienteEditar.TipoVencimiento = cuentacorrienteDto.TipoVencimiento;
+
 
             cuentacorrienteEditar.CuentaCorrienteAutorizado.Clear();
 
             foreach (var dni in cuentacorrienteDto.DniAutorizados)
-                cuentacorrienteEditar.CuentaCorrienteAutorizado.Add(new AccesoDatos.Entidades.CuentaCorrienteAutorizado { Dni = dni });
+                cuentacorrienteEditar.CuentaCorrienteAutorizado.Add(new AccesoDatos.Entidades.CuentaCorrienteAutorizado { Dni = long.Parse(dni) });
 
             context.SaveChanges();
 
@@ -177,8 +183,10 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var cuentacorrienteBusqueda = context.CuentaCorriente
+                .Include(x => x.Cliente)
+                .ThenInclude(c => c.Persona)
                 .Include(x => x.CuentaCorrienteAutorizado)
-                .FirstOrDefault(x => x.CuentaCorrienteId == cuentacorrienteId);
+                .FirstOrDefault(x => x.CuentaCorrienteId == cuentacorrienteId && x.Cliente.CuentaCorrienteId == cuentacorrienteId);
 
             if (cuentacorrienteBusqueda == null)
                 throw new Exception("No se encontró la cuentacorriente.");
@@ -190,10 +198,15 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 NombreCuentaCorriente = cuentacorrienteBusqueda.NombreCuentaCorriente,
                 LimiteDeudaActivo = cuentacorrienteBusqueda.LimiteDeudaActivo,
                 FechaVencimiento = cuentacorrienteBusqueda.FechaVencimiento,
-                //FechaCreacion = cuentacorrienteBusqueda.FechaCreacion,
-                //FechaActivacion = cuentacorrienteBusqueda.FechaActivacion,
+                FechaCreacion = cuentacorrienteBusqueda.FechaCreacion,
+                FechaActivacion = cuentacorrienteBusqueda.FechaActivacion,
+                CantidadMesesVencimiento = cuentacorrienteBusqueda.CantidadMesesVencimiento,
+                ConDeuda = cuentacorrienteBusqueda.ConDeuda,
+                EstadoCtaCte = cuentacorrienteBusqueda.EstadoCuentaCorriente,
+                TipoVencimiento = cuentacorrienteBusqueda.TipoVencimiento,
                 CuentaCorrienteId = cuentacorrienteBusqueda.CuentaCorrienteId,
-                DniAutorizados = cuentacorrienteBusqueda.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
+                NombreCliente = $"{cuentacorrienteBusqueda.Cliente.Persona.Nombre}{cuentacorrienteBusqueda.Cliente.Persona.Apellido}",
+                DniAutorizados = cuentacorrienteBusqueda.CuentaCorrienteAutorizado.Select(dni => dni.Dni.ToString()).ToList()
             };
         }
 
@@ -333,11 +346,15 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     LimiteDeudaActivo = x.LimiteDeudaActivo,
                     FechaVencimiento = x.FechaVencimiento,
                     EstadoCtaCte = x.EstadoCuentaCorriente,
-                    //FechaActivacion = x.FechaActivacion,
-                    //FechaCreacion = x.FechaCreacion,
+                    FechaActivacion = x.FechaActivacion,
+                    FechaCreacion = x.FechaCreacion,
+                    ConDeuda = x.ConDeuda,
+                    CantidadMesesVencimiento = x.CantidadMesesVencimiento,
+                    TipoVencimiento = x.TipoVencimiento,
+                   
 
                     DniAutorizados = x.CuentaCorrienteAutorizado
-                        .Select(a => a.Dni)
+                        .Select(a => a.Dni.ToString())
                         .ToList()
                 })
                 .ToList();
@@ -487,7 +504,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 FechaCreacion = x.FechaCreacion,
                 FechaActivacion = x.FechaActivacion,
                 EstadoCtaCte = x.EstadoCuentaCorriente,
-                DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
+                DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni.ToString()).ToList()
             };
         }
 
@@ -510,7 +527,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     FechaActivacion = x.FechaActivacion,
                     CuentaCorrienteId = x.CuentaCorrienteId,
                     NombreCliente = $"{x.Cliente.Persona.Nombre} {x.Cliente.Persona.Apellido}",
-                    DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
+                    DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni.ToString()).ToList()
                 })
                 .ToList();
             return cuentasVencidas;
@@ -696,6 +713,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Cerrada;
 
+
             context.SaveChanges();
 
             return new EstadoOperacion
@@ -741,6 +759,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             }
 
             cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Activa;
+            cuenta.FechaActivacion = DateTime.Now;
 
             context.SaveChanges();
 

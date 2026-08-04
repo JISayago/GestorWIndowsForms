@@ -74,6 +74,8 @@
             dgvGrilla = new DataGridView();
             lblListadoMovimientos = new Label();
             tbpDnis = new TabPage();
+            lblFechaUltimaActivacion = new Label();
+            lblFechaUltimaActivacionTitulo = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudCantidadMeses).BeginInit();
@@ -302,6 +304,8 @@
             // 
             // tbpInicio
             // 
+            tbpInicio.Controls.Add(lblFechaUltimaActivacion);
+            tbpInicio.Controls.Add(lblFechaUltimaActivacionTitulo);
             tbpInicio.Controls.Add(btnActivar);
             tbpInicio.Controls.Add(btnCerrarCtacte);
             tbpInicio.Controls.Add(lblFechaCreacion);
@@ -376,7 +380,7 @@
             // 
             lblEstado.AutoSize = true;
             lblEstado.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblEstado.Location = new Point(131, 227);
+            lblEstado.Location = new Point(203, 208);
             lblEstado.Name = "lblEstado";
             lblEstado.Size = new Size(114, 32);
             lblEstado.TabIndex = 45;
@@ -387,7 +391,7 @@
             // 
             lblEstadoTitulo.AutoSize = true;
             lblEstadoTitulo.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblEstadoTitulo.Location = new Point(22, 227);
+            lblEstadoTitulo.Location = new Point(34, 220);
             lblEstadoTitulo.Name = "lblEstadoTitulo";
             lblEstadoTitulo.Size = new Size(92, 32);
             lblEstadoTitulo.TabIndex = 44;
@@ -580,6 +584,28 @@
             tbpDnis.Text = "DNI habilitados";
             tbpDnis.UseVisualStyleBackColor = true;
             // 
+            // lblFechaUltimaActivacion
+            // 
+            lblFechaUltimaActivacion.AutoSize = true;
+            lblFechaUltimaActivacion.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
+            lblFechaUltimaActivacion.Location = new Point(228, 269);
+            lblFechaUltimaActivacion.Name = "lblFechaUltimaActivacion";
+            lblFechaUltimaActivacion.Size = new Size(135, 32);
+            lblFechaUltimaActivacion.TabIndex = 51;
+            lblFechaUltimaActivacion.Tag = "NoModificarConBase";
+            lblFechaUltimaActivacion.Text = "01/08/2026";
+            // 
+            // lblFechaUltimaActivacionTitulo
+            // 
+            lblFechaUltimaActivacionTitulo.AutoSize = true;
+            lblFechaUltimaActivacionTitulo.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
+            lblFechaUltimaActivacionTitulo.Location = new Point(11, 269);
+            lblFechaUltimaActivacionTitulo.Name = "lblFechaUltimaActivacionTitulo";
+            lblFechaUltimaActivacionTitulo.Size = new Size(211, 32);
+            lblFechaUltimaActivacionTitulo.TabIndex = 50;
+            lblFechaUltimaActivacionTitulo.Tag = "NoModificarConBase";
+            lblFechaUltimaActivacionTitulo.Text = "Última Activacion:";
+            // 
             // FCuentaCorrienteABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -659,5 +685,7 @@
         private Label lblFechaCreacionTitulo;
         private Button btnActivar;
         private Button btnCerrarCtacte;
+        private Label lblFechaUltimaActivacion;
+        private Label lblFechaUltimaActivacionTitulo;
     }
 }

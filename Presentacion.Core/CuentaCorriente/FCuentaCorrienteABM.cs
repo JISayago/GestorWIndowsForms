@@ -5,6 +5,7 @@ using Servicios.Helpers.Cliente;
 using Servicios.Helpers.Cliente.CtaCte;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Cliente;
+using Servicios.LogicaNegocio.Cliente.DTO;
 using Servicios.LogicaNegocio.CuentaCorriente;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
 using Servicios.LogicaNegocio.Movimiento;
@@ -42,7 +43,7 @@ namespace Presentacion.Core.CuentaCorriente
         private const int PageSize = 20;
 
         // 🔹 Reemplazamos el DataGridView por una BindingList en memoria
-        private BindingList<long> _dnisAutorizadosLista;
+        private BindingList<string> _dnisAutorizadosLista;
 
         public FCuentaCorrienteABM()
         {
@@ -51,7 +52,7 @@ namespace Presentacion.Core.CuentaCorriente
         }
         private void InicializarListaDni()
         {
-            _dnisAutorizadosLista = new BindingList<long>();
+            _dnisAutorizadosLista = new BindingList<string>();
             lstDnis.DataSource = _dnisAutorizadosLista;
         }
 
@@ -94,6 +95,40 @@ namespace Presentacion.Core.CuentaCorriente
                 CargarDatosCuenta();
                 CargarMovimientos();
             }
+            else
+            {
+                CargarDatosCliente();
+            }
+
+            ActualizarPantalla();
+        }
+        private void CargarDatosCliente()
+        {
+            if (!ClienteID.HasValue)
+                return;
+
+            var cliente = _clienteServicio.ObtenerClientePorId(ClienteID.Value);
+
+            if (cliente == null)
+                return;
+
+            lblNombreCliente.Text = $"{cliente.Nombre} {cliente.Apellido}";
+
+            txtNombreCC.Text = GenerarNombreCuentaCorriente(cliente);
+
+            saldoInicial = 0;
+            limiteDeuda = 0;
+            chkLimiteDeuda.Checked = false;
+
+            rbVencimientoMensual.Checked = true;
+            nudCantidadMeses.Value = 1;
+
+            _dnisAutorizadosLista.Clear();
+
+            if (!string.IsNullOrEmpty(cliente.Dni))
+            {
+                _dnisAutorizadosLista.Add(cliente.Dni);
+            }
 
             ActualizarPantalla();
         }
@@ -118,18 +153,18 @@ namespace Presentacion.Core.CuentaCorriente
         {
             bool creada = CuentaCreada;
 
-            lblSaldo.Visible = creada;
-            btnCargarSaldoCtaCte.Visible = creada;
+            //lblSaldo.Visible = creada;
+            //btnCargarSaldoCtaCte.Visible = creada;
 
             lblEstado.Visible = creada;
             lblEstadoTitulo.Visible = creada;
 
-            lblFechaCreacion.Visible = creada;
-            lblFechaCreacionTitulo.Visible = creada;
+            //lblFechaCreacion.Visible = creada;
+            //lblFechaCreacionTitulo.Visible = creada;
 
-            lblFechaVencimiento.Visible = creada;
-            lblFechaVencimientoTitulo.Visible = creada;
-
+            //lblFechaVencimiento.Visible = creada;
+            //lblFechaVencimientoTitulo.Visible = creada;
+            btnCerrarCtacte.Visible = creada;
             btnActivar.Visible = creada;
         }
         private void ConfigurarTabMovimientos()
@@ -166,12 +201,16 @@ namespace Presentacion.Core.CuentaCorriente
             lblLimiteDeuda.Text = limiteDeuda.ToString("C");
             chkLimiteDeuda.Checked = _cuentaCorriente.LimiteDeudaActivo;
             btnCargarLimite.Enabled = _cuentaCorriente.LimiteDeudaActivo;
+            lblNombreCliente.Text = _cuentaCorriente.NombreCliente;
 
 
 
             rbVencimientoMensual.Checked = _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Mensual;
             rbVencimientoManual.Checked = _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Manual;
-
+            if(_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Activa)
+            {
+                btnActivar.Enabled = false;
+            }
             nudCantidadMeses.Value =
                 _cuentaCorriente.CantidadMesesVencimiento;
             // 🔹 Mapeo directo a la lista del ListBox sin dar vueltas con celdas
@@ -202,6 +241,11 @@ namespace Presentacion.Core.CuentaCorriente
 
                 return false;
             }
+            if(_dnisAutorizadosLista.Count < 1)
+            {
+                MessageBox.Show(@"Debe ingresar al menos un DNI autorizado.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
             var tipoVencimiento = rbVencimientoMensual.Checked
                 ? TipoVencimientoCuentaCorriente.Mensual
                 : TipoVencimientoCuentaCorriente.Manual;
@@ -223,7 +267,9 @@ namespace Presentacion.Core.CuentaCorriente
                 LimiteDeuda = limiteDeuda,
                 FechaCreacion = DateTime.Now,
                 FechaActivacion = DateTime.Now,// evaluar si va con creacion activacion automatica o no, por ahora lo dejamos asi
-
+                FechaVencimiento = rbVencimientoMensual.Checked
+                    ? DateTime.Now.AddMonths(1)
+                    : DateTime.Now.AddMonths(cantidadMeses),
                 // 🔹 Directamente le pasamos la lista limpia convertida a List<long>
                 DniAutorizados = _dnisAutorizadosLista.ToList(),
                 EstaEliminado = false,
@@ -287,6 +333,11 @@ namespace Presentacion.Core.CuentaCorriente
 
             if (!ValidarSaldoYLimite())
                 return false;
+            if(_dnisAutorizadosLista.Count < 1)
+            {
+                MessageBox.Show(@"Debe ingresar al menos un DNI autorizado.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
             var tipoVencimiento = rbVencimientoMensual.Checked
           ? TipoVencimientoCuentaCorriente.Mensual
           : TipoVencimientoCuentaCorriente.Manual;
@@ -302,16 +353,21 @@ namespace Presentacion.Core.CuentaCorriente
                 {
                     NombreCuentaCorriente = txtNombreCC.Text,
                     Saldo = saldoInicial,
-                    //FechaVencimiento = dtpFechaVencimiento.Value,
                     LimiteDeudaActivo = chkLimiteDeuda.Checked,
                     LimiteDeuda = limiteDeuda,
                     TipoVencimiento = (int)tipoVencimiento,
                     CantidadMesesVencimiento = cantidadMeses,
+                    FechaVencimiento = rbVencimientoMensual.Checked
+                    ? DateTime.Now.AddMonths(1)
+                    : DateTime.Now.AddMonths(cantidadMeses),
 
                     // 🔹 Al modificar también usamos la lista del ListBox directamente
                     DniAutorizados = _dnisAutorizadosLista.ToList(),
                     EstaEliminado = false
                 };
+                // 🔹 Directamente le pasamos la lista limpia convertida a List<long>
+
+
 
                 var response = _cuentacorrienteServicio.Modificar(cuentacorrienteEditar, CuentaCorrienteId.Value);
 
@@ -332,8 +388,8 @@ namespace Presentacion.Core.CuentaCorriente
         // 🔹 EVENTO: Botón Agregar DNI
         private void btnAgregarDni_Click(object sender, EventArgs e)
         {
-            if (long.TryParse(txtNuevoDni.Text.Trim(), out long dni))
-            {
+           
+            var dni = txtNuevoDni.Text.Trim();
                 if (_dnisAutorizadosLista.Contains(dni))
                 {
                     MessageBox.Show("Este DNI ya está en la lista.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -343,11 +399,6 @@ namespace Presentacion.Core.CuentaCorriente
                 _dnisAutorizadosLista.Add(dni);
                 txtNuevoDni.Clear();
                 txtNuevoDni.Focus();
-            }
-            else
-            {
-                MessageBox.Show("Por favor, ingrese un número de DNI válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         // 🔹 EVENTO: Botón Eliminar DNI seleccionado
@@ -355,8 +406,8 @@ namespace Presentacion.Core.CuentaCorriente
         {
             if (lstDnis.SelectedItem != null)
             {
-                var dniSeleccionado = (long)lstDnis.SelectedItem;
-                _dnisAutorizadosLista.Remove(dniSeleccionado);
+                var dniSeleccionado = lstDnis.SelectedItem;
+                _dnisAutorizadosLista.Remove((string)dniSeleccionado);
             }
             else
             {
@@ -366,8 +417,6 @@ namespace Presentacion.Core.CuentaCorriente
 
         private void ActualizarProximoVencimiento()
         {
-            if (CuentaCreada)
-                return;
             int meses = rbVencimientoMensual.Checked
                 ? 1
                 : (int)nudCantidadMeses.Value;
@@ -391,6 +440,24 @@ namespace Presentacion.Core.CuentaCorriente
             ActualizarBotones();
 
         }
+        private void ActualizarLimite()
+        {
+            btnCargarLimite.Enabled = chkLimiteDeuda.Checked;
+
+            if (!chkLimiteDeuda.Checked)
+            {
+                lblLimiteDeuda.Text = "No habilitado";
+                return;
+            }
+
+            if (limiteDeuda == 0)
+            {
+                lblLimiteDeuda.Text = "Habilitado sin límite asignado";
+                return;
+            }
+
+            lblLimiteDeuda.Text = limiteDeuda.ToString("C");
+        }
         private void rbVencimientoMensual_CheckedChanged(object sender, EventArgs e)
         {
             ActualizarPantalla();
@@ -413,24 +480,18 @@ namespace Presentacion.Core.CuentaCorriente
         {
             lblSaldo.Text = saldoInicial.ToString("C");
         }
-        private void ActualizarLimite()
-        {
-            btnCargarLimite.Enabled = chkLimiteDeuda.Checked;
-
-            lblLimiteDeuda.Text = chkLimiteDeuda.Checked
-                ? limiteDeuda.ToString("C")
-                : "Sin límite";
-        }
 
         private void ActualizarEstado()
         {
             if (EsCuentaNueva)
             {
                 lblEstado.Text = "Pendiente de creación";
-                lblFechaCreacion.Text = "-";
+                lblFechaCreacion.Text = DateTime.Today.ToString("dd/MM/yyyy");
+                lblFechaUltimaActivacion.Text = "-";
                 lblFechaVencimiento.Text = "-";
                 return;
             }
+
 
             lblEstado.Text = _cuentaCorriente.EstadoDescripcionCtaCte;
 
@@ -443,28 +504,46 @@ namespace Presentacion.Core.CuentaCorriente
                 _cuentaCorriente.FechaVencimiento.HasValue
                     ? _cuentaCorriente.FechaVencimiento.Value.ToString("dd/MM/yyyy")
                     : "-";
+            lblFechaUltimaActivacion.Text =
+                _cuentaCorriente.FechaActivacion.HasValue
+                    ? _cuentaCorriente.FechaActivacion.Value.ToString("dd/MM/yyyy")
+                    : "-";
         }
+        private string GenerarNombreCuentaCorriente(ClienteDTO cliente)
+        {
+            var inicial = cliente.Nombre.Trim()[0].ToString().ToUpper();
+            var apellido = cliente.Apellido.Trim();
 
+            return $"{inicial}{apellido} - {DateTime.Now:ddMMyyHHmmss}";
+        }
         private bool ValidarSaldoYLimite()
         {
             decimal saldo = saldoInicial;
-
             decimal limite = limiteDeuda;
 
-            bool tieneSaldoAFavor = saldo > 0;
-
-            bool deudaInfinita =
-                chkLimiteDeuda.Checked && limite == 0;
-
-            bool deudaConLimite =
-                chkLimiteDeuda.Checked && limite > 0;
-
-            if (!tieneSaldoAFavor &&
-                !deudaInfinita &&
-                !deudaConLimite)
+            // No permite una cuenta sin saldo y sin deuda.
+            if (!chkLimiteDeuda.Checked && saldo <= 0)
             {
                 MessageBox.Show(
                     "La cuenta debe tener saldo a favor o permitir deuda.",
+                    "Atención",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return false;
+            }
+
+            // Deuda ilimitada (límite = 0)
+            if (chkLimiteDeuda.Checked && limite == 0)
+                return true;
+
+            // Si tiene límite, la deuda inicial no puede superarlo.
+            if (chkLimiteDeuda.Checked &&
+                saldo < 0 &&
+                Math.Abs(saldo) > limite)
+            {
+                MessageBox.Show(
+                    "La deuda inicial supera el límite permitido.",
                     "Atención",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
@@ -511,7 +590,7 @@ namespace Presentacion.Core.CuentaCorriente
 
                 limiteDeuda = f.MontoIngresado;
 
-                lblLimiteDeuda.Text = limiteDeuda.ToString("C");
+                ActualizarLimite();
             }
         }
 
@@ -722,11 +801,11 @@ namespace Presentacion.Core.CuentaCorriente
         }
         private void ActualizarBotones()
         {
-            btnCargarSaldoCtaCte.Enabled =
-               CuentaCreada;
+            //btnCargarSaldoCtaCte.Enabled =
+            //   CuentaCreada;
 
-            btnCargarLimite.Enabled =
-                CuentaCreada && chkLimiteDeuda.Checked;
+            //btnCargarLimite.Enabled =
+            //    CuentaCreada && chkLimiteDeuda.Checked;
 
             lblPagina.Text = $"Página {paginaActual} de {totalPaginas}";
             lblTotalRegistros.Text = $"Total: {totalRegistros}";
