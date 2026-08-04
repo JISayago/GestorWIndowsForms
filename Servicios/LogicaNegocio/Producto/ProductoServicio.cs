@@ -433,7 +433,15 @@ namespace Servicios.LogicaNegocio.Producto
             productoEditar.IvaIncluidoPrecioFinal = productoDto.IvaIncluidoPrecioFinal;
             productoEditar.EsFraccionable = productoDto.EsFraccionable;
 
-            foreach (var categoriaId in productoDto.CategoriaIds)
+            // 🔄 CATEGORIAS (N a N): sacamos las asociaciones viejas antes de
+            // cargar las nuevas, sino quedan duplicadas/viejas categorías colgadas.
+            if (productoEditar.CategoriasProductos.Any())
+            {
+                context.CategoriasProductos.RemoveRange(productoEditar.CategoriasProductos);
+                productoEditar.CategoriasProductos.Clear();
+            }
+
+            foreach (var categoriaId in productoDto.CategoriaIds ?? new List<long>())
             {
                 productoEditar.CategoriasProductos.Add(new CategoriaProducto
                 {
