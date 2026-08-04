@@ -15,7 +15,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
     public interface ICuentaCorrienteServicio
     {
         ResultadoPaginacion<CuentaCorrienteDTO> ObtenerCuentaCorrientes(FiltroConsulta filtros);
-
+        EstadoOperacion CerrarCuentaCorriente(long ctacteId);
+        EstadoOperacion ActivarCuentaCorriente(long ctacteId);
         ResultadoPaginacion<MovimientoDTO> ObtenerMovimientosPorCuentaCorriente(long cuentaCorrienteId, FiltroConsulta filtros);
         CuentaCorrienteDTO ObtenerCuentaCorrientePorId(long cuentacorrienteId);
         EstadoOperacion Insertar(CuentaCorrienteDTO cuentacorrienteDto);

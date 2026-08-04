@@ -118,7 +118,7 @@
             // lblFechaVencimientoTitulo
             // 
             lblFechaVencimientoTitulo.AutoSize = true;
-            lblFechaVencimientoTitulo.Location = new Point(6, 125);
+            lblFechaVencimientoTitulo.Location = new Point(22, 125);
             lblFechaVencimientoTitulo.Name = "lblFechaVencimientoTitulo";
             lblFechaVencimientoTitulo.Size = new Size(107, 15);
             lblFechaVencimientoTitulo.TabIndex = 5;
@@ -254,7 +254,7 @@
             // lblFechaVencimiento
             // 
             lblFechaVencimiento.AutoSize = true;
-            lblFechaVencimiento.Location = new Point(120, 125);
+            lblFechaVencimiento.Location = new Point(223, 125);
             lblFechaVencimiento.Name = "lblFechaVencimiento";
             lblFechaVencimiento.Size = new Size(53, 15);
             lblFechaVencimiento.TabIndex = 26;
@@ -338,6 +338,7 @@
             btnActivar.TabIndex = 49;
             btnActivar.Text = "Activar";
             btnActivar.UseVisualStyleBackColor = true;
+            btnActivar.Click += btnActivar_Click;
             // 
             // btnCerrarCtacte
             // 
@@ -347,6 +348,7 @@
             btnCerrarCtacte.TabIndex = 48;
             btnCerrarCtacte.Text = "Cerrar Cuenta";
             btnCerrarCtacte.UseVisualStyleBackColor = true;
+            btnCerrarCtacte.Click += btnCerrarCtacte_Click;
             // 
             // lblFechaCreacion
             // 

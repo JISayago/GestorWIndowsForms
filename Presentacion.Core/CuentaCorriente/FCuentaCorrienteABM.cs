@@ -277,7 +277,7 @@ namespace Presentacion.Core.CuentaCorriente
 
         public override bool EjecutarComandoModificar()
         {
-            if (CuentaCorrienteId==null)
+            if (CuentaCorrienteId == null)
             {
                 MessageBox.Show(@"´Por favor seleccione un cuentacorriente válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
@@ -313,7 +313,7 @@ namespace Presentacion.Core.CuentaCorriente
                     EstaEliminado = false
                 };
 
-                var response = _cuentacorrienteServicio.Modificar(cuentacorrienteEditar, CuentaCorrienteId.Value);    
+                var response = _cuentacorrienteServicio.Modificar(cuentacorrienteEditar, CuentaCorrienteId.Value);
 
                 if (response.Exitoso)
                 {
@@ -545,7 +545,7 @@ namespace Presentacion.Core.CuentaCorriente
 
             totalRegistros = resultado.TotalRegistros;
 
-            totalPaginas = Math.Max(1,(int)Math.Ceiling((double)totalRegistros / resultado.PageSize));
+            totalPaginas = Math.Max(1, (int)Math.Ceiling((double)totalRegistros / resultado.PageSize));
 
             ActualizarBotones();
         }
@@ -774,5 +774,47 @@ namespace Presentacion.Core.CuentaCorriente
             }
         }
 
+        private void btnActivar_Click(object sender, EventArgs e)
+        {
+            if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Activa)
+                return;
+            var msjee = MessageBox.Show("¿Está seguro que desea Activar la cuenta corriente? Esta acción no se puede deshacer.", "Confirmar cierre", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (msjee != DialogResult.Yes)
+                return;
+            var respuesta = _cuentacorrienteServicio.ActivarCuentaCorriente(CuentaCorrienteId.Value);
+            if (respuesta.Exitoso)
+            {
+                MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CargarDatosCuenta();
+                ActualizarPantalla();
+            }
+            else
+            {
+                MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+            
+        }
+
+        private void btnCerrarCtacte_Click(object sender, EventArgs e)
+        {
+            if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Cerrada)
+                return;
+            var msjee = MessageBox.Show("¿Está seguro que desea cerrar la cuenta corriente? Esta acción no se puede deshacer.", "Confirmar cierre", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (msjee != DialogResult.Yes)
+                return;
+            var respuesta = _cuentacorrienteServicio.CerrarCuentaCorriente(CuentaCorrienteId.Value);
+            if (respuesta.Exitoso)
+            {
+                MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CargarDatosCuenta();
+                ActualizarPantalla();
+            }
+            else
+            {
+                MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
     }
 }

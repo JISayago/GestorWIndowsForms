@@ -659,5 +659,97 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 PageSize = filtros.PageSize
             };
         }
+
+        public EstadoOperacion CerrarCuentaCorriente(long ctacteId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var cuenta = context.CuentaCorriente
+                .FirstOrDefault(x => x.CuentaCorrienteId == ctacteId);
+
+            if (cuenta == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Cuenta corriente no encontrada."
+                };
+            }
+
+            if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Cerrada)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "La cuenta corriente ya se encuentra cerrada."
+                };
+            }
+
+            if (cuenta.Saldo < 0)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "No es posible cerrar la cuenta corriente porque posee una deuda pendiente. Debe cancelar la deuda antes de cerrarla."
+                };
+            }
+
+            cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Cerrada;
+
+            context.SaveChanges();
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = "Cuenta corriente cerrada correctamente.",
+                EntidadId = cuenta.CuentaCorrienteId
+            };
+        }
+
+        public EstadoOperacion ActivarCuentaCorriente(long ctacteId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var cuenta = context.CuentaCorriente
+                .FirstOrDefault(x => x.CuentaCorrienteId == ctacteId);
+
+            if (cuenta == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Cuenta corriente no encontrada."
+                };
+            }
+
+            if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Activa)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "La cuenta corriente ya se encuentra activa."
+                };
+            }
+
+            if (cuenta.Saldo < 0)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "No es posible activar la cuenta corriente porque posee una deuda pendiente. Debe cancelar la deuda antes de activarla."
+                };
+            }
+
+            cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Activa;
+
+            context.SaveChanges();
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = "Cuenta corriente activada correctamente.",
+                EntidadId = cuenta.CuentaCorrienteId
+            };
+        }
     }
 }
