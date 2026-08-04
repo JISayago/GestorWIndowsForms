@@ -25,6 +25,10 @@ namespace Presentacion.Core.CuentaCorriente
         private readonly ICuentaCorrienteServicio _cuentacorrienteServicio;
         private readonly IClienteServicio _clienteServicio;
         private long ClienteID;
+        private decimal saldoInicial = 0; // Variable para almacenar el saldo actual del cliente
+        private decimal limiteDeuda = 0; // Variable para almacenar el límite de deuda del cliente
+        private bool EsCuentaNueva => TipoOperacion == TipoOperacion.Nuevo;
+        private bool CuentaCreada => !EsCuentaNueva;
 
         // 🔹 Reemplazamos el DataGridView por una BindingList en memoria
         private BindingList<long> _dnisAutorizadosLista;
@@ -56,8 +60,9 @@ namespace Presentacion.Core.CuentaCorriente
                 btnAgregarDni.Enabled = false;
                 btnEliminarDni.Enabled = false;
             }
-            txtLimiteDeuda.Enabled = false; // Deshabilitar el TextBox de límite de deuda al inicio
-           
+
+            //txtLimiteDeuda.Enabled = false; // Deshabilitar el TextBox de límite de deuda al inicio
+
             //lblFechaVTO.Text = DateTime.Now.ToString();
 
             //var clientes = _clienteServicio.ObtenerClientes(filtros).Items;
@@ -65,11 +70,10 @@ namespace Presentacion.Core.CuentaCorriente
 
 
             AgregarControlesObligatorios(txtNombreCC, "Nombre Cuenta Corriente");
-            AgregarControlesObligatorios(txtSaldo, "Saldo");
+            //AgregarControlesObligatorios(txtSaldo, "Saldo");
         }
         private void FCuentaCorrienteABM_Load(object sender, EventArgs e)
         {
-            txtSaldo.Text = "0";
             var cliente = _clienteServicio.ObtenerClientePorId(ClienteID);
 
             lblNombreCliente.Text = cliente.NombreCompleto;
@@ -94,8 +98,30 @@ namespace Presentacion.Core.CuentaCorriente
 
                 _dnisAutorizadosLista.Add(long.Parse(cliente.Dni));
             }
-
+            btnCargarLimite.Enabled = false; // Deshabilitar el botón de cargar límite de deuda al inicio
             ActualizarPantalla();
+        }
+
+        private void ConfigurarFormulario()
+        {
+            ConfigurarTabs();
+            ConfigurarControlesConfiguracion();
+            ConfigurarControlesMovimientos();
+            ConfigurarControlesDnis();
+        }
+
+        private void ConfigurarControlesConfiguracion()
+        {
+            bool creada = !EsCuentaNueva;
+
+            lblSaldo.Visible = creada;
+            btnCargarSaldoCtaCte.Visible = creada;
+
+            lblEstado.Visible = creada;
+            lblEstadoTitulo.Visible = creada;
+
+            lblFechaAlta.Visible = creada;
+            lblFechaAltaTitulo.Visible = creada;
         }
         // 🔹 Método para enlazar la lista al ListBox
         private void InicializarListaDni()
@@ -130,14 +156,19 @@ namespace Presentacion.Core.CuentaCorriente
 
             var cuentacorriente = _cuentacorrienteServicio.ObtenerCuentaCorrientePorId(entidadId.Value);
 
-            txtNombreCC.Text = cuentacorriente.NombreCuentaCorriente;
-            txtSaldo.Text = cuentacorriente.Saldo.ToString();
-            //dtpFechaVencimiento.Value = (DateTime)cuentacorriente.FechaVencimiento;
-            chkLimiteDeuda.Checked = cuentacorriente.LimiteDeudaActivo;
-            txtLimiteDeuda.Text = cuentacorriente.LimiteDeuda.ToString();
-            txtLimiteDeuda.Enabled = cuentacorriente.LimiteDeudaActivo;
-            rbVencimientoMensual.Checked = cuentacorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Mensual;
+            saldoInicial = cuentacorriente.Saldo;
+            limiteDeuda = cuentacorriente.LimiteDeuda;
 
+            txtNombreCC.Text = cuentacorriente.NombreCuentaCorriente;
+            lblSaldo.Text = saldoInicial.ToString("C");
+            lblLimiteDeuda.Text = limiteDeuda.ToString("C");
+            chkLimiteDeuda.Checked = cuentacorriente.LimiteDeudaActivo;
+            lblLimiteDeuda.Text = cuentacorriente.LimiteDeuda.ToString();
+            btnCargarLimite.Enabled = cuentacorriente.LimiteDeudaActivo;
+
+          
+
+            rbVencimientoMensual.Checked = cuentacorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Mensual;
             rbVencimientoManual.Checked = cuentacorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Manual;
 
             nudCantidadMeses.Value =
@@ -153,28 +184,11 @@ namespace Presentacion.Core.CuentaCorriente
 
         public override bool EjecutarComandoNuevo()
         {
-            if (string.IsNullOrEmpty(txtSaldo.Text))
-            {
-                txtSaldo.Text = "0";
-            }
             if (!VerificarDatosObligatorios())
             {
                 MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
-            if (!decimal.TryParse(txtSaldo.Text?.Trim(), out var saldo))
-            {
-                MessageBox.Show("Saldo inválido.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-            decimal? limite = null;
-
-            if (chkLimiteDeuda.Checked)
-            {
-                if (decimal.TryParse(txtLimiteDeuda.Text, out var l))
-                    limite = l;
-            }
-
 
             var tipoVencimiento = rbVencimientoMensual.Checked
                 ? TipoVencimientoCuentaCorriente.Mensual
@@ -190,11 +204,11 @@ namespace Presentacion.Core.CuentaCorriente
             {
                 ClienteId = EntidadID.Value, // Asumimos que el ID del cliente se pasa al formulario y se usa para crear la cuenta corriente
                 NombreCuentaCorriente = txtNombreCC.Text,
-                Saldo = saldo,
+                Saldo = saldoInicial,
                 TipoVencimiento = (int)tipoVencimiento,
                 CantidadMesesVencimiento = cantidadMeses,
                 LimiteDeudaActivo = chkLimiteDeuda.Checked,
-                LimiteDeuda = limite ?? 0,
+                LimiteDeuda = limiteDeuda,
                 FechaCreacion = DateTime.Now,
                 FechaActivacion = DateTime.Now,// evaluar si va con creacion activacion automatica o no, por ahora lo dejamos asi
 
@@ -271,18 +285,13 @@ namespace Presentacion.Core.CuentaCorriente
 
             decimal? limite = null;
 
-            if (chkLimiteDeuda.Checked)
-            {
-                if (decimal.TryParse(txtLimiteDeuda.Text, out var l))
-                    limite = l;
-            }
 
             if (TipoOperacion == TipoOperacion.Modificar)
             {
                 var cuentacorrienteEditar = new CuentaCorrienteDTO
                 {
                     NombreCuentaCorriente = txtNombreCC.Text,
-                    Saldo = Convert.ToDecimal(txtSaldo.Text),
+                    Saldo = saldoInicial,
                     //FechaVencimiento = dtpFechaVencimiento.Value,
                     LimiteDeudaActivo = chkLimiteDeuda.Checked,
                     LimiteDeuda = limite ?? 0,
@@ -359,7 +368,7 @@ namespace Presentacion.Core.CuentaCorriente
         }
         private void ActualizarPantalla()
         {
-            txtLimiteDeuda.Enabled = chkLimiteDeuda.Checked;
+            btnCargarLimite.Enabled = chkLimiteDeuda.Checked;
             nudCantidadMeses.Enabled = rbVencimientoManual.Checked;
 
             nudCantidadMeses.Minimum = rbVencimientoMensual.Checked ? 1 : 2;
@@ -389,19 +398,17 @@ namespace Presentacion.Core.CuentaCorriente
 
         private bool ValidarSaldoYLimite()
         {
-            decimal.TryParse(txtSaldo.Text, out var saldo);
+            decimal saldo = saldoInicial;
 
-            decimal.TryParse(txtLimiteDeuda.Text, out var limite);
+            decimal limite = limiteDeuda;
 
             bool tieneSaldoAFavor = saldo > 0;
 
             bool deudaInfinita =
-                chkLimiteDeuda.Checked &&
-                string.IsNullOrWhiteSpace(txtLimiteDeuda.Text);
+                chkLimiteDeuda.Checked && limite == 0;
 
             bool deudaConLimite =
-                chkLimiteDeuda.Checked &&
-                limite > 0;
+                chkLimiteDeuda.Checked && limite > 0;
 
             if (!tieneSaldoAFavor &&
                 !deudaInfinita &&
@@ -427,6 +434,37 @@ namespace Presentacion.Core.CuentaCorriente
         private void chkLimiteDeuda_CheckedChanged_1(object sender, EventArgs e)
         {
             ActualizarPantalla();
+        }
+
+
+        private void btnCargarSaldoCtaCte_Click(object sender, EventArgs e)
+        {
+            using (var f = new FCargaSaldoCtaCte(
+                saldoInicial,
+                HelperFormularioCargaSaldoCtaCte.Saldo))
+            {
+                if (f.ShowDialog() != DialogResult.OK)
+                    return;
+
+                saldoInicial = f.MontoIngresado;
+
+                lblSaldo.Text = saldoInicial.ToString("C");
+            }
+        }
+
+        private void btnCargarLimite_Click(object sender, EventArgs e)
+        {
+            using (var f = new FCargaSaldoCtaCte(
+                limiteDeuda,
+                HelperFormularioCargaSaldoCtaCte.LimiteDeuda))
+            {
+                if (f.ShowDialog() != DialogResult.OK)
+                    return;
+
+                limiteDeuda = f.MontoIngresado;
+
+                lblLimiteDeuda.Text = limiteDeuda.ToString("C");
+            }
         }
     }
 }

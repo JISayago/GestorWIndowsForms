@@ -1,4 +1,7 @@
-﻿using ScottPlot.Colormaps;
+﻿using Presentacion.Core.Producto;
+using Presentacion.FormulariosBase.Helpers;
+using ScottPlot.Colormaps;
+using Servicios.Helpers.Cliente.CtaCte;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.CuentaCorriente;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
@@ -12,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TuProyecto.Presentacion;
 
 namespace Presentacion.Core.CuentaCorriente
 {
@@ -22,10 +26,11 @@ namespace Presentacion.Core.CuentaCorriente
         private CuentaCorrienteDTO _cuentaCorrienteDto;
         private long? entidadID;
         private const int PageSize = 20;
-
+        private BindingList<long> _dnisAutorizadosLista;
         private int paginaActual = 1;
         private int totalPaginas = 1;
         private int totalRegistros = 0;
+        private decimal saldoInicial = 0;
         public FDetallesCtaCte(long? id = null)
         {
             if (id == null)
@@ -60,7 +65,7 @@ namespace Presentacion.Core.CuentaCorriente
                 Filtro3 = null
             };
 
-            var resultado = _cuentaCorrienteServicio.ObtenerMovimientosPorCuentaCorriente(CtaCteID,filtros);
+            var resultado = _cuentaCorrienteServicio.ObtenerMovimientosPorCuentaCorriente(CtaCteID, filtros);
 
             dgvGrilla.DataSource = resultado.Items;
 
@@ -94,7 +99,7 @@ namespace Presentacion.Core.CuentaCorriente
                 montodeudaMaximo = "El monto de deuda máximo es: " + _cuentaCorrienteDto.LimiteDeuda.ToString("C");
                 perimeteDeuda = "Se le permite tener saldo negativo.";
             }
-            lblDetallesExtra.Text = $"{perimeteDeuda}. {montodeudaMaximo}";
+            lblDetallesExtra.Text = $"{perimeteDeuda}.\n {montodeudaMaximo}";
             lblEstado.Text = _cuentaCorrienteDto.EstadoDescripcionCtaCte;
             lstDnis.DataSource = _cuentaCorrienteDto.DniAutorizados;
 
@@ -131,6 +136,36 @@ namespace Presentacion.Core.CuentaCorriente
             }
 
         }
+
+        private void DgvGrilla_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+        }
+
+        private void EjecutarClickDerechoFila(long? id, Point posicionMouse)
+        {
+            if (!id.HasValue)
+                return;
+
+            ContextMenuStrip menu = new ContextMenuStrip();
+
+            menu.Items.Add("Ver Detalle", null, (s, e) =>
+            {
+                if (!id.HasValue)
+                    return;
+
+                var f = new FMovimientoDetallado(id.Value);
+
+                f.ShowDialog();
+            });
+
+
+            menu.Show(dgvGrilla, posicionMouse);
+        }
+
+
+
         public virtual void ResetearGrilla(DataGridView grilla)
         {
             for (int i = 0; i < grilla.ColumnCount; i++)
@@ -163,7 +198,7 @@ namespace Presentacion.Core.CuentaCorriente
                 col.Visible = true;
                 col.HeaderText = "Número";
 
-                col.FillWeight = 300;   // 🔥 grande
+                col.FillWeight = 150;   // 🔥 grande
                 col.MinimumWidth = 180;
             }
 
@@ -207,13 +242,7 @@ namespace Presentacion.Core.CuentaCorriente
             // =========================================
             if (grilla.Columns.Contains("TipoMovimientoDetalleDescripcion"))
             {
-                var col = grilla.Columns["TipoMovimientoDetalleDescripcion"];
-
-                col.Visible = true;
-                col.HeaderText = "Tipo";
-
-                col.FillWeight = 100;
-                col.MinimumWidth = 120;
+                grilla.Columns["TipoMovimientoDetalleDescripcion"].Visible = false;
             }
 
             if (grilla.Columns.Contains("TipoMovimientoDetalle"))
@@ -284,6 +313,79 @@ namespace Presentacion.Core.CuentaCorriente
             paginaActual++;
 
             CargarMovimientos();
+        }
+
+        private void dgvGrilla_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right)
+                return;
+
+            var hit = dgvGrilla.HitTest(e.X, e.Y);
+
+            if (hit.RowIndex >= 0)
+            {
+                dgvGrilla.ClearSelection();
+
+                dgvGrilla.Rows[hit.RowIndex].Selected = true;
+
+                RowEnter(new DataGridViewCellEventArgs(0, hit.RowIndex));
+
+                EjecutarClickDerechoFila(entidadID, e.Location);
+            }
+        }
+
+        private void btnCargarSaldo_Click(object sender, EventArgs e)
+        {
+            using (var f = new FCargaSaldoCtaCte(
+                  saldoInicial,
+                  HelperFormularioCargaSaldoCtaCte.Saldo))
+            {
+                if (f.ShowDialog() != DialogResult.OK)
+                    return;
+
+                saldoInicial = f.MontoIngresado;
+
+                //lblSaldo.Text = saldoInicial.ToString("C");
+            }
+        }
+
+        private void btnAgregarDni_Click(object sender, EventArgs e)
+        {
+            if (long.TryParse(txtNuevoDni.Text.Trim(), out long dni))
+            {
+                if (_dnisAutorizadosLista.Contains(dni))
+                {
+                    MessageBox.Show("Este DNI ya está en la lista.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                _dnisAutorizadosLista.Add(dni);
+                txtNuevoDni.Clear();
+                txtNuevoDni.Focus();
+            }
+            else
+            {
+                MessageBox.Show("Por favor, ingrese un número de DNI válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // 🔹 EVENTO: Botón Eliminar DNI seleccionado
+        private void btnEliminarDni_Click(object sender, EventArgs e)
+        {
+            if (lstDnis.SelectedItem != null)
+            {
+                var dniSeleccionado = (long)lstDnis.SelectedItem;
+                _dnisAutorizadosLista.Remove(dniSeleccionado);
+            }
+            else
+            {
+                MessageBox.Show("Seleccione un DNI de la lista para eliminarlo.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void btnSalir_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
