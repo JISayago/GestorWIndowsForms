@@ -1,4 +1,5 @@
-﻿using Servicios.LogicaNegocio.CuentaCorriente.DTO;
+﻿using Servicios.Helpers.Movimiento;
+using Servicios.LogicaNegocio.CuentaCorriente.DTO;
 using Servicios.LogicaNegocio.Gasto.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
 using System;
@@ -20,6 +21,31 @@ namespace Servicios.LogicaNegocio.Movimiento.DTO
         public bool EstaEliminado { get; set; }
         public long? EntidadId { get; set; }
         public int? TipoEntidad { get; set; }
+
+        // =========================================
+        // AUTOCALCULADOS (mismo criterio que MovimientoDTO)
+        // =========================================
+        public string TipoMovimientoDescripcion
+        {
+            get
+            {
+                if (!Enum.IsDefined(typeof(TipoMovimiento), TipoMovimiento))
+                    return "Desconocido";
+
+                return ((TipoMovimiento)TipoMovimiento).ToString();
+            }
+        }
+
+        public string TipoMovimientoDetalleDescripcion
+        {
+            get
+            {
+                if (!Enum.IsDefined(typeof(TipoMovimientoDetalle), TipoMovimientoDetalle))
+                    return "Desconocido";
+
+                return ((TipoMovimientoDetalle)TipoMovimientoDetalle).ToString();
+            }
+        }
 
         // Información adicional para el movimiento, dependiendo del tipo de movimiento y entidad relacionada
 

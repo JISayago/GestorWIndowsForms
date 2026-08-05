@@ -107,7 +107,7 @@ namespace Presentacion.Core.CuentaCorriente
                 Text = "Aceptar",
                 Width = 100,
                 Height = 35,
-                Location = new Point(245, 205)
+                Location = new Point((Width - 250) / 2, 205)
             };
 
             btnAceptar.Click += BtnAceptar_Click;
@@ -117,7 +117,7 @@ namespace Presentacion.Core.CuentaCorriente
                 Text = "Cancelar",
                 Width = 100,
                 Height = 35,
-                Location = new Point(355, 205)
+                Location = new Point((Width + 50) / 2, 205)
             };
 
             btnCancelar.Click += BtnCancelar_Click;
