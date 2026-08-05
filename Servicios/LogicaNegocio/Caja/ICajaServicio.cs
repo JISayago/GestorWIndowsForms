@@ -16,7 +16,7 @@ namespace Servicios.LogicaNegocio.Caja
         public void CerrarCaja(long empleadoId);
         public CajaDTO ObtenerCaja(long cajaId);
         public long? ObtenerIdCajaAbierta(GestorContextDB context = null);
-        public long? ObtenerIdDeEña(GestorContextDB context);
+        public long? ObtenerIdDeUltimaCajaAbierta(GestorContextDB context);
         public bool ObtenerEstadoCaja();
         public decimal ObtenerSaldoCaja();
         public CajaDTO EstadoInicioCaja();

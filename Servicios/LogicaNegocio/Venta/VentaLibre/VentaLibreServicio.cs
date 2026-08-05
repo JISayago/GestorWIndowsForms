@@ -196,7 +196,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
             try
             {
                 var cajaServicio = new Caja.CajaServicio();
-                var cajaId = cajaServicio.ObtenerIdDeEña(context);
+                var cajaId = cajaServicio.ObtenerIdDeUltimaCajaAbierta(context);
 
                 if (!cajaId.HasValue)
                     throw new Exception("No hay una caja abierta.");

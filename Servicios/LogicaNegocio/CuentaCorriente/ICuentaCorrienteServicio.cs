@@ -16,6 +16,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
     {
         ResultadoPaginacion<CuentaCorrienteDTO> ObtenerCuentaCorrientes(FiltroConsulta filtros);
         EstadoOperacion CerrarCuentaCorriente(long ctacteId);
+        EstadoOperacion CargarSaldoCuentaCorriente(long cuentaCorrienteId,decimal nuevoSaldo);
         EstadoOperacion ActivarCuentaCorriente(long ctacteId);
         ResultadoPaginacion<MovimientoDTO> ObtenerMovimientosPorCuentaCorriente(long cuentaCorrienteId, FiltroConsulta filtros);
         CuentaCorrienteDTO ObtenerCuentaCorrientePorId(long cuentacorrienteId);

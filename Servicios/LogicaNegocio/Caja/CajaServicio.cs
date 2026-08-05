@@ -106,7 +106,7 @@ namespace Servicios.LogicaNegocio.Caja
             }
             return caja.CajaId;
         }
-            public long? ObtenerIdDeEña(GestorContextDB context)
+            public long? ObtenerIdDeUltimaCajaAbierta(GestorContextDB context)
         {
             var caja = context.Cajas
                 .Where(c => !c.EstaCerrada)

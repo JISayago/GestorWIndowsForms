@@ -23,6 +23,8 @@ namespace Servicios.LogicaNegocio.CuentaCorriente.DTO
         public int CantidadMesesVencimiento { get; set; } // Cantidad de meses para el vencimiento de la cuenta corriente
         public bool ConDeuda { get; set; } // Indica si la cuenta corriente tiene deuda pendiente
         public int EstadoCtaCte { get; set; } //
+
+        public decimal MontoCargaSaldo { get; set; }
         public string EstadoDescripcionCtaCte =>
          EstadoCtaCte switch
          {

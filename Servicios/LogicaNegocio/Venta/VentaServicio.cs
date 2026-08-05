@@ -108,7 +108,7 @@ namespace Servicios.LogicaNegocio.Venta
         {
             var cajaServicio = new Caja.CajaServicio();
 
-            var cajaId = cajaServicio.ObtenerIdDeEña(context);
+            var cajaId = cajaServicio.ObtenerIdDeUltimaCajaAbierta(context);
 
             if (!cajaId.HasValue)
                 throw new Exception(

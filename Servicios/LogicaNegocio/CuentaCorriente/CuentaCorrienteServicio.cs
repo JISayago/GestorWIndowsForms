@@ -123,6 +123,92 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 };
             }
         }
+        public EstadoOperacion CargarSaldoCuentaCorriente(long cuentaCorrienteId,decimal nuevoSaldo)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+
+            var cuenta = context.CuentaCorriente
+                .FirstOrDefault(x =>
+                    x.CuentaCorrienteId == cuentaCorrienteId);
+
+
+            if (cuenta == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Cuenta corriente no encontrada."
+                };
+            }
+
+
+            decimal saldoAnterior = cuenta.Saldo;
+
+
+            if (saldoAnterior == nuevoSaldo)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "El saldo ingresado no genera cambios."
+                };
+            }
+
+
+            decimal diferencia = nuevoSaldo - saldoAnterior;
+
+
+            //---------------------------------------------
+            // Actualizar saldo
+            //---------------------------------------------
+
+            cuenta.Saldo = nuevoSaldo;
+
+
+            //---------------------------------------------
+            // Movimiento de caja
+            //---------------------------------------------
+            var cajaServicio = new Caja.CajaServicio();
+
+            var cajaId = cajaServicio.ObtenerIdDeUltimaCajaAbierta(context);
+
+            cajaServicio.RegistrarTransaccion(context, diferencia, TipoMovimiento.Ingreso, cajaId.Value);
+            CrearMovimientoCargaSaldoCuentaCorriente(cuenta.CuentaCorrienteId, diferencia, context);
+
+
+            context.SaveChanges();
+
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = "Saldo actualizado correctamente.",
+                EntidadId = cuenta.CuentaCorrienteId,
+                DatoExtra = cuenta.Saldo.ToString("C")
+            };
+        }
+
+        public void CrearMovimientoCargaSaldoCuentaCorriente(long cuentaCorrienteId,decimal monto,GestorContextDB context)
+        {
+            if (cuentaCorrienteId <= 0)
+                throw new Exception("No puede crearse el movimiento porque la cuenta corriente no posee un Id válido.");
+
+            var movimiento = new AccesoDatos.Entidades.Movimiento
+            {
+                NumeroMovimiento = $"MOV-SALDOCTACTE-{cuentaCorrienteId}-{DateTime.Now:yyyyMMddHHmmss}",
+                EntidadId = cuentaCorrienteId,
+                TipoEntidad = (int)TipoEntidadMovimiento.CuentaCorriente,
+                TipoMovimiento = (int)TipoMovimiento.Ingreso,
+                TipoMovimientoDetalle = (int)TipoMovimientoDetalle.CuentaCorriente,
+                Monto = Math.Abs(monto),
+                FechaMovimiento = DateTime.Now,
+                EstaEliminado = false
+            };
+
+            context.Movimientos.Add(movimiento);
+        }
+
 
         public EstadoOperacion Modificar(CuentaCorrienteDTO cuentacorrienteDto, long? cuentacorrienteId)
         {
@@ -141,19 +227,24 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 };
             }
 
-            bool cuentacorrienteDuplicada = context.CuentaCorriente
-                .Any(p => p.NombreCuentaCorriente == cuentacorrienteDto.NombreCuentaCorriente && p.NombreCuentaCorriente != cuentacorrienteEditar.NombreCuentaCorriente);
+            bool cuentaDuplicada = context.CuentaCorriente.Any(x =>
+                x.NombreCuentaCorriente == cuentacorrienteDto.NombreCuentaCorriente &&
+                x.CuentaCorrienteId != cuentacorrienteEditar.CuentaCorrienteId);
 
-            if (cuentacorrienteDuplicada)
+            if (cuentaDuplicada)
             {
                 return new EstadoOperacion
                 {
                     Exitoso = false,
-                    Mensaje = "Ya existe una cuenta corriente con le mismo nombre."
+                    Mensaje = "Ya existe una cuenta corriente con el mismo nombre."
                 };
             }
 
-            // Modificar los campos
+
+            //---------------------------------------------------
+            // Actualizar datos
+            //---------------------------------------------------
+
             cuentacorrienteEditar.NombreCuentaCorriente = cuentacorrienteDto.NombreCuentaCorriente;
             cuentacorrienteEditar.Saldo = cuentacorrienteDto.Saldo;
             cuentacorrienteEditar.LimiteDeuda = cuentacorrienteDto.LimiteDeuda;
@@ -162,12 +253,26 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             cuentacorrienteEditar.CantidadMesesVencimiento = cuentacorrienteDto.CantidadMesesVencimiento;
             cuentacorrienteEditar.TipoVencimiento = cuentacorrienteDto.TipoVencimiento;
 
+            //---------------------------------------------------
+            // Actualizar DNIs
+            //---------------------------------------------------
 
             cuentacorrienteEditar.CuentaCorrienteAutorizado.Clear();
 
             foreach (var dni in cuentacorrienteDto.DniAutorizados)
-                cuentacorrienteEditar.CuentaCorrienteAutorizado.Add(new AccesoDatos.Entidades.CuentaCorrienteAutorizado { Dni = long.Parse(dni) });
+            {
+                cuentacorrienteEditar.CuentaCorrienteAutorizado.Add(
+                    new CuentaCorrienteAutorizado
+                    {
+                        Dni = long.Parse(dni)
+                    });
+            }
 
+            //---------------------------------------------------
+            // Cambió el saldo
+            //---------------------------------------------------
+
+          
             context.SaveChanges();
 
             return new EstadoOperacion
@@ -177,7 +282,6 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 EntidadId = cuentacorrienteEditar.CuentaCorrienteId
             };
         }
-
         public CuentaCorrienteDTO ObtenerCuentaCorrientePorId(long cuentacorrienteId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);

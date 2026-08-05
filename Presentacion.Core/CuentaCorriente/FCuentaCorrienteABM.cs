@@ -28,8 +28,6 @@ namespace Presentacion.Core.CuentaCorriente
         private readonly IClienteServicio _clienteServicio;
         private long? CuentaCorrienteId;
         private long? ClienteID;
-        private decimal saldoInicial = 0; // Variable para almacenar el saldo actual del cliente
-        private decimal limiteDeuda = 0; // Variable para almacenar el límite de deuda del cliente
         private CuentaCorrienteDTO _cuentaCorriente;
         private long? movimientoId;
         private bool EsCuentaNueva =>
@@ -44,6 +42,14 @@ namespace Presentacion.Core.CuentaCorriente
 
         // 🔹 Reemplazamos el DataGridView por una BindingList en memoria
         private BindingList<string> _dnisAutorizadosLista;
+
+        private decimal saldoInicial = 0;
+        private decimal limiteDeuda = 0;
+
+        // Nuevas variables
+        private decimal saldoOriginal = 0;
+        private decimal limiteOriginal = 0;
+
 
         public FCuentaCorrienteABM()
         {
@@ -194,7 +200,10 @@ namespace Presentacion.Core.CuentaCorriente
             _cuentaCorriente = _cuentacorrienteServicio.ObtenerCuentaCorrientePorId(CuentaCorrienteId.Value);
 
             saldoInicial = _cuentaCorriente.Saldo;
+            saldoOriginal = _cuentaCorriente.Saldo;
+
             limiteDeuda = _cuentaCorriente.LimiteDeuda;
+            limiteOriginal = _cuentaCorriente.LimiteDeuda;
 
             txtNombreCC.Text = _cuentaCorriente.NombreCuentaCorriente;
             lblSaldo.Text = saldoInicial.ToString("C");
@@ -352,9 +361,10 @@ namespace Presentacion.Core.CuentaCorriente
                 var cuentacorrienteEditar = new CuentaCorrienteDTO
                 {
                     NombreCuentaCorriente = txtNombreCC.Text,
-                    Saldo = saldoInicial,
-                    LimiteDeudaActivo = chkLimiteDeuda.Checked,
+                    //Saldo = saldoInicial,
+                    MontoCargaSaldo = saldoInicial - saldoOriginal,
                     LimiteDeuda = limiteDeuda,
+                    LimiteDeudaActivo = chkLimiteDeuda.Checked,
                     TipoVencimiento = (int)tipoVencimiento,
                     CantidadMesesVencimiento = cantidadMeses,
                     FechaVencimiento = rbVencimientoMensual.Checked
@@ -571,12 +581,44 @@ namespace Presentacion.Core.CuentaCorriente
                 saldoInicial,
                 HelperFormularioCargaSaldoCtaCte.Saldo))
             {
+
                 if (f.ShowDialog() != DialogResult.OK)
                     return;
 
-                saldoInicial = f.MontoIngresado;
 
-                lblSaldo.Text = saldoInicial.ToString("C");
+                var respuesta = _cuentacorrienteServicio.CargarSaldoCuentaCorriente(
+                    CuentaCorrienteId.Value,
+                    f.MontoIngresado);
+
+
+                if (!respuesta.Exitoso)
+                {
+                    MessageBox.Show(
+                        respuesta.Mensaje,
+                        "Atención",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+
+                    return;
+                }
+
+
+                // Actualizar pantalla
+                //saldoInicial = respuesta.ValorActualizado.Value;
+
+                lblSaldo.Text = respuesta.DatoExtra;
+
+
+                MessageBox.Show(
+                    respuesta.Mensaje,
+                    "Atención",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+
+                // Si querés refrescar todo:
+                CargarDatosCuenta();
+                ActualizarPantalla();
             }
         }
         private void btnCargarLimite_Click(object sender, EventArgs e)
