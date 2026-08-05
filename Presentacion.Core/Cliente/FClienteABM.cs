@@ -201,8 +201,8 @@ namespace Presentacion.Core.Cliente
 
         private void btnCuentaCorriente_Click(object sender, EventArgs e)
         {
-            var fCuentaCorriente = new FCuentaCorrienteConsulta();
-            fCuentaCorriente.ShowDialog();
+            //var fCuentaCorriente = new FCuentaCorrienteConsulta();
+            //fCuentaCorriente.ShowDialog();
         }
 
 

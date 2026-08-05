@@ -885,6 +885,15 @@ namespace AccesoDatos
                     entity.Property(cc => cc.FechaCreacion)
                         .HasColumnName("fecha_creacion")
                         .HasColumnType("date");
+                    entity.Property(cc=>cc.TipoVencimiento)
+                        .HasColumnName("tipo_vencimiento")
+                        .IsRequired();
+                    entity.Property(cc => cc.ConDeuda)
+                        .HasColumnName("con_deuda")
+                        .IsRequired();
+                    entity.Property(cc => cc.CantidadMesesVencimiento)
+                        .HasColumnName("cantidad_meses_vencimiento")
+                        .IsRequired();
 
                     // Relación uno a uno con Cliente
                     entity.HasOne(cc => cc.Cliente)

@@ -1,4 +1,5 @@
-﻿using Presentacion.Core.CuentaCorriente;
+﻿using AccesoDatos.Entidades;
+using Presentacion.Core.CuentaCorriente;
 using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
@@ -459,6 +460,12 @@ namespace Presentacion.Core.Cliente
             SeleccionarClienteParaCtaCte,
             true
             );
+            AgregarAccion(
+            "Detalles Cta Cte",
+            Constantes.Imagenes.ImgMovimiento,
+            AbrirDetalleCtaCte,
+            true
+            );
         }
 
         private void SeleccionarCliente(long? id)
@@ -473,6 +480,33 @@ namespace Presentacion.Core.Cliente
             DialogResult = DialogResult.OK;
 
             Close();
+        }
+        private void AbrirDetalleCtaCte(long? id)
+        {
+            clienteSeleccionado = id;
+            if(clienteSeleccionado == null)
+            {
+                MessageBox.Show("Seleccione un cliente para ver los detalles de su cuenta corriente.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            else
+            {
+
+                var response = _clienteServicio.ObtenerCtaCteIdPorClienteId((long)clienteSeleccionado);
+            if(!response.Exitoso)
+            {
+                MessageBox.Show("El cliente seleccionado no tiene una cuenta corriente asociada.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            else
+            {
+                    using (var f = new FCuentaCorrienteABM(
+             TipoOperacion.Modificar,null,response.EntidadId))
+                    {
+                        f.ShowDialog();
+                    }
+                }
+            }
         }
 
         private void SeleccionarClienteParaCtaCte(long? id)
@@ -498,7 +532,7 @@ namespace Presentacion.Core.Cliente
                 return;
             }
 
-            var fCtacte = new FCuentaCorrienteABM(TipoOperacion.Nuevo, clienteSeleccionado);
+            var fCtacte = new FCuentaCorrienteABM(TipoOperacion.Nuevo, clienteSeleccionado,null);
 
             if (fCtacte.ShowDialog() == DialogResult.OK &&
                 fCtacte.RealizoAlgunaOperacion)

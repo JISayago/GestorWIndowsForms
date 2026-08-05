@@ -19,7 +19,12 @@ namespace Servicios.LogicaNegocio.CuentaCorriente.DTO
         public DateTime? FechaVencimiento { get; set; }
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaActivacion { get; set; }
+        public int TipoVencimiento { get; set; }
+        public int CantidadMesesVencimiento { get; set; } // Cantidad de meses para el vencimiento de la cuenta corriente
+        public bool ConDeuda { get; set; } // Indica si la cuenta corriente tiene deuda pendiente
         public int EstadoCtaCte { get; set; } //
+
+        public decimal MontoCargaSaldo { get; set; }
         public string EstadoDescripcionCtaCte =>
          EstadoCtaCte switch
          {
@@ -31,6 +36,6 @@ namespace Servicios.LogicaNegocio.CuentaCorriente.DTO
 
         public long ClienteId { get; set; } // Lista de ID de cliente asociado
         public string NombreCliente { get; set; } // Nombre del cliente asociado
-        public List<long> DniAutorizados { get; set; } // Lista de DNI autorizados
+        public List<string> DniAutorizados { get; set; } // Lista de DNI autorizados
     }
 }

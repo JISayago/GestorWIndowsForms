@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FAdministracion));
             menuStrip1 = new MenuStrip();
             pRODUCTOToolStripMenuItem = new ToolStripMenuItem();
             sTOCKToolStripMenuItem = new ToolStripMenuItem();
@@ -40,7 +41,6 @@
             rOLESToolStripMenuItem = new ToolStripMenuItem();
             cLIENTESToolStripMenuItem = new ToolStripMenuItem();
             lISTADOCLIENTESToolStripMenuItem = new ToolStripMenuItem();
-            cUENTASCORRIENTESToolStripMenuItem = new ToolStripMenuItem();
             oFERTASToolStripMenuItem = new ToolStripMenuItem();
             lISTADOOFERTASToolStripMenuItem = new ToolStripMenuItem();
             aCTIVARDESACTIVARToolStripMenuItem = new ToolStripMenuItem();
@@ -178,7 +178,7 @@
             // 
             // cLIENTESToolStripMenuItem
             // 
-            cLIENTESToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOCLIENTESToolStripMenuItem, cUENTASCORRIENTESToolStripMenuItem });
+            cLIENTESToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lISTADOCLIENTESToolStripMenuItem });
             cLIENTESToolStripMenuItem.Name = "cLIENTESToolStripMenuItem";
             cLIENTESToolStripMenuItem.Size = new Size(85, 24);
             cLIENTESToolStripMenuItem.Text = "CLIENTES";
@@ -186,16 +186,9 @@
             // lISTADOCLIENTESToolStripMenuItem
             // 
             lISTADOCLIENTESToolStripMenuItem.Name = "lISTADOCLIENTESToolStripMenuItem";
-            lISTADOCLIENTESToolStripMenuItem.Size = new Size(206, 24);
+            lISTADOCLIENTESToolStripMenuItem.Size = new Size(183, 24);
             lISTADOCLIENTESToolStripMenuItem.Text = "Listado Clientes";
             lISTADOCLIENTESToolStripMenuItem.Click += lISTADOCLIENTESToolStripMenuItem_Click;
-            // 
-            // cUENTASCORRIENTESToolStripMenuItem
-            // 
-            cUENTASCORRIENTESToolStripMenuItem.Name = "cUENTASCORRIENTESToolStripMenuItem";
-            cUENTASCORRIENTESToolStripMenuItem.Size = new Size(206, 24);
-            cUENTASCORRIENTESToolStripMenuItem.Text = "Cuentas Corrientes";
-            cUENTASCORRIENTESToolStripMenuItem.Click += cUENTASCORRIENTESToolStripMenuItem_Click;
             // 
             // oFERTASToolStripMenuItem
             // 
@@ -671,6 +664,7 @@
             Controls.Add(tableLayoutPanel1);
             Controls.Add(menuStrip1);
             ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FAdministracion";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Panel Administración";
@@ -707,7 +701,6 @@
         private ToolStripMenuItem lISTADOEMPLEADOSToolStripMenuItem;
         private ToolStripMenuItem cLIENTESToolStripMenuItem;
         private ToolStripMenuItem lISTADOCLIENTESToolStripMenuItem;
-        private ToolStripMenuItem cUENTASCORRIENTESToolStripMenuItem;
         private ToolStripMenuItem pRODUCTOToolStripMenuItem;
         private ToolStripMenuItem sTOCKToolStripMenuItem;
         private ToolStripMenuItem mARCASToolStripMenuItem;

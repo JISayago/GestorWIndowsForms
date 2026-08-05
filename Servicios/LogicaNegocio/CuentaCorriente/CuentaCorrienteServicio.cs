@@ -7,7 +7,9 @@ using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
 using Servicios.LogicaNegocio.Movimiento;
+using Servicios.LogicaNegocio.Movimiento.DTO;
 using Servicios.LogicaNegocio.Producto.DTO;
+using System.ComponentModel;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Servicios.LogicaNegocio.CuentaCorriente
@@ -64,12 +66,16 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     LimiteDeuda = cuentacorrienteDto.LimiteDeuda,
                     LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo,
                     FechaVencimiento = cuentacorrienteDto.FechaVencimiento,
-                    //FechaActivacion = cuentacorrienteDto.FechaActivacion,// de momento automatico, pero lo dejamos por si en el futuro se quiere usar
-                    //FechaCreacion = cuentacorrienteDto.FechaCreacion,
+                    FechaActivacion = cuentacorrienteDto.FechaActivacion,// de momento automatico, pero lo dejamos por si en el futuro se quiere usar
+                    FechaCreacion = cuentacorrienteDto.FechaCreacion,
+                    TipoVencimiento = cuentacorrienteDto.TipoVencimiento,
                     EstaEliminado = false,
+                    EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Activa, // Por defecto al crearla, está activa
+                    ConDeuda = cuentacorrienteDto.Saldo < 0,
+                    CantidadMesesVencimiento = cuentacorrienteDto.CantidadMesesVencimiento,
                     ClienteId = cuentacorrienteDto.ClienteId,
                     CuentaCorrienteAutorizado = cuentacorrienteDto.DniAutorizados
-                        .Select(dni => new CuentaCorrienteAutorizado { Dni = dni })
+                        .Select(dni => new CuentaCorrienteAutorizado { Dni = long.Parse(dni)})
                         .ToList()
                 };
 
@@ -117,6 +123,92 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 };
             }
         }
+        public EstadoOperacion CargarSaldoCuentaCorriente(long cuentaCorrienteId,decimal nuevoSaldo)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+
+            var cuenta = context.CuentaCorriente
+                .FirstOrDefault(x =>
+                    x.CuentaCorrienteId == cuentaCorrienteId);
+
+
+            if (cuenta == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Cuenta corriente no encontrada."
+                };
+            }
+
+
+            decimal saldoAnterior = cuenta.Saldo;
+
+
+            if (saldoAnterior == nuevoSaldo)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "El saldo ingresado no genera cambios."
+                };
+            }
+
+
+            decimal diferencia = nuevoSaldo - saldoAnterior;
+
+
+            //---------------------------------------------
+            // Actualizar saldo
+            //---------------------------------------------
+
+            cuenta.Saldo = nuevoSaldo;
+
+
+            //---------------------------------------------
+            // Movimiento de caja
+            //---------------------------------------------
+            var cajaServicio = new Caja.CajaServicio();
+
+            var cajaId = cajaServicio.ObtenerIdDeUltimaCajaAbierta(context);
+
+            cajaServicio.RegistrarTransaccion(context, diferencia, TipoMovimiento.Ingreso, cajaId.Value);
+            CrearMovimientoCargaSaldoCuentaCorriente(cuenta.CuentaCorrienteId, diferencia, context);
+
+
+            context.SaveChanges();
+
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = "Saldo actualizado correctamente.",
+                EntidadId = cuenta.CuentaCorrienteId,
+                DatoExtra = cuenta.Saldo.ToString("C")
+            };
+        }
+
+        public void CrearMovimientoCargaSaldoCuentaCorriente(long cuentaCorrienteId,decimal monto,GestorContextDB context)
+        {
+            if (cuentaCorrienteId <= 0)
+                throw new Exception("No puede crearse el movimiento porque la cuenta corriente no posee un Id válido.");
+
+            var movimiento = new AccesoDatos.Entidades.Movimiento
+            {
+                NumeroMovimiento = $"MOV-SALDOCTACTE-{cuentaCorrienteId}-{DateTime.Now:yyyyMMddHHmmss}",
+                EntidadId = cuentaCorrienteId,
+                TipoEntidad = (int)TipoEntidadMovimiento.CuentaCorriente,
+                TipoMovimiento = (int)TipoMovimiento.Ingreso,
+                TipoMovimientoDetalle = (int)TipoMovimientoDetalle.CuentaCorriente,
+                Monto = Math.Abs(monto),
+                FechaMovimiento = DateTime.Now,
+                EstaEliminado = false
+            };
+
+            context.Movimientos.Add(movimiento);
+        }
+
 
         public EstadoOperacion Modificar(CuentaCorrienteDTO cuentacorrienteDto, long? cuentacorrienteId)
         {
@@ -135,31 +227,52 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 };
             }
 
-            bool cuentacorrienteDuplicada = context.CuentaCorriente
-                .Any(p => p.NombreCuentaCorriente == cuentacorrienteDto.NombreCuentaCorriente && p.NombreCuentaCorriente != cuentacorrienteEditar.NombreCuentaCorriente);
+            bool cuentaDuplicada = context.CuentaCorriente.Any(x =>
+                x.NombreCuentaCorriente == cuentacorrienteDto.NombreCuentaCorriente &&
+                x.CuentaCorrienteId != cuentacorrienteEditar.CuentaCorrienteId);
 
-            if (cuentacorrienteDuplicada)
+            if (cuentaDuplicada)
             {
                 return new EstadoOperacion
                 {
                     Exitoso = false,
-                    Mensaje = "Ya existe una cuenta corriente con le mismo nombre."
+                    Mensaje = "Ya existe una cuenta corriente con el mismo nombre."
                 };
             }
 
-            // Modificar los campos
+
+            //---------------------------------------------------
+            // Actualizar datos
+            //---------------------------------------------------
+
             cuentacorrienteEditar.NombreCuentaCorriente = cuentacorrienteDto.NombreCuentaCorriente;
             cuentacorrienteEditar.Saldo = cuentacorrienteDto.Saldo;
             cuentacorrienteEditar.LimiteDeuda = cuentacorrienteDto.LimiteDeuda;
             cuentacorrienteEditar.LimiteDeudaActivo = cuentacorrienteDto.LimiteDeudaActivo;
             cuentacorrienteEditar.FechaVencimiento = cuentacorrienteDto.FechaVencimiento;
-            
+            cuentacorrienteEditar.CantidadMesesVencimiento = cuentacorrienteDto.CantidadMesesVencimiento;
+            cuentacorrienteEditar.TipoVencimiento = cuentacorrienteDto.TipoVencimiento;
+
+            //---------------------------------------------------
+            // Actualizar DNIs
+            //---------------------------------------------------
 
             cuentacorrienteEditar.CuentaCorrienteAutorizado.Clear();
 
             foreach (var dni in cuentacorrienteDto.DniAutorizados)
-                cuentacorrienteEditar.CuentaCorrienteAutorizado.Add(new AccesoDatos.Entidades.CuentaCorrienteAutorizado { Dni = dni });
+            {
+                cuentacorrienteEditar.CuentaCorrienteAutorizado.Add(
+                    new CuentaCorrienteAutorizado
+                    {
+                        Dni = long.Parse(dni)
+                    });
+            }
 
+            //---------------------------------------------------
+            // Cambió el saldo
+            //---------------------------------------------------
+
+          
             context.SaveChanges();
 
             return new EstadoOperacion
@@ -169,14 +282,15 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 EntidadId = cuentacorrienteEditar.CuentaCorrienteId
             };
         }
-
         public CuentaCorrienteDTO ObtenerCuentaCorrientePorId(long cuentacorrienteId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
             var cuentacorrienteBusqueda = context.CuentaCorriente
+                .Include(x => x.Cliente)
+                .ThenInclude(c => c.Persona)
                 .Include(x => x.CuentaCorrienteAutorizado)
-                .FirstOrDefault(x => x.CuentaCorrienteId == cuentacorrienteId);
+                .FirstOrDefault(x => x.CuentaCorrienteId == cuentacorrienteId && x.Cliente.CuentaCorrienteId == cuentacorrienteId);
 
             if (cuentacorrienteBusqueda == null)
                 throw new Exception("No se encontró la cuentacorriente.");
@@ -188,10 +302,15 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 NombreCuentaCorriente = cuentacorrienteBusqueda.NombreCuentaCorriente,
                 LimiteDeudaActivo = cuentacorrienteBusqueda.LimiteDeudaActivo,
                 FechaVencimiento = cuentacorrienteBusqueda.FechaVencimiento,
-                //FechaCreacion = cuentacorrienteBusqueda.FechaCreacion,
-                //FechaActivacion = cuentacorrienteBusqueda.FechaActivacion,
+                FechaCreacion = cuentacorrienteBusqueda.FechaCreacion,
+                FechaActivacion = cuentacorrienteBusqueda.FechaActivacion,
+                CantidadMesesVencimiento = cuentacorrienteBusqueda.CantidadMesesVencimiento,
+                ConDeuda = cuentacorrienteBusqueda.ConDeuda,
+                EstadoCtaCte = cuentacorrienteBusqueda.EstadoCuentaCorriente,
+                TipoVencimiento = cuentacorrienteBusqueda.TipoVencimiento,
                 CuentaCorrienteId = cuentacorrienteBusqueda.CuentaCorrienteId,
-                DniAutorizados = cuentacorrienteBusqueda.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
+                NombreCliente = $"{cuentacorrienteBusqueda.Cliente.Persona.Nombre}{cuentacorrienteBusqueda.Cliente.Persona.Apellido}",
+                DniAutorizados = cuentacorrienteBusqueda.CuentaCorrienteAutorizado.Select(dni => dni.Dni.ToString()).ToList()
             };
         }
 
@@ -331,11 +450,15 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     LimiteDeudaActivo = x.LimiteDeudaActivo,
                     FechaVencimiento = x.FechaVencimiento,
                     EstadoCtaCte = x.EstadoCuentaCorriente,
-                    //FechaActivacion = x.FechaActivacion,
-                    //FechaCreacion = x.FechaCreacion,
+                    FechaActivacion = x.FechaActivacion,
+                    FechaCreacion = x.FechaCreacion,
+                    ConDeuda = x.ConDeuda,
+                    CantidadMesesVencimiento = x.CantidadMesesVencimiento,
+                    TipoVencimiento = x.TipoVencimiento,
+                   
 
                     DniAutorizados = x.CuentaCorrienteAutorizado
-                        .Select(a => a.Dni)
+                        .Select(a => a.Dni.ToString())
                         .ToList()
                 })
                 .ToList();
@@ -485,7 +608,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 FechaCreacion = x.FechaCreacion,
                 FechaActivacion = x.FechaActivacion,
                 EstadoCtaCte = x.EstadoCuentaCorriente,
-                DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
+                DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni.ToString()).ToList()
             };
         }
 
@@ -508,7 +631,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     FechaActivacion = x.FechaActivacion,
                     CuentaCorrienteId = x.CuentaCorrienteId,
                     NombreCliente = $"{x.Cliente.Persona.Nombre} {x.Cliente.Persona.Apellido}",
-                    DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni).ToList()
+                    DniAutorizados = x.CuentaCorrienteAutorizado.Select(dni => dni.Dni.ToString()).ToList()
                 })
                 .ToList();
             return cuentasVencidas;
@@ -531,6 +654,225 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             {
                 cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Activa;
             }
+        }
+
+
+        public ResultadoPaginacion<MovimientoDTO> ObtenerMovimientosPorCuentaCorriente(long cuentaCorrienteId,FiltroConsulta filtros)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var query = context.Movimientos
+            .Where(x =>
+                x.TipoMovimientoDetalle == (int)TipoMovimientoDetalle.CuentaCorriente &&
+                x.TipoEntidad == (int)TipoEntidadMovimiento.CuentaCorriente &&
+                x.EntidadId == cuentaCorrienteId)
+            .AsNoTracking()
+            .AsQueryable();
+
+            //==========================================
+            // ELIMINADOS
+            //==========================================
+
+            if (filtros.Bool2)
+            {
+                // Histórico
+            }
+            else if (filtros.Bool1)
+            {
+                query = query.Where(x => x.EstaEliminado);
+            }
+            else
+            {
+                query = query.Where(x => !x.EstaEliminado);
+            }
+
+            //==========================================
+            // BUSQUEDA
+            //==========================================
+
+            if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+            {
+                var texto = filtros.TextoBuscar.Trim();
+
+                query = query.Where(x =>
+                    x.NumeroMovimiento.Contains(texto));
+            }
+
+            //==========================================
+            // FECHA
+            //==========================================
+
+            bool hayFiltroFecha =
+                filtros.FechaDesde.HasValue ||
+                filtros.FechaHasta.HasValue;
+
+            if (hayFiltroFecha)
+            {
+                if (filtros.FechaDesde.HasValue)
+                {
+                    query = query.Where(x =>
+                        x.FechaMovimiento >= filtros.FechaDesde.Value);
+                }
+
+                if (filtros.FechaHasta.HasValue)
+                {
+                    var hasta = filtros.FechaHasta.Value.AddDays(1);
+
+                    query = query.Where(x =>
+                        x.FechaMovimiento < hasta);
+                }
+            }
+            else
+            {
+                var fechaLimite = filtros.Bool2
+                    ? DateTime.Now.AddMonths(-6)
+                    : DateTime.Now.AddMonths(-2);
+
+                query = query.Where(x =>
+                    x.FechaMovimiento >= fechaLimite);
+            }
+
+            //==========================================
+            // TOTAL
+            //==========================================
+
+            var total = query.Count();
+
+            var totalPaginas =
+                (int)Math.Ceiling((double)total / filtros.PageSize);
+
+            if (totalPaginas <= 0)
+                totalPaginas = 1;
+
+            if (filtros.Page > totalPaginas)
+                filtros.Page = totalPaginas;
+
+            if (filtros.Page < 1)
+                filtros.Page = 1;
+
+            //==========================================
+            // DATOS
+            //==========================================
+
+            var data = query
+                .OrderByDescending(x => x.FechaMovimiento)
+                .Skip((filtros.Page - 1) * filtros.PageSize)
+                .Take(filtros.PageSize)
+                .Select(x => new MovimientoDTO
+                {
+                    MovimientoId = x.MovimientoId,
+                    NumeroMovimiento = x.NumeroMovimiento,
+                    TipoMovimiento = x.TipoMovimiento,
+                    TipoMovimientoDetalle = x.TipoMovimientoDetalle,
+                    Monto = x.Monto,
+                    FechaMovimiento = x.FechaMovimiento,
+                    EstaEliminado = x.EstaEliminado,
+                    EntidadId = x.EntidadId,
+                    TipoEntidad = x.TipoEntidad
+                })
+                .ToList();
+
+            return new ResultadoPaginacion<MovimientoDTO>
+            {
+                Items = data,
+                TotalRegistros = total,
+                Page = filtros.Page,
+                PageSize = filtros.PageSize
+            };
+        }
+
+        public EstadoOperacion CerrarCuentaCorriente(long ctacteId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var cuenta = context.CuentaCorriente
+                .FirstOrDefault(x => x.CuentaCorrienteId == ctacteId);
+
+            if (cuenta == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Cuenta corriente no encontrada."
+                };
+            }
+
+            if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Cerrada)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "La cuenta corriente ya se encuentra cerrada."
+                };
+            }
+
+            if (cuenta.Saldo < 0)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "No es posible cerrar la cuenta corriente porque posee una deuda pendiente. Debe cancelar la deuda antes de cerrarla."
+                };
+            }
+
+            cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Cerrada;
+
+
+            context.SaveChanges();
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = "Cuenta corriente cerrada correctamente.",
+                EntidadId = cuenta.CuentaCorrienteId
+            };
+        }
+
+        public EstadoOperacion ActivarCuentaCorriente(long ctacteId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var cuenta = context.CuentaCorriente
+                .FirstOrDefault(x => x.CuentaCorrienteId == ctacteId);
+
+            if (cuenta == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Cuenta corriente no encontrada."
+                };
+            }
+
+            if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Activa)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "La cuenta corriente ya se encuentra activa."
+                };
+            }
+
+            if (cuenta.Saldo < 0)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "No es posible activar la cuenta corriente porque posee una deuda pendiente. Debe cancelar la deuda antes de activarla."
+                };
+            }
+
+            cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Activa;
+            cuenta.FechaActivacion = DateTime.Now;
+
+            context.SaveChanges();
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = "Cuenta corriente activada correctamente.",
+                EntidadId = cuenta.CuentaCorrienteId
+            };
         }
     }
 }

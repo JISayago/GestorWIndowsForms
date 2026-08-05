@@ -555,7 +555,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                         // Navegación hacia el nombre del cliente
                         NombreCliente = cc.Cliente.Persona.Nombre + " " + cc.Cliente.Persona.Apellido,
                         // Mapeo de DNI autorizados (asumiendo relación o lista)
-                        DniAutorizados = cc.CuentaCorrienteAutorizado.Select(a => a.Dni).ToList()
+                        DniAutorizados = cc.CuentaCorrienteAutorizado.Select(a => a.Dni.ToString()).ToList()
                         }).FirstOrDefault()
                        : null
 
