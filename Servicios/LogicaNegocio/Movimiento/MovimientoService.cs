@@ -117,6 +117,7 @@ namespace Servicios.LogicaNegocio.Movimiento
 
                 context.Movimientos.Add(movimiento);
 
+
                 //Si el contexto es local, guardamos los cambios directamente
                 if (crearContextoLocal)
                     context.SaveChanges();
