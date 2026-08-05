@@ -16,7 +16,7 @@ using System.Windows.Forms;
 
 namespace Presentacion.Core.CuentaCorriente
 {
-    public partial class FCuentaCorrienteValidacion : Form
+    public partial class FCuentaCorrienteValidacion : FBase.FBase
     {
         private readonly ICuentaCorrienteServicio _ctacteServicio;
         private CuentaCorrienteDTO ctaCte;

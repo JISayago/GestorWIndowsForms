@@ -1,4 +1,6 @@
-﻿using Servicios.LogicaNegocio.Movimiento;
+﻿using Presentacion.FBase.Helpers;
+using Servicios.Helpers.Movimiento;
+using Servicios.LogicaNegocio.Movimiento;
 using Servicios.LogicaNegocio.Movimiento.DTO;
 using System;
 using System.Drawing;
@@ -8,7 +10,7 @@ using TuProyecto.Presentacion.Paneles; // Asegúrate de apuntar a la carpeta de 
 
 namespace TuProyecto.Presentacion
 {
-    public partial class FMovimientoDetallado : Form
+    public partial class FMovimientoDetallado : global::Presentacion.FBase.FBase
     {
         private readonly long _movimientoId;
 
@@ -27,24 +29,25 @@ namespace TuProyecto.Presentacion
         private void CrearInterfazGrafica()
         {
             this.Size = new Size(1000, 800);
-            this.MinimumSize = new Size(900, 700);
+            // Evita que el layout se rompa (grid de Venta, TextBox de detalle con MaximumSize fijo)
+            // si el usuario achica demasiado la ventana.
+            this.MinimumSize = new Size(750, 550);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "Consulta Detallada de Movimiento";
-            this.BackColor = Color.White;
+            // El color de fondo lo aplica AplicarTema (FBase) al cargar el formulario.
 
             // 1. Panel Superior (General)
             _panelGeneral = new PanelMovimientoGeneral();
             _panelGeneral.Dock = DockStyle.Top;
 
             // 2. Panel Inferior (Botones)
-            Panel pnlBotonera = new Panel { Dock = DockStyle.Bottom, Height = 70, BackColor = Color.FromArgb(245, 245, 245) };
+            Panel pnlBotonera = new Panel { Dock = DockStyle.Bottom, Height = 70, BackColor = TemaSistema.Fondo };
             _btnCerrar = new Button
             {
                 Text = "Cerrar Detalle",
                 Size = new Size(150, 40),
-                Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
-                FlatStyle = FlatStyle.Flat,
-                BackColor = Color.White
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Right
+                // Colores y FlatStyle los aplica AplicarTema (FBase), igual que en el resto de los forms.
             };
             // Posición fija inicial, el Anchor lo mantendrá ahí
             _btnCerrar.Location = new Point(pnlBotonera.Width - 170, 15);
@@ -66,6 +69,13 @@ namespace TuProyecto.Presentacion
         private void FrmDetalleMovimiento_Load(object sender, EventArgs e)
         {
             CargarInformacion();
+
+            // Foco inicial en "Cerrar Detalle": permite cerrar con Enter/Espacio sin usar el mouse,
+            // y evita que el modal quede sin ningún control activo al abrirse.
+            // Se valida que el form siga abierto porque CargarInformacion pudo haberlo cerrado
+            // (caso de error o "movimiento no encontrado").
+            if (!this.IsDisposed)
+                _btnCerrar.Focus();
         }
 
         private void CargarInformacion()
@@ -93,7 +103,11 @@ namespace TuProyecto.Presentacion
             }
             catch (Exception ex)
             {
+                // Antes solo se mostraba el error y la ventana quedaba abierta con el panel general
+                // vacío (sin datos cargados) — daba la sensación de que el sistema se colgó. Ahora se
+                // cierra igual que en el caso "datos == null", que es el otro camino de fallo esperado.
                 MessageBox.Show("Error al cargar datos: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Close();
             }
         }
 
@@ -108,11 +122,15 @@ namespace TuProyecto.Presentacion
                 return;
             }
 
-            // Dependiendo de tu lógica de Enums, evalúas el tipo
-            // Supongamos que 1 es Venta y 2 es Gasto (Ajusta los números según tu base de datos)
-            switch (datos.TipoEntidad.Value)
+            if (!Enum.IsDefined(typeof(TipoEntidadMovimiento), datos.TipoEntidad.Value))
             {
-                case 1: // VENTA - AJUSTA EL NÚMERO SEGÚN TU ENUM
+                MostrarAvisoSinDetalle($"Tipo de entidad desconocida o no soportada (Código: {datos.TipoEntidad.Value}).");
+                return;
+            }
+
+            switch ((TipoEntidadMovimiento)datos.TipoEntidad.Value)
+            {
+                case TipoEntidadMovimiento.Venta:
                     if (datos.Venta != null)
                     {
                         var panelVenta = new PanelMovimientoVenta();
@@ -125,7 +143,7 @@ namespace TuProyecto.Presentacion
                     }
                     break;
 
-                case 2: // CTACTEs
+                case TipoEntidadMovimiento.CuentaCorriente:
                     if (datos.CuentaCorriente != null)
                     {
                         var panelCC = new PanelMovimientoCuentaCorriente();
@@ -138,7 +156,7 @@ namespace TuProyecto.Presentacion
                     }
                     break;
 
-                case 5: // GASTO
+                case TipoEntidadMovimiento.Gasto:
                     if (datos.Gasto != null)
                     {
                         var panelGasto = new PanelMovimientoGasto();
@@ -154,7 +172,7 @@ namespace TuProyecto.Presentacion
                     break;
 
                 default:
-                    MostrarAvisoSinDetalle($"Tipo de entidad desconocida o no soportada (Código: {datos.TipoEntidad.Value}).");
+                    MostrarAvisoSinDetalle($"Tipo de entidad '{(TipoEntidadMovimiento)datos.TipoEntidad.Value}' sin panel de detalle asociado.");
                     break;
             }
         }
@@ -162,20 +180,18 @@ namespace TuProyecto.Presentacion
         // Método auxiliar para no repetir código visual de advertencia
         private void MostrarAvisoSinDetalle(string mensaje)
         {
+            // Antes quedaba pegado en la esquina superior izquierda (Point(20,20)), se veía como
+            // texto perdido. Ahora ocupa todo el contenedor dinámico y centra el mensaje, como un
+            // estado vacío prolijo en vez de una advertencia suelta.
             Label lblAviso = new Label
             {
                 Text = mensaje,
-                AutoSize = true,
-                Location = new Point(20, 20),
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Segoe UI", 11, FontStyle.Italic),
-                ForeColor = Color.Gray
+                ForeColor = TemaSistema.TextoSecundario
             };
             _pnlContenedorDinamico.Controls.Add(lblAviso);
-        }
-
-        private void InitializeComponent()
-        {
-
         }
     }
 }
