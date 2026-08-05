@@ -17,7 +17,7 @@ namespace AccesoDatos.Migrations
                 type: "nvarchar(max)",
                 nullable: false,
                 oldClrType: typeof(long),
-                oldType: "bigint");
+                oldType: "bigint"); 
         }
 
         /// <inheritdoc />
