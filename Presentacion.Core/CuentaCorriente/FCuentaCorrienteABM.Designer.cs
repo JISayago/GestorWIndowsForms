@@ -56,6 +56,8 @@
             btnCargarLimite = new Button();
             tbcBase = new TabControl();
             tbpInicio = new TabPage();
+            lblFechaUltimaActivacion = new Label();
+            lblFechaUltimaActivacionTitulo = new Label();
             btnActivar = new Button();
             btnCerrarCtacte = new Button();
             lblFechaCreacion = new Label();
@@ -74,8 +76,6 @@
             dgvGrilla = new DataGridView();
             lblListadoMovimientos = new Label();
             tbpDnis = new TabPage();
-            lblFechaUltimaActivacion = new Label();
-            lblFechaUltimaActivacionTitulo = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudCantidadMeses).BeginInit();
@@ -93,7 +93,7 @@
             // lblccorriente
             // 
             lblccorriente.AutoSize = true;
-            lblccorriente.Location = new Point(6, 65);
+            lblccorriente.Location = new Point(7, 65);
             lblccorriente.Name = "lblccorriente";
             lblccorriente.Size = new Size(68, 15);
             lblccorriente.TabIndex = 0;
@@ -102,7 +102,7 @@
             // lblSaldo
             // 
             lblSaldo.AutoSize = true;
-            lblSaldo.Location = new Point(584, 369);
+            lblSaldo.Location = new Point(567, 370);
             lblSaldo.Name = "lblSaldo";
             lblSaldo.Size = new Size(96, 15);
             lblSaldo.TabIndex = 1;
@@ -111,7 +111,7 @@
             // lblLimiteDeuda
             // 
             lblLimiteDeuda.AutoSize = true;
-            lblLimiteDeuda.Location = new Point(173, 370);
+            lblLimiteDeuda.Location = new Point(154, 370);
             lblLimiteDeuda.Name = "lblLimiteDeuda";
             lblLimiteDeuda.Size = new Size(220, 15);
             lblLimiteDeuda.TabIndex = 3;
@@ -120,7 +120,7 @@
             // lblFechaVencimientoTitulo
             // 
             lblFechaVencimientoTitulo.AutoSize = true;
-            lblFechaVencimientoTitulo.Location = new Point(22, 125);
+            lblFechaVencimientoTitulo.Location = new Point(19, 125);
             lblFechaVencimientoTitulo.Name = "lblFechaVencimientoTitulo";
             lblFechaVencimientoTitulo.Size = new Size(107, 15);
             lblFechaVencimientoTitulo.TabIndex = 5;
@@ -129,7 +129,7 @@
             // chkLimiteDeuda
             // 
             chkLimiteDeuda.AutoSize = true;
-            chkLimiteDeuda.Location = new Point(22, 335);
+            chkLimiteDeuda.Location = new Point(22, 336);
             chkLimiteDeuda.Name = "chkLimiteDeuda";
             chkLimiteDeuda.Size = new Size(104, 19);
             chkLimiteDeuda.TabIndex = 7;
@@ -139,7 +139,7 @@
             // 
             // txtNombreCC
             // 
-            txtNombreCC.Location = new Point(88, 62);
+            txtNombreCC.Location = new Point(120, 62);
             txtNombreCC.Name = "txtNombreCC";
             txtNombreCC.Size = new Size(200, 23);
             txtNombreCC.TabIndex = 8;
@@ -147,7 +147,7 @@
             // lblDni
             // 
             lblDni.AutoSize = true;
-            lblDni.Location = new Point(201, 30);
+            lblDni.Location = new Point(210, 39);
             lblDni.Name = "lblDni";
             lblDni.Size = new Size(246, 15);
             lblDni.TabIndex = 13;
@@ -157,21 +157,21 @@
             // 
             lstDnis.FormattingEnabled = true;
             lstDnis.ItemHeight = 15;
-            lstDnis.Location = new Point(201, 90);
+            lstDnis.Location = new Point(201, 108);
             lstDnis.Name = "lstDnis";
-            lstDnis.Size = new Size(282, 109);
+            lstDnis.Size = new Size(316, 139);
             lstDnis.TabIndex = 19;
             // 
             // txtNuevoDni
             // 
-            txtNuevoDni.Location = new Point(201, 55);
+            txtNuevoDni.Location = new Point(201, 79);
             txtNuevoDni.Name = "txtNuevoDni";
-            txtNuevoDni.Size = new Size(160, 23);
+            txtNuevoDni.Size = new Size(194, 23);
             txtNuevoDni.TabIndex = 16;
             // 
             // btnAgregarDni
             // 
-            btnAgregarDni.Location = new Point(367, 54);
+            btnAgregarDni.Location = new Point(401, 77);
             btnAgregarDni.Name = "btnAgregarDni";
             btnAgregarDni.Size = new Size(55, 25);
             btnAgregarDni.TabIndex = 17;
@@ -181,7 +181,7 @@
             // 
             // btnEliminarDni
             // 
-            btnEliminarDni.Location = new Point(428, 54);
+            btnEliminarDni.Location = new Point(462, 77);
             btnEliminarDni.Name = "btnEliminarDni";
             btnEliminarDni.Size = new Size(55, 25);
             btnEliminarDni.TabIndex = 18;
@@ -193,7 +193,7 @@
             // 
             lblCliente.AutoSize = true;
             lblCliente.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblCliente.Location = new Point(6, 12);
+            lblCliente.Location = new Point(3, 12);
             lblCliente.Name = "lblCliente";
             lblCliente.Size = new Size(96, 32);
             lblCliente.TabIndex = 20;
@@ -204,7 +204,7 @@
             // 
             lblNombreCliente.AutoSize = true;
             lblNombreCliente.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblNombreCliente.Location = new Point(108, 12);
+            lblNombreCliente.Location = new Point(120, 12);
             lblNombreCliente.Name = "lblNombreCliente";
             lblNombreCliente.Size = new Size(114, 32);
             lblNombreCliente.TabIndex = 21;
@@ -215,7 +215,7 @@
             // 
             groupBox1.Controls.Add(rbVencimientoManual);
             groupBox1.Controls.Add(rbVencimientoMensual);
-            groupBox1.Location = new Point(397, 29);
+            groupBox1.Location = new Point(397, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(333, 51);
             groupBox1.TabIndex = 24;
@@ -247,7 +247,7 @@
             // 
             // nudCantidadMeses
             // 
-            nudCantidadMeses.Location = new Point(695, 94);
+            nudCantidadMeses.Location = new Point(695, 69);
             nudCantidadMeses.Name = "nudCantidadMeses";
             nudCantidadMeses.Size = new Size(35, 23);
             nudCantidadMeses.TabIndex = 25;
@@ -256,7 +256,7 @@
             // lblFechaVencimiento
             // 
             lblFechaVencimiento.AutoSize = true;
-            lblFechaVencimiento.Location = new Point(223, 125);
+            lblFechaVencimiento.Location = new Point(173, 125);
             lblFechaVencimiento.Name = "lblFechaVencimiento";
             lblFechaVencimiento.Size = new Size(53, 15);
             lblFechaVencimiento.TabIndex = 26;
@@ -265,7 +265,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(395, 94);
+            label2.Location = new Point(403, 70);
             label2.Name = "label2";
             label2.Size = new Size(209, 15);
             label2.TabIndex = 27;
@@ -273,7 +273,7 @@
             // 
             // btnCargarSaldoCtaCte
             // 
-            btnCargarSaldoCtaCte.Location = new Point(433, 360);
+            btnCargarSaldoCtaCte.Location = new Point(434, 361);
             btnCargarSaldoCtaCte.Name = "btnCargarSaldoCtaCte";
             btnCargarSaldoCtaCte.Size = new Size(127, 33);
             btnCargarSaldoCtaCte.TabIndex = 32;
@@ -283,7 +283,7 @@
             // 
             // btnCargarLimite
             // 
-            btnCargarLimite.Location = new Point(22, 360);
+            btnCargarLimite.Location = new Point(22, 361);
             btnCargarLimite.Name = "btnCargarLimite";
             btnCargarLimite.Size = new Size(127, 33);
             btnCargarLimite.TabIndex = 33;
@@ -334,6 +334,28 @@
             tbpInicio.Text = "Configuración";
             tbpInicio.UseVisualStyleBackColor = true;
             // 
+            // lblFechaUltimaActivacion
+            // 
+            lblFechaUltimaActivacion.AutoSize = true;
+            lblFechaUltimaActivacion.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
+            lblFechaUltimaActivacion.Location = new Point(239, 269);
+            lblFechaUltimaActivacion.Name = "lblFechaUltimaActivacion";
+            lblFechaUltimaActivacion.Size = new Size(135, 32);
+            lblFechaUltimaActivacion.TabIndex = 51;
+            lblFechaUltimaActivacion.Tag = "NoModificarConBase";
+            lblFechaUltimaActivacion.Text = "01/08/2026";
+            // 
+            // lblFechaUltimaActivacionTitulo
+            // 
+            lblFechaUltimaActivacionTitulo.AutoSize = true;
+            lblFechaUltimaActivacionTitulo.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
+            lblFechaUltimaActivacionTitulo.Location = new Point(22, 269);
+            lblFechaUltimaActivacionTitulo.Name = "lblFechaUltimaActivacionTitulo";
+            lblFechaUltimaActivacionTitulo.Size = new Size(211, 32);
+            lblFechaUltimaActivacionTitulo.TabIndex = 50;
+            lblFechaUltimaActivacionTitulo.Tag = "NoModificarConBase";
+            lblFechaUltimaActivacionTitulo.Text = "Última Activacion:";
+            // 
             // btnActivar
             // 
             btnActivar.Location = new Point(536, 247);
@@ -380,7 +402,7 @@
             // 
             lblEstado.AutoSize = true;
             lblEstado.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblEstado.Location = new Point(203, 208);
+            lblEstado.Location = new Point(120, 217);
             lblEstado.Name = "lblEstado";
             lblEstado.Size = new Size(114, 32);
             lblEstado.TabIndex = 45;
@@ -391,7 +413,7 @@
             // 
             lblEstadoTitulo.AutoSize = true;
             lblEstadoTitulo.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblEstadoTitulo.Location = new Point(34, 220);
+            lblEstadoTitulo.Location = new Point(22, 217);
             lblEstadoTitulo.Name = "lblEstadoTitulo";
             lblEstadoTitulo.Size = new Size(92, 32);
             lblEstadoTitulo.TabIndex = 44;
@@ -419,11 +441,11 @@
             tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.66667F));
             tableLayoutPanel10.Controls.Add(tableLayoutPanel9, 1, 0);
             tableLayoutPanel10.Controls.Add(pbxLogo, 0, 0);
-            tableLayoutPanel10.Location = new Point(172, 317);
+            tableLayoutPanel10.Location = new Point(198, 329);
             tableLayoutPanel10.Name = "tableLayoutPanel10";
             tableLayoutPanel10.RowCount = 1;
             tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel10.Size = new Size(499, 58);
+            tableLayoutPanel10.Size = new Size(473, 46);
             tableLayoutPanel10.TabIndex = 37;
             // 
             // tableLayoutPanel9
@@ -434,11 +456,11 @@
             tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
             tableLayoutPanel9.Controls.Add(tableLayoutPanel11, 1, 0);
             tableLayoutPanel9.Controls.Add(lblTotalRegistros, 0, 0);
-            tableLayoutPanel9.Location = new Point(169, 3);
+            tableLayoutPanel9.Location = new Point(160, 3);
             tableLayoutPanel9.Name = "tableLayoutPanel9";
             tableLayoutPanel9.RowCount = 1;
             tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 70F));
-            tableLayoutPanel9.Size = new Size(327, 52);
+            tableLayoutPanel9.Size = new Size(310, 40);
             tableLayoutPanel9.TabIndex = 9;
             // 
             // tableLayoutPanel11
@@ -451,11 +473,11 @@
             tableLayoutPanel11.Controls.Add(lblPagina, 1, 0);
             tableLayoutPanel11.Controls.Add(btnAnterior, 0, 0);
             tableLayoutPanel11.Controls.Add(btnSiguiente, 2, 0);
-            tableLayoutPanel11.Location = new Point(133, 3);
+            tableLayoutPanel11.Location = new Point(127, 3);
             tableLayoutPanel11.Name = "tableLayoutPanel11";
             tableLayoutPanel11.RowCount = 1;
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel11.Size = new Size(191, 46);
+            tableLayoutPanel11.Size = new Size(180, 34);
             tableLayoutPanel11.TabIndex = 7;
             // 
             // lblPagina
@@ -463,7 +485,7 @@
             lblPagina.Anchor = AnchorStyles.None;
             lblPagina.AutoSize = true;
             lblPagina.Font = new Font("Segoe UI Black", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblPagina.Location = new Point(60, 10);
+            lblPagina.Location = new Point(55, 4);
             lblPagina.Name = "lblPagina";
             lblPagina.Size = new Size(69, 25);
             lblPagina.TabIndex = 1;
@@ -476,7 +498,7 @@
             btnAnterior.Font = new Font("Segoe UI Black", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnAnterior.Location = new Point(3, 3);
             btnAnterior.Name = "btnAnterior";
-            btnAnterior.Size = new Size(41, 40);
+            btnAnterior.Size = new Size(39, 28);
             btnAnterior.TabIndex = 2;
             btnAnterior.Text = "<";
             btnAnterior.UseVisualStyleBackColor = true;
@@ -485,9 +507,9 @@
             // 
             btnSiguiente.Anchor = AnchorStyles.None;
             btnSiguiente.Font = new Font("Segoe UI Black", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnSiguiente.Location = new Point(145, 3);
+            btnSiguiente.Location = new Point(138, 3);
             btnSiguiente.Name = "btnSiguiente";
-            btnSiguiente.Size = new Size(43, 40);
+            btnSiguiente.Size = new Size(39, 28);
             btnSiguiente.TabIndex = 7;
             btnSiguiente.Text = ">";
             btnSiguiente.UseVisualStyleBackColor = true;
@@ -497,7 +519,7 @@
             lblTotalRegistros.Anchor = AnchorStyles.None;
             lblTotalRegistros.AutoSize = true;
             lblTotalRegistros.Font = new Font("Segoe UI Black", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotalRegistros.Location = new Point(31, 13);
+            lblTotalRegistros.Location = new Point(28, 7);
             lblTotalRegistros.Name = "lblTotalRegistros";
             lblTotalRegistros.Size = new Size(67, 25);
             lblTotalRegistros.TabIndex = 0;
@@ -510,7 +532,7 @@
             pbxLogo.Location = new Point(80, 3);
             pbxLogo.Margin = new Padding(80, 3, 3, 3);
             pbxLogo.Name = "pbxLogo";
-            pbxLogo.Size = new Size(83, 52);
+            pbxLogo.Size = new Size(74, 40);
             pbxLogo.SizeMode = PictureBoxSizeMode.Zoom;
             pbxLogo.TabIndex = 8;
             pbxLogo.TabStop = false;
@@ -583,28 +605,6 @@
             tbpDnis.TabIndex = 2;
             tbpDnis.Text = "DNI habilitados";
             tbpDnis.UseVisualStyleBackColor = true;
-            // 
-            // lblFechaUltimaActivacion
-            // 
-            lblFechaUltimaActivacion.AutoSize = true;
-            lblFechaUltimaActivacion.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblFechaUltimaActivacion.Location = new Point(228, 269);
-            lblFechaUltimaActivacion.Name = "lblFechaUltimaActivacion";
-            lblFechaUltimaActivacion.Size = new Size(135, 32);
-            lblFechaUltimaActivacion.TabIndex = 51;
-            lblFechaUltimaActivacion.Tag = "NoModificarConBase";
-            lblFechaUltimaActivacion.Text = "01/08/2026";
-            // 
-            // lblFechaUltimaActivacionTitulo
-            // 
-            lblFechaUltimaActivacionTitulo.AutoSize = true;
-            lblFechaUltimaActivacionTitulo.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblFechaUltimaActivacionTitulo.Location = new Point(11, 269);
-            lblFechaUltimaActivacionTitulo.Name = "lblFechaUltimaActivacionTitulo";
-            lblFechaUltimaActivacionTitulo.Size = new Size(211, 32);
-            lblFechaUltimaActivacionTitulo.TabIndex = 50;
-            lblFechaUltimaActivacionTitulo.Tag = "NoModificarConBase";
-            lblFechaUltimaActivacionTitulo.Text = "Última Activacion:";
             // 
             // FCuentaCorrienteABM
             // 

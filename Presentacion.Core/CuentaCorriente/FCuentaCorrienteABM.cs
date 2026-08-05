@@ -581,42 +581,33 @@ namespace Presentacion.Core.CuentaCorriente
                 saldoInicial,
                 HelperFormularioCargaSaldoCtaCte.Saldo))
             {
-
                 if (f.ShowDialog() != DialogResult.OK)
                     return;
 
+                if (!CuentaCreada)
+                {
+                    // Todavía no existe la CtaCte (estamos en el alta), no hay Id para pegarle al service.
+                    // Acumulamos localmente; se persiste recién en EjecutarComandoNuevo -> Insertar.
+                    saldoInicial += f.MontoIngresado;
+
+                    ActualizarPantalla();
+                    return;
+                }
 
                 var respuesta = _cuentacorrienteServicio.CargarSaldoCuentaCorriente(
                     CuentaCorrienteId.Value,
                     f.MontoIngresado);
 
-
                 if (!respuesta.Exitoso)
                 {
-                    MessageBox.Show(
-                        respuesta.Mensaje,
-                        "Atención",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-
+                    MessageBox.Show(respuesta.Mensaje, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-
-                // Actualizar pantalla
-                //saldoInicial = respuesta.ValorActualizado.Value;
-
                 lblSaldo.Text = respuesta.DatoExtra;
 
+                MessageBox.Show(respuesta.Mensaje, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                MessageBox.Show(
-                    respuesta.Mensaje,
-                    "Atención",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-
-
-                // Si querés refrescar todo:
                 CargarDatosCuenta();
                 ActualizarPantalla();
             }

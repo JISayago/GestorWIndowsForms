@@ -4,11 +4,12 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Presentacion.Core.Movimiento;
-using TuProyecto.Presentacion.Paneles; // Asegúrate de apuntar a la carpeta de tus paneles
+using TuProyecto.Presentacion.Paneles;
+using Presentacion.FBase; // Asegúrate de apuntar a la carpeta de tus paneles
 
 namespace TuProyecto.Presentacion
 {
-    public partial class FMovimientoDetallado : Form
+    public partial class FMovimientoDetallado : FBase
     {
         private readonly long _movimientoId;
 

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Presentacion.Core.Venta
 {
-    public partial class FSeleccionCantidadPagos : Form
+    public partial class FSeleccionCantidadPagos : FBase.FBase
     {
         // Resultado: si el usuario elige múltiples pagos -> true, si elige 1 pago -> false
         public bool multiplePagos = false;
