@@ -105,7 +105,7 @@ namespace Servicios.LogicaNegocio.Movimiento
             {
                 var movimiento = new AccesoDatos.Entidades.Movimiento
                 {
-                    NumeroMovimiento = $"MOV{total}CTACTE",
+                    NumeroMovimiento = $"MOV-CTACTE-{cuentaCorrienteId}-{DateTime.Now:yyyyMMddHHmmss}",
                     TipoMovimiento = esPago ? (int)TipoMovimiento.Ingreso : (int)TipoMovimiento.Egreso, //Ingreso es pago de ctacte, Egreso es compra con ctacte
                     TipoMovimientoDetalle = (int)detalleTipo,
                     Monto = total,
@@ -116,6 +116,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                 };
 
                 context.Movimientos.Add(movimiento);
+
 
                 //Si el contexto es local, guardamos los cambios directamente
                 if (crearContextoLocal)

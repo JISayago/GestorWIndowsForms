@@ -59,6 +59,9 @@ namespace Servicios.Helpers.DatosObligatorios
                 progress?.Report((70, "Controlando vencimiento de lotes..."));
                 ControlarVencimientoLotes();
 
+                progress?.Report((75, "Controlando cuentas corrientes..."));
+                ControlCuentaCorriente();
+
                 // 🔥 NUEVO BLOQUE (lo importante para vos)
                 progress?.Report((80, "Cargando datos de pantalla principal..."));
                 InicializarDatosPantallaPrincipal();
@@ -92,6 +95,10 @@ namespace Servicios.Helpers.DatosObligatorios
             return OfertasActivarDesactivar.Inicializar(Context);
         }
 
+        private void ControlCuentaCorriente()
+        {
+          ControlEstadoCuentaCorriente.Inicializar(Context);
+        }
         private void InicializarAdmin()
         {
             UsuarioInicial.Inicializar(Context);

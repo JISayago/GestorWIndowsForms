@@ -23,7 +23,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         EstadoOperacion Insertar(CuentaCorrienteDTO cuentacorrienteDto);
         EstadoOperacion Modificar(CuentaCorrienteDTO cuentacorrienteDto, long? cuentacorrienteId);
         EstadoOperacion Eliminar(long cuentacorrienteId);
-        List<long> ObtenerDnisAutorizados(long? cuentaId);
+        List<string> ObtenerDnisAutorizados(long? cuentaId);
         CuentaCorrienteDTO ObtenerCuentaCorrientePorClienteId(long clienteId);
         bool PuedeComprar(long cuentaId, decimal monto);
         List<CuentaCorrienteDTO> ObtenerCtaCteVencidas(int cantidadDiasVencimiento);

@@ -75,7 +75,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     CantidadMesesVencimiento = cuentacorrienteDto.CantidadMesesVencimiento,
                     ClienteId = cuentacorrienteDto.ClienteId,
                     CuentaCorrienteAutorizado = cuentacorrienteDto.DniAutorizados
-                        .Select(dni => new CuentaCorrienteAutorizado { Dni = long.Parse(dni)})
+                        .Select(dni => new CuentaCorrienteAutorizado { Dni = dni})
                         .ToList()
                 };
 
@@ -196,7 +196,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             var movimiento = new AccesoDatos.Entidades.Movimiento
             {
-                NumeroMovimiento = $"MOV-SALDOCTACTE-{cuentaCorrienteId}-{DateTime.Now:yyyyMMddHHmmss}",
+                NumeroMovimiento = $"MOV-CTACTE-{cuentaCorrienteId}-{DateTime.Now:yyyyMMddHHmmss}",
                 EntidadId = cuentaCorrienteId,
                 TipoEntidad = (int)TipoEntidadMovimiento.CuentaCorriente,
                 TipoMovimiento = (int)TipoMovimiento.Ingreso,
@@ -264,7 +264,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 cuentacorrienteEditar.CuentaCorrienteAutorizado.Add(
                     new CuentaCorrienteAutorizado
                     {
-                        Dni = long.Parse(dni)
+                        Dni = dni
                     });
             }
 
@@ -479,31 +479,37 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         public bool PuedeComprar(long cuentaId, decimal monto)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
-            var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId && !c.EstaEliminado);
 
-            if (cuenta == null) return false;
+            var cuenta = context.CuentaCorriente
+                .FirstOrDefault(c => c.CuentaCorrienteId == cuentaId && !c.EstaEliminado);
 
-            // Si el administrador la cerró manualmente por otra razón, no puede comprar nada
-            if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Cerrada) return false;
+            if (cuenta == null)
+                return false;
+
+            // Cuenta cerrada manualmente o suspendida
+            if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Cerrada || cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Suspendida)
+                return false;
 
             decimal saldoProyectado = cuenta.Saldo - monto;
-            bool estaVencidaPorFecha = cuenta.FechaVencimiento.HasValue && cuenta.FechaVencimiento.Value < DateTime.Now;
 
-            // 🌟 REGLA CLAVE: Si está vencida por fecha, solo puede comprar si se mantiene en terreno positivo (gasta su propia plata)
-            if (estaVencidaPorFecha)
-            {
-                // Si el saldo proyectado baja de 0 (quiere pedir fiado estando vencido), se rechaza
-                if (saldoProyectado < 0) return false;
-            }
+            bool estaVencidaPorFecha =
+                cuenta.FechaVencimiento.HasValue &&
+                cuenta.FechaVencimiento.Value < DateTime.Now;
 
-            // Validación del límite de deuda (solo aplica si entra o está en saldo negativo)
-            if (cuenta.LimiteDeudaActivo && saldoProyectado < 0)
-            {
-                if (Math.Abs(saldoProyectado) > cuenta.LimiteDeuda)
-                    return false;
-            }
+            // Si está vencida solamente puede gastar saldo disponible.
+            if (estaVencidaPorFecha && saldoProyectado < 0)
+                return false;
 
-            return true;
+            // No permite deuda.
+            if (!cuenta.LimiteDeudaActivo)
+                return saldoProyectado >= 0;
+
+            // Permite deuda ilimitada.
+            if (cuenta.LimiteDeuda == 0)
+                return true;
+
+            // El saldo no puede ser menor al límite negativo permitido.
+            return saldoProyectado >= -cuenta.LimiteDeuda;
         }
 
         public EstadoOperacion RegistrarCompra(long cuentaId, decimal monto, long cajaId, string descripcion = "Compra")
@@ -575,7 +581,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             return new EstadoOperacion { Exitoso = true, Mensaje = "Devolución/Anulación registrada correctamente" };
         }
 
-        public List<long> ObtenerDnisAutorizados(long? cuentaId)
+        public List<string> ObtenerDnisAutorizados(long? cuentaId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             var cuenta = context.CuentaCorriente
@@ -637,24 +643,30 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             return cuentasVencidas;
         }
 
-        private void VerificarYActualizarEstadoInstancia(AccesoDatos.Entidades.CuentaCorriente cuenta)
-        {
-            // Si la cuenta está cerrada manualmente, no tocamos el estado de forma automática
-            if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Cerrada) return;
+       public static void VerificarYActualizarEstadoInstancia(AccesoDatos.Entidades.CuentaCorriente cuenta)
+{
+    cuenta.ConDeuda = cuenta.Saldo < 0;
 
-            bool estaVencidaPorFecha = cuenta.FechaVencimiento.HasValue && cuenta.FechaVencimiento.Value < DateTime.Now;
+    // Si fue cerrada manualmente no la modificamos.
+    if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Cerrada)
+        return;
 
-            // Está suspendida SOLOTE si la fecha expiró Y además nos debe plata
-            if (estaVencidaPorFecha && cuenta.Saldo < 0)
-            {
-                cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Suspendida;
-            }
-            // Si no venció, o si venció pero tiene saldo a favor (saldo >= 0), comercialmente está Activa
-            else
-            {
-                cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Activa;
-            }
-        }
+    bool suspendidaPorFecha =
+        cuenta.FechaVencimiento.HasValue &&
+        cuenta.FechaVencimiento.Value < DateTime.Now;
+
+    bool suspendidaPorLimite = false;
+
+    if (cuenta.LimiteDeudaActivo && cuenta.LimiteDeuda > 0)
+    {
+        suspendidaPorLimite = cuenta.Saldo <= -cuenta.LimiteDeuda;
+    }
+
+    cuenta.EstadoCuentaCorriente =
+        (suspendidaPorFecha || suspendidaPorLimite)
+            ? (int)EstadoCuentaCorriente.Suspendida
+            : (int)EstadoCuentaCorriente.Activa;
+}
 
 
         public ResultadoPaginacion<MovimientoDTO> ObtenerMovimientosPorCuentaCorriente(long cuentaCorrienteId,FiltroConsulta filtros)
