@@ -959,10 +959,7 @@ namespace Servicios.LogicaNegocio.Venta
 
             try
             {
-                var venta = CrearVentaInterna(
-                    context,
-                    ventaDto,
-                    TipoMovimientoDetalle.Venta);
+                var venta = CrearVentaInterna(context,ventaDto,TipoMovimientoDetalle.Venta);
 
                 transaction.Commit();
 
