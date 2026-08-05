@@ -22,7 +22,7 @@ namespace Presentacion.Core.CuentaCorriente
         private CuentaCorrienteDTO ctaCte;
         private long clienteId;
         private decimal monto;
-        private List<long> dniAutorizados;
+        private List<string> dniAutorizados;
 
         public FCuentaCorrienteValidacion(long clienteCargado, decimal montoCtaCte)
         {

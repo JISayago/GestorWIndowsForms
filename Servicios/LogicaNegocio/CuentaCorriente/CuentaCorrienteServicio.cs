@@ -75,7 +75,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     CantidadMesesVencimiento = cuentacorrienteDto.CantidadMesesVencimiento,
                     ClienteId = cuentacorrienteDto.ClienteId,
                     CuentaCorrienteAutorizado = cuentacorrienteDto.DniAutorizados
-                        .Select(dni => new CuentaCorrienteAutorizado { Dni = long.Parse(dni)})
+                        .Select(dni => new CuentaCorrienteAutorizado { Dni = dni})
                         .ToList()
                 };
 
@@ -264,7 +264,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 cuentacorrienteEditar.CuentaCorrienteAutorizado.Add(
                     new CuentaCorrienteAutorizado
                     {
-                        Dni = long.Parse(dni)
+                        Dni = dni
                     });
             }
 
@@ -581,7 +581,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             return new EstadoOperacion { Exitoso = true, Mensaje = "Devolución/Anulación registrada correctamente" };
         }
 
-        public List<long> ObtenerDnisAutorizados(long? cuentaId)
+        public List<string> ObtenerDnisAutorizados(long? cuentaId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             var cuenta = context.CuentaCorriente
