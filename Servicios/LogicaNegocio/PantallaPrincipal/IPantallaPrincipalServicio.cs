@@ -12,9 +12,11 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
     {
         List<NotificacionDTO> ObtenerNotificacionesProdutosVencidos();
         List<NotificacionDTO> ObtenerNotificacionesCtaCteVencidas();
-        //List<NotificacionDTO> ObtenerNotificacionesOfertasVencidas();
+        List<NotificacionDTO> ObtenerNotificacionesOfertasVencidas();
+        List<NotificacionDTO> ObtenerNotificacionesOfertasBajoStock();
         void NotifiacionesProductosVencidos();
-        //void NotificacionesOfertasVencidas();
+        void NotificacionesOfertasVencidas();
+        void NotificacionesOfertasBajoStock();
         void NotificacionesCtaCteVencidas();
         void MarcarNotificacionComoLeida(long notificacionId);
         DatosTurnoDTO ObtenerDatosTurno(long? cajaId, long usuarioId);

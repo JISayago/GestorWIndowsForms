@@ -862,8 +862,7 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         //    catch (Exception)
         //    {
         //        // opcional: loguear exception
-        //        return null;
-        //    }
+        //        return null;        //    }
         //}
         public ItemVentaDTO? ObtenerItemVentaOferta(long ofertaId)
         {
@@ -1112,31 +1111,61 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         //    return matches;
         //}
 
-        //public List<OfertaDTO> ObtenerOfertasVencidas(int diasHaciaAtras)
-        //{
-        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
+        public List<OfertaDTO> ObtenerOfertasVencidas(int diasHaciaAdelante)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-        //    DateTime fechaLimite = DateTime.Now.AddDays(-diasHaciaAtras);
+            // Igual criterio que ObtenerCtaCteVencidas: sin piso, así entran tanto las que
+            // ya vencieron como las que vencen dentro de la ventana indicada.
+            DateTime fechaLimite = DateTime.Now.AddDays(diasHaciaAdelante);
 
+            var ofertasVencidas = context.OfertasDescuentos
+                .AsNoTracking()
+                .Where(o => o.EstaActiva && o.FechaFin.HasValue && o.FechaFin.Value <= fechaLimite)
+                .Select(o => new OfertaDTO
+                {
+                    OfertaDescuentoId = o.OfertaDescuentoId,
+                    Descripcion = o.Descripcion,
+                    Codigo = o.Codigo,
+                    FechaInicio = o.FechaInicio,
+                    FechaFin = o.FechaFin,
+                    EstaActiva = o.EstaActiva,
+                    TipoOferta = o.TipoOferta,
+                    PorcentajeDescuento = o.PorcentajeDescuento,
+                    PrecioFinal = o.PrecioFinal
+                })
+                .ToList();
 
-        //    var ofertasVencidas = context.OfertasDescuentos
-        //        .Where(x => x.FechaFin < fechaLimite && x.EstaActiva)//DEBERIA SER SOLO LAS ACTIVAS
-        //        .Select(o => new OfertaDTO
-        //        {
-        //            OfertaDescuentoId = o.OfertaDescuentoId,
-        //            Descripcion = o.Descripcion,
-        //            Codigo = o.Codigo,
-        //            FechaInicio = o.FechaInicio,
-        //            FechaFin = o.FechaFin,
-        //            EstaActiva = o.EstaActiva,
-        //            esOfertaPorGrupo = o.esOfertaPorGrupo,
-        //            IdMarca = o.IdMarca,
-        //            IdRubro = o.IdRubro,
-        //            IdCategoria = o.IdCategoria,
-        //            GrupoNombre = o.GrupoNombre
-        //        }).ToList();
+            return ofertasVencidas;
+        }
 
-        //    return ofertasVencidas;
-        //}
+        public List<OfertaBajoStockDTO> ObtenerOfertasConBajoStock()
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            // Una oferta activa "se queda sin stock" cuando, para al menos uno de sus productos,
+            // lo que queda en depósito ya no alcanza para cubrir la cantidad que la oferta exige
+            // por aplicación (CantidadRequerida). Ej: un 2x1 que pide 2 unidades y sólo quedan 0 o 1.
+            var resultado = context.ProductosEnOfertasDescuentos
+                .AsNoTracking()
+                .Include(pe => pe.Producto)
+                .Include(pe => pe.OfertaDescuento)
+                .Where(pe => pe.OfertaDescuento.EstaActiva
+                          && !pe.Producto.EstaEliminado
+                          && pe.Producto.Stock <= pe.CantidadRequerida)
+                .Select(pe => new OfertaBajoStockDTO
+                {
+                    OfertaDescuentoId = pe.OfertaDescuentoId,
+                    Codigo = pe.OfertaDescuento.Codigo,
+                    Descripcion = pe.OfertaDescuento.Descripcion,
+                    ProductoId = pe.ProductoId,
+                    NombreProducto = pe.Producto.Descripcion,
+                    StockActual = pe.Producto.Stock,
+                    CantidadRequerida = pe.CantidadRequerida
+                })
+                .ToList();
+
+            return resultado;
+        }
     }
 }

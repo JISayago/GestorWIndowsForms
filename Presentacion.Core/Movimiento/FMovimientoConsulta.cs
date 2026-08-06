@@ -324,7 +324,7 @@ namespace Presentacion.Core.Movimiento
             }
 
             // =========================================
-            // MONTO (GRANDE)
+            // MONTO (GRANDE) — con signo y color según Ingreso/Egreso
             // =========================================
             if (grilla.Columns.Contains("Monto"))
             {
@@ -334,10 +334,16 @@ namespace Presentacion.Core.Movimiento
                 col.HeaderText = "Monto";
 
                 col.DefaultCellStyle.Format = "C2";
+                col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 
                 col.FillWeight = 150;   // 🔥 grande
                 col.MinimumWidth = 150;
             }
+
+            // El color/signo se resuelve en tiempo de pintado (CellFormatting),
+            // ya que depende de otra columna (TipoMovimiento) del mismo registro.
+            grilla.CellFormatting -= DgvGrilla_CellFormatting;
+            grilla.CellFormatting += DgvGrilla_CellFormatting;
 
             // =========================================
             // OCULTOS
@@ -350,6 +356,34 @@ namespace Presentacion.Core.Movimiento
 
             if (grilla.Columns.Contains("EstaEliminado"))
                 grilla.Columns["EstaEliminado"].Visible = false;
+        }
+
+        private void DgvGrilla_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            var grilla = (DataGridView)sender;
+
+            if (e.RowIndex < 0 || e.Value == null)
+                return;
+
+            if (grilla.Columns[e.ColumnIndex].Name != "Monto")
+                return;
+
+            if (!grilla.Columns.Contains("TipoMovimiento"))
+                return;
+
+            var tipoValor = grilla.Rows[e.RowIndex].Cells["TipoMovimiento"].Value;
+
+            if (tipoValor == null)
+                return;
+
+            bool esIngreso = Convert.ToInt32(tipoValor) == (int)TipoMovimiento.Ingreso;
+            decimal monto = Convert.ToDecimal(e.Value);
+
+            e.Value = (esIngreso ? "+ " : "- ") + monto.ToString("C2");
+            e.FormattingApplied = true;
+
+            e.CellStyle.ForeColor = esIngreso ? Color.SeaGreen : Color.Firebrick;
+            e.CellStyle.Font = new Font(grilla.Font, FontStyle.Bold);
         }
 
         #endregion

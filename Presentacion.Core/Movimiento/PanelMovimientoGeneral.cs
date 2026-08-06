@@ -14,7 +14,6 @@ namespace TuProyecto.Presentacion.Paneles
         private Label lblMonto;
         private Label lblEstado;
         private Label lblTipoMovimiento;
-        private Label lblReferencia;
 
         // Remove or comment out the call to InitializeComponent() in the constructor,
         // since this UserControl does not use a designer file and all controls are created manually.
@@ -27,7 +26,7 @@ namespace TuProyecto.Presentacion.Paneles
 
         private void CrearControlesVisuales()
         {
-            this.Height = 145;
+            this.Height = 120;
             this.Padding = new Padding(20, 10, 20, 10);
             this.BackColor = TemaSistema.FondoControl;
 
@@ -46,9 +45,7 @@ namespace TuProyecto.Presentacion.Paneles
             lblNumero = new Label { Text = "Movimiento N°:", Location = new Point(0, 5), AutoSize = true, Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = TemaSistema.Texto };
             lblFecha = new Label { Location = new Point(0, 40), AutoSize = true, Font = new Font("Segoe UI", 10), ForeColor = TemaSistema.TextoSecundario };
             lblTipoMovimiento = new Label { Location = new Point(0, 70), AutoSize = true, Font = new Font("Segoe UI", 9), ForeColor = TemaSistema.TextoSecundario };
-            // Referencia cruzada a la entidad asociada (Venta / Gasto / Cuenta Corriente), para ubicarla sin salir del formulario
-            lblReferencia = new Label { Location = new Point(0, 95), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Italic), ForeColor = TemaSistema.TextoSecundario };
-            pnlIzquierdo.Controls.AddRange(new Control[] { lblNumero, lblFecha, lblTipoMovimiento, lblReferencia });
+            pnlIzquierdo.Controls.AddRange(new Control[] { lblNumero, lblFecha, lblTipoMovimiento });
 
             // Contenedor Derecho (Alineado a la derecha)
             FlowLayoutPanel pnlDerecho = new FlowLayoutPanel
@@ -60,9 +57,7 @@ namespace TuProyecto.Presentacion.Paneles
                 BackColor = Color.Transparent
             };
             lblMonto = new Label { AutoSize = true, Font = new Font("Segoe UI", 16, FontStyle.Bold), ForeColor = TemaSistema.Primario };
-            // Solo se muestra cuando hay algo que advertir (ELIMINADO); mostrar "ACTIVO" todo el
-            // tiempo era ruido visual redundante, ya que activo es el estado esperado por defecto.
-            lblEstado = new Label { AutoSize = true, Font = new Font("Segoe UI", 11, FontStyle.Bold), Margin = new Padding(0, 5, 0, 0), Visible = false };
+            lblEstado = new Label { AutoSize = true, Font = new Font("Segoe UI", 11, FontStyle.Bold), Margin = new Padding(0, 5, 0, 0) };
             pnlDerecho.Controls.AddRange(new Control[] { lblMonto, lblEstado });
 
             tblHeader.Controls.Add(pnlIzquierdo, 0, 0);
@@ -76,36 +71,25 @@ namespace TuProyecto.Presentacion.Paneles
             lblNumero.Text = $"Movimiento N°: {mov.NumeroMovimiento}";
             lblFecha.Text = $"Fecha: {mov.FechaMovimiento:dd/MM/yyyy HH:mm}";
 
-            // Color por signo: mismo criterio que ya usa PanelMovimientoCuentaCorriente para el saldo,
-            // así el monto se lee de un vistazo como ingreso o egreso.
-            // Math.Abs: si Monto ya viene negativo en BD para egresos, formatear con :C directamente
-            // agrega el signo negativo de nuevo según el patrón de la cultura (a veces DESPUÉS del
-            // número, ej. "100,00-"), duplicando o corriendo el signo. Se normaliza a valor absoluto
-            // y el signo +/- lo controla únicamente este código.
+            // Signo y color según Ingreso/Egreso (el monto en BD siempre viaja en positivo,
+            // ver MovimientoService.cs: "Monto = Math.Abs(monto)").
             bool esIngreso = mov.TipoMovimiento == (int)TipoMovimiento.Ingreso;
-            string signo = esIngreso ? "+" : "-";
-            lblMonto.Text = $"{signo} {System.Math.Abs(mov.Monto):C}";
+
+            lblMonto.Text = (esIngreso ? "+ " : "- ") + mov.Monto.ToString("C2");
             lblMonto.ForeColor = esIngreso ? Color.SeaGreen : Color.Firebrick;
 
-            // Solo se muestra el badge de estado cuando el movimiento está eliminado (excepción a
-            // señalar); en el caso normal (activo) se mantiene oculto para no repetir información
-            // implícita y despejar el encabezado.
             if (mov.EstaEliminado)
             {
                 lblEstado.Text = "ELIMINADO";
                 lblEstado.ForeColor = Color.Red;
-                lblEstado.Visible = true;
             }
             else
             {
-                lblEstado.Visible = false;
+                lblEstado.Text = "ACTIVO";
+                lblEstado.ForeColor = Color.SeaGreen;
             }
 
             lblTipoMovimiento.Text = $"Tipo: {mov.TipoMovimientoDescripcion} | Detalle: {mov.TipoMovimientoDetalleDescripcion}";
-
-            lblReferencia.Text = mov.EntidadId.HasValue
-                ? $"Referencia: Entidad #{mov.EntidadId.Value} ({(mov.TipoEntidad.HasValue ? ((TipoEntidadMovimiento)mov.TipoEntidad.Value).ToString() : "N/D")})"
-                : "Sin entidad asociada";
         }
     }
 }
