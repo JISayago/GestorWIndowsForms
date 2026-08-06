@@ -15,14 +15,19 @@ namespace Presentacion.Notificaciones
 
         // Modifica estos valores por defecto o cámbialos desde afuera antes de llamar a CargarResumenTurno
         public Color ColorFondoContenedor { get; set; } = TemaSistema.Fondo;
-        public Color ColorTarjetaFondo { get; set; } = TemaSistema.Fondo;
+        // Antes por defecto era igual a TemaSistema.Fondo -> la card se confundía con el fondo de
+        // la pantalla (sin contraste visual). Alternado es un tono cálido distinto, pensado
+        // justamente para diferenciar bloques de contenido del fondo general.
+        public Color ColorTarjetaFondo { get; set; } = TemaSistema.Alternado;
         public Color ColorTextoPrincipal { get; set; } = TemaSistema.Texto;
         public Color ColorTextoSecundario { get; set; } = TemaSistema.TextoSecundario;
         public Color ColorTextoGrisClaro { get; set; } = Color.Gray;
 
         // Colores de acento o indicadores laterales
-        public Color ColorIndicadorCaja { get; set; } = TemaSistema.Fondo;
-        public Color ColorIndicadorSesion { get; set; } = TemaSistema.Fondo;
+        // Antes ambos eran TemaSistema.Fondo -> franja lateral invisible contra el fondo.
+        // Se diferencian entre sí para distinguir de un vistazo la tarjeta de Caja de la de Sesión.
+        public Color ColorIndicadorCaja { get; set; } = TemaSistema.Primario;
+        public Color ColorIndicadorSesion { get; set; } = TemaSistema.Acento;
         public Color ColorBotonGuardarFondo { get; set; } = TemaSistema.Seleccion;
         public Color ColorBotonGuardarTexto { get; set; } = Color.Black;
 
@@ -178,7 +183,11 @@ namespace Presentacion.Notificaciones
                 Width = ancho,
                 Height = 130,
                 BackColor = this.ColorTarjetaFondo,
-                Margin = new Padding(0, 0, 20, 20)
+                Margin = new Padding(0, 0, 20, 20),
+                // Marca para que FBase.AplicarTema no le resetee el color al recorrer el form:
+                // esta card se crea en VentanaPrincipal_Load, ANTES de que FBase aplique el tema
+                // general, así que sin esta marca el theme genérico la pisa con TemaSistema.Fondo.
+                Tag = "card-sin-tema"
             };
 
             // Indicador Lateral (Color)
@@ -186,7 +195,8 @@ namespace Presentacion.Notificaciones
             {
                 Dock = DockStyle.Left,
                 Width = 12,
-                BackColor = colorIndicador
+                BackColor = colorIndicador,
+                Tag = "card-sin-tema"
             };
 
             // Label de Título (Superior)

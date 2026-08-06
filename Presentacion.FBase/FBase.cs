@@ -372,7 +372,11 @@ namespace Presentacion.FBase
                         break;
 
                     case Panel pnl:
-                        pnl.BackColor = TemaSistema.Fondo;
+                        // Respeta paneles marcados explícitamente para no ser re-coloreados por el
+                        // tema genérico (ej. las "cards" de PanelDatosTurno, que necesitan un color
+                        // distinto al fondo general para tener contraste visual).
+                        if (!(pnl.Tag is string tagPnl && tagPnl == "card-sin-tema"))
+                            pnl.BackColor = TemaSistema.Fondo;
                         break;
 
                     case MenuStrip ms:
