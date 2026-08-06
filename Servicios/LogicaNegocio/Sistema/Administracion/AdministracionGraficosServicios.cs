@@ -1,6 +1,7 @@
 ﻿using Servicios.LogicaNegocio.Caja;
 using Servicios.LogicaNegocio.Sistema.Administracion.DTO;
 using Servicios.LogicaNegocio.Venta;
+using Servicios.Helpers.VentaEnum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,13 +32,13 @@ namespace Servicios.LogicaNegocio.Sistema.Administracion
 
                 Cajas31Dias = _cajaServicio.ObtenerCajasUltimosXDias(31),
 
-                VentasMes = _ventaServicio.ObtenerVentasPorMesYAño(mes, año),
+                VentasMes = _ventaServicio.ObtenerVentasConfirmadasPorMesYAño(mes, año),
 
-                VentasMesAnterior = _ventaServicio.ObtenerVentasPorMesYAño(mesAnterior, anioAnterior),
+                VentasMesAnterior = _ventaServicio.ObtenerVentasConfirmadasPorMesYAño(mesAnterior, anioAnterior),
 
                 CajasAnio = _cajaServicio.ObtenerLasCajasDeXAño(año),
 
-                VentasAnio = _ventaServicio.ObtenerVentasPorMesYAño(0, año)
+                VentasAnio = _ventaServicio.ObtenerVentasConfirmadasAnio(año)
             };
         }
     }

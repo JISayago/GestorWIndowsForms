@@ -16,6 +16,7 @@ using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.TipoPago;
+using Servicios.Helpers.VentaEnum;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1385,6 +1386,41 @@ namespace Servicios.LogicaNegocio.Venta
                     Detalle = v.Detalle
                 })
                 .ToList();
+        }
+
+        public List<VentaDTO> ObtenerVentasConfirmadasPorMesYAño(int mes, int año)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var query = context.Ventas
+                .Where(v => v.FechaVenta.Year == año
+                    && v.Estado == (int)EstadoVenta.Confirmada);
+
+            if (mes > 0)
+            {
+                query = query.Where(v => v.FechaVenta.Month == mes);
+            }
+
+            return query
+                .Select(v => new VentaDTO
+                {
+                    VentaId = v.VentaId,
+                    NumeroVenta = v.NumeroVenta,
+                    IdEmpleado = v.IdEmpleado,
+                    IdVendedor = v.IdVendedor,
+                    FechaVenta = v.FechaVenta,
+                    Total = v.Total,
+                    TotalSinDescuento = v.TotalSinDescuento,
+                    Descuento = v.Descuento,
+                    Estado = v.Estado,
+                    Detalle = v.Detalle
+                })
+                .ToList();
+        }
+
+        public List<VentaDTO> ObtenerVentasConfirmadasAnio(int año)
+        {
+            return ObtenerVentasConfirmadasPorMesYAño(0, año);
         }
 
         public List<long> ObtenerVentasParaCancelacion(DateTime fecha, string filtroNumero = null)

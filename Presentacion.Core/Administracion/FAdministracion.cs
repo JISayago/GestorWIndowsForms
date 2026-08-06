@@ -70,6 +70,15 @@ namespace Presentacion.Core.Administracion
         private static readonly ScottPlot.Color ColorMonto = ScottPlot.Color.FromHex("#2E7D32");
         private static readonly ScottPlot.Color ColorCantidad = ScottPlot.Color.FromHex("#1565C0");
         private static readonly ScottPlot.Color ColorTendencia = ScottPlot.Color.FromHex("#291a3e");
+        private static readonly ScottPlot.Color ColorComparativo = ScottPlot.Color.FromHex("#F57F17"); // ámbar para comparativo
+        
+        // Constantes de umbral de proximidad para tooltips (unificadas)
+        private const double TooltipThreshold = 0.4;
+        private const double TooltipThresholdBars = 1.2; // Para gráficos de barras agrupadas (gráfico 1)
+        
+        // Cache para datos que no dependen del filtro mes/año
+        private List<CajaDTO> _cajas31DiasCache;
+
         // ==========================================
         // CONFIGURACIÓN DE TOOLTIPS PERSONALIZADOS
         // ==========================================
@@ -84,8 +93,10 @@ namespace Presentacion.Core.Administracion
         private double[] _xs1, _ys1; // Gráfico 1: Ingresos vs Egresos por caja
         private double[] _egresos1;
         private double[] _xs2, _ys2; // Gráfico 2: Cajas Últimos 31 Días
-        private double[] _xs3, _ys3; // Gráfico 3: Ganancias Diarias del Mes
+        private double[] _xs3, _ys3; // Gráfico 3: Ventas Diarias del Mes
+        private double[] _xs3prev, _ys3prev; // Gráfico 3: Mes anterior para comparativo
         private double[] _xs4, _ys4; // Gráfico 4: Cantidad de Ventas Diarias
+        private double[] _xs4prev, _ys4prev; // Gráfico 4: Mes anterior para comparativo
         private double[] _xs5, _ys5; // Gráfico 5: Balance Anual Combinado
         private double[] _xs6, _ys6; // Gráfico 6: Volumen de Ventas Anual
 
@@ -493,11 +504,17 @@ namespace Presentacion.Core.Administracion
 
             formsPlot1.Plot.Legend.IsVisible = true;
             formsPlot1.Plot.Legend.Alignment = Alignment.UpperRight;
+            formsPlot1.Plot.Legend.ManualItems.Clear();
             formsPlot1.Plot.Legend.ManualItems.Add(new LegendItem { LabelText = "Ingresos", FillColor = ColorIngresos });
             formsPlot1.Plot.Legend.ManualItems.Add(new LegendItem { LabelText = "Egresos", FillColor = ColorEgresos });
 
             formsPlot1.Plot.Axes.AutoScale();
             formsPlot1.Plot.Axes.Margins(bottom: 0);
+
+            // Formato moneda en eje Y usando NumericAutomatic con LabelFormatter
+            var tickGen1 = new ScottPlot.TickGenerators.NumericAutomatic();
+            tickGen1.LabelFormatter = (value) => value.ToString("C0");
+            formsPlot1.Plot.Axes.Left.TickGenerator = tickGen1;
         }
 
         /// <summary>
@@ -505,7 +522,10 @@ namespace Presentacion.Core.Administracion
         /// </summary>
         private void grafico2()
         {
-            var cajasUltimos31Dias = _graficosDTO.Cajas31Dias;
+            // Usar caché para evitar re-consultar los mismos datos
+            var cajasUltimos31Dias = _cajas31DiasCache ?? _graficosDTO.Cajas31Dias;
+            if (_cajas31DiasCache == null)
+                _cajas31DiasCache = _graficosDTO.Cajas31Dias;
 
             var cajasPorDia = cajasUltimos31Dias
                 .GroupBy(c => c.FechaInicio.Date)
@@ -542,6 +562,11 @@ namespace Presentacion.Core.Administracion
 
             formsPlot2.Plot.Axes.Bottom.SetTicks(numerosDias, dias);
             formsPlot2.Plot.Axes.AutoScale();
+
+            // Formato moneda en eje Y usando NumericAutomatic con LabelFormatter
+            var tickGen2 = new ScottPlot.TickGenerators.NumericAutomatic();
+            tickGen2.LabelFormatter = (value) => value.ToString("C0");
+            formsPlot2.Plot.Axes.Left.TickGenerator = tickGen2;
         }
 
         /// <summary>
@@ -552,8 +577,13 @@ namespace Presentacion.Core.Administracion
             int año = _anioCargado ?? DateTime.Now.Year;
             int mes = _mesCargado ?? DateTime.Now.Month;
             var ventas = _graficosDTO.VentasMes;
+            var ventasAnterior = _graficosDTO.VentasMesAnterior;
 
             var ventasPorDia = ventas
+                .GroupBy(v => v.FechaVenta.Date)
+                .ToDictionary(g => g.Key, g => g.Sum(x => x.Total));
+
+            var ventasPorDiaAnterior = ventasAnterior
                 .GroupBy(v => v.FechaVenta.Date)
                 .ToDictionary(g => g.Key, g => g.Sum(x => x.Total));
 
@@ -567,6 +597,10 @@ namespace Presentacion.Core.Administracion
                 .Select(fecha => ventasPorDia.TryGetValue(fecha, out var total) ? (double)total : 0)
                 .ToArray();
 
+            double[] valoresAnterior = diasDelMes
+                .Select(fecha => ventasPorDiaAnterior.TryGetValue(fecha, out var total) ? (double)total : 0)
+                .ToArray();
+
             double[] posiciones = Enumerable
                 .Range(0, dias.Length)
                 .Select(i => (double)i)
@@ -574,18 +608,48 @@ namespace Presentacion.Core.Administracion
 
             _xs3 = posiciones;
             _ys3 = valores;
+            _xs3prev = posiciones;
+            _ys3prev = valoresAnterior;
             _lastIndex3 = -1;
 
             formsPlot3.Plot.Clear();
 
-            formsPlot3.Plot.Title($"Ganancias diarias en {ObtenerNombreMesLocal(mes)}");
+            formsPlot3.Plot.Title($"Ventas diarias en {ObtenerNombreMesLocal(mes)}");
 
             formsPlot3.Plot.XLabel("Días");
             formsPlot3.Plot.YLabel("Total Ventas");
 
-            var bars = formsPlot3.Plot.Add.Bars(valores);
+            // Barras del mes actual
+            var bars = new List<ScottPlot.Bar>();
+            for (int i = 0; i < valores.Length; i++)
+            {
+                bars.Add(new ScottPlot.Bar
+                {
+                    Position = posiciones[i] - 0.15,
+                    Value = valores[i],
+                    FillColor = ColorMonto
+                });
+            }
+            formsPlot3.Plot.Add.Bars(bars.ToArray());
 
-            bars.Color = ColorMonto;
+            // Agregar barras del mes anterior para comparativo (más transparentes, offset -0.15)
+            if (valoresAnterior.Any(v => v > 0))
+            {
+                var barsPrev = new List<ScottPlot.Bar>();
+                for (int i = 0; i < valoresAnterior.Length; i++)
+                {
+                    if (valoresAnterior[i] > 0)
+                    {
+                        barsPrev.Add(new ScottPlot.Bar
+                        {
+                            Position = posiciones[i] + 0.15,
+                            Value = valoresAnterior[i],
+                            FillColor = ColorComparativo.WithAlpha(120)
+                        });
+                    }
+                }
+                formsPlot3.Plot.Add.Bars(barsPrev.ToArray());
+            }
 
             formsPlot3.Plot.Axes.Bottom.SetTicks(posiciones, dias);
             if (dias.Length > 15)
@@ -593,6 +657,11 @@ namespace Presentacion.Core.Administracion
 
             formsPlot3.Plot.Axes.AutoScale();
             formsPlot3.Plot.Axes.Margins(bottom: 0);
+
+            // Formato moneda en eje Y usando NumericAutomatic con LabelFormatter
+            var tickGen3 = new ScottPlot.TickGenerators.NumericAutomatic();
+            tickGen3.LabelFormatter = (value) => value.ToString("C0");
+            formsPlot3.Plot.Axes.Left.TickGenerator = tickGen3;
         }
 
         /// <summary>
@@ -603,8 +672,13 @@ namespace Presentacion.Core.Administracion
             int año = _anioCargado ?? DateTime.Now.Year;
             int mes = _mesCargado ?? DateTime.Now.Month;
             var ventas = _graficosDTO.VentasMes;
+            var ventasAnterior = _graficosDTO.VentasMesAnterior;
 
             var ventasPorDia = ventas
+                .GroupBy(v => v.FechaVenta.Date)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            var ventasPorDiaAnterior = ventasAnterior
                 .GroupBy(v => v.FechaVenta.Date)
                 .ToDictionary(g => g.Key, g => g.Count());
 
@@ -618,6 +692,10 @@ namespace Presentacion.Core.Administracion
                 .Select(fecha => ventasPorDia.TryGetValue(fecha, out var cantidad) ? (double)cantidad : 0)
                 .ToArray();
 
+            double[] cantidadesAnterior = diasDelMes
+                .Select(fecha => ventasPorDiaAnterior.TryGetValue(fecha, out var cantidad) ? (double)cantidad : 0)
+                .ToArray();
+
             double[] posiciones = Enumerable
                 .Range(0, dias.Length)
                 .Select(i => (double)i)
@@ -625,6 +703,8 @@ namespace Presentacion.Core.Administracion
 
             _xs4 = posiciones;
             _ys4 = cantidades;
+            _xs4prev = posiciones;
+            _ys4prev = cantidadesAnterior;
             _lastIndex4 = -1;
 
             formsPlot4.Plot.Clear();
@@ -634,9 +714,37 @@ namespace Presentacion.Core.Administracion
             formsPlot4.Plot.XLabel("Días");
             formsPlot4.Plot.YLabel("Cantidad");
 
-            var bars = formsPlot4.Plot.Add.Bars(cantidades);
+            // Barras del mes actual
+            var bars4 = new List<ScottPlot.Bar>();
+            for (int i = 0; i < cantidades.Length; i++)
+            {
+                bars4.Add(new ScottPlot.Bar
+                {
+                    Position = posiciones[i] - 0.15,
+                    Value = cantidades[i],
+                    FillColor = ColorCantidad
+                });
+            }
+            formsPlot4.Plot.Add.Bars(bars4.ToArray());
 
-            bars.Color = ColorCantidad;
+            // Agregar barras del mes anterior para comparativo (offset +0.15)
+            if (cantidadesAnterior.Any(v => v > 0))
+            {
+                var barsPrev = new List<ScottPlot.Bar>();
+                for (int i = 0; i < cantidadesAnterior.Length; i++)
+                {
+                    if (cantidadesAnterior[i] > 0)
+                    {
+                        barsPrev.Add(new ScottPlot.Bar
+                        {
+                            Position = posiciones[i] + 0.15,
+                            Value = cantidadesAnterior[i],
+                            FillColor = ColorComparativo.WithAlpha(120)
+                        });
+                    }
+                }
+                formsPlot4.Plot.Add.Bars(barsPrev.ToArray());
+            }
 
             formsPlot4.Plot.Axes.Bottom.SetTicks(posiciones, dias);
             if (dias.Length > 15)
@@ -668,7 +776,7 @@ namespace Presentacion.Core.Administracion
 
             formsPlot5.Plot.Clear();
 
-            formsPlot5.Plot.Title($"Ganancias en {_anioCargado}");
+            formsPlot5.Plot.Title($"Ingresos en {_anioCargado}");
 
             formsPlot5.Plot.XLabel("Meses");
             formsPlot5.Plot.YLabel("Ingresos");
@@ -681,6 +789,11 @@ namespace Presentacion.Core.Administracion
             formsPlot5.Plot.Axes.Bottom.TickLabelStyle.Rotation = 45;
             formsPlot5.Plot.Axes.AutoScale();
             formsPlot5.Plot.Axes.Margins(bottom: 0);
+
+            // Formato moneda en eje Y usando NumericAutomatic con LabelFormatter
+            var tickGen5 = new ScottPlot.TickGenerators.NumericAutomatic();
+            tickGen5.LabelFormatter = (value) => value.ToString("C0");
+            formsPlot5.Plot.Axes.Left.TickGenerator = tickGen5;
         }
 
         /// <summary>
@@ -814,7 +927,7 @@ namespace Presentacion.Core.Administracion
             }
 
             // 4. Umbral de Sensibilidad (0.4 unidades matemáticas): Evita que se dispare el tooltip si el mouse está lejos del punto real
-            if (indexMasCercano != -1 && minimaDistanciaX < 0.4)
+            if (indexMasCercano != -1 && minimaDistanciaX < TooltipThreshold)
             {
                 // Solo operamos si el usuario movió el cursor a un punto estadístico DIFERENTE al evaluado en el ciclo anterior
                 if (lastIndex != indexMasCercano)
@@ -896,7 +1009,7 @@ namespace Presentacion.Core.Administracion
                 }
             }
 
-            if (indexMasCercano != -1 && minimaDistanciaX < 1.2)
+            if (indexMasCercano != -1 && minimaDistanciaX < TooltipThresholdBars)
             {
                 if (_lastIndex1 != indexMasCercano)
                 {
@@ -912,7 +1025,7 @@ namespace Presentacion.Core.Administracion
             }
         }
         private void FormsPlot2_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot2, _xs2, _ys2, e, "Total Día", "C2", ref _lastIndex2);
-        private void FormsPlot3_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot3, _xs3, _ys3, e, "Ganancia", "C2", ref _lastIndex3);
+        private void FormsPlot3_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot3, _xs3, _ys3, e, "Venta", "C2", ref _lastIndex3);
         private void FormsPlot4_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot4, _xs4, _ys4, e, "Cant. Ventas", "N0", ref _lastIndex4);
         private void FormsPlot5_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot5, _xs5, _ys5, e, "Total Mes", "C2", ref _lastIndex5);
         private void FormsPlot6_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot6, _xs6, _ys6, e, "Cant. Ventas", "N0", ref _lastIndex6);
