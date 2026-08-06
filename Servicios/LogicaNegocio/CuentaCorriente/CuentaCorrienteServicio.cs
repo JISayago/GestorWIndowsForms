@@ -172,7 +172,12 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             var cajaServicio = new Caja.CajaServicio();
 
             var cajaId = cajaServicio.ObtenerIdDeUltimaCajaAbierta(context);
-
+            if (!cajaId.HasValue)
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Por favor abra una caja para continuar con la transacción."
+                };
             cajaServicio.RegistrarTransaccion(context, diferencia, TipoMovimiento.Ingreso, cajaId.Value);
             CrearMovimientoCargaSaldoCuentaCorriente(cuenta.CuentaCorrienteId, diferencia, context);
 
