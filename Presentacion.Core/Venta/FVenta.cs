@@ -831,6 +831,7 @@ namespace Presentacion.Core.Venta
                     if (respuesta.Exitoso)
                     {
                         MessageBox.Show("Venta cancelada con éxito.");
+                        this.Close();
                     }
                     else
                     {
