@@ -546,8 +546,13 @@ namespace Presentacion.FBase
                 ((CurrencyManager)dgv.BindingContext[dgv.DataSource]).Refresh();
 
             foreach (DataGridViewColumn col in dgv.Columns)
-                col.HeaderCell.SortGlyphDirection = SortOrder.None;
-            columna.HeaderCell.SortGlyphDirection = ascendente ? SortOrder.Ascending : SortOrder.Descending;
+            {
+                if (col.SortMode != DataGridViewColumnSortMode.NotSortable)
+                    col.HeaderCell.SortGlyphDirection = SortOrder.None;
+            }
+
+            if (columna.SortMode != DataGridViewColumnSortMode.NotSortable)
+                columna.HeaderCell.SortGlyphDirection = ascendente ? SortOrder.Ascending : SortOrder.Descending;
         }
 
         // Comparador null-safe y tolerante a tipos no-IComparable (ej. si la propiedad es un enum
