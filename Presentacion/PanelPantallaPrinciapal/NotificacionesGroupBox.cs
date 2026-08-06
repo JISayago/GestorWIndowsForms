@@ -18,6 +18,22 @@ public class NotificationGroupBox : GroupBox
 
     public event EventHandler NotificacionCambiada;
 
+    // Identifica a qué grupo pertenece esta instancia (ej: "Lotes Vencidos"),
+    // para poder recordar si estaba abierto o cerrado entre refrescos del panel.
+    public string TituloBase { get; private set; } = "";
+
+    // Permite abrir/cerrar el grupo desde afuera (VentanaPrincipal) sin pasar
+    // por el botón, por ejemplo para restaurar el estado tras un refresco.
+    public bool Expanded
+    {
+        get => expanded;
+        set
+        {
+            expanded = value;
+            AplicarEstado();
+        }
+    }
+
     // ===========================================================================
     // CONFIGURACIÓN DE COLORES (Modificar aquí para Temas Claro/Oscuro)
     // ===========================================================================
@@ -136,6 +152,8 @@ public class NotificationGroupBox : GroupBox
     {
         // Aseguramos que siempre sea visible
         this.Visible = true;
+
+        TituloBase = tituloBase;
 
         int conteo = notificaciones?.Count ?? 0;
         _tituloVisual = $"{tituloBase} ({conteo})".ToUpper();

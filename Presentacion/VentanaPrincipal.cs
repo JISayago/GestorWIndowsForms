@@ -52,6 +52,10 @@ namespace Presentacion
         private readonly ElementoDePanelesPantallaPrincipal _datosIniciales;
         private readonly List<ProductoDTO> _productosIniciales;
         private readonly List<VentaDTO> _ventasIniciales;
+
+        // Recuerda qué grupos de notificaciones estaban abiertos, para no colapsarlos
+        // cada vez que se reconstruye el panel (ej: al marcar una como leída).
+        private readonly Dictionary<string, bool> _estadoExpandidoNotificaciones = new Dictionary<string, bool>();
         #endregion
 
         #region Constructores
@@ -298,6 +302,32 @@ namespace Presentacion
 
         #region Generación de Notificaciones
 
+        // Reabre un grupo si estaba abierto antes del refresco Y sigue teniendo
+        // notificaciones para mostrar (si quedó vacío, no tiene sentido abrirlo).
+        private void RestaurarEstadoExpandido(NotificationGroupBox grupo, int cantidadItems)
+        {
+            if (cantidadItems <= 0)
+                return;
+
+            if (_estadoExpandidoNotificaciones.TryGetValue(grupo.TituloBase, out bool estabaAbierto) && estabaAbierto)
+            {
+                grupo.Expanded = true;
+            }
+        }
+
+        // Recorre los grupos actuales (antes de destruirlos) y guarda si estaban
+        // abiertos o cerrados, para poder restaurarlo tras reconstruir el panel.
+        private void GuardarEstadoExpandidoNotificaciones()
+        {
+            foreach (Control ctrl in flowLayoutNotificaciones.Controls)
+            {
+                if (ctrl is NotificationGroupBox grupo && !string.IsNullOrEmpty(grupo.TituloBase))
+                {
+                    _estadoExpandidoNotificaciones[grupo.TituloBase] = grupo.Expanded;
+                }
+            }
+        }
+
         private void crearNotificacionesLotes()
         {
             _pantallaPrincipalServicio.NotifiacionesProductosVencidos();
@@ -312,6 +342,7 @@ namespace Presentacion
 
             var listaLotesNotificar = _pantallaPrincipalServicio.ObtenerNotificacionesProdutosVencidos();
             notiProdVencidos.SetData(listaLotesNotificar, "Lotes Vencidos");
+            RestaurarEstadoExpandido(notiProdVencidos, listaLotesNotificar?.Count ?? 0);
         }
 
         private void crearNotificacionesPromocionesVencidas()
@@ -327,6 +358,7 @@ namespace Presentacion
 
             var listaOfertasVencidas = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasVencidas();
             notifOferVencidas.SetData(listaOfertasVencidas, "Ofertas Vencidas");
+            RestaurarEstadoExpandido(notifOferVencidas, listaOfertasVencidas?.Count ?? 0);
         }
 
         private void crearNotificacionesPromocionesBajoStock()
@@ -342,6 +374,7 @@ namespace Presentacion
 
             var listaOfertasBajoStock = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasBajoStock();
             notifOfertasBajoStock.SetData(listaOfertasBajoStock, "Ofertas con Bajo Stock");
+            RestaurarEstadoExpandido(notifOfertasBajoStock, listaOfertasBajoStock?.Count ?? 0);
         }
 
         private void crearNotificacionesCuentaCorriente()
@@ -358,6 +391,7 @@ namespace Presentacion
 
             var listaCuentasCorrientes = _pantallaPrincipalServicio.ObtenerNotificacionesCtaCteVencidas();
             notifCuentasCorrientesVencidas.SetData(listaCuentasCorrientes, "Cuentas Corrientes Vencidas");
+            RestaurarEstadoExpandido(notifCuentasCorrientesVencidas, listaCuentasCorrientes?.Count ?? 0);
         }
 
         #endregion
@@ -465,6 +499,7 @@ namespace Presentacion
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             //flowLayoutNotificaciones.SuspendLayout();
+            GuardarEstadoExpandidoNotificaciones();
             flowLayoutNotificaciones.Controls.Clear();
 
             tabPage1.Controls.Clear();
@@ -481,6 +516,9 @@ namespace Presentacion
         {
             // Congelamos el diseño para evitar parpadeos visuales
             flowLayoutNotificaciones.SuspendLayout();
+
+            // Guardamos qué grupos estaban desplegados antes de destruirlos
+            GuardarEstadoExpandidoNotificaciones();
 
             // Limpiamos por completo los GroupBox anteriores
             flowLayoutNotificaciones.Controls.Clear();
