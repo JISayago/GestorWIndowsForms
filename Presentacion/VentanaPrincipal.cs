@@ -102,7 +102,8 @@ namespace Presentacion
 
             // 4. Cargar Notificaciones
             crearNotificacionesLotes();
-            //crearNotificacionesPromociones();
+            crearNotificacionesPromocionesVencidas();
+            crearNotificacionesPromocionesBajoStock();
             crearNotificacionesCuentaCorriente();
         }
 
@@ -313,21 +314,35 @@ namespace Presentacion
             notiProdVencidos.SetData(listaLotesNotificar, "Lotes Vencidos");
         }
 
-        //private void crearNotificacionesPromociones()
-        //{
-        //    _pantallaPrincipalServicio.NotificacionesOfertasVencidas();
+        private void crearNotificacionesPromocionesVencidas()
+        {
+            _pantallaPrincipalServicio.NotificacionesOfertasVencidas();
 
-        //    var notifOferVencidos = new NotificationGroupBox();
-        //    notifOferVencidos.Width = flowLayoutNotificaciones.Width - 25;
+            var notifOferVencidas = new NotificationGroupBox();
+            notifOferVencidas.Width = flowLayoutNotificaciones.Width - 25;
 
-        //    // 🌟 NUEVO: Suscripción al evento
-        //    notifOferVencidos.NotificacionCambiada += (s, e) => RecargarSeccionNotificaciones();
+            notifOferVencidas.NotificacionCambiada += (s, e) => RecargarSeccionNotificaciones();
 
-        //    flowLayoutNotificaciones.Controls.Add(notifOferVencidos);
+            flowLayoutNotificaciones.Controls.Add(notifOferVencidas);
 
-        //    var listaOfertasVencidas = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasVencidas();
-        //    notifOferVencidos.SetData(listaOfertasVencidas, "Ofertas Vencidas");
-        //}
+            var listaOfertasVencidas = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasVencidas();
+            notifOferVencidas.SetData(listaOfertasVencidas, "Ofertas Vencidas");
+        }
+
+        private void crearNotificacionesPromocionesBajoStock()
+        {
+            _pantallaPrincipalServicio.NotificacionesOfertasBajoStock();
+
+            var notifOfertasBajoStock = new NotificationGroupBox();
+            notifOfertasBajoStock.Width = flowLayoutNotificaciones.Width - 25;
+
+            notifOfertasBajoStock.NotificacionCambiada += (s, e) => RecargarSeccionNotificaciones();
+
+            flowLayoutNotificaciones.Controls.Add(notifOfertasBajoStock);
+
+            var listaOfertasBajoStock = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasBajoStock();
+            notifOfertasBajoStock.SetData(listaOfertasBajoStock, "Ofertas con Bajo Stock");
+        }
 
         private void crearNotificacionesCuentaCorriente()
         {
@@ -457,7 +472,8 @@ namespace Presentacion
             crearPanelDatosAdicionales();
 
             crearNotificacionesLotes();
-            //crearNotificacionesPromociones();
+            crearNotificacionesPromocionesVencidas();
+            crearNotificacionesPromocionesBajoStock();
             crearNotificacionesCuentaCorriente();
         }
 
@@ -469,9 +485,10 @@ namespace Presentacion
             // Limpiamos por completo los GroupBox anteriores
             flowLayoutNotificaciones.Controls.Clear();
 
-            // Volvemos a generar los tres bloques con datos frescos de la BD
+            // Volvemos a generar los cuatro bloques con datos frescos de la BD
             crearNotificacionesLotes();
-            //crearNotificacionesPromociones();
+            crearNotificacionesPromocionesVencidas();
+            crearNotificacionesPromocionesBajoStock();
             crearNotificacionesCuentaCorriente();
 
             flowLayoutNotificaciones.ResumeLayout(true);

@@ -7,11 +7,13 @@ using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Cliente.DTO;
+using Servicios.LogicaNegocio.CuentaCorriente;
 
 namespace Servicios.LogicaNegocio.Cliente
 {
     public class ClienteServicio : IClienteServicio
     {
+        private ICuentaCorrienteServicio _cuentaCorrienteServicio;
         public ClienteDTO ObtenerConsumidorFinal()
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -444,6 +446,35 @@ namespace Servicios.LogicaNegocio.Cliente
                 Page = filtros.Page,
                 PageSize = filtros.PageSize
             };
+        }
+
+        public EstadoOperacion ObtenerCtaCteIdPorClienteId(long clienteId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+           _cuentaCorrienteServicio = new CuentaCorrienteServicio();
+
+            var ctacteId = context.Cliente
+                .Where(c => c.PersonaId == clienteId)
+                .Select(c => c.CuentaCorrienteId)
+                .FirstOrDefault();
+            if (ctacteId.HasValue)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "Cuenta corriente encontrada.",
+                    EntidadId = ctacteId.Value
+                };
+            }
+            else
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "No se encontró cuenta corriente para el cliente."
+                };
+            }
+
         }
     }
 }

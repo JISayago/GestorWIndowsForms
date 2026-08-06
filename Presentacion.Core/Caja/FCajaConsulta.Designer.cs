@@ -36,8 +36,33 @@
             btnFiltrar = new Button();
             btnClear = new Button();
             button1 = new Button();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvCajas).BeginInit();
             SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.BackColor = Color.FromArgb(234, 234, 234);
+            panel1.Size = new Size(755, 365);
+            // 
+            // chkBool1
+            // 
+            chkBool1.ForeColor = Color.FromArgb(31, 26, 43);
+            chkBool1.Size = new Size(17, 1);
+            // 
+            // btnBuscar
+            // 
+            btnBuscar.BackColor = Color.FromArgb(220, 199, 255);
+            btnBuscar.FlatAppearance.BorderColor = Color.Black;
+            btnBuscar.FlatStyle = FlatStyle.Flat;
+            btnBuscar.ForeColor = Color.Black;
+            btnBuscar.Location = new Point(3, 3);
+            btnBuscar.Size = new Size(176, 10);
+            btnBuscar.UseVisualStyleBackColor = false;
+            // 
+            // lblTotalRegistros
+            // 
+            lblTotalRegistros.Location = new Point(64, 0);
             // 
             // dgvCajas
             // 
@@ -90,7 +115,6 @@
             btnFiltrar.TabIndex = 5;
             btnFiltrar.Text = "Filtrar";
             btnFiltrar.UseVisualStyleBackColor = true;
-            //btnFiltrar.Click += btnFiltrar_Click;
             // 
             // btnClear
             // 
@@ -100,7 +124,6 @@
             btnClear.TabIndex = 6;
             btnClear.Text = "Todas";
             btnClear.UseVisualStyleBackColor = true;
-            //btnClear.Click += btnClear_Click;
             // 
             // button1
             // 
@@ -110,7 +133,6 @@
             button1.TabIndex = 7;
             button1.Text = "Ultimas 7";
             button1.UseVisualStyleBackColor = true;
-            //button1.Click += button1_Click;
             // 
             // FCajaConsulta
             // 
@@ -126,7 +148,17 @@
             Controls.Add(dtpCerrada);
             Controls.Add(dgvCajas);
             Name = "FCajaConsulta";
-            Text = "FCajaConsulta";
+            Text = "Consulta Cajas";
+            Controls.SetChildIndex(dgvCajas, 0);
+            Controls.SetChildIndex(dtpCerrada, 0);
+            Controls.SetChildIndex(label1, 0);
+            Controls.SetChildIndex(label2, 0);
+            Controls.SetChildIndex(btnFiltrar, 0);
+            Controls.SetChildIndex(dtpAbierta, 0);
+            Controls.SetChildIndex(btnClear, 0);
+            Controls.SetChildIndex(button1, 0);
+            Controls.SetChildIndex(panel1, 0);
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvCajas).EndInit();
             ResumeLayout(false);
             PerformLayout();

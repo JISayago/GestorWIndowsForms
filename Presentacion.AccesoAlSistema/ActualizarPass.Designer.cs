@@ -113,7 +113,7 @@
             MinimizeBox = false;
             Name = "ActualizarPass";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "ActualizarPass";
+            Text = "Actualizar Contraseña";
             ResumeLayout(false);
             PerformLayout();
         }

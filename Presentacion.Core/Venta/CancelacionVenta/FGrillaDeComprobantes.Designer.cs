@@ -85,7 +85,7 @@
             Controls.Add(lblTitulo);
             Name = "FGrillaDeComprobantes";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "FGrillaDeComprobantes";
+            Text = "Grilla Comprobantes";
             Load += FGrillaDeComprobantes_Load;
             ((System.ComponentModel.ISupportInitialize)dgvComprobantes).EndInit();
             ResumeLayout(false);

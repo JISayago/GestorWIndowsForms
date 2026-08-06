@@ -32,6 +32,7 @@
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FVenta));
             lblFechaHoy = new Label();
             btnLimpiar = new Button();
             txtCliente = new TextBox();
@@ -609,11 +610,11 @@
             tableLayoutPanel8.Location = new Point(12, 19);
             tableLayoutPanel8.Name = "tableLayoutPanel8";
             tableLayoutPanel8.RowCount = 5;
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 9F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 41.1689949F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 18.8055916F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 23F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 8F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 9.002288F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 41.17946F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 18.8103733F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 21.0053387F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 10.0025415F));
             tableLayoutPanel8.Size = new Size(1101, 797);
             tableLayoutPanel8.TabIndex = 45;
             // 
@@ -626,11 +627,11 @@
             tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
             tableLayoutPanel10.Controls.Add(tableLayoutPanel12, 0, 0);
             tableLayoutPanel10.Controls.Add(tableLayoutPanel13, 2, 0);
-            tableLayoutPanel10.Location = new Point(3, 734);
+            tableLayoutPanel10.Location = new Point(3, 718);
             tableLayoutPanel10.Name = "tableLayoutPanel10";
             tableLayoutPanel10.RowCount = 1;
             tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel10.Size = new Size(1095, 60);
+            tableLayoutPanel10.Size = new Size(1095, 76);
             tableLayoutPanel10.TabIndex = 46;
             // 
             // tableLayoutPanel12
@@ -644,7 +645,7 @@
             tableLayoutPanel12.Name = "tableLayoutPanel12";
             tableLayoutPanel12.RowCount = 1;
             tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel12.Size = new Size(286, 54);
+            tableLayoutPanel12.Size = new Size(286, 70);
             tableLayoutPanel12.TabIndex = 46;
             // 
             // tableLayoutPanel13
@@ -658,7 +659,7 @@
             tableLayoutPanel13.Name = "tableLayoutPanel13";
             tableLayoutPanel13.RowCount = 1;
             tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel13.Size = new Size(432, 54);
+            tableLayoutPanel13.Size = new Size(432, 70);
             tableLayoutPanel13.TabIndex = 46;
             // 
             // flowLayoutPanel10
@@ -669,7 +670,7 @@
             flowLayoutPanel10.FlowDirection = FlowDirection.RightToLeft;
             flowLayoutPanel10.Location = new Point(3, 3);
             flowLayoutPanel10.Name = "flowLayoutPanel10";
-            flowLayoutPanel10.Size = new Size(404, 48);
+            flowLayoutPanel10.Size = new Size(404, 64);
             flowLayoutPanel10.TabIndex = 47;
             // 
             // tableLayoutPanel9
@@ -786,7 +787,7 @@
             txtAreaDetallesVenta.Multiline = true;
             txtAreaDetallesVenta.Name = "txtAreaDetallesVenta";
             txtAreaDetallesVenta.ScrollBars = ScrollBars.Vertical;
-            txtAreaDetallesVenta.Size = new Size(1095, 177);
+            txtAreaDetallesVenta.Size = new Size(1095, 161);
             txtAreaDetallesVenta.TabIndex = 47;
             // 
             // FVenta
@@ -798,9 +799,10 @@
             ClientSize = new Size(1125, 818);
             Controls.Add(tableLayoutPanel8);
             ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FVenta";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "FVenta";
+            Text = "Venta";
             WindowState = FormWindowState.Maximized;
             Load += FVenta_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();

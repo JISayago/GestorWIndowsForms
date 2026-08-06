@@ -28,7 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.BackColor = Color.FromArgb(234, 234, 234);
+            panel1.Size = new Size(1226, 561);
+            // 
+            // chkBool1
+            // 
+            chkBool1.ForeColor = Color.FromArgb(31, 26, 43);
+            chkBool1.Size = new Size(17, 1);
+            // 
+            // btnBuscar
+            // 
+            btnBuscar.BackColor = Color.FromArgb(220, 199, 255);
+            btnBuscar.FlatAppearance.BorderColor = Color.Black;
+            btnBuscar.FlatStyle = FlatStyle.Flat;
+            btnBuscar.ForeColor = Color.Black;
+            btnBuscar.Location = new Point(3, 3);
+            btnBuscar.Size = new Size(294, 28);
+            btnBuscar.UseVisualStyleBackColor = false;
+            // 
+            // lblTotalRegistros
+            // 
+            lblTotalRegistros.Location = new Point(126, 10);
             // 
             // FClienteConsulta
             // 
@@ -36,8 +61,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1226, 561);
             Name = "FClienteConsulta";
-            Text = "FClienteConsulta";
+            Text = "Consulta Clientes";
             Load += FClienteConsulta_Load;
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
         }
 

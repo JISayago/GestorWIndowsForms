@@ -28,6 +28,8 @@ namespace Servicios.LogicaNegocio.Producto.DTO
                 if (EstaVencido)
                     return "Vencido";
                 var diasRestantes = (FechaVencimiento.Value - DateTime.Now).Days;
+                if(diasRestantes < 0)
+                    return "Vencido";
                 return $"Vence en {diasRestantes} días";
             }
         }

@@ -4,6 +4,10 @@ using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.DTO;
 using ScottPlot.WinForms;
 using System.Text.Json.Nodes;
+using System.Collections;
+using System.ComponentModel;
+using System.Reflection;
+using System.Linq;
 
 namespace Presentacion.FBase
 {
@@ -474,6 +478,83 @@ namespace Presentacion.FBase
             dgv.RowHeadersVisible = false;
 
             dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+            // Ordenar al hacer click en el header: la mayoría de los grids del sistema bindean un
+            // List<T> plano (dgv.DataSource = resultado.Items), que NO soporta el sort nativo de
+            // DataGridView (eso solo funciona con DataTable o listas que implementan IBindingList
+            // con SupportsSorting=true). Centralizado acá para que aplique a todos los grids del
+            // sistema sin tocar cada formulario individualmente.
+            dgv.ColumnHeaderMouseClick -= Grilla_ColumnHeaderMouseClick;
+            dgv.ColumnHeaderMouseClick += Grilla_ColumnHeaderMouseClick;
+        }
+
+        // Guarda por-grid (no por-form, ya que un mismo form puede tener más de un grid) qué
+        // columna y dirección está ordenada actualmente. Se guarda en dgv.Tag porque no está en
+        // uso en ningún grid del sistema (verificado) y evita agregar un diccionario global.
+        private class OrdenGrillaEstado
+        {
+            public int ColumnIndex;
+            public bool Ascendente;
+        }
+
+        private void Grilla_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            var dgv = (DataGridView)sender;
+
+            // Si el DataSource ya soporta ordenamiento nativo (ej. algunos grids bindeados a
+            // BindingSource, como los de Roles/Permisos), no interferimos: WinForms ya lo resuelve.
+            if (dgv.DataSource is IBindingList blNativo && blNativo.SupportsSorting)
+                return;
+
+            if (!(dgv.DataSource is IList lista) || lista.Count == 0)
+                return;
+
+            var columna = dgv.Columns[e.ColumnIndex];
+            string propiedad = string.IsNullOrEmpty(columna.DataPropertyName) ? columna.Name : columna.DataPropertyName;
+
+            // Tipo real de los elementos, sin necesidad de conocer T en tiempo de compilación
+            Type tipoElemento = lista[0].GetType();
+            PropertyInfo propInfo = tipoElemento.GetProperty(propiedad, BindingFlags.Public | BindingFlags.Instance);
+            if (propInfo == null)
+                return; // La columna no mapea a una propiedad real (ej. columna calculada a mano) -> no se ordena
+
+            var estadoAnterior = dgv.Tag as OrdenGrillaEstado;
+            bool ascendente = !(estadoAnterior != null && estadoAnterior.ColumnIndex == e.ColumnIndex && estadoAnterior.Ascendente);
+            dgv.Tag = new OrdenGrillaEstado { ColumnIndex = e.ColumnIndex, Ascendente = ascendente };
+
+            var ordenado = lista.Cast<object>()
+                .OrderBy(x => propInfo.GetValue(x), Comparer<object>.Create(CompararValores))
+                .ToList();
+            if (!ascendente)
+                ordenado.Reverse();
+
+            // Reordenamos la MISMA lista in-place (Clear + Add) en vez de reemplazar dgv.DataSource:
+            // así no se pierden columnas ocultas/renombradas a mano (ej.
+            // PanelMovimientoVenta.ConfigurarColumnasItems), que se resetearían si se reasigna
+            // DataSource con AutoGenerateColumns=true.
+            lista.Clear();
+            foreach (var item in ordenado)
+                lista.Add(item);
+
+            // CurrencyManager.Refresh() releé la lista mutada sin tocar la colección de columnas
+            // del grid (a diferencia de volver a asignar dgv.DataSource).
+            if (dgv.BindingContext != null && dgv.DataSource != null)
+                ((CurrencyManager)dgv.BindingContext[dgv.DataSource]).Refresh();
+
+            foreach (DataGridViewColumn col in dgv.Columns)
+                col.HeaderCell.SortGlyphDirection = SortOrder.None;
+            columna.HeaderCell.SortGlyphDirection = ascendente ? SortOrder.Ascending : SortOrder.Descending;
+        }
+
+        // Comparador null-safe y tolerante a tipos no-IComparable (ej. si la propiedad es un enum
+        // o un objeto sin comparación definida, se compara por texto como último recurso).
+        private static int CompararValores(object a, object b)
+        {
+            if (a == null && b == null) return 0;
+            if (a == null) return -1;
+            if (b == null) return 1;
+            if (a is IComparable comparable) return comparable.CompareTo(b);
+            return string.Compare(a.ToString(), b.ToString(), StringComparison.OrdinalIgnoreCase);
         }
         private void ConfigurarToolStrip(ToolStrip ts)
         {

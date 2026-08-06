@@ -37,7 +37,7 @@
             ClientSize = new Size(552, 295);
             Name = "PantallaCargaEspera";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "PantallaCargaEspera";
+            Text = "Pantalla de Carga";
             ResumeLayout(false);
         }
 

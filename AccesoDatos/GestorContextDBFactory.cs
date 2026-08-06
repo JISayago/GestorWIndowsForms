@@ -9,18 +9,20 @@ using System.Threading.Tasks;
 
 namespace AccesoDatos
 {
-    
-    
-        public class GestorContextDBFactory : IDesignTimeDbContextFactory<GestorContextDB>
+
+
+    public class GestorContextDBFactory : IDesignTimeDbContextFactory<GestorContextDB>
+    {
+        public GestorContextDB CreateDbContext(string[] args)
         {
-            public GestorContextDB CreateDbContext(string[] args)
-            {
             var optionsBuilder = new DbContextOptionsBuilder<GestorContextDB>();
-                optionsBuilder.UseSqlServer(Conexion.ObtenerCadenaConexion());
+            optionsBuilder.UseSqlServer(
+                Conexion.ObtenerCadenaConexion(),
+                sql => sql.CommandTimeout(300)); // 5 min, para migraciones pesadas (creación de índices sobre tablas grandes)
 
             return new GestorContextDB(optionsBuilder.Options);
-            }
+        }
 
     }
-    
+
 }

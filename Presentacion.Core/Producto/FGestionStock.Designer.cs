@@ -169,7 +169,7 @@
             Controls.Add(lblTexto);
             Name = "FGestionStock";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "FGestionStock";
+            Text = "ABM Stock Simple";
             Load += FGestionStock_Load;
             ResumeLayout(false);
             PerformLayout();

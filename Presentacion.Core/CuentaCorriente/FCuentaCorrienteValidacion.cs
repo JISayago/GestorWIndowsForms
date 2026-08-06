@@ -16,13 +16,13 @@ using System.Windows.Forms;
 
 namespace Presentacion.Core.CuentaCorriente
 {
-    public partial class FCuentaCorrienteValidacion : Form
+    public partial class FCuentaCorrienteValidacion : FBase.FBase
     {
         private readonly ICuentaCorrienteServicio _ctacteServicio;
         private CuentaCorrienteDTO ctaCte;
         private long clienteId;
         private decimal monto;
-        private List<long> dniAutorizados;
+        private List<string> dniAutorizados;
 
         public FCuentaCorrienteValidacion(long clienteCargado, decimal montoCtaCte)
         {

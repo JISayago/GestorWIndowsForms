@@ -165,6 +165,10 @@ namespace Presentacion.Core.Producto
                 cmbRubro.SelectedValue = Producto.IdRubro;
                 chkControlPorLotes.Checked = Producto.ControlPorLote;
                 chkTieneVencimiento.Checked = Producto.TieneVencimiento;
+
+                // Precargamos las categorías que ya tiene asignadas el producto,
+                // para no perderlas si se guarda sin abrir el diálogo de Categorias.
+                _categoriasSeleccionadas = Producto.CategoriaIds?.ToList() ?? new List<long>();
             }
             else
             {

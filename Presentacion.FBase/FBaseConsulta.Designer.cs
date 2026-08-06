@@ -32,6 +32,7 @@
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FBaseConsulta));
             BarraLateralBotones = new ToolStrip();
             btnNuevo = new ToolStripButton();
             btnEliminar = new ToolStripButton();
@@ -786,6 +787,7 @@
             ClientSize = new Size(1444, 688);
             Controls.Add(panel1);
             ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FBaseConsulta";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FBaseConsulta";

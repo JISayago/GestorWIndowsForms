@@ -1,6 +1,6 @@
-﻿namespace Presentacion.Core.CuentaCorriente
+﻿namespace Presentacion.Core.Oferta
 {
-    partial class FCuentaCorrienteConsulta
+    partial class FProductosExcluidosDeOferta
     {
         /// <summary>
         /// Required designer variable.
@@ -28,16 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            SuspendLayout();
-            // 
-            // FCuentaCorrienteConsulta
-            // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1297, 450);
-            Name = "FCuentaCorrienteConsulta";
-            Text = "FCuentaCorrienteConsulta";
-            ResumeLayout(false);
+            this.components = new System.ComponentModel.Container();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Text = "FProductosExcluidosDeOferta";
         }
 
         #endregion

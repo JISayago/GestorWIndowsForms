@@ -105,7 +105,7 @@
             Controls.Add(txtDniLegajo);
             Name = "FRecuperarContra";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "FRecuperarContra";
+            Text = "Recuperar Contraseña";
             Load += FRecuperarContra_Load;
             ResumeLayout(false);
             PerformLayout();

@@ -105,7 +105,7 @@ namespace Servicios.LogicaNegocio.Movimiento
             {
                 var movimiento = new AccesoDatos.Entidades.Movimiento
                 {
-                    NumeroMovimiento = $"MOV{total}CTACTE",
+                    NumeroMovimiento = $"MOV-CTACTE-{cuentaCorrienteId}-{DateTime.Now:yyyyMMddHHmmss}",
                     TipoMovimiento = esPago ? (int)TipoMovimiento.Ingreso : (int)TipoMovimiento.Egreso, //Ingreso es pago de ctacte, Egreso es compra con ctacte
                     TipoMovimientoDetalle = (int)detalleTipo,
                     Monto = total,
@@ -116,6 +116,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                 };
 
                 context.Movimientos.Add(movimiento);
+
 
                 //Si el contexto es local, guardamos los cambios directamente
                 if (crearContextoLocal)
@@ -555,7 +556,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                         // Navegación hacia el nombre del cliente
                         NombreCliente = cc.Cliente.Persona.Nombre + " " + cc.Cliente.Persona.Apellido,
                         // Mapeo de DNI autorizados (asumiendo relación o lista)
-                        DniAutorizados = cc.CuentaCorrienteAutorizado.Select(a => a.Dni).ToList()
+                        DniAutorizados = cc.CuentaCorrienteAutorizado.Select(a => a.Dni.ToString()).ToList()
                         }).FirstOrDefault()
                        : null
 

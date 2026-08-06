@@ -18,6 +18,8 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         public EstadoOperacion Insertar(OfertaDTO dto);
         //public OfertaDTO ObtenerOfertaActivaPorId(long idOFerta);
         ItemVentaDTO? ObtenerItemVentaOferta(long ofertaId);
+        List<OfertaDTO> ObtenerOfertasVencidas(int diasHaciaAdelante);
+        List<OfertaBajoStockDTO> ObtenerOfertasConBajoStock();
 
         //public InfoOfertaDTO ObtenerInfoOferta();
         //public List<OfertaDTO> ObtenerOfertasActivas(string cadenaBuscar);
@@ -29,6 +31,5 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
         //public List<OfertaDTO> ObtenerOfertasActivasInactivas(string cadenaBuscar, string columna, DateTime? fechaDesde, DateTime? fechaHasta);
         //public OfertaDTO? ActivarDesactivar(long ofertaId);
         //public bool ExisteOfertaPorCodigo(string codigo);
-        //public List<OfertaDTO> ObtenerOfertasVencidas(int cantidadDiasABuscar);
     }
 }

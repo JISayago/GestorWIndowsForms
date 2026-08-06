@@ -39,7 +39,8 @@ namespace Presentacion.Core.Caja
             var result = FCajaAbrir.ShowDialog();
             if (result == DialogResult.OK)
             {
-                this.Close();
+                MessageBox.Show($"Caja Abierta correctamente.\n Saldo Actual: ${FCajaAbrir.SaldoApertura} ");
+                InicializarEstadoCaja();
             }
         }
 
@@ -55,17 +56,18 @@ namespace Presentacion.Core.Caja
             var result = FCerrarCaja.ShowDialog();
             if (result == DialogResult.OK)
             {
-                this.Close();
+                MessageBox.Show($"Caja Cerrada correctamente.\n Saldo Final: ${FCerrarCaja.SaldoFinal} ");
+                InicializarEstadoCaja();
             }
         }
 
-        private void FCaja_Load(object sender, EventArgs e)
+        private void InicializarEstadoCaja()
         {
-            //var estadoCaja = cajaServicio.ObtenerEstadoCaja();
             var cajaInicial = cajaServicio.EstadoInicioCaja();
             if (!cajaInicial.EstaCerrada)
             {
                 btnAbrirCaja.Enabled = false;
+                btnCerrarCaja.Enabled = true;
                 lblSaldoCaja.Text = cajaInicial.SaldoActual.ToString("C");
                 if (cajaInicial.SaldoActual > 0)
                 {
@@ -80,10 +82,16 @@ namespace Presentacion.Core.Caja
             {
                 var x = 0.00m;
                 btnCerrarCaja.Enabled = false;
+                btnAbrirCaja.Enabled = true;
                 lblSaldoCaja.Text = x.ToString("C");
             }
             lblEstadoCaja.Text = !cajaInicial.EstaCerrada ? "CAJA ABIERTA" : "CAJA CERRADA";
         }
+        private void FCaja_Load(object sender, EventArgs e)
+        {
+            InicializarEstadoCaja();
+        }
+
 
         private void btnConsultarCajas_Click(object sender, EventArgs e)
         {

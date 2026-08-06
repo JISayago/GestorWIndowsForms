@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FRubroABM));
             label3 = new Label();
             txtRubro = new TextBox();
             lblRubro = new Label();
@@ -71,8 +72,10 @@
             Controls.Add(label3);
             Controls.Add(txtRubro);
             Controls.Add(lblRubro);
+            ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FRubroABM";
-            Text = "FRubroABM";
+            Text = "ABM Rubro";
             Controls.SetChildIndex(lblRubro, 0);
             Controls.SetChildIndex(txtRubro, 0);
             Controls.SetChildIndex(label3, 0);
