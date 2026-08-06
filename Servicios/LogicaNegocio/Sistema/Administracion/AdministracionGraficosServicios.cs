@@ -22,6 +22,9 @@ namespace Servicios.LogicaNegocio.Sistema.Administracion
 
         public GraficosAdministracionDTO ObtenerDatos(int año, int mes)
         {
+            int mesAnterior = mes == 1 ? 12 : mes - 1;
+            int anioAnterior = mes == 1 ? año - 1 : año;
+
             return new GraficosAdministracionDTO
             {
                 CajasMes = _cajaServicio.ObtenerCajasPorMesYAño(mes, año),
@@ -29,6 +32,8 @@ namespace Servicios.LogicaNegocio.Sistema.Administracion
                 Cajas31Dias = _cajaServicio.ObtenerCajasUltimosXDias(31),
 
                 VentasMes = _ventaServicio.ObtenerVentasPorMesYAño(mes, año),
+
+                VentasMesAnterior = _ventaServicio.ObtenerVentasPorMesYAño(mesAnterior, anioAnterior),
 
                 CajasAnio = _cajaServicio.ObtenerLasCajasDeXAño(año),
 

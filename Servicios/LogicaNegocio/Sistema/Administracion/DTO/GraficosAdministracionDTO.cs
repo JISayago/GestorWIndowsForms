@@ -14,6 +14,7 @@ namespace Servicios.LogicaNegocio.Sistema.Administracion.DTO
         public List<CajaDTO> Cajas31Dias { get; set; }
 
         public List<VentaDTO> VentasMes { get; set; }
+        public List<VentaDTO> VentasMesAnterior { get; set; }
         public List<CajaDTO> CajasAnio { get; set; }
         public List<VentaDTO> VentasAnio { get; set; }
     }

@@ -497,7 +497,7 @@
             tabPage1.Padding = new Padding(3);
             tabPage1.Size = new Size(1598, 332);
             tabPage1.TabIndex = 0;
-            tabPage1.Text = "Cajas del Mes";
+            tabPage1.Text = "Ingresos vs Egresos";
             tabPage1.UseVisualStyleBackColor = true;
             // 
             // formsPlot1
@@ -517,7 +517,7 @@
             tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(1598, 332);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "Ultimas 50";
+            tabPage2.Text = "Últimos 31 días";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // formsPlot2
