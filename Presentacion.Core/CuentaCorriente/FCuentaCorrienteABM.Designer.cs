@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FCuentaCorrienteABM));
             lblccorriente = new Label();
             lblSaldo = new Label();
@@ -48,7 +48,7 @@
             lblNombreCliente = new Label();
             groupBox1 = new GroupBox();
             rbVencimientoManual = new RadioButton();
-            rbVencimientoMensual = new RadioButton();
+            rbVencimientoAutomatico = new RadioButton();
             nudCantidadMeses = new NumericUpDown();
             lblFechaVencimiento = new Label();
             label2 = new Label();
@@ -214,7 +214,7 @@
             // groupBox1
             // 
             groupBox1.Controls.Add(rbVencimientoManual);
-            groupBox1.Controls.Add(rbVencimientoMensual);
+            groupBox1.Controls.Add(rbVencimientoAutomatico);
             groupBox1.Location = new Point(397, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(333, 51);
@@ -233,17 +233,17 @@
             rbVencimientoManual.UseVisualStyleBackColor = true;
             rbVencimientoManual.CheckedChanged += rbVencimientoManual_CheckedChanged;
             // 
-            // rbVencimientoMensual
+            // rbVencimientoAutomatico
             // 
-            rbVencimientoMensual.AutoSize = true;
-            rbVencimientoMensual.Location = new Point(6, 22);
-            rbVencimientoMensual.Name = "rbVencimientoMensual";
-            rbVencimientoMensual.Size = new Size(158, 19);
-            rbVencimientoMensual.TabIndex = 0;
-            rbVencimientoMensual.TabStop = true;
-            rbVencimientoMensual.Text = "Vencimiento fijo por mes";
-            rbVencimientoMensual.UseVisualStyleBackColor = true;
-            rbVencimientoMensual.CheckedChanged += rbVencimientoMensual_CheckedChanged;
+            rbVencimientoAutomatico.AutoSize = true;
+            rbVencimientoAutomatico.Location = new Point(6, 22);
+            rbVencimientoAutomatico.Name = "rbVencimientoAutomatico";
+            rbVencimientoAutomatico.Size = new Size(158, 19);
+            rbVencimientoAutomatico.TabIndex = 0;
+            rbVencimientoAutomatico.TabStop = true;
+            rbVencimientoAutomatico.Text = "Vencimiento Automatico";
+            rbVencimientoAutomatico.UseVisualStyleBackColor = true;
+            rbVencimientoAutomatico.CheckedChanged += rbVencimientoMensual_CheckedChanged;
             // 
             // nudCantidadMeses
             // 
@@ -543,38 +543,38 @@
             dgvGrilla.AllowUserToDeleteRows = false;
             dgvGrilla.Anchor = AnchorStyles.None;
             dgvGrilla.BackgroundColor = SystemColors.ButtonFace;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvGrilla.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = SystemColors.Control;
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
+            dgvGrilla.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = Color.FromArgb(31, 26, 43);
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dgvGrilla.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = SystemColors.Window;
+            dataGridViewCellStyle6.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle6.ForeColor = Color.FromArgb(31, 26, 43);
+            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
+            dgvGrilla.DefaultCellStyle = dataGridViewCellStyle6;
             dgvGrilla.EditMode = DataGridViewEditMode.EditProgrammatically;
             dgvGrilla.Location = new Point(6, 66);
             dgvGrilla.Name = "dgvGrilla";
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = SystemColors.Control;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            dgvGrilla.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = SystemColors.Control;
+            dataGridViewCellStyle7.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle7.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = DataGridViewTriState.True;
+            dgvGrilla.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
             dgvGrilla.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
-            dataGridViewCellStyle4.BackColor = Color.White;
-            dataGridViewCellStyle4.Padding = new Padding(2, 4, 2, 4);
-            dgvGrilla.RowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle8.BackColor = Color.White;
+            dataGridViewCellStyle8.Padding = new Padding(2, 4, 2, 4);
+            dgvGrilla.RowsDefaultCellStyle = dataGridViewCellStyle8;
             dgvGrilla.RowTemplate.Height = 40;
             dgvGrilla.Size = new Size(665, 228);
             dgvGrilla.TabIndex = 35;
@@ -659,7 +659,7 @@
         private Label lblNombreCliente;
         private GroupBox groupBox1;
         private RadioButton rbVencimientoManual;
-        private RadioButton rbVencimientoMensual;
+        private RadioButton rbVencimientoAutomatico;
         private NumericUpDown nudCantidadMeses;
         private Label lblFechaVencimiento;
         private Label label2;

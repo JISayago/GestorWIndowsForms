@@ -8,7 +8,7 @@ namespace Servicios.Helpers.Cliente.CtaCte
 {
     public enum TipoVencimientoCuentaCorriente
     {
-        Mensual = 1,
+        Automatico = 1,
         Manual = 2
     }
 }
