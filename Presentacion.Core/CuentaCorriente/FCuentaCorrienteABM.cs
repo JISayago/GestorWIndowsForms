@@ -126,7 +126,7 @@ namespace Presentacion.Core.CuentaCorriente
             limiteDeuda = 0;
             chkLimiteDeuda.Checked = false;
 
-            rbVencimientoMensual.Checked = true;
+            rbVencimientoAutomatico.Checked = true;
             nudCantidadMeses.Value = 1;
 
             _dnisAutorizadosLista.Clear();
@@ -214,7 +214,7 @@ namespace Presentacion.Core.CuentaCorriente
 
 
 
-            rbVencimientoMensual.Checked = _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Mensual;
+            rbVencimientoAutomatico.Checked = _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Automatico;
             rbVencimientoManual.Checked = _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Manual;
             if(_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Activa)
             {
@@ -255,13 +255,13 @@ namespace Presentacion.Core.CuentaCorriente
                 MessageBox.Show(@"Debe ingresar al menos un DNI autorizado.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
-            var tipoVencimiento = rbVencimientoMensual.Checked
-                ? TipoVencimientoCuentaCorriente.Mensual
+            var tipoVencimiento = rbVencimientoAutomatico.Checked
+                ? TipoVencimientoCuentaCorriente.Automatico
                 : TipoVencimientoCuentaCorriente.Manual;
 
-            var cantidadMeses = rbVencimientoMensual.Checked
-                ? 1
-                : (int)nudCantidadMeses.Value;
+            var cantidadMeses = rbVencimientoAutomatico.Checked
+                ? (int)nudCantidadMeses.Value
+                : 1;
 
             if (!ValidarSaldoYLimite())
                 return false;
@@ -276,9 +276,7 @@ namespace Presentacion.Core.CuentaCorriente
                 LimiteDeuda = limiteDeuda,
                 FechaCreacion = DateTime.Now,
                 FechaActivacion = DateTime.Now,// evaluar si va con creacion activacion automatica o no, por ahora lo dejamos asi
-                FechaVencimiento = rbVencimientoMensual.Checked
-                    ? DateTime.Now.AddMonths(1)
-                    : DateTime.Now.AddMonths(cantidadMeses),
+                FechaVencimiento = DateTime.Now.AddMonths(cantidadMeses),
                 // 🔹 Directamente le pasamos la lista limpia convertida a List<long>
                 DniAutorizados = _dnisAutorizadosLista.ToList(),
                 EstaEliminado = false,
@@ -347,13 +345,13 @@ namespace Presentacion.Core.CuentaCorriente
                 MessageBox.Show(@"Debe ingresar al menos un DNI autorizado.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
-            var tipoVencimiento = rbVencimientoMensual.Checked
-          ? TipoVencimientoCuentaCorriente.Mensual
-          : TipoVencimientoCuentaCorriente.Manual;
+            var tipoVencimiento = rbVencimientoAutomatico.Checked
+                ? TipoVencimientoCuentaCorriente.Automatico
+                : TipoVencimientoCuentaCorriente.Manual;
 
-            var cantidadMeses = rbVencimientoMensual.Checked
-               ? 1
-               : (int)nudCantidadMeses.Value;
+            var cantidadMeses = rbVencimientoAutomatico.Checked
+                 ? (int)nudCantidadMeses.Value
+                 : 1;
 
 
             if (TipoOperacion == TipoOperacion.Modificar)
@@ -361,15 +359,13 @@ namespace Presentacion.Core.CuentaCorriente
                 var cuentacorrienteEditar = new CuentaCorrienteDTO
                 {
                     NombreCuentaCorriente = txtNombreCC.Text,
-                    //Saldo = saldoInicial,
+                    Saldo = saldoInicial,
                     MontoCargaSaldo = saldoInicial - saldoOriginal,
                     LimiteDeuda = limiteDeuda,
                     LimiteDeudaActivo = chkLimiteDeuda.Checked,
                     TipoVencimiento = (int)tipoVencimiento,
                     CantidadMesesVencimiento = cantidadMeses,
-                    FechaVencimiento = rbVencimientoMensual.Checked
-                    ? DateTime.Now.AddMonths(1)
-                    : DateTime.Now.AddMonths(cantidadMeses),
+                    FechaVencimiento = DateTime.Now.AddMonths(cantidadMeses),
 
                     // 🔹 Al modificar también usamos la lista del ListBox directamente
                     DniAutorizados = _dnisAutorizadosLista.ToList(),
@@ -427,15 +423,30 @@ namespace Presentacion.Core.CuentaCorriente
 
         private void ActualizarProximoVencimiento()
         {
-            int meses = rbVencimientoMensual.Checked
-                ? 1
-                : (int)nudCantidadMeses.Value;
+            //if (rbVencimientoManual.Checked)
+            //{
+            //    lblFechaVencimiento.Text = "Vencimiento manual";
+            //    return;
+            //}
+            if(_cuentaCorriente.ConDeuda && _cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Suspendida)
+            {
+                lblFechaVencimiento.Text = "Cuenta vencida con deuda.\n" +
+                    " Por favor pague la deuda para registrar el próximo vencimiento";
+                return;
+            }
+            if(_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Suspendida && _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Manual && _cuentaCorriente.Saldo >= 0)
+            {
+                lblFechaVencimiento.Text = "Cuenta suspendida sin deuda y/o con saldo a favor.\n" +
+                    " Por favor seleccione las condiciones para el próximo vencimiento";
+                return;
+            }
 
-            var fechaBase = DateTime.Today;
+            var meses = (int)nudCantidadMeses.Value;
 
-            var proximo = fechaBase.AddMonths(meses);
+            var proximo = DateTime.Today.AddMonths(meses);
 
-            lblFechaVencimiento.Text = $"Próximo vencimiento: {proximo:dd/MM/yyyy}";
+            lblFechaVencimiento.Text =
+                $"Próximo vencimiento: {proximo:dd/MM/yyyy}";
         }
         private void ActualizarPantalla()
         {
@@ -448,8 +459,8 @@ namespace Presentacion.Core.CuentaCorriente
             ActualizarProximoVencimiento();
 
             ActualizarBotones();
-
         }
+        
         private void ActualizarLimite()
         {
             btnCargarLimite.Enabled = chkLimiteDeuda.Checked;
@@ -501,7 +512,19 @@ namespace Presentacion.Core.CuentaCorriente
                 lblFechaVencimiento.Text = "-";
                 return;
             }
-
+            if (CuentaCreada)
+            {
+                var cta = _cuentaCorriente.FechaCreacion;
+                if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Activa)
+                {
+                    btnCerrarCtacte.Text = "Cerrar Cuenta";
+                }
+                else if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Cerrada)
+                {
+                    btnActivar.Enabled = false;
+                    btnCerrarCtacte.Text = "Reabrir Cuenta";
+                }
+            }
 
             lblEstado.Text = _cuentaCorriente.EstadoDescripcionCtaCte;
 
@@ -839,6 +862,7 @@ namespace Presentacion.Core.CuentaCorriente
 
             //btnCargarLimite.Enabled =
             //    CuentaCreada && chkLimiteDeuda.Checked;
+     
 
             lblPagina.Text = $"Página {paginaActual} de {totalPaginas}";
             lblTotalRegistros.Text = $"Total: {totalRegistros}";
@@ -911,7 +935,24 @@ namespace Presentacion.Core.CuentaCorriente
         private void btnCerrarCtacte_Click(object sender, EventArgs e)
         {
             if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Cerrada)
+            {
+                var msje = MessageBox.Show("¿Esta seguro que desea reabrir la cuenta corriente?", "Confirmar reapertura", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (msje == DialogResult.Yes)
+                {
+                    var res = _cuentacorrienteServicio.ReabrirCuentaCorriente(CuentaCorrienteId.Value);
+                    if (res.Exitoso)
+                    {
+                        MessageBox.Show($"{res.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        CargarDatosCuenta();
+                        ActualizarPantalla();
+                    }
+                    else
+                    {
+                        MessageBox.Show($"{res.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
                 return;
+            }   
             var msjee = MessageBox.Show("¿Está seguro que desea cerrar la cuenta corriente? Esta acción no se puede deshacer.", "Confirmar cierre", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (msjee != DialogResult.Yes)
                 return;
@@ -928,5 +969,6 @@ namespace Presentacion.Core.CuentaCorriente
             }
 
         }
+
     }
 }

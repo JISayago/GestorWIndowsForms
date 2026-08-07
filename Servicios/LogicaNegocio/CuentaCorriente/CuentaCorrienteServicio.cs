@@ -172,7 +172,12 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             var cajaServicio = new Caja.CajaServicio();
 
             var cajaId = cajaServicio.ObtenerIdDeUltimaCajaAbierta(context);
-
+            if (!cajaId.HasValue)
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Por favor abra una caja para continuar con la transacción."
+                };
             cajaServicio.RegistrarTransaccion(context, diferencia, TipoMovimiento.Ingreso, cajaId.Value);
             CrearMovimientoCargaSaldoCuentaCorriente(cuenta.CuentaCorrienteId, diferencia, context);
 
@@ -476,7 +481,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         // LOGICA DE NEGOCIO                                              // 
         // ===============================================================// 
 
-        public bool PuedeComprar(long cuentaId, decimal monto)
+        public EstadoOperacion PuedeComprar(long cuentaId, decimal monto)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
 
@@ -484,11 +489,11 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 .FirstOrDefault(c => c.CuentaCorrienteId == cuentaId && !c.EstaEliminado);
 
             if (cuenta == null)
-                return false;
+                return new EstadoOperacion { Exitoso = false, Mensaje = "Cuenta corriente no encontrada" };
 
             // Cuenta cerrada manualmente o suspendida
             if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Cerrada || cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Suspendida)
-                return false;
+                return new EstadoOperacion { Exitoso = false, Mensaje = "La cuenta está cerrada o suspendida" };
 
             decimal saldoProyectado = cuenta.Saldo - monto;
 
@@ -498,18 +503,18 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             // Si está vencida solamente puede gastar saldo disponible.
             if (estaVencidaPorFecha && saldoProyectado < 0)
-                return false;
+                return new EstadoOperacion { Exitoso = false, Mensaje = "La cuenta está vencida y no tiene saldo disponible" };
 
             // No permite deuda.
             if (!cuenta.LimiteDeudaActivo)
-                return saldoProyectado >= 0;
+                return new EstadoOperacion { Exitoso = saldoProyectado >= 0, Mensaje = saldoProyectado >= 0 ? "Puede comprar" : "No puede comprar, no permite deuda" };
 
             // Permite deuda ilimitada.
             if (cuenta.LimiteDeuda == 0)
-                return true;
+                return new EstadoOperacion { Exitoso = true, Mensaje = "Puede comprar" };
 
             // El saldo no puede ser menor al límite negativo permitido.
-            return saldoProyectado >= -cuenta.LimiteDeuda;
+            return new EstadoOperacion { Exitoso = saldoProyectado >= -cuenta.LimiteDeuda, Mensaje = saldoProyectado >= -cuenta.LimiteDeuda ? "Puede comprar" : "No puede comprar, supera el límite de deuda" };
         }
 
         public EstadoOperacion RegistrarCompra(long cuentaId, decimal monto, long cajaId, string descripcion = "Compra")
@@ -519,8 +524,9 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             if (cuenta == null) throw new Exception("Cuenta corriente no encontrada");
 
-            if (!PuedeComprar(cuentaId, monto))
-                return new EstadoOperacion { Exitoso = false, Mensaje = "No puede realizar la compra (cuenta vencida, inactiva o sin límite)." };
+            var puedeComprar = PuedeComprar(cuentaId, monto);
+            if (!puedeComprar.Exitoso)
+                return new EstadoOperacion { Exitoso = false, Mensaje = puedeComprar.Mensaje};
 
             cuenta.Saldo -= monto;
 
@@ -643,30 +649,54 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             return cuentasVencidas;
         }
 
-       public static void VerificarYActualizarEstadoInstancia(AccesoDatos.Entidades.CuentaCorriente cuenta)
-{
-    cuenta.ConDeuda = cuenta.Saldo < 0;
+        public static void VerificarYActualizarEstadoInstancia(AccesoDatos.Entidades.CuentaCorriente cuenta)
+        {
+            cuenta.ConDeuda = cuenta.Saldo < 0;
 
-    // Si fue cerrada manualmente no la modificamos.
-    if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Cerrada)
-        return;
+            if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Cerrada)
+                return;
 
-    bool suspendidaPorFecha =
-        cuenta.FechaVencimiento.HasValue &&
-        cuenta.FechaVencimiento.Value < DateTime.Now;
+            // primero control del límite
+            bool suspendidaPorLimite = false;
 
-    bool suspendidaPorLimite = false;
+            if (cuenta.LimiteDeudaActivo && cuenta.LimiteDeuda > 0)
+            {
+                suspendidaPorLimite = cuenta.Saldo <= -cuenta.LimiteDeuda;
+            }
 
-    if (cuenta.LimiteDeudaActivo && cuenta.LimiteDeuda > 0)
-    {
-        suspendidaPorLimite = cuenta.Saldo <= -cuenta.LimiteDeuda;
-    }
+            if (suspendidaPorLimite)
+            {
+                cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Suspendida;
+                return;
+            }
 
-    cuenta.EstadoCuentaCorriente =
-        (suspendidaPorFecha || suspendidaPorLimite)
-            ? (int)EstadoCuentaCorriente.Suspendida
-            : (int)EstadoCuentaCorriente.Activa;
-}
+            // después control del vencimiento
+            if (cuenta.FechaVencimiento.HasValue &&
+                cuenta.FechaVencimiento.Value <= DateTime.Now)
+            {
+                if (cuenta.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Manual)
+                {
+                    cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Suspendida;
+
+                    return;
+                }
+
+                // automático
+                if (cuenta.Saldo < 0)
+                {
+                    cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Suspendida;
+
+                    return;
+                }
+
+                while (cuenta.FechaVencimiento <= DateTime.Now)
+                {
+                    cuenta.FechaVencimiento =cuenta.FechaVencimiento.Value.AddMonths(cuenta.CantidadMesesVencimiento);
+                }
+            }
+
+            cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Activa;
+        }
 
 
         public ResultadoPaginacion<MovimientoDTO> ObtenerMovimientosPorCuentaCorriente(long cuentaCorrienteId,FiltroConsulta filtros)
@@ -883,6 +913,65 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             {
                 Exitoso = true,
                 Mensaje = "Cuenta corriente activada correctamente.",
+                EntidadId = cuenta.CuentaCorrienteId
+            };
+        }
+
+        public EstadoOperacion ReabrirCuentaCorriente(long ctacteId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var cuenta = context.CuentaCorriente
+                .FirstOrDefault(x => x.CuentaCorrienteId == ctacteId);
+
+            if (cuenta == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Cuenta corriente no encontrada."
+                };
+            }
+
+            if (cuenta.EstadoCuentaCorriente != (int)EstadoCuentaCorriente.Cerrada)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "La cuenta corriente no se encuentra cerrada."
+                };
+            }
+            var Msje = "";
+            if (cuenta.Saldo < 0)
+            {
+                cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Suspendida;
+                Msje = "Cuenta corriente reabierta en estado suspendida debido a deuda pendiente.";
+                cuenta.ConDeuda = true;
+            }
+            else
+            {
+                cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Activa;
+                Msje = "Cuenta corriente reabierta correctamente.";
+                cuenta.FechaActivacion = DateTime.Now;
+                cuenta.ConDeuda = false;
+            }
+
+
+            if (cuenta.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Manual ||
+                cuenta.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Automatico)
+            {
+                int meses = Math.Max(1, cuenta.CantidadMesesVencimiento);
+
+                cuenta.FechaVencimiento = DateTime.Now.AddMonths(meses);
+            }
+
+
+            context.SaveChanges();
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = Msje,
                 EntidadId = cuenta.CuentaCorrienteId
             };
         }

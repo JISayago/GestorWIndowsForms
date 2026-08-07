@@ -171,8 +171,8 @@ namespace Servicios.LogicaNegocio.Venta
         }
         private void RegistrarMovimientoCuentaCorriente(AccesoDatos.Entidades.Venta venta,VentaDTO ventaDto,long cajaId,GestorContextDB context)
         {
-            if (venta.MontoAdeudado == 0)
-                return;
+            //if (venta.MontoAdeudado == 0) era aplicado a cta cte pero al final pasamos como Total de la venta despues ver si se asigna o no funcion a esta propiedad
+            //    return;
 
             if (!venta.IdCliente.HasValue)
                 throw new Exception(
@@ -189,14 +189,15 @@ namespace Servicios.LogicaNegocio.Venta
 
             if (ventaDto.Estado == (int)EstadoVenta.Confirmada)
             {
-                var resultado = servicio.RegistrarCompra(cuenta.CuentaCorrienteId,venta.MontoAdeudado,cajaId,$"Cargo por Venta Interna N° {venta.NumeroVenta}");
+                //tento en esta como en el else deberia ser venta.montoadeudado y no total pero por cuestiones practicas va a quedar total
+                var resultado = servicio.RegistrarCompra(cuenta.CuentaCorrienteId,venta.Total,cajaId,$"Cargo por Venta Interna N° {venta.NumeroVenta}");
 
                 if (!resultado.Exitoso)
                     throw new Exception(resultado.Mensaje);
             }
             else
             {
-                var resultado = servicio.RegistrarDevolucionOAnulacion(cuenta.CuentaCorrienteId,Math.Abs(venta.MontoAdeudado), cajaId, $"Crédito por Anulación de Venta N° {venta.NumeroVenta}");
+                var resultado = servicio.RegistrarDevolucionOAnulacion(cuenta.CuentaCorrienteId,Math.Abs(venta.Total), cajaId, $"Crédito por Anulación de Venta N° {venta.NumeroVenta}");
 
                 if (!resultado.Exitoso)
                     throw new Exception(resultado.Mensaje);

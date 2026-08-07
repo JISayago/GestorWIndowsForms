@@ -14,6 +14,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 {
     public interface ICuentaCorrienteServicio
     {
+        EstadoOperacion ReabrirCuentaCorriente(long ctacteId );
         ResultadoPaginacion<CuentaCorrienteDTO> ObtenerCuentaCorrientes(FiltroConsulta filtros);
         EstadoOperacion CerrarCuentaCorriente(long ctacteId);
         EstadoOperacion CargarSaldoCuentaCorriente(long cuentaCorrienteId,decimal nuevoSaldo);
@@ -25,7 +26,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
         EstadoOperacion Eliminar(long cuentacorrienteId);
         List<string> ObtenerDnisAutorizados(long? cuentaId);
         CuentaCorrienteDTO ObtenerCuentaCorrientePorClienteId(long clienteId);
-        bool PuedeComprar(long cuentaId, decimal monto);
+        EstadoOperacion PuedeComprar(long cuentaId, decimal monto);
         List<CuentaCorrienteDTO> ObtenerCtaCteVencidas(int cantidadDiasVencimiento);
 
     }
