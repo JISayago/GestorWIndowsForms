@@ -14,6 +14,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 {
     public interface ICuentaCorrienteServicio
     {
+        EstadoOperacion ReabrirCuentaCorriente(long ctacteId );
         ResultadoPaginacion<CuentaCorrienteDTO> ObtenerCuentaCorrientes(FiltroConsulta filtros);
         EstadoOperacion CerrarCuentaCorriente(long ctacteId);
         EstadoOperacion CargarSaldoCuentaCorriente(long cuentaCorrienteId,decimal nuevoSaldo);

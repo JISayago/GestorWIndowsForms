@@ -916,5 +916,64 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 EntidadId = cuenta.CuentaCorrienteId
             };
         }
+
+        public EstadoOperacion ReabrirCuentaCorriente(long ctacteId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var cuenta = context.CuentaCorriente
+                .FirstOrDefault(x => x.CuentaCorrienteId == ctacteId);
+
+            if (cuenta == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Cuenta corriente no encontrada."
+                };
+            }
+
+            if (cuenta.EstadoCuentaCorriente != (int)EstadoCuentaCorriente.Cerrada)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "La cuenta corriente no se encuentra cerrada."
+                };
+            }
+            var Msje = "";
+            if (cuenta.Saldo < 0)
+            {
+                cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Suspendida;
+                Msje = "Cuenta corriente reabierta en estado suspendida debido a deuda pendiente.";
+                cuenta.ConDeuda = true;
+            }
+            else
+            {
+                cuenta.EstadoCuentaCorriente = (int)EstadoCuentaCorriente.Activa;
+                Msje = "Cuenta corriente reabierta correctamente.";
+                cuenta.FechaActivacion = DateTime.Now;
+                cuenta.ConDeuda = false;
+            }
+
+
+            if (cuenta.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Manual ||
+                cuenta.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Automatico)
+            {
+                int meses = Math.Max(1, cuenta.CantidadMesesVencimiento);
+
+                cuenta.FechaVencimiento = DateTime.Now.AddMonths(meses);
+            }
+
+
+            context.SaveChanges();
+
+            return new EstadoOperacion
+            {
+                Exitoso = true,
+                Mensaje = Msje,
+                EntidadId = cuenta.CuentaCorrienteId
+            };
+        }
     }
 }
