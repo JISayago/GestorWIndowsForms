@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Presentacion.Core.Venta
 {
-    public partial class FNroComprobanteParaCancelacion : Form
+    public partial class FNroComprobanteParaCancelacion : FBase.FBase
     {
         private IVentaServicio _ventaServicio;
         private long _usuarioLogeadoID;

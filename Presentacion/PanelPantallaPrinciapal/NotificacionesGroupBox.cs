@@ -1,4 +1,4 @@
-﻿using Presentacion.FBase.Helpers;
+using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Sistema;
 using Servicios.LogicaNegocio.PantallaPrincipal;
 using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
@@ -15,15 +15,12 @@ public class NotificationGroupBox : GroupBox
     private bool expanded = false;
     private string _tituloVisual = "";
     private readonly IPantallaPrincipalServicio _pantallaPrincipalServicio;
+    private readonly ToolTip _toolTip = new ToolTip();
 
     public event EventHandler NotificacionCambiada;
 
-    // Identifica a qué grupo pertenece esta instancia (ej: "Lotes Vencidos"),
-    // para poder recordar si estaba abierto o cerrado entre refrescos del panel.
     public string TituloBase { get; private set; } = "";
 
-    // Permite abrir/cerrar el grupo desde afuera (VentanaPrincipal) sin pasar
-    // por el botón, por ejemplo para restaurar el estado tras un refresco.
     public bool Expanded
     {
         get => expanded;
@@ -34,36 +31,24 @@ public class NotificationGroupBox : GroupBox
         }
     }
 
-    // ===========================================================================
-    // CONFIGURACIÓN DE COLORES (Modificar aquí para Temas Claro/Oscuro)
-    // ===========================================================================
-
-    // --- Sección: Título del GroupBox (Badge Superior) ---
-    private readonly Color COLOR_TITULO_FONDO = Color.FromArgb(50, 50, 50); // Fondo oscuro del badge
-    private readonly Color COLOR_TITULO_TEXTO = Color.White;                // Texto blanco del badge
-
-    // --- Sección: Ítems de Notificación ---
-    private readonly Color COLOR_ITEM_FONDO_LEIDO = Color.FromArgb(242, 242, 242); // Gris tenue para leídos
-    private readonly Color COLOR_ITEM_FONDO_NUEVO = Color.White;                    // Blanco para no leídos
-    private readonly Color COLOR_ITEM_BORDE = Color.DarkGray;                      // Color de la línea del borde del ítem
-
-    // --- Sección: Textos ---
-    private readonly Color COLOR_TEXTO_PRINCIPAL = Color.FromArgb(40, 40, 40);   // Gris muy oscuro (Título ítem)
-    private readonly Color COLOR_TEXTO_SECUNDARIO = Color.FromArgb(100, 100, 100); // Gris medio (Descripción)
-
-    // --- Sección: Botón Expandir/Contraer ---
-    private readonly Color COLOR_BTN_FONDO = TemaSistema.Seleccion; // Fondo del botón de la flecha
-    private readonly Color COLOR_BTN_BORDE = Color.Black;                  // Borde del botón de la flecha
-    private readonly Color COLOR_BTN_TEXTO = Color.Black;                  // Color de la flecha (▲/▼)
-
-    // ===========================================================================
+    private readonly Color COLOR_TITULO_FONDO = TemaSistema.Oscuro;
+    private readonly Color COLOR_TITULO_TEXTO = TemaSistema.Acento;
+    private readonly Color COLOR_ITEM_FONDO_LEIDO = TemaSistema.FondoControl;
+    private readonly Color COLOR_ITEM_FONDO_NUEVO = Color.White;
+    private readonly Color COLOR_TEXTO_PRINCIPAL = TemaSistema.Texto;
+    private readonly Color COLOR_TEXTO_SECUNDARIO = TemaSistema.TextoSecundario;
+    private readonly Color COLOR_BTN_FONDO = TemaSistema.Seleccion;
+    private readonly Color COLOR_BTN_BORDE = Color.Black;
+    private readonly Color COLOR_BTN_TEXTO = Color.Black;
 
     public NotificationGroupBox()
     {
-        // Espaciado interno para evitar que los ítems toquen el marco
         this.Padding = new Padding(12, 45, 12, 12);
         this.DoubleBuffered = true;
+        this.BackColor = TemaSistema.Fondo;
+        this.ForeColor = TemaSistema.Texto;
         _pantallaPrincipalServicio = new PantallaPrincipalServicio();
+        _toolTip.SetToolTip(this, "Click derecho en un aviso: marcarlo como leído");
         InicializarComponentes();
     }
 
@@ -72,51 +57,43 @@ public class NotificationGroupBox : GroupBox
         this.Height = 50;
         this.Font = new Font("Segoe UI", 9);
 
-        btnToggle = new Button();
-        btnToggle.Text = "▲";
-        btnToggle.Width = 30;
-        btnToggle.Height = 25;
-
-        // CAMBIO SOLICITADO: 
-        // X: this.Width - 50 (se aleja del borde derecho)
-        // Y: 12 (baja el botón para que no toque el borde superior)
-        btnToggle.Location = new Point(this.Width - 50, 12);
-
-        btnToggle.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        btnToggle.FlatStyle = FlatStyle.Flat;
-
-        // Aplicamos los colores del botón desde la configuración
-        btnToggle.BackColor = COLOR_BTN_FONDO;
-        btnToggle.ForeColor = COLOR_BTN_TEXTO;
+        btnToggle = new Button
+        {
+            Text = "▲",
+            Width = 30,
+            Height = 25,
+            Location = new Point(this.Width - 50, 12),
+            Anchor = AnchorStyles.Top | AnchorStyles.Right,
+            FlatStyle = FlatStyle.Flat,
+            BackColor = COLOR_BTN_FONDO,
+            ForeColor = COLOR_BTN_TEXTO
+        };
         btnToggle.FlatAppearance.BorderColor = COLOR_BTN_BORDE;
-
         btnToggle.Click += BtnToggle_Click;
 
-        panelItems = new FlowLayoutPanel();
-        panelItems.Dock = DockStyle.Top;
-        panelItems.AutoSize = true;
-        panelItems.FlowDirection = FlowDirection.TopDown;
-        panelItems.WrapContents = false;
-        panelItems.BorderStyle = BorderStyle.None;
-        panelItems.BackColor = Color.Transparent; // El fondo salmón se ve a través
+        panelItems = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Top,
+            AutoSize = true,
+            FlowDirection = FlowDirection.TopDown,
+            WrapContents = false,
+            BorderStyle = BorderStyle.None,
+            BackColor = Color.Transparent
+        };
 
         this.Controls.Add(panelItems);
         this.Controls.Add(btnToggle);
 
         this.Resize += (s, e) =>
         {
-            // Mantiene la nueva posición al redimensionar
             btnToggle.Location = new Point(this.Width - 50, 12);
-
             foreach (Control ctrl in panelItems.Controls)
             {
                 ctrl.Width = panelItems.ClientSize.Width - 5;
                 foreach (Control child in ctrl.Controls)
                 {
                     if (child is Label lbl && lbl.ForeColor == COLOR_TEXTO_SECUNDARIO)
-                    {
                         lbl.MaximumSize = new Size(ctrl.Width - 25, 0);
-                    }
                 }
             }
             this.Invalidate();
@@ -126,148 +103,137 @@ public class NotificationGroupBox : GroupBox
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
-
         if (string.IsNullOrEmpty(_tituloVisual)) return;
 
         Graphics g = e.Graphics;
         g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-        using (Font fontTitulo = new Font("Segoe UI", 8.5f, FontStyle.Bold))
-        {
-            Size sizeTexto = TextRenderer.MeasureText(_tituloVisual, fontTitulo);
-            Rectangle rectFondo = new Rectangle(10, 0, sizeTexto.Width + 20, 22);
+        using Font fontTitulo = new Font("Segoe UI", 8.5f, FontStyle.Bold);
+        Size sizeTexto = TextRenderer.MeasureText(_tituloVisual, fontTitulo);
+        Rectangle rectFondo = new Rectangle(10, 0, sizeTexto.Width + 20, 22);
 
-            // Dibujo del Badge Superior
-            using (SolidBrush brushFondo = new SolidBrush(COLOR_TITULO_FONDO))
-            {
-                g.FillRectangle(brushFondo, rectFondo);
-            }
+        using (SolidBrush brushFondo = new SolidBrush(COLOR_TITULO_FONDO))
+            g.FillRectangle(brushFondo, rectFondo);
 
-            TextRenderer.DrawText(g, _tituloVisual, fontTitulo, rectFondo,
-                COLOR_TITULO_TEXTO, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
-        }
+        TextRenderer.DrawText(g, _tituloVisual, fontTitulo, rectFondo,
+            COLOR_TITULO_TEXTO, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
     }
 
     public void SetData(List<NotificacionDTO> notificaciones, string tituloBase)
     {
-        // Aseguramos que siempre sea visible
         this.Visible = true;
-
         TituloBase = tituloBase;
 
         int conteo = notificaciones?.Count ?? 0;
-        _tituloVisual = $"{tituloBase} ({conteo})".ToUpper();
+        ActualizarTituloVisual(conteo);
         this.Text = "";
-
         panelItems.Controls.Clear();
 
         if (conteo > 0)
         {
-            // Si hay datos, los ordenamos y cargamos
-            var notificacionesOrdenadas = notificaciones
+            var ordenadas = notificaciones
                 .OrderByDescending(n => n.NivelUrgencia)
                 .ThenByDescending(n => n.FechaNotificacion)
                 .ToList();
 
-            foreach (var item in notificacionesOrdenadas)
-            {
+            foreach (var item in ordenadas)
                 panelItems.Controls.Add(CrearItem(item));
-            }
-
-            // Opcional: Podrías forzar que se abra si llegan notificaciones nuevas
-            // expanded = true; 
         }
         else
         {
-            // CAMBIO CLAVE: Si no hay notificaciones, forzamos el estado contraído
             expanded = false;
         }
 
         this.Invalidate();
-
-        // AplicarEstado se encarga de ajustar el alto del GroupBox y el texto del botón (▲/▼)
         AplicarEstado();
+    }
+
+    private void ActualizarTituloVisual(int conteo)
+    {
+        _tituloVisual = $"{TituloBase} ({conteo})".ToUpper();
+        this.Invalidate();
     }
 
     private Control CrearItem(NotificacionDTO item)
     {
-        var panelItem = new Panel();
-        panelItem.Width = panelItems.ClientSize.Width - 5;
-        panelItem.Margin = new Padding(0, 0, 0, 8);
-        panelItem.BorderStyle = BorderStyle.FixedSingle;
-        panelItem.Cursor = Cursors.Hand;
+        var panelItem = new Panel
+        {
+            Width = Math.Max(panelItems.ClientSize.Width - 5, 100),
+            Margin = new Padding(0, 0, 0, 8),
+            BorderStyle = BorderStyle.FixedSingle,
+            Cursor = Cursors.Hand,
+            BackColor = item.Leida ? COLOR_ITEM_FONDO_LEIDO : COLOR_ITEM_FONDO_NUEVO
+        };
 
-        // Color inicial según estado (Leída o Nueva)
-        panelItem.BackColor = item.Leida ? COLOR_ITEM_FONDO_LEIDO : COLOR_ITEM_FONDO_NUEVO;
+        _toolTip.SetToolTip(panelItem, "Click derecho: marcar como leído");
 
         panelItem.Paint += (s, e) =>
         {
-            Color colorUrgencia;
-            switch (item.NivelUrgencia)
+            Color colorUrgencia = item.NivelUrgencia switch
             {
-                case (int)NivelUrgencia.Alta: colorUrgencia = Color.Crimson; break;
-                case (int)NivelUrgencia.Media: colorUrgencia = Color.DarkOrange; break;
-                case (int)NivelUrgencia.Baja: colorUrgencia = Color.ForestGreen; break;
-                default: colorUrgencia = Color.Gray; break;
-            }
-            using (SolidBrush brush = new SolidBrush(colorUrgencia))
-            {
-                e.Graphics.FillRectangle(brush, 0, 0, 6, panelItem.Height);
-            }
+                (int)NivelUrgencia.Alta => Color.Crimson,
+                (int)NivelUrgencia.Media => Color.DarkOrange,
+                (int)NivelUrgencia.Baja => Color.ForestGreen,
+                _ => Color.Gray
+            };
+            using SolidBrush brush = new SolidBrush(colorUrgencia);
+            e.Graphics.FillRectangle(brush, 0, 0, 6, panelItem.Height);
         };
 
-        var lblTitulo = new Label();
-        lblTitulo.Text = item.Titulo;
-        lblTitulo.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
-        lblTitulo.Top = 8;
-        lblTitulo.Left = 12;
-        lblTitulo.ForeColor = COLOR_TEXTO_PRINCIPAL;
-        lblTitulo.AutoSize = true;
+        var lblTitulo = new Label
+        {
+            Text = item.Titulo,
+            Font = new Font("Segoe UI", 9.5f, FontStyle.Bold),
+            Top = 8,
+            Left = 12,
+            ForeColor = COLOR_TEXTO_PRINCIPAL,
+            AutoSize = true
+        };
 
-        var lblDescripcion = new Label();
-        lblDescripcion.Text = item.Descripcion;
-        lblDescripcion.Font = new Font("Segoe UI", 8.5f);
-        lblDescripcion.Left = 12;
-        lblDescripcion.Top = lblTitulo.Bottom + 4;
-        lblDescripcion.ForeColor = COLOR_TEXTO_SECUNDARIO;
-        lblDescripcion.AutoSize = true;
-        lblDescripcion.MaximumSize = new Size(panelItem.Width - 20, 0);
+        var lblDescripcion = new Label
+        {
+            Text = item.Descripcion,
+            Font = new Font("Segoe UI", 8.5f),
+            Left = 12,
+            Top = lblTitulo.Bottom + 4,
+            ForeColor = COLOR_TEXTO_SECUNDARIO,
+            AutoSize = true,
+            MaximumSize = new Size(panelItem.Width - 20, 0)
+        };
 
         MouseEventHandler unifiedClickHandler = (s, e) =>
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                //OnItemClick(item);
-            }
-            else if (e.Button == MouseButtons.Right) // Click Derecho
-            {
-                if (!item.Leida)
-                {
-                    item.Leida = true;
-                    _pantallaPrincipalServicio.MarcarNotificacionComoLeida(item.NotificacionId);
-                    panelItem.BackColor = COLOR_ITEM_FONDO_LEIDO;
+            if (e.Button != MouseButtons.Right || item.Leida)
+                return;
 
-                    // 🌟 NUEVO: Disparamos el evento si el formulario padre está escuchando
-                    NotificacionCambiada?.Invoke(this, EventArgs.Empty);
-                }
-            }
+            item.Leida = true;
+            _pantallaPrincipalServicio.MarcarNotificacionComoLeida(item.NotificacionId);
+
+            // La lista solo muestra no leídas: quitar el ítem del UI sin rebuild de los 4 grupos.
+            panelItems.SuspendLayout();
+            panelItems.Controls.Remove(panelItem);
+            panelItem.Dispose();
+            panelItems.ResumeLayout();
+
+            int restante = panelItems.Controls.Count;
+            ActualizarTituloVisual(restante);
+            if (restante == 0)
+                expanded = false;
+            AplicarEstado();
+
+            NotificacionCambiada?.Invoke(this, EventArgs.Empty);
         };
 
         panelItem.MouseClick += unifiedClickHandler;
         lblTitulo.MouseClick += unifiedClickHandler;
         lblDescripcion.MouseClick += unifiedClickHandler;
+        _toolTip.SetToolTip(lblTitulo, "Click derecho: marcar como leído");
+        _toolTip.SetToolTip(lblDescripcion, "Click derecho: marcar como leído");
 
         panelItem.Controls.Add(lblTitulo);
         panelItem.Controls.Add(lblDescripcion);
-
         panelItem.Height = lblDescripcion.Bottom + 12;
-
         return panelItem;
-    }
-
-    private void OnItemClick(NotificacionDTO item)
-    {
-        MessageBox.Show($"Notificación:\n{item.Titulo}");
     }
 
     private void BtnToggle_Click(object sender, EventArgs e)
@@ -282,7 +248,7 @@ public class NotificationGroupBox : GroupBox
         if (expanded)
         {
             btnToggle.Text = "▲";
-            this.Height = panelItems.Bottom + this.Padding.Bottom;
+            this.Height = Math.Max(panelItems.Bottom + this.Padding.Bottom, 50);
         }
         else
         {

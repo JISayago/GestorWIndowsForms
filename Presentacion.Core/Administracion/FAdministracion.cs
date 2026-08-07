@@ -1936,7 +1936,7 @@ namespace Presentacion.Core.Administracion
                     {
                         grafico3();
                         _grafico3Construido = true;
-                        formsPlot3.Refresh();
+                    formsPlot3.Refresh();
                     }
                     break;
 
@@ -1945,7 +1945,7 @@ namespace Presentacion.Core.Administracion
                     {
                         grafico5();
                         _grafico5Construido = true;
-                        formsPlot5.Refresh();
+                    formsPlot5.Refresh();
                     }
                     break;
 
