@@ -37,5 +37,38 @@ namespace Servicios.LogicaNegocio.CuentaCorriente.DTO
         public long ClienteId { get; set; } // Lista de ID de cliente asociado
         public string NombreCliente { get; set; } // Nombre del cliente asociado
         public List<string> DniAutorizados { get; set; } // Lista de DNI autorizados
+
+        // Datos de contacto del cliente (ya existían en Persona/Cliente, no se usaban en este panel)
+        public string NumeroCliente { get; set; } // Identificador no sensible, pensado para mostrar en pantallas de movimiento
+        public string TelefonoCliente { get; set; }
+        public string EmailCliente { get; set; }
+
+        // Tipo del movimiento padre (Ingreso/Egreso) que llevó a este detalle de CtaCte -> permite
+        // distinguir "Carga de saldo" (Ingreso) de "Compra a cuenta" (Egreso) sin necesitar vincular
+        // la venta puntual (eso sí requeriría una migración).
+        public int TipoMovimientoPadre { get; set; }
+        public string TipoMovimientoPadreDescripcion =>
+            TipoMovimientoPadre == (int)Servicios.Helpers.Movimiento.TipoMovimiento.Ingreso
+                ? "Carga de saldo"
+                : "Compra a cuenta";
+
+        // Últimos movimientos de esta misma cuenta (excluyendo el actual), para dar contexto
+        // temporal sin necesitar vincular la venta puntual que originó este movimiento.
+        public List<MovimientoResumenCtaCteDTO> HistorialReciente { get; set; } = new List<MovimientoResumenCtaCteDTO>();
+    }
+
+    // DTO liviano solo para el mini-historial: evita traer el MovimientoHelperDTO completo
+    // (con Venta/Gasto anidados) para algo que solo necesita 4 campos por fila.
+    public class MovimientoResumenCtaCteDTO
+    {
+        public string NumeroMovimiento { get; set; }
+        public DateTime FechaMovimiento { get; set; }
+        public decimal Monto { get; set; }
+        public int TipoMovimiento { get; set; }
+
+        public string TipoMovimientoDescripcion =>
+            TipoMovimiento == (int)Servicios.Helpers.Movimiento.TipoMovimiento.Ingreso
+                ? "Carga de saldo"
+                : "Compra a cuenta";
     }
 }

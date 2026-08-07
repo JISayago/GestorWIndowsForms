@@ -228,7 +228,7 @@
             // 
             tIPOPAGOToolStripMenuItem.Name = "tIPOPAGOToolStripMenuItem";
             tIPOPAGOToolStripMenuItem.Size = new Size(175, 24);
-            tIPOPAGOToolStripMenuItem.Text = "Tipo Pago????";
+            tIPOPAGOToolStripMenuItem.Text = "Tipo de pago";
             tIPOPAGOToolStripMenuItem.Click += tIPOPAGOToolStripMenuItem_Click;
             // 
             // vENTAToolStripMenuItem
@@ -497,7 +497,7 @@
             tabPage1.Padding = new Padding(3);
             tabPage1.Size = new Size(1598, 332);
             tabPage1.TabIndex = 0;
-            tabPage1.Text = "Cajas del Mes";
+            tabPage1.Text = "Ingresos y egresos";
             tabPage1.UseVisualStyleBackColor = true;
             // 
             // formsPlot1
@@ -517,7 +517,7 @@
             tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(1598, 332);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "Ultimas 50";
+            tabPage2.Text = "Ingresos por caja";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // formsPlot2
@@ -563,13 +563,13 @@
             // tabPage3
             // 
             tabPage3.Controls.Add(tlpBajoNivel3);
-            tabPage3.Font = new Font("Microsoft Sans Serif", 15.75F);
+            tabPage3.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             tabPage3.Location = new Point(0, 25);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
             tabPage3.Size = new Size(1598, 460);
             tabPage3.TabIndex = 0;
-            tabPage3.Text = "Por Dia";
+            tabPage3.Text = "Ventas por día";
             tabPage3.UseVisualStyleBackColor = true;
             // 
             // tlpBajoNivel3
@@ -611,13 +611,13 @@
             // tabPage4
             // 
             tabPage4.Controls.Add(tlpBajoNivel3Pagina2);
-            tabPage4.Font = new Font("Microsoft Sans Serif", 15.75F);
+            tabPage4.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             tabPage4.Location = new Point(0, 25);
             tabPage4.Name = "tabPage4";
             tabPage4.Padding = new Padding(3);
             tabPage4.Size = new Size(1598, 460);
             tabPage4.TabIndex = 1;
-            tabPage4.Text = "Por Mes";
+            tabPage4.Text = "Ventas por mes";
             tabPage4.UseVisualStyleBackColor = true;
             // 
             // tlpBajoNivel3Pagina2

@@ -105,7 +105,7 @@ namespace Servicios.LogicaNegocio.Movimiento
             {
                 var movimiento = new AccesoDatos.Entidades.Movimiento
                 {
-                    NumeroMovimiento = $"MOV-CTACTE-{cuentaCorrienteId}-{DateTime.Now:yyyyMMddHHmmss}",
+                    NumeroMovimiento = $"MOV{total}CTACTE",
                     TipoMovimiento = esPago ? (int)TipoMovimiento.Ingreso : (int)TipoMovimiento.Egreso, //Ingreso es pago de ctacte, Egreso es compra con ctacte
                     TipoMovimientoDetalle = (int)detalleTipo,
                     Monto = total,
@@ -116,7 +116,6 @@ namespace Servicios.LogicaNegocio.Movimiento
                 };
 
                 context.Movimientos.Add(movimiento);
-
 
                 //Si el contexto es local, guardamos los cambios directamente
                 if (crearContextoLocal)
@@ -551,12 +550,40 @@ namespace Servicios.LogicaNegocio.Movimiento
                         EstaEliminado = cc.EstaEliminado,
                         LimiteDeudaActivo = cc.LimiteDeudaActivo,
                         FechaVencimiento = cc.FechaVencimiento,
+                        FechaCreacion = cc.FechaCreacion,
+                        FechaActivacion = cc.FechaActivacion,
+                        ConDeuda = cc.ConDeuda,
                         EstadoCtaCte = cc.EstadoCuentaCorriente,
                         ClienteId = cc.ClienteId,
                         // Navegación hacia el nombre del cliente
                         NombreCliente = cc.Cliente.Persona.Nombre + " " + cc.Cliente.Persona.Apellido,
+                        // Datos de contacto ya existentes en Persona/Cliente, sin mapear hasta ahora
+                        NumeroCliente = cc.Cliente.NumeroCliente,
+                        TelefonoCliente = cc.Cliente.Persona.Telefono,
+                        EmailCliente = cc.Cliente.Persona.Email,
                         // Mapeo de DNI autorizados (asumiendo relación o lista)
-                        DniAutorizados = cc.CuentaCorrienteAutorizado.Select(a => a.Dni.ToString()).ToList()
+                        DniAutorizados = cc.CuentaCorrienteAutorizado.Select(a => a.Dni.ToString()).ToList(),
+
+                        // Tipo del movimiento padre (Ingreso/Egreso), para distinguir "Carga de
+                        // saldo" de "Compra a cuenta" sin necesitar vincular la venta puntual.
+                        TipoMovimientoPadre = m.TipoMovimiento,
+
+                        // Últimos 5 movimientos de esta misma cuenta (sin el actual), para dar
+                        // contexto temporal. Consulta correlacionada, no requiere nueva columna.
+                        HistorialReciente = context.Movimientos
+                            .Where(mh => mh.TipoEntidad == (int)TipoEntidadMovimiento.CuentaCorriente
+                                      && mh.EntidadId == cc.CuentaCorrienteId
+                                      && !mh.EstaEliminado
+                                      && mh.MovimientoId != m.MovimientoId)
+                            .OrderByDescending(mh => mh.FechaMovimiento)
+                            .Take(5)
+                            .Select(mh => new MovimientoResumenCtaCteDTO
+                            {
+                                NumeroMovimiento = mh.NumeroMovimiento,
+                                FechaMovimiento = mh.FechaMovimiento,
+                                Monto = mh.Monto,
+                                TipoMovimiento = mh.TipoMovimiento
+                            }).ToList()
                         }).FirstOrDefault()
                        : null
 

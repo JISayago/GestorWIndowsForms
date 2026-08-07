@@ -87,7 +87,7 @@ namespace Presentacion.Core.Caja
         }
 
         protected override string TextoLblBuscar => "Buscar Cajas:";
-        protected override string TextoLblCbx1 => "Filtrar por Propiedad";
+        protected override string TextoLblCbx1 => "Buscar por Propiedad";
         protected override string TextoLblCbx2 => "Filtrar por Estado";
         protected override string TextoLblCbx3 => "Filtrar por";
 

@@ -14,7 +14,7 @@ namespace Presentacion.Core.Administracion
         /// <summary>
         /// Permite cambiar el color del encabezado desde afuera.
         /// </summary>
-        public Color HeaderBackColor { get; set; } = TemaSistema.FondoControl;
+        public Color HeaderBackColor { get; set; } = TemaSistema.Fondo;
 
         public FlatTabControl()
         {
@@ -126,7 +126,7 @@ namespace Presentacion.Core.Administracion
             BackColor = TemaSistema.Fondo;
             ForeColor = TemaSistema.Texto;
 
-            HeaderBackColor = TemaSistema.FondoControl;
+            HeaderBackColor = TemaSistema.Fondo;
 
             foreach (TabPage page in TabPages)
             {
