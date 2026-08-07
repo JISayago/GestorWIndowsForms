@@ -66,7 +66,7 @@ namespace Presentacion.Core.Movimiento
                 opcionesBusqueda,
                 "Texto",
                 "Valor",
-                "Buscar por"
+                "Buscar por Propiedad"
             );
 
                          var opcionesTipoMovimiento = new List<OpcionFiltro>
@@ -123,7 +123,7 @@ namespace Presentacion.Core.Movimiento
      => "Buscar Movimientos:";
 
         protected override string TextoLblCbx1
-            => "Filtrar por Propiedad";
+            => "Buscar por Propiedad";
 
         protected override string TextoLblCbx2
             => "Filtrar por Movimiento";

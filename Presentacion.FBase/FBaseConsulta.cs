@@ -73,17 +73,154 @@ namespace Presentacion.FBase
             ConfigurarAccionesPersonalizadas();
             CrearBotonesPersonalizados();
 
+            AjustarVisibilidadFiltros();
             RefrescarGrilla();
-            
         }
 
         private void CargarLogoEnBase()
         {
             pbxLogo.Image = Constantes.Imagenes.ImgLogoCompuesto;
             pbxLogo.Dock = DockStyle.Fill;
-            pbxLogo.SizeMode = PictureBoxSizeMode.StretchImage;
+            pbxLogo.SizeMode = PictureBoxSizeMode.Zoom;
         }
         #endregion
+
+        /// <summary>
+        /// Estilo visual de consultas (no afecta ABMs). Se aplica después del tema base.
+        /// </summary>
+        protected override void AplicarTema(Control parent)
+        {
+            base.AplicarTema(parent);
+
+            if (ReferenceEquals(parent, this))
+                AplicarEstiloConsulta();
+        }
+
+        private void AplicarEstiloConsulta()
+        {
+            if (lblContenidoTexto != null)
+            {
+                lblContenidoTexto.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold);
+                lblContenidoTexto.ForeColor = TemaSistema.Primario;
+            }
+
+            EstilarLabelFiltro(lblBuscar);
+            EstilarLabelFiltro(lblcbx1);
+            EstilarLabelFiltro(lblcbx2);
+            EstilarLabelFiltro(lblcbx3);
+            EstilarLabelFiltro(lblTotalRegistros);
+            EstilarLabelFiltro(lblPagina);
+
+            EstilarBotonPrimario(btnBuscar);
+            EstilarBotonSecundario(btnLimpiar);
+            EstilarBotonSecundario(btnAnterior);
+            EstilarBotonSecundario(btnSiguiente);
+
+            ConfigurarFechaCorta(dtpDesde);
+            ConfigurarFechaCorta(dtpHasta);
+
+            if (txtBuscar != null)
+            {
+                txtBuscar.Font = new Font("Segoe UI", 10F);
+                if (string.IsNullOrWhiteSpace(txtBuscar.PlaceholderText))
+                    txtBuscar.PlaceholderText = "Escribí para buscar...";
+            }
+
+            if (BarraLateralBotones != null)
+            {
+                BarraLateralBotones.ImageScalingSize = new Size(26, 26);
+                BarraLateralBotones.Padding = new Padding(4, 2, 4, 4);
+                BarraLateralBotones.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+            }
+
+            if (pbxLogo != null)
+                pbxLogo.SizeMode = PictureBoxSizeMode.Zoom;
+
+            foreach (var chk in new[] { chkBool1, chkBool2, chkUsarFecha, chkUsarRango })
+            {
+                if (chk == null) continue;
+                chk.Font = new Font("Segoe UI", 9.25F);
+                chk.ForeColor = TemaSistema.Texto;
+            }
+
+            AjustarVisibilidadFiltros();
+        }
+
+        private static void EstilarLabelFiltro(Label lbl)
+        {
+            if (lbl == null) return;
+            lbl.ForeColor = TemaSistema.TextoSecundario;
+            lbl.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+        }
+
+        private static void ConfigurarFechaCorta(DateTimePicker dtp)
+        {
+            if (dtp == null) return;
+            dtp.Format = DateTimePickerFormat.Custom;
+            dtp.CustomFormat = "dd/MM/yyyy";
+            dtp.Font = new Font("Segoe UI", 9.75F);
+        }
+
+        private static void EstilarBotonPrimario(Button btn)
+        {
+            if (btn == null) return;
+            btn.BackColor = TemaSistema.Primario;
+            btn.ForeColor = Color.White;
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 0;
+            btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(
+                Math.Min(TemaSistema.Primario.R + 28, 255),
+                Math.Min(TemaSistema.Primario.G + 28, 255),
+                Math.Min(TemaSistema.Primario.B + 28, 255));
+            btn.Font = new Font("Segoe UI Semibold", 9.25F, FontStyle.Bold);
+            btn.Cursor = Cursors.Hand;
+            btn.UseVisualStyleBackColor = false;
+        }
+
+        private static void EstilarBotonSecundario(Button btn)
+        {
+            if (btn == null) return;
+            btn.BackColor = TemaSistema.Seleccion;
+            btn.ForeColor = TemaSistema.Texto;
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 1;
+            btn.FlatAppearance.BorderColor = TemaSistema.Borde;
+            btn.Font = new Font("Segoe UI Semibold", 9.25F, FontStyle.Bold);
+            btn.Cursor = Cursors.Hand;
+            btn.UseVisualStyleBackColor = false;
+        }
+
+        /// <summary>
+        /// Oculta slots de filtro no activados para no dejar huecos vacíos.
+        /// </summary>
+        private void AjustarVisibilidadFiltros()
+        {
+            if (tableLayoutPanel2 != null)
+                tableLayoutPanel2.Visible = cbx1 != null && cbx1.Enabled;
+            if (tableLayoutPanel7 != null)
+                tableLayoutPanel7.Visible = cbx2 != null && cbx2.Enabled;
+            if (tableLayoutPanel12 != null)
+                tableLayoutPanel12.Visible = cbx3 != null && cbx3.Enabled;
+
+            bool usaFechas = chkUsarFecha != null && chkUsarFecha.Enabled;
+            if (tableLayoutPanel17 != null)
+                tableLayoutPanel17.Visible = usaFechas;
+
+            // Si no hay fechas, dar más espacio a los combos
+            if (tableLayoutPanel1 != null && tableLayoutPanel1.ColumnStyles.Count >= 2)
+            {
+                if (usaFechas)
+                {
+                    tableLayoutPanel1.ColumnStyles[0].Width = 58F;
+                    tableLayoutPanel1.ColumnStyles[1].Width = 42F;
+                }
+                else
+                {
+                    tableLayoutPanel1.ColumnStyles[0].Width = 100F;
+                    tableLayoutPanel1.ColumnStyles[1].Width = 0F;
+                }
+            }
+        }
 
         #region ENTER
 
@@ -194,13 +331,23 @@ namespace Presentacion.FBase
         protected void ActivarFiltroFechas(string textoCheck)
         {
             chkUsarFecha.Enabled = true;
+            chkUsarFecha.Visible = true;
             chkUsarFecha.Text = textoCheck;
 
             chkUsarRango.Enabled = false;
+            chkUsarRango.Visible = true;
             chkUsarRango.Checked = false;
 
             dtpDesde.Enabled = false;
+            dtpDesde.Visible = true;
             dtpHasta.Enabled = false;
+            dtpHasta.Visible = true;
+
+            if (tableLayoutPanel17 != null)
+                tableLayoutPanel17.Visible = true;
+
+            ConfigurarFechaCorta(dtpDesde);
+            ConfigurarFechaCorta(dtpHasta);
 
             chkUsarFecha.CheckedChanged -= chkUsarFecha_CheckedChanged;
             chkUsarFecha.CheckedChanged += chkUsarFecha_CheckedChanged;
@@ -214,6 +361,7 @@ namespace Presentacion.FBase
             if (combo == null) return;
 
             combo.Enabled = true;
+            combo.Visible = true;
 
             combo.DataSource = data;
             combo.DisplayMember = display;
@@ -222,7 +370,13 @@ namespace Presentacion.FBase
             combo.SelectedIndex = -1;
 
             if (label != null)
+            {
+                label.Visible = true;
                 label.Text = textoLabel;
+            }
+
+            if (combo.Parent != null)
+                combo.Parent.Visible = true;
         }
 
         protected void ActivarCheck(CheckBox check, string texto)
