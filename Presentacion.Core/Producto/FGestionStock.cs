@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace Presentacion.Core.Producto
 {
-    public partial class FGestionStock : Form
+    public partial class FGestionStock : FBase.FBase
     {
         private readonly IProductoServicio _productoServicio;
         private readonly long _productoID;

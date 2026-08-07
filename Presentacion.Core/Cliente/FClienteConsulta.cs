@@ -63,7 +63,7 @@ namespace Presentacion.Core.Cliente
     => "Buscar Cliente:";
 
         protected override string TextoLblCbx1
-            => "Filtrar por Propiedad";
+            => "Buscar por Propiedad";
 
         protected override string TextoLblCbx2
             => "Filtrar por Estado";

@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Presentacion.Core.Venta.CancelacionVenta
 {
-    public partial class FGrillaDeComprobantes : Form
+    public partial class FGrillaDeComprobantes : FBase.FBase
     {
         private List<long> _comprobantesIDs;
         private long _usuarioLogeadoID;

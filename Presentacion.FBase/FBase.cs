@@ -372,7 +372,11 @@ namespace Presentacion.FBase
                         break;
 
                     case Panel pnl:
-                        pnl.BackColor = TemaSistema.Fondo;
+                        // Respeta paneles marcados explícitamente para no ser re-coloreados por el
+                        // tema genérico (ej. las "cards" de PanelDatosTurno, que necesitan un color
+                        // distinto al fondo general para tener contraste visual).
+                        if (!(pnl.Tag is string tagPnl && tagPnl == "card-sin-tema"))
+                            pnl.BackColor = TemaSistema.Fondo;
                         break;
 
                     case MenuStrip ms:
@@ -542,8 +546,13 @@ namespace Presentacion.FBase
                 ((CurrencyManager)dgv.BindingContext[dgv.DataSource]).Refresh();
 
             foreach (DataGridViewColumn col in dgv.Columns)
-                col.HeaderCell.SortGlyphDirection = SortOrder.None;
-            columna.HeaderCell.SortGlyphDirection = ascendente ? SortOrder.Ascending : SortOrder.Descending;
+            {
+                if (col.SortMode != DataGridViewColumnSortMode.NotSortable)
+                    col.HeaderCell.SortGlyphDirection = SortOrder.None;
+            }
+
+            if (columna.SortMode != DataGridViewColumnSortMode.NotSortable)
+                columna.HeaderCell.SortGlyphDirection = ascendente ? SortOrder.Ascending : SortOrder.Descending;
         }
 
         // Comparador null-safe y tolerante a tipos no-IComparable (ej. si la propiedad es un enum
@@ -626,6 +635,9 @@ namespace Presentacion.FBase
          private void ConfigurarFormPlot(FormsPlot fp)
         {
             fp.BackColor = TemaSistema.Fondo;
+            var spColor = ScottPlot.Color.FromHex("#EAEAEA");
+            fp.Plot.FigureBackground.Color = spColor;
+            fp.Plot.DataBackground.Color = spColor;
         }
         private void ConfugurarTableLayoutPanel(TableLayoutPanel tlp)
         {
