@@ -13,6 +13,7 @@ using Presentacion.Core.Producto.Lote;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
 using Presentacion.Core.Venta;
+using Presentacion.FBase.Helpers;
 using ScottPlot;
 using ScottPlot.WinForms;
 using Servicios.Helpers;
@@ -127,8 +128,9 @@ namespace Presentacion.Core.Administracion
         private const double TooltipThreshold = 0.4;
         private const double TooltipThresholdBars = 1.2;
 
-        private static readonly ScottPlot.Color ColorFondoPlot = ScottPlot.Color.FromHex("#F0F0F0");
-        private static readonly System.Drawing.Color ColorFondoWinForms = System.Drawing.Color.FromArgb(240, 240, 240);
+        // Mismo gris del tema (#EAEAEA) para que el marco del plot no contraste con el panel.
+        private static readonly System.Drawing.Color ColorFondoWinForms = TemaSistema.Fondo;
+        private static readonly ScottPlot.Color ColorFondoPlot = ScottPlot.Color.FromHex("#EAEAEA");
 
         private int _lastIndex1 = -1;
         private int _lastIndex2 = -1;
@@ -148,6 +150,7 @@ namespace Presentacion.Core.Administracion
             ConfigurarLayoutPorDia();
             ConfigurarLayoutPorMes();
             ConfigurarAnchoPestanas();
+            UnificarFondosGraficos();
 
             _logeadoId = logeadoId;
 
@@ -249,7 +252,7 @@ namespace Presentacion.Core.Administracion
                 Dock = DockStyle.Fill,
                 ColumnCount = 5,
                 RowCount = 1,
-                BackColor = System.Drawing.Color.FromArgb(245, 245, 245),
+                BackColor = TemaSistema.FondoControl,
                 Padding = new Padding(8, 4, 8, 4)
             };
 
@@ -657,6 +660,59 @@ namespace Presentacion.Core.Administracion
             }
 
             _pnlCardsPagos.ResumeLayout();
+        }
+
+        /// <summary>
+        /// Alinea paneles, pestañas y ScottPlot al mismo fondo del tema (sin marco gris distinto).
+        /// </summary>
+        private void UnificarFondosGraficos()
+        {
+            System.Drawing.Color fondo = TemaSistema.Fondo;
+
+            pnlInfoInicial.BackColor = fondo;
+            tlpBaseNivel1.BackColor = fondo;
+            tlpArribaNivel2.BackColor = fondo;
+            tlpBajoNivel2.BackColor = fondo;
+            tlpBajoNivel3.BackColor = fondo;
+            tlpBajoNivel3Pagina2.BackColor = fondo;
+
+            tabControlGraficoArriba.HeaderBackColor = fondo;
+            tabControlGraficoArriba.BackColor = fondo;
+            tabControl1.HeaderBackColor = fondo;
+            tabControl1.BackColor = fondo;
+
+            foreach (TabPage page in tabControlGraficoArriba.TabPages)
+            {
+                page.UseVisualStyleBackColor = false;
+                page.BackColor = fondo;
+            }
+
+            foreach (TabPage page in tabControl1.TabPages)
+            {
+                page.UseVisualStyleBackColor = false;
+                page.BackColor = fondo;
+            }
+
+            AplicarFondoPlot(formsPlot1);
+            AplicarFondoPlot(formsPlot2);
+            AplicarFondoPlot(formsPlot3);
+            AplicarFondoPlot(formsPlot5);
+            if (formsPlot4 != null)
+            {
+                formsPlot4.BackColor = fondo;
+            }
+            if (formsPlot6 != null)
+            {
+                formsPlot6.BackColor = fondo;
+            }
+            if (formsPlot7 != null)
+                AplicarFondoPlot(formsPlot7);
+            if (formsPlot8 != null)
+                AplicarFondoPlot(formsPlot8);
+            if (formsPlot9 != null)
+                AplicarFondoPlot(formsPlot9);
+            if (formsPlot10 != null)
+                AplicarFondoPlot(formsPlot10);
         }
 
         private static void AplicarFondoPlot(FormsPlot formsPlot)

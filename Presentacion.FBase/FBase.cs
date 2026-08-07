@@ -635,6 +635,9 @@ namespace Presentacion.FBase
          private void ConfigurarFormPlot(FormsPlot fp)
         {
             fp.BackColor = TemaSistema.Fondo;
+            var spColor = ScottPlot.Color.FromHex("#EAEAEA");
+            fp.Plot.FigureBackground.Color = spColor;
+            fp.Plot.DataBackground.Color = spColor;
         }
         private void ConfugurarTableLayoutPanel(TableLayoutPanel tlp)
         {
