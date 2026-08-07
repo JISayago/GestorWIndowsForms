@@ -50,9 +50,10 @@ namespace Presentacion.Core.CuentaCorriente
 
         private void btnVerificar_Click(object sender, EventArgs e)
         {
-            if(!_ctacteServicio.PuedeComprar(ctaCte.CuentaCorrienteId, monto))
+            var response = _ctacteServicio.PuedeComprar(ctaCte.CuentaCorrienteId, monto);
+            if (!response.Exitoso)
             {
-                MessageBox.Show("La cuenta corriente no tiene saldo suficiente para realizar la compra.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
