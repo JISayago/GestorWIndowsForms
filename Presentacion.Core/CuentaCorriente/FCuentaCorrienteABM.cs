@@ -512,7 +512,19 @@ namespace Presentacion.Core.CuentaCorriente
                 lblFechaVencimiento.Text = "-";
                 return;
             }
-
+            if (CuentaCreada)
+            {
+                var cta = _cuentaCorriente.FechaCreacion;
+                if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Activa)
+                {
+                    btnCerrarCtacte.Text = "Cerrar Cuenta";
+                }
+                else if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Cerrada)
+                {
+                    btnActivar.Enabled = false;
+                    btnCerrarCtacte.Text = "Reabrir Cuenta";
+                }
+            }
 
             lblEstado.Text = _cuentaCorriente.EstadoDescripcionCtaCte;
 
@@ -850,6 +862,7 @@ namespace Presentacion.Core.CuentaCorriente
 
             //btnCargarLimite.Enabled =
             //    CuentaCreada && chkLimiteDeuda.Checked;
+     
 
             lblPagina.Text = $"Página {paginaActual} de {totalPaginas}";
             lblTotalRegistros.Text = $"Total: {totalRegistros}";
@@ -922,7 +935,24 @@ namespace Presentacion.Core.CuentaCorriente
         private void btnCerrarCtacte_Click(object sender, EventArgs e)
         {
             if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Cerrada)
+            {
+                var msje = MessageBox.Show("¿Esta seguro que desea reabrir la cuenta corriente?", "Confirmar reapertura", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (msje == DialogResult.Yes)
+                {
+                    var res = _cuentacorrienteServicio.ReabrirCuentaCorriente(CuentaCorrienteId.Value);
+                    if (res.Exitoso)
+                    {
+                        MessageBox.Show($"{res.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        CargarDatosCuenta();
+                        ActualizarPantalla();
+                    }
+                    else
+                    {
+                        MessageBox.Show($"{res.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
                 return;
+            }   
             var msjee = MessageBox.Show("¿Está seguro que desea cerrar la cuenta corriente? Esta acción no se puede deshacer.", "Confirmar cierre", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (msjee != DialogResult.Yes)
                 return;
