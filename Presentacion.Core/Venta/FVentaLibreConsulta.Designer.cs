@@ -1,4 +1,4 @@
-﻿namespace Presentacion.Core.Venta
+namespace Presentacion.Core.Venta
 {
     partial class FVentaLibreConsulta
     {
@@ -47,8 +47,6 @@
             btnBuscar.FlatAppearance.BorderColor = Color.Black;
             btnBuscar.FlatStyle = FlatStyle.Flat;
             btnBuscar.ForeColor = Color.Black;
-            btnBuscar.Location = new Point(26, 3);
-            btnBuscar.Size = new Size(305, 18);
             btnBuscar.UseVisualStyleBackColor = false;
             // 
             // lblTotalRegistros

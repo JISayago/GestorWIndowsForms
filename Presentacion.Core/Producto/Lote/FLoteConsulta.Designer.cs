@@ -1,4 +1,4 @@
-﻿namespace Presentacion.Core.Producto.Lote
+namespace Presentacion.Core.Producto.Lote
 {
     partial class FLoteConsulta
     {
@@ -48,8 +48,6 @@
             btnBuscar.FlatAppearance.BorderColor = Color.Black;
             btnBuscar.FlatStyle = FlatStyle.Flat;
             btnBuscar.ForeColor = Color.Black;
-            btnBuscar.Location = new Point(56, 3);
-            btnBuscar.Size = new Size(305, 18);
             btnBuscar.UseVisualStyleBackColor = false;
             // 
             // lblTotalRegistros
