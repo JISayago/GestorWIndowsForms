@@ -1,4 +1,4 @@
-﻿using AccesoDatos.Entidades;
+using AccesoDatos.Entidades;
 using Microsoft.Extensions.Logging;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Cliente;
@@ -6,9 +6,9 @@ using Presentacion.Core.Venta.HelpersVenta;
 using Presentacion.Core.Venta.HelpersVenta.Servicios.Helpers.Venta;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.OpcionesPagos;
+using Servicios.Helpers.VentaEnum;
 using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.Cliente.DTO;
-using Servicios.LogicaNegocio.CuentaCorriente;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Movimiento;
 using Servicios.LogicaNegocio.Venta;
@@ -553,41 +553,18 @@ namespace Presentacion.Core.Venta
                     FechaVenta = DateTime.Now,
                     Total = _totalVenta,
 
-                    Estado = 1,
+                    Estado = (int)EstadoVenta.Confirmada,
 
                     Detalle = _cuerpoDetalleVenta.CuerpoDelTextoFinal(descripcionVenta),
 
-                    MontoPagado = tipoDePagosVenta.Sum(x => x.Monto),
-                    MontoAdeudado = _totalVenta - tipoDePagosVenta.Sum(x => x.Monto),
-
+                    // El servicio recalcula caja vs CtaCte con VentaMontosHelper.
                     TiposDePagoSeleccionado = tipoDePagosVenta
                 };
 
                 frmProcesando.ActualizarEstado("Registrando venta...");
 
                 var resultado = await Task.Run(() =>
-                {
-                    foreach (var tp in tipoDePagosVenta)
-                    {
-                        if (tp.TipoDePago == TipoDePago.CtaCte)
-                        {
-                            var ctaCteServicio = new CuentaCorrienteServicio();
-
-                            var ctacte =
-                                ctaCteServicio.ObtenerCuentaCorrientePorClienteId(idCliente);
-
-                            if (ctacte != null)
-                            {
-                                ctaCteServicio.RegistrarCompra(
-                                    ctacte.CuentaCorrienteId,
-                                    tp.Monto,
-                                    DatosSistema.CajaId.Value);
-                            }
-                        }
-                    }
-
-                    return _ventaLibreServicio.NuevaVentaLibre(_ventaLibreDto);
-                });
+                    _ventaLibreServicio.NuevaVentaLibre(_ventaLibreDto));
 
                 frmProcesando.Close();
 
