@@ -721,6 +721,33 @@ namespace Presentacion.Core.Administracion
             formsPlot.Plot.FigureBackground.Color = ColorFondoPlot;
             formsPlot.Plot.DataBackground.Color = ColorFondoPlot;
             formsPlot.Plot.Benchmark.IsVisible = false;
+            ConfigurarInteraccionPlotParaTooltips(formsPlot);
+        }
+
+        /// <summary>
+        /// Click izquierdo: libre para el cartel de valor (sin pan).
+        /// Click derecho + arrastre: pan (pick-and-move), en lugar del zoom derecho por defecto.
+        /// </summary>
+        private static void ConfigurarInteraccionPlotParaTooltips(FormsPlot formsPlot)
+        {
+            if (formsPlot == null)
+                return;
+
+            var input = formsPlot.UserInputProcessor;
+            input.IsEnabled = true;
+            input.Reset();
+
+            // Sin pan con click izquierdo: ese gesto robaba el click del cartel.
+            input.LeftClickDragPan(false, false, false);
+
+            // Saca el zoom por arrastre derecho y el menú contextual.
+            input.RightClickDragZoom(false, false, false);
+            input.RemoveAll<ScottPlot.Interactivity.UserActionResponses.SingleClickContextMenu>();
+
+            // Pan con click derecho (la funcionalidad que antes tenía el izquierdo).
+            input.UserActionResponses.Add(
+                new ScottPlot.Interactivity.UserActionResponses.MouseDragPan(
+                    ScottPlot.Interactivity.StandardMouseButtons.Right));
         }
 
         /// <summary>
@@ -980,11 +1007,26 @@ namespace Presentacion.Core.Administracion
                 CargarGraficoActivo();
             }
 
-            // Vinculación de eventos de mouse para procesar la proximidad matemática y mostrar Tooltips interactivos
+            // MouseDown: el click se evalúa antes; el pan izquierdo ya está desactivado.
+            formsPlot1.MouseDown += FormsPlot1_MouseClick;
+            formsPlot2.MouseDown += FormsPlot2_MouseClick;
+            formsPlot3.MouseDown += FormsPlot3_MouseClick;
+            formsPlot5.MouseDown += FormsPlot5_MouseClick;
+
             formsPlot1.MouseMove += FormsPlot1_MouseMove;
             formsPlot2.MouseMove += FormsPlot2_MouseMove;
             formsPlot3.MouseMove += FormsPlot3_MouseMove;
             formsPlot5.MouseMove += FormsPlot5_MouseMove;
+
+            formsPlot1.MouseLeave += (_, __) => OcultarTooltip(formsPlot1, ref _lastIndex1);
+            formsPlot2.MouseLeave += (_, __) => OcultarTooltip(formsPlot2, ref _lastIndex2);
+            formsPlot3.MouseLeave += (_, __) => OcultarTooltip(formsPlot3, ref _lastIndex3);
+            formsPlot5.MouseLeave += (_, __) => OcultarTooltip(formsPlot5, ref _lastIndex5);
+
+            ConfigurarInteraccionPlotParaTooltips(formsPlot1);
+            ConfigurarInteraccionPlotParaTooltips(formsPlot2);
+            ConfigurarInteraccionPlotParaTooltips(formsPlot3);
+            ConfigurarInteraccionPlotParaTooltips(formsPlot5);
         }
 
         // =================================================================================
@@ -1634,224 +1676,225 @@ namespace Presentacion.Core.Administracion
         }
 
         // =================================================================================
-        // MOTOR MATEMÁTICO DE SEGUIMIENTO DE MOUSE Y RENDERIZADO PERSONALIZADO DE TOOLTIPS
+        // MOTOR DE TOOLTIPS: click para mostrar, salir de la columna para ocultar
         // =================================================================================
 
-        /// <summary>
-        /// Realiza la traducción de coordenadas físicas del monitor (píxeles de pantalla) a coordenadas cartesianas 
-        /// matemáticas de ScottPlot para identificar el punto de datos más cercano bajo el puntero del mouse.
-        /// </summary>
-        /// <param name="formsPlot">El control UI sobre el que se desplaza el cursor.</param>
-        /// <param name="xs">Colección de valores cartesianos del eje X actual del gráfico.</param>
-        /// <param name="ys">Colección de valores cartesianos del eje Y actual del gráfico.</param>
-        /// <param name="e">Argumentos del evento de movimiento de mouse nativo.</param>
-        /// <param name="prefijo">Texto descriptivo inicial ("Ingreso", "Ganancia").</param>
-        /// <param name="formato">Cadena de formato estándar .NET para monedas o enteros ("C2", "N0").</param>
-        /// <param name="lastIndex">Referencia por dirección (ref) del puntero interno del gráfico para trackear cambios de estado.</param>
-        private void EvaluarPosicionMouse(FormsPlot formsPlot, double[] xs, double[] ys, MouseEventArgs e, string prefijo, string formato, ref int lastIndex)
+        private static int BuscarIndiceCercano(FormsPlot formsPlot, double[] xs, MouseEventArgs e, double umbral)
         {
-            // Si el lote de datos estructurales está vacío, forzamos la ocultación inmediata del ToolTip y cancelamos la evaluación
-            if (xs == null || ys == null || xs.Length == 0) { OcultarTooltip(formsPlot, ref lastIndex); return; }
+            if (formsPlot == null || xs == null || xs.Length == 0)
+                return -1;
 
-            // 1. Instanciamos la posición del puntero en píxeles
             Pixel pixelMouse = new Pixel(e.X, e.Y);
-            // 2. Traducimos esos píxeles a coordenadas lógicas cartesianas matemáticas
             Coordinates coordMouse = formsPlot.Plot.GetCoordinates(pixelMouse);
 
             int indexMasCercano = -1;
             double minimaDistanciaX = double.MaxValue;
 
-            // 3. Algoritmo de Proximidad Lineal por diferencia absoluta mínima en el eje X
             for (int i = 0; i < xs.Length; i++)
             {
                 double distancia = Math.Abs(xs[i] - coordMouse.X);
-                if (distancia < minimaDistanciaX) { minimaDistanciaX = distancia; indexMasCercano = i; }
-            }
-
-            // 4. Umbral de Sensibilidad (0.4 unidades matemáticas): Evita que se dispare el tooltip si el mouse está lejos del punto real
-            if (indexMasCercano != -1 && minimaDistanciaX < TooltipThreshold)
-            {
-                // Solo operamos si el usuario movió el cursor a un punto estadístico DIFERENTE al evaluado en el ciclo anterior
-                if (lastIndex != indexMasCercano)
+                if (distancia < minimaDistanciaX)
                 {
-                    lastIndex = indexMasCercano; // Guardamos el nuevo estado para evitar parpadeos
-                    double valorY = ys[indexMasCercano];
-                    _currentToolTipText = $"{prefijo}: {valorY.ToString(formato)}";
-
-                    // Despliega el ToolTip flotante con un pequeño desfasaje estratégico de +15 píxeles para no tapar el nodo visual
-                    _winFormsToolTip.Show(_currentToolTipText, formsPlot, e.X + 15, e.Y + 15, 3000);
+                    minimaDistanciaX = distancia;
+                    indexMasCercano = i;
                 }
             }
-            else { OcultarTooltip(formsPlot, ref lastIndex); }
+
+            return indexMasCercano != -1 && minimaDistanciaX < umbral
+                ? indexMasCercano
+                : -1;
+        }
+
+        private void MostrarTooltip(FormsPlot formsPlot, string texto, MouseEventArgs e, ref int lastIndex, int index)
+        {
+            lastIndex = index;
+            _currentToolTipText = texto;
+            // Arriba del plot para que el mouse no entre al cartel y dispare MouseLeave.
+            int x = Math.Max(8, Math.Min(e.X, formsPlot.Width - 160));
+            _winFormsToolTip.Show(_currentToolTipText, formsPlot, x, 8);
         }
 
         /// <summary>
-        /// Intercepta el evento de dimensionamiento del cuadro de diálogo flotante.
-        /// Mide de antemano el tamaño de los strings para forzar márgenes de padding estéticos personalizados.
+        /// Si hay un tooltip activo por click, lo oculta cuando el mouse deja la columna fijada.
         /// </summary>
+        private void EvaluarSalidaTooltip(FormsPlot formsPlot, double[] xs, MouseEventArgs e, ref int lastIndex, double umbral)
+        {
+            if (lastIndex < 0)
+                return;
+
+            if (xs == null || lastIndex >= xs.Length)
+            {
+                OcultarTooltip(formsPlot, ref lastIndex);
+                return;
+            }
+
+            Pixel pixelMouse = new Pixel(e.X, e.Y);
+            Coordinates coordMouse = formsPlot.Plot.GetCoordinates(pixelMouse);
+            if (Math.Abs(xs[lastIndex] - coordMouse.X) >= umbral)
+                OcultarTooltip(formsPlot, ref lastIndex);
+        }
+
+        private void EvaluarClickTooltip(
+            FormsPlot formsPlot,
+            double[] xs,
+            double[] ys,
+            MouseEventArgs e,
+            string prefijo,
+            string formato,
+            ref int lastIndex,
+            double umbral)
+        {
+            if (e.Button != MouseButtons.Left)
+                return;
+
+            int index = BuscarIndiceCercano(formsPlot, xs, e, umbral);
+            if (index < 0 || ys == null || index >= ys.Length)
+            {
+                OcultarTooltip(formsPlot, ref lastIndex);
+                return;
+            }
+
+            MostrarTooltip(
+                formsPlot,
+                $"{prefijo}: {ys[index].ToString(formato)}",
+                e,
+                ref lastIndex,
+                index);
+        }
+
         private void WinFormsToolTip_Popup(object sender, PopupEventArgs e)
         {
             Size tamanoTexto = TextRenderer.MeasureText(_currentToolTipText, _toolTipFont);
-            // Añade un padding controlado (+12 de ancho, +8 de alto) sobre el tamaño nativo delimitado por el texto
             e.ToolTipSize = new Size(tamanoTexto.Width + 12, tamanoTexto.Height + 8);
         }
 
-        /// <summary>
-        /// Sobrescribe por completo el motor de dibujo por defecto de Windows (OwnerDraw).
-        /// Permite aplicar tipografías anti-aliasing de alta definición y paletas de color minimalistas profesionales.
-        /// </summary>
         private void WinFormsToolTip_Draw(object sender, DrawToolTipEventArgs e)
         {
-            // Relleno de fondo minimalista blanco
             e.Graphics.FillRectangle(Brushes.White, e.Bounds);
 
-            // Dibujado del marco perimetral con un tono gris neutro estilizado (RGB: 180, 180, 180)
             using (Pen lapizBorde = new Pen(System.Drawing.Color.FromArgb(180, 180, 180), 1))
             {
                 e.Graphics.DrawRectangle(lapizBorde, 0, 0, e.Bounds.Width - 1, e.Bounds.Height - 1);
             }
 
-            // Forzado de alineación bidireccional completamente centrada tanto vertical como horizontalmente
             TextFormatFlags alineacion = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
             TextRenderer.DrawText(e.Graphics, e.ToolTipText, _toolTipFont, e.Bounds, System.Drawing.Color.Black, alineacion);
         }
 
-        /// <summary>
-        /// Oculta de manera segura el cartel flotante activo y reinicia los punteros de control del mouse.
-        /// </summary>
         private void OcultarTooltip(FormsPlot formsPlot, ref int lastIndex)
         {
-            if (lastIndex != -1) { lastIndex = -1; _winFormsToolTip.Hide(formsPlot); }
+            if (lastIndex == -1)
+                return;
+
+            lastIndex = -1;
+            _winFormsToolTip.Hide(formsPlot);
         }
 
         // =================================================================================
-        // REDIRECCIONAMIENTO DIRECTO DE EVENTOS DE MOUSE INDIVIDUALES POR COMPONENTE VISUAL
+        // EVENTOS DE MOUSE POR GRÁFICO
         // =================================================================================
-        private void FormsPlot1_MouseMove(object sender, MouseEventArgs e)
+        private void FormsPlot1_MouseClick(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButtons.Left)
+                return;
+
             if (_xs1 == null || _ys1 == null || _egresos1 == null || _xs1.Length == 0)
             {
                 OcultarTooltip(formsPlot1, ref _lastIndex1);
                 return;
             }
 
-            Pixel pixelMouse = new Pixel(e.X, e.Y);
-            Coordinates coordMouse = formsPlot1.Plot.GetCoordinates(pixelMouse);
-
-            int indexMasCercano = -1;
-            double minimaDistanciaX = double.MaxValue;
-
-            for (int i = 0; i < _xs1.Length; i++)
-            {
-                double distancia = Math.Abs(_xs1[i] - coordMouse.X);
-                if (distancia < minimaDistanciaX)
-                {
-                    minimaDistanciaX = distancia;
-                    indexMasCercano = i;
-                }
-            }
-
-            if (indexMasCercano != -1 && minimaDistanciaX < TooltipThresholdBars)
-            {
-                if (_lastIndex1 != indexMasCercano)
-                {
-                    _lastIndex1 = indexMasCercano;
-                    _currentToolTipText =
-                        $"Ingreso: {_ys1[indexMasCercano]:C2}\nEgreso: {_egresos1[indexMasCercano]:C2}";
-                    _winFormsToolTip.Show(_currentToolTipText, formsPlot1, e.X + 15, e.Y + 15, 3000);
-                }
-            }
-            else
+            int index = BuscarIndiceCercano(formsPlot1, _xs1, e, TooltipThresholdBars);
+            if (index < 0)
             {
                 OcultarTooltip(formsPlot1, ref _lastIndex1);
+                return;
             }
+
+            MostrarTooltip(
+                formsPlot1,
+                $"Ingreso: {_ys1[index]:C2}\nEgreso: {_egresos1[index]:C2}",
+                e,
+                ref _lastIndex1,
+                index);
         }
-        private void FormsPlot2_MouseMove(object sender, MouseEventArgs e) => EvaluarPosicionMouse(formsPlot2, _xs2, _ys2, e, "Ingresos", "C2", ref _lastIndex2);
-        private void FormsPlot3_MouseMove(object sender, MouseEventArgs e)
+
+        private void FormsPlot1_MouseMove(object sender, MouseEventArgs e)
+            => EvaluarSalidaTooltip(formsPlot1, _xs1, e, ref _lastIndex1, TooltipThresholdBars);
+
+        private void FormsPlot2_MouseClick(object sender, MouseEventArgs e)
+            => EvaluarClickTooltip(formsPlot2, _xs2, _ys2, e, "Ingresos", "C2", ref _lastIndex2, TooltipThreshold);
+
+        private void FormsPlot2_MouseMove(object sender, MouseEventArgs e)
+            => EvaluarSalidaTooltip(formsPlot2, _xs2, e, ref _lastIndex2, TooltipThreshold);
+
+        private void FormsPlot3_MouseClick(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButtons.Left)
+                return;
+
             if (_xs3 == null || _ys3 == null || _xs3.Length == 0)
             {
                 OcultarTooltip(formsPlot3, ref _lastIndex3);
                 return;
             }
 
-            Pixel pixelMouse = new Pixel(e.X, e.Y);
-            Coordinates coordMouse = formsPlot3.Plot.GetCoordinates(pixelMouse);
-
-            int indexMasCercano = -1;
-            double minimaDistanciaX = double.MaxValue;
-            for (int i = 0; i < _xs3.Length; i++)
-            {
-                double distancia = Math.Abs(_xs3[i] - coordMouse.X);
-                if (distancia < minimaDistanciaX)
-                {
-                    minimaDistanciaX = distancia;
-                    indexMasCercano = i;
-                }
-            }
-
-            if (indexMasCercano != -1 && minimaDistanciaX < TooltipThresholdBars)
-            {
-                if (_lastIndex3 != indexMasCercano)
-                {
-                    _lastIndex3 = indexMasCercano;
-                    string formato = _ventasDiariasModoMonto ? "C2" : "N0";
-                    double prev = _ys3prev != null && indexMasCercano < _ys3prev.Length ? _ys3prev[indexMasCercano] : 0;
-                    int dia = indexMasCercano + 1;
-                    _currentToolTipText =
-                        $"Día {dia:00}\nActual: {_ys3[indexMasCercano].ToString(formato)}\nAnterior: {prev.ToString(formato)}";
-                    _winFormsToolTip.Show(_currentToolTipText, formsPlot3, e.X + 15, e.Y + 15, 3000);
-                }
-            }
-            else
+            int index = BuscarIndiceCercano(formsPlot3, _xs3, e, TooltipThresholdBars);
+            if (index < 0)
             {
                 OcultarTooltip(formsPlot3, ref _lastIndex3);
+                return;
             }
+
+            string formato = _ventasDiariasModoMonto ? "C2" : "N0";
+            double prev = _ys3prev != null && index < _ys3prev.Length ? _ys3prev[index] : 0;
+            int dia = index + 1;
+            MostrarTooltip(
+                formsPlot3,
+                $"Día {dia:00}\nActual: {_ys3[index].ToString(formato)}\nAnterior: {prev.ToString(formato)}",
+                e,
+                ref _lastIndex3,
+                index);
         }
-        private void FormsPlot5_MouseMove(object sender, MouseEventArgs e)
+
+        private void FormsPlot3_MouseMove(object sender, MouseEventArgs e)
+            => EvaluarSalidaTooltip(formsPlot3, _xs3, e, ref _lastIndex3, TooltipThresholdBars);
+
+        private void FormsPlot5_MouseClick(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButtons.Left)
+                return;
+
             if (_xs5 == null || _ys5 == null || _xs5.Length == 0)
             {
                 OcultarTooltip(formsPlot5, ref _lastIndex5);
                 return;
             }
 
-            Pixel pixelMouse = new Pixel(e.X, e.Y);
-            Coordinates coordMouse = formsPlot5.Plot.GetCoordinates(pixelMouse);
-
-            int indexMasCercano = -1;
-            double minimaDistanciaX = double.MaxValue;
-            for (int i = 0; i < _xs5.Length; i++)
-            {
-                double distancia = Math.Abs(_xs5[i] - coordMouse.X);
-                if (distancia < minimaDistanciaX)
-                {
-                    minimaDistanciaX = distancia;
-                    indexMasCercano = i;
-                }
-            }
-
-            if (indexMasCercano != -1 && minimaDistanciaX < TooltipThresholdBars)
-            {
-                if (_lastIndex5 != indexMasCercano)
-                {
-                    _lastIndex5 = indexMasCercano;
-                    int anio = _anioCargado ?? DateTime.Now.Year;
-                    string formato = _ventasMensualesModoMonto ? "C2" : "N0";
-                    double prev = _ys5prev != null && indexMasCercano < _ys5prev.Length ? _ys5prev[indexMasCercano] : 0;
-                    string mes = indexMasCercano < NombresMesesCortos.Length
-                        ? NombresMesesCortos[indexMasCercano]
-                        : (indexMasCercano + 1).ToString("00");
-                    _currentToolTipText =
-                        $"{mes}\n{anio}: {_ys5[indexMasCercano].ToString(formato)}\n{anio - 1}: {prev.ToString(formato)}";
-                    _winFormsToolTip.Show(_currentToolTipText, formsPlot5, e.X + 15, e.Y + 15, 3000);
-                }
-            }
-            else
+            int index = BuscarIndiceCercano(formsPlot5, _xs5, e, TooltipThresholdBars);
+            if (index < 0)
             {
                 OcultarTooltip(formsPlot5, ref _lastIndex5);
+                return;
             }
+
+            int anio = _anioCargado ?? DateTime.Now.Year;
+            string formato = _ventasMensualesModoMonto ? "C2" : "N0";
+            double prev = _ys5prev != null && index < _ys5prev.Length ? _ys5prev[index] : 0;
+            string mes = index < NombresMesesCortos.Length
+                ? NombresMesesCortos[index]
+                : (index + 1).ToString("00");
+
+            MostrarTooltip(
+                formsPlot5,
+                $"{mes}\n{anio}: {_ys5[index].ToString(formato)}\n{anio - 1}: {prev.ToString(formato)}",
+                e,
+                ref _lastIndex5,
+                index);
         }
+
+        private void FormsPlot5_MouseMove(object sender, MouseEventArgs e)
+            => EvaluarSalidaTooltip(formsPlot5, _xs5, e, ref _lastIndex5, TooltipThresholdBars);
 
         private void DibujarBotones()
         {

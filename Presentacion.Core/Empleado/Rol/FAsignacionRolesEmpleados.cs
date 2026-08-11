@@ -54,26 +54,35 @@ namespace Presentacion.Core.Empleado.Rol
 
             ConfigurarGrillas();
 
-            //var filtros = new FiltroConsulta
-            //{
-            //    TextoBuscar = string.Empty,
-            //    VerEliminados = false,
-            //    Page = 1,
-            //    PageSize = int.MaxValue
-            //};
+            var filtros = new FiltroConsulta
+            {
+                TextoBuscar = string.Empty,
+                Bool1 = false,
+                Page = 1,
+                PageSize = 10000
+            };
 
-            //var resultado = _empleadoServicio.ObtenerEmpleados(filtros);
-            //var empleados = resultado.Items.ToList();
+            var resultado = _empleadoServicio.ObtenerEmpleados(filtros);
+            var empleados = resultado.Items
+                .Select(e => new
+                {
+                    e.PersonaId,
+                    Display = $"{e.Apellido}, {e.Nombre} ({e.Username})"
+                })
+                .OrderBy(e => e.Display)
+                .ToList();
 
             _cargandoEmpleado = true;
-            //CargarComboBox(cbxEmpleado, empleados, "Nombre", "PersonaId");
+            CargarComboBox(cbxEmpleado, empleados, "Display", "PersonaId");
             _cargandoEmpleado = false;
 
             if (tipoAsignacionRol == TipoAsignacionRol.Existente && entidadID.HasValue)
             {
+                _cargandoEmpleado = true;
                 cbxEmpleado.SelectedValue = entidadID.Value;
                 cbxEmpleado.Enabled = false;
                 EntidadID = entidadID;
+                _cargandoEmpleado = false;
             }
 
             InicializacionGrillas();
@@ -107,9 +116,9 @@ namespace Presentacion.Core.Empleado.Rol
         }
         public void CargarComboBox(ComboBox cmb, object datos, string propiedadMostrar, string propiedadDevolver)
         {
-            cmb.DataSource = datos;
             cmb.DisplayMember = propiedadMostrar;
             cmb.ValueMember = propiedadDevolver;
+            cmb.DataSource = datos;
         }
 
         private void FAsignacionRolesEmpleados_Load(object sender, EventArgs e)
@@ -215,7 +224,8 @@ namespace Presentacion.Core.Empleado.Rol
                 .Any(p => p.Codigo.StartsWith("Admin."));
 
             // 🔥 Validación final
-            if ((esRolSAdmin || tienePermisoAdmin) && !AuthHelper.UsuarioActual.EsSuperAdmin)
+            if ((esRolSAdmin || tienePermisoAdmin) &&
+                (AuthHelper.UsuarioActual == null || !AuthHelper.UsuarioActual.EsSuperAdmin))
             {
                 MessageBox.Show("Solo un Super Administrador puede asignar roles con permisos de administración",
                     "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -229,6 +239,13 @@ namespace Presentacion.Core.Empleado.Rol
                 MessageBoxIcon.Question);
 
             if (respuesta != DialogResult.Yes) return;
+
+            if (_rolesDisponibles == null || _rolesAsignados == null)
+            {
+                MessageBox.Show("No se pudieron cargar los roles. Reabrí la ventana.", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             _rolesDisponibles.Remove(rolDisponibleSeleccionado);
             _rolesAsignados.Add(rolDisponibleSeleccionado);
@@ -270,6 +287,13 @@ namespace Presentacion.Core.Empleado.Rol
 
             if (respuesta != DialogResult.Yes) return;
 
+            if (_rolesDisponibles == null || _rolesAsignados == null)
+            {
+                MessageBox.Show("No se pudieron cargar los roles. Reabrí la ventana.", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             _rolesAsignados.Remove(rolQuitableSeleccionado);
             _rolesDisponibles.Add(rolQuitableSeleccionado);
 
@@ -295,7 +319,7 @@ namespace Presentacion.Core.Empleado.Rol
             bool contieneSAdmin = _rolesAsignados
                 .Any(r => r.CodigoRol == "SADMIN");
 
-            if (contieneSAdmin && !AuthHelper.UsuarioActual.EsSuperAdmin)
+            if (contieneSAdmin && (AuthHelper.UsuarioActual == null || !AuthHelper.UsuarioActual.EsSuperAdmin))
             {
                 MessageBox.Show("Solo un Super Administrador puede asignar el rol SADMIN",
                     "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -348,15 +372,15 @@ namespace Presentacion.Core.Empleado.Rol
 
         private void InicializacionGrillas()
         {
-            //var filtros = new FiltroConsulta
-            //{
-            //    TextoBuscar = string.Empty,
-            //    VerEliminados = false,
-            //    Page = 1,
-            //    PageSize = int.MaxValue
-            //};
+            var filtros = new FiltroConsulta
+            {
+                TextoBuscar = string.Empty,
+                Bool1 = false,
+                Page = 1,
+                PageSize = 10000
+            };
 
-            //var todosLosRoles = _rolServicio.ObtenerRoles(filtros).Items.ToList();
+            var todosLosRoles = _rolServicio.ObtenerRoles(filtros).Items.ToList();
 
             var rolesAsignados = new List<RolDTO>();
 
@@ -368,9 +392,9 @@ namespace Presentacion.Core.Empleado.Rol
             var idsAsignados = new HashSet<long>(rolesAsignados.Select(r => r.RolId));
 
             _rolesAsignados = new BindingList<RolDTO>(rolesAsignados);
-            //_rolesDisponibles = new BindingList<RolDTO>(
-            //    todosLosRoles.Where(r => !idsAsignados.Contains(r.RolId)).ToList()
-            //);
+            _rolesDisponibles = new BindingList<RolDTO>(
+                todosLosRoles.Where(r => !idsAsignados.Contains(r.RolId)).ToList()
+            );
 
             _rolesControl = new BindingList<RolDTO>(
                 rolesAsignados.Select(r => new RolDTO

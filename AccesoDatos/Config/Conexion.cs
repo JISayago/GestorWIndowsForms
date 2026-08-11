@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -18,6 +18,28 @@ namespace AccesoDatos.Config
 
         private static readonly object _sync = new();
         private static string? _cadenaConexionCache;
+
+        /// <summary>
+        /// Solo para tests de integración. Evita tocar el .enc de producción.
+        /// </summary>
+        public static void ConfigurarCadenaConexionParaTests(string cadenaConexion)
+        {
+            if (string.IsNullOrWhiteSpace(cadenaConexion))
+                throw new ArgumentException("La cadena de conexión de test no puede estar vacía.", nameof(cadenaConexion));
+
+            lock (_sync)
+            {
+                _cadenaConexionCache = cadenaConexion;
+            }
+        }
+
+        public static void LimpiarCacheCadenaConexion()
+        {
+            lock (_sync)
+            {
+                _cadenaConexionCache = null;
+            }
+        }
 
         public static string ObtenerCadenaConexion()
         {

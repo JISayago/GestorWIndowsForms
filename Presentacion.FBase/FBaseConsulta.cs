@@ -5,6 +5,7 @@ using Servicios.Helpers.Sistema.FiltrosConsulta;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
@@ -18,7 +19,7 @@ namespace Presentacion.FBase
         private FiltroConsulta ultimoFiltro;
 
         protected int paginaActual = 1;
-        protected int pageSize = 12;
+        protected int pageSize = 16;
         protected int totalPaginas = 1;
 
         protected bool _actualizandoFiltros;
@@ -58,6 +59,9 @@ namespace Presentacion.FBase
             dgvGrilla.CellDoubleClick += DgvGrilla_CellDoubleClick;
             dgvGrilla.CellClick += DgvGrilla_CellClick;
             dgvGrilla.MouseDown += DgvGrilla_MouseDown;
+            dgvGrilla.Paint += DgvGrilla_PaintFondoVacio;
+            dgvGrilla.Resize += (_, __) => AjustarAlturaFilasParaPageSize();
+            dgvGrilla.DataBindingComplete += (_, __) => AjustarAlturaFilasParaPageSize();
         }
 
         #region LOAD
@@ -74,14 +78,18 @@ namespace Presentacion.FBase
             CrearBotonesPersonalizados();
 
             AjustarVisibilidadFiltros();
+            AjustarLayoutFooterYFiltros();
             RefrescarGrilla();
         }
 
         private void CargarLogoEnBase()
         {
             pbxLogo.Image = Constantes.Imagenes.ImgLogoCompuesto;
-            pbxLogo.Dock = DockStyle.Fill;
+            pbxLogo.Dock = DockStyle.None;
+            pbxLogo.Anchor = AnchorStyles.None;
             pbxLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            pbxLogo.Margin = new Padding(8, 4, 8, 4);
+            pbxLogo.Size = new Size(154, 60);
         }
         #endregion
 
@@ -113,8 +121,17 @@ namespace Presentacion.FBase
 
             EstilarBotonPrimario(btnBuscar);
             EstilarBotonSecundario(btnLimpiar);
-            EstilarBotonSecundario(btnAnterior);
-            EstilarBotonSecundario(btnSiguiente);
+            ForzarTamanoBotonFiltro(btnBuscar);
+            ForzarTamanoBotonFiltro(btnLimpiar);
+
+            EstilarBotonPaginacion(btnAnterior);
+            EstilarBotonPaginacion(btnSiguiente);
+
+            if (dgvGrilla != null)
+            {
+                dgvGrilla.Margin = new Padding(6, 2, 18, 4);
+                ConfigurarGrillaConsulta();
+            }
 
             ConfigurarFechaCorta(dtpDesde);
             ConfigurarFechaCorta(dtpHasta);
@@ -134,12 +151,27 @@ namespace Presentacion.FBase
             }
 
             if (pbxLogo != null)
+            {
                 pbxLogo.SizeMode = PictureBoxSizeMode.Zoom;
+                pbxLogo.Dock = DockStyle.None;
+                pbxLogo.Anchor = AnchorStyles.None;
+                pbxLogo.Margin = new Padding(8, 4, 8, 4);
+                pbxLogo.Size = new Size(154, 60);
+            }
+
+            if (lblTotalRegistros != null)
+            {
+                lblTotalRegistros.Dock = DockStyle.None;
+                lblTotalRegistros.Anchor = AnchorStyles.Left;
+                lblTotalRegistros.AutoSize = true;
+            }
+
+            AjustarLayoutFooterYFiltros();
 
             foreach (var chk in new[] { chkBool1, chkBool2, chkUsarFecha, chkUsarRango })
             {
                 if (chk == null) continue;
-                chk.Font = new Font("Segoe UI", 9.25F);
+                chk.Font = new Font("Segoe UI", 9.75F);
                 chk.ForeColor = TemaSistema.Texto;
             }
 
@@ -149,8 +181,8 @@ namespace Presentacion.FBase
         private static void EstilarLabelFiltro(Label lbl)
         {
             if (lbl == null) return;
-            lbl.ForeColor = TemaSistema.TextoSecundario;
-            lbl.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+            lbl.ForeColor = TemaSistema.Texto;
+            lbl.Font = new Font("Segoe UI Semibold", 10.25F, FontStyle.Bold);
         }
 
         private static void ConfigurarFechaCorta(DateTimePicker dtp)
@@ -161,18 +193,95 @@ namespace Presentacion.FBase
             dtp.Font = new Font("Segoe UI", 9.75F);
         }
 
+        /// <summary>
+        /// Footer: logo+total a la izquierda; paginación compacta en zona amarilla (margen derecho).
+        /// Filtros: botones alineados y más anchos hacia la izquierda.
+        /// </summary>
+        private void AjustarLayoutFooterYFiltros()
+        {
+            if (tableLayoutPanel15 != null && tableLayoutPanel15.RowStyles.Count > 5)
+                tableLayoutPanel15.RowStyles[5].Height = 110F;
+
+            if (tableLayoutPanel10 != null)
+            {
+                tableLayoutPanel10.MinimumSize = new Size(0, 100);
+                tableLayoutPanel10.Padding = new Padding(8, 12, 160, 12);
+                while (tableLayoutPanel10.ColumnStyles.Count < 3)
+                    tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle());
+                tableLayoutPanel10.ColumnStyles[0].SizeType = SizeType.AutoSize;
+                tableLayoutPanel10.ColumnStyles[1].SizeType = SizeType.Percent;
+                tableLayoutPanel10.ColumnStyles[1].Width = 100F;
+                tableLayoutPanel10.ColumnStyles[2].SizeType = SizeType.AutoSize;
+            }
+
+            if (tableLayoutPanel9 != null)
+            {
+                tableLayoutPanel9.Visible = true;
+                tableLayoutPanel9.AutoSize = true;
+                tableLayoutPanel9.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                tableLayoutPanel9.Anchor = AnchorStyles.Left;
+            }
+
+            if (tableLayoutPanel11 != null)
+            {
+                tableLayoutPanel11.AutoSize = true;
+                tableLayoutPanel11.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                tableLayoutPanel11.Anchor = AnchorStyles.None;
+                tableLayoutPanel11.Margin = new Padding(0);
+                while (tableLayoutPanel11.ColumnStyles.Count < 3)
+                    tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
+                tableLayoutPanel11.ColumnStyles[0] = new ColumnStyle(SizeType.Absolute, 50F);
+                tableLayoutPanel11.ColumnStyles[1] = new ColumnStyle(SizeType.AutoSize);
+                tableLayoutPanel11.ColumnStyles[2] = new ColumnStyle(SizeType.Absolute, 50F);
+            }
+
+            if (tableLayoutPanel4 != null && tableLayoutPanel4.ColumnStyles.Count > 1)
+            {
+                tableLayoutPanel4.ColumnStyles[1].SizeType = SizeType.Absolute;
+                tableLayoutPanel4.ColumnStyles[1].Width = 480F;
+            }
+
+            if (tableLayoutPanel14 != null)
+            {
+                tableLayoutPanel14.MinimumSize = new Size(470, 48);
+                tableLayoutPanel14.Padding = Padding.Empty;
+                if (tableLayoutPanel14.ColumnStyles.Count >= 2)
+                {
+                    tableLayoutPanel14.ColumnStyles[0] = new ColumnStyle(SizeType.Percent, 50F);
+                    tableLayoutPanel14.ColumnStyles[1] = new ColumnStyle(SizeType.Percent, 50F);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Algunos Designer de consultas hijas pisan Size con altos/anchos rotos (ej. 18px).
+        /// Dock Fill + mismo Margin = botones alineados.
+        /// </summary>
+        private static void ForzarTamanoBotonFiltro(Button btn)
+        {
+            if (btn == null) return;
+            btn.Dock = DockStyle.Fill;
+            btn.AutoSize = false;
+            btn.Margin = new Padding(6, 8, 6, 8);
+            btn.MinimumSize = new Size(200, 36);
+            btn.Padding = Padding.Empty;
+            btn.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+        }
+
         private static void EstilarBotonPrimario(Button btn)
         {
             if (btn == null) return;
             btn.BackColor = TemaSistema.Primario;
             btn.ForeColor = Color.White;
             btn.FlatStyle = FlatStyle.Flat;
-            btn.FlatAppearance.BorderSize = 0;
+            // Mismo BorderSize que el secundario para alinear alturas visuales.
+            btn.FlatAppearance.BorderSize = 1;
+            btn.FlatAppearance.BorderColor = TemaSistema.Primario;
             btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(
                 Math.Min(TemaSistema.Primario.R + 28, 255),
                 Math.Min(TemaSistema.Primario.G + 28, 255),
                 Math.Min(TemaSistema.Primario.B + 28, 255));
-            btn.Font = new Font("Segoe UI Semibold", 9.25F, FontStyle.Bold);
+            btn.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
             btn.Cursor = Cursors.Hand;
             btn.UseVisualStyleBackColor = false;
         }
@@ -188,6 +297,17 @@ namespace Presentacion.FBase
             btn.Font = new Font("Segoe UI Semibold", 9.25F, FontStyle.Bold);
             btn.Cursor = Cursors.Hand;
             btn.UseVisualStyleBackColor = false;
+        }
+
+        private static void EstilarBotonPaginacion(Button btn)
+        {
+            if (btn == null) return;
+            EstilarBotonSecundario(btn);
+            btn.Dock = DockStyle.None;
+            btn.Anchor = AnchorStyles.None;
+            btn.Size = new Size(44, 40);
+            btn.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            btn.Margin = new Padding(3, 6, 3, 6);
         }
 
         /// <summary>
@@ -460,6 +580,7 @@ protected virtual string NormalizarTextoBusqueda(string texto)
             ActualizarDatos(dgvGrilla, ultimoFiltro);
 
             EvaluarAccionesPorEstado(ultimoFiltro);
+            AjustarAlturaFilasParaPageSize();
         }
 
         protected virtual object ObtenerFiltroCombo(ComboBox combo)
@@ -521,6 +642,42 @@ protected virtual string NormalizarTextoBusqueda(string texto)
                 grilla.Columns[i].Visible = false;
         }
 
+        /// <summary>
+        /// Columna proporcional (modo Fill). No usar Width con Fill a nivel grilla.
+        /// </summary>
+        protected static void ColumnaFill(
+            DataGridViewColumn col,
+            float fillWeight,
+            int minimumWidth,
+            string headerText = null)
+        {
+            if (col == null) return;
+            col.Visible = true;
+            col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            col.FillWeight = fillWeight;
+            col.MinimumWidth = Math.Max(1, minimumWidth);
+            if (!string.IsNullOrWhiteSpace(headerText))
+                col.HeaderText = headerText;
+        }
+
+        /// <summary>
+        /// Columna de ancho fijo. Usar cuando el resto de columnas son Fill
+        /// (o la grilla no está en Fill global).
+        /// </summary>
+        protected static void ColumnaFija(
+            DataGridViewColumn col,
+            int width,
+            string headerText = null)
+        {
+            if (col == null) return;
+            col.Visible = true;
+            col.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            col.Width = width;
+            col.MinimumWidth = Math.Max(1, width);
+            if (!string.IsNullOrWhiteSpace(headerText))
+                col.HeaderText = headerText;
+        }
+
         #endregion
 
         #region BOTONES BASE
@@ -569,6 +726,110 @@ protected virtual string NormalizarTextoBusqueda(string texto)
         #endregion
 
         #region GRILLA
+
+        /// <summary>
+        /// Grilla con scroll vertical/horizontal para resoluciones o ventanas chicas.
+        /// El área vacía (menos filas que pageSize) sigue mostrando fondo + marca de agua.
+        /// </summary>
+        private void ConfigurarGrillaConsulta()
+        {
+            if (dgvGrilla == null) return;
+
+            dgvGrilla.ScrollBars = ScrollBars.Both;
+            dgvGrilla.BackgroundColor = Color.FromArgb(236, 230, 245);
+            dgvGrilla.BorderStyle = BorderStyle.None;
+            AjustarAlturaFilasParaPageSize();
+        }
+
+        /// <summary>
+        /// Altura de fila legible: si hay espacio, reparte; si la ventana es chica,
+        /// mantiene un mínimo y deja scrollear.
+        /// </summary>
+        private void AjustarAlturaFilasParaPageSize()
+        {
+            if (dgvGrilla == null || dgvGrilla.IsDisposed || pageSize <= 0)
+                return;
+
+            const int alturaMinima = 28;
+            const int alturaMaxima = 44;
+
+            int header = dgvGrilla.ColumnHeadersVisible ? dgvGrilla.ColumnHeadersHeight : 0;
+            int available = dgvGrilla.ClientSize.Height - header - 2;
+            if (available < 40)
+                return;
+
+            int rowH = available / pageSize;
+            if (rowH < alturaMinima)
+                rowH = alturaMinima; // ventana chica → scroll vertical
+            else if (rowH > alturaMaxima)
+                rowH = alturaMaxima;
+
+            dgvGrilla.RowTemplate.Height = rowH;
+
+            foreach (DataGridViewRow row in dgvGrilla.Rows)
+            {
+                if (!row.IsNewRow && row.Height != rowH)
+                    row.Height = rowH;
+            }
+        }
+
+        private void DgvGrilla_PaintFondoVacio(object sender, PaintEventArgs e)
+        {
+            if (dgvGrilla == null || dgvGrilla.IsDisposed)
+                return;
+
+            int top = dgvGrilla.ColumnHeadersVisible ? dgvGrilla.ColumnHeadersHeight : 0;
+            if (dgvGrilla.Rows.Count > 0)
+            {
+                try
+                {
+                    var last = dgvGrilla.GetRowDisplayRectangle(dgvGrilla.Rows.Count - 1, true);
+                    if (last.Height > 0)
+                        top = Math.Max(top, last.Bottom);
+                }
+                catch
+                {
+                    // Ignorar si la fila aún no está medida.
+                }
+            }
+
+            if (top >= dgvGrilla.ClientSize.Height - 8)
+                return;
+
+            var empty = Rectangle.FromLTRB(0, top, dgvGrilla.ClientSize.Width, dgvGrilla.ClientSize.Height);
+
+            using (var fill = new SolidBrush(Color.FromArgb(236, 230, 245)))
+                e.Graphics.FillRectangle(fill, empty);
+
+            // Banda superior suave para separar filas del vacío.
+            using (var accent = new SolidBrush(Color.FromArgb(55, TemaSistema.Seleccion)))
+                e.Graphics.FillRectangle(accent, empty.Left, empty.Top, empty.Width, Math.Min(6, empty.Height));
+
+            var logo = Constantes.Imagenes.ImgLogoCompuesto;
+            if (logo == null || empty.Height < 60 || empty.Width < 80)
+                return;
+
+            int maxW = Math.Min(300, empty.Width * 2 / 5);
+            int maxH = Math.Min(170, empty.Height - 24);
+            if (maxW < 48 || maxH < 48)
+                return;
+
+            float scale = Math.Min((float)maxW / logo.Width, (float)maxH / logo.Height);
+            int w = Math.Max(1, (int)(logo.Width * scale));
+            int h = Math.Max(1, (int)(logo.Height * scale));
+            int x = empty.Left + (empty.Width - w) / 2;
+            int y = empty.Top + (empty.Height - h) / 2;
+
+            var matrix = new ColorMatrix { Matrix33 = 0.11f };
+            using var attrs = new ImageAttributes();
+            attrs.SetColorMatrix(matrix);
+            e.Graphics.DrawImage(
+                logo,
+                new Rectangle(x, y, w, h),
+                0, 0, logo.Width, logo.Height,
+                GraphicsUnit.Pixel,
+                attrs);
+        }
 
         private void DgvGrilla_MouseDown(object sender, MouseEventArgs e)
         {

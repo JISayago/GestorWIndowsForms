@@ -1,4 +1,4 @@
-﻿namespace Presentacion.Core.CuentaCorriente
+namespace Presentacion.Core.CuentaCorriente
 {
     partial class FCuentaCorrienteABM
     {
@@ -147,55 +147,62 @@
             // lblDni
             // 
             lblDni.AutoSize = true;
-            lblDni.Location = new Point(210, 39);
+            lblDni.Dock = DockStyle.Top;
+            lblDni.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblDni.Location = new Point(16, 16);
+            lblDni.Margin = new Padding(0, 0, 0, 8);
             lblDni.Name = "lblDni";
-            lblDni.Size = new Size(246, 15);
+            lblDni.Padding = new Padding(4, 8, 4, 8);
+            lblDni.Size = new Size(246, 35);
             lblDni.TabIndex = 13;
             lblDni.Text = "DNI autorizados para usar la cuenta corriente";
             // 
             // lstDnis
             // 
+            lstDnis.BorderStyle = BorderStyle.FixedSingle;
+            lstDnis.Dock = DockStyle.Fill;
             lstDnis.FormattingEnabled = true;
-            lstDnis.ItemHeight = 15;
-            lstDnis.Location = new Point(201, 108);
+            lstDnis.ItemHeight = 18;
+            lstDnis.Location = new Point(16, 88);
             lstDnis.Name = "lstDnis";
-            lstDnis.Size = new Size(316, 139);
+            lstDnis.Size = new Size(732, 317);
             lstDnis.TabIndex = 19;
             // 
             // txtNuevoDni
             // 
-            txtNuevoDni.Location = new Point(201, 79);
+            txtNuevoDni.Location = new Point(16, 52);
             txtNuevoDni.Name = "txtNuevoDni";
-            txtNuevoDni.Size = new Size(194, 23);
+            txtNuevoDni.PlaceholderText = "Ingresar DNI...";
+            txtNuevoDni.Size = new Size(220, 23);
             txtNuevoDni.TabIndex = 16;
             // 
             // btnAgregarDni
             // 
-            btnAgregarDni.Location = new Point(401, 77);
+            btnAgregarDni.Location = new Point(246, 50);
             btnAgregarDni.Name = "btnAgregarDni";
-            btnAgregarDni.Size = new Size(55, 25);
+            btnAgregarDni.Size = new Size(90, 28);
             btnAgregarDni.TabIndex = 17;
-            btnAgregarDni.Text = "+";
+            btnAgregarDni.Text = "Agregar";
             btnAgregarDni.UseVisualStyleBackColor = true;
             btnAgregarDni.Click += btnAgregarDni_Click;
             // 
             // btnEliminarDni
             // 
-            btnEliminarDni.Location = new Point(462, 77);
+            btnEliminarDni.Location = new Point(346, 50);
             btnEliminarDni.Name = "btnEliminarDni";
-            btnEliminarDni.Size = new Size(55, 25);
+            btnEliminarDni.Size = new Size(90, 28);
             btnEliminarDni.TabIndex = 18;
-            btnEliminarDni.Text = "-";
+            btnEliminarDni.Text = "Quitar";
             btnEliminarDni.UseVisualStyleBackColor = true;
             btnEliminarDni.Click += btnEliminarDni_Click;
             // 
             // lblCliente
             // 
             lblCliente.AutoSize = true;
-            lblCliente.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblCliente.Location = new Point(3, 12);
+            lblCliente.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblCliente.Location = new Point(8, 14);
             lblCliente.Name = "lblCliente";
-            lblCliente.Size = new Size(96, 32);
+            lblCliente.Size = new Size(58, 20);
             lblCliente.TabIndex = 20;
             lblCliente.Tag = "NoModificarConBase";
             lblCliente.Text = "Cliente:";
@@ -203,10 +210,10 @@
             // lblNombreCliente
             // 
             lblNombreCliente.AutoSize = true;
-            lblNombreCliente.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblNombreCliente.Location = new Point(120, 12);
+            lblNombreCliente.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblNombreCliente.Location = new Point(72, 14);
             lblNombreCliente.Name = "lblNombreCliente";
-            lblNombreCliente.Size = new Size(114, 32);
+            lblNombreCliente.Size = new Size(72, 20);
             lblNombreCliente.TabIndex = 21;
             lblNombreCliente.Tag = "NoModificarConBase";
             lblNombreCliente.Text = "**********";
@@ -296,10 +303,12 @@
             tbcBase.Controls.Add(tbpInicio);
             tbcBase.Controls.Add(tbpMovimientos);
             tbcBase.Controls.Add(tbpDnis);
-            tbcBase.Location = new Point(12, 62);
+            tbcBase.Dock = DockStyle.Fill;
+            tbcBase.Location = new Point(0, 28);
             tbcBase.Name = "tbcBase";
+            tbcBase.Padding = new Point(8, 4);
             tbcBase.SelectedIndex = 0;
-            tbcBase.Size = new Size(772, 449);
+            tbcBase.Size = new Size(784, 495);
             tbcBase.TabIndex = 34;
             // 
             // tbpInicio
@@ -337,10 +346,10 @@
             // lblFechaUltimaActivacion
             // 
             lblFechaUltimaActivacion.AutoSize = true;
-            lblFechaUltimaActivacion.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblFechaUltimaActivacion.Location = new Point(239, 269);
+            lblFechaUltimaActivacion.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblFechaUltimaActivacion.Location = new Point(180, 275);
             lblFechaUltimaActivacion.Name = "lblFechaUltimaActivacion";
-            lblFechaUltimaActivacion.Size = new Size(135, 32);
+            lblFechaUltimaActivacion.Size = new Size(72, 19);
             lblFechaUltimaActivacion.TabIndex = 51;
             lblFechaUltimaActivacion.Tag = "NoModificarConBase";
             lblFechaUltimaActivacion.Text = "01/08/2026";
@@ -348,19 +357,19 @@
             // lblFechaUltimaActivacionTitulo
             // 
             lblFechaUltimaActivacionTitulo.AutoSize = true;
-            lblFechaUltimaActivacionTitulo.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblFechaUltimaActivacionTitulo.Location = new Point(22, 269);
+            lblFechaUltimaActivacionTitulo.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblFechaUltimaActivacionTitulo.Location = new Point(22, 275);
             lblFechaUltimaActivacionTitulo.Name = "lblFechaUltimaActivacionTitulo";
-            lblFechaUltimaActivacionTitulo.Size = new Size(211, 32);
+            lblFechaUltimaActivacionTitulo.Size = new Size(125, 19);
             lblFechaUltimaActivacionTitulo.TabIndex = 50;
             lblFechaUltimaActivacionTitulo.Tag = "NoModificarConBase";
-            lblFechaUltimaActivacionTitulo.Text = "Última Activacion:";
+            lblFechaUltimaActivacionTitulo.Text = "Última Activación:";
             // 
             // btnActivar
             // 
             btnActivar.Location = new Point(536, 247);
             btnActivar.Name = "btnActivar";
-            btnActivar.Size = new Size(127, 54);
+            btnActivar.Size = new Size(127, 36);
             btnActivar.TabIndex = 49;
             btnActivar.Text = "Activar";
             btnActivar.UseVisualStyleBackColor = true;
@@ -368,9 +377,9 @@
             // 
             // btnCerrarCtacte
             // 
-            btnCerrarCtacte.Location = new Point(536, 155);
+            btnCerrarCtacte.Location = new Point(536, 165);
             btnCerrarCtacte.Name = "btnCerrarCtacte";
-            btnCerrarCtacte.Size = new Size(127, 54);
+            btnCerrarCtacte.Size = new Size(127, 36);
             btnCerrarCtacte.TabIndex = 48;
             btnCerrarCtacte.Text = "Cerrar Cuenta";
             btnCerrarCtacte.UseVisualStyleBackColor = true;
@@ -379,10 +388,10 @@
             // lblFechaCreacion
             // 
             lblFechaCreacion.AutoSize = true;
-            lblFechaCreacion.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblFechaCreacion.Location = new Point(213, 163);
+            lblFechaCreacion.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblFechaCreacion.Location = new Point(160, 168);
             lblFechaCreacion.Name = "lblFechaCreacion";
-            lblFechaCreacion.Size = new Size(135, 32);
+            lblFechaCreacion.Size = new Size(72, 19);
             lblFechaCreacion.TabIndex = 47;
             lblFechaCreacion.Tag = "NoModificarConBase";
             lblFechaCreacion.Text = "01/08/2026";
@@ -390,10 +399,10 @@
             // lblFechaCreacionTitulo
             // 
             lblFechaCreacionTitulo.AutoSize = true;
-            lblFechaCreacionTitulo.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblFechaCreacionTitulo.Location = new Point(22, 163);
+            lblFechaCreacionTitulo.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblFechaCreacionTitulo.Location = new Point(22, 168);
             lblFechaCreacionTitulo.Name = "lblFechaCreacionTitulo";
-            lblFechaCreacionTitulo.Size = new Size(185, 32);
+            lblFechaCreacionTitulo.Size = new Size(110, 19);
             lblFechaCreacionTitulo.TabIndex = 46;
             lblFechaCreacionTitulo.Tag = "NoModificarConBase";
             lblFechaCreacionTitulo.Text = "Fecha Creación:";
@@ -401,10 +410,10 @@
             // lblEstado
             // 
             lblEstado.AutoSize = true;
-            lblEstado.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblEstado.Location = new Point(120, 217);
+            lblEstado.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblEstado.Location = new Point(90, 220);
             lblEstado.Name = "lblEstado";
-            lblEstado.Size = new Size(114, 32);
+            lblEstado.Size = new Size(72, 19);
             lblEstado.TabIndex = 45;
             lblEstado.Tag = "NoModificarConBase";
             lblEstado.Text = "**********";
@@ -412,22 +421,22 @@
             // lblEstadoTitulo
             // 
             lblEstadoTitulo.AutoSize = true;
-            lblEstadoTitulo.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblEstadoTitulo.Location = new Point(22, 217);
+            lblEstadoTitulo.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblEstadoTitulo.Location = new Point(22, 220);
             lblEstadoTitulo.Name = "lblEstadoTitulo";
-            lblEstadoTitulo.Size = new Size(92, 32);
+            lblEstadoTitulo.Size = new Size(52, 19);
             lblEstadoTitulo.TabIndex = 44;
             lblEstadoTitulo.Tag = "NoModificarConBase";
             lblEstadoTitulo.Text = "Estado:";
             // 
             // tbpMovimientos
             // 
-            tbpMovimientos.Controls.Add(tableLayoutPanel10);
             tbpMovimientos.Controls.Add(dgvGrilla);
+            tbpMovimientos.Controls.Add(tableLayoutPanel10);
             tbpMovimientos.Controls.Add(lblListadoMovimientos);
             tbpMovimientos.Location = new Point(4, 24);
             tbpMovimientos.Name = "tbpMovimientos";
-            tbpMovimientos.Padding = new Padding(3);
+            tbpMovimientos.Padding = new Padding(8);
             tbpMovimientos.Size = new Size(764, 421);
             tbpMovimientos.TabIndex = 1;
             tbpMovimientos.Text = "Movimientos";
@@ -435,32 +444,32 @@
             // 
             // tableLayoutPanel10
             // 
-            tableLayoutPanel10.Anchor = AnchorStyles.None;
-            tableLayoutPanel10.ColumnCount = 2;
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.66667F));
-            tableLayoutPanel10.Controls.Add(tableLayoutPanel9, 1, 0);
-            tableLayoutPanel10.Controls.Add(pbxLogo, 0, 0);
-            tableLayoutPanel10.Location = new Point(198, 329);
+            tableLayoutPanel10.ColumnCount = 1;
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel10.Controls.Add(tableLayoutPanel9, 0, 0);
+            tableLayoutPanel10.Dock = DockStyle.Bottom;
+            tableLayoutPanel10.Location = new Point(8, 367);
             tableLayoutPanel10.Name = "tableLayoutPanel10";
+            tableLayoutPanel10.Padding = new Padding(0, 6, 0, 0);
             tableLayoutPanel10.RowCount = 1;
             tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel10.Size = new Size(473, 46);
+            tableLayoutPanel10.Size = new Size(748, 46);
             tableLayoutPanel10.TabIndex = 37;
             // 
             // tableLayoutPanel9
             // 
-            tableLayoutPanel9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel9.ColumnCount = 2;
             tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
             tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
             tableLayoutPanel9.Controls.Add(tableLayoutPanel11, 1, 0);
             tableLayoutPanel9.Controls.Add(lblTotalRegistros, 0, 0);
-            tableLayoutPanel9.Location = new Point(160, 3);
+            tableLayoutPanel9.Dock = DockStyle.Fill;
+            tableLayoutPanel9.Location = new Point(0, 6);
+            tableLayoutPanel9.Margin = new Padding(0);
             tableLayoutPanel9.Name = "tableLayoutPanel9";
             tableLayoutPanel9.RowCount = 1;
-            tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 70F));
-            tableLayoutPanel9.Size = new Size(310, 40);
+            tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel9.Size = new Size(748, 40);
             tableLayoutPanel9.TabIndex = 9;
             // 
             // tableLayoutPanel11
@@ -473,134 +482,138 @@
             tableLayoutPanel11.Controls.Add(lblPagina, 1, 0);
             tableLayoutPanel11.Controls.Add(btnAnterior, 0, 0);
             tableLayoutPanel11.Controls.Add(btnSiguiente, 2, 0);
-            tableLayoutPanel11.Location = new Point(127, 3);
+            tableLayoutPanel11.Location = new Point(302, 3);
             tableLayoutPanel11.Name = "tableLayoutPanel11";
             tableLayoutPanel11.RowCount = 1;
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel11.Size = new Size(180, 34);
+            tableLayoutPanel11.Size = new Size(443, 34);
             tableLayoutPanel11.TabIndex = 7;
             // 
             // lblPagina
             // 
             lblPagina.Anchor = AnchorStyles.None;
             lblPagina.AutoSize = true;
-            lblPagina.Font = new Font("Segoe UI Black", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblPagina.Location = new Point(55, 4);
+            lblPagina.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            lblPagina.Location = new Point(187, 7);
             lblPagina.Name = "lblPagina";
-            lblPagina.Size = new Size(69, 25);
+            lblPagina.Size = new Size(69, 17);
             lblPagina.TabIndex = 1;
-            lblPagina.Text = "label2";
+            lblPagina.Text = "Página 1";
             lblPagina.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // btnAnterior
             // 
             btnAnterior.Anchor = AnchorStyles.None;
-            btnAnterior.Font = new Font("Segoe UI Black", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnAnterior.Location = new Point(3, 3);
+            btnAnterior.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnAnterior.Location = new Point(33, 3);
             btnAnterior.Name = "btnAnterior";
-            btnAnterior.Size = new Size(39, 28);
+            btnAnterior.Size = new Size(44, 28);
             btnAnterior.TabIndex = 2;
             btnAnterior.Text = "<";
             btnAnterior.UseVisualStyleBackColor = true;
+            btnAnterior.Click += btnAnterior_Click;
             // 
             // btnSiguiente
             // 
             btnSiguiente.Anchor = AnchorStyles.None;
-            btnSiguiente.Font = new Font("Segoe UI Black", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnSiguiente.Location = new Point(138, 3);
+            btnSiguiente.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnSiguiente.Location = new Point(365, 3);
             btnSiguiente.Name = "btnSiguiente";
-            btnSiguiente.Size = new Size(39, 28);
+            btnSiguiente.Size = new Size(44, 28);
             btnSiguiente.TabIndex = 7;
             btnSiguiente.Text = ">";
             btnSiguiente.UseVisualStyleBackColor = true;
+            btnSiguiente.Click += btnSiguiente_Click;
             // 
             // lblTotalRegistros
             // 
-            lblTotalRegistros.Anchor = AnchorStyles.None;
+            lblTotalRegistros.Anchor = AnchorStyles.Left;
             lblTotalRegistros.AutoSize = true;
-            lblTotalRegistros.Font = new Font("Segoe UI Black", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotalRegistros.Location = new Point(28, 7);
+            lblTotalRegistros.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            lblTotalRegistros.Location = new Point(3, 11);
             lblTotalRegistros.Name = "lblTotalRegistros";
-            lblTotalRegistros.Size = new Size(67, 25);
+            lblTotalRegistros.Size = new Size(48, 17);
             lblTotalRegistros.TabIndex = 0;
-            lblTotalRegistros.Text = "label1";
-            lblTotalRegistros.TextAlign = ContentAlignment.MiddleCenter;
+            lblTotalRegistros.Text = "Total: 0";
+            lblTotalRegistros.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // pbxLogo
             // 
-            pbxLogo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            pbxLogo.Location = new Point(80, 3);
-            pbxLogo.Margin = new Padding(80, 3, 3, 3);
+            pbxLogo.Location = new Point(0, 0);
             pbxLogo.Name = "pbxLogo";
-            pbxLogo.Size = new Size(74, 40);
-            pbxLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            pbxLogo.Size = new Size(1, 1);
             pbxLogo.TabIndex = 8;
             pbxLogo.TabStop = false;
+            pbxLogo.Visible = false;
             // 
             // dgvGrilla
             // 
             dgvGrilla.AllowUserToAddRows = false;
             dgvGrilla.AllowUserToDeleteRows = false;
-            dgvGrilla.Anchor = AnchorStyles.None;
             dgvGrilla.BackgroundColor = SystemColors.ButtonFace;
+            dgvGrilla.BorderStyle = BorderStyle.FixedSingle;
             dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle5.BackColor = SystemColors.Control;
-            dataGridViewCellStyle5.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
             dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
             dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
             dgvGrilla.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
-            dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvGrilla.ColumnHeadersHeight = 32;
+            dgvGrilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle6.BackColor = SystemColors.Window;
-            dataGridViewCellStyle6.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9.5F);
             dataGridViewCellStyle6.ForeColor = Color.FromArgb(31, 26, 43);
             dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
             dgvGrilla.DefaultCellStyle = dataGridViewCellStyle6;
+            dgvGrilla.Dock = DockStyle.Fill;
             dgvGrilla.EditMode = DataGridViewEditMode.EditProgrammatically;
-            dgvGrilla.Location = new Point(6, 66);
+            dgvGrilla.Location = new Point(8, 44);
             dgvGrilla.Name = "dgvGrilla";
             dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle7.BackColor = SystemColors.Control;
-            dataGridViewCellStyle7.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle7.Font = new Font("Segoe UI", 9F);
             dataGridViewCellStyle7.ForeColor = SystemColors.WindowText;
             dataGridViewCellStyle7.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle7.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle7.WrapMode = DataGridViewTriState.True;
             dgvGrilla.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
-            dgvGrilla.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
+            dgvGrilla.RowHeadersVisible = false;
             dataGridViewCellStyle8.BackColor = Color.White;
-            dataGridViewCellStyle8.Padding = new Padding(2, 4, 2, 4);
+            dataGridViewCellStyle8.Padding = new Padding(2, 2, 2, 2);
             dgvGrilla.RowsDefaultCellStyle = dataGridViewCellStyle8;
-            dgvGrilla.RowTemplate.Height = 40;
-            dgvGrilla.Size = new Size(665, 228);
+            dgvGrilla.RowTemplate.Height = 28;
+            dgvGrilla.Size = new Size(748, 323);
             dgvGrilla.TabIndex = 35;
             dgvGrilla.MouseDown += dgvGrilla_MouseDown;
             // 
             // lblListadoMovimientos
             // 
-            lblListadoMovimientos.AutoSize = true;
-            lblListadoMovimientos.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblListadoMovimientos.Location = new Point(6, 20);
+            lblListadoMovimientos.Dock = DockStyle.Top;
+            lblListadoMovimientos.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblListadoMovimientos.Location = new Point(8, 8);
             lblListadoMovimientos.Name = "lblListadoMovimientos";
-            lblListadoMovimientos.Size = new Size(155, 32);
+            lblListadoMovimientos.Padding = new Padding(0, 4, 0, 8);
+            lblListadoMovimientos.Size = new Size(748, 36);
             lblListadoMovimientos.TabIndex = 36;
             lblListadoMovimientos.Tag = "NoModificarConBase";
             lblListadoMovimientos.Text = "Movimientos";
+            lblListadoMovimientos.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // tbpDnis
             // 
             tbpDnis.Controls.Add(lstDnis);
             tbpDnis.Controls.Add(btnEliminarDni);
-            tbpDnis.Controls.Add(lblDni);
             tbpDnis.Controls.Add(btnAgregarDni);
             tbpDnis.Controls.Add(txtNuevoDni);
+            tbpDnis.Controls.Add(lblDni);
             tbpDnis.Location = new Point(4, 24);
             tbpDnis.Name = "tbpDnis";
-            tbpDnis.Padding = new Padding(3);
+            tbpDnis.Padding = new Padding(16);
             tbpDnis.Size = new Size(764, 421);
             tbpDnis.TabIndex = 2;
             tbpDnis.Text = "DNI habilitados";

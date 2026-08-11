@@ -74,7 +74,14 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
             var rolEliminar = context.Roles
                     .FirstOrDefault(x => x.RolId == rolId);
 
-            if (rolEliminar == null || rolEliminar.EstaEliminado) throw new Exception($" No se encontro el Rol: {rolEliminar.Nombre}");
+            if (rolEliminar == null || rolEliminar.EstaEliminado)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = $"No se encontró el Rol con Id {rolId}."
+                };
+            }
 
             rolEliminar.EstaEliminado = true;
 
@@ -119,10 +126,19 @@ namespace Servicios.LogicaNegocio.Empleado.Rol
         {
             var context = new GestorContextDBFactory().CreateDbContext(null);
 
+            if (rolId == null)
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "Rol no encontrado."
+                };
+            }
+
             var rolEditar = context.Roles
                 .FirstOrDefault(x => x.RolId == rolId);
 
-            if (rolId == null)
+            if (rolEditar == null)
             {
                 return new EstadoOperacion
                 {

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FAsignacionRolesEmpleados));
             cbxEmpleado = new ComboBox();
             dgvRolesDisponibles = new DataGridView();
             dgvRolesAsignados = new DataGridView();
@@ -104,13 +105,14 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(cbxEmpleado);
             Controls.Add(btnActualizarRoles);
             Controls.Add(btnQuitarRol);
             Controls.Add(btnAsignarRol);
             Controls.Add(dgvRolesAsignados);
             Controls.Add(dgvRolesDisponibles);
-            Controls.Add(cbxEmpleado);
             ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FAsignacionRolesEmpleados";
             Text = "Asignacion Roles a Empleados";
             Load += FAsignacionRolesEmpleados_Load;
