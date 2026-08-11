@@ -302,93 +302,33 @@ namespace Presentacion.Core.Cliente
 
             grilla.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            // =========================
-            // ID (oculto + alias)
-            // =========================
             if (grilla.Columns.Contains("PersonaId"))
             {
                 grilla.Columns["PersonaId"].Visible = false;
                 grilla.Columns["PersonaId"].Name = "Id";
             }
 
-            // =========================
-            // NOMBRE
-            // =========================
             if (grilla.Columns.Contains("Nombre"))
-            {
-                var col = grilla.Columns["Nombre"];
-                col.Visible = true;
-                col.FillWeight = 120;
-                col.MinimumWidth = 120;
-            }
+                ColumnaFill(grilla.Columns["Nombre"], 140, 110);
 
-            // =========================
-            // APELLIDO
-            // =========================
             if (grilla.Columns.Contains("Apellido"))
-            {
-                var col = grilla.Columns["Apellido"];
-                col.Visible = true;
-                col.FillWeight = 120;
-                col.MinimumWidth = 120;
-            }
+                ColumnaFill(grilla.Columns["Apellido"], 140, 110);
 
-            // =========================
-            // DNI
-            // =========================
             if (grilla.Columns.Contains("Dni"))
-            {
-                var col = grilla.Columns["Dni"];
-                col.Visible = true;
-                col.Width = 110;
-            }
+                ColumnaFill(grilla.Columns["Dni"], 85, 90, "DNI");
 
-            // =========================
-            // EMAIL
-            // =========================
             if (grilla.Columns.Contains("Email"))
-            {
-                var col = grilla.Columns["Email"];
-                col.Visible = true;
-                col.FillWeight = 160;
-                col.MinimumWidth = 150;
-            }
+                ColumnaFill(grilla.Columns["Email"], 200, 160);
 
-            // =========================
-            // TELÉFONO
-            // =========================
             if (grilla.Columns.Contains("Telefono"))
-            {
-                var col = grilla.Columns["Telefono"];
-                col.Visible = true;
-                col.Width = 110;
-            }
+                ColumnaFill(grilla.Columns["Telefono"], 95, 95, "Teléfono");
 
-            // =========================
-            // ESTADO (DESCRIPCIÓN)
-            // =========================
             if (grilla.Columns.Contains("EstadoDescripcion"))
-            {
-                var col = grilla.Columns["EstadoDescripcion"];
-                col.Visible = true;
-                col.HeaderText = "Estado";
-                col.Width = 110;
-            }
+                ColumnaFill(grilla.Columns["EstadoDescripcion"], 80, 90, "Estado");
 
-            // =========================
-            // CUENTACORRIENTE ID
-            // =========================
             if (grilla.Columns.Contains("TieneCuentaCorriente"))
-            {
-                var col = grilla.Columns["TieneCuentaCorriente"];
-                col.Visible = true;
-                col.HeaderText = "CtaCte";
-                col.Width = 110;
-            }
+                ColumnaFill(grilla.Columns["TieneCuentaCorriente"], 70, 80, "CtaCte");
 
-            // =========================
-            // OCULTAR CAMPOS CRUDOS
-            // =========================
             if (grilla.Columns.Contains("Estado"))
                 grilla.Columns["Estado"].Visible = false;
 

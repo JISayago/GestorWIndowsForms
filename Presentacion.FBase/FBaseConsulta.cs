@@ -59,7 +59,6 @@ namespace Presentacion.FBase
             dgvGrilla.CellDoubleClick += DgvGrilla_CellDoubleClick;
             dgvGrilla.CellClick += DgvGrilla_CellClick;
             dgvGrilla.MouseDown += DgvGrilla_MouseDown;
-            dgvGrilla.MouseWheel += DgvGrilla_MouseWheel;
             dgvGrilla.Paint += DgvGrilla_PaintFondoVacio;
             dgvGrilla.Resize += (_, __) => AjustarAlturaFilasParaPageSize();
             dgvGrilla.DataBindingComplete += (_, __) => AjustarAlturaFilasParaPageSize();
@@ -131,7 +130,7 @@ namespace Presentacion.FBase
             if (dgvGrilla != null)
             {
                 dgvGrilla.Margin = new Padding(6, 2, 18, 4);
-                ConfigurarGrillaConsultaSinScroll();
+                ConfigurarGrillaConsulta();
             }
 
             ConfigurarFechaCorta(dtpDesde);
@@ -643,6 +642,42 @@ protected virtual string NormalizarTextoBusqueda(string texto)
                 grilla.Columns[i].Visible = false;
         }
 
+        /// <summary>
+        /// Columna proporcional (modo Fill). No usar Width con Fill a nivel grilla.
+        /// </summary>
+        protected static void ColumnaFill(
+            DataGridViewColumn col,
+            float fillWeight,
+            int minimumWidth,
+            string headerText = null)
+        {
+            if (col == null) return;
+            col.Visible = true;
+            col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            col.FillWeight = fillWeight;
+            col.MinimumWidth = Math.Max(1, minimumWidth);
+            if (!string.IsNullOrWhiteSpace(headerText))
+                col.HeaderText = headerText;
+        }
+
+        /// <summary>
+        /// Columna de ancho fijo. Usar cuando el resto de columnas son Fill
+        /// (o la grilla no está en Fill global).
+        /// </summary>
+        protected static void ColumnaFija(
+            DataGridViewColumn col,
+            int width,
+            string headerText = null)
+        {
+            if (col == null) return;
+            col.Visible = true;
+            col.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            col.Width = width;
+            col.MinimumWidth = Math.Max(1, width);
+            if (!string.IsNullOrWhiteSpace(headerText))
+                col.HeaderText = headerText;
+        }
+
         #endregion
 
         #region BOTONES BASE
@@ -693,35 +728,42 @@ protected virtual string NormalizarTextoBusqueda(string texto)
         #region GRILLA
 
         /// <summary>
-        /// Sin scroll: la grilla muestra como máximo <see cref="pageSize"/> filas
-        /// y el área vacía usa un fondo + marca de agua.
+        /// Grilla con scroll vertical/horizontal para resoluciones o ventanas chicas.
+        /// El área vacía (menos filas que pageSize) sigue mostrando fondo + marca de agua.
         /// </summary>
-        private void ConfigurarGrillaConsultaSinScroll()
+        private void ConfigurarGrillaConsulta()
         {
             if (dgvGrilla == null) return;
 
-            dgvGrilla.ScrollBars = ScrollBars.None;
-            // Fondo suave (visible cuando hay menos filas que pageSize).
+            dgvGrilla.ScrollBars = ScrollBars.Both;
             dgvGrilla.BackgroundColor = Color.FromArgb(236, 230, 245);
             dgvGrilla.BorderStyle = BorderStyle.None;
             AjustarAlturaFilasParaPageSize();
         }
 
         /// <summary>
-        /// Distribuye la altura disponible entre pageSize filas para que una página llena
-        /// ocupe toda la grilla; si hay menos filas, queda área vacía con fondo.
+        /// Altura de fila legible: si hay espacio, reparte; si la ventana es chica,
+        /// mantiene un mínimo y deja scrollear.
         /// </summary>
         private void AjustarAlturaFilasParaPageSize()
         {
             if (dgvGrilla == null || dgvGrilla.IsDisposed || pageSize <= 0)
                 return;
 
+            const int alturaMinima = 28;
+            const int alturaMaxima = 44;
+
             int header = dgvGrilla.ColumnHeadersVisible ? dgvGrilla.ColumnHeadersHeight : 0;
             int available = dgvGrilla.ClientSize.Height - header - 2;
             if (available < 40)
                 return;
 
-            int rowH = Math.Max(26, available / pageSize);
+            int rowH = available / pageSize;
+            if (rowH < alturaMinima)
+                rowH = alturaMinima; // ventana chica → scroll vertical
+            else if (rowH > alturaMaxima)
+                rowH = alturaMaxima;
+
             dgvGrilla.RowTemplate.Height = rowH;
 
             foreach (DataGridViewRow row in dgvGrilla.Rows)
@@ -729,13 +771,6 @@ protected virtual string NormalizarTextoBusqueda(string texto)
                 if (!row.IsNewRow && row.Height != rowH)
                     row.Height = rowH;
             }
-        }
-
-        private void DgvGrilla_MouseWheel(object sender, MouseEventArgs e)
-        {
-            // Bloquea scroll con rueda aunque ScrollBars esté en None.
-            if (e is HandledMouseEventArgs he)
-                he.Handled = true;
         }
 
         private void DgvGrilla_PaintFondoVacio(object sender, PaintEventArgs e)

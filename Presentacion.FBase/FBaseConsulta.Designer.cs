@@ -809,7 +809,7 @@
             dgvGrilla.EditMode = DataGridViewEditMode.EditProgrammatically;
             dgvGrilla.Location = new Point(3, 249);
             dgvGrilla.Name = "dgvGrilla";
-            dgvGrilla.ScrollBars = ScrollBars.None;
+            dgvGrilla.ScrollBars = ScrollBars.Both;
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = SystemColors.Control;
             dataGridViewCellStyle3.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
