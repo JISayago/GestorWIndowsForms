@@ -29,7 +29,7 @@ using System.Windows.Forms;
 
 namespace Presentacion.Core.Venta
 {
-    public partial class FVentaLibre : Form
+    public partial class FVentaLibre : FBase.FBase
     {
         private readonly IVentaServicio _ventaServicio;
         private readonly IVentaLibreServicio _ventaLibreServicio;
