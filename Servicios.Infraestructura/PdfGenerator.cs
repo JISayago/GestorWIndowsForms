@@ -1,4 +1,5 @@
 ﻿using AccesoDatos.Entidades;
+using AccesoDatos.Storage;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
@@ -145,28 +146,39 @@ public class PdfGenerator : IPdfGenerator
     // PATH / FILE
     // =========================
 
+    //private string ObtenerRutaPdf(string modulo, string tipo, string numero)
+    //{
+    //    var escritorio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+    //    var año = DateTime.Now.Year.ToString();
+    //    var mes = DateTime.Now.Month.ToString("D2");
+
+    //    var carpeta = Path.Combine(
+    //        escritorio,
+    //        "ComprobantesPdf",
+    //        modulo,     // Ventas / Gastos
+    //        tipo,       // Realizados / Anulados / etc
+    //        año,
+    //        mes
+    //    );
+
+    //    if (!Directory.Exists(carpeta))
+    //        Directory.CreateDirectory(carpeta);
+
+    //    var nombreBase = $"{tipo}_{numero}.pdf";
+
+    //    return GenerarNombreUnico(carpeta, nombreBase);
+    //}
     private string ObtenerRutaPdf(string modulo, string tipo, string numero)
     {
-        var escritorio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        var carpeta = StorageManager.ObtenerRutaComprobante(
+            modulo,
+            tipo,
+            DateTime.Now);
 
-        var año = DateTime.Now.Year.ToString();
-        var mes = DateTime.Now.Month.ToString("D2");
-
-        var carpeta = Path.Combine(
-            escritorio,
-            "ComprobantesPdf",
-            modulo,     // Ventas / Gastos
-            tipo,       // Realizados / Anulados / etc
-            año,
-            mes
-        );
-
-        if (!Directory.Exists(carpeta))
-            Directory.CreateDirectory(carpeta);
-
-        var nombreBase = $"{tipo}_{numero}.pdf";
-
-        return GenerarNombreUnico(carpeta, nombreBase);
+        return GenerarNombreUnico(
+            carpeta,
+            $"{tipo}_{numero}.pdf");
     }
 
     private string GenerarNombreUnico(string carpeta, string nombreBase)

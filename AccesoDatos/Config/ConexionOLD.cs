@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace AccesoDatos.Config
 {
-    public class Conexion
+    public class ConexionOLD
     {
         public class ConexionInfo
         {

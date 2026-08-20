@@ -11,29 +11,29 @@ namespace AccesoDatos.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            //migrationBuilder.AddColumn<DateTime>(
-            //    name: "fecha_activacion",
-            //    table: "CuentasCorrientes",
-            //    type: "date",
-            //    nullable: true);
+            migrationBuilder.AddColumn<DateTime>(
+                name: "fecha_activacion",
+                table: "CuentasCorrientes",
+                type: "date",
+                nullable: true);
 
-            //migrationBuilder.AddColumn<DateTime>(
-            //    name: "fecha_creacion",
-            //    table: "CuentasCorrientes",
-            //    type: "date",
-            //    nullable: true);
+            migrationBuilder.AddColumn<DateTime>(
+                name: "fecha_creacion",
+                table: "CuentasCorrientes",
+                type: "date",
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            //migrationBuilder.DropColumn(
-            //    name: "fecha_activacion",
-            //    table: "CuentasCorrientes");
-            
-            //migrationBuilder.DropColumn(
-            //    name: "fecha_creacion",
-            //    table: "CuentasCorrientes");
+            migrationBuilder.DropColumn(
+                name: "fecha_activacion",
+                table: "CuentasCorrientes");
+
+            migrationBuilder.DropColumn(
+                name: "fecha_creacion",
+                table: "CuentasCorrientes");
         }
     }
 }
