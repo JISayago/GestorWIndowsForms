@@ -46,14 +46,15 @@ namespace Presentacion
             };
 
             // 🔥 VALIDAR CONEXIÓN
-            if (!PruebaConexion.ProbarConexion())
+            if (!PruebaConexion.ProbarConexion(out string error))
             {
                 MessageBox.Show(
-                    "No se pudo establecer conexión con la base de datos.\nLa aplicación se cerrará.",
+                    $"No se pudo establecer conexión con la base de datos.\n\n{error}",
                     "Error de conexión",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
+
                 return;
             }
 
