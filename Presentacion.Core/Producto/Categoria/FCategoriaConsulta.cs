@@ -50,25 +50,13 @@ namespace Presentacion.Core.Categoria
             }
 
             if (grilla.Columns.Contains("Nombre"))
-            {
-                grilla.Columns["Nombre"].Visible = true;
-                grilla.Columns["Nombre"].HeaderText = "Categoria";
-                grilla.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            }
+                ColumnaFill(grilla.Columns["Nombre"], 160, 140, "Categoria");
 
             if (grilla.Columns.Contains("Descripcion"))
-            {
-                grilla.Columns["Descripcion"].Visible = true;
-                grilla.Columns["Descripcion"].HeaderText = "Descripción";
-                grilla.Columns["Descripcion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            }
+                ColumnaFill(grilla.Columns["Descripcion"], 220, 160, "Descripción");
 
             if (grilla.Columns.Contains("EstadoDescripcion"))
-            {
-                grilla.Columns["EstadoDescripcion"].Visible = true;
-                grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
-                grilla.Columns["EstadoDescripcion"].Width = 120;
-            }
+                ColumnaFija(grilla.Columns["EstadoDescripcion"], 110, "Estado");
         }
         protected override string TextoLblBuscar
   => "Buscar Categoria:";

@@ -1,4 +1,4 @@
-﻿using AccesoDatos.Entidades;
+using AccesoDatos.Entidades;
 using Presentacion.Core.Movimiento;
 using Presentacion.Core.Producto;
 using Presentacion.FBase.Helpers;
@@ -33,11 +33,12 @@ namespace Presentacion.Notificaciones
         private int _paginaActual = 1;
         private int _totalPaginas = 1;
         private const int _pageSize = 10;
+        private const int _maxPaginas = 5;
 
         // Estado de la paginación Ventas
         private int _paginaActualV = 1;
         private int _totalPaginasV = 1;
-        private const int _pageSizeV = 12;
+        private const int _pageSizeV = 10;
 
         private Button btnPrevVenta, btnNextVenta;
         private Label lblPaginaInfoVenta;
@@ -51,16 +52,17 @@ namespace Presentacion.Notificaciones
         // ===========================================================================
         // MÉTODO PRINCIPAL: Estructura de Tab 1 en 2 filas (Limpio)
         // ===========================================================================
-        public void CargarConsultasRapidas(Control contenedorPadre)
+        public void CargarConsultasRapidas(Control contenedorPadre, bool cargarDatosDesdeBd = true)
         {
-            contenedorPadre.BackColor = SystemColors.Control;
+            contenedorPadre.BackColor = TemaSistema.Fondo;
 
             TableLayoutPanel mainLayout = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 ColumnCount = 1,
                 RowCount = 2,
-                Padding = new Padding(10)
+                Padding = new Padding(10),
+                BackColor = TemaSistema.Fondo
             };
 
             mainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
@@ -77,9 +79,50 @@ namespace Presentacion.Notificaciones
             ConfigurarColoresGrid(dgvProds);
             ConfigurarColoresGrid(dgvVentas);
 
+            dgvProds.SizeChanged += (s, e) => AjustarFilasSinScroll(dgvProds, dgvProds.Rows.Count);
+            dgvVentas.SizeChanged += (s, e) => AjustarFilasSinScroll(dgvVentas, dgvVentas.Rows.Count);
+
+            if (cargarDatosDesdeBd)
+            {
+                RefrescarProductos();
+                RefrescarVentas();
+            }
+        }
+
+        /// <summary>
+        /// Pinta grillas con el snapshot del arranque (sin pegarle otra vez a la BD).
+        /// </summary>
+        public void AplicarDatosIniciales(IEnumerable<ProductoDTO> productos, IEnumerable<VentaDTO> ventas)
+        {
+            ActualizarTablaProductos(productos ?? Enumerable.Empty<ProductoDTO>());
+            ActualizarTablaVentas(ventas ?? Enumerable.Empty<VentaDTO>());
+
+            _paginaActual = 1;
+            _paginaActualV = 1;
+            _totalPaginas = _maxPaginas;
+            _totalPaginasV = _maxPaginas;
+
+            if (lblPaginaInfo != null)
+                lblPaginaInfo.Text = $"Página 1 de {_maxPaginas}";
+            if (lblPaginaInfoVenta != null)
+                lblPaginaInfoVenta.Text = $"Página 1 de {_maxPaginas}";
+
+            if (btnPrevProd != null) btnPrevProd.Enabled = false;
+            if (btnPrevVenta != null) btnPrevVenta.Enabled = false;
+            if (btnNextProd != null) btnNextProd.Enabled = true;
+            if (btnNextVenta != null) btnNextVenta.Enabled = true;
+        }
+
+        public void RefrescarTodoDesdeBd()
+        {
+            _paginaActual = 1;
+            _paginaActualV = 1;
             RefrescarProductos();
             RefrescarVentas();
         }
+
+        /// <summary>Grilla de Últimas Ventas (para alinear otros paneles).</summary>
+        public DataGridView GridUltimasVentas => dgvVentas;
 
         // ===========================================================================
         // CONFIGURACIÓN DE COLORES ESTILIZADOS - GRILLAS
@@ -183,8 +226,8 @@ namespace Presentacion.Notificaciones
         // ===========================================================================
         private Panel CrearPanelVentas()
         {
-            Panel p = new Panel { Dock = DockStyle.Fill, Padding = new Padding(5) };
-            Label lbl = new Label { Text = "Últimas Ventas", Dock = DockStyle.Top, Height = 25, Font = new Font("Segoe UI", 10, FontStyle.Bold) };
+            Panel p = new Panel { Dock = DockStyle.Fill, Padding = new Padding(5), BackColor = TemaSistema.Fondo };
+            Label lbl = new Label { Text = "Últimas Ventas", Dock = DockStyle.Top, Height = 25, Font = new Font("Segoe UI", 10, FontStyle.Bold), ForeColor = TemaSistema.Texto };
 
             dgvVentas = ConfigurarGridSimple();
             dgvVentas.Columns.Add("Id", "Comprobante");
@@ -212,15 +255,16 @@ namespace Presentacion.Notificaciones
         // ===========================================================================
         private Panel CrearPanelProductos()
         {
-            Panel p = new Panel { Dock = DockStyle.Fill, Padding = new Padding(5) };
-            Panel pHeader = new Panel { Dock = DockStyle.Top, Height = 35 };
+            Panel p = new Panel { Dock = DockStyle.Fill, Padding = new Padding(5), BackColor = TemaSistema.Fondo };
+            Panel pHeader = new Panel { Dock = DockStyle.Top, Height = 35, BackColor = TemaSistema.Fondo };
 
             Label lbl = new Label
             {
                 Text = "Productos",
                 Width = 100,
                 Top = 5,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold)
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                ForeColor = TemaSistema.Texto
             };
 
             txtBuscador = new TextBox
@@ -228,7 +272,9 @@ namespace Presentacion.Notificaciones
                 Width = 350,
                 Left = 110,
                 Top = 5,
-                PlaceholderText = "Buscar por nombre..."
+                PlaceholderText = "Buscar por nombre...",
+                BackColor = TemaSistema.FondoControl,
+                ForeColor = TemaSistema.Texto
             };
 
             txtBuscador.TextChanged += (s, e) =>
@@ -294,13 +340,16 @@ namespace Presentacion.Notificaciones
                 AllowUserToAddRows = false,
                 ReadOnly = true,
                 RowHeadersVisible = false,
-                ColumnHeadersHeight = 35,
-                EnableHeadersVisualStyles = false
+                ColumnHeadersHeight = 30,
+                ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing,
+                EnableHeadersVisualStyles = false,
+                ScrollBars = ScrollBars.None,
+                AllowUserToResizeRows = false
             };
 
-            dgv.RowTemplate.Height = 28;
+            dgv.RowTemplate.Height = 26;
             dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dgv.Margin = new Padding(0, 0, 0, 8);
+            dgv.Margin = new Padding(0, 0, 0, 4);
             return dgv;
         }
 
@@ -312,13 +361,20 @@ namespace Presentacion.Notificaciones
             Panel pNav = new Panel
             {
                 Dock = DockStyle.Bottom,
-                Height = 50,
-                Padding = new Padding(0, 15, 0, 0)
+                Height = 42,
+                Padding = new Padding(0, 8, 0, 0),
+                BackColor = TemaSistema.Fondo
             };
 
             btnPrev = new Button { Text = "<", Width = 40, Dock = DockStyle.Left };
             btnNext = new Button { Text = ">", Width = 40, Dock = DockStyle.Left };
-            lblInfo = new Label { Text = "Página 1 de 1", AutoSize = true, Dock = DockStyle.Left, Padding = new Padding(10, 12, 0, 0) };
+            lblInfo = new Label
+            {
+                Text = $"Página 1 de {_maxPaginas}",
+                AutoSize = true,
+                Dock = DockStyle.Left,
+                Padding = new Padding(10, 8, 0, 0)
+            };
 
             btnVerMas = new Button { Text = "Ver Más", Width = 80, Dock = DockStyle.Right };
 
@@ -344,19 +400,23 @@ namespace Presentacion.Notificaciones
         public void ActualizarTablaVentas(IEnumerable<VentaDTO> listaVentas)
         {
             dgvVentas.Rows.Clear();
-            foreach (var v in listaVentas)
+            var lista = listaVentas?.ToList() ?? new List<VentaDTO>();
+            foreach (var v in lista)
             {
                 dgvVentas.Rows.Add(v.NumeroVenta, v.FechaVenta.ToString("G"), v.Detalle, v.Total.ToString("C2"));
             }
+            AjustarFilasSinScroll(dgvVentas, lista.Count);
         }
 
         public void ActualizarTablaProductos(IEnumerable<ProductoDTO> listaProds)
         {
             dgvProds.Rows.Clear();
-            foreach (var p in listaProds)
+            var lista = listaProds?.ToList() ?? new List<ProductoDTO>();
+            foreach (var p in lista)
             {
                 dgvProds.Rows.Add(p.Codigo, p.Descripcion, p.PrecioVenta.ToString("C2"), p.Stock);
             }
+            AjustarFilasSinScroll(dgvProds, lista.Count);
         }
 
         // ===========================================================================
@@ -364,6 +424,9 @@ namespace Presentacion.Notificaciones
         // ===========================================================================
         private void RefrescarProductos()
         {
+            if (_paginaActual > _maxPaginas)
+                _paginaActual = _maxPaginas;
+
             var filtro = new FiltroConsulta
             {
                 TextoBuscar = txtBuscador.Text,
@@ -380,16 +443,21 @@ namespace Presentacion.Notificaciones
                 dgvProds.Rows.Add(p.Codigo, p.Descripcion, p.PrecioVenta.ToString("C2"), p.Stock);
             }
 
-            _totalPaginas = resultado.TotalPaginas;
-            _paginaActual = resultado.Page;
+            _totalPaginas = Math.Min(Math.Max(resultado.TotalPaginas, 1), _maxPaginas);
+            _paginaActual = Math.Min(Math.Max(resultado.Page, 1), _totalPaginas);
 
+            // Si hay menos páginas reales, no forzar "de 5"; si hay más, cap en 5.
             lblPaginaInfo.Text = $"Página {_paginaActual} de {_totalPaginas}";
             btnPrevProd.Enabled = _paginaActual > 1;
             btnNextProd.Enabled = _paginaActual < _totalPaginas;
+            AjustarFilasSinScroll(dgvProds, dgvProds.Rows.Count);
         }
 
         public void RefrescarVentas()
         {
+            if (_paginaActualV > _maxPaginas)
+                _paginaActualV = _maxPaginas;
+
             var filtroVentas = new FiltroConsulta
             {
                 Page = _paginaActualV,
@@ -405,12 +473,35 @@ namespace Presentacion.Notificaciones
                 dgvVentas.Rows.Add(v.NumeroVenta, v.FechaVenta.ToString("g"), v.Detalle, v.Total.ToString("C2"));
             }
 
-            _totalPaginasV = resultado.TotalPaginas;
-            _paginaActualV = resultado.Page;
+            _totalPaginasV = Math.Min(Math.Max(resultado.TotalPaginas, 1), _maxPaginas);
+            _paginaActualV = Math.Min(Math.Max(resultado.Page, 1), _totalPaginasV);
 
             lblPaginaInfoVenta.Text = $"Página {_paginaActualV} de {_totalPaginasV}";
             btnPrevVenta.Enabled = _paginaActualV > 1;
             btnNextVenta.Enabled = _paginaActualV < _totalPaginasV;
+            AjustarFilasSinScroll(dgvVentas, dgvVentas.Rows.Count);
+        }
+
+        /// <summary>
+        /// Ajusta alto de filas para mostrar la página completa sin barra de scroll.
+        /// Usa pageSize como referencia mínima para no dejar filas demasiado altas en la última página.
+        /// </summary>
+        private void AjustarFilasSinScroll(DataGridView dgv, int cantidadFilas)
+        {
+            if (dgv == null || dgv.IsDisposed)
+                return;
+
+            dgv.ScrollBars = ScrollBars.None;
+            int pageSizeRef = ReferenceEquals(dgv, dgvVentas) ? _pageSizeV : _pageSize;
+            int filas = Math.Max(Math.Max(cantidadFilas, pageSizeRef), 1);
+            int altoDisponible = dgv.ClientSize.Height - dgv.ColumnHeadersHeight - 2;
+            if (altoDisponible <= 0)
+                return;
+
+            int altoFila = Math.Max(altoDisponible / filas, 18);
+            dgv.RowTemplate.Height = altoFila;
+            foreach (DataGridViewRow row in dgv.Rows)
+                row.Height = altoFila;
         }
     }
 }

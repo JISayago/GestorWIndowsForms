@@ -1,17 +1,9 @@
-﻿using Presentacion.Core.Venta.TipoPago;
-using Servicios.Helpers;
-using Servicios.LogicaNegocio.Cliente.DTO;
+﻿using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.CuentaCorriente;
 using Servicios.LogicaNegocio.CuentaCorriente.DTO;
-using Servicios.LogicaNegocio.Venta;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Presentacion.Core.CuentaCorriente
@@ -19,61 +11,89 @@ namespace Presentacion.Core.CuentaCorriente
     public partial class FCuentaCorrienteValidacion : FBase.FBase
     {
         private readonly ICuentaCorrienteServicio _ctacteServicio;
-        private CuentaCorrienteDTO ctaCte;
-        private long clienteId;
-        private decimal monto;
-        private List<string> dniAutorizados;
+        private readonly CuentaCorrienteDTO ctaCte;
+        private readonly long clienteId;
+        private readonly decimal monto;
+        private readonly HashSet<string> dniAutorizadosNormalizados;
 
         public FCuentaCorrienteValidacion(long clienteCargado, decimal montoCtaCte)
         {
-
-            //cambiar clienteDTO por clienteId
             InitializeComponent();
 
             clienteId = clienteCargado;
             monto = montoCtaCte;
 
-            _ctacteServicio = new CuentaCorrienteServicio();            
+            _ctacteServicio = new CuentaCorrienteServicio();
 
             ctaCte = _ctacteServicio.ObtenerCuentaCorrientePorClienteId(clienteId);
-            dniAutorizados = _ctacteServicio.ObtenerDnisAutorizados(ctaCte.CuentaCorrienteId);
+            dniAutorizadosNormalizados = CargarDnisAutorizados(ctaCte.CuentaCorrienteId, clienteId);
 
             lblCtaCte.Text = ctaCte.NombreCuentaCorriente;
-            lblSaldoDisponible.Text = $"{"Saldo Disponible:"} {ctaCte.Saldo.ToString()}";
-            lblLimite.Text = $"{"Limite Deuda:"} {ctaCte.LimiteDeuda.ToString()}";
+            lblSaldoDisponible.Text = $"Saldo Disponible: {ctaCte.Saldo}";
+            lblLimite.Text = $"Limite Deuda: {ctaCte.LimiteDeuda}";
+        }
 
-            //arreglar uso de de servicios al pedo
+        private HashSet<string> CargarDnisAutorizados(long cuentaId, long clientePersonaId)
+        {
+            var dnis = _ctacteServicio.ObtenerDnisAutorizados(cuentaId) ?? new List<string>();
+            var set = new HashSet<string>(
+                dnis.Select(NormalizarDni).Where(d => !string.IsNullOrEmpty(d)),
+                StringComparer.Ordinal);
 
-            //validar saldo de la ctacte respecto al la compra
+            // El DNI del titular siempre debe poder operar, aunque falte en la lista autorizada.
+            try
+            {
+                var cliente = new ClienteServicio().ObtenerClientePorId(clientePersonaId);
+                var dniTitular = NormalizarDni(cliente?.Dni);
+                if (!string.IsNullOrEmpty(dniTitular))
+                    set.Add(dniTitular);
+            }
+            catch
+            {
+                // Si no se puede leer el cliente, se valida solo con la lista de autorizados.
+            }
 
+            return set;
         }
 
         private void btnVerificar_Click(object sender, EventArgs e)
         {
-            if(!_ctacteServicio.PuedeComprar(ctaCte.CuentaCorrienteId, monto))
+            var response = _ctacteServicio.PuedeComprar(ctaCte.CuentaCorrienteId, monto);
+            if (!response.Exitoso)
             {
-                MessageBox.Show("La cuenta corriente no tiene saldo suficiente para realizar la compra.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(txtDni.Text))
+            var dniIngresado = NormalizarDni(txtDni.Text);
+            if (string.IsNullOrEmpty(dniIngresado))
             {
                 MessageBox.Show("Por favor, ingrese un DNI válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtDni.Focus();
                 return;
             }
-            foreach (var dni in dniAutorizados)
+
+            // Antes: el MessageBox estaba en el else del foreach → avisaba en el primer
+            // DNI que no coincidía y después igual podía cerrar OK si otro sí coincidía.
+            if (!dniAutorizadosNormalizados.Contains(dniIngresado))
             {
-                if (txtDni.Text.Trim() == dni.ToString())
-                {
-                    this.DialogResult = DialogResult.OK;
-                    this.Close();
-                    return;
-                }
-                else
-                {
-                    MessageBox.Show("DNI no autorizado para cuenta corriente.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                MessageBox.Show("DNI no autorizado para cuenta corriente.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtDni.Focus();
+                txtDni.SelectAll();
+                return;
             }
+
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        private static string NormalizarDni(string? dni)
+        {
+            if (string.IsNullOrWhiteSpace(dni))
+                return string.Empty;
+
+            // Acepta "30.111.222", "30111222 ", etc.
+            return new string(dni.Where(char.IsDigit).ToArray());
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using AccesoDatos;
+using AccesoDatos;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Movimiento;
@@ -8,6 +8,7 @@ using Servicios.Helpers.Sistema.Extras;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.Helpers.VentaEnum;
 using Servicios.Infraestructura;
+using Servicios.LogicaNegocio.CuentaCorriente;
 using Servicios.LogicaNegocio.Venta.TipoPago;
 using Servicios.LogicaNegocio.Venta.VentaLibre.DTO;
 using System;
@@ -23,9 +24,13 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
     {
         private readonly IPdfGenerator _pdf;
 
-        public VentaLibreServicio()
+        public VentaLibreServicio() : this(new PdfGenerator())
         {
-            _pdf = new PdfGenerator();
+        }
+
+        public VentaLibreServicio(IPdfGenerator pdf)
+        {
+            _pdf = pdf ?? throw new ArgumentNullException(nameof(pdf));
         }
         private void GeneracionComprobanteVentaLibre(GestorContextDB context, AccesoDatos.Entidades.VentaLibre venta)
         {
@@ -64,6 +69,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
             {
                 var venta = context.VentasLibres
                     .Include(v => v.VentaPagoDetalles)
+                        .ThenInclude(p => p.TipoPago)
                     .FirstOrDefault(v => v.VentaLibreId == ventaLibreId);
 
                 if (venta == null)
@@ -100,9 +106,10 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     MontoPagado = venta.MontoPagado,
                     MontoAdeudado = venta.MontoAdeudado,
 
+                    // NumeroReferencia = enum; NO usar IdTipoPago (PK de BD).
                     TiposDePagoSeleccionado = venta.VentaPagoDetalles.Select(p => new FormaPago
                     {
-                        TipoDePago = (TipoDePago)p.IdTipoPago,
+                        TipoDePago = (TipoDePago)p.TipoPago.NumeroReferencia,
                         Monto = p.Monto
                     }).ToList()
                 };
@@ -195,6 +202,8 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
         {
             try
             {
+                var montos = VentaMontosHelper.Calcular(dto.Total, dto.TiposDePagoSeleccionado);
+
                 var cajaServicio = new Caja.CajaServicio();
                 var cajaId = cajaServicio.ObtenerIdDeUltimaCajaAbierta(context);
 
@@ -217,7 +226,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     cantidadHoy
                 );
 
-                // 🧾 Crear entidad (TODO POSITIVO)
+                // 🧾 Crear entidad — caja vs CtaCte con el mismo helper que venta interna
                 var venta = new AccesoDatos.Entidades.VentaLibre
                 {
                     NumeroVenta = dto.NumeroVenta,
@@ -228,8 +237,8 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     Total = Math.Abs(dto.Total),
                     Estado = dto.Estado,
                     Detalle = dto.Detalle,
-                    MontoPagado = Math.Abs(dto.MontoPagado),
-                    MontoAdeudado = Math.Abs(dto.MontoAdeudado),
+                    MontoPagado = montos.MontoCaja,
+                    MontoAdeudado = montos.MontoCtaCte,
                 };
 
                 context.VentasLibres.Add(venta);
@@ -247,17 +256,22 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     context
                 );
 
-                // 🏦 Caja (SIN SIGNO, SOLO TIPO)
-                var tipoMovimientoCaja = esCancelacion
-                    ? TipoMovimiento.Egreso
-                    : TipoMovimiento.Ingreso;
+                // 🏦 Caja solo el monto no-CtaCte
+                if (venta.MontoPagado != 0)
+                {
+                    var tipoMovimientoCaja = esCancelacion
+                        ? TipoMovimiento.Egreso
+                        : TipoMovimiento.Ingreso;
 
-                cajaServicio.RegistrarTransaccion(
-                    context,
-                    venta.MontoPagado,
-                    tipoMovimientoCaja,
-                    cajaId.Value
-                );
+                    cajaServicio.RegistrarTransaccion(
+                        context,
+                        venta.MontoPagado,
+                        tipoMovimientoCaja,
+                        cajaId.Value
+                    );
+                }
+
+                RegistrarMovimientoCuentaCorriente(venta, dto, cajaId.Value, context);
 
                 // 💳 Pagos (SIEMPRE POSITIVOS)
                 if (dto.TiposDePagoSeleccionado != null && dto.TiposDePagoSeleccionado.Any())
@@ -285,6 +299,48 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 Debug.WriteLine("ERROR EN VENTA LIBRE");
                 Debug.WriteLine(ex.ToString());
                 throw;
+            }
+        }
+
+        private static void RegistrarMovimientoCuentaCorriente(
+            AccesoDatos.Entidades.VentaLibre venta,
+            VentaLibreDTO dto,
+            long cajaId,
+            GestorContextDB context)
+        {
+            if (venta.MontoAdeudado == 0)
+                return;
+
+            if (!venta.IdCliente.HasValue)
+                throw new Exception(
+                    "No se puede registrar un movimiento de Cuenta Corriente sin un Cliente asignado.");
+
+            var servicio = new CuentaCorrienteServicio();
+            var cuenta = servicio.ObtenerCuentaCorrientePorClienteId(venta.IdCliente.Value);
+
+            if (dto.Estado == (int)EstadoVenta.Confirmada)
+            {
+                var resultado = servicio.RegistrarCompra(
+                    cuenta.CuentaCorrienteId,
+                    venta.MontoAdeudado,
+                    cajaId,
+                    $"Cargo por Venta Libre N° {venta.NumeroVenta}",
+                    context);
+
+                if (!resultado.Exitoso)
+                    throw new Exception(resultado.Mensaje);
+            }
+            else
+            {
+                var resultado = servicio.RegistrarDevolucionOAnulacion(
+                    cuenta.CuentaCorrienteId,
+                    Math.Abs(venta.MontoAdeudado),
+                    cajaId,
+                    $"Crédito por Anulación de Venta Libre N° {venta.NumeroVenta}",
+                    context);
+
+                if (!resultado.Exitoso)
+                    throw new Exception(resultado.Mensaje);
             }
         }
         public ResultadoPaginacion<VentaLibreDTO> ObtenerVentasLibres(FiltroConsulta filtros)

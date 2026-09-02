@@ -1,4 +1,4 @@
-﻿using AccesoDatos.Entidades;
+using AccesoDatos.Entidades;
 using Presentacion.AccesoAlSistema;
 using Presentacion.Core.Administracion;
 using Presentacion.Core.Articulo.Marca;
@@ -47,11 +47,16 @@ namespace Presentacion
         private DateTime _fechaActual = DateTime.Now;
         private DateTime _horaActual = DateTime.Now;
         private PanelDatosTurno _panelDatosTurno;
+        private PanelConsultasRapidas _panelConsultasRapidas;
         private DatosTurnoDTO _ultimoEstadoTurno;
 
         private readonly ElementoDePanelesPantallaPrincipal _datosIniciales;
         private readonly List<ProductoDTO> _productosIniciales;
         private readonly List<VentaDTO> _ventasIniciales;
+
+        // Recuerda qué grupos de notificaciones estaban abiertos, para no colapsarlos
+        // cada vez que se reconstruye el panel (ej: al marcar una como leída).
+        private readonly Dictionary<string, bool> _estadoExpandidoNotificaciones = new Dictionary<string, bool>();
         #endregion
 
         #region Constructores
@@ -76,12 +81,14 @@ namespace Presentacion
 
             this.Bounds = Screen.PrimaryScreen.WorkingArea;
 
-            // Formato de nombre de usuario
-            var font = new Font(lblNombreUsuario.Font.FontFamily, 15F, FontStyle.Bold);
+            // Formato de nombre de usuario (junto a "Usuario Logeado:")
+            var font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
             lblNombreUsuario.Font = font;
             lblNombreUsuario.ForeColor = TemaSistema.Primario;
             lblNombreUsuario.Text = _usuarioLogeado.Username.ToUpper();
-            lblNombreUsuario.Anchor = AnchorStyles.Left;
+            lblNombreUsuario.AutoSize = true;
+            lblNombreUsuario.Dock = DockStyle.None;
+            lblNombreUsuario.TextAlign = ContentAlignment.MiddleLeft;
         }
 
         #endregion
@@ -90,11 +97,14 @@ namespace Presentacion
 
         private void VentanaPrincipal_Load(object sender, EventArgs e)
         {
+            UnificarFondosPantallaPrincipal();
+
             // 1. Configurar Timers
             InicializarTimers();
 
             // 2. Suscribir eventos de Layout
             flowLayoutNotificaciones.SizeChanged += FlowLayoutNotificaciones_SizeChanged;
+            tlpPanelBaseTabControlYNotis.Layout += (_, __) => AlinearNotificacionesConUltimasVentas();
 
             // 3. Inicializar Panel de Turno y Datos
             _panelDatosTurno = new PanelDatosTurno();
@@ -105,6 +115,46 @@ namespace Presentacion
             crearNotificacionesPromocionesVencidas();
             crearNotificacionesPromocionesBajoStock();
             crearNotificacionesCuentaCorriente();
+
+            // 5. Alinear top de notificaciones con la grilla de Últimas Ventas
+            BeginInvoke(new Action(AlinearNotificacionesConUltimasVentas));
+        }
+
+        private void UnificarFondosPantallaPrincipal()
+        {
+            var fondo = TemaSistema.Fondo;
+            const int padH = 20;
+
+            // Mismo margen horizontal header / consultas+notis / botones
+            tableLayoutPanel2.Padding = new Padding(padH, 0, padH, 0);
+            tlpPanelBaseTabControlYNotis.Padding = new Padding(padH, 0, padH, 0);
+            PnlBotones.Padding = new Padding(padH, 0, padH, 0);
+            tableLayoutPanel2.Dock = DockStyle.Fill;
+            tableLayoutPanel3.Dock = DockStyle.Fill;
+            flowLayoutPanel2.Dock = DockStyle.Right;
+            flowLayoutPanel2.AutoSize = true;
+            flowLayoutPanel2.WrapContents = false;
+            flowLayoutPanel2.FlowDirection = FlowDirection.RightToLeft;
+
+            tlpBaseInfo1.BackColor = fondo;
+            tableLayoutPanel2.BackColor = fondo;
+            tableLayoutPanel3.BackColor = fondo;
+            flowHeaderUsuario.BackColor = fondo;
+            tlpPanelBaseTabControlYNotis.BackColor = fondo;
+            tlpNotificaciones0.BackColor = fondo;
+            PnlBotones.BackColor = fondo;
+            flowLayoutNotificaciones.BackColor = fondo;
+            flowLayoutPanel2.BackColor = fondo;
+            flowLayoutPanel3.BackColor = fondo;
+
+            tcIzquierda.BackColor = fondo;
+            tcIzquierda.HeaderBackColor = fondo;
+            tcIzquierda.AplicarTema();
+            tabPage1.UseVisualStyleBackColor = false;
+            tabPage1.BackColor = fondo;
+            tabPage1.Text = "Acceso Rápido";
+            tabPage2.UseVisualStyleBackColor = false;
+            tabPage2.BackColor = fondo;
         }
 
         private void InicializarTimers()
@@ -128,20 +178,16 @@ namespace Presentacion
 
         private void ActualizarInformacionTurno()
         {
-            // 1. Obtener datos actualizados del servicio
             var datosNuevos = _pantallaPrincipalServicio.ObtenerActualizarDatosCaja(DatosSistema.CajaId, _ultimoEstadoTurno);
 
-            // 2. Validar cambios (Equals compara los valores del record)
-            if (datosNuevos == null || datosNuevos.Equals(_ultimoEstadoTurno))
-            {
-                return;
-            }
+            // Siempre marcar el poll del timer (aunque no haya cambios de montos).
+            _panelDatosTurno?.MarcarUltimaActualizacion(DateTime.Now);
 
-            // 3. Si hay cambios, actualizar caché y UI silenciosamente (sin flashear)
+            if (datosNuevos == null || datosNuevos.Equals(_ultimoEstadoTurno))
+                return;
+
             _ultimoEstadoTurno = datosNuevos;
             _panelDatosTurno.ActualizarSoloTextoCaja(datosNuevos);
-
-            Console.WriteLine("UI Actualizada: Se detectaron cambios en el turno.");
         }
 
         //private void crearPanelDatosAdicionales()
@@ -174,28 +220,19 @@ namespace Presentacion
         //}
         private void crearPanelDatosAdicionales()
         {
-            var panelConsultasRapidas = new PanelConsultasRapidas();
+            _panelConsultasRapidas = new PanelConsultasRapidas();
 
-            // 🔥 1. DATOS DE TURNO (desde inicializador, NO DB)
-            if (_datosIniciales != null)
+            // Turno: snapshot del arranque
+            if (_datosIniciales?.DatosTurno != null)
             {
                 _ultimoEstadoTurno = _datosIniciales.DatosTurno;
                 _panelDatosTurno.CargarResumenTurno(tabPage2, _datosIniciales.DatosTurno);
             }
 
-            // 🔥 2. CREAR UI
-            panelConsultasRapidas.CargarConsultasRapidas(tabPage1);
-
-            // 🔥 3. CARGAR GRILLAS (sin DB)
-            if (_productosIniciales != null && _productosIniciales.Count > 0)
-            {
-                panelConsultasRapidas.ActualizarTablaProductos(_productosIniciales);
-            }
-
-            if (_ventasIniciales != null && _ventasIniciales.Count > 0)
-            {
-                panelConsultasRapidas.ActualizarTablaVentas(_ventasIniciales);
-            }
+            // UI de grillas sin pegarle otra vez a BD; datos del precarga
+            tabPage1.Controls.Clear();
+            _panelConsultasRapidas.CargarConsultasRapidas(tabPage1, cargarDatosDesdeBd: false);
+            _panelConsultasRapidas.AplicarDatosIniciales(_productosIniciales, _ventasIniciales);
         }
 
         #endregion
@@ -231,6 +268,47 @@ namespace Presentacion
             flowLayoutNotificaciones.AutoScroll = true;
             flowLayoutNotificaciones.ResumeLayout();
             flowLayoutNotificaciones.Refresh();
+        }
+
+        /// <summary>
+        /// Baja el bloque de notificaciones para que su contenido arranque
+        /// a la misma altura que la grilla de Últimas Ventas.
+        /// </summary>
+        private bool _alineandoNotificaciones;
+
+        private void AlinearNotificacionesConUltimasVentas()
+        {
+            if (_alineandoNotificaciones)
+                return;
+
+            var gridVentas = _panelConsultasRapidas?.GridUltimasVentas;
+            if (gridVentas == null || !gridVentas.IsHandleCreated || !flowLayoutNotificaciones.IsHandleCreated)
+                return;
+            if (gridVentas.Height <= 0 || !gridVentas.Visible)
+                return;
+
+            try
+            {
+                _alineandoNotificaciones = true;
+
+                int yGrid = gridVentas.PointToScreen(Point.Empty).Y;
+                int yFlow = flowLayoutNotificaciones.PointToScreen(Point.Empty).Y;
+                int diff = yGrid - yFlow;
+
+                if (Math.Abs(diff) < 2)
+                    return;
+
+                var pad = tlpNotificaciones0.Padding;
+                int nuevoTop = Math.Max(0, pad.Top + diff);
+                if (nuevoTop == pad.Top)
+                    return;
+
+                tlpNotificaciones0.Padding = new Padding(pad.Left, nuevoTop, pad.Right, pad.Bottom);
+            }
+            finally
+            {
+                _alineandoNotificaciones = false;
+            }
         }
 
         #endregion
@@ -298,6 +376,32 @@ namespace Presentacion
 
         #region Generación de Notificaciones
 
+        // Reabre un grupo si estaba abierto antes del refresco Y sigue teniendo
+        // notificaciones para mostrar (si quedó vacío, no tiene sentido abrirlo).
+        private void RestaurarEstadoExpandido(NotificationGroupBox grupo, int cantidadItems)
+        {
+            if (cantidadItems <= 0)
+                return;
+
+            if (_estadoExpandidoNotificaciones.TryGetValue(grupo.TituloBase, out bool estabaAbierto) && estabaAbierto)
+            {
+                grupo.Expanded = true;
+            }
+        }
+
+        // Recorre los grupos actuales (antes de destruirlos) y guarda si estaban
+        // abiertos o cerrados, para poder restaurarlo tras reconstruir el panel.
+        private void GuardarEstadoExpandidoNotificaciones()
+        {
+            foreach (Control ctrl in flowLayoutNotificaciones.Controls)
+            {
+                if (ctrl is NotificationGroupBox grupo && !string.IsNullOrEmpty(grupo.TituloBase))
+                {
+                    _estadoExpandidoNotificaciones[grupo.TituloBase] = grupo.Expanded;
+                }
+            }
+        }
+
         private void crearNotificacionesLotes()
         {
             _pantallaPrincipalServicio.NotifiacionesProductosVencidos();
@@ -305,13 +409,11 @@ namespace Presentacion
             var notiProdVencidos = new NotificationGroupBox();
             notiProdVencidos.Width = flowLayoutNotificaciones.Width - 25;
 
-            // 🌟 NUEVO: Si cambia una notificación acá, se refresca todo el panel
-            notiProdVencidos.NotificacionCambiada += (s, e) => RecargarSeccionNotificaciones();
-
             flowLayoutNotificaciones.Controls.Add(notiProdVencidos);
 
             var listaLotesNotificar = _pantallaPrincipalServicio.ObtenerNotificacionesProdutosVencidos();
             notiProdVencidos.SetData(listaLotesNotificar, "Lotes Vencidos");
+            RestaurarEstadoExpandido(notiProdVencidos, listaLotesNotificar?.Count ?? 0);
         }
 
         private void crearNotificacionesPromocionesVencidas()
@@ -321,12 +423,11 @@ namespace Presentacion
             var notifOferVencidas = new NotificationGroupBox();
             notifOferVencidas.Width = flowLayoutNotificaciones.Width - 25;
 
-            notifOferVencidas.NotificacionCambiada += (s, e) => RecargarSeccionNotificaciones();
-
             flowLayoutNotificaciones.Controls.Add(notifOferVencidas);
 
             var listaOfertasVencidas = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasVencidas();
             notifOferVencidas.SetData(listaOfertasVencidas, "Ofertas Vencidas");
+            RestaurarEstadoExpandido(notifOferVencidas, listaOfertasVencidas?.Count ?? 0);
         }
 
         private void crearNotificacionesPromocionesBajoStock()
@@ -336,12 +437,11 @@ namespace Presentacion
             var notifOfertasBajoStock = new NotificationGroupBox();
             notifOfertasBajoStock.Width = flowLayoutNotificaciones.Width - 25;
 
-            notifOfertasBajoStock.NotificacionCambiada += (s, e) => RecargarSeccionNotificaciones();
-
             flowLayoutNotificaciones.Controls.Add(notifOfertasBajoStock);
 
             var listaOfertasBajoStock = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasBajoStock();
             notifOfertasBajoStock.SetData(listaOfertasBajoStock, "Ofertas con Bajo Stock");
+            RestaurarEstadoExpandido(notifOfertasBajoStock, listaOfertasBajoStock?.Count ?? 0);
         }
 
         private void crearNotificacionesCuentaCorriente()
@@ -351,13 +451,11 @@ namespace Presentacion
             var notifCuentasCorrientesVencidas = new NotificationGroupBox();
             notifCuentasCorrientesVencidas.Width = flowLayoutNotificaciones.Width - 25;
 
-            // 🌟 NUEVO: Suscripción al evento
-            notifCuentasCorrientesVencidas.NotificacionCambiada += (s, e) => RecargarSeccionNotificaciones();
-
             flowLayoutNotificaciones.Controls.Add(notifCuentasCorrientesVencidas);
 
             var listaCuentasCorrientes = _pantallaPrincipalServicio.ObtenerNotificacionesCtaCteVencidas();
             notifCuentasCorrientesVencidas.SetData(listaCuentasCorrientes, "Cuentas Corrientes Vencidas");
+            RestaurarEstadoExpandido(notifCuentasCorrientesVencidas, listaCuentasCorrientes?.Count ?? 0);
         }
 
         #endregion
@@ -464,33 +562,55 @@ namespace Presentacion
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            //flowLayoutNotificaciones.SuspendLayout();
-            flowLayoutNotificaciones.Controls.Clear();
+            Cursor = Cursors.WaitCursor;
+            try
+            {
+                // 1) Notificaciones: regenerar + pintar (único lugar donde conviene rebuild completo)
+                GuardarEstadoExpandidoNotificaciones();
+                flowLayoutNotificaciones.SuspendLayout();
+                flowLayoutNotificaciones.Controls.Clear();
+                crearNotificacionesLotes();
+                crearNotificacionesPromocionesVencidas();
+                crearNotificacionesPromocionesBajoStock();
+                crearNotificacionesCuentaCorriente();
+                flowLayoutNotificaciones.ResumeLayout(true);
 
-            tabPage1.Controls.Clear();
-           
-            crearPanelDatosAdicionales();
+                // 2) Turno fresco desde BD
+                var datosTurno = _pantallaPrincipalServicio.ObtenerDatosTurno(DatosSistema.CajaId, DatosSistema.UsuarioId);
+                if (datosTurno != null)
+                {
+                    _ultimoEstadoTurno = datosTurno;
+                    _panelDatosTurno.CargarResumenTurno(tabPage2, datosTurno);
+                    _panelDatosTurno.MarcarUltimaActualizacion(DateTime.Now);
+                }
 
-            crearNotificacionesLotes();
-            crearNotificacionesPromocionesVencidas();
-            crearNotificacionesPromocionesBajoStock();
-            crearNotificacionesCuentaCorriente();
+                // 3) Grillas desde BD (no reusar snapshot del arranque)
+                if (_panelConsultasRapidas == null || tabPage1.Controls.Count == 0)
+                {
+                    tabPage1.Controls.Clear();
+                    _panelConsultasRapidas = new PanelConsultasRapidas();
+                    _panelConsultasRapidas.CargarConsultasRapidas(tabPage1, cargarDatosDesdeBd: true);
+                }
+                else
+                {
+                    _panelConsultasRapidas.RefrescarTodoDesdeBd();
+                }
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
         }
 
         private void RecargarSeccionNotificaciones()
         {
-            // Congelamos el diseño para evitar parpadeos visuales
             flowLayoutNotificaciones.SuspendLayout();
-
-            // Limpiamos por completo los GroupBox anteriores
+            GuardarEstadoExpandidoNotificaciones();
             flowLayoutNotificaciones.Controls.Clear();
-
-            // Volvemos a generar los cuatro bloques con datos frescos de la BD
             crearNotificacionesLotes();
             crearNotificacionesPromocionesVencidas();
             crearNotificacionesPromocionesBajoStock();
             crearNotificacionesCuentaCorriente();
-
             flowLayoutNotificaciones.ResumeLayout(true);
         }
     }

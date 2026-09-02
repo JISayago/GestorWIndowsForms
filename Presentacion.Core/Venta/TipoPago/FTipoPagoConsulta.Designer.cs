@@ -1,4 +1,4 @@
-﻿namespace Presentacion.Core.TipoPago
+namespace Presentacion.Core.TipoPago
 {
     partial class FTipoPagoConsulta
     {
@@ -47,8 +47,6 @@
             btnBuscar.FlatAppearance.BorderColor = Color.Black;
             btnBuscar.FlatStyle = FlatStyle.Flat;
             btnBuscar.ForeColor = Color.Black;
-            btnBuscar.Location = new Point(3, 3);
-            btnBuscar.Size = new Size(289, 18);
             btnBuscar.UseVisualStyleBackColor = false;
             // 
             // lblTotalRegistros

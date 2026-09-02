@@ -1,4 +1,4 @@
-﻿using AccesoDatos;
+using AccesoDatos;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using MigraDoc.DocumentObjectModel.Internals;
@@ -16,6 +16,7 @@ using Servicios.LogicaNegocio.Empleado.DTO;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.TipoPago;
+using Servicios.Helpers.VentaEnum;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,12 +31,12 @@ namespace Servicios.LogicaNegocio.Venta
 
         public VentaServicio() : this(new PdfGenerator())
         {
-            _productoServicio = new ProductoServicio();
         }
 
         public VentaServicio(IPdfGenerator pdf)
         {
-            _pdf = pdf;
+            _pdf = pdf ?? throw new ArgumentNullException(nameof(pdf));
+            _productoServicio = new ProductoServicio();
         }
 
         public string GenerarPdf(AccesoDatos.Entidades.Venta venta)
@@ -50,7 +51,7 @@ namespace Servicios.LogicaNegocio.Venta
         {
             try
             {
-                var montos = CalcularMontosVenta(ventaDto);
+                var montos = VentaMontosHelper.Calcular(ventaDto.Total, ventaDto.TiposDePagoSeleccionado);
 
                 var cajaId = ObtenerCajaAbierta(context);
 
@@ -82,27 +83,6 @@ namespace Servicios.LogicaNegocio.Venta
             {
                 throw;
             }
-        }
-        private (decimal MontoCaja, decimal MontoCtaCte) CalcularMontosVenta(VentaDTO ventaDto)
-        {
-            decimal montoCaja = 0;
-            decimal montoCtaCte = 0;
-
-            var pagoCtaCte = ventaDto.TiposDePagoSeleccionado?
-                .FirstOrDefault(x =>
-                    Convert.ToInt32(x.TipoDePago.Value) == (int)TipoDePago.CtaCte);
-
-            if (pagoCtaCte != null)
-            {
-                montoCtaCte = Math.Abs(pagoCtaCte.Monto);
-                montoCaja = Math.Abs(ventaDto.Total) - montoCtaCte;
-            }
-            else
-            {
-                montoCaja = Math.Abs(ventaDto.Total);
-            }
-
-            return (montoCaja, montoCtaCte);
         }
         private long ObtenerCajaAbierta(GestorContextDB context)
         {
@@ -170,6 +150,7 @@ namespace Servicios.LogicaNegocio.Venta
         }
         private void RegistrarMovimientoCuentaCorriente(AccesoDatos.Entidades.Venta venta,VentaDTO ventaDto,long cajaId,GestorContextDB context)
         {
+            // Solo impacta CtaCte lo que realmente se cobró por ese medio (no el Total de la venta).
             if (venta.MontoAdeudado == 0)
                 return;
 
@@ -188,14 +169,24 @@ namespace Servicios.LogicaNegocio.Venta
 
             if (ventaDto.Estado == (int)EstadoVenta.Confirmada)
             {
-                var resultado = servicio.RegistrarCompra(cuenta.CuentaCorrienteId,venta.MontoAdeudado,cajaId,$"Cargo por Venta Interna N° {venta.NumeroVenta}");
+                var resultado = servicio.RegistrarCompra(
+                    cuenta.CuentaCorrienteId,
+                    venta.MontoAdeudado,
+                    cajaId,
+                    $"Cargo por Venta Interna N° {venta.NumeroVenta}",
+                    context);
 
                 if (!resultado.Exitoso)
                     throw new Exception(resultado.Mensaje);
             }
             else
             {
-                var resultado = servicio.RegistrarDevolucionOAnulacion(cuenta.CuentaCorrienteId,Math.Abs(venta.MontoAdeudado), cajaId, $"Crédito por Anulación de Venta N° {venta.NumeroVenta}");
+                var resultado = servicio.RegistrarDevolucionOAnulacion(
+                    cuenta.CuentaCorrienteId,
+                    Math.Abs(venta.MontoAdeudado),
+                    cajaId,
+                    $"Crédito por Anulación de Venta N° {venta.NumeroVenta}",
+                    context);
 
                 if (!resultado.Exitoso)
                     throw new Exception(resultado.Mensaje);
@@ -1235,6 +1226,7 @@ namespace Servicios.LogicaNegocio.Venta
 
             var venta = context.Ventas
                 .Include(v => v.VentaPagoDetalles)
+                    .ThenInclude(p => p.TipoPago)
                 .Include(v => v.DetallesVentas)
                     .ThenInclude(d => d.Producto)
                 .Include(v => v.DetallesVentas)
@@ -1272,7 +1264,9 @@ namespace Servicios.LogicaNegocio.Venta
 
                 TiposDePagoSeleccionado = venta.VentaPagoDetalles.Select(vp => new FormaPago
                 {
-                    TipoDePago = (TipoDePago?)vp.IdTipoPago,
+                    TipoDePago = vp.TipoPago != null
+                        ? (TipoDePago?)vp.TipoPago.NumeroReferencia
+                        : null,
                     Monto = vp.Monto
                 }).ToList(),
 
@@ -1387,6 +1381,41 @@ namespace Servicios.LogicaNegocio.Venta
                 .ToList();
         }
 
+        public List<VentaDTO> ObtenerVentasConfirmadasPorMesYAño(int mes, int año)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var query = context.Ventas
+                .Where(v => v.FechaVenta.Year == año
+                    && v.Estado == (int)EstadoVenta.Confirmada);
+
+            if (mes > 0)
+            {
+                query = query.Where(v => v.FechaVenta.Month == mes);
+            }
+
+            return query
+                .Select(v => new VentaDTO
+                {
+                    VentaId = v.VentaId,
+                    NumeroVenta = v.NumeroVenta,
+                    IdEmpleado = v.IdEmpleado,
+                    IdVendedor = v.IdVendedor,
+                    FechaVenta = v.FechaVenta,
+                    Total = v.Total,
+                    TotalSinDescuento = v.TotalSinDescuento,
+                    Descuento = v.Descuento,
+                    Estado = v.Estado,
+                    Detalle = v.Detalle
+                })
+                .ToList();
+        }
+
+        public List<VentaDTO> ObtenerVentasConfirmadasAnio(int año)
+        {
+            return ObtenerVentasConfirmadasPorMesYAño(0, año);
+        }
+
         public List<long> ObtenerVentasParaCancelacion(DateTime fecha, string filtroNumero = null)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -1459,6 +1488,7 @@ namespace Servicios.LogicaNegocio.Venta
                 var ventaOriginal = context.Ventas
                     .Include(v => v.DetallesVentas)
                     .Include(v => v.VentaPagoDetalles)
+                        .ThenInclude(p => p.TipoPago)
                     .FirstOrDefault(v => v.VentaId == ventaId);
 
                 if (ventaOriginal == null)
@@ -1539,10 +1569,17 @@ namespace Servicios.LogicaNegocio.Venta
                     }).ToList(),
 
 
-                    TiposDePagoSeleccionado = ventaOriginal.VentaPagoDetalles.Select(p => new FormaPago
+                    TiposDePagoSeleccionado = ventaOriginal.VentaPagoDetalles.Select(p =>
                     {
-                        TipoDePago = (TipoDePago)p.IdTipoPago,
-                        Monto = -p.Monto
+                        if (p.TipoPago == null)
+                            throw new Exception("La venta original tiene un pago sin tipo de pago asociado.");
+
+                        return new FormaPago
+                        {
+                            // Usar NumeroReferencia (= enum), NO TipoPagoId (PK de BD).
+                            TipoDePago = (TipoDePago)p.TipoPago.NumeroReferencia,
+                            Monto = Math.Abs(p.Monto)
+                        };
                     }).ToList()
                 }; //AGREGAR DETALLEVENTALOTE EN EL CASO QUE EXISTA if(ventaOriginal.DetallesVentasLotes.any()), cargar en el dto 
 

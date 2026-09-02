@@ -275,7 +275,7 @@ namespace Presentacion.Core.Empleado
     => "Buscar Empleado:";
 
         protected override string TextoLblCbx1
-            => "Filtrar por Propiedad";
+            => "Buscar por Propiedad";
 
         protected override string TextoLblCbx2
             => "Filtrar por Estado";
@@ -471,55 +471,34 @@ namespace Presentacion.Core.Empleado
             }
 
             if (grilla.Columns.Contains("Legajo"))
-            {
-                grilla.Columns["Legajo"].Visible = true;
-                grilla.Columns["Legajo"].Width = 80;
-            }
+                ColumnaFija(grilla.Columns["Legajo"], 80);
 
             if (grilla.Columns.Contains("Nombre"))
-            {
-                grilla.Columns["Nombre"].Visible = true;
-                grilla.Columns["Nombre"].Width = 100;
-            }
+                ColumnaFija(grilla.Columns["Nombre"], 120);
 
             if (grilla.Columns.Contains("Apellido"))
-            {
-                grilla.Columns["Apellido"].Visible = true;
-                grilla.Columns["Apellido"].Width = 100;
-            }
+                ColumnaFija(grilla.Columns["Apellido"], 120);
 
             if (grilla.Columns.Contains("Username"))
             {
-                grilla.Columns["Username"].Visible = true;
-                grilla.Columns["Username"].HeaderText = "Usuario";
-                grilla.Columns["Username"].AutoSizeMode =
-                    DataGridViewAutoSizeColumnMode.Fill;
+                var col = grilla.Columns["Username"];
+                col.Visible = true;
+                col.HeaderText = "Usuario";
+                col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                col.MinimumWidth = 120;
             }
 
             if (grilla.Columns.Contains("DNI"))
-            {
-                grilla.Columns["DNI"].Visible = true;
-                grilla.Columns["DNI"].Width = 100;
-            }
+                ColumnaFija(grilla.Columns["DNI"], 100);
 
             if (grilla.Columns.Contains("Email"))
-            {
-                grilla.Columns["Email"].Visible = true;
-                grilla.Columns["Email"].Width = 130;
-            }
+                ColumnaFija(grilla.Columns["Email"], 180);
 
             if (grilla.Columns.Contains("Telefono"))
-            {
-                grilla.Columns["Telefono"].Visible = true;
-                grilla.Columns["Telefono"].Width = 100;
-            }
+                ColumnaFija(grilla.Columns["Telefono"], 110);
 
             if (grilla.Columns.Contains("EstadoDescripcion"))
-            {
-                grilla.Columns["EstadoDescripcion"].Visible = true;
-                grilla.Columns["EstadoDescripcion"].Width = 100;
-                grilla.Columns["EstadoDescripcion"].HeaderText = "Estado";
-            }
+                ColumnaFija(grilla.Columns["EstadoDescripcion"], 100, "Estado");
         }
 
         #endregion

@@ -1,4 +1,4 @@
-﻿using Servicios.Helpers.DatosObligatoriosParaInicioSistema;
+using Servicios.Helpers.DatosObligatoriosParaInicioSistema;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.PantallaPrincipal;
 using Servicios.LogicaNegocio.Producto;
@@ -66,7 +66,7 @@ public class DatosPantallaPrincipal
         var filtroVentas = new FiltroConsulta
         {
             Page = 1,
-            PageSize = 12,
+            PageSize = 10,
 
             TextoBuscar = string.Empty,
 

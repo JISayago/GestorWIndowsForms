@@ -141,7 +141,7 @@ namespace Presentacion.Core.Producto
        => "Buscar producto:";
 
         protected override string TextoLblCbx1
-            => "Filtrar por Propiedad";
+            => "Buscar por Propiedad";
 
         protected override string TextoLblCbx2
             => "Filtrar por Estado";
@@ -332,113 +332,51 @@ namespace Presentacion.Core.Producto
 
             // PRODUCTO
             if (grilla.Columns.Contains("Descripcion"))
-            {
-                var col = grilla.Columns["Descripcion"];
-
-                col.Visible = true;
-                col.HeaderText = "Producto";
-
-                col.FillWeight = 220;
-                col.MinimumWidth = 220;
-            }
+                ColumnaFill(grilla.Columns["Descripcion"], 220, 160, "Producto");
 
             // MARCA
             if (grilla.Columns.Contains("MarcaNombre"))
-            {
-                var col = grilla.Columns["MarcaNombre"];
-
-                col.Visible = true;
-                col.HeaderText = "Marca";
-
-                col.FillWeight = 110;
-                col.MinimumWidth = 100;
-            }
+                ColumnaFill(grilla.Columns["MarcaNombre"], 110, 90, "Marca");
 
             // RUBRO
             if (grilla.Columns.Contains("RubroNombre"))
-            {
-                var col = grilla.Columns["RubroNombre"];
-
-                col.Visible = true;
-                col.HeaderText = "Rubro";
-
-                col.FillWeight = 110;
-                col.MinimumWidth = 100;
-            }
+                ColumnaFill(grilla.Columns["RubroNombre"], 110, 90, "Rubro");
 
             // COSTO
             if (grilla.Columns.Contains("PrecioCosto"))
             {
                 var col = grilla.Columns["PrecioCosto"];
-
-                col.Visible = true;
-                col.HeaderText = "Precio Costo";
-
+                ColumnaFill(col, 90, 85, "Precio Costo");
                 col.DefaultCellStyle.Format = "C2";
-
-                col.FillWeight = 80;
-                col.MinimumWidth = 80;
             }
 
             // VENTA
             if (grilla.Columns.Contains("PrecioVenta"))
             {
                 var col = grilla.Columns["PrecioVenta"];
-
-                col.Visible = true;
-                col.HeaderText = "Precio Venta";
-
+                ColumnaFill(col, 90, 85, "Precio Venta");
                 col.DefaultCellStyle.Format = "C2";
-
-                col.FillWeight = 80;
-                col.MinimumWidth = 80;
             }
 
             // STOCK
             if (grilla.Columns.Contains("Stock"))
-            {
-                var col = grilla.Columns["Stock"];
-
-                col.Visible = true;
-
-                col.FillWeight = 45;
-                col.MinimumWidth = 55;
-            }
+                ColumnaFill(grilla.Columns["Stock"], 70, 65);
 
             // ESTADO
             if (grilla.Columns.Contains("Estado"))
-            {
                 grilla.Columns["Estado"].Visible = false;
-            }
 
             if (grilla.Columns.Contains("EstadoDescripcion"))
-            {
-                var col = grilla.Columns["EstadoDescripcion"];
-
-                col.Visible = true;
-                col.HeaderText = "Estado";
-
-                col.FillWeight = 70;
-                col.MinimumWidth = 80;
-            }
+                ColumnaFill(grilla.Columns["EstadoDescripcion"], 85, 80, "Estado");
 
             // CONTROL POR LOTE
             if (grilla.Columns.Contains("ControlPorLote"))
-            {
                 grilla.Columns["ControlPorLote"].Visible = false;
-            }
 
             if (grilla.Columns.Contains("ControlLoteDescripcion"))
             {
                 var col = grilla.Columns["ControlLoteDescripcion"];
-
-                col.Visible = true;
-
-                col.HeaderText = "Ctrl. Lote";
-
-                col.FillWeight = 95;
-                col.MinimumWidth = 95;
-
+                ColumnaFill(col, 90, 85, "Ctrl. Lote");
                 col.ReadOnly = true;
             }
         }
