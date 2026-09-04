@@ -150,14 +150,14 @@ namespace Presentacion.FBase
                 BarraLateralBotones.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
             }
 
-            if (pbxLogo != null)
-            {
-                pbxLogo.SizeMode = PictureBoxSizeMode.Zoom;
-                pbxLogo.Dock = DockStyle.None;
-                pbxLogo.Anchor = AnchorStyles.None;
-                pbxLogo.Margin = new Padding(8, 4, 8, 4);
-                pbxLogo.Size = new Size(154, 60);
-            }
+            //if (pbxLogo != null)
+            //{
+            //    pbxLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            //    pbxLogo.Dock = DockStyle.None;
+            //    pbxLogo.Anchor = AnchorStyles.None;
+            //    pbxLogo.Margin = new Padding(8, 4, 8, 4);
+            //    pbxLogo.Size = new Size(154, 60);
+            //}
 
             if (lblTotalRegistros != null)
             {
@@ -199,41 +199,41 @@ namespace Presentacion.FBase
         /// </summary>
         private void AjustarLayoutFooterYFiltros()
         {
-            if (tableLayoutPanel15 != null && tableLayoutPanel15.RowStyles.Count > 5)
-                tableLayoutPanel15.RowStyles[5].Height = 110F;
+            //if (tableLayoutPanel15 != null && tableLayoutPanel15.RowStyles.Count > 5)
+            //    tableLayoutPanel15.RowStyles[5].Height = 110F;
 
-            if (tableLayoutPanel10 != null)
-            {
-                tableLayoutPanel10.MinimumSize = new Size(0, 100);
-                tableLayoutPanel10.Padding = new Padding(8, 12, 160, 12);
-                while (tableLayoutPanel10.ColumnStyles.Count < 3)
-                    tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle());
-                tableLayoutPanel10.ColumnStyles[0].SizeType = SizeType.AutoSize;
-                tableLayoutPanel10.ColumnStyles[1].SizeType = SizeType.Percent;
-                tableLayoutPanel10.ColumnStyles[1].Width = 100F;
-                tableLayoutPanel10.ColumnStyles[2].SizeType = SizeType.AutoSize;
-            }
+            //if (tableLayoutPanel10 != null)
+            //{
+            //    tableLayoutPanel10.MinimumSize = new Size(0, 100);
+            //    tableLayoutPanel10.Padding = new Padding(8, 12, 160, 12);
+            //    while (tableLayoutPanel10.ColumnStyles.Count < 3)
+            //        tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle());
+            //    tableLayoutPanel10.ColumnStyles[0].SizeType = SizeType.AutoSize;
+            //    tableLayoutPanel10.ColumnStyles[1].SizeType = SizeType.Percent;
+            //    tableLayoutPanel10.ColumnStyles[1].Width = 100F;
+            //    tableLayoutPanel10.ColumnStyles[2].SizeType = SizeType.AutoSize;
+            //}
 
-            if (tableLayoutPanel9 != null)
-            {
-                tableLayoutPanel9.Visible = true;
-                tableLayoutPanel9.AutoSize = true;
-                tableLayoutPanel9.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-                tableLayoutPanel9.Anchor = AnchorStyles.Left;
-            }
+            //if (tableLayoutPanel9 != null)
+            //{
+            //    tableLayoutPanel9.Visible = true;
+            //    tableLayoutPanel9.AutoSize = true;
+            //    tableLayoutPanel9.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            //    tableLayoutPanel9.Anchor = AnchorStyles.Left;
+            //}
 
-            if (tableLayoutPanel11 != null)
-            {
-                tableLayoutPanel11.AutoSize = true;
-                tableLayoutPanel11.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-                tableLayoutPanel11.Anchor = AnchorStyles.None;
-                tableLayoutPanel11.Margin = new Padding(0);
-                while (tableLayoutPanel11.ColumnStyles.Count < 3)
-                    tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
-                tableLayoutPanel11.ColumnStyles[0] = new ColumnStyle(SizeType.Absolute, 50F);
-                tableLayoutPanel11.ColumnStyles[1] = new ColumnStyle(SizeType.AutoSize);
-                tableLayoutPanel11.ColumnStyles[2] = new ColumnStyle(SizeType.Absolute, 50F);
-            }
+            //if (tableLayoutPanel11 != null)
+            //{
+            //    tableLayoutPanel11.AutoSize = true;
+            //    tableLayoutPanel11.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            //    tableLayoutPanel11.Anchor = AnchorStyles.None;
+            //    tableLayoutPanel11.Margin = new Padding(0);
+            //    while (tableLayoutPanel11.ColumnStyles.Count < 3)
+            //        tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
+            //    tableLayoutPanel11.ColumnStyles[0] = new ColumnStyle(SizeType.Absolute, 50F);
+            //    tableLayoutPanel11.ColumnStyles[1] = new ColumnStyle(SizeType.AutoSize);
+            //    tableLayoutPanel11.ColumnStyles[2] = new ColumnStyle(SizeType.Absolute, 50F);
+            //}
 
             if (tableLayoutPanel4 != null && tableLayoutPanel4.ColumnStyles.Count > 1)
             {
