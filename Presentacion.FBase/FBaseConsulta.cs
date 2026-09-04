@@ -84,12 +84,20 @@ namespace Presentacion.FBase
 
         private void CargarLogoEnBase()
         {
+            if (pbxLogo == null)
+                return;
+
             pbxLogo.Image = Constantes.Imagenes.ImgLogoCompuesto;
-            pbxLogo.Dock = DockStyle.None;
-            pbxLogo.Anchor = AnchorStyles.None;
+            pbxLogo.Dock = DockStyle.Fill;
             pbxLogo.SizeMode = PictureBoxSizeMode.Zoom;
-            pbxLogo.Margin = new Padding(8, 4, 8, 4);
-            pbxLogo.Size = new Size(154, 60);
+            pbxLogo.Margin = new Padding(3);
+
+            //pbxLogo.Image = Constantes.Imagenes.ImgLogoCompuesto;
+            //pbxLogo.Dock = DockStyle.None;
+            //pbxLogo.Anchor = AnchorStyles.None;
+            //pbxLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            //pbxLogo.Margin = new Padding(8, 4, 8, 4);
+            //pbxLogo.Size = new Size(154, 60);
         }
         #endregion
 
@@ -162,7 +170,7 @@ namespace Presentacion.FBase
             if (lblTotalRegistros != null)
             {
                 lblTotalRegistros.Dock = DockStyle.None;
-                lblTotalRegistros.Anchor = AnchorStyles.Left;
+                lblTotalRegistros.Anchor = AnchorStyles.Right;
                 lblTotalRegistros.AutoSize = true;
             }
 
@@ -302,11 +310,21 @@ namespace Presentacion.FBase
         private static void EstilarBotonPaginacion(Button btn)
         {
             if (btn == null) return;
+
             EstilarBotonSecundario(btn);
+
             btn.Dock = DockStyle.None;
             btn.Anchor = AnchorStyles.None;
-            btn.Size = new Size(44, 40);
-            btn.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+
+            btn.Size = new Size(120, 44);
+
+            btn.Font = new Font(
+                "Segoe UI Semibold",
+                13F,
+                FontStyle.Bold,
+                GraphicsUnit.Point,
+                0);
+
             btn.Margin = new Padding(3, 6, 3, 6);
         }
 

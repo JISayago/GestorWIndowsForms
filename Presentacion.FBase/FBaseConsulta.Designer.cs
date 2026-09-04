@@ -689,9 +689,9 @@
             // 
             tableLayoutPanel11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel11.ColumnCount = 3;
-            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
             tableLayoutPanel11.Controls.Add(lblPagina, 1, 0);
             tableLayoutPanel11.Controls.Add(btnAnterior, 0, 0);
             tableLayoutPanel11.Controls.Add(btnSiguiente, 2, 0);
@@ -706,10 +706,10 @@
             // 
             lblPagina.Anchor = AnchorStyles.None;
             lblPagina.AutoSize = true;
-            lblPagina.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblPagina.Location = new Point(231, 36);
+            lblPagina.Font = new Font("Segoe UI Semibold", 13F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblPagina.Location = new Point(217, 33);
             lblPagina.Name = "lblPagina";
-            lblPagina.Size = new Size(90, 19);
+            lblPagina.Size = new Size(117, 25);
             lblPagina.TabIndex = 1;
             lblPagina.Text = "Página 1 de 1";
             lblPagina.TextAlign = ContentAlignment.MiddleCenter;
@@ -717,10 +717,10 @@
             // btnAnterior
             // 
             btnAnterior.Anchor = AnchorStyles.None;
-            btnAnterior.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnAnterior.Location = new Point(3, 26);
+            btnAnterior.Font = new Font("Segoe UI Semibold", 13F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnAnterior.Location = new Point(32, 24);
             btnAnterior.Name = "btnAnterior";
-            btnAnterior.Size = new Size(132, 40);
+            btnAnterior.Size = new Size(120, 44);
             btnAnterior.TabIndex = 2;
             btnAnterior.Text = "<";
             btnAnterior.UseVisualStyleBackColor = true;
@@ -729,10 +729,10 @@
             // btnSiguiente
             // 
             btnSiguiente.Anchor = AnchorStyles.None;
-            btnSiguiente.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnSiguiente.Location = new Point(418, 26);
+            btnSiguiente.Font = new Font("Segoe UI Semibold", 13F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnSiguiente.Location = new Point(401, 24);
             btnSiguiente.Name = "btnSiguiente";
-            btnSiguiente.Size = new Size(133, 40);
+            btnSiguiente.Size = new Size(120, 44);
             btnSiguiente.TabIndex = 7;
             btnSiguiente.Text = ">";
             btnSiguiente.UseVisualStyleBackColor = true;
@@ -740,24 +740,23 @@
             // 
             // lblTotalRegistros
             // 
-            lblTotalRegistros.Anchor = AnchorStyles.None;
+            lblTotalRegistros.Anchor = AnchorStyles.Right;
             lblTotalRegistros.AutoSize = true;
-            lblTotalRegistros.Font = new Font("Segoe UI Semibold", 11F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotalRegistros.Location = new Point(157, 39);
+            lblTotalRegistros.Font = new Font("Segoe UI Semibold", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTotalRegistros.Location = new Point(292, 35);
             lblTotalRegistros.Name = "lblTotalRegistros";
-            lblTotalRegistros.Size = new Size(58, 20);
+            lblTotalRegistros.Size = new Size(77, 28);
             lblTotalRegistros.TabIndex = 0;
             lblTotalRegistros.Text = "Total: 0";
             lblTotalRegistros.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pbxLogo
             // 
-            pbxLogo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             pbxLogo.BackColor = Color.Transparent;
-            pbxLogo.Location = new Point(0, 0);
-            pbxLogo.Margin = new Padding(0);
+            pbxLogo.Dock = DockStyle.Fill;
+            pbxLogo.Location = new Point(3, 3);
             pbxLogo.Name = "pbxLogo";
-            pbxLogo.Size = new Size(468, 104);
+            pbxLogo.Size = new Size(462, 98);
             pbxLogo.SizeMode = PictureBoxSizeMode.Zoom;
             pbxLogo.TabIndex = 0;
             pbxLogo.TabStop = false;
