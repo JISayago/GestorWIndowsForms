@@ -13,6 +13,7 @@ using Presentacion.Core.Producto.Lote;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.TipoPago;
 using Presentacion.Core.Venta;
+using Presentacion.Core.CustomPdf;
 using Presentacion.FBase.Helpers;
 using ScottPlot;
 using ScottPlot.WinForms;
@@ -1947,7 +1948,7 @@ namespace Presentacion.Core.Administracion
                     {
                         grafico1();
                         _grafico1Construido = true;
-                    formsPlot1.Refresh();
+                        formsPlot1.Refresh();
                     }
 
                     break;
@@ -1957,7 +1958,7 @@ namespace Presentacion.Core.Administracion
                     {
                         grafico2();
                         _grafico2Construido = true;
-                    formsPlot2.Refresh();
+                        formsPlot2.Refresh();
                     }
 
                     break;
@@ -1979,7 +1980,7 @@ namespace Presentacion.Core.Administracion
                     {
                         grafico3();
                         _grafico3Construido = true;
-                    formsPlot3.Refresh();
+                        formsPlot3.Refresh();
                     }
                     break;
 
@@ -1988,7 +1989,7 @@ namespace Presentacion.Core.Administracion
                     {
                         grafico5();
                         _grafico5Construido = true;
-                    formsPlot5.Refresh();
+                        formsPlot5.Refresh();
                     }
                     break;
 
@@ -2016,6 +2017,13 @@ namespace Presentacion.Core.Administracion
                     }
                     break;
             }
+        }
+
+        private void modificarPDFToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fCustomPdf = new CustomPdf.FCustomPdf();
+
+            fCustomPdf.Show();
         }
     }
 }
