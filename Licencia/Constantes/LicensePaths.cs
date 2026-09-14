@@ -11,7 +11,7 @@ namespace Licencia.Constantes
         public static string ProgramData =>
             Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                "Stockiate");
+                "Stockeate");
 
         public static string Config =>
             Path.Combine(ProgramData, "config.json");

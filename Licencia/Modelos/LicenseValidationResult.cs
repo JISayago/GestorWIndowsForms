@@ -10,6 +10,10 @@ namespace Licencia.Modelos
     {
         public bool Valida { get; set; }
 
+        public bool SoloConsulta { get; set; }
+
         public string Mensaje { get; set; } = "";
+
+        public LicenseStatus Estado { get; set; }
     }
 }

@@ -1,84 +1,233 @@
-﻿using System.Text.Json;
-using Licencia.Criptografia;
+﻿using Licencia.Criptografia;
 using Licencia.Modelos;
+using Licencia.Servicios;
+using System;
+using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace Licencia.Servicios
+namespace Stockeate.Licensing
 {
     public class LicenseValidator
     {
         private readonly LicenseStorage _storage = new();
         private readonly InstallationManager _installation = new();
 
-        public LicenseValidationResult Validar(string publicKeyPem)
+        public LicenseValidationResult Validar(
+            string publicKeyPem)
         {
+            // ========================================================
+            // 1. OBTENER / CREAR INSTALACION
+            // ========================================================
+
+            InstallationInfo instalacion;
+
+            try
+            {
+                instalacion =
+                    _installation.Obtener();
+            }
+            catch (Exception ex)
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "No se pudo crear o leer la información " +
+                        "de instalación.\r\n\r\n" +
+                        ex.Message
+                };
+            }
+
+            // ========================================================
+            // 2. EXISTE LICENCIA
+            // ========================================================
+
             if (!_storage.Existe())
             {
                 return new LicenseValidationResult
                 {
                     Valida = false,
-                    Mensaje = "No existe una licencia."
+                    Estado = LicenseStatus.NoExiste,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "No existe una licencia para esta instalación."
                 };
             }
 
-            LicenseInfo licencia = _storage.Leer();
+            // ========================================================
+            // 3. LEER LICENCIA
+            // ========================================================
 
-            InstallationInfo instalacion = _installation.Obtener();
+            LicenseInfo licencia;
 
-            if (licencia.InstallationId != instalacion.InstallationId)
+            try
+            {
+                licencia =
+                    _storage.Leer();
+            }
+            catch (Exception ex)
             {
                 return new LicenseValidationResult
                 {
                     Valida = false,
-                    Mensaje = "La licencia pertenece a otra instalación."
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "No se pudo leer el archivo de licencia.\r\n\r\n" +
+                        ex.Message
                 };
             }
 
-            if (licencia.FechaInicio > DateTime.Today)
+            // ========================================================
+            // 4. INSTALLATION ID
+            // ========================================================
+
+            if (licencia.InstallationId !=
+                instalacion.InstallationId)
             {
                 return new LicenseValidationResult
                 {
                     Valida = false,
-                    Mensaje = "La licencia aún no es válida."
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "La licencia pertenece a otra instalación."
                 };
             }
+
+            // ========================================================
+            // 5. FECHA DE INICIO
+            // ========================================================
+
+            if (licencia.FechaInicio.Date >
+                DateTime.Today)
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "La licencia aún no es válida."
+                };
+            }
+
+            // ========================================================
+            // 6. FECHA DE VENCIMIENTO
+            // ========================================================
 
             if (licencia.FechaVencimiento.HasValue &&
-                licencia.FechaVencimiento.Value.Date < DateTime.Today)
+                licencia.FechaVencimiento.Value.Date <
+                DateTime.Today)
             {
                 return new LicenseValidationResult
                 {
                     Valida = false,
-                    Mensaje = "La licencia ha vencido."
+                    Estado = LicenseStatus.Vencida,
+                    SoloConsulta = true,
+                    Mensaje =
+                        "La licencia ha vencido. " +
+                        "El sistema funcionará en modo consulta."
                 };
             }
 
-            string firma = licencia.Firma;
+            // ========================================================
+            // 7. FIRMA
+            // ========================================================
 
-            licencia.Firma = "";
+            string firmaOriginal =
+                licencia.Firma;
 
-            string datos = JsonSerializer.Serialize(licencia);
-
-            bool ok = RsaVerifier.VerificarFirma(
-                datos,
-                firma,
-                publicKeyPem);
-
-            if (!ok)
+            if (string.IsNullOrWhiteSpace(
+                    firmaOriginal))
             {
                 return new LicenseValidationResult
                 {
                     Valida = false,
-                    Mensaje = "Firma digital inválida."
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "La licencia no contiene una firma digital."
                 };
             }
 
-            licencia.Firma = firma;
+            string datos =
+                CrearDatosCanonicos(licencia);
+
+            bool firmaValida =
+                RsaVerifier.VerificarFirma(
+                    datos,
+                    firmaOriginal,
+                    publicKeyPem);
+
+            if (!firmaValida)
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "Firma digital inválida."
+                };
+            }
+
+            // ========================================================
+            // 8. LICENCIA VALIDA
+            // ========================================================
 
             return new LicenseValidationResult
             {
                 Valida = true,
+                Estado = LicenseStatus.Valida,
+                SoloConsulta = false,
                 Mensaje = "Licencia válida."
             };
+        }
+
+        // ============================================================
+        // DATOS CANONICOS
+        // ============================================================
+
+        private static string CrearDatosCanonicos(
+            LicenseInfo licencia)
+        {
+            var datos = new
+            {
+                Cliente =
+                    licencia.Cliente ?? string.Empty,
+
+                Empresa =
+                    licencia.Empresa ?? string.Empty,
+
+                InstallationId =
+                    licencia.InstallationId.ToString("D"),
+
+                Tipo =
+                    licencia.Tipo.ToString(),
+
+                FechaInicio =
+                    licencia.FechaInicio.Date.ToString(
+                        "yyyy-MM-dd",
+                        CultureInfo.InvariantCulture),
+
+                FechaVencimiento =
+                    licencia.FechaVencimiento.HasValue
+                        ? licencia.FechaVencimiento.Value.Date.ToString(
+                            "yyyy-MM-dd",
+                            CultureInfo.InvariantCulture)
+                        : null
+            };
+
+            return JsonSerializer.Serialize(
+                datos,
+                new JsonSerializerOptions
+                {
+                    WriteIndented = false
+                });
         }
     }
 }
