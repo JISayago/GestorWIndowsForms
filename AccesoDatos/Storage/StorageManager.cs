@@ -30,6 +30,11 @@ namespace AccesoDatos.Storage
             return CrearCarpeta(Config.CarpetaExportaciones);
         }
 
+        public static string ObtenerRutaIdentidadComprobantes()
+        {
+            return CrearCarpeta(Config.CarpetaComprobantes, "Identidad");
+        }
+
         public static string ObtenerRutaComprobante(
             string modulo,
             string tipo,

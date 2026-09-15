@@ -14,5 +14,7 @@ namespace AccesoDatos.Config
         public ConfiguracionAlmacenamiento Almacenamiento { get; set; } = new();
 
         public ConfiguracionLicencia Licencia { get; set; } = new();
+
+        public ConfiguracionComprobantes Comprobantes { get; set; } = new();
     }
 }
