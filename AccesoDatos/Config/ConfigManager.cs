@@ -61,6 +61,8 @@ namespace AccesoDatos.Config
 
             _config = JsonSerializer.Deserialize<ConfiguracionSistema>(json)
                 ?? throw new Exception("No se pudo leer la configuración.");
+
+            _config.Comprobantes ??= new ConfiguracionComprobantes();
         }
     }
 }

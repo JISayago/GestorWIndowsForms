@@ -82,6 +82,7 @@
             tlpBajoNivel3Pagina2 = new TableLayoutPanel();
             formsPlot6 = new ScottPlot.WinForms.FormsPlot();
             formsPlot5 = new ScottPlot.WinForms.FormsPlot();
+            modificarPDFToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -219,7 +220,7 @@
             // 
             // cONFIGURACIONToolStripMenuItem
             // 
-            cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tIPOPAGOToolStripMenuItem });
+            cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tIPOPAGOToolStripMenuItem, modificarPDFToolStripMenuItem });
             cONFIGURACIONToolStripMenuItem.Name = "cONFIGURACIONToolStripMenuItem";
             cONFIGURACIONToolStripMenuItem.Size = new Size(141, 24);
             cONFIGURACIONToolStripMenuItem.Text = "CONFIGURACION";
@@ -227,7 +228,7 @@
             // tIPOPAGOToolStripMenuItem
             // 
             tIPOPAGOToolStripMenuItem.Name = "tIPOPAGOToolStripMenuItem";
-            tIPOPAGOToolStripMenuItem.Size = new Size(175, 24);
+            tIPOPAGOToolStripMenuItem.Size = new Size(180, 24);
             tIPOPAGOToolStripMenuItem.Text = "Tipo de pago";
             tIPOPAGOToolStripMenuItem.Click += tIPOPAGOToolStripMenuItem_Click;
             // 
@@ -655,6 +656,13 @@
             formsPlot5.Size = new Size(786, 446);
             formsPlot5.TabIndex = 2;
             // 
+            // modificarPDFToolStripMenuItem
+            // 
+            modificarPDFToolStripMenuItem.Name = "modificarPDFToolStripMenuItem";
+            modificarPDFToolStripMenuItem.Size = new Size(180, 24);
+            modificarPDFToolStripMenuItem.Text = "Modificar PDF";
+            modificarPDFToolStripMenuItem.Click += modificarPDFToolStripMenuItem_Click;
+            // 
             // FAdministracion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -749,5 +757,6 @@
         private ScottPlot.WinForms.FormsPlot formsPlot6;
         private ScottPlot.WinForms.FormsPlot formsPlot5;
         private ScottPlot.WinForms.FormsPlot formsPlot1;
+        private ToolStripMenuItem modificarPDFToolStripMenuItem;
     }
 }
