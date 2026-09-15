@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2-Servicios", "2-Servicios"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3-AccesoDatos", "3-AccesoDatos", "{111693E0-6DB3-48CB-A8D2-F15DF239F60C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentacion", "Presentacion\Presentacion.csproj", "{51ADC5AA-CB76-4BA7-A33D-3430AADA9EDB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stockeate", "Presentacion\Stockeate.csproj", "{51ADC5AA-CB76-4BA7-A33D-3430AADA9EDB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servicios", "Servicios\Servicios.csproj", "{7CC3AFFE-423F-4F31-ADCE-9532FF38C707}"
 EndProject

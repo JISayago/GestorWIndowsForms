@@ -46,7 +46,7 @@
             aCTIVARDESACTIVARToolStripMenuItem = new ToolStripMenuItem();
             nUEVAOFERTAToolStripMenuItem = new ToolStripMenuItem();
             cONFIGURACIONToolStripMenuItem = new ToolStripMenuItem();
-            tIPOPAGOToolStripMenuItem = new ToolStripMenuItem();
+            modificarPDFToolStripMenuItem = new ToolStripMenuItem();
             vENTAToolStripMenuItem = new ToolStripMenuItem();
             historialToolStripMenuItem = new ToolStripMenuItem();
             nuevaVentaLibreToolStripMenuItem = new ToolStripMenuItem();
@@ -82,7 +82,6 @@
             tlpBajoNivel3Pagina2 = new TableLayoutPanel();
             formsPlot6 = new ScottPlot.WinForms.FormsPlot();
             formsPlot5 = new ScottPlot.WinForms.FormsPlot();
-            modificarPDFToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -220,17 +219,17 @@
             // 
             // cONFIGURACIONToolStripMenuItem
             // 
-            cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tIPOPAGOToolStripMenuItem, modificarPDFToolStripMenuItem });
+            cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { modificarPDFToolStripMenuItem });
             cONFIGURACIONToolStripMenuItem.Name = "cONFIGURACIONToolStripMenuItem";
             cONFIGURACIONToolStripMenuItem.Size = new Size(141, 24);
             cONFIGURACIONToolStripMenuItem.Text = "CONFIGURACION";
             // 
-            // tIPOPAGOToolStripMenuItem
+            // modificarPDFToolStripMenuItem
             // 
-            tIPOPAGOToolStripMenuItem.Name = "tIPOPAGOToolStripMenuItem";
-            tIPOPAGOToolStripMenuItem.Size = new Size(180, 24);
-            tIPOPAGOToolStripMenuItem.Text = "Tipo de pago";
-            tIPOPAGOToolStripMenuItem.Click += tIPOPAGOToolStripMenuItem_Click;
+            modificarPDFToolStripMenuItem.Name = "modificarPDFToolStripMenuItem";
+            modificarPDFToolStripMenuItem.Size = new Size(180, 24);
+            modificarPDFToolStripMenuItem.Text = "Modificar PDF";
+            modificarPDFToolStripMenuItem.Click += modificarPDFToolStripMenuItem_Click;
             // 
             // vENTAToolStripMenuItem
             // 
@@ -656,13 +655,6 @@
             formsPlot5.Size = new Size(786, 446);
             formsPlot5.TabIndex = 2;
             // 
-            // modificarPDFToolStripMenuItem
-            // 
-            modificarPDFToolStripMenuItem.Name = "modificarPDFToolStripMenuItem";
-            modificarPDFToolStripMenuItem.Size = new Size(180, 24);
-            modificarPDFToolStripMenuItem.Text = "Modificar PDF";
-            modificarPDFToolStripMenuItem.Click += modificarPDFToolStripMenuItem_Click;
-            // 
             // FAdministracion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -718,7 +710,6 @@
         private ToolStripMenuItem lISTADOOFERTASToolStripMenuItem;
         private ToolStripMenuItem aCTIVARDESACTIVARToolStripMenuItem;
         private ToolStripMenuItem cONFIGURACIONToolStripMenuItem;
-        private ToolStripMenuItem tIPOPAGOToolStripMenuItem;
         private TableLayoutPanel tableLayoutPanel1;
         private Button btnGasto;
         private Button btnMovimientos;

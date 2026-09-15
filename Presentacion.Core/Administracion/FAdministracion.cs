@@ -1659,8 +1659,8 @@ namespace Presentacion.Core.Administracion
         /// </summary>
         private void btnComprobantes_Click(object sender, EventArgs e)
         {
-            var escritorio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var carpeta = Path.Combine(escritorio, "ComprobantesPdf");
+            var programDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+            var carpeta = Path.Combine(programDataPath, "Stockeate\\ComprobantesPdf");
 
             if (!Directory.Exists(carpeta))
             {
