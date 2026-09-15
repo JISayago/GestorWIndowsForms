@@ -46,7 +46,7 @@
             aCTIVARDESACTIVARToolStripMenuItem = new ToolStripMenuItem();
             nUEVAOFERTAToolStripMenuItem = new ToolStripMenuItem();
             cONFIGURACIONToolStripMenuItem = new ToolStripMenuItem();
-            tIPOPAGOToolStripMenuItem = new ToolStripMenuItem();
+            modificarPDFToolStripMenuItem = new ToolStripMenuItem();
             vENTAToolStripMenuItem = new ToolStripMenuItem();
             historialToolStripMenuItem = new ToolStripMenuItem();
             nuevaVentaLibreToolStripMenuItem = new ToolStripMenuItem();
@@ -219,17 +219,17 @@
             // 
             // cONFIGURACIONToolStripMenuItem
             // 
-            cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tIPOPAGOToolStripMenuItem });
+            cONFIGURACIONToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { modificarPDFToolStripMenuItem });
             cONFIGURACIONToolStripMenuItem.Name = "cONFIGURACIONToolStripMenuItem";
             cONFIGURACIONToolStripMenuItem.Size = new Size(141, 24);
             cONFIGURACIONToolStripMenuItem.Text = "CONFIGURACION";
             // 
-            // tIPOPAGOToolStripMenuItem
+            // modificarPDFToolStripMenuItem
             // 
-            tIPOPAGOToolStripMenuItem.Name = "tIPOPAGOToolStripMenuItem";
-            tIPOPAGOToolStripMenuItem.Size = new Size(175, 24);
-            tIPOPAGOToolStripMenuItem.Text = "Tipo de pago";
-            tIPOPAGOToolStripMenuItem.Click += tIPOPAGOToolStripMenuItem_Click;
+            modificarPDFToolStripMenuItem.Name = "modificarPDFToolStripMenuItem";
+            modificarPDFToolStripMenuItem.Size = new Size(180, 24);
+            modificarPDFToolStripMenuItem.Text = "Modificar PDF";
+            modificarPDFToolStripMenuItem.Click += modificarPDFToolStripMenuItem_Click;
             // 
             // vENTAToolStripMenuItem
             // 
@@ -710,7 +710,6 @@
         private ToolStripMenuItem lISTADOOFERTASToolStripMenuItem;
         private ToolStripMenuItem aCTIVARDESACTIVARToolStripMenuItem;
         private ToolStripMenuItem cONFIGURACIONToolStripMenuItem;
-        private ToolStripMenuItem tIPOPAGOToolStripMenuItem;
         private TableLayoutPanel tableLayoutPanel1;
         private Button btnGasto;
         private Button btnMovimientos;
@@ -749,5 +748,6 @@
         private ScottPlot.WinForms.FormsPlot formsPlot6;
         private ScottPlot.WinForms.FormsPlot formsPlot5;
         private ScottPlot.WinForms.FormsPlot formsPlot1;
+        private ToolStripMenuItem modificarPDFToolStripMenuItem;
     }
 }

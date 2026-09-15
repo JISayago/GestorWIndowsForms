@@ -33,7 +33,7 @@ public sealed class VentaCtaCteE2EFixture : IDisposable
 
     public VentaCtaCteE2EFixture()
     {
-        Conexion.ConfigurarCadenaConexionParaTests(CadenaConexion);
+        ConexionOLD.ConfigurarCadenaConexionParaTests(CadenaConexion);
         RecrearBaseYSeed();
     }
 
@@ -378,7 +378,7 @@ public sealed class VentaCtaCteE2EFixture : IDisposable
         }
         finally
         {
-            Conexion.LimpiarCacheCadenaConexion();
+            ConexionOLD.LimpiarCacheCadenaConexion();
         }
     }
 }

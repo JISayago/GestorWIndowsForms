@@ -7,17 +7,26 @@ using System.Threading.Tasks;
 
 namespace Servicios.Seguridad
 {
-    public class PruebaConexion
+    public static class PruebaConexion
     {
-        public static bool ProbarConexion()
+        public static bool ProbarConexion(out string mensajeError)
         {
             try
             {
-                using var context = new GestorContextDBFactory().CreateDbContext(null);
-                return context.Database.CanConnect();
+                using var context =
+                    new GestorContextDBFactory().CreateDbContext(null);
+
+                var conectado = context.Database.CanConnect();
+
+                mensajeError = conectado
+                    ? string.Empty
+                    : "SQL Server no permitió la conexión.";
+
+                return conectado;
             }
-            catch
+            catch (Exception ex)
             {
+                mensajeError = ex.ToString();
                 return false;
             }
         }

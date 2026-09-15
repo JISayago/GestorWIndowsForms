@@ -1,5 +1,8 @@
-﻿using AccesoDatos.Entidades;
+﻿using AccesoDatos.Config;
+using AccesoDatos.Entidades;
+using AccesoDatos.Storage;
 using MigraDoc.DocumentObjectModel;
+using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
 using Servicios.Infraestructura;
@@ -145,28 +148,39 @@ public class PdfGenerator : IPdfGenerator
     // PATH / FILE
     // =========================
 
+    //private string ObtenerRutaPdf(string modulo, string tipo, string numero)
+    //{
+    //    var escritorio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+    //    var año = DateTime.Now.Year.ToString();
+    //    var mes = DateTime.Now.Month.ToString("D2");
+
+    //    var carpeta = Path.Combine(
+    //        escritorio,
+    //        "ComprobantesPdf",
+    //        modulo,     // Ventas / Gastos
+    //        tipo,       // Realizados / Anulados / etc
+    //        año,
+    //        mes
+    //    );
+
+    //    if (!Directory.Exists(carpeta))
+    //        Directory.CreateDirectory(carpeta);
+
+    //    var nombreBase = $"{tipo}_{numero}.pdf";
+
+    //    return GenerarNombreUnico(carpeta, nombreBase);
+    //}
     private string ObtenerRutaPdf(string modulo, string tipo, string numero)
     {
-        var escritorio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        var carpeta = StorageManager.ObtenerRutaComprobante(
+            modulo,
+            tipo,
+            DateTime.Now);
 
-        var año = DateTime.Now.Year.ToString();
-        var mes = DateTime.Now.Month.ToString("D2");
-
-        var carpeta = Path.Combine(
-            escritorio,
-            "ComprobantesPdf",
-            modulo,     // Ventas / Gastos
-            tipo,       // Realizados / Anulados / etc
-            año,
-            mes
-        );
-
-        if (!Directory.Exists(carpeta))
-            Directory.CreateDirectory(carpeta);
-
-        var nombreBase = $"{tipo}_{numero}.pdf";
-
-        return GenerarNombreUnico(carpeta, nombreBase);
+        return GenerarNombreUnico(
+            carpeta,
+            $"{tipo}_{numero}.pdf");
     }
 
     private string GenerarNombreUnico(string carpeta, string nombreBase)
@@ -222,11 +236,36 @@ public class PdfGenerator : IPdfGenerator
 
     private void AgregarHeader(Section section, string titulo)
     {
-        var p = section.AddParagraph("MI NEGOCIO\n", "Titulo");
+        var cfg = ConfigManager.Config.Comprobantes ?? new ConfiguracionComprobantes();
+
+        if (!string.IsNullOrWhiteSpace(cfg.RutaLogo) && File.Exists(cfg.RutaLogo))
+        {
+            var imagen = section.AddImage(cfg.RutaLogo);
+            imagen.LockAspectRatio = true;
+            imagen.Width = "3cm";
+            // Replace this line:
+            // imagen.Left = LeftPosition.center;
+
+            // With this line to center the image horizontally:
+            imagen.Left = ShapePosition.Center;
+            section.AddParagraph();
+        }
+
+        var nombre = string.IsNullOrWhiteSpace(cfg.NombreNegocio) ? "MI NEGOCIO" : cfg.NombreNegocio;
+        var p = section.AddParagraph(nombre + "\n", "Titulo");
         p.Format.Alignment = ParagraphAlignment.Center;
+
+        if (!string.IsNullOrWhiteSpace(cfg.Subtitulo))
+        {
+            var datosNegocio = section.AddParagraph(cfg.Subtitulo);
+            datosNegocio.Format.Alignment = ParagraphAlignment.Center;
+            datosNegocio.Format.Font.Size = 9;
+            section.AddParagraph();
+        }
 
         var sub = section.AddParagraph(titulo + "\n\n");
         sub.Format.Alignment = ParagraphAlignment.Center;
+        sub.Format.Font.Bold = true;
     }
 
     private void AgregarDatosVenta(Section section, Venta venta, bool consumidorFinal = false)
@@ -348,9 +387,13 @@ public class PdfGenerator : IPdfGenerator
         section.AddParagraph("\n");
     }
 
-    private void AgregarPie(Section section, string texto = "Gracias por su compra")
+    private void AgregarPie(Section section, string? texto = null)
     {
-        var pie = section.AddParagraph(texto);
+        var cfg = ConfigManager.Config.Comprobantes ?? new ConfiguracionComprobantes();
+        var pieTexto = texto
+            ?? (string.IsNullOrWhiteSpace(cfg.TextoPie) ? "Gracias por su compra" : cfg.TextoPie);
+
+        var pie = section.AddParagraph(pieTexto);
         pie.Format.Alignment = ParagraphAlignment.Center;
         pie.Format.Font.Italic = true;
     }
