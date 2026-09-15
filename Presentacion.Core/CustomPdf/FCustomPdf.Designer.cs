@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FCustomPdf));
             lblTitulo = new Label();
             lblNombreNegocio = new Label();
             txtNombreNegocio = new TextBox();
@@ -49,7 +50,7 @@
             lblTitulo.AutoSize = true;
             lblTitulo.Location = new Point(28, 68);
             lblTitulo.Name = "lblTitulo";
-            lblTitulo.Size = new Size(280, 15);
+            lblTitulo.Size = new Size(251, 15);
             lblTitulo.TabIndex = 1;
             lblTitulo.Tag = "Titulo";
             lblTitulo.Text = "Datos que aparecen en los comprobantes PDF";
@@ -60,7 +61,7 @@
             lblNombreNegocio.Font = new Font("Segoe UI", 9.75F);
             lblNombreNegocio.Location = new Point(28, 108);
             lblNombreNegocio.Name = "lblNombreNegocio";
-            lblNombreNegocio.Size = new Size(118, 17);
+            lblNombreNegocio.Size = new Size(130, 17);
             lblNombreNegocio.TabIndex = 2;
             lblNombreNegocio.Text = "Nombre del negocio";
             // 
@@ -79,7 +80,7 @@
             lblSubtitulo.Font = new Font("Segoe UI", 9.75F);
             lblSubtitulo.Location = new Point(28, 168);
             lblSubtitulo.Name = "lblSubtitulo";
-            lblSubtitulo.Size = new Size(221, 17);
+            lblSubtitulo.Size = new Size(213, 17);
             lblSubtitulo.TabIndex = 4;
             lblSubtitulo.Text = "Subtítulo (dirección, teléfono, CUIT)";
             // 
@@ -99,7 +100,7 @@
             lblTextoPie.Font = new Font("Segoe UI", 9.75F);
             lblTextoPie.Location = new Point(28, 266);
             lblTextoPie.Name = "lblTextoPie";
-            lblTextoPie.Size = new Size(72, 17);
+            lblTextoPie.Size = new Size(80, 17);
             lblTextoPie.TabIndex = 6;
             lblTextoPie.Text = "Texto de pie";
             // 
@@ -118,7 +119,7 @@
             lblLogo.Font = new Font("Segoe UI", 9.75F);
             lblLogo.Location = new Point(490, 108);
             lblLogo.Name = "lblLogo";
-            lblLogo.Size = new Size(36, 17);
+            lblLogo.Size = new Size(38, 17);
             lblLogo.TabIndex = 8;
             lblLogo.Text = "Logo";
             // 
@@ -178,9 +179,12 @@
             Controls.Add(txtNombreNegocio);
             Controls.Add(lblNombreNegocio);
             Controls.Add(lblTitulo);
+            ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximumSize = new Size(757, 429);
             MinimumSize = new Size(757, 429);
             Name = "FCustomPdf";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Personalizar comprobantes";
             Controls.SetChildIndex(lblTitulo, 0);
             Controls.SetChildIndex(lblNombreNegocio, 0);
@@ -194,8 +198,8 @@
             Controls.SetChildIndex(btnSeleccionarLogo, 0);
             Controls.SetChildIndex(btnQuitarLogo, 0);
             Controls.SetChildIndex(lblRutaLogo, 0);
-            ((System.ComponentModel.ISupportInitialize)pbxLogo).EndInit();
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbxLogo).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
