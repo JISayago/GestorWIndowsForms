@@ -1,6 +1,6 @@
 ﻿namespace Stockeate
 {
-    partial class FrmActivacion
+    partial class FActivacion
     {
         private System.ComponentModel.IContainer components = null;
 

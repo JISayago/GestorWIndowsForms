@@ -82,7 +82,7 @@ namespace Presentacion
                  resultadoLicencia.Estado == LicenseStatus.Invalida))
             {
                 using (var activacion =
-                       new FrmActivacion(primeraEjecucion))
+                       new FActivacion(primeraEjecucion))
                 {
                     var resultadoFormulario =
                         activacion.ShowDialog();

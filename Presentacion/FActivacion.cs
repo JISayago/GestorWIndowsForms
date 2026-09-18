@@ -14,14 +14,14 @@ using System.Windows.Forms;
 
 namespace Stockeate
 {
-    public partial class FrmActivacion : FBase
+    public partial class FActivacion : FBase
     {
         private readonly bool _primeraEjecucion;
         private InstallationInfo? _instalacion;
 
         public bool LicenciaValida { get; private set; }
 
-        public FrmActivacion(bool primeraEjecucion)
+        public FActivacion(bool primeraEjecucion)
         {
             InitializeComponent();
 
