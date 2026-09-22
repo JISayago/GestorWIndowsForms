@@ -613,5 +613,10 @@ namespace Presentacion
             crearNotificacionesCuentaCorriente();
             flowLayoutNotificaciones.ResumeLayout(true);
         }
+
+        private void flowHeaderUsuario_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
