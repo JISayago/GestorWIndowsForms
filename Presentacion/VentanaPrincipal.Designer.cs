@@ -43,14 +43,16 @@ namespace Presentacion
             tableLayoutPanel4 = new TableLayoutPanel();
             tableLayoutPanel3 = new TableLayoutPanel();
             flowHeaderUsuario = new FlowLayoutPanel();
-            lblUsuario = new Label();
             lblNombreUsuario = new Label();
+            lblUsuario = new Label();
             llbCerrarSesion = new LinkLabel();
+            tableLayoutPanel5 = new TableLayoutPanel();
+            tableLayoutPanel6 = new TableLayoutPanel();
             flowLayoutPanel2 = new FlowLayoutPanel();
-            lblHoraValor = new Label();
-            lblHora = new Label();
-            lblFechaValor = new Label();
             lblFecha = new Label();
+            lblFechaValor = new Label();
+            lblHora = new Label();
+            lblHoraValor = new Label();
             tlpPanelBaseTabControlYNotis = new TableLayoutPanel();
             tcIzquierda = new FlatTabControl();
             tabPage1 = new TabPage();
@@ -60,8 +62,6 @@ namespace Presentacion
             btnRefresh = new Button();
             flowLayoutPanel3 = new FlowLayoutPanel();
             panel1 = new Panel();
-            tableLayoutPanel5 = new TableLayoutPanel();
-            tableLayoutPanel6 = new TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             PnlBotones.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -70,13 +70,13 @@ namespace Presentacion
             tableLayoutPanel4.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             flowHeaderUsuario.SuspendLayout();
+            tableLayoutPanel5.SuspendLayout();
+            tableLayoutPanel6.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
             tlpPanelBaseTabControlYNotis.SuspendLayout();
             tcIzquierda.SuspendLayout();
             tlpNotificaciones0.SuspendLayout();
             panel1.SuspendLayout();
-            tableLayoutPanel5.SuspendLayout();
-            tableLayoutPanel6.SuspendLayout();
             SuspendLayout();
             // 
             // sqlCommand1
@@ -195,9 +195,9 @@ namespace Presentacion
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55.85366F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 34.94668F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9.269894F));
-            tableLayoutPanel2.Controls.Add(tableLayoutPanel5, 1, 0);
-            tableLayoutPanel2.Controls.Add(tableLayoutPanel4, 0, 0);
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel4, 1, 0);
             tableLayoutPanel2.Controls.Add(llbCerrarSesion, 2, 0);
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel5, 0, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -213,12 +213,12 @@ namespace Presentacion
             tableLayoutPanel4.ColumnCount = 1;
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel4.Controls.Add(tableLayoutPanel3, 0, 0);
-            tableLayoutPanel4.Location = new Point(23, 3);
+            tableLayoutPanel4.Location = new Point(703, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel4.Size = new Size(674, 69);
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 8F));
+            tableLayoutPanel4.Size = new Size(419, 69);
             tableLayoutPanel4.TabIndex = 29;
             // 
             // tableLayoutPanel3
@@ -233,44 +233,45 @@ namespace Presentacion
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 15F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 70F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 15F));
-            tableLayoutPanel3.Size = new Size(668, 43);
+            tableLayoutPanel3.Size = new Size(413, 55);
             tableLayoutPanel3.TabIndex = 1;
             // 
             // flowHeaderUsuario
             // 
-            flowHeaderUsuario.Controls.Add(lblUsuario);
             flowHeaderUsuario.Controls.Add(lblNombreUsuario);
-            flowHeaderUsuario.Location = new Point(3, 9);
+            flowHeaderUsuario.Controls.Add(lblUsuario);
+            flowHeaderUsuario.FlowDirection = FlowDirection.RightToLeft;
+            flowHeaderUsuario.Location = new Point(3, 11);
             flowHeaderUsuario.Name = "flowHeaderUsuario";
-            flowHeaderUsuario.Size = new Size(662, 24);
+            flowHeaderUsuario.Size = new Size(407, 32);
             flowHeaderUsuario.TabIndex = 0;
             flowHeaderUsuario.WrapContents = false;
-            // 
-            // lblUsuario
-            // 
-            lblUsuario.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            lblUsuario.AutoSize = true;
-            lblUsuario.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblUsuario.Location = new Point(0, 0);
-            lblUsuario.Margin = new Padding(0, 0, 6, 0);
-            lblUsuario.Name = "lblUsuario";
-            lblUsuario.Size = new Size(174, 30);
-            lblUsuario.TabIndex = 26;
-            lblUsuario.Text = "Usuario Logeado:";
-            lblUsuario.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // lblNombreUsuario
             // 
             lblNombreUsuario.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             lblNombreUsuario.AutoSize = true;
             lblNombreUsuario.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblNombreUsuario.Location = new Point(180, 0);
+            lblNombreUsuario.Location = new Point(335, 0);
             lblNombreUsuario.Margin = new Padding(0);
             lblNombreUsuario.Name = "lblNombreUsuario";
             lblNombreUsuario.Size = new Size(72, 30);
             lblNombreUsuario.TabIndex = 25;
             lblNombreUsuario.Text = "label3";
             lblNombreUsuario.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lblUsuario
+            // 
+            lblUsuario.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            lblUsuario.AutoSize = true;
+            lblUsuario.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblUsuario.Location = new Point(155, 0);
+            lblUsuario.Margin = new Padding(0, 0, 6, 0);
+            lblUsuario.Name = "lblUsuario";
+            lblUsuario.Size = new Size(174, 30);
+            lblUsuario.TabIndex = 26;
+            lblUsuario.Text = "Usuario Logeado:";
+            lblUsuario.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // llbCerrarSesion
             // 
@@ -286,34 +287,71 @@ namespace Presentacion
             llbCerrarSesion.TextAlign = ContentAlignment.MiddleCenter;
             llbCerrarSesion.LinkClicked += llbCerrarSesion_LinkClicked;
             // 
+            // tableLayoutPanel5
+            // 
+            tableLayoutPanel5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel5.ColumnCount = 1;
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel5.Controls.Add(tableLayoutPanel6, 0, 0);
+            tableLayoutPanel5.Location = new Point(23, 3);
+            tableLayoutPanel5.Name = "tableLayoutPanel5";
+            tableLayoutPanel5.RowCount = 1;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel5.Size = new Size(674, 69);
+            tableLayoutPanel5.TabIndex = 30;
+            // 
+            // tableLayoutPanel6
+            // 
+            tableLayoutPanel6.ColumnCount = 1;
+            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel6.Controls.Add(flowLayoutPanel2, 0, 1);
+            tableLayoutPanel6.Dock = DockStyle.Left;
+            tableLayoutPanel6.Location = new Point(3, 3);
+            tableLayoutPanel6.Name = "tableLayoutPanel6";
+            tableLayoutPanel6.RowCount = 3;
+            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 15F));
+            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 70F));
+            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 15F));
+            tableLayoutPanel6.Size = new Size(668, 63);
+            tableLayoutPanel6.TabIndex = 1;
+            // 
             // flowLayoutPanel2
             // 
-            flowLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            flowLayoutPanel2.Anchor = AnchorStyles.Left;
             flowLayoutPanel2.AutoSize = true;
             flowLayoutPanel2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            flowLayoutPanel2.Controls.Add(lblHoraValor);
-            flowLayoutPanel2.Controls.Add(lblHora);
-            flowLayoutPanel2.Controls.Add(lblFechaValor);
             flowLayoutPanel2.Controls.Add(lblFecha);
-            flowLayoutPanel2.FlowDirection = FlowDirection.RightToLeft;
+            flowLayoutPanel2.Controls.Add(lblFechaValor);
+            flowLayoutPanel2.Controls.Add(lblHora);
+            flowLayoutPanel2.Controls.Add(lblHoraValor);
             flowLayoutPanel2.Location = new Point(3, 12);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
             flowLayoutPanel2.Padding = new Padding(0, 8, 0, 0);
-            flowLayoutPanel2.Size = new Size(407, 38);
+            flowLayoutPanel2.Size = new Size(393, 38);
             flowLayoutPanel2.TabIndex = 28;
             flowLayoutPanel2.WrapContents = false;
             // 
-            // lblHoraValor
+            // lblFecha
             // 
-            lblHoraValor.Anchor = AnchorStyles.Left;
-            lblHoraValor.AutoSize = true;
-            lblHoraValor.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblHoraValor.ImageAlign = ContentAlignment.MiddleLeft;
-            lblHoraValor.Location = new Point(307, 8);
-            lblHoraValor.Name = "lblHoraValor";
-            lblHoraValor.Size = new Size(97, 30);
-            lblHoraValor.TabIndex = 25;
-            lblHoraValor.Text = "00:00:00";
+            lblFecha.Anchor = AnchorStyles.Left;
+            lblFecha.AutoSize = true;
+            lblFecha.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblFecha.Location = new Point(3, 8);
+            lblFecha.Name = "lblFecha";
+            lblFecha.Size = new Size(72, 30);
+            lblFecha.TabIndex = 26;
+            lblFecha.Text = "Fecha:";
+            // 
+            // lblFechaValor
+            // 
+            lblFechaValor.Anchor = AnchorStyles.Left;
+            lblFechaValor.AutoSize = true;
+            lblFechaValor.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblFechaValor.Location = new Point(81, 8);
+            lblFechaValor.Name = "lblFechaValor";
+            lblFechaValor.Size = new Size(127, 30);
+            lblFechaValor.TabIndex = 25;
+            lblFechaValor.Text = "00/00/0000";
             // 
             // lblHora
             // 
@@ -321,34 +359,24 @@ namespace Presentacion
             lblHora.AutoSize = true;
             lblHora.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblHora.ImageAlign = ContentAlignment.MiddleLeft;
-            lblHora.Location = new Point(241, 8);
+            lblHora.Location = new Point(227, 8);
             lblHora.Margin = new Padding(16, 0, 0, 0);
             lblHora.Name = "lblHora";
             lblHora.Size = new Size(63, 30);
             lblHora.TabIndex = 27;
             lblHora.Text = "Hora:";
             // 
-            // lblFechaValor
+            // lblHoraValor
             // 
-            lblFechaValor.Anchor = AnchorStyles.Left;
-            lblFechaValor.AutoSize = true;
-            lblFechaValor.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblFechaValor.Location = new Point(95, 8);
-            lblFechaValor.Name = "lblFechaValor";
-            lblFechaValor.Size = new Size(127, 30);
-            lblFechaValor.TabIndex = 25;
-            lblFechaValor.Text = "00/00/0000";
-            // 
-            // lblFecha
-            // 
-            lblFecha.Anchor = AnchorStyles.Left;
-            lblFecha.AutoSize = true;
-            lblFecha.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblFecha.Location = new Point(17, 8);
-            lblFecha.Name = "lblFecha";
-            lblFecha.Size = new Size(72, 30);
-            lblFecha.TabIndex = 26;
-            lblFecha.Text = "Fecha:";
+            lblHoraValor.Anchor = AnchorStyles.Left;
+            lblHoraValor.AutoSize = true;
+            lblHoraValor.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblHoraValor.ImageAlign = ContentAlignment.MiddleLeft;
+            lblHoraValor.Location = new Point(293, 8);
+            lblHoraValor.Name = "lblHoraValor";
+            lblHoraValor.Size = new Size(97, 30);
+            lblHoraValor.TabIndex = 25;
+            lblHoraValor.Text = "00:00:00";
             // 
             // tlpPanelBaseTabControlYNotis
             // 
@@ -466,34 +494,6 @@ namespace Presentacion
             panel1.Size = new Size(1265, 816);
             panel1.TabIndex = 24;
             // 
-            // tableLayoutPanel5
-            // 
-            tableLayoutPanel5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel5.ColumnCount = 1;
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel5.Controls.Add(tableLayoutPanel6, 0, 0);
-            tableLayoutPanel5.Location = new Point(703, 3);
-            tableLayoutPanel5.Name = "tableLayoutPanel5";
-            tableLayoutPanel5.RowCount = 1;
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel5.Size = new Size(419, 69);
-            tableLayoutPanel5.TabIndex = 30;
-            // 
-            // tableLayoutPanel6
-            // 
-            tableLayoutPanel6.ColumnCount = 1;
-            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel6.Controls.Add(flowLayoutPanel2, 0, 1);
-            tableLayoutPanel6.Dock = DockStyle.Fill;
-            tableLayoutPanel6.Location = new Point(3, 3);
-            tableLayoutPanel6.Name = "tableLayoutPanel6";
-            tableLayoutPanel6.RowCount = 3;
-            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 15F));
-            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 70F));
-            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 15F));
-            tableLayoutPanel6.Size = new Size(413, 63);
-            tableLayoutPanel6.TabIndex = 1;
-            // 
             // VentanaPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -518,15 +518,15 @@ namespace Presentacion
             tableLayoutPanel3.ResumeLayout(false);
             flowHeaderUsuario.ResumeLayout(false);
             flowHeaderUsuario.PerformLayout();
+            tableLayoutPanel5.ResumeLayout(false);
+            tableLayoutPanel6.ResumeLayout(false);
+            tableLayoutPanel6.PerformLayout();
             flowLayoutPanel2.ResumeLayout(false);
             flowLayoutPanel2.PerformLayout();
             tlpPanelBaseTabControlYNotis.ResumeLayout(false);
             tcIzquierda.ResumeLayout(false);
             tlpNotificaciones0.ResumeLayout(false);
             panel1.ResumeLayout(false);
-            tableLayoutPanel5.ResumeLayout(false);
-            tableLayoutPanel6.ResumeLayout(false);
-            tableLayoutPanel6.PerformLayout();
             ResumeLayout(false);
         }
 
