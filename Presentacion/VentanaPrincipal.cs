@@ -130,21 +130,21 @@ namespace Presentacion
             tlpPanelBaseTabControlYNotis.Padding = new Padding(padH, 0, padH, 0);
             PnlBotones.Padding = new Padding(padH, 0, padH, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Dock = DockStyle.Fill;
-            flowLayoutPanel2.Dock = DockStyle.Right;
-            flowLayoutPanel2.AutoSize = true;
-            flowLayoutPanel2.WrapContents = false;
-            flowLayoutPanel2.FlowDirection = FlowDirection.RightToLeft;
+            tblUsuario.Dock = DockStyle.Fill;
+            //flpDatosFechaHora.Dock = DockStyle.Right;
+            //flpDatosFechaHora.AutoSize = true;
+            //flpDatosFechaHora.WrapContents = false;
+            //flpDatosFechaHora.FlowDirection = FlowDirection.RightToLeft;
 
             tlpBaseInfo1.BackColor = fondo;
             tableLayoutPanel2.BackColor = fondo;
-            tableLayoutPanel3.BackColor = fondo;
-            flowHeaderUsuario.BackColor = fondo;
+            tblUsuario.BackColor = fondo;
+            flpUsuarioLogeado.BackColor = fondo;
             tlpPanelBaseTabControlYNotis.BackColor = fondo;
             tlpNotificaciones0.BackColor = fondo;
             PnlBotones.BackColor = fondo;
             flowLayoutNotificaciones.BackColor = fondo;
-            flowLayoutPanel2.BackColor = fondo;
+            flpDatosFechaHora.BackColor = fondo;
             flowLayoutPanel3.BackColor = fondo;
 
             tcIzquierda.BackColor = fondo;
@@ -617,6 +617,19 @@ namespace Presentacion
         private void flowHeaderUsuario_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void btnCerarSesion_Click(object sender, EventArgs e)
+        {
+            var respuesta = _accesoSistema.CerrarSesion(_usuarioLogeado.PersonaId);
+            if (!respuesta.Exitoso)
+            {
+                MessageBox.Show(respuesta.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Application.Restart();
         }
     }
 }
