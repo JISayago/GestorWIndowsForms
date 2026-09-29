@@ -31,7 +31,10 @@ namespace Presentacion.Core.Venta
         {
             _usuarioLogeadoID = usuarioLogeadoID;
         }
-
+        protected override bool EsModoSoloLectura(FiltroConsulta filtro)
+        {
+            return true;
+        }
 
         #region 🔷 FILTROS
         protected override string TextoLblBuscar
