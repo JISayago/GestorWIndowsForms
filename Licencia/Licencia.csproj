@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Servicios.AccesoSistema\Servicios.AccesoSistema.csproj" />
+  </ItemGroup>
+
 </Project>
