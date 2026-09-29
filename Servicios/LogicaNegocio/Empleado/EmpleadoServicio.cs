@@ -73,7 +73,7 @@ namespace Servicios.LogicaNegocio.Empleado
                 PersonaId = persona.PersonaId,
                 Legajo = empleadoDto.Legajo,
                 FechaIngreso = empleadoDto.FechaIngreso,
-                Estado = (int)EstadoEmpleado.Inhablitado,
+                Estado = (int)EstadoEmpleado.SinUsuario,
                 Username = null,
                 Pass = null,
                 UsuarioEstaHabilitado = false
