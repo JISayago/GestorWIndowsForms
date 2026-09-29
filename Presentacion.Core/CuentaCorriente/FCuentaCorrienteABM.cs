@@ -1,4 +1,5 @@
 using AccesoDatos.Entidades;
+using MigraDoc.DocumentObjectModel;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
@@ -104,23 +105,62 @@ namespace Presentacion.Core.CuentaCorriente
             AplicarEstiloCuentaCorriente();
         }
 
+        private void EstilarFechaLabel(Label lbl)
+        {
+            if (lbl == null) return;
+            lbl.ForeColor = TemaSistema.Primario;
+            float size = lbl.Font?.Size >= 14F ? 10F : (lbl.Font?.Size ?? 10F);
+            lbl.Font = new System.Drawing.Font("Segoe UI", size, FontStyle.Bold);
+
+        }
+        private void EstilarNombreUsuario(Label lbl)
+        {
+            if (lbl == null) return;
+            lbl.ForeColor = TemaSistema.Primario;
+            float size = 24F;
+            lbl.Font = new System.Drawing.Font("Segoe UI", size, FontStyle.Bold);
+
+        }
+        private void EstilarLabelSaldo(Label lbl)
+        {
+            if (lbl == null) return;
+            lbl.ForeColor = TemaSistema.Primario;
+            float size = 20F;
+            lbl.Font = new System.Drawing.Font("Segoe UI", size, FontStyle.Bold);
+
+            if (saldoInicial < 0)
+            {
+                lbl.ForeColor = System.Drawing.Color.Red;
+            }
+            else if (saldoInicial > 0)
+            {
+                lbl.ForeColor = System.Drawing.Color.Green;
+            }
+            else
+            {
+                lbl.ForeColor = TemaSistema.Primario;
+            }
+
+        }
+
         private void AplicarEstiloCuentaCorriente()
         {
             EstilarLabelDestacado(lblCliente);
-            EstilarLabelDestacado(lblNombreCliente2);
+            EstilarNombreUsuario(lblNombreCliente2);
             EstilarLabelDestacado(lblEstadoTitulo);
             EstilarLabelDestacado(lblEstado);
             EstilarLabelDestacado(lblFechaCreacionTitulo);
-            EstilarLabelDestacado(lblFechaCreacion);
+            EstilarFechaLabel(lblFechaCreacion);
             EstilarLabelDestacado(lblFechaUltimaActivacionTitulo);
-            EstilarLabelDestacado(lblFechaUltimaActivacion);
+            EstilarFechaLabel(lblFechaUltimaActivacion);
             EstilarLabelDestacado(lblFechaVencimientoTitulo);
-            EstilarLabelDestacado(lblFechaVencimiento);
+            EstilarFechaLabel(lblFechaVencimiento);
             EstilarLabelDestacado(lblListadoMovimientos);
             EstilarLabelDestacado(lblDni);
+            EstilarLabelSaldo(lblSaldo);
 
-            if (lblNombreCliente2 != null)
-                lblNombreCliente2.ForeColor = TemaSistema.Primario;
+            //if (lblNombreCliente2 != null)
+            //    lblNombreCliente2.ForeColor = TemaSistema.Primario;
 
             //EstilarBotonPrimario(btnActivar);
             EstilarBotonPeligro(btnCerrarCtacte);
@@ -133,13 +173,13 @@ namespace Presentacion.Core.CuentaCorriente
 
             if (dgvGrilla != null)
             {
-                dgvGrilla.BorderStyle = BorderStyle.FixedSingle;
+                dgvGrilla.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
                 dgvGrilla.BackgroundColor = TemaSistema.FondoControl;
             }
 
             if (lstDnis != null)
             {
-                lstDnis.BorderStyle = BorderStyle.FixedSingle;
+                lstDnis.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
                 lstDnis.BackColor = TemaSistema.FondoControl;
                 lstDnis.ForeColor = TemaSistema.Texto;
             }
@@ -150,7 +190,7 @@ namespace Presentacion.Core.CuentaCorriente
             if (lbl == null) return;
             lbl.ForeColor = TemaSistema.Texto;
             float size = lbl.Font?.Size >= 14F ? 10F : (lbl.Font?.Size ?? 10F);
-            lbl.Font = new Font("Segoe UI", size, FontStyle.Bold);
+            lbl.Font = new System.Drawing.Font("Segoe UI", size, FontStyle.Bold);
         }
 
         private static void EstilarBotonPrimario(Button btn)
@@ -159,7 +199,7 @@ namespace Presentacion.Core.CuentaCorriente
             btn.FlatStyle = FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 0;
             btn.BackColor = TemaSistema.Primario;
-            btn.ForeColor = Color.White;
+            btn.ForeColor = System.Drawing.Color.White;
             btn.Cursor = Cursors.Hand;
             btn.UseVisualStyleBackColor = false;
         }
@@ -181,8 +221,8 @@ namespace Presentacion.Core.CuentaCorriente
             if (btn == null) return;
             btn.FlatStyle = FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 0;
-            btn.BackColor = Color.FromArgb(160, 40, 40);
-            btn.ForeColor = Color.White;
+            btn.BackColor = System.Drawing.Color.FromArgb(160, 40, 40);
+            btn.ForeColor = System.Drawing.Color.White;
             btn.Cursor = Cursors.Hand;
             btn.UseVisualStyleBackColor = false;
         }
@@ -313,10 +353,10 @@ namespace Presentacion.Core.CuentaCorriente
 
             rbVencimientoAutomatico.Checked = _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Automatico;
             rbVencimientoManual.Checked = _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Manual;
-            if(_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Activa)
+            if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Activa)
             {
                 btnActivar.Enabled = false;
-                btnActivar.ForeColor = Color.Gray;
+                btnActivar.ForeColor = System.Drawing.Color.Gray;
             }
             nudCantidadMeses.Value =
                 _cuentaCorriente.CantidadMesesVencimiento;
@@ -350,7 +390,7 @@ namespace Presentacion.Core.CuentaCorriente
 
                 return false;
             }
-            if(_dnisAutorizadosLista.Count < 1)
+            if (_dnisAutorizadosLista.Count < 1)
             {
                 MessageBox.Show(@"Debe ingresar al menos un DNI autorizado.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
@@ -443,7 +483,7 @@ namespace Presentacion.Core.CuentaCorriente
 
             if (!ValidarSaldoYLimite())
                 return false;
-            if(_dnisAutorizadosLista.Count < 1)
+            if (_dnisAutorizadosLista.Count < 1)
             {
                 MessageBox.Show(@"Debe ingresar al menos un DNI autorizado.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
@@ -596,7 +636,7 @@ namespace Presentacion.Core.CuentaCorriente
             pnlAcciones.Controls.Add(btnEliminarDni);
 
             lstDnis.Dock = DockStyle.Fill;
-            lstDnis.BorderStyle = BorderStyle.FixedSingle;
+            lstDnis.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 
             // Orden Dock: Fill primero, luego Top (último Top queda arriba).
             tbpDnis.Controls.Add(lstDnis);
@@ -618,13 +658,13 @@ namespace Presentacion.Core.CuentaCorriente
                 return;
             }
 
-            if(_cuentaCorriente.ConDeuda && _cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Suspendida)
+            if (_cuentaCorriente.ConDeuda && _cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Suspendida)
             {
                 lblFechaVencimiento.Text = "Cuenta vencida con deuda.\n" +
                     " Por favor pague la deuda para registrar el próximo vencimiento";
                 return;
             }
-            if(_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Suspendida && _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Manual && _cuentaCorriente.Saldo >= 0)
+            if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Suspendida && _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Manual && _cuentaCorriente.Saldo >= 0)
             {
                 lblFechaVencimiento.Text = "Cuenta suspendida sin deuda y/o con saldo a favor.\n" +
                     " Por favor seleccione las condiciones para el próximo vencimiento";
@@ -649,8 +689,9 @@ namespace Presentacion.Core.CuentaCorriente
             ActualizarProximoVencimiento();
 
             ActualizarBotones();
+            
         }
-        
+
         private void ActualizarLimite()
         {
             btnCargarLimite.Enabled = chkLimiteDeuda.Checked;
@@ -689,7 +730,7 @@ namespace Presentacion.Core.CuentaCorriente
         }
         private void ActualizarSaldo()
         {
-            lblSaldo.Text = saldoInicial.ToString("C");
+            lblSaldo.Text = $"Saldo: {saldoInicial.ToString("C")}";
         }
 
         private void ActualizarEstado()
@@ -710,23 +751,23 @@ namespace Presentacion.Core.CuentaCorriente
                 if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Activa)
                 {
                     btnCerrarCtacte.Text = "Cerrar Cuenta";
-                    btnCerrarCtacte.BackColor = Color.FromArgb(160, 40, 40);
+                    btnCerrarCtacte.BackColor = System.Drawing.Color.FromArgb(160, 40, 40);
                     btnActivar.Enabled = false;
-                    btnActivar.ForeColor = Color.Gray;
+                    btnActivar.ForeColor = System.Drawing.Color.Gray;
                 }
                 else if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Cerrada)
                 {
                     btnActivar.Enabled = false;
-                    btnActivar.ForeColor = Color.Gray;
-                    btnCerrarCtacte.BackColor = Color.Green;
+                    btnActivar.ForeColor = System.Drawing.Color.Gray;
+                    btnCerrarCtacte.BackColor = System.Drawing.Color.Green;
                     btnCerrarCtacte.Text = "Reabrir Cuenta";
                 }
                 else
                 {
                     btnActivar.Enabled = true;
-                    btnActivar.ForeColor = Color.White;
+                    btnActivar.ForeColor = System.Drawing.Color.White;
                     btnCerrarCtacte.Text = "Cerrar Cuenta";
-                    btnCerrarCtacte.BackColor = Color.FromArgb(160, 40, 40);
+                    btnCerrarCtacte.BackColor = System.Drawing.Color.FromArgb(160, 40, 40);
                 }
             }
 
@@ -831,12 +872,13 @@ namespace Presentacion.Core.CuentaCorriente
                     return;
                 }
 
-                lblSaldo.Text = respuesta.DatoExtra;
+                lblSaldo.Text = $"Saldo: {respuesta.DatoExtra}";
 
                 MessageBox.Show(respuesta.Mensaje, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 CargarDatosCuenta();
                 ActualizarPantalla();
+                AplicarEstiloCuentaCorriente();
             }
         }
         private void btnCargarLimite_Click(object sender, EventArgs e)
@@ -1066,7 +1108,7 @@ namespace Presentacion.Core.CuentaCorriente
 
             //btnCargarLimite.Enabled =
             //    CuentaCreada && chkLimiteDeuda.Checked;
-     
+
 
             lblPagina.Text = $"Página {paginaActual} de {totalPaginas}";
             lblTotalRegistros.Text = $"Total: {totalRegistros}";
@@ -1135,7 +1177,7 @@ namespace Presentacion.Core.CuentaCorriente
                 MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
-            
+
         }
 
         private void btnCerrarCtacte_Click(object sender, EventArgs e)
@@ -1160,7 +1202,7 @@ namespace Presentacion.Core.CuentaCorriente
                     }
                 }
                 return;
-            }   
+            }
             var msjee = MessageBox.Show("¿Está seguro que desea cerrar la cuenta corriente? Esta acción no se puede deshacer.", "Confirmar cierre", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (msjee != DialogResult.Yes)
                 return;
@@ -1178,5 +1220,9 @@ namespace Presentacion.Core.CuentaCorriente
 
         }
 
+        private void lblLimiteDeuda_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

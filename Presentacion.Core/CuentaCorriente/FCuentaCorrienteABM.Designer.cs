@@ -35,11 +35,34 @@ namespace Presentacion.Core.CuentaCorriente
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FCuentaCorrienteABM));
+            grpLimite = new GroupBox();
+            tableLayoutPanel15 = new TableLayoutPanel();
+            chkLimiteDeuda = new CheckBox();
+            btnCargarLimite = new Button();
+            lblLimiteDeuda = new Label();
+            grpVencimiento = new GroupBox();
+            tableLayoutPanel17 = new TableLayoutPanel();
+            groupBox1 = new GroupBox();
+            rbVencimientoManual = new RadioButton();
+            rbVencimientoAutomatico = new RadioButton();
+            flowLayoutPanel5 = new FlowLayoutPanel();
+            label2 = new Label();
+            nudCantidadMeses = new NumericUpDown();
+            flowLayoutPanel7 = new FlowLayoutPanel();
+            lblFechaVencimientoTitulo = new Label();
+            lblFechaVencimiento = new Label();
+            grpEstado = new GroupBox();
+            tableLayoutPanel3 = new TableLayoutPanel();
+            flowLayoutPanel3 = new FlowLayoutPanel();
+            lblEstadoTitulo = new Label();
+            lblEstado = new Label();
+            flowLayoutPanel8 = new FlowLayoutPanel();
+            lblFechaUltimaActivacionTitulo = new Label();
+            lblFechaUltimaActivacion = new Label();
+            btnActivar = new Button();
+            btnCerrarCtacte = new Button();
             lblccorriente = new Label();
             lblSaldo = new Label();
-            lblLimiteDeuda = new Label();
-            lblFechaVencimientoTitulo = new Label();
-            chkLimiteDeuda = new CheckBox();
             txtNombreCC = new TextBox();
             lblDni = new Label();
             lstDnis = new ListBox();
@@ -48,39 +71,18 @@ namespace Presentacion.Core.CuentaCorriente
             btnEliminarDni = new Button();
             lblCliente = new Label();
             lblNombreCliente = new Label();
-            groupBox1 = new GroupBox();
-            rbVencimientoManual = new RadioButton();
-            rbVencimientoAutomatico = new RadioButton();
-            nudCantidadMeses = new NumericUpDown();
-            lblFechaVencimiento = new Label();
-            label2 = new Label();
             btnCargarSaldoCtaCte = new Button();
-            btnCargarLimite = new Button();
             tbcBase = new TabControl();
             tbpInicio = new TabPage();
-            tableLayoutPanel8 = new TableLayoutPanel();
-            flowLayoutPanel2 = new FlowLayoutPanel();
-            tableLayoutPanel3 = new TableLayoutPanel();
-            flowLayoutPanel3 = new FlowLayoutPanel();
-            lblEstadoTitulo = new Label();
-            lblEstado = new Label();
-            tableLayoutPanel2 = new TableLayoutPanel();
-            btnCerrarCtacte = new Button();
-            btnActivar = new Button();
             tableLayoutPanel5 = new TableLayoutPanel();
-            tableLayoutPanel4 = new TableLayoutPanel();
-            tableLayoutPanel6 = new TableLayoutPanel();
-            flowLayoutPanel5 = new FlowLayoutPanel();
-            tableLayoutPanel7 = new TableLayoutPanel();
+            tableLayoutPanel13 = new TableLayoutPanel();
+            lblNombreCliente2 = new Label();
             flowLayoutPanel6 = new FlowLayoutPanel();
             lblFechaCreacionTitulo = new Label();
             lblFechaCreacion = new Label();
-            flowLayoutPanel7 = new FlowLayoutPanel();
-            flowLayoutPanel8 = new FlowLayoutPanel();
-            lblFechaUltimaActivacionTitulo = new Label();
-            lblFechaUltimaActivacion = new Label();
+            flowLayoutPanel2 = new FlowLayoutPanel();
+            tableLayoutPanel14 = new TableLayoutPanel();
             tableLayoutPanel12 = new TableLayoutPanel();
-            lblNombreCliente2 = new Label();
             tbpMovimientos = new TabPage();
             dgvGrilla = new DataGridView();
             tableLayoutPanel10 = new TableLayoutPanel();
@@ -92,27 +94,33 @@ namespace Presentacion.Core.CuentaCorriente
             btnSiguiente = new Button();
             lblListadoMovimientos = new Label();
             tbpDnis = new TabPage();
+            tableLayoutPanel18 = new TableLayoutPanel();
+            tableLayoutPanel4 = new TableLayoutPanel();
+            tableLayoutPanel16 = new TableLayoutPanel();
+            tableLayoutPanel2 = new TableLayoutPanel();
             tableLayoutPanel1 = new TableLayoutPanel();
             flowLayoutPanel1 = new FlowLayoutPanel();
             pbxLogo = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
+            grpLimite.SuspendLayout();
+            tableLayoutPanel15.SuspendLayout();
+            grpVencimiento.SuspendLayout();
+            tableLayoutPanel17.SuspendLayout();
             groupBox1.SuspendLayout();
+            flowLayoutPanel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudCantidadMeses).BeginInit();
-            tbcBase.SuspendLayout();
-            tbpInicio.SuspendLayout();
-            tableLayoutPanel8.SuspendLayout();
-            flowLayoutPanel2.SuspendLayout();
+            flowLayoutPanel7.SuspendLayout();
+            grpEstado.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             flowLayoutPanel3.SuspendLayout();
-            tableLayoutPanel2.SuspendLayout();
-            tableLayoutPanel5.SuspendLayout();
-            tableLayoutPanel4.SuspendLayout();
-            tableLayoutPanel6.SuspendLayout();
-            flowLayoutPanel5.SuspendLayout();
-            tableLayoutPanel7.SuspendLayout();
-            flowLayoutPanel6.SuspendLayout();
-            flowLayoutPanel7.SuspendLayout();
             flowLayoutPanel8.SuspendLayout();
+            tbcBase.SuspendLayout();
+            tbpInicio.SuspendLayout();
+            tableLayoutPanel5.SuspendLayout();
+            tableLayoutPanel13.SuspendLayout();
+            flowLayoutPanel6.SuspendLayout();
+            flowLayoutPanel2.SuspendLayout();
+            tableLayoutPanel14.SuspendLayout();
             tableLayoutPanel12.SuspendLayout();
             tbpMovimientos.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvGrilla).BeginInit();
@@ -124,47 +132,213 @@ namespace Presentacion.Core.CuentaCorriente
             ((System.ComponentModel.ISupportInitialize)pbxLogo).BeginInit();
             SuspendLayout();
             // 
-            // lblccorriente
+            // grpLimite
             // 
-            lblccorriente.Anchor = AnchorStyles.None;
-            lblccorriente.AutoSize = true;
-            lblccorriente.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblccorriente.ForeColor = Color.FromArgb(31, 26, 43);
-            lblccorriente.Location = new Point(0, 6);
-            lblccorriente.Margin = new Padding(0, 0, 10, 0);
-            lblccorriente.Name = "lblccorriente";
-            lblccorriente.Size = new Size(91, 19);
-            lblccorriente.TabIndex = 0;
-            lblccorriente.Text = "Nombre CC:";
-            lblccorriente.TextAlign = ContentAlignment.MiddleLeft;
+            grpLimite.Controls.Add(tableLayoutPanel15);
+            grpLimite.Dock = DockStyle.Fill;
+            grpLimite.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            grpLimite.ForeColor = Color.FromArgb(31, 26, 43);
+            grpLimite.Location = new Point(0, 0);
+            grpLimite.Margin = new Padding(0, 0, 6, 0);
+            grpLimite.Name = "grpLimite";
+            grpLimite.Padding = new Padding(10, 6, 10, 6);
+            grpLimite.Size = new Size(345, 192);
+            grpLimite.TabIndex = 64;
+            grpLimite.TabStop = false;
+            grpLimite.Text = "Límite de deuda";
             // 
-            // lblSaldo
+            // tableLayoutPanel15
             // 
-            lblSaldo.Anchor = AnchorStyles.Left;
-            lblSaldo.AutoSize = true;
-            lblSaldo.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold);
-            lblSaldo.ForeColor = Color.FromArgb(31, 26, 43);
-            lblSaldo.Location = new Point(8, 53);
-            lblSaldo.Margin = new Padding(8, 0, 0, 0);
-            lblSaldo.Name = "lblSaldo";
-            lblSaldo.Size = new Size(115, 19);
-            lblSaldo.TabIndex = 1;
-            lblSaldo.Text = "Saldo a favor: $0";
-            lblSaldo.TextAlign = ContentAlignment.MiddleLeft;
+            tableLayoutPanel15.ColumnCount = 2;
+            tableLayoutPanel15.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55F));
+            tableLayoutPanel15.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45F));
+            tableLayoutPanel15.Controls.Add(chkLimiteDeuda, 0, 0);
+            tableLayoutPanel15.Controls.Add(btnCargarLimite, 1, 0);
+            tableLayoutPanel15.Controls.Add(lblLimiteDeuda, 0, 1);
+            tableLayoutPanel15.Dock = DockStyle.Fill;
+            tableLayoutPanel15.Location = new Point(10, 24);
+            tableLayoutPanel15.Margin = new Padding(0);
+            tableLayoutPanel15.Name = "tableLayoutPanel15";
+            tableLayoutPanel15.RowCount = 2;
+            tableLayoutPanel15.RowStyles.Add(new RowStyle(SizeType.Absolute, 74F));
+            tableLayoutPanel15.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel15.Size = new Size(325, 162);
+            tableLayoutPanel15.TabIndex = 60;
+            // 
+            // chkLimiteDeuda
+            // 
+            chkLimiteDeuda.Anchor = AnchorStyles.Left;
+            chkLimiteDeuda.AutoSize = true;
+            chkLimiteDeuda.Font = new Font("Segoe UI", 10F);
+            chkLimiteDeuda.ForeColor = Color.FromArgb(31, 26, 43);
+            chkLimiteDeuda.Location = new Point(0, 25);
+            chkLimiteDeuda.Margin = new Padding(0);
+            chkLimiteDeuda.Name = "chkLimiteDeuda";
+            chkLimiteDeuda.Size = new Size(117, 23);
+            chkLimiteDeuda.TabIndex = 7;
+            chkLimiteDeuda.Text = "Permitir deuda";
+            chkLimiteDeuda.UseVisualStyleBackColor = true;
+            chkLimiteDeuda.CheckedChanged += chkLimiteDeuda_CheckedChanged_1;
+            // 
+            // btnCargarLimite
+            // 
+            btnCargarLimite.Anchor = AnchorStyles.None;
+            btnCargarLimite.BackColor = Color.White;
+            btnCargarLimite.FlatAppearance.BorderColor = Color.FromArgb(67, 20, 135);
+            btnCargarLimite.FlatStyle = FlatStyle.Flat;
+            btnCargarLimite.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnCargarLimite.ForeColor = Color.FromArgb(67, 20, 135);
+            btnCargarLimite.Location = new Point(189, 20);
+            btnCargarLimite.Margin = new Padding(0);
+            btnCargarLimite.Name = "btnCargarLimite";
+            btnCargarLimite.Size = new Size(124, 34);
+            btnCargarLimite.TabIndex = 33;
+            btnCargarLimite.Text = "Cargar límite";
+            btnCargarLimite.UseVisualStyleBackColor = false;
+            btnCargarLimite.Click += btnCargarLimite_Click;
             // 
             // lblLimiteDeuda
             // 
-            lblLimiteDeuda.AutoSize = true;
+            tableLayoutPanel15.SetColumnSpan(lblLimiteDeuda, 2);
             lblLimiteDeuda.Dock = DockStyle.Fill;
             lblLimiteDeuda.Font = new Font("Segoe UI", 10F);
             lblLimiteDeuda.ForeColor = Color.FromArgb(95, 89, 105);
-            lblLimiteDeuda.Location = new Point(12, 42);
-            lblLimiteDeuda.Margin = new Padding(12, 0, 0, 0);
+            lblLimiteDeuda.Location = new Point(0, 74);
+            lblLimiteDeuda.Margin = new Padding(0);
             lblLimiteDeuda.Name = "lblLimiteDeuda";
-            lblLimiteDeuda.Size = new Size(373, 51);
+            lblLimiteDeuda.Size = new Size(325, 88);
             lblLimiteDeuda.TabIndex = 3;
             lblLimiteDeuda.Text = "Deuda máxima permitida: Deshabilitada";
-            lblLimiteDeuda.TextAlign = ContentAlignment.MiddleLeft;
+            lblLimiteDeuda.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // grpVencimiento
+            // 
+            grpVencimiento.Controls.Add(tableLayoutPanel17);
+            grpVencimiento.Dock = DockStyle.Fill;
+            grpVencimiento.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            grpVencimiento.ForeColor = Color.FromArgb(31, 26, 43);
+            grpVencimiento.Location = new Point(357, 0);
+            grpVencimiento.Margin = new Padding(6, 0, 0, 0);
+            grpVencimiento.Name = "grpVencimiento";
+            grpVencimiento.Padding = new Padding(10, 6, 10, 6);
+            grpVencimiento.Size = new Size(345, 192);
+            grpVencimiento.TabIndex = 65;
+            grpVencimiento.TabStop = false;
+            grpVencimiento.Text = "Vencimiento";
+            // 
+            // tableLayoutPanel17
+            // 
+            tableLayoutPanel17.ColumnCount = 1;
+            tableLayoutPanel17.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel17.Controls.Add(groupBox1, 0, 0);
+            tableLayoutPanel17.Controls.Add(flowLayoutPanel5, 0, 1);
+            tableLayoutPanel17.Controls.Add(flowLayoutPanel7, 0, 2);
+            tableLayoutPanel17.Dock = DockStyle.Fill;
+            tableLayoutPanel17.Location = new Point(10, 24);
+            tableLayoutPanel17.Margin = new Padding(0);
+            tableLayoutPanel17.Name = "tableLayoutPanel17";
+            tableLayoutPanel17.RowCount = 3;
+            tableLayoutPanel17.RowStyles.Add(new RowStyle(SizeType.Absolute, 67F));
+            tableLayoutPanel17.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
+            tableLayoutPanel17.RowStyles.Add(new RowStyle(SizeType.Absolute, 17F));
+            tableLayoutPanel17.Size = new Size(325, 162);
+            tableLayoutPanel17.TabIndex = 61;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(rbVencimientoManual);
+            groupBox1.Controls.Add(rbVencimientoAutomatico);
+            groupBox1.Dock = DockStyle.Fill;
+            groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            groupBox1.ForeColor = Color.FromArgb(31, 26, 43);
+            groupBox1.Location = new Point(0, 0);
+            groupBox1.Margin = new Padding(0);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Padding = new Padding(10, 4, 10, 4);
+            groupBox1.Size = new Size(325, 67);
+            groupBox1.TabIndex = 24;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Tipo de vencimiento";
+            // 
+            // rbVencimientoManual
+            // 
+            rbVencimientoManual.AutoSize = true;
+            rbVencimientoManual.Font = new Font("Segoe UI", 10F);
+            rbVencimientoManual.Location = new Point(175, 22);
+            rbVencimientoManual.Name = "rbVencimientoManual";
+            rbVencimientoManual.Size = new Size(73, 23);
+            rbVencimientoManual.TabIndex = 1;
+            rbVencimientoManual.TabStop = true;
+            rbVencimientoManual.Text = "Manual";
+            rbVencimientoManual.UseVisualStyleBackColor = true;
+            rbVencimientoManual.CheckedChanged += rbVencimientoManual_CheckedChanged;
+            // 
+            // rbVencimientoAutomatico
+            // 
+            rbVencimientoAutomatico.AutoSize = true;
+            rbVencimientoAutomatico.Font = new Font("Segoe UI", 10F);
+            rbVencimientoAutomatico.Location = new Point(10, 22);
+            rbVencimientoAutomatico.Name = "rbVencimientoAutomatico";
+            rbVencimientoAutomatico.Size = new Size(98, 23);
+            rbVencimientoAutomatico.TabIndex = 0;
+            rbVencimientoAutomatico.TabStop = true;
+            rbVencimientoAutomatico.Text = "Automático";
+            rbVencimientoAutomatico.UseVisualStyleBackColor = true;
+            rbVencimientoAutomatico.CheckedChanged += rbVencimientoMensual_CheckedChanged;
+            // 
+            // flowLayoutPanel5
+            // 
+            flowLayoutPanel5.Controls.Add(label2);
+            flowLayoutPanel5.Controls.Add(nudCantidadMeses);
+            flowLayoutPanel5.Dock = DockStyle.Fill;
+            flowLayoutPanel5.Location = new Point(0, 67);
+            flowLayoutPanel5.Margin = new Padding(0);
+            flowLayoutPanel5.Name = "flowLayoutPanel5";
+            flowLayoutPanel5.Padding = new Padding(0, 4, 0, 0);
+            flowLayoutPanel5.Size = new Size(325, 32);
+            flowLayoutPanel5.TabIndex = 53;
+            flowLayoutPanel5.WrapContents = false;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 10F);
+            label2.ForeColor = Color.FromArgb(95, 89, 105);
+            label2.Location = new Point(0, 7);
+            label2.Margin = new Padding(0, 3, 0, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(128, 19);
+            label2.TabIndex = 27;
+            label2.Text = "Cantidad de meses:";
+            // 
+            // nudCantidadMeses
+            // 
+            nudCantidadMeses.Anchor = AnchorStyles.Left;
+            nudCantidadMeses.BackColor = Color.White;
+            nudCantidadMeses.BorderStyle = BorderStyle.FixedSingle;
+            nudCantidadMeses.Font = new Font("Segoe UI", 10F);
+            nudCantidadMeses.Location = new Point(134, 4);
+            nudCantidadMeses.Margin = new Padding(6, 0, 0, 0);
+            nudCantidadMeses.Maximum = new decimal(new int[] { 120, 0, 0, 0 });
+            nudCantidadMeses.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudCantidadMeses.Name = "nudCantidadMeses";
+            nudCantidadMeses.Size = new Size(70, 25);
+            nudCantidadMeses.TabIndex = 25;
+            nudCantidadMeses.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            nudCantidadMeses.ValueChanged += nudCantidadMeses_ValueChanged_1;
+            // 
+            // flowLayoutPanel7
+            // 
+            flowLayoutPanel7.Anchor = AnchorStyles.Left;
+            flowLayoutPanel7.Controls.Add(lblFechaVencimientoTitulo);
+            flowLayoutPanel7.Controls.Add(lblFechaVencimiento);
+            flowLayoutPanel7.Location = new Point(0, 110);
+            flowLayoutPanel7.Margin = new Padding(0);
+            flowLayoutPanel7.Name = "flowLayoutPanel7";
+            flowLayoutPanel7.Padding = new Padding(0, 4, 0, 0);
+            flowLayoutPanel7.Size = new Size(325, 40);
+            flowLayoutPanel7.TabIndex = 54;
+            flowLayoutPanel7.WrapContents = false;
             // 
             // lblFechaVencimientoTitulo
             // 
@@ -177,34 +351,182 @@ namespace Presentacion.Core.CuentaCorriente
             lblFechaVencimientoTitulo.Size = new Size(157, 19);
             lblFechaVencimientoTitulo.TabIndex = 5;
             lblFechaVencimientoTitulo.Text = "Próximo Vencimiento:";
-            lblFechaVencimientoTitulo.TextAlign = ContentAlignment.MiddleLeft;
+            lblFechaVencimientoTitulo.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // chkLimiteDeuda
+            // lblFechaVencimiento
             // 
-            chkLimiteDeuda.Anchor = AnchorStyles.Left;
-            chkLimiteDeuda.AutoSize = true;
-            chkLimiteDeuda.Font = new Font("Segoe UI", 10F);
-            chkLimiteDeuda.ForeColor = Color.FromArgb(31, 26, 43);
-            chkLimiteDeuda.Location = new Point(0, 9);
-            chkLimiteDeuda.Margin = new Padding(0);
-            chkLimiteDeuda.Name = "chkLimiteDeuda";
-            chkLimiteDeuda.Size = new Size(117, 23);
-            chkLimiteDeuda.TabIndex = 7;
-            chkLimiteDeuda.Text = "Permitir deuda";
-            chkLimiteDeuda.UseVisualStyleBackColor = true;
-            chkLimiteDeuda.CheckedChanged += chkLimiteDeuda_CheckedChanged_1;
+            lblFechaVencimiento.AutoSize = true;
+            lblFechaVencimiento.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold);
+            lblFechaVencimiento.ForeColor = Color.FromArgb(67, 20, 135);
+            lblFechaVencimiento.Location = new Point(165, 4);
+            lblFechaVencimiento.Margin = new Padding(8, 0, 0, 0);
+            lblFechaVencimiento.Name = "lblFechaVencimiento";
+            lblFechaVencimiento.Size = new Size(83, 19);
+            lblFechaVencimiento.TabIndex = 26;
+            lblFechaVencimiento.Text = "01/08/2026";
+            lblFechaVencimiento.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // grpEstado
+            // 
+            grpEstado.Controls.Add(tableLayoutPanel3);
+            grpEstado.Dock = DockStyle.Fill;
+            grpEstado.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            grpEstado.ForeColor = Color.FromArgb(31, 26, 43);
+            grpEstado.Location = new Point(0, 290);
+            grpEstado.Margin = new Padding(0, 4, 0, 4);
+            grpEstado.Name = "grpEstado";
+            grpEstado.Padding = new Padding(10, 4, 10, 6);
+            grpEstado.Size = new Size(702, 72);
+            grpEstado.TabIndex = 66;
+            grpEstado.TabStop = false;
+            grpEstado.Text = "Estado de la cuenta";
+            // 
+            // tableLayoutPanel3
+            // 
+            tableLayoutPanel3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel3.ColumnCount = 4;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 48.29932F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 51.70068F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130F));
+            tableLayoutPanel3.Controls.Add(flowLayoutPanel3, 0, 0);
+            tableLayoutPanel3.Controls.Add(flowLayoutPanel8, 1, 0);
+            tableLayoutPanel3.Controls.Add(btnActivar, 2, 0);
+            tableLayoutPanel3.Controls.Add(btnCerrarCtacte, 3, 0);
+            tableLayoutPanel3.Location = new Point(10, 22);
+            tableLayoutPanel3.Margin = new Padding(0);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 1;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel3.Size = new Size(682, 44);
+            tableLayoutPanel3.TabIndex = 53;
+            // 
+            // flowLayoutPanel3
+            // 
+            flowLayoutPanel3.Anchor = AnchorStyles.Left;
+            flowLayoutPanel3.AutoSize = true;
+            flowLayoutPanel3.Controls.Add(lblEstadoTitulo);
+            flowLayoutPanel3.Controls.Add(lblEstado);
+            flowLayoutPanel3.Location = new Point(0, 10);
+            flowLayoutPanel3.Margin = new Padding(0);
+            flowLayoutPanel3.Name = "flowLayoutPanel3";
+            flowLayoutPanel3.Size = new Size(161, 23);
+            flowLayoutPanel3.TabIndex = 52;
+            flowLayoutPanel3.WrapContents = false;
+            // 
+            // lblEstadoTitulo
+            // 
+            lblEstadoTitulo.FlatStyle = FlatStyle.Flat;
+            lblEstadoTitulo.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblEstadoTitulo.Location = new Point(3, 0);
+            lblEstadoTitulo.Name = "lblEstadoTitulo";
+            lblEstadoTitulo.Size = new Size(78, 23);
+            lblEstadoTitulo.TabIndex = 0;
+            lblEstadoTitulo.Text = "Estado:";
+            // 
+            // lblEstado
+            // 
+            lblEstado.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold);
+            lblEstado.Location = new Point(87, 0);
+            lblEstado.Name = "lblEstado";
+            lblEstado.Size = new Size(71, 23);
+            lblEstado.TabIndex = 1;
+            lblEstado.Text = "Estado";
+            // 
+            // flowLayoutPanel8
+            // 
+            flowLayoutPanel8.Anchor = AnchorStyles.Left;
+            flowLayoutPanel8.AutoSize = true;
+            flowLayoutPanel8.Controls.Add(lblFechaUltimaActivacionTitulo);
+            flowLayoutPanel8.Controls.Add(lblFechaUltimaActivacion);
+            flowLayoutPanel8.Location = new Point(213, 10);
+            flowLayoutPanel8.Margin = new Padding(0);
+            flowLayoutPanel8.Name = "flowLayoutPanel8";
+            flowLayoutPanel8.Size = new Size(228, 23);
+            flowLayoutPanel8.TabIndex = 55;
+            flowLayoutPanel8.WrapContents = false;
+            // 
+            // lblFechaUltimaActivacionTitulo
+            // 
+            lblFechaUltimaActivacionTitulo.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblFechaUltimaActivacionTitulo.ForeColor = Color.Black;
+            lblFechaUltimaActivacionTitulo.Location = new Point(3, 0);
+            lblFechaUltimaActivacionTitulo.Name = "lblFechaUltimaActivacionTitulo";
+            lblFechaUltimaActivacionTitulo.Size = new Size(132, 23);
+            lblFechaUltimaActivacionTitulo.TabIndex = 0;
+            lblFechaUltimaActivacionTitulo.Text = "Última Activación:";
+            // 
+            // lblFechaUltimaActivacion
+            // 
+            lblFechaUltimaActivacion.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold);
+            lblFechaUltimaActivacion.ForeColor = Color.FromArgb(67, 20, 135);
+            lblFechaUltimaActivacion.Location = new Point(141, 0);
+            lblFechaUltimaActivacion.Name = "lblFechaUltimaActivacion";
+            lblFechaUltimaActivacion.Size = new Size(100, 23);
+            lblFechaUltimaActivacion.TabIndex = 1;
+            lblFechaUltimaActivacion.Text = "01/08/2026";
+            // 
+            // btnActivar
+            // 
+            btnActivar.Anchor = AnchorStyles.None;
+            btnActivar.Location = new Point(446, 5);
+            btnActivar.Margin = new Padding(0);
+            btnActivar.Name = "btnActivar";
+            btnActivar.Size = new Size(100, 34);
+            btnActivar.TabIndex = 56;
+            btnActivar.Text = "Activar";
+            btnActivar.Click += btnActivar_Click;
+            // 
+            // btnCerrarCtacte
+            // 
+            btnCerrarCtacte.Anchor = AnchorStyles.None;
+            btnCerrarCtacte.Location = new Point(556, 5);
+            btnCerrarCtacte.Margin = new Padding(0);
+            btnCerrarCtacte.Name = "btnCerrarCtacte";
+            btnCerrarCtacte.Size = new Size(120, 34);
+            btnCerrarCtacte.TabIndex = 57;
+            btnCerrarCtacte.Text = "Cerrar Cuenta";
+            btnCerrarCtacte.Click += btnCerrarCtacte_Click;
+            // 
+            // lblccorriente
+            // 
+            lblccorriente.Anchor = AnchorStyles.Left;
+            lblccorriente.AutoSize = true;
+            lblccorriente.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblccorriente.ForeColor = Color.FromArgb(31, 26, 43);
+            lblccorriente.Location = new Point(0, 11);
+            lblccorriente.Margin = new Padding(0, 0, 10, 0);
+            lblccorriente.Name = "lblccorriente";
+            lblccorriente.Size = new Size(91, 19);
+            lblccorriente.TabIndex = 0;
+            lblccorriente.Text = "Nombre CC:";
+            lblccorriente.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lblSaldo
+            // 
+            lblSaldo.Anchor = AnchorStyles.Left;
+            lblSaldo.AutoSize = true;
+            lblSaldo.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblSaldo.ForeColor = Color.FromArgb(31, 26, 43);
+            lblSaldo.Location = new Point(99, 14);
+            lblSaldo.Margin = new Padding(0);
+            lblSaldo.Name = "lblSaldo";
+            lblSaldo.Size = new Size(207, 32);
+            lblSaldo.TabIndex = 1;
+            lblSaldo.Text = "Saldo a favor: $0";
+            lblSaldo.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // txtNombreCC
             // 
-            txtNombreCC.Anchor = AnchorStyles.None;
+            txtNombreCC.Anchor = AnchorStyles.Left;
             txtNombreCC.BackColor = Color.White;
             txtNombreCC.BorderStyle = BorderStyle.FixedSingle;
             txtNombreCC.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold);
             txtNombreCC.ForeColor = Color.FromArgb(31, 26, 43);
-            txtNombreCC.Location = new Point(101, 3);
+            txtNombreCC.Location = new Point(101, 8);
             txtNombreCC.Margin = new Padding(0);
             txtNombreCC.Name = "txtNombreCC";
-            txtNombreCC.Size = new Size(245, 26);
+            txtNombreCC.Size = new Size(300, 26);
             txtNombreCC.TabIndex = 8;
             // 
             // lblDni
@@ -216,7 +538,7 @@ namespace Presentacion.Core.CuentaCorriente
             lblDni.Margin = new Padding(0);
             lblDni.Name = "lblDni";
             lblDni.Padding = new Padding(0, 0, 0, 8);
-            lblDni.Size = new Size(744, 33);
+            lblDni.Size = new Size(690, 33);
             lblDni.TabIndex = 13;
             lblDni.Text = "DNI autorizados para usar la cuenta corriente";
             lblDni.TextAlign = ContentAlignment.MiddleLeft;
@@ -309,120 +631,22 @@ namespace Presentacion.Core.CuentaCorriente
             lblNombreCliente.Text = "**********";
             lblNombreCliente.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // groupBox1
-            // 
-            groupBox1.Controls.Add(rbVencimientoManual);
-            groupBox1.Controls.Add(rbVencimientoAutomatico);
-            groupBox1.Dock = DockStyle.Fill;
-            groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            groupBox1.ForeColor = Color.FromArgb(31, 26, 43);
-            groupBox1.Location = new Point(0, 0);
-            groupBox1.Margin = new Padding(0);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Padding = new Padding(10, 6, 10, 6);
-            groupBox1.Size = new Size(385, 57);
-            groupBox1.TabIndex = 24;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Tipo de vencimiento";
-            // 
-            // rbVencimientoManual
-            // 
-            rbVencimientoManual.AutoSize = true;
-            rbVencimientoManual.Font = new Font("Segoe UI", 10F);
-            rbVencimientoManual.Location = new Point(175, 22);
-            rbVencimientoManual.Name = "rbVencimientoManual";
-            rbVencimientoManual.Size = new Size(73, 23);
-            rbVencimientoManual.TabIndex = 1;
-            rbVencimientoManual.TabStop = true;
-            rbVencimientoManual.Text = "Manual";
-            rbVencimientoManual.UseVisualStyleBackColor = true;
-            rbVencimientoManual.CheckedChanged += rbVencimientoManual_CheckedChanged;
-            // 
-            // rbVencimientoAutomatico
-            // 
-            rbVencimientoAutomatico.AutoSize = true;
-            rbVencimientoAutomatico.Font = new Font("Segoe UI", 10F);
-            rbVencimientoAutomatico.Location = new Point(10, 22);
-            rbVencimientoAutomatico.Name = "rbVencimientoAutomatico";
-            rbVencimientoAutomatico.Size = new Size(98, 23);
-            rbVencimientoAutomatico.TabIndex = 0;
-            rbVencimientoAutomatico.TabStop = true;
-            rbVencimientoAutomatico.Text = "Automático";
-            rbVencimientoAutomatico.UseVisualStyleBackColor = true;
-            rbVencimientoAutomatico.CheckedChanged += rbVencimientoMensual_CheckedChanged;
-            // 
-            // nudCantidadMeses
-            // 
-            nudCantidadMeses.Anchor = AnchorStyles.Left;
-            nudCantidadMeses.BackColor = Color.White;
-            nudCantidadMeses.BorderStyle = BorderStyle.FixedSingle;
-            nudCantidadMeses.Font = new Font("Segoe UI", 10F);
-            nudCantidadMeses.Location = new Point(131, 8);
-            nudCantidadMeses.Maximum = new decimal(new int[] { 120, 0, 0, 0 });
-            nudCantidadMeses.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            nudCantidadMeses.Name = "nudCantidadMeses";
-            nudCantidadMeses.Size = new Size(70, 25);
-            nudCantidadMeses.TabIndex = 25;
-            nudCantidadMeses.Value = new decimal(new int[] { 1, 0, 0, 0 });
-            nudCantidadMeses.ValueChanged += nudCantidadMeses_ValueChanged_1;
-            // 
-            // lblFechaVencimiento
-            // 
-            lblFechaVencimiento.AutoSize = true;
-            lblFechaVencimiento.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold);
-            lblFechaVencimiento.ForeColor = Color.FromArgb(67, 20, 135);
-            lblFechaVencimiento.Location = new Point(165, 4);
-            lblFechaVencimiento.Margin = new Padding(8, 0, 0, 0);
-            lblFechaVencimiento.Name = "lblFechaVencimiento";
-            lblFechaVencimiento.Size = new Size(83, 19);
-            lblFechaVencimiento.TabIndex = 26;
-            lblFechaVencimiento.Text = "01/08/2026";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 10F);
-            label2.ForeColor = Color.FromArgb(95, 89, 105);
-            label2.Location = new Point(0, 5);
-            label2.Margin = new Padding(0);
-            label2.Name = "label2";
-            label2.Size = new Size(128, 19);
-            label2.TabIndex = 27;
-            label2.Text = "Cantidad de meses:";
-            // 
             // btnCargarSaldoCtaCte
             // 
-            btnCargarSaldoCtaCte.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+            btnCargarSaldoCtaCte.Anchor = AnchorStyles.None;
             btnCargarSaldoCtaCte.BackColor = Color.White;
             btnCargarSaldoCtaCte.FlatAppearance.BorderColor = Color.FromArgb(67, 20, 135);
             btnCargarSaldoCtaCte.FlatStyle = FlatStyle.Flat;
             btnCargarSaldoCtaCte.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnCargarSaldoCtaCte.ForeColor = Color.FromArgb(67, 20, 135);
-            btnCargarSaldoCtaCte.Location = new Point(231, 42);
+            btnCargarSaldoCtaCte.Location = new Point(477, 10);
             btnCargarSaldoCtaCte.Margin = new Padding(0);
             btnCargarSaldoCtaCte.Name = "btnCargarSaldoCtaCte";
-            btnCargarSaldoCtaCte.Size = new Size(124, 42);
+            btnCargarSaldoCtaCte.Size = new Size(140, 40);
             btnCargarSaldoCtaCte.TabIndex = 32;
             btnCargarSaldoCtaCte.Text = "Cargar saldo";
             btnCargarSaldoCtaCte.UseVisualStyleBackColor = false;
             btnCargarSaldoCtaCte.Click += btnCargarSaldoCtaCte_Click;
-            // 
-            // btnCargarLimite
-            // 
-            btnCargarLimite.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
-            btnCargarLimite.BackColor = Color.White;
-            btnCargarLimite.FlatAppearance.BorderColor = Color.FromArgb(67, 20, 135);
-            btnCargarLimite.FlatStyle = FlatStyle.Flat;
-            btnCargarLimite.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnCargarLimite.ForeColor = Color.FromArgb(67, 20, 135);
-            btnCargarLimite.Location = new Point(236, 0);
-            btnCargarLimite.Margin = new Padding(0);
-            btnCargarLimite.Name = "btnCargarLimite";
-            btnCargarLimite.Size = new Size(124, 42);
-            btnCargarLimite.TabIndex = 33;
-            btnCargarLimite.Text = "Cargar límite";
-            btnCargarLimite.UseVisualStyleBackColor = false;
-            btnCargarLimite.Click += btnCargarLimite_Click;
             // 
             // tbcBase
             // 
@@ -435,354 +659,152 @@ namespace Presentacion.Core.CuentaCorriente
             tbcBase.Name = "tbcBase";
             tbcBase.Padding = new Point(12, 5);
             tbcBase.SelectedIndex = 0;
-            tbcBase.Size = new Size(784, 379);
+            tbcBase.Size = new Size(730, 481);
             tbcBase.TabIndex = 34;
             // 
             // tbpInicio
             // 
-            tbpInicio.Controls.Add(tableLayoutPanel8);
+            tbpInicio.Controls.Add(tableLayoutPanel5);
             tbpInicio.Font = new Font("Segoe UI", 10F);
             tbpInicio.Location = new Point(4, 31);
             tbpInicio.Name = "tbpInicio";
-            tbpInicio.Padding = new Padding(3);
-            tbpInicio.Size = new Size(776, 344);
+            tbpInicio.Padding = new Padding(10);
+            tbpInicio.Size = new Size(722, 446);
             tbpInicio.TabIndex = 0;
             tbpInicio.Text = "Configuración";
             tbpInicio.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanel8
-            // 
-            tableLayoutPanel8.ColumnCount = 2;
-            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel8.Controls.Add(flowLayoutPanel2, 0, 1);
-            tableLayoutPanel8.Controls.Add(tableLayoutPanel3, 1, 1);
-            tableLayoutPanel8.Controls.Add(tableLayoutPanel5, 0, 2);
-            tableLayoutPanel8.Controls.Add(tableLayoutPanel6, 1, 2);
-            tableLayoutPanel8.Controls.Add(tableLayoutPanel7, 1, 3);
-            tableLayoutPanel8.Controls.Add(tableLayoutPanel12, 0, 3);
-            tableLayoutPanel8.Controls.Add(lblNombreCliente2, 0, 0);
-            tableLayoutPanel8.Dock = DockStyle.Fill;
-            tableLayoutPanel8.Location = new Point(3, 3);
-            tableLayoutPanel8.Margin = new Padding(0);
-            tableLayoutPanel8.Name = "tableLayoutPanel8";
-            tableLayoutPanel8.RowCount = 4;
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 102F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 93F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 66F));
-            tableLayoutPanel8.Size = new Size(770, 338);
-            tableLayoutPanel8.TabIndex = 57;
-            // 
-            // flowLayoutPanel2
-            // 
-            flowLayoutPanel2.Anchor = AnchorStyles.None;
-            flowLayoutPanel2.Controls.Add(lblccorriente);
-            flowLayoutPanel2.Controls.Add(txtNombreCC);
-            flowLayoutPanel2.Location = new Point(0, 56);
-            flowLayoutPanel2.Margin = new Padding(0);
-            flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Padding = new Padding(0, 3, 0, 0);
-            flowLayoutPanel2.Size = new Size(385, 57);
-            flowLayoutPanel2.TabIndex = 52;
-            flowLayoutPanel2.WrapContents = false;
-            // 
-            // tableLayoutPanel3
-            // 
-            tableLayoutPanel3.ColumnCount = 1;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 62.07792F));
-            tableLayoutPanel3.Controls.Add(flowLayoutPanel3, 0, 1);
-            tableLayoutPanel3.Controls.Add(tableLayoutPanel2, 0, 0);
-            tableLayoutPanel3.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Location = new Point(385, 34);
-            tableLayoutPanel3.Margin = new Padding(0);
-            tableLayoutPanel3.Name = "tableLayoutPanel3";
-            tableLayoutPanel3.RowCount = 2;
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 35F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 30F));
-            tableLayoutPanel3.Size = new Size(385, 102);
-            tableLayoutPanel3.TabIndex = 53;
-            // 
-            // flowLayoutPanel3
-            // 
-            flowLayoutPanel3.Anchor = AnchorStyles.None;
-            flowLayoutPanel3.Controls.Add(lblEstadoTitulo);
-            flowLayoutPanel3.Controls.Add(lblEstado);
-            flowLayoutPanel3.Location = new Point(73, 63);
-            flowLayoutPanel3.Margin = new Padding(0);
-            flowLayoutPanel3.Name = "flowLayoutPanel3";
-            flowLayoutPanel3.Padding = new Padding(0, 3, 0, 0);
-            flowLayoutPanel3.Size = new Size(238, 30);
-            flowLayoutPanel3.TabIndex = 52;
-            flowLayoutPanel3.WrapContents = false;
-            // 
-            // lblEstadoTitulo
-            // 
-            lblEstadoTitulo.Anchor = AnchorStyles.Left;
-            lblEstadoTitulo.AutoSize = true;
-            lblEstadoTitulo.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblEstadoTitulo.ForeColor = Color.FromArgb(31, 26, 43);
-            lblEstadoTitulo.Location = new Point(0, 3);
-            lblEstadoTitulo.Margin = new Padding(0);
-            lblEstadoTitulo.Name = "lblEstadoTitulo";
-            lblEstadoTitulo.Size = new Size(57, 19);
-            lblEstadoTitulo.TabIndex = 44;
-            lblEstadoTitulo.Tag = "NoModificarConBase";
-            lblEstadoTitulo.Text = "Estado:";
-            // 
-            // lblEstado
-            // 
-            lblEstado.AutoSize = true;
-            lblEstado.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold);
-            lblEstado.ForeColor = Color.FromArgb(67, 20, 135);
-            lblEstado.Location = new Point(65, 3);
-            lblEstado.Margin = new Padding(8, 0, 0, 0);
-            lblEstado.Name = "lblEstado";
-            lblEstado.Size = new Size(69, 19);
-            lblEstado.TabIndex = 45;
-            lblEstado.Tag = "NoModificarConBase";
-            lblEstado.Text = "**********";
-            // 
-            // tableLayoutPanel2
-            // 
-            tableLayoutPanel2.ColumnCount = 2;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Controls.Add(btnActivar, 1, 0);
-            tableLayoutPanel2.Controls.Add(btnCerrarCtacte, 0, 0);
-            tableLayoutPanel2.Location = new Point(3, 3);
-            tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 1;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Size = new Size(379, 42);
-            tableLayoutPanel2.TabIndex = 53;
-            // 
-            // btnCerrarCtacte
-            // 
-            btnCerrarCtacte.Anchor = AnchorStyles.None;
-            btnCerrarCtacte.BackColor = Color.FromArgb(245, 242, 248);
-            btnCerrarCtacte.FlatAppearance.BorderColor = Color.FromArgb(150, 140, 160);
-            btnCerrarCtacte.FlatStyle = FlatStyle.Flat;
-            btnCerrarCtacte.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnCerrarCtacte.ForeColor = Color.FromArgb(31, 26, 43);
-            btnCerrarCtacte.Location = new Point(30, 4);
-            btnCerrarCtacte.Margin = new Padding(0);
-            btnCerrarCtacte.Name = "btnCerrarCtacte";
-            btnCerrarCtacte.Size = new Size(128, 34);
-            btnCerrarCtacte.TabIndex = 48;
-            btnCerrarCtacte.Text = "Cerrar cuenta";
-            btnCerrarCtacte.UseVisualStyleBackColor = false;
-            btnCerrarCtacte.Click += btnCerrarCtacte_Click;
-            // 
-            // btnActivar
-            // 
-            btnActivar.Anchor = AnchorStyles.None;
-            btnActivar.BackColor = Color.FromArgb(67, 20, 135);
-            btnActivar.FlatAppearance.BorderSize = 0;
-            btnActivar.FlatStyle = FlatStyle.Flat;
-            btnActivar.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnActivar.ForeColor = Color.White;
-            btnActivar.Location = new Point(225, 5);
-            btnActivar.Margin = new Padding(0);
-            btnActivar.Name = "btnActivar";
-            btnActivar.Size = new Size(118, 31);
-            btnActivar.TabIndex = 49;
-            btnActivar.Text = "Activar";
-            btnActivar.UseVisualStyleBackColor = false;
-            btnActivar.Click += btnActivar_Click;
             // 
             // tableLayoutPanel5
             // 
             tableLayoutPanel5.ColumnCount = 1;
             tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel5.Controls.Add(tableLayoutPanel4, 0, 0);
-            tableLayoutPanel5.Controls.Add(lblLimiteDeuda, 0, 1);
+            tableLayoutPanel5.Controls.Add(tableLayoutPanel13, 0, 0);
+            tableLayoutPanel5.Controls.Add(flowLayoutPanel2, 0, 1);
+            tableLayoutPanel5.Controls.Add(tableLayoutPanel14, 0, 2);
+            tableLayoutPanel5.Controls.Add(grpEstado, 0, 3);
+            tableLayoutPanel5.Controls.Add(tableLayoutPanel12, 0, 4);
             tableLayoutPanel5.Dock = DockStyle.Fill;
-            tableLayoutPanel5.Location = new Point(0, 136);
+            tableLayoutPanel5.Location = new Point(10, 10);
             tableLayoutPanel5.Margin = new Padding(0);
             tableLayoutPanel5.Name = "tableLayoutPanel5";
-            tableLayoutPanel5.RowCount = 2;
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
+            tableLayoutPanel5.RowCount = 5;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel5.Size = new Size(385, 93);
-            tableLayoutPanel5.TabIndex = 53;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel5.Size = new Size(702, 426);
+            tableLayoutPanel5.TabIndex = 63;
             // 
-            // tableLayoutPanel4
+            // tableLayoutPanel13
             // 
-            tableLayoutPanel4.ColumnCount = 2;
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55F));
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45F));
-            tableLayoutPanel4.Controls.Add(chkLimiteDeuda, 0, 0);
-            tableLayoutPanel4.Controls.Add(btnCargarLimite, 1, 0);
-            tableLayoutPanel4.Location = new Point(0, 0);
-            tableLayoutPanel4.Margin = new Padding(0);
-            tableLayoutPanel4.Name = "tableLayoutPanel4";
-            tableLayoutPanel4.RowCount = 1;
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            tableLayoutPanel4.Size = new Size(385, 42);
-            tableLayoutPanel4.TabIndex = 52;
+            tableLayoutPanel13.ColumnCount = 2;
+            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
+            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
+            tableLayoutPanel13.Controls.Add(lblNombreCliente2, 0, 0);
+            tableLayoutPanel13.Controls.Add(flowLayoutPanel6, 1, 0);
+            tableLayoutPanel13.Dock = DockStyle.Fill;
+            tableLayoutPanel13.Location = new Point(0, 0);
+            tableLayoutPanel13.Margin = new Padding(0);
+            tableLayoutPanel13.Name = "tableLayoutPanel13";
+            tableLayoutPanel13.RowCount = 1;
+            tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel13.Size = new Size(702, 50);
+            tableLayoutPanel13.TabIndex = 58;
             // 
-            // tableLayoutPanel6
+            // lblNombreCliente2
             // 
-            tableLayoutPanel6.ColumnCount = 1;
-            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel6.Controls.Add(groupBox1, 0, 0);
-            tableLayoutPanel6.Controls.Add(flowLayoutPanel5, 0, 1);
-            tableLayoutPanel6.Dock = DockStyle.Fill;
-            tableLayoutPanel6.Location = new Point(385, 136);
-            tableLayoutPanel6.Margin = new Padding(0);
-            tableLayoutPanel6.Name = "tableLayoutPanel6";
-            tableLayoutPanel6.RowCount = 2;
-            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Absolute, 57F));
-            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Absolute, 37F));
-            tableLayoutPanel6.Size = new Size(385, 93);
-            tableLayoutPanel6.TabIndex = 52;
-            // 
-            // flowLayoutPanel5
-            // 
-            flowLayoutPanel5.Controls.Add(label2);
-            flowLayoutPanel5.Controls.Add(nudCantidadMeses);
-            flowLayoutPanel5.Dock = DockStyle.Fill;
-            flowLayoutPanel5.Location = new Point(0, 57);
-            flowLayoutPanel5.Margin = new Padding(0);
-            flowLayoutPanel5.Name = "flowLayoutPanel5";
-            flowLayoutPanel5.Padding = new Padding(0, 5, 0, 0);
-            flowLayoutPanel5.Size = new Size(385, 37);
-            flowLayoutPanel5.TabIndex = 53;
-            flowLayoutPanel5.WrapContents = false;
-            // 
-            // tableLayoutPanel7
-            // 
-            tableLayoutPanel7.ColumnCount = 1;
-            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel7.Controls.Add(flowLayoutPanel6, 0, 0);
-            tableLayoutPanel7.Controls.Add(flowLayoutPanel7, 0, 1);
-            tableLayoutPanel7.Controls.Add(flowLayoutPanel8, 0, 2);
-            tableLayoutPanel7.Dock = DockStyle.Fill;
-            tableLayoutPanel7.Location = new Point(385, 229);
-            tableLayoutPanel7.Margin = new Padding(0);
-            tableLayoutPanel7.Name = "tableLayoutPanel7";
-            tableLayoutPanel7.RowCount = 3;
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
-            tableLayoutPanel7.Size = new Size(385, 109);
-            tableLayoutPanel7.TabIndex = 56;
+            lblNombreCliente2.Anchor = AnchorStyles.Left;
+            lblNombreCliente2.AutoSize = true;
+            lblNombreCliente2.Font = new Font("Segoe UI Semibold", 24F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblNombreCliente2.ForeColor = Color.FromArgb(67, 20, 135);
+            lblNombreCliente2.Location = new Point(0, 2);
+            lblNombreCliente2.Margin = new Padding(0);
+            lblNombreCliente2.Name = "lblNombreCliente2";
+            lblNombreCliente2.Size = new Size(102, 45);
+            lblNombreCliente2.TabIndex = 58;
+            lblNombreCliente2.Text = "label1";
             // 
             // flowLayoutPanel6
             // 
+            flowLayoutPanel6.Anchor = AnchorStyles.Right;
+            flowLayoutPanel6.AutoSize = true;
             flowLayoutPanel6.Controls.Add(lblFechaCreacionTitulo);
             flowLayoutPanel6.Controls.Add(lblFechaCreacion);
-            flowLayoutPanel6.Dock = DockStyle.Fill;
-            flowLayoutPanel6.Location = new Point(0, 0);
+            flowLayoutPanel6.Location = new Point(442, 13);
             flowLayoutPanel6.Margin = new Padding(0);
             flowLayoutPanel6.Name = "flowLayoutPanel6";
-            flowLayoutPanel6.Padding = new Padding(0, 4, 0, 0);
-            flowLayoutPanel6.Size = new Size(385, 29);
+            flowLayoutPanel6.Size = new Size(260, 23);
             flowLayoutPanel6.TabIndex = 53;
             flowLayoutPanel6.WrapContents = false;
             // 
             // lblFechaCreacionTitulo
             // 
-            lblFechaCreacionTitulo.AutoSize = true;
             lblFechaCreacionTitulo.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblFechaCreacionTitulo.ForeColor = Color.FromArgb(31, 26, 43);
-            lblFechaCreacionTitulo.Location = new Point(0, 4);
-            lblFechaCreacionTitulo.Margin = new Padding(0);
+            lblFechaCreacionTitulo.ForeColor = Color.Black;
+            lblFechaCreacionTitulo.Location = new Point(3, 0);
             lblFechaCreacionTitulo.Name = "lblFechaCreacionTitulo";
-            lblFechaCreacionTitulo.Size = new Size(112, 19);
-            lblFechaCreacionTitulo.TabIndex = 46;
-            lblFechaCreacionTitulo.Tag = "NoModificarConBase";
-            lblFechaCreacionTitulo.Text = "Fecha creación:";
+            lblFechaCreacionTitulo.Size = new Size(148, 23);
+            lblFechaCreacionTitulo.TabIndex = 0;
+            lblFechaCreacionTitulo.Text = "Fecha de Creación:";
+            lblFechaCreacionTitulo.TextAlign = ContentAlignment.MiddleRight;
             // 
             // lblFechaCreacion
             // 
-            lblFechaCreacion.AutoSize = true;
             lblFechaCreacion.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold);
             lblFechaCreacion.ForeColor = Color.FromArgb(67, 20, 135);
-            lblFechaCreacion.Location = new Point(120, 4);
-            lblFechaCreacion.Margin = new Padding(8, 0, 0, 0);
+            lblFechaCreacion.Location = new Point(157, 0);
             lblFechaCreacion.Name = "lblFechaCreacion";
-            lblFechaCreacion.Size = new Size(83, 19);
-            lblFechaCreacion.TabIndex = 47;
-            lblFechaCreacion.Tag = "NoModificarConBase";
+            lblFechaCreacion.Size = new Size(100, 23);
+            lblFechaCreacion.TabIndex = 1;
             lblFechaCreacion.Text = "01/08/2026";
+            lblFechaCreacion.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // flowLayoutPanel7
+            // flowLayoutPanel2
             // 
-            flowLayoutPanel7.Controls.Add(lblFechaVencimientoTitulo);
-            flowLayoutPanel7.Controls.Add(lblFechaVencimiento);
-            flowLayoutPanel7.Dock = DockStyle.Fill;
-            flowLayoutPanel7.Location = new Point(0, 29);
-            flowLayoutPanel7.Margin = new Padding(0);
-            flowLayoutPanel7.Name = "flowLayoutPanel7";
-            flowLayoutPanel7.Padding = new Padding(0, 4, 0, 0);
-            flowLayoutPanel7.Size = new Size(385, 29);
-            flowLayoutPanel7.TabIndex = 54;
-            flowLayoutPanel7.WrapContents = false;
+            flowLayoutPanel2.Controls.Add(lblccorriente);
+            flowLayoutPanel2.Controls.Add(txtNombreCC);
+            flowLayoutPanel2.Dock = DockStyle.Fill;
+            flowLayoutPanel2.Location = new Point(0, 50);
+            flowLayoutPanel2.Margin = new Padding(0);
+            flowLayoutPanel2.Name = "flowLayoutPanel2";
+            flowLayoutPanel2.Padding = new Padding(0, 8, 0, 0);
+            flowLayoutPanel2.Size = new Size(702, 44);
+            flowLayoutPanel2.TabIndex = 52;
+            flowLayoutPanel2.WrapContents = false;
             // 
-            // flowLayoutPanel8
+            // tableLayoutPanel14
             // 
-            flowLayoutPanel8.Controls.Add(lblFechaUltimaActivacionTitulo);
-            flowLayoutPanel8.Controls.Add(lblFechaUltimaActivacion);
-            flowLayoutPanel8.Dock = DockStyle.Fill;
-            flowLayoutPanel8.Location = new Point(0, 58);
-            flowLayoutPanel8.Margin = new Padding(0);
-            flowLayoutPanel8.Name = "flowLayoutPanel8";
-            flowLayoutPanel8.Padding = new Padding(0, 4, 0, 0);
-            flowLayoutPanel8.Size = new Size(385, 51);
-            flowLayoutPanel8.TabIndex = 55;
-            flowLayoutPanel8.WrapContents = false;
-            // 
-            // lblFechaUltimaActivacionTitulo
-            // 
-            lblFechaUltimaActivacionTitulo.AutoSize = true;
-            lblFechaUltimaActivacionTitulo.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblFechaUltimaActivacionTitulo.ForeColor = Color.FromArgb(31, 26, 43);
-            lblFechaUltimaActivacionTitulo.Location = new Point(0, 4);
-            lblFechaUltimaActivacionTitulo.Margin = new Padding(0);
-            lblFechaUltimaActivacionTitulo.Name = "lblFechaUltimaActivacionTitulo";
-            lblFechaUltimaActivacionTitulo.Size = new Size(129, 19);
-            lblFechaUltimaActivacionTitulo.TabIndex = 50;
-            lblFechaUltimaActivacionTitulo.Tag = "NoModificarConBase";
-            lblFechaUltimaActivacionTitulo.Text = "Última activación:";
-            // 
-            // lblFechaUltimaActivacion
-            // 
-            lblFechaUltimaActivacion.AutoSize = true;
-            lblFechaUltimaActivacion.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold);
-            lblFechaUltimaActivacion.ForeColor = Color.FromArgb(67, 20, 135);
-            lblFechaUltimaActivacion.Location = new Point(137, 4);
-            lblFechaUltimaActivacion.Margin = new Padding(8, 0, 0, 0);
-            lblFechaUltimaActivacion.Name = "lblFechaUltimaActivacion";
-            lblFechaUltimaActivacion.Size = new Size(83, 19);
-            lblFechaUltimaActivacion.TabIndex = 51;
-            lblFechaUltimaActivacion.Tag = "NoModificarConBase";
-            lblFechaUltimaActivacion.Text = "01/08/2026";
+            tableLayoutPanel14.ColumnCount = 2;
+            tableLayoutPanel14.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel14.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel14.Controls.Add(grpLimite, 0, 0);
+            tableLayoutPanel14.Controls.Add(grpVencimiento, 1, 0);
+            tableLayoutPanel14.Dock = DockStyle.Fill;
+            tableLayoutPanel14.Location = new Point(0, 94);
+            tableLayoutPanel14.Margin = new Padding(0);
+            tableLayoutPanel14.Name = "tableLayoutPanel14";
+            tableLayoutPanel14.RowCount = 1;
+            tableLayoutPanel14.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel14.Size = new Size(702, 192);
+            tableLayoutPanel14.TabIndex = 59;
             // 
             // tableLayoutPanel12
             // 
-            tableLayoutPanel12.ColumnCount = 2;
-            tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 54.6174126F));
-            tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45.3825874F));
-            tableLayoutPanel12.Controls.Add(btnCargarSaldoCtaCte, 1, 1);
-            tableLayoutPanel12.Controls.Add(lblSaldo, 0, 1);
-            tableLayoutPanel12.Location = new Point(3, 232);
+            tableLayoutPanel12.ColumnCount = 3;
+            tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 293F));
+            tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 310F));
+            tableLayoutPanel12.Controls.Add(btnCargarSaldoCtaCte, 2, 0);
+            tableLayoutPanel12.Controls.Add(lblSaldo, 1, 0);
+            tableLayoutPanel12.Dock = DockStyle.Fill;
+            tableLayoutPanel12.Location = new Point(0, 366);
+            tableLayoutPanel12.Margin = new Padding(0);
             tableLayoutPanel12.Name = "tableLayoutPanel12";
-            tableLayoutPanel12.RowCount = 2;
-            tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel12.Size = new Size(379, 84);
+            tableLayoutPanel12.RowCount = 1;
+            tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel12.Size = new Size(702, 60);
             tableLayoutPanel12.TabIndex = 57;
-            // 
-            // lblNombreCliente2
-            // 
-            lblNombreCliente2.AutoSize = true;
-            lblNombreCliente2.Location = new Point(3, 0);
-            lblNombreCliente2.Name = "lblNombreCliente2";
-            lblNombreCliente2.Size = new Size(45, 19);
-            lblNombreCliente2.TabIndex = 58;
-            lblNombreCliente2.Text = "label1";
             // 
             // tbpMovimientos
             // 
@@ -792,7 +814,7 @@ namespace Presentacion.Core.CuentaCorriente
             tbpMovimientos.Location = new Point(4, 31);
             tbpMovimientos.Name = "tbpMovimientos";
             tbpMovimientos.Padding = new Padding(10);
-            tbpMovimientos.Size = new Size(776, 344);
+            tbpMovimientos.Size = new Size(722, 446);
             tbpMovimientos.TabIndex = 1;
             tbpMovimientos.Text = "Movimientos";
             tbpMovimientos.UseVisualStyleBackColor = true;
@@ -847,7 +869,7 @@ namespace Presentacion.Core.CuentaCorriente
             dgvGrilla.RowsDefaultCellStyle = dataGridViewCellStyle5;
             dgvGrilla.RowTemplate.Height = 30;
             dgvGrilla.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvGrilla.Size = new Size(756, 244);
+            dgvGrilla.Size = new Size(702, 346);
             dgvGrilla.TabIndex = 35;
             dgvGrilla.MouseDown += dgvGrilla_MouseDown;
             // 
@@ -857,13 +879,13 @@ namespace Presentacion.Core.CuentaCorriente
             tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel10.Controls.Add(tableLayoutPanel9, 0, 0);
             tableLayoutPanel10.Dock = DockStyle.Bottom;
-            tableLayoutPanel10.Location = new Point(10, 288);
+            tableLayoutPanel10.Location = new Point(10, 390);
             tableLayoutPanel10.Margin = new Padding(0);
             tableLayoutPanel10.Name = "tableLayoutPanel10";
             tableLayoutPanel10.Padding = new Padding(0, 6, 0, 0);
             tableLayoutPanel10.RowCount = 1;
             tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel10.Size = new Size(756, 46);
+            tableLayoutPanel10.Size = new Size(702, 46);
             tableLayoutPanel10.TabIndex = 37;
             // 
             // tableLayoutPanel9
@@ -879,7 +901,7 @@ namespace Presentacion.Core.CuentaCorriente
             tableLayoutPanel9.Name = "tableLayoutPanel9";
             tableLayoutPanel9.RowCount = 1;
             tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel9.Size = new Size(756, 40);
+            tableLayoutPanel9.Size = new Size(702, 40);
             tableLayoutPanel9.TabIndex = 9;
             // 
             // lblTotalRegistros
@@ -906,12 +928,12 @@ namespace Presentacion.Core.CuentaCorriente
             tableLayoutPanel11.Controls.Add(lblPagina, 1, 0);
             tableLayoutPanel11.Controls.Add(btnSiguiente, 2, 0);
             tableLayoutPanel11.Dock = DockStyle.Fill;
-            tableLayoutPanel11.Location = new Point(302, 0);
+            tableLayoutPanel11.Location = new Point(280, 0);
             tableLayoutPanel11.Margin = new Padding(0);
             tableLayoutPanel11.Name = "tableLayoutPanel11";
             tableLayoutPanel11.RowCount = 1;
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel11.Size = new Size(454, 40);
+            tableLayoutPanel11.Size = new Size(422, 40);
             tableLayoutPanel11.TabIndex = 7;
             // 
             // btnAnterior
@@ -922,7 +944,7 @@ namespace Presentacion.Core.CuentaCorriente
             btnAnterior.FlatStyle = FlatStyle.Flat;
             btnAnterior.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnAnterior.ForeColor = Color.FromArgb(67, 20, 135);
-            btnAnterior.Location = new Point(52, 6);
+            btnAnterior.Location = new Point(47, 6);
             btnAnterior.Name = "btnAnterior";
             btnAnterior.Size = new Size(45, 28);
             btnAnterior.TabIndex = 2;
@@ -936,7 +958,7 @@ namespace Presentacion.Core.CuentaCorriente
             lblPagina.AutoSize = true;
             lblPagina.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
             lblPagina.ForeColor = Color.FromArgb(31, 26, 43);
-            lblPagina.Location = new Point(195, 11);
+            lblPagina.Location = new Point(180, 11);
             lblPagina.Name = "lblPagina";
             lblPagina.Size = new Size(61, 17);
             lblPagina.TabIndex = 1;
@@ -951,7 +973,7 @@ namespace Presentacion.Core.CuentaCorriente
             btnSiguiente.FlatStyle = FlatStyle.Flat;
             btnSiguiente.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnSiguiente.ForeColor = Color.FromArgb(67, 20, 135);
-            btnSiguiente.Location = new Point(356, 6);
+            btnSiguiente.Location = new Point(329, 6);
             btnSiguiente.Name = "btnSiguiente";
             btnSiguiente.Size = new Size(45, 28);
             btnSiguiente.TabIndex = 7;
@@ -968,7 +990,7 @@ namespace Presentacion.Core.CuentaCorriente
             lblListadoMovimientos.Margin = new Padding(0);
             lblListadoMovimientos.Name = "lblListadoMovimientos";
             lblListadoMovimientos.Padding = new Padding(0, 0, 0, 8);
-            lblListadoMovimientos.Size = new Size(756, 34);
+            lblListadoMovimientos.Size = new Size(702, 34);
             lblListadoMovimientos.TabIndex = 36;
             lblListadoMovimientos.Tag = "NoModificarConBase";
             lblListadoMovimientos.Text = "Movimientos";
@@ -984,10 +1006,38 @@ namespace Presentacion.Core.CuentaCorriente
             tbpDnis.Location = new Point(4, 31);
             tbpDnis.Name = "tbpDnis";
             tbpDnis.Padding = new Padding(16);
-            tbpDnis.Size = new Size(776, 344);
+            tbpDnis.Size = new Size(722, 446);
             tbpDnis.TabIndex = 2;
             tbpDnis.Text = "DNI habilitados";
             tbpDnis.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel18
+            // 
+            tableLayoutPanel18.Location = new Point(0, 0);
+            tableLayoutPanel18.Name = "tableLayoutPanel18";
+            tableLayoutPanel18.Size = new Size(200, 100);
+            tableLayoutPanel18.TabIndex = 0;
+            // 
+            // tableLayoutPanel4
+            // 
+            tableLayoutPanel4.Location = new Point(0, 0);
+            tableLayoutPanel4.Name = "tableLayoutPanel4";
+            tableLayoutPanel4.Size = new Size(200, 100);
+            tableLayoutPanel4.TabIndex = 0;
+            // 
+            // tableLayoutPanel16
+            // 
+            tableLayoutPanel16.Location = new Point(0, 0);
+            tableLayoutPanel16.Name = "tableLayoutPanel16";
+            tableLayoutPanel16.Size = new Size(200, 100);
+            tableLayoutPanel16.TabIndex = 0;
+            // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.Location = new Point(0, 0);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.Size = new Size(200, 100);
+            tableLayoutPanel2.TabIndex = 0;
             // 
             // tableLayoutPanel1
             // 
@@ -1028,43 +1078,43 @@ namespace Presentacion.Core.CuentaCorriente
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(784, 432);
+            ClientSize = new Size(730, 534);
             Controls.Add(tbcBase);
             ForeColor = Color.FromArgb(31, 26, 43);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximumSize = new Size(746, 573);
             Name = "FCuentaCorrienteABM";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "ABM Cuenta Corriente";
             Load += FCuentaCorrienteABM_Load;
             Controls.SetChildIndex(tbcBase, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
+            grpLimite.ResumeLayout(false);
+            tableLayoutPanel15.ResumeLayout(false);
+            tableLayoutPanel15.PerformLayout();
+            grpVencimiento.ResumeLayout(false);
+            tableLayoutPanel17.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)nudCantidadMeses).EndInit();
-            tbcBase.ResumeLayout(false);
-            tbpInicio.ResumeLayout(false);
-            tableLayoutPanel8.ResumeLayout(false);
-            tableLayoutPanel8.PerformLayout();
-            flowLayoutPanel2.ResumeLayout(false);
-            flowLayoutPanel2.PerformLayout();
-            tableLayoutPanel3.ResumeLayout(false);
-            flowLayoutPanel3.ResumeLayout(false);
-            flowLayoutPanel3.PerformLayout();
-            tableLayoutPanel2.ResumeLayout(false);
-            tableLayoutPanel5.ResumeLayout(false);
-            tableLayoutPanel5.PerformLayout();
-            tableLayoutPanel4.ResumeLayout(false);
-            tableLayoutPanel4.PerformLayout();
-            tableLayoutPanel6.ResumeLayout(false);
             flowLayoutPanel5.ResumeLayout(false);
             flowLayoutPanel5.PerformLayout();
-            tableLayoutPanel7.ResumeLayout(false);
-            flowLayoutPanel6.ResumeLayout(false);
-            flowLayoutPanel6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudCantidadMeses).EndInit();
             flowLayoutPanel7.ResumeLayout(false);
             flowLayoutPanel7.PerformLayout();
+            grpEstado.ResumeLayout(false);
+            tableLayoutPanel3.ResumeLayout(false);
+            tableLayoutPanel3.PerformLayout();
+            flowLayoutPanel3.ResumeLayout(false);
             flowLayoutPanel8.ResumeLayout(false);
-            flowLayoutPanel8.PerformLayout();
+            tbcBase.ResumeLayout(false);
+            tbpInicio.ResumeLayout(false);
+            tableLayoutPanel5.ResumeLayout(false);
+            tableLayoutPanel13.ResumeLayout(false);
+            tableLayoutPanel13.PerformLayout();
+            flowLayoutPanel6.ResumeLayout(false);
+            flowLayoutPanel2.ResumeLayout(false);
+            flowLayoutPanel2.PerformLayout();
+            tableLayoutPanel14.ResumeLayout(false);
             tableLayoutPanel12.ResumeLayout(false);
             tableLayoutPanel12.PerformLayout();
             tbpMovimientos.ResumeLayout(false);
@@ -1119,10 +1169,6 @@ namespace Presentacion.Core.CuentaCorriente
         private TableLayoutPanel tableLayoutPanel1;
         private TableLayoutPanel tableLayoutPanel3;
         private TableLayoutPanel tableLayoutPanel4;
-        private TableLayoutPanel tableLayoutPanel5;
-        private TableLayoutPanel tableLayoutPanel6;
-        private TableLayoutPanel tableLayoutPanel7;
-        private TableLayoutPanel tableLayoutPanel8;
         private TableLayoutPanel tableLayoutPanel9;
         private TableLayoutPanel tableLayoutPanel10;
         private TableLayoutPanel tableLayoutPanel11;
@@ -1155,10 +1201,20 @@ namespace Presentacion.Core.CuentaCorriente
         protected DataGridView dgvGrilla;
 
         private Label lblListadoMovimientos;
+        private GroupBox grpLimite;
+        private GroupBox grpVencimiento;
+        private GroupBox grpEstado;
 
         private PictureBox pbxLogo;
         private TableLayoutPanel tableLayoutPanel12;
         private Label lblNombreCliente2;
         private TableLayoutPanel tableLayoutPanel2;
+        private TableLayoutPanel tableLayoutPanel14;
+        private TableLayoutPanel tableLayoutPanel15;
+        private TableLayoutPanel tableLayoutPanel13;
+        private TableLayoutPanel tableLayoutPanel5;
+        private TableLayoutPanel tableLayoutPanel18;
+        private TableLayoutPanel tableLayoutPanel17;
+        private TableLayoutPanel tableLayoutPanel16;
     }
 }
