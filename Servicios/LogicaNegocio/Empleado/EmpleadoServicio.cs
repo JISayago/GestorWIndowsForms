@@ -66,14 +66,14 @@ namespace Servicios.LogicaNegocio.Empleado
             };
 
             context.Personas.Add(persona);
-            context.SaveChanges(); 
-                        
+            context.SaveChanges();
+
             var empleado = new AccesoDatos.Entidades.Empleado
             {
                 PersonaId = persona.PersonaId,
                 Legajo = empleadoDto.Legajo,
                 FechaIngreso = empleadoDto.FechaIngreso,
-                Estado = 0,
+                Estado = (int)EstadoEmpleado.Inhablitado,
                 Username = null,
                 Pass = null,
                 UsuarioEstaHabilitado = false

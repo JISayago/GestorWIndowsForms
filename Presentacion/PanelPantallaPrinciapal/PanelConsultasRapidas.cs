@@ -3,6 +3,7 @@ using Presentacion.Core.Movimiento;
 using Presentacion.Core.Producto;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Venta;
@@ -240,6 +241,11 @@ namespace Presentacion.Notificaciones
             btnPrevVenta.Click += (s, e) => { if (_paginaActualV > 1) { _paginaActualV--; RefrescarVentas(); } };
             btnNextVenta.Click += (s, e) => { if (_paginaActualV < _totalPaginasV) { _paginaActualV++; RefrescarVentas(); } };
             btnVerMas.Click += (s, e) => {
+                if (!AuthHelper.Tiene("Admin.Movimientos"))
+                {
+                    MessageBox.Show("Acceso disponible sólo para Administradores");
+                    return;
+                }
                 var movimientosVenta = new FMovimientoConsulta();
                 movimientosVenta.ShowDialog();
             };
