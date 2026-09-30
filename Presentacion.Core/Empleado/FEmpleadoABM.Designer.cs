@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FEmpleadoABM));
             lblLegajo = new Label();
             lblFechaIngreso = new Label();
             lblApellido = new Label();
@@ -274,6 +275,7 @@
             Controls.Add(lblFechaIngreso);
             Controls.Add(lblLegajo);
             ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FEmpleadoABM";
             Text = "ABM Empleado";
             Controls.SetChildIndex(lblLegajo, 0);
