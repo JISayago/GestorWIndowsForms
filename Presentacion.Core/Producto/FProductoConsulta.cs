@@ -158,12 +158,7 @@ namespace Presentacion.Core.Producto
 
         protected override void ConfigurarAccionesPersonalizadas()
         {
-            AgregarAccion(
-                "Stock",
-                Constantes.Imagenes.ImgStock,
-                AbrirGestionStock,
-                true
-            );
+         
 
             if (vieneDeCargaProducto)
             {
@@ -173,6 +168,16 @@ namespace Presentacion.Core.Producto
                     SeleccionProducto,
                     true
                 );
+            }
+            else
+            {
+                AgregarAccion(
+             "Stock",
+             Constantes.Imagenes.ImgStock,
+             AbrirGestionStock,
+             true
+         );
+
             }
 
 

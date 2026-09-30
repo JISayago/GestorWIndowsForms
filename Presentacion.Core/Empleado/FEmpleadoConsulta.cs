@@ -66,12 +66,24 @@ namespace Presentacion.Core.Empleado
 
         protected override void ConfigurarAccionesPersonalizadas()
         {
-            AgregarAccion(
-                "Roles",
-                Constantes.Imagenes.ImgRoles,
-                AbrirAsignacionRoles,
+            if (vieneDeCargaVendedor)
+            {
+                AgregarAccion(
+                "Asignar Vendedor",
+                Constantes.Imagenes.ImgAsignarVendedor,
+                AsignarVendedor,
                 true
             );
+            }
+            else
+            {
+
+                AgregarAccion(
+                    "Roles",
+                    Constantes.Imagenes.ImgRoles,
+                    AbrirAsignacionRoles,
+                    true
+                );
 
             AgregarAccion(
                 "Crear Usuario",
@@ -81,18 +93,12 @@ namespace Presentacion.Core.Empleado
             );
 
             AgregarAccion(
-                "Asignar Vendedor",
-                Constantes.Imagenes.ImgAsignarVendedor,
-                AsignarVendedor,
-                true
-            );
-
-            AgregarAccion(
                 "Resetear Contraseña",
                 Constantes.Imagenes.ImgResetearContraseña,
                 ResetarContraseniaUsuario,
                 true
             );
+            }
         }
 
         private void AbrirAsignacionRoles(long? id)
