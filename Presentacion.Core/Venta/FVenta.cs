@@ -78,6 +78,16 @@ namespace Presentacion.Core.Venta
 
             VENTAID = VentaId;
 
+
+            //VENTANA FULLSCREEN SIN BORDES NI BOTONES DE CIERRE
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.ControlBox = false;
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false; // opcional
+
             if (VentaId != null)
             {
                 var ventaCargada = _ventaServicio.ObtenerVentaDetalle((long)VENTAID);

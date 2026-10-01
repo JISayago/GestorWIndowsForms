@@ -89,6 +89,16 @@ namespace Presentacion
             lblNombreUsuario.AutoSize = true;
             lblNombreUsuario.Dock = DockStyle.None;
             lblNombreUsuario.TextAlign = ContentAlignment.MiddleLeft;
+
+
+            //VENTANA FULLSCREEN SIN BORDES NI BOTONES DE CIERRE
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.ControlBox = false;
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false; // opcional
         }
 
         #endregion

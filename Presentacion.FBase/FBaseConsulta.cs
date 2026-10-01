@@ -62,6 +62,14 @@ namespace Presentacion.FBase
             dgvGrilla.Paint += DgvGrilla_PaintFondoVacio;
             dgvGrilla.Resize += (_, __) => AjustarAlturaFilasParaPageSize();
             dgvGrilla.DataBindingComplete += (_, __) => AjustarAlturaFilasParaPageSize();
+
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.ControlBox = false;
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false; // opcional
         }
 
         #region LOAD
