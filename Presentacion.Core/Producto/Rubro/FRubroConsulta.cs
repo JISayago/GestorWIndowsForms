@@ -236,7 +236,7 @@ namespace Presentacion.Core.Producto.Rubro
             {
                 AgregarAccion(
                     "Seleccionar Rubro",
-                    Constantes.Imagenes.ImgPerfilUsuario,
+                    Constantes.Imagenes.ImgSumar,
                     SeleccionRubro,
                     true
                 );
