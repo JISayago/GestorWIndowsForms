@@ -426,6 +426,10 @@ namespace Presentacion.Core.Producto.Lote
 
         public override void EjecutarBtnNuevo()
         {
+            MessageBox.Show(
+     "Para gestionar el stock, serás redirigido al listado de productos. " +
+     "Desde allí podrás seleccionar el producto y utilizar el botón de manejo de stock."
+ );
             var f = new FProductoConsulta();
 
             f.ShowDialog();
