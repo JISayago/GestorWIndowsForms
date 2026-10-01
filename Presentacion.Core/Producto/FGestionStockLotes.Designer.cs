@@ -88,7 +88,7 @@
             lblNombreProducto.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             lblNombreProducto.AutoSize = true;
             lblNombreProducto.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
-            lblNombreProducto.ForeColor = Color.SeaGreen;
+            lblNombreProducto.ForeColor = Color.FromArgb(67, 20, 135);
             lblNombreProducto.Location = new Point(3, 30);
             lblNombreProducto.Name = "lblNombreProducto";
             lblNombreProducto.Size = new Size(546, 30);
