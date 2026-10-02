@@ -417,7 +417,7 @@ namespace Presentacion.FBase
         {
             btn.BackColor = TemaSistema.Seleccion;
             btn.ForeColor = Color.Black;
-
+            
             btn.FlatStyle = FlatStyle.Flat;
 
             btn.FlatAppearance.BorderSize = 1;
@@ -482,6 +482,9 @@ namespace Presentacion.FBase
             dgv.RowHeadersVisible = false;
 
             dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+            // Fondo del área vacía (debajo de las filas / sin datos) igual al de las consultas.
+            FondoGrillaVacioHelper.Aplicar(dgv);
 
             // El alto de las filas no debe poder modificarse arrastrando con el mouse (el ancho de
             // las columnas sí). Centralizado acá para que aplique a todos los grids del sistema,
@@ -640,7 +643,7 @@ namespace Presentacion.FBase
                 }
             }
         }
-        private void ConfigurarFormPlot(FormsPlot fp)
+         private void ConfigurarFormPlot(FormsPlot fp)
         {
             fp.BackColor = TemaSistema.Fondo;
             var spColor = ScottPlot.Color.FromHex("#EAEAEA");
