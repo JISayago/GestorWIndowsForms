@@ -417,7 +417,7 @@ namespace Presentacion.FBase
         {
             btn.BackColor = TemaSistema.Seleccion;
             btn.ForeColor = Color.Black;
-            
+
             btn.FlatStyle = FlatStyle.Flat;
 
             btn.FlatAppearance.BorderSize = 1;
@@ -482,6 +482,14 @@ namespace Presentacion.FBase
             dgv.RowHeadersVisible = false;
 
             dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+            // El alto de las filas no debe poder modificarse arrastrando con el mouse (el ancho de
+            // las columnas sí). Centralizado acá para que aplique a todos los grids del sistema,
+            // incluidos los armados por código. El alto del encabezado también se bloquea, salvo
+            // que ya esté en AutoSize (en ese modo el usuario no puede cambiarlo).
+            dgv.AllowUserToResizeRows = false;
+            if (dgv.ColumnHeadersHeightSizeMode == DataGridViewColumnHeadersHeightSizeMode.EnableResizing)
+                dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
 
             // Ordenar al hacer click en el header: la mayoría de los grids del sistema bindean un
             // List<T> plano (dgv.DataSource = resultado.Items), que NO soporta el sort nativo de
@@ -632,7 +640,7 @@ namespace Presentacion.FBase
                 }
             }
         }
-         private void ConfigurarFormPlot(FormsPlot fp)
+        private void ConfigurarFormPlot(FormsPlot fp)
         {
             fp.BackColor = TemaSistema.Fondo;
             var spColor = ScottPlot.Color.FromHex("#EAEAEA");
