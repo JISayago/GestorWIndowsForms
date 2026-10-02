@@ -35,9 +35,11 @@
             btnAbrirCaja = new Button();
             lblEstadoCaja = new Label();
             lblSaldoCaja = new Label();
+            pbEstadoCaja = new PictureBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel2 = new TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbEstadoCaja).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             SuspendLayout();
@@ -112,25 +114,37 @@
             lblSaldoCaja.TabIndex = 9;
             lblSaldoCaja.Text = "saldocaja";
             // 
+            // pbEstadoCaja
+            // 
+            pbEstadoCaja.Anchor = AnchorStyles.None;
+            pbEstadoCaja.BackColor = Color.Transparent;
+            pbEstadoCaja.Location = new Point(136, 43);
+            pbEstadoCaja.Name = "pbEstadoCaja";
+            pbEstadoCaja.Size = new Size(48, 48);
+            pbEstadoCaja.SizeMode = PictureBoxSizeMode.Zoom;
+            pbEstadoCaja.TabIndex = 12;
+            pbEstadoCaja.TabStop = false;
+            // 
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 2);
-            tableLayoutPanel1.Controls.Add(btnConsultarMovimientos, 0, 4);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 3);
+            tableLayoutPanel1.Controls.Add(btnConsultarMovimientos, 0, 5);
             tableLayoutPanel1.Controls.Add(lblEstadoCaja, 0, 0);
-            tableLayoutPanel1.Controls.Add(btnConsultarCajas, 0, 3);
-            tableLayoutPanel1.Controls.Add(lblSaldoCaja, 0, 1);
+            tableLayoutPanel1.Controls.Add(pbEstadoCaja, 0, 1);
+            tableLayoutPanel1.Controls.Add(btnConsultarCajas, 0, 4);
+            tableLayoutPanel1.Controls.Add(lblSaldoCaja, 0, 2);
             tableLayoutPanel1.Location = new Point(12, 12);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 5;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(320, 277);
+            tableLayoutPanel1.RowCount = 6;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.Size = new Size(320, 316);
             tableLayoutPanel1.TabIndex = 10;
             // 
             // tableLayoutPanel2
@@ -152,7 +166,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(344, 301);
+            ClientSize = new Size(344, 340);
             Controls.Add(tableLayoutPanel1);
             ForeColor = Color.FromArgb(31, 26, 43);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -161,6 +175,7 @@
             Text = "Caja";
             Load += FCaja_Load;
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbEstadoCaja).EndInit();
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
@@ -175,6 +190,7 @@
         private Button btnAbrirCaja;
         private Label lblEstadoCaja;
         private Label lblSaldoCaja;
+        private PictureBox pbEstadoCaja;
         private TableLayoutPanel tableLayoutPanel1;
         private TableLayoutPanel tableLayoutPanel2;
     }

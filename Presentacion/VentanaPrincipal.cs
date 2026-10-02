@@ -538,7 +538,7 @@ namespace Presentacion
             //BOTON CAJA                //
             //========================= //
 
-            btnCaja.Image = Constantes.Imagenes.ImgVenta;
+            btnCaja.Image = Constantes.Imagenes.ImgCaja;
             // Alineamos la imagen arriba al centro
             btnCaja.ImageAlign = ContentAlignment.TopCenter;
             btnCaja.TextImageRelation = TextImageRelation.ImageAboveText;

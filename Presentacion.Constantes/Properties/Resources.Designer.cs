@@ -103,6 +103,36 @@ namespace Presentacion.Constantes.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ImagenCaja {
+            get {
+                object obj = ResourceManager.GetObject("ImagenCaja", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ImagenCajaAbierta {
+            get {
+                object obj = ResourceManager.GetObject("ImagenCajaAbierta", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ImagenCajaCerrada {
+            get {
+                object obj = ResourceManager.GetObject("ImagenCajaCerrada", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ImagenCancelacion {
             get {
                 object obj = ResourceManager.GetObject("ImagenCancelacion", resourceCulture);

@@ -86,6 +86,9 @@ namespace Presentacion.Core.Caja
                 lblSaldoCaja.Text = x.ToString("C");
             }
             lblEstadoCaja.Text = !cajaInicial.EstaCerrada ? "CAJA ABIERTA" : "CAJA CERRADA";
+            pbEstadoCaja.Image = cajaInicial.EstaCerrada
+                ? Constantes.Imagenes.ImgCajaCerrada
+                : Constantes.Imagenes.ImgCajaAbierta;
         }
         private void FCaja_Load(object sender, EventArgs e)
         {
