@@ -1,5 +1,6 @@
 using AccesoDatos;
 using AccesoDatos.Config;
+using AccesoDatos.Database;
 using Licencia.Constantes;
 using Licencia.Modelos;
 using Licencia.Servicios;
@@ -122,7 +123,64 @@ namespace Presentacion
 
                 return;
             }
+            //---------------------------------------------
+            // ESTO ES CLAUDE PARA EL SEED EN CASO DE TRIAL
+            //---------------------------------------------
 
+            bool esTrial = resultadoLicencia.Tipo == LicenseType.Trial;   // usá tu enum real
+            Conexion.BaseForzada = esTrial ? "StockeateTrial" : "Stockeate";
+
+            try { PreparadorBase.Migrar(); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("No se pudo preparar la base de datos:\n" + ex.Message, "Error");
+                return;
+            }
+
+            if (!PruebaConexion.ProbarConexion(out string error2))
+            {
+                MessageBox.Show(
+                    $"No se pudo establecer conexión con la base de datos.\n\n{error2}",
+                    "Error de conexión",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return;
+            }
+
+            new InicializadorDatosObligatorios().InicializarBaseMinima();
+
+            if (esTrial)
+            {
+                var estado = SeedTrial.Estado();
+                if (estado != EstadoSeed.Completa)
+                {
+                    Exception? errorSeed = null;
+                    using var pantalla = new PantallaCargaEspera("Preparando la versión de prueba (puede demorar unos minutos)...");
+                    pantalla.Shown += async (s, e) =>
+                    {
+                        try
+                        {
+                            var runner = new SeedRunner(Path.Combine(AppContext.BaseDirectory, "Seed"));
+                            var progreso = new Progress<SeedProgreso>(p =>
+                            {
+                                pantalla.SetProgress(p.Paso * 100 / p.Total);
+                                pantalla.SetMensaje($"Cargando datos de ejemplo ({p.Paso}/{p.Total})");
+                            });
+                            await Task.Run(() => runner.EjecutarAsync(estado == EstadoSeed.Parcial, progreso));
+                        }
+                        catch (Exception ex) { errorSeed = ex; }
+                        finally { pantalla.Close(); }
+                    };
+                    Application.Run(pantalla);
+
+                    if (errorSeed != null)
+                    {
+                        MessageBox.Show("No se pudieron cargar los datos de prueba:\n" + errorSeed.Message, "Error");
+                        return;
+                    }
+                }
+            }
 
             //---------------------------------------------
             // CONEXIÓN
