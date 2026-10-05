@@ -49,9 +49,37 @@ INSERT INTO [dbo].[Personas] ([PersonaId],[Nombre],[Apellido],[Dni],[Cuil],[Tele
 INSERT INTO [dbo].[Personas] ([PersonaId],[Nombre],[Apellido],[Dni],[Cuil],[Telefono],[Telefono2],[Email],[Direccion],[FechaNacimiento],[EstaEliminado]) VALUES (142, N'Ivan', N'Ramallo', N'20000142', N'27-20000142-2', N'3814100142', NULL, N'ivan.ramallo@mail.com', N'Calle Falsa 142', '1985-06-15', 0)
 INSERT INTO [dbo].[Personas] ([PersonaId],[Nombre],[Apellido],[Dni],[Cuil],[Telefono],[Telefono2],[Email],[Direccion],[FechaNacimiento],[EstaEliminado]) VALUES (143, N'Morena', N'Salas', N'20000143', N'27-20000143-2', N'3814100143', NULL, N'morena.salas@mail.com', N'Calle Falsa 143', '1985-06-15', 0)
 INSERT INTO [dbo].[Personas] ([PersonaId],[Nombre],[Apellido],[Dni],[Cuil],[Telefono],[Telefono2],[Email],[Direccion],[FechaNacimiento],[EstaEliminado]) VALUES (144, N'Santino', N'Coronel', N'20000144', N'27-20000144-2', N'3814100144', NULL, N'santino.coronel@mail.com', N'Calle Falsa 144', '1985-06-15', 0)
+INSERT INTO [dbo].[Personas]
+(
+    [PersonaId],
+    [Nombre],
+    [Apellido],
+    [Dni],
+    [Cuil],
+    [Telefono],
+    [Telefono2],
+    [Email],
+    [Direccion],
+    [FechaNacimiento],
+    [EstaEliminado]
+)
+VALUES
+(
+    145,
+    N'Consumidor Final',
+    N'',
+    N'00000000',
+    N'00-00000000-0',
+    N'0000000000',
+    N'',
+    N'',
+    N'Consumidor Final',
+    DATEADD(YEAR, -30, CAST(GETDATE() AS DATE)),
+    0
+)
 SET IDENTITY_INSERT [dbo].[Personas] OFF
 GO
-DBCC CHECKIDENT ('[dbo].[Personas]', RESEED, 144)
+DBCC CHECKIDENT ('[dbo].[Personas]', RESEED, 145)
 GO
 INSERT INTO [dbo].[Empleados] ([PersonaId],[legajo],[fechaIngreso],[fechaEgreso],[estado],[username],[pass],[usuarioestahabilitado]) VALUES (100, N'LEG100', '2024-01-01', NULL, 3, N'lfernandez', NULL, 1)
 INSERT INTO [dbo].[Empleados] ([PersonaId],[legajo],[fechaIngreso],[fechaEgreso],[estado],[username],[pass],[usuarioestahabilitado]) VALUES (101, N'LEG101', '2024-01-01', NULL, 3, N'mgomez', NULL, 1)
@@ -99,6 +127,7 @@ SET IDENTITY_INSERT [dbo].[Empleados_Roles] OFF
 GO
 DBCC CHECKIDENT ('[dbo].[Empleados_Roles]', RESEED, 103)
 GO
+
 INSERT INTO [dbo].[Clientes] ([PersonaId],[CuentaCorrienteId],[numero_cliente],[fecha_alta],[fecha_baja],[estado],[estado_descripcion]) VALUES (105, NULL, N'CLI-105', '2024-02-01', NULL, 1, N'Cliente activo')
 INSERT INTO [dbo].[Clientes] ([PersonaId],[CuentaCorrienteId],[numero_cliente],[fecha_alta],[fecha_baja],[estado],[estado_descripcion]) VALUES (106, NULL, N'CLI-106', '2024-02-01', NULL, 1, N'Cliente activo')
 INSERT INTO [dbo].[Clientes] ([PersonaId],[CuentaCorrienteId],[numero_cliente],[fecha_alta],[fecha_baja],[estado],[estado_descripcion]) VALUES (107, NULL, N'CLI-107', '2024-02-01', NULL, 1, N'Cliente activo')
@@ -139,6 +168,26 @@ INSERT INTO [dbo].[Clientes] ([PersonaId],[CuentaCorrienteId],[numero_cliente],[
 INSERT INTO [dbo].[Clientes] ([PersonaId],[CuentaCorrienteId],[numero_cliente],[fecha_alta],[fecha_baja],[estado],[estado_descripcion]) VALUES (142, NULL, N'CLI-142', '2024-02-01', '2025-11-01', 2, N'Cliente dado de baja')
 INSERT INTO [dbo].[Clientes] ([PersonaId],[CuentaCorrienteId],[numero_cliente],[fecha_alta],[fecha_baja],[estado],[estado_descripcion]) VALUES (143, NULL, N'CLI-143', '2024-02-01', NULL, 1, N'Cliente activo')
 INSERT INTO [dbo].[Clientes] ([PersonaId],[CuentaCorrienteId],[numero_cliente],[fecha_alta],[fecha_baja],[estado],[estado_descripcion]) VALUES (144, NULL, N'CLI-144', '2024-02-01', NULL, 1, N'Cliente activo')
+INSERT INTO [dbo].[Clientes]
+(
+    [PersonaId],
+    [CuentaCorrienteId],
+    [numero_cliente],
+    [fecha_alta],
+    [fecha_baja],
+    [estado],
+    [estado_descripcion]
+)
+VALUES
+(
+    145,
+    NULL,
+    N'0',
+    CAST(GETDATE() AS DATE),
+    NULL,
+    1,
+    N'Cliente activo'
+)
 GO
 SET IDENTITY_INSERT [dbo].[CuentasCorrientes] ON
 INSERT INTO [dbo].[CuentasCorrientes] ([CuentaCorrienteId],[saldo],[limite_deuda],[esta_eliminado],[fecha_vencimiento],[limite_deuda_activo],[nombre_cuenta_corriente],[EstadoCuentaCorriente],[ClienteId],[con_deuda],[tipo_vencimiento],[cantidad_meses_vencimiento],[fecha_creacion],[fecha_activacion]) VALUES (100, -8000.00, 50000.00, 0, '2027-12-31', 1, N'Cuenta Corriente Ana Torres', 1, 105, 1, 1, 12, '2024-02-01', '2024-02-01')
