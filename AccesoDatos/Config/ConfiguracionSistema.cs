@@ -16,5 +16,7 @@ namespace AccesoDatos.Config
         public ConfiguracionLicencia Licencia { get; set; } = new();
 
         public ConfiguracionComprobantes Comprobantes { get; set; } = new();
+
+        public ConfiguracionBaseDatos? BaseDatosTrial { get; set; }
     }
 }

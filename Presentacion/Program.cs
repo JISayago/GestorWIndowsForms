@@ -128,7 +128,7 @@ namespace Presentacion
             //---------------------------------------------
 
             bool esTrial = resultadoLicencia.Tipo == LicenseType.Trial;   // usá tu enum real
-            Conexion.BaseForzada = esTrial ? "StockeateTrial" : "Stockeate";
+            Conexion.UsarTrial = esTrial;
 
             try { PreparadorBase.Migrar(); }
             catch (Exception ex)
