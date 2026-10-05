@@ -452,6 +452,7 @@ namespace Presentacion
             flowLayoutNotificaciones.Controls.Add(notifOfertasBajoStock);
 
             var listaOfertasBajoStock = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasBajoStock();
+            notifOfertasBajoStock.Tipo = TipoNotificacion.OfertaBajoStock;
             notifOfertasBajoStock.SetData(listaOfertasBajoStock, "Ofertas con Bajo Stock");
             RestaurarEstadoExpandido(notifOfertasBajoStock, listaOfertasBajoStock?.Count ?? 0);
         }

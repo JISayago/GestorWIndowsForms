@@ -1,4 +1,5 @@
 ﻿using Presentacion.Core.Cliente;
+using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Lote;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Sistema.Rol;
@@ -14,6 +15,7 @@ namespace Presentacion.Notificaciones
     {
         LoteVencido,
         OfertaVencida,
+        OfertaBajoStock,
         CuentaCorrienteVencida
     }
 
@@ -44,6 +46,10 @@ namespace Presentacion.Notificaciones
 
                 case TipoNotificacion.OfertaVencida:
                     AbrirOferta(aviso);
+                    break;
+
+                case TipoNotificacion.OfertaBajoStock:
+                    AbrirProductosDeOferta(aviso, pantallaPrincipalServicio);
                     break;
 
                 case TipoNotificacion.CuentaCorrienteVencida:
@@ -94,6 +100,27 @@ namespace Presentacion.Notificaciones
                     TextoBuscar = codigo,
                     Filtro1 = "Codigo",
                     Bool1 = true
+                }
+            }.Show();
+        }
+
+        private static void AbrirProductosDeOferta(NotificacionDTO aviso, IPantallaPrincipalServicio servicio)
+        {
+            if (!TienePermiso("Productos.Ver"))
+                return;
+
+            var codigoOferta = servicio.ObtenerCodigoOfertaDeAvisoBajoStock(aviso.Titulo);
+            if (string.IsNullOrWhiteSpace(codigoOferta))
+                return;
+
+            // Lista todos los productos que componen la oferta (sea del tipo que sea), para ver
+            // cuál falta y reponerlo.
+            new FProductoConsulta
+            {
+                BusquedaInicial = new BusquedaInicialConsulta
+                {
+                    TextoBuscar = codigoOferta,
+                    Filtro1 = "OfertaCodigo"
                 }
             }.Show();
         }

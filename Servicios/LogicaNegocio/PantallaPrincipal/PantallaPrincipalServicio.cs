@@ -417,6 +417,35 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             }
         }
 
+        /// <summary>
+        /// Devuelve el código de la oferta de un aviso de bajo stock. El título tiene la forma
+        /// "Oferta con bajo stock: {Codigo} - {Producto}"; como el código puede escribirse a mano y
+        /// contener " - ", primero se lo busca entre las ofertas que hoy tienen bajo stock y, si ya
+        /// no figura ahí, se toma lo que está antes del primer " - ".
+        /// </summary>
+        public string ObtenerCodigoOfertaDeAvisoBajoStock(string tituloAviso)
+        {
+            const string prefijo = "Oferta con bajo stock:";
+
+            if (string.IsNullOrWhiteSpace(tituloAviso) ||
+                !tituloAviso.StartsWith(prefijo, StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            var resto = tituloAviso.Substring(prefijo.Length).Trim();
+            if (resto.Length == 0)
+                return null;
+
+            var coincidencia = _ofertaServicio.ObtenerOfertasConBajoStock()
+                .FirstOrDefault(o => $"{o.Codigo} - {o.NombreProducto}" == resto);
+
+            if (coincidencia != null)
+                return coincidencia.Codigo;
+
+            var corte = resto.IndexOf(" - ", StringComparison.Ordinal);
+            var codigo = corte > 0 ? resto.Substring(0, corte) : resto;
+            return string.IsNullOrWhiteSpace(codigo) ? null : codigo.Trim();
+        }
+
         public DatosTurnoDTO ObtenerDatosTurno(long? cajaId, long usuarioId)
         {
             DatosTurnoDTO datosTurno;

@@ -11,7 +11,6 @@ using System.Windows.Forms;
 
 public class NotificationGroupBox : GroupBox
 {
-    private Button btnToggle;
     private FlowLayoutPanel panelItems;
     private bool expanded = false;
     private string _tituloVisual = "";
@@ -44,9 +43,6 @@ public class NotificationGroupBox : GroupBox
     private readonly Color COLOR_ITEM_FONDO_NUEVO = Color.White;
     private readonly Color COLOR_TEXTO_PRINCIPAL = TemaSistema.Texto;
     private readonly Color COLOR_TEXTO_SECUNDARIO = TemaSistema.TextoSecundario;
-    private readonly Color COLOR_BTN_FONDO = TemaSistema.Seleccion;
-    private readonly Color COLOR_BTN_BORDE = Color.Black;
-    private readonly Color COLOR_BTN_TEXTO = Color.Black;
 
     public NotificationGroupBox()
     {
@@ -55,7 +51,7 @@ public class NotificationGroupBox : GroupBox
         this.BackColor = TemaSistema.Fondo;
         this.ForeColor = TemaSistema.Texto;
         _pantallaPrincipalServicio = new PantallaPrincipalServicio();
-        _toolTip.SetToolTip(this, "Click derecho en un aviso: marcarlo como leído");
+        _toolTip.SetToolTip(this, "Click en el título: abrir o cerrar el grupo\nClick derecho en un aviso: marcarlo como leído");
         InicializarComponentes();
     }
 
@@ -63,20 +59,6 @@ public class NotificationGroupBox : GroupBox
     {
         this.Height = 50;
         this.Font = new Font("Segoe UI", 9);
-
-        btnToggle = new Button
-        {
-            Text = "▲",
-            Width = 30,
-            Height = 25,
-            Location = new Point(this.Width - 50, 12),
-            Anchor = AnchorStyles.Top | AnchorStyles.Right,
-            FlatStyle = FlatStyle.Flat,
-            BackColor = COLOR_BTN_FONDO,
-            ForeColor = COLOR_BTN_TEXTO
-        };
-        btnToggle.FlatAppearance.BorderColor = COLOR_BTN_BORDE;
-        btnToggle.Click += BtnToggle_Click;
 
         panelItems = new FlowLayoutPanel
         {
@@ -89,11 +71,13 @@ public class NotificationGroupBox : GroupBox
         };
 
         this.Controls.Add(panelItems);
-        this.Controls.Add(btnToggle);
+
+        // Abrir/cerrar con click en la cabecera (reemplaza al botón de la flecha).
+        this.MouseClick += GroupBox_MouseClick;
+        this.MouseMove += GroupBox_MouseMove;
 
         this.Resize += (s, e) =>
         {
-            btnToggle.Location = new Point(this.Width - 50, 12);
             foreach (Control ctrl in panelItems.Controls)
             {
                 ctrl.Width = panelItems.ClientSize.Width - 5;
@@ -254,24 +238,36 @@ public class NotificationGroupBox : GroupBox
         return panelItem;
     }
 
-    private void BtnToggle_Click(object sender, EventArgs e)
+    // Cerrado: toda el área del grupo (50 px) es cabecera y abre. Abierto: solo la franja del
+    // título (el padding superior) cierra; el resto son los avisos, que tienen sus propios clicks.
+    private bool EsZonaCabecera(Point p)
     {
+        return !expanded || p.Y < this.Padding.Top;
+    }
+
+    private bool TieneAvisos => panelItems.Controls.Count > 0;
+
+    private void GroupBox_MouseClick(object sender, MouseEventArgs e)
+    {
+        if (e.Button != MouseButtons.Left || !TieneAvisos || !EsZonaCabecera(e.Location))
+            return;
+
         expanded = !expanded;
         AplicarEstado();
+    }
+
+    private void GroupBox_MouseMove(object sender, MouseEventArgs e)
+    {
+        this.Cursor = TieneAvisos && EsZonaCabecera(e.Location)
+            ? Cursors.Hand
+            : Cursors.Default;
     }
 
     private void AplicarEstado()
     {
         panelItems.Visible = expanded;
-        if (expanded)
-        {
-            btnToggle.Text = "▲";
-            this.Height = Math.Max(panelItems.Bottom + this.Padding.Bottom, 50);
-        }
-        else
-        {
-            btnToggle.Text = "▼";
-            this.Height = 50;
-        }
+        this.Height = expanded
+            ? Math.Max(panelItems.Bottom + this.Padding.Bottom, 50)
+            : 50;
     }
 }
