@@ -19,6 +19,7 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
         void NotificacionesOfertasBajoStock();
         void NotificacionesCtaCteVencidas();
         void MarcarNotificacionComoLeida(long notificacionId);
+        string ObtenerDniClientePorNombreCuentaCorriente(string nombreCuentaCorriente);
         DatosTurnoDTO ObtenerDatosTurno(long? cajaId, long usuarioId);
         DatosTurnoDTO ObtenerActualizarDatosCaja(long? cajaId, DatosTurnoDTO datosTurno);
         void GuardarNotasRapidas(string textoLimpio, string nombreUsuario);

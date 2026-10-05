@@ -14,6 +14,12 @@ namespace Presentacion.FBase
     public partial class FBaseConsulta : FBase
     {
         protected long? entidadID;
+
+        /// <summary>
+        /// Filtros iniciales opcionales. Se asigna antes de mostrar el formulario y se aplica una
+        /// sola vez, justo antes de la primera carga de la grilla.
+        /// </summary>
+        public BusquedaInicialConsulta BusquedaInicial { get; set; }
         protected bool puedeEjecutarComando;
         private FiltroConsulta ultimoFiltro;
 
@@ -86,7 +92,49 @@ namespace Presentacion.FBase
 
             AjustarVisibilidadFiltros();
             AjustarLayoutFooterYFiltros();
+            AplicarBusquedaInicial();
             RefrescarGrilla();
+        }
+
+        private void AplicarBusquedaInicial()
+        {
+            var inicial = BusquedaInicial;
+            if (inicial == null)
+                return;
+
+            // Evita que los handlers de los checks/combos dispongan refrescos o limpien filtros
+            // mientras se cargan los valores; el refresco lo hace el Load a continuación.
+            _actualizandoFiltros = true;
+            try
+            {
+                AsignarCombo(cbx1, inicial.Filtro1);
+                AsignarCombo(cbx2, inicial.Filtro2);
+                AsignarCombo(cbx3, inicial.Filtro3);
+
+                if (inicial.Bool1.HasValue && chkBool1 != null && chkBool1.Enabled)
+                    chkBool1.Checked = inicial.Bool1.Value;
+
+                if (inicial.Bool2.HasValue && chkBool2 != null && chkBool2.Enabled)
+                    chkBool2.Checked = inicial.Bool2.Value;
+
+                if (inicial.TextoBuscar != null && txtBuscar != null)
+                    txtBuscar.Text = inicial.TextoBuscar;
+            }
+            finally
+            {
+                _actualizandoFiltros = false;
+            }
+
+            // Se aplica una sola vez: si luego la consulta se limpia, no se vuelve a imponer.
+            BusquedaInicial = null;
+        }
+
+        private static void AsignarCombo(ComboBox combo, object valor)
+        {
+            if (valor == null || combo == null || !combo.Enabled)
+                return;
+
+            combo.SelectedValue = valor;
         }
 
         private void CargarLogoEnBase()

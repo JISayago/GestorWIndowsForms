@@ -395,6 +395,28 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             }
         }
 
+        /// <summary>
+        /// Devuelve el DNI del cliente dueño de la cuenta corriente con ese nombre (el que figura en
+        /// el título del aviso), o null si no se encuentra. Sirve para abrir la consulta de clientes
+        /// filtrada por ese cliente.
+        /// </summary>
+        public string ObtenerDniClientePorNombreCuentaCorriente(string nombreCuentaCorriente)
+        {
+            if (string.IsNullOrWhiteSpace(nombreCuentaCorriente))
+                return null;
+
+            var nombre = nombreCuentaCorriente.Trim();
+
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                return context.CuentaCorriente
+                    .AsNoTracking()
+                    .Where(c => c.NombreCuentaCorriente == nombre)
+                    .Select(c => c.Cliente.Persona.Dni)
+                    .FirstOrDefault();
+            }
+        }
+
         public DatosTurnoDTO ObtenerDatosTurno(long? cajaId, long usuarioId)
         {
             DatosTurnoDTO datosTurno;

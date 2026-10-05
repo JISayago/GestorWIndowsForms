@@ -1,4 +1,5 @@
 using Presentacion.FBase.Helpers;
+using Presentacion.Notificaciones;
 using Servicios.Helpers.Sistema;
 using Servicios.LogicaNegocio.PantallaPrincipal;
 using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
@@ -20,6 +21,12 @@ public class NotificationGroupBox : GroupBox
     public event EventHandler NotificacionCambiada;
 
     public string TituloBase { get; private set; } = "";
+
+    /// <summary>
+    /// Tipo de aviso del grupo. Si está definido, el click izquierdo abre la consulta del objeto
+    /// del aviso; si es null, el click izquierdo no hace nada. Se asigna antes de SetData.
+    /// </summary>
+    public TipoNotificacion? Tipo { get; set; }
 
     public bool Expanded
     {
@@ -165,7 +172,11 @@ public class NotificationGroupBox : GroupBox
             BackColor = item.Leida ? COLOR_ITEM_FONDO_LEIDO : COLOR_ITEM_FONDO_NUEVO
         };
 
-        _toolTip.SetToolTip(panelItem, "Click derecho: marcar como leído");
+        string textoAyuda = Tipo.HasValue
+            ? "Click izquierdo: abrir la consulta\nClick derecho: marcar como leído"
+            : "Click derecho: marcar como leído";
+
+        _toolTip.SetToolTip(panelItem, textoAyuda);
 
         panelItem.Paint += (s, e) =>
         {
@@ -203,6 +214,13 @@ public class NotificationGroupBox : GroupBox
 
         MouseEventHandler unifiedClickHandler = (s, e) =>
         {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (Tipo.HasValue)
+                    NotificacionNavegador.Abrir(Tipo.Value, item, _pantallaPrincipalServicio);
+                return;
+            }
+
             if (e.Button != MouseButtons.Right || item.Leida)
                 return;
 
@@ -227,8 +245,8 @@ public class NotificationGroupBox : GroupBox
         panelItem.MouseClick += unifiedClickHandler;
         lblTitulo.MouseClick += unifiedClickHandler;
         lblDescripcion.MouseClick += unifiedClickHandler;
-        _toolTip.SetToolTip(lblTitulo, "Click derecho: marcar como leído");
-        _toolTip.SetToolTip(lblDescripcion, "Click derecho: marcar como leído");
+        _toolTip.SetToolTip(lblTitulo, textoAyuda);
+        _toolTip.SetToolTip(lblDescripcion, textoAyuda);
 
         panelItem.Controls.Add(lblTitulo);
         panelItem.Controls.Add(lblDescripcion);

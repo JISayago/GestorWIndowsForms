@@ -422,6 +422,7 @@ namespace Presentacion
             flowLayoutNotificaciones.Controls.Add(notiProdVencidos);
 
             var listaLotesNotificar = _pantallaPrincipalServicio.ObtenerNotificacionesProdutosVencidos();
+            notiProdVencidos.Tipo = TipoNotificacion.LoteVencido;
             notiProdVencidos.SetData(listaLotesNotificar, "Lotes Vencidos");
             RestaurarEstadoExpandido(notiProdVencidos, listaLotesNotificar?.Count ?? 0);
         }
@@ -436,6 +437,7 @@ namespace Presentacion
             flowLayoutNotificaciones.Controls.Add(notifOferVencidas);
 
             var listaOfertasVencidas = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasVencidas();
+            notifOferVencidas.Tipo = TipoNotificacion.OfertaVencida;
             notifOferVencidas.SetData(listaOfertasVencidas, "Ofertas Vencidas");
             RestaurarEstadoExpandido(notifOferVencidas, listaOfertasVencidas?.Count ?? 0);
         }
@@ -464,6 +466,7 @@ namespace Presentacion
             flowLayoutNotificaciones.Controls.Add(notifCuentasCorrientesVencidas);
 
             var listaCuentasCorrientes = _pantallaPrincipalServicio.ObtenerNotificacionesCtaCteVencidas();
+            notifCuentasCorrientesVencidas.Tipo = TipoNotificacion.CuentaCorrienteVencida;
             notifCuentasCorrientesVencidas.SetData(listaCuentasCorrientes, "Cuentas Corrientes Vencidas");
             RestaurarEstadoExpandido(notifCuentasCorrientesVencidas, listaCuentasCorrientes?.Count ?? 0);
         }
