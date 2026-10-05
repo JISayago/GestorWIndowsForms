@@ -593,3 +593,166 @@ INSERT INTO [dbo].[OfertaProductoEstadisticas] ([id_OfertaDescuento],[id_Product
 GO
 PRINT N'Catalogo QueryData3.0 OK';
 GO
+-- ============================================================
+-- TIPOS DE PAGO
+-- ============================================================
+
+SET IDENTITY_INSERT [dbo].[TiposPago] ON
+
+INSERT INTO [dbo].[TiposPago]
+(
+    [id_TipoPago],
+    [nombre],
+    [numero_referencia],
+    [metodo_pago_habilitado],
+    [detalle],
+    [codigo]
+)
+VALUES
+(
+    100,
+    N'Efectivo',
+    1,
+    1,
+    N'Pago en efectivo',
+    N'EF'
+);
+
+INSERT INTO [dbo].[TiposPago]
+(
+    [id_TipoPago],
+    [nombre],
+    [numero_referencia],
+    [metodo_pago_habilitado],
+    [detalle],
+    [codigo]
+)
+VALUES
+(
+    101,
+    N'Transferencia Bancaria',
+    3,
+    1,
+    N'Pago mediante transferencia bancaria',
+    N'TB'
+);
+
+INSERT INTO [dbo].[TiposPago]
+(
+    [id_TipoPago],
+    [nombre],
+    [numero_referencia],
+    [metodo_pago_habilitado],
+    [detalle],
+    [codigo]
+)
+VALUES
+(
+    102,
+    N'Tarjeta de Crédito',
+    2,
+    1,
+    N'Pago con tarjeta de crédito',
+    N'TC'
+);
+
+INSERT INTO [dbo].[TiposPago]
+(
+    [id_TipoPago],
+    [nombre],
+    [numero_referencia],
+    [metodo_pago_habilitado],
+    [detalle],
+    [codigo]
+)
+VALUES
+(
+    103,
+    N'Tarjeta de Débito',
+    4,
+    1,
+    N'Pago con tarjeta de débito',
+    N'TD'
+);
+
+INSERT INTO [dbo].[TiposPago]
+(
+    [id_TipoPago],
+    [nombre],
+    [numero_referencia],
+    [metodo_pago_habilitado],
+    [detalle],
+    [codigo]
+)
+VALUES
+(
+    104,
+    N'Cuenta Corriente',
+    5,
+    1,
+    N'Pago mediante cuenta corriente',
+    N'CC'
+);
+
+INSERT INTO [dbo].[TiposPago]
+(
+    [id_TipoPago],
+    [nombre],
+    [numero_referencia],
+    [metodo_pago_habilitado],
+    [detalle],
+    [codigo]
+)
+VALUES
+(
+    105,
+    N'QR',
+    6,
+    1,
+    N'Pago mediante código QR',
+    N'QR'
+);
+
+INSERT INTO [dbo].[TiposPago]
+(
+    [id_TipoPago],
+    [nombre],
+    [numero_referencia],
+    [metodo_pago_habilitado],
+    [detalle],
+    [codigo]
+)
+VALUES
+(
+    106,
+    N'Cheque',
+    7,
+    1,
+    N'Pago mediante cheque',
+    N'CH'
+);
+
+INSERT INTO [dbo].[TiposPago]
+(
+    [id_TipoPago],
+    [nombre],
+    [numero_referencia],
+    [metodo_pago_habilitado],
+    [detalle],
+    [codigo]
+)
+VALUES
+(
+    107,
+    N'Otro',
+    8,
+    1,
+    N'Otros métodos de pago',
+    N'OT'
+);
+
+SET IDENTITY_INSERT [dbo].[TiposPago] OFF
+GO
+
+DBCC CHECKIDENT ('[dbo].[TiposPago]', RESEED, 107)
+GO
