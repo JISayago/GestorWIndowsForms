@@ -606,7 +606,8 @@ INSERT INTO [dbo].[TiposPago]
     [numero_referencia],
     [metodo_pago_habilitado],
     [detalle],
-    [codigo]
+    [codigo],
+    [EstaELiminado]
 )
 VALUES
 (
@@ -615,7 +616,8 @@ VALUES
     1,
     1,
     N'Pago en efectivo',
-    N'EF'
+    N'EF',
+    0
 );
 
 INSERT INTO [dbo].[TiposPago]
@@ -625,7 +627,8 @@ INSERT INTO [dbo].[TiposPago]
     [numero_referencia],
     [metodo_pago_habilitado],
     [detalle],
-    [codigo]
+    [codigo],
+    [EstaELiminado]
 )
 VALUES
 (
@@ -634,7 +637,8 @@ VALUES
     3,
     1,
     N'Pago mediante transferencia bancaria',
-    N'TB'
+    N'TB',
+    0
 );
 
 INSERT INTO [dbo].[TiposPago]
@@ -644,7 +648,8 @@ INSERT INTO [dbo].[TiposPago]
     [numero_referencia],
     [metodo_pago_habilitado],
     [detalle],
-    [codigo]
+    [codigo],
+    [EstaELiminado]
 )
 VALUES
 (
@@ -653,7 +658,8 @@ VALUES
     2,
     1,
     N'Pago con tarjeta de crédito',
-    N'TC'
+    N'TC',
+    0
 );
 
 INSERT INTO [dbo].[TiposPago]
@@ -663,7 +669,8 @@ INSERT INTO [dbo].[TiposPago]
     [numero_referencia],
     [metodo_pago_habilitado],
     [detalle],
-    [codigo]
+    [codigo],
+    [EstaELiminado]
 )
 VALUES
 (
@@ -672,7 +679,8 @@ VALUES
     4,
     1,
     N'Pago con tarjeta de débito',
-    N'TD'
+    N'TD',
+    0
 );
 
 INSERT INTO [dbo].[TiposPago]
@@ -682,7 +690,8 @@ INSERT INTO [dbo].[TiposPago]
     [numero_referencia],
     [metodo_pago_habilitado],
     [detalle],
-    [codigo]
+    [codigo],
+    [EstaELiminado]
 )
 VALUES
 (
@@ -691,7 +700,8 @@ VALUES
     5,
     1,
     N'Pago mediante cuenta corriente',
-    N'CC'
+    N'CC',
+    0
 );
 
 INSERT INTO [dbo].[TiposPago]
@@ -701,7 +711,8 @@ INSERT INTO [dbo].[TiposPago]
     [numero_referencia],
     [metodo_pago_habilitado],
     [detalle],
-    [codigo]
+    [codigo],
+    [EstaELiminado]
 )
 VALUES
 (
@@ -710,7 +721,8 @@ VALUES
     6,
     1,
     N'Pago mediante código QR',
-    N'QR'
+    N'QR',
+    0
 );
 
 INSERT INTO [dbo].[TiposPago]
@@ -720,7 +732,8 @@ INSERT INTO [dbo].[TiposPago]
     [numero_referencia],
     [metodo_pago_habilitado],
     [detalle],
-    [codigo]
+    [codigo],
+    [EstaELiminado]
 )
 VALUES
 (
@@ -729,7 +742,8 @@ VALUES
     7,
     1,
     N'Pago mediante cheque',
-    N'CH'
+    N'CH',
+    0
 );
 
 INSERT INTO [dbo].[TiposPago]
@@ -739,7 +753,8 @@ INSERT INTO [dbo].[TiposPago]
     [numero_referencia],
     [metodo_pago_habilitado],
     [detalle],
-    [codigo]
+    [codigo],
+    [EstaELiminado]
 )
 VALUES
 (
@@ -748,7 +763,8 @@ VALUES
     8,
     1,
     N'Otros métodos de pago',
-    N'OT'
+    N'OT',
+    0
 );
 
 SET IDENTITY_INSERT [dbo].[TiposPago] OFF
