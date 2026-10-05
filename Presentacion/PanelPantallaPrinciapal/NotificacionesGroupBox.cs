@@ -99,14 +99,20 @@ public class NotificationGroupBox : GroupBox
         Graphics g = e.Graphics;
         g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
+        // La flecha indica que el grupo se abre/cierra con click en el título; solo se muestra
+        // si hay avisos que desplegar (▼ cerrado, ▲ abierto).
+        string textoTitulo = TieneAvisos
+            ? _tituloVisual + (expanded ? "  ▲" : "  ▼")
+            : _tituloVisual;
+
         using Font fontTitulo = new Font("Segoe UI", 8.5f, FontStyle.Bold);
-        Size sizeTexto = TextRenderer.MeasureText(_tituloVisual, fontTitulo);
+        Size sizeTexto = TextRenderer.MeasureText(textoTitulo, fontTitulo);
         Rectangle rectFondo = new Rectangle(10, 0, sizeTexto.Width + 20, 22);
 
         using (SolidBrush brushFondo = new SolidBrush(COLOR_TITULO_FONDO))
             g.FillRectangle(brushFondo, rectFondo);
 
-        TextRenderer.DrawText(g, _tituloVisual, fontTitulo, rectFondo,
+        TextRenderer.DrawText(g, textoTitulo, fontTitulo, rectFondo,
             COLOR_TITULO_TEXTO, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
     }
 
@@ -269,5 +275,7 @@ public class NotificationGroupBox : GroupBox
         this.Height = expanded
             ? Math.Max(panelItems.Bottom + this.Padding.Bottom, 50)
             : 50;
+
+        this.Invalidate();
     }
 }
