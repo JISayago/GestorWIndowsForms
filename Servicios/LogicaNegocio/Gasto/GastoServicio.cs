@@ -407,10 +407,17 @@ namespace Servicios.LogicaNegocio.Gasto
             // 🧠 CORE: ANULADOS + HISTORICO
             // =========================================================
 
+            int estadoFiltro = 0;
+
+            bool tieneFiltroEstado =
+                filtros.Filtro2 != null &&
+                int.TryParse(filtros.Filtro2.ToString(), out estadoFiltro);
+
             if (filtros.Bool2)
             {
                 // 👉 HISTORICO
-                // trae todos los estados
+                //query = query.Where(g =>
+                //    g.EstadoGasto != (int)EstadoGasto.Anulado);
             }
             else if (filtros.Bool1)
             {
@@ -418,28 +425,24 @@ namespace Servicios.LogicaNegocio.Gasto
                 query = query.Where(g =>
                     g.EstadoGasto == (int)EstadoGasto.Anulado);
             }
-            else
+            else if (!tieneFiltroEstado)
             {
                 // 👉 DEFAULT
-                // NO anulados + lógica pendiente/último mes
+                // NO anulados + pendientes + gastos del último mes
 
                 var desde = DateTime.Now.AddMonths(-1);
 
                 query = query.Where(g =>
                     g.EstadoGasto != (int)EstadoGasto.Anulado &&
-
                     (
                         g.EstadoGasto == (int)EstadoGasto.Pendiente
-
                         ||
-
                         (
                             g.FechaGasto.HasValue &&
                             g.FechaGasto.Value >= desde
                         )
                     ));
             }
-
             // =========================================================
             // 🔍 BUSQUEDA
             // =========================================================
@@ -541,13 +544,11 @@ namespace Servicios.LogicaNegocio.Gasto
             // 🔴 FILTRO ESTADO (cbx2)
             // =========================================================
 
-            if (filtros.Filtro2 != null &&
-                int.TryParse(filtros.Filtro2.ToString(), out var estado))
+            if (tieneFiltroEstado)
             {
                 query = query.Where(g =>
-                    g.EstadoGasto == estado);
+                    g.EstadoGasto == estadoFiltro);
             }
-
             // =========================================================
             // 📅 FILTRO FECHAS
             // =========================================================

@@ -1,5 +1,6 @@
 using AccesoDatos;
 using AccesoDatos.Config;
+using AccesoDatos.Database;
 using Licencia.Constantes;
 using Licencia.Modelos;
 using Licencia.Servicios;
@@ -14,10 +15,12 @@ using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.Seguridad;
 using Stockeate;
+using Stockeate.Licensing;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Presentacion
 {
@@ -48,17 +51,9 @@ namespace Presentacion
                     MessageBoxIcon.Error);
             };
 
-
             //---------------------------------------------
             // PRIMERA EJECUCIÓN
             //---------------------------------------------
-
-            // IMPORTANTE:
-            // Se comprueba ANTES de llamar a StartupValidator.
-            //
-            // StartupValidator puede crear installation.json.
-            // Si lo comprobáramos después, ya no sabríamos
-            // que era el primer inicio.
 
             bool primeraEjecucion =
                 !File.Exists(LicensePaths.Installation);
@@ -73,8 +68,7 @@ namespace Presentacion
 
 
             //---------------------------------------------
-            // NO EXISTE LICENCIA
-            // O LICENCIA INVÁLIDA
+            // NO EXISTE LICENCIA O ES INVÁLIDA
             //---------------------------------------------
 
             if (!resultadoLicencia.Valida &&
@@ -87,10 +81,6 @@ namespace Presentacion
                     var resultadoFormulario =
                         activacion.ShowDialog();
 
-                    // ------------------------------------------------
-                    // El usuario cerró/canceló.
-                    // ------------------------------------------------
-
                     if (resultadoFormulario != DialogResult.OK ||
                         !activacion.LicenciaValida)
                     {
@@ -98,13 +88,124 @@ namespace Presentacion
                     }
                 }
 
-
                 //---------------------------------------------
                 // VOLVER A VALIDAR
                 //---------------------------------------------
 
                 resultadoLicencia =
                     StartupValidator.ValidarInicio();
+            }
+
+
+            //---------------------------------------------
+            // ¿HAY UNA LICENCIA TRIAL?
+            //---------------------------------------------
+
+            LicenseInfo? licenciaActual = null;
+
+            if (File.Exists(LicensePaths.License))
+            {
+                try
+                {
+                    licenciaActual =
+                        new LicenseStorage().Leer();
+                }
+                catch
+                {
+                    // La validación posterior se encargará del error.
+                }
+            }
+
+            //---------------------------------------------
+            // LICENCIA TRIAL
+            //---------------------------------------------
+
+            if (licenciaActual != null &&
+                licenciaActual.Tipo == LicenseType.Trial)
+            {
+                // ========================================================
+                // TRIAL VENCIDA
+                // ========================================================
+
+                if (resultadoLicencia.Estado == LicenseStatus.Vencida)
+                {
+                    using var avisoTrial =
+                        new FActualizacionLicencia(
+                            licenciaActual,
+                            licenciaVencida: true);
+
+                    avisoTrial.ShowDialog();
+
+                    if (avisoTrial.DeseaCargarLicencia)
+                    {
+                        using var activacion =
+                            new FActivacion(
+                                primeraEjecucion: false,
+                                esRenovacionTrial: true);
+
+                        var resultado =
+                            activacion.ShowDialog();
+
+                        if (resultado == DialogResult.OK &&
+                            activacion.LicenciaValida)
+                        {
+                            resultadoLicencia =
+                                StartupValidator.ValidarInicio();
+
+                            licenciaActual =
+                                new LicenseStorage().Leer();
+                        }
+                    }
+
+                    // Si la Trial sigue vencida y no se cargó una permanente.
+                    if (!resultadoLicencia.Valida)
+                    {
+                        MessageBox.Show(
+                            "La licencia de prueba ha vencido.\r\n\r\n" +
+                            "Para continuar utilizando Stockeate debe " +
+                            "cargar una licencia permanente.",
+                            "Stockeate",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+
+                        return;
+                    }
+                }
+
+                // ========================================================
+                // TRIAL VIGENTE
+                // ========================================================
+
+                else if (resultadoLicencia.Valida)
+                {
+                    using var avisoTrial =
+                        new FActualizacionLicencia(
+                            licenciaActual,
+                            licenciaVencida: false);
+
+                    avisoTrial.ShowDialog();
+
+                    if (avisoTrial.DeseaCargarLicencia)
+                    {
+                        using var activacion =
+                            new FActivacion(
+                                primeraEjecucion: false,
+                                esRenovacionTrial: true);
+
+                        var resultado =
+                            activacion.ShowDialog();
+
+                        if (resultado == DialogResult.OK &&
+                            activacion.LicenciaValida)
+                        {
+                            resultadoLicencia =
+                                StartupValidator.ValidarInicio();
+
+                            licenciaActual =
+                                new LicenseStorage().Leer();
+                        }
+                    }
+                }
             }
 
 
@@ -123,6 +224,71 @@ namespace Presentacion
                 return;
             }
 
+
+            //---------------------------------------------
+            // DETERMINAR SI ES TRIAL
+            //---------------------------------------------
+
+            bool esTrial =
+                licenciaActual != null &&
+                licenciaActual.Tipo == LicenseType.Trial;
+
+            Conexion.UsarTrial = esTrial;
+            if (esTrial)
+            {
+
+            try { PreparadorBase.Migrar(); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("No se pudo preparar la base de datos:\n" + ex.Message, "Error");
+                return;
+            }
+            }
+
+            if (!PruebaConexion.ProbarConexion(out string error2))
+            {
+                MessageBox.Show(
+                    $"No se pudo establecer conexión con la base de datos.\n\n{error2}",
+                    "Error de conexión",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return;
+            }
+
+            new InicializadorDatosObligatorios().InicializarBaseMinima();
+
+            if (esTrial)
+            {
+                var estado = SeedTrial.Estado();
+                if (estado != EstadoSeed.Completa)
+                {
+                    Exception? errorSeed = null;
+                    using var pantalla = new PantallaCargaEspera("Preparando la versión de prueba (puede demorar unos minutos)...");
+                    pantalla.Shown += async (s, e) =>
+                    {
+                        try
+                        {
+                            var runner = new SeedRunner(Path.Combine(AppContext.BaseDirectory, "Seed"));
+                            var progreso = new Progress<SeedProgreso>(p =>
+                            {
+                                pantalla.SetProgress(p.Paso * 100 / p.Total);
+                                pantalla.SetMensaje($"Cargando datos de ejemplo ({p.Paso}/{p.Total})");
+                            });
+                            await Task.Run(() => runner.EjecutarAsync(estado == EstadoSeed.Parcial, progreso));
+                        }
+                        catch (Exception ex) { errorSeed = ex; }
+                        finally { pantalla.Close(); }
+                    };
+                    Application.Run(pantalla);
+
+                    if (errorSeed != null)
+                    {
+                        MessageBox.Show("No se pudieron cargar los datos de prueba:\n" + errorSeed.Message, "Error");
+                        return;
+                    }
+                }
+            }
 
             //---------------------------------------------
             // CONEXIÓN
@@ -284,6 +450,7 @@ namespace Presentacion
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
+
 
 
             if (datosPantalla == null)

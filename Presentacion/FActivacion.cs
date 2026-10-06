@@ -2,35 +2,36 @@
 using Licencia.Modelos;
 using Licencia.Servicios;
 using Presentacion.FBase;
-using System;
-using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
+using Servicios.AccesoSistema.Seguridad;
 
 namespace Stockeate
 {
     public partial class FActivacion : FBase
     {
         private readonly bool _primeraEjecucion;
+        private readonly bool _esRenovacionTrial;
 
         private InstallationInfo? _instalacion;
 
         public bool LicenciaValida { get; private set; }
 
-        public FActivacion(bool primeraEjecucion)
+
+        public FActivacion(
+            bool primeraEjecucion,
+            bool esRenovacionTrial = false)
         {
             InitializeComponent();
 
-            _primeraEjecucion =
-                primeraEjecucion;
+            _primeraEjecucion = primeraEjecucion;
+            _esRenovacionTrial = esRenovacionTrial;
 
             ConfigurarFormulario();
-
-            CargarInformacionInstalacion();
+            CargarInstalacion();
         }
 
+
         // ============================================================
-        // CONFIGURACION INICIAL
+        // CONFIGURACIÓN
         // ============================================================
 
         private void ConfigurarFormulario()
@@ -38,8 +39,9 @@ namespace Stockeate
             StartPosition =
                 FormStartPosition.CenterScreen;
 
+
             // ========================================================
-            // PRIMERA EJECUCION
+            // PRIMERA EJECUCIÓN
             // ========================================================
 
             if (_primeraEjecucion)
@@ -52,33 +54,51 @@ namespace Stockeate
 
                 lblDescripcion.Text =
                     "Es el primer inicio de esta instalación.\r\n\r\n" +
-                    "Stockeate generó una identificación para esta " +
-                    "instalación y una identificación de hardware del equipo.\r\n\r\n" +
-                    "Para solicitar la licencia, guardá el archivo de " +
-                    "activación y envialo al proveedor de Stockeate.";
+                    "Stockeate generó una identificación única para " +
+                    "esta computadora.\r\n\r\n" +
+                    "Podés copiar el Installation ID o guardar el " +
+                    "archivo de activación completo para enviarlo " +
+                    "al proveedor.";
 
-                btnGuardarArchivo.Visible =
-                    true;
-
-                btnCopiarId.Visible =
-                    true;
-
-                btnCargarLicencia.Visible =
-                    false;
-
-                btnCopiarId.Text =
-                    "Copiar datos";
+                btnGuardarArchivo.Visible = true;
+                btnCargarLicencia.Visible = true;
 
                 lblAyuda.Text =
-                    "Podés guardar el archivo de activación " +
-                    "o copiar los datos mostrados.";
-
-                // En la primera ejecución solamente necesitamos
-                // generar y enviar la información de instalación.
+                    "El archivo se guardará inicialmente en el Escritorio.";
             }
 
+
             // ========================================================
-            // EJECUCIONES POSTERIORES
+            // RENOVACIÓN DE TRIAL
+            // ========================================================
+
+            else if (_esRenovacionTrial)
+            {
+                Text =
+                    "Stockeate - Activación";
+
+                lblTitulo.Text =
+                    "Activar licencia permanente";
+
+                lblDescripcion.Text =
+                    "Esta instalación ya está registrada.\r\n\r\n" +
+                    "Podés volver a compartir el Installation ID " +
+                    "o el archivo de activación si necesitás solicitar " +
+                    "una nueva licencia.\r\n\r\n" +
+                    "Cuando recibas la licencia permanente, cargala " +
+                    "desde esta misma pantalla.";
+
+                btnGuardarArchivo.Visible = true;
+                btnCargarLicencia.Visible = true;
+
+                lblAyuda.Text =
+                    "Podés guardar nuevamente el archivo de activación " +
+                    "o cargar directamente la licencia recibida.";
+            }
+
+
+            // ========================================================
+            // ACTIVACIÓN NORMAL SIN LICENCIA
             // ========================================================
 
             else
@@ -90,111 +110,98 @@ namespace Stockeate
                     "Activar Stockeate";
 
                 lblDescripcion.Text =
-                    "Esta instalación ya está registrada.\r\n\r\n" +
+                    "Esta instalación ya está registrada, pero todavía " +
+                    "no tiene una licencia válida.\r\n\r\n" +
                     "Seleccioná el archivo de licencia que recibiste " +
-                    "del proveedor de Stockeate.\r\n\r\n" +
-                    "Stockeate verificará automáticamente la instalación, " +
-                    "el hardware y la firma digital de la licencia.";
+                    "del proveedor.";
 
-                btnGuardarArchivo.Visible =
-                    false;
-
-                btnCopiarId.Visible =
-                    true;
-
-                btnCargarLicencia.Visible =
-                    true;
-
-                btnCopiarId.Text =
-                    "Copiar datos";
+                btnGuardarArchivo.Visible = true;
+                btnCargarLicencia.Visible = true;
 
                 lblAyuda.Text =
-                    "Seleccioná el archivo license.json que recibiste.";
+                    "Podés compartir el Installation ID o guardar " +
+                    "una copia del archivo de activación.";
             }
 
-            lblEstado.Text =
-                "";
+            lblEstado.Text = "";
         }
 
-        // ============================================================
-        // OBTENER INSTALLATION.JSON
-        // ============================================================
 
-        private void CargarInformacionInstalacion()
+        // ============================================================
+        // CARGAR INSTALLATION.JSON
+        // ============================================================
+        private void CargarInstalacion()
         {
             try
             {
                 var manager =
                     new InstallationManager();
 
-                // Si no existe installation.json,
-                // Obtener() lo crea automáticamente.
-
+                // Crea installation.json si todavía no existe.
                 _instalacion =
                     manager.Obtener();
 
+
+                // ========================================================
+                // INSTALLATION ID
+                // ========================================================
+
                 txtInstallationId.Text =
-                    _instalacion.InstallationId
-                        .ToString("D");
+                    _instalacion.InstallationId.ToString("D");
+
+
+                // ========================================================
+                // HARDWARE FINGERPRINT
+                //
+                // DEBE SER EL MISMO QUE USA LicenseValidator
+                // ========================================================
 
                 txtHardwareFingerprint.Text =
-                    _instalacion.HardwareFingerprint;
-
-                // Ambos datos son informativos.
-                // El usuario no debe modificarlos.
-
-                txtInstallationId.ReadOnly =
-                    true;
-
-                txtHardwareFingerprint.ReadOnly =
-                    true;
+                    HardwareFingerprint.Obtener();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "No se pudo obtener la información de esta instalación.\r\n\r\n" +
+                    "No se pudo obtener la información de instalación.\r\n\r\n" +
                     ex.Message,
                     "Stockeate - Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
 
-                BeginInvoke(
-                    new Action(
-                        CerrarCancelado));
+                DialogResult =
+                    DialogResult.Cancel;
+
+                Close();
             }
         }
 
-        // ============================================================
-        // COPIAR DATOS DE INSTALACION
-        // ============================================================
 
+        // ============================================================
+        // COPIAR INSTALLATION ID
+        // ============================================================
         private void btnCopiarId_Click(
             object sender,
             EventArgs e)
         {
             try
             {
-                if (_instalacion == null)
-                    return;
-
                 string datos =
-                    "InstallationId: " +
-                    _instalacion.InstallationId.ToString("D") +
+                    "Installation ID: " +
+                    txtInstallationId.Text +
                     Environment.NewLine +
                     Environment.NewLine +
-                    "HardwareFingerprint: " +
-                    _instalacion.HardwareFingerprint;
+                    "Hardware Fingerprint: " +
+                    txtHardwareFingerprint.Text;
 
-                Clipboard.SetText(
-                    datos);
+                Clipboard.SetText(datos);
 
                 lblEstado.Text =
-                    "Datos de instalación copiados al portapapeles.";
+                    "Installation ID y Hardware Fingerprint copiados.";
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "No se pudieron copiar los datos de instalación.\r\n\r\n" +
+                    "No se pudieron copiar los datos.\r\n\r\n" +
                     ex.Message,
                     "Stockeate",
                     MessageBoxButtons.OK,
@@ -203,7 +210,7 @@ namespace Stockeate
         }
 
         // ============================================================
-        // GUARDAR COPIA DEL INSTALLATION.JSON
+        // GUARDAR COPIA DE INSTALLATION.JSON
         // ============================================================
 
         private void btnGuardarArchivo_Click(
@@ -223,19 +230,16 @@ namespace Stockeate
                 "Archivo de activación de Stockeate (*.json)|*.json|" +
                 "Archivo JSON (*.json)|*.json";
 
-            dialogo.DefaultExt =
-                "json";
-
-            dialogo.AddExtension =
-                true;
+            dialogo.DefaultExt = "json";
+            dialogo.AddExtension = true;
 
             dialogo.FileName =
-                $"Stockeate_Installation_{_instalacion.InstallationId:N}.json";
+                $"Stockeate_Installation_" +
+                $"{_instalacion.InstallationId:N}.json";
+
 
             // ========================================================
-            // DESTINO PREDETERMINADO
             // ESCRITORIO
-            // SI NO EXISTE, DESCARGAS
             // ========================================================
 
             string escritorio =
@@ -248,6 +252,7 @@ namespace Stockeate
                         Environment.SpecialFolder.UserProfile),
                     "Downloads");
 
+
             if (Directory.Exists(escritorio))
             {
                 dialogo.InitialDirectory =
@@ -259,9 +264,6 @@ namespace Stockeate
                     descargas;
             }
 
-            // ========================================================
-            // CANCELAR
-            // ========================================================
 
             if (dialogo.ShowDialog(this) !=
                 DialogResult.OK)
@@ -269,9 +271,6 @@ namespace Stockeate
                 return;
             }
 
-            // ========================================================
-            // COPIAR INSTALLATION.JSON
-            // ========================================================
 
             try
             {
@@ -285,9 +284,8 @@ namespace Stockeate
 
                 MessageBox.Show(
                     "El archivo de activación se guardó correctamente.\r\n\r\n" +
-                    "Ahora podés enviarlo al proveedor de Stockeate " +
-                    "para solicitar la licencia.",
-                    "Stockeate - Activación",
+                    "Podés enviarlo al proveedor de Stockeate.",
+                    "Stockeate",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
@@ -301,6 +299,7 @@ namespace Stockeate
                     MessageBoxIcon.Error);
             }
         }
+
 
         // ============================================================
         // CARGAR LICENSE.JSON
@@ -330,110 +329,142 @@ namespace Stockeate
             dialogo.Multiselect =
                 false;
 
+
             if (dialogo.ShowDialog(this) !=
                 DialogResult.OK)
             {
                 return;
             }
 
+
+            InstalarLicencia(
+                dialogo.FileName);
+        }
+
+
+        // ============================================================
+        // INSTALAR LICENCIA
+        // ============================================================
+
+        private void InstalarLicencia(
+            string rutaNuevaLicencia)
+        {
+            byte[]? licenciaAnterior = null;
+
             try
             {
-                Directory.CreateDirectory(
-                    LicensePaths.ProgramData);
-
                 // ====================================================
-                // GUARDAR COPIA DE LA LICENCIA ACTUAL
+                // GUARDAR LICENCIA ACTUAL
                 // ====================================================
 
-                byte[]? licenciaAnterior = null;
-
-                if (File.Exists(
-                        LicensePaths.License))
+                if (File.Exists(LicensePaths.License))
                 {
                     licenciaAnterior =
                         File.ReadAllBytes(
                             LicensePaths.License);
                 }
 
+
                 // ====================================================
                 // COPIAR NUEVA LICENCIA
                 // ====================================================
 
+                Directory.CreateDirectory(
+                    LicensePaths.ProgramData);
+
                 File.Copy(
-                    dialogo.FileName,
+                    rutaNuevaLicencia,
                     LicensePaths.License,
                     true);
 
+
                 // ====================================================
-                // VALIDAR INMEDIATAMENTE
+                // VALIDAR
                 // ====================================================
 
                 var resultado =
                     StartupValidator.ValidarInicio();
 
-                // ====================================================
-                // LICENCIA CORRECTA
-                // ====================================================
 
-                if (resultado.Valida)
+                if (!resultado.Valida)
                 {
-                    LicenciaValida =
-                        true;
-
-                    lblEstado.Text =
-                        "Licencia válida.";
+                    RestaurarLicenciaAnterior(
+                        licenciaAnterior);
 
                     MessageBox.Show(
-                        "La licencia fue instalada y validada correctamente.",
-                        "Stockeate - Activación",
+                        resultado.Mensaje,
+                        "Licencia no válida",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
-
-                    DialogResult =
-                        DialogResult.OK;
-
-                    Close();
+                        MessageBoxIcon.Warning);
 
                     return;
                 }
 
+
                 // ====================================================
-                // LICENCIA INVÁLIDA
-                // ====================================================
-                //
-                // Restauramos la licencia anterior.
-                //
-                // Esto es especialmente importante ahora que la
-                // licencia también valida el hardware.
+                // LEER LICENCIA NUEVA
                 // ====================================================
 
-                if (licenciaAnterior != null)
+                var nuevaLicencia =
+                    new LicenseStorage().Leer();
+
+
+                // ====================================================
+                // SI VENIMOS DE TRIAL,
+                // LA NUEVA TIENE QUE SER PERPETUA
+                // ====================================================
+
+                if (_esRenovacionTrial &&
+                    nuevaLicencia.Tipo !=
+                    LicenseType.Perpetua)
                 {
-                    File.WriteAllBytes(
-                        LicensePaths.License,
+                    RestaurarLicenciaAnterior(
                         licenciaAnterior);
+
+                    MessageBox.Show(
+                        "La licencia seleccionada no es una " +
+                        "licencia permanente.\r\n\r\n" +
+                        "Seleccioná una licencia de tipo Perpetua.",
+                        "Licencia incorrecta",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+
+                    return;
                 }
-                else
-                {
-                    if (File.Exists(
-                            LicensePaths.License))
-                    {
-                        File.Delete(
-                            LicensePaths.License);
-                    }
-                }
+
+
+                // ====================================================
+                // ÉXITO
+                // ====================================================
+
+                LicenciaValida =
+                    true;
 
                 lblEstado.Text =
-                    resultado.Mensaje;
+                    "Licencia válida.";
 
                 MessageBox.Show(
-                    resultado.Mensaje,
-                    "Stockeate - Licencia",
+                    "La licencia fue instalada y validada correctamente.",
+                    "Stockeate",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    MessageBoxIcon.Information);
+
+                DialogResult =
+                    DialogResult.OK;
+
+                Close();
             }
             catch (Exception ex)
             {
+                try
+                {
+                    RestaurarLicenciaAnterior(
+                        licenciaAnterior);
+                }
+                catch
+                {
+                }
+
                 MessageBox.Show(
                     "No se pudo instalar la licencia.\r\n\r\n" +
                     ex.Message,
@@ -443,6 +474,31 @@ namespace Stockeate
             }
         }
 
+
+        // ============================================================
+        // RESTAURAR LICENCIA ANTERIOR
+        // ============================================================
+
+        private void RestaurarLicenciaAnterior(
+            byte[]? licenciaAnterior)
+        {
+            if (licenciaAnterior != null)
+            {
+                File.WriteAllBytes(
+                    LicensePaths.License,
+                    licenciaAnterior);
+
+                return;
+            }
+
+            if (File.Exists(LicensePaths.License))
+            {
+                File.Delete(
+                    LicensePaths.License);
+            }
+        }
+
+
         // ============================================================
         // CERRAR
         // ============================================================
@@ -450,11 +506,6 @@ namespace Stockeate
         private void btnCerrar_Click(
             object sender,
             EventArgs e)
-        {
-            CerrarCancelado();
-        }
-
-        private void CerrarCancelado()
         {
             LicenciaValida =
                 false;

@@ -232,6 +232,7 @@ namespace Stockeate.Licensing
                     Valida = false,
                     Estado = LicenseStatus.Vencida,
                     SoloConsulta = true,
+                    Tipo = licencia.Tipo,
                     Mensaje =
                         "La licencia ha vencido. " +
                         "El sistema funcionará en modo consulta."
@@ -247,6 +248,7 @@ namespace Stockeate.Licensing
                 Valida = true,
                 Estado = LicenseStatus.Valida,
                 SoloConsulta = false,
+                Tipo = licencia.Tipo,
                 Mensaje = "Licencia válida."
             };
         }

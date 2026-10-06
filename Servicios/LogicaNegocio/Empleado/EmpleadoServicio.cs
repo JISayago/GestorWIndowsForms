@@ -50,17 +50,27 @@ namespace Servicios.LogicaNegocio.Empleado
                     Exitoso = false,
                     Mensaje = "Ya existe una persona con el mismo DNI."
                 };
+            if (empleadoDto.Dni.Count() > 15)
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "El DNI no puede tener más de 15 caracteres."
+                };
 
+            var tel = "0000000000";
+            var cuil = empleadoDto.Dni;
+            var mail = "Sin asignar";
+            var dir = "Sin asignar";
             var persona = new Persona
             {
                 Nombre = empleadoDto.Nombre,
                 Apellido = empleadoDto.Apellido,
                 Dni = empleadoDto.Dni,
-                Cuil = empleadoDto.Cuil,
-                Telefono = empleadoDto.Telefono,
-                Telefono2 = empleadoDto.Telefono2,
-                Email = empleadoDto.Email,
-                Direccion = empleadoDto.Direccion,
+                Cuil = string.IsNullOrEmpty(empleadoDto.Cuil) ? cuil : empleadoDto.Cuil,
+                Telefono = string.IsNullOrEmpty(empleadoDto.Telefono) ? tel : empleadoDto.Telefono,
+                Telefono2 = string.IsNullOrEmpty(empleadoDto.Telefono2) ? tel : empleadoDto.Telefono2,
+                Email = string.IsNullOrEmpty(empleadoDto.Email) ? mail : empleadoDto.Email,
+                Direccion = string.IsNullOrEmpty(empleadoDto.Direccion) ? dir : empleadoDto.Direccion,
                 EstaEliminado = false,
                 FechaNacimiento = empleadoDto.FechaNacimiento
             };
@@ -71,7 +81,7 @@ namespace Servicios.LogicaNegocio.Empleado
             var empleado = new AccesoDatos.Entidades.Empleado
             {
                 PersonaId = persona.PersonaId,
-                Legajo = empleadoDto.Legajo,
+                Legajo = string.IsNullOrEmpty(empleadoDto.Legajo) ? cuil : empleadoDto.Legajo,
                 FechaIngreso = empleadoDto.FechaIngreso,
                 Estado = (int)EstadoEmpleado.SinUsuario,
                 Username = null,
