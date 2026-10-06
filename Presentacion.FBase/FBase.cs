@@ -483,6 +483,17 @@ namespace Presentacion.FBase
 
             dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
+            // Fondo del área vacía (debajo de las filas / sin datos) igual al de las consultas.
+            FondoGrillaVacioHelper.Aplicar(dgv);
+
+            // El alto de las filas no debe poder modificarse arrastrando con el mouse (el ancho de
+            // las columnas sí). Centralizado acá para que aplique a todos los grids del sistema,
+            // incluidos los armados por código. El alto del encabezado también se bloquea, salvo
+            // que ya esté en AutoSize (en ese modo el usuario no puede cambiarlo).
+            dgv.AllowUserToResizeRows = false;
+            if (dgv.ColumnHeadersHeightSizeMode == DataGridViewColumnHeadersHeightSizeMode.EnableResizing)
+                dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+
             // Ordenar al hacer click en el header: la mayoría de los grids del sistema bindean un
             // List<T> plano (dgv.DataSource = resultado.Items), que NO soporta el sort nativo de
             // DataGridView (eso solo funciona con DataTable o listas que implementan IBindingList

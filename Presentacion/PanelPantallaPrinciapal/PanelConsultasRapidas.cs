@@ -148,6 +148,9 @@ namespace Presentacion.Notificaciones
             dgv.GridColor = TemaSistema.Borde;
             dgv.RowHeadersVisible = false;
             dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+            // Mismo fondo vacío que las consultas cuando hay menos filas que el tamaño de página.
+            FondoGrillaVacioHelper.Aplicar(dgv);
         }
 
         // ===========================================================================

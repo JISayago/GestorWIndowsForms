@@ -61,6 +61,16 @@ namespace Presentacion.Core.Oferta
             InitializeComponent();
             _filtroGrupos = new FiltroBusquedaComboGrupo();
             _productoServicio = new ProductoServicio();
+
+
+            //VENTANA FULLSCREEN SIN BORDES NI BOTONES DE CIERRE
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.ControlBox = false;
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false; // opcional
         }
         private void FOfertaABM_Load(object sender, EventArgs e)
         {
