@@ -184,6 +184,14 @@ namespace Presentacion.Core.Administracion
             // Ejecutamos la carga inicial dinámica analizando la base de datos de manera segura
             //InicializarFiltrosCronologicos();
 
+            //VENTANA FULLSCREEN SIN BORDES NI BOTONES DE CIERRE
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.ControlBox = false;
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false; // opcional
         }
 
         /// <summary>

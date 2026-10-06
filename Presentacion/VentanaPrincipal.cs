@@ -89,6 +89,16 @@ namespace Presentacion
             lblNombreUsuario.AutoSize = true;
             lblNombreUsuario.Dock = DockStyle.None;
             lblNombreUsuario.TextAlign = ContentAlignment.MiddleLeft;
+
+
+            //VENTANA FULLSCREEN SIN BORDES NI BOTONES DE CIERRE
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.ControlBox = false;
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false; // opcional
         }
 
         #endregion
@@ -412,6 +422,7 @@ namespace Presentacion
             flowLayoutNotificaciones.Controls.Add(notiProdVencidos);
 
             var listaLotesNotificar = _pantallaPrincipalServicio.ObtenerNotificacionesProdutosVencidos();
+            notiProdVencidos.Tipo = TipoNotificacion.LoteVencido;
             notiProdVencidos.SetData(listaLotesNotificar, "Lotes Vencidos");
             RestaurarEstadoExpandido(notiProdVencidos, listaLotesNotificar?.Count ?? 0);
         }
@@ -426,6 +437,7 @@ namespace Presentacion
             flowLayoutNotificaciones.Controls.Add(notifOferVencidas);
 
             var listaOfertasVencidas = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasVencidas();
+            notifOferVencidas.Tipo = TipoNotificacion.OfertaVencida;
             notifOferVencidas.SetData(listaOfertasVencidas, "Ofertas Vencidas");
             RestaurarEstadoExpandido(notifOferVencidas, listaOfertasVencidas?.Count ?? 0);
         }
@@ -440,6 +452,7 @@ namespace Presentacion
             flowLayoutNotificaciones.Controls.Add(notifOfertasBajoStock);
 
             var listaOfertasBajoStock = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasBajoStock();
+            notifOfertasBajoStock.Tipo = TipoNotificacion.OfertaBajoStock;
             notifOfertasBajoStock.SetData(listaOfertasBajoStock, "Ofertas con Bajo Stock");
             RestaurarEstadoExpandido(notifOfertasBajoStock, listaOfertasBajoStock?.Count ?? 0);
         }
@@ -454,6 +467,7 @@ namespace Presentacion
             flowLayoutNotificaciones.Controls.Add(notifCuentasCorrientesVencidas);
 
             var listaCuentasCorrientes = _pantallaPrincipalServicio.ObtenerNotificacionesCtaCteVencidas();
+            notifCuentasCorrientesVencidas.Tipo = TipoNotificacion.CuentaCorrienteVencida;
             notifCuentasCorrientesVencidas.SetData(listaCuentasCorrientes, "Cuentas Corrientes Vencidas");
             RestaurarEstadoExpandido(notifCuentasCorrientesVencidas, listaCuentasCorrientes?.Count ?? 0);
         }
@@ -528,7 +542,7 @@ namespace Presentacion
             //BOTON CAJA                //
             //========================= //
 
-            btnCaja.Image = Constantes.Imagenes.ImgVenta;
+            btnCaja.Image = Constantes.Imagenes.ImgCaja;
             // Alineamos la imagen arriba al centro
             btnCaja.ImageAlign = ContentAlignment.TopCenter;
             btnCaja.TextImageRelation = TextImageRelation.ImageAboveText;

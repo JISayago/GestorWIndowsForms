@@ -6,6 +6,7 @@ using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.Venta;
+using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Venta.Oferta;
 using Servicios.LogicaNegocio.Articulo.Categoria;
@@ -99,6 +100,9 @@ namespace Presentacion.Core.Oferta
         {
             dgvProductos.AllowUserToAddRows = false;
             dgvProductosQuitados.AllowUserToAddRows = false;
+
+            FondoGrillaVacioHelper.Aplicar(dgvProductos);
+            FondoGrillaVacioHelper.Aplicar(dgvProductosQuitados);
 
             _productosParaOfertaDTO = new BindingList<ProductoDTO>();
             _productosParaQuitarDeOfertaDTO = new BindingList<ProductoDTO>();

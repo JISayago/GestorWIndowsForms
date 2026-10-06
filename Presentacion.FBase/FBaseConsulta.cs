@@ -5,7 +5,6 @@ using Servicios.Helpers.Sistema.FiltrosConsulta;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
@@ -15,6 +14,12 @@ namespace Presentacion.FBase
     public partial class FBaseConsulta : FBase
     {
         protected long? entidadID;
+
+        /// <summary>
+        /// Filtros iniciales opcionales. Se asigna antes de mostrar el formulario y se aplica una
+        /// sola vez, justo antes de la primera carga de la grilla.
+        /// </summary>
+        public BusquedaInicialConsulta BusquedaInicial { get; set; }
         protected bool puedeEjecutarComando;
         private FiltroConsulta ultimoFiltro;
 
@@ -59,9 +64,17 @@ namespace Presentacion.FBase
             dgvGrilla.CellDoubleClick += DgvGrilla_CellDoubleClick;
             dgvGrilla.CellClick += DgvGrilla_CellClick;
             dgvGrilla.MouseDown += DgvGrilla_MouseDown;
-            dgvGrilla.Paint += DgvGrilla_PaintFondoVacio;
+            FondoGrillaVacioHelper.Aplicar(dgvGrilla);
             dgvGrilla.Resize += (_, __) => AjustarAlturaFilasParaPageSize();
             dgvGrilla.DataBindingComplete += (_, __) => AjustarAlturaFilasParaPageSize();
+
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.ControlBox = false;
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false; // opcional
         }
 
         #region LOAD
@@ -79,7 +92,49 @@ namespace Presentacion.FBase
 
             AjustarVisibilidadFiltros();
             AjustarLayoutFooterYFiltros();
+            AplicarBusquedaInicial();
             RefrescarGrilla();
+        }
+
+        private void AplicarBusquedaInicial()
+        {
+            var inicial = BusquedaInicial;
+            if (inicial == null)
+                return;
+
+            // Evita que los handlers de los checks/combos dispongan refrescos o limpien filtros
+            // mientras se cargan los valores; el refresco lo hace el Load a continuación.
+            _actualizandoFiltros = true;
+            try
+            {
+                AsignarCombo(cbx1, inicial.Filtro1);
+                AsignarCombo(cbx2, inicial.Filtro2);
+                AsignarCombo(cbx3, inicial.Filtro3);
+
+                if (inicial.Bool1.HasValue && chkBool1 != null && chkBool1.Enabled)
+                    chkBool1.Checked = inicial.Bool1.Value;
+
+                if (inicial.Bool2.HasValue && chkBool2 != null && chkBool2.Enabled)
+                    chkBool2.Checked = inicial.Bool2.Value;
+
+                if (inicial.TextoBuscar != null && txtBuscar != null)
+                    txtBuscar.Text = inicial.TextoBuscar;
+            }
+            finally
+            {
+                _actualizandoFiltros = false;
+            }
+
+            // Se aplica una sola vez: si luego la consulta se limpia, no se vuelve a imponer.
+            BusquedaInicial = null;
+        }
+
+        private static void AsignarCombo(ComboBox combo, object valor)
+        {
+            if (valor == null || combo == null || !combo.Enabled)
+                return;
+
+            combo.SelectedValue = valor;
         }
 
         private void CargarLogoEnBase()
@@ -789,64 +844,6 @@ protected virtual string NormalizarTextoBusqueda(string texto)
                 if (!row.IsNewRow && row.Height != rowH)
                     row.Height = rowH;
             }
-        }
-
-        private void DgvGrilla_PaintFondoVacio(object sender, PaintEventArgs e)
-        {
-            if (dgvGrilla == null || dgvGrilla.IsDisposed)
-                return;
-
-            int top = dgvGrilla.ColumnHeadersVisible ? dgvGrilla.ColumnHeadersHeight : 0;
-            if (dgvGrilla.Rows.Count > 0)
-            {
-                try
-                {
-                    var last = dgvGrilla.GetRowDisplayRectangle(dgvGrilla.Rows.Count - 1, true);
-                    if (last.Height > 0)
-                        top = Math.Max(top, last.Bottom);
-                }
-                catch
-                {
-                    // Ignorar si la fila aún no está medida.
-                }
-            }
-
-            if (top >= dgvGrilla.ClientSize.Height - 8)
-                return;
-
-            var empty = Rectangle.FromLTRB(0, top, dgvGrilla.ClientSize.Width, dgvGrilla.ClientSize.Height);
-
-            using (var fill = new SolidBrush(Color.FromArgb(236, 230, 245)))
-                e.Graphics.FillRectangle(fill, empty);
-
-            // Banda superior suave para separar filas del vacío.
-            using (var accent = new SolidBrush(Color.FromArgb(55, TemaSistema.Seleccion)))
-                e.Graphics.FillRectangle(accent, empty.Left, empty.Top, empty.Width, Math.Min(6, empty.Height));
-
-            var logo = Constantes.Imagenes.ImgLogoCompuesto;
-            if (logo == null || empty.Height < 60 || empty.Width < 80)
-                return;
-
-            int maxW = Math.Min(300, empty.Width * 2 / 5);
-            int maxH = Math.Min(170, empty.Height - 24);
-            if (maxW < 48 || maxH < 48)
-                return;
-
-            float scale = Math.Min((float)maxW / logo.Width, (float)maxH / logo.Height);
-            int w = Math.Max(1, (int)(logo.Width * scale));
-            int h = Math.Max(1, (int)(logo.Height * scale));
-            int x = empty.Left + (empty.Width - w) / 2;
-            int y = empty.Top + (empty.Height - h) / 2;
-
-            var matrix = new ColorMatrix { Matrix33 = 0.11f };
-            using var attrs = new ImageAttributes();
-            attrs.SetColorMatrix(matrix);
-            e.Graphics.DrawImage(
-                logo,
-                new Rectangle(x, y, w, h),
-                0, 0, logo.Width, logo.Height,
-                GraphicsUnit.Pixel,
-                attrs);
         }
 
         private void DgvGrilla_MouseDown(object sender, MouseEventArgs e)

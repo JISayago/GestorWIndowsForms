@@ -1,4 +1,5 @@
 using Presentacion.FBase.Helpers;
+using Presentacion.Notificaciones;
 using Servicios.Helpers.Sistema;
 using Servicios.LogicaNegocio.PantallaPrincipal;
 using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
@@ -10,7 +11,6 @@ using System.Windows.Forms;
 
 public class NotificationGroupBox : GroupBox
 {
-    private Button btnToggle;
     private FlowLayoutPanel panelItems;
     private bool expanded = false;
     private string _tituloVisual = "";
@@ -20,6 +20,12 @@ public class NotificationGroupBox : GroupBox
     public event EventHandler NotificacionCambiada;
 
     public string TituloBase { get; private set; } = "";
+
+    /// <summary>
+    /// Tipo de aviso del grupo. Si está definido, el click izquierdo abre la consulta del objeto
+    /// del aviso; si es null, el click izquierdo no hace nada. Se asigna antes de SetData.
+    /// </summary>
+    public TipoNotificacion? Tipo { get; set; }
 
     public bool Expanded
     {
@@ -37,9 +43,6 @@ public class NotificationGroupBox : GroupBox
     private readonly Color COLOR_ITEM_FONDO_NUEVO = Color.White;
     private readonly Color COLOR_TEXTO_PRINCIPAL = TemaSistema.Texto;
     private readonly Color COLOR_TEXTO_SECUNDARIO = TemaSistema.TextoSecundario;
-    private readonly Color COLOR_BTN_FONDO = TemaSistema.Seleccion;
-    private readonly Color COLOR_BTN_BORDE = Color.Black;
-    private readonly Color COLOR_BTN_TEXTO = Color.Black;
 
     public NotificationGroupBox()
     {
@@ -48,7 +51,7 @@ public class NotificationGroupBox : GroupBox
         this.BackColor = TemaSistema.Fondo;
         this.ForeColor = TemaSistema.Texto;
         _pantallaPrincipalServicio = new PantallaPrincipalServicio();
-        _toolTip.SetToolTip(this, "Click derecho en un aviso: marcarlo como leído");
+        _toolTip.SetToolTip(this, "Click en el título: abrir o cerrar el grupo\nClick derecho en un aviso: marcarlo como leído");
         InicializarComponentes();
     }
 
@@ -56,20 +59,6 @@ public class NotificationGroupBox : GroupBox
     {
         this.Height = 50;
         this.Font = new Font("Segoe UI", 9);
-
-        btnToggle = new Button
-        {
-            Text = "▲",
-            Width = 30,
-            Height = 25,
-            Location = new Point(this.Width - 50, 12),
-            Anchor = AnchorStyles.Top | AnchorStyles.Right,
-            FlatStyle = FlatStyle.Flat,
-            BackColor = COLOR_BTN_FONDO,
-            ForeColor = COLOR_BTN_TEXTO
-        };
-        btnToggle.FlatAppearance.BorderColor = COLOR_BTN_BORDE;
-        btnToggle.Click += BtnToggle_Click;
 
         panelItems = new FlowLayoutPanel
         {
@@ -82,11 +71,13 @@ public class NotificationGroupBox : GroupBox
         };
 
         this.Controls.Add(panelItems);
-        this.Controls.Add(btnToggle);
+
+        // Abrir/cerrar con click en la cabecera (reemplaza al botón de la flecha).
+        this.MouseClick += GroupBox_MouseClick;
+        this.MouseMove += GroupBox_MouseMove;
 
         this.Resize += (s, e) =>
         {
-            btnToggle.Location = new Point(this.Width - 50, 12);
             foreach (Control ctrl in panelItems.Controls)
             {
                 ctrl.Width = panelItems.ClientSize.Width - 5;
@@ -108,14 +99,20 @@ public class NotificationGroupBox : GroupBox
         Graphics g = e.Graphics;
         g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
+        // La flecha indica que el grupo se abre/cierra con click en el título; solo se muestra
+        // si hay avisos que desplegar (▼ cerrado, ▲ abierto).
+        string textoTitulo = TieneAvisos
+            ? _tituloVisual + (expanded ? "  ▲" : "  ▼")
+            : _tituloVisual;
+
         using Font fontTitulo = new Font("Segoe UI", 8.5f, FontStyle.Bold);
-        Size sizeTexto = TextRenderer.MeasureText(_tituloVisual, fontTitulo);
+        Size sizeTexto = TextRenderer.MeasureText(textoTitulo, fontTitulo);
         Rectangle rectFondo = new Rectangle(10, 0, sizeTexto.Width + 20, 22);
 
         using (SolidBrush brushFondo = new SolidBrush(COLOR_TITULO_FONDO))
             g.FillRectangle(brushFondo, rectFondo);
 
-        TextRenderer.DrawText(g, _tituloVisual, fontTitulo, rectFondo,
+        TextRenderer.DrawText(g, textoTitulo, fontTitulo, rectFondo,
             COLOR_TITULO_TEXTO, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
     }
 
@@ -165,7 +162,11 @@ public class NotificationGroupBox : GroupBox
             BackColor = item.Leida ? COLOR_ITEM_FONDO_LEIDO : COLOR_ITEM_FONDO_NUEVO
         };
 
-        _toolTip.SetToolTip(panelItem, "Click derecho: marcar como leído");
+        string textoAyuda = Tipo.HasValue
+            ? "Click izquierdo: abrir la consulta\nClick derecho: marcar como leído"
+            : "Click derecho: marcar como leído";
+
+        _toolTip.SetToolTip(panelItem, textoAyuda);
 
         panelItem.Paint += (s, e) =>
         {
@@ -203,6 +204,13 @@ public class NotificationGroupBox : GroupBox
 
         MouseEventHandler unifiedClickHandler = (s, e) =>
         {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (Tipo.HasValue)
+                    NotificacionNavegador.Abrir(Tipo.Value, item, _pantallaPrincipalServicio);
+                return;
+            }
+
             if (e.Button != MouseButtons.Right || item.Leida)
                 return;
 
@@ -227,8 +235,8 @@ public class NotificationGroupBox : GroupBox
         panelItem.MouseClick += unifiedClickHandler;
         lblTitulo.MouseClick += unifiedClickHandler;
         lblDescripcion.MouseClick += unifiedClickHandler;
-        _toolTip.SetToolTip(lblTitulo, "Click derecho: marcar como leído");
-        _toolTip.SetToolTip(lblDescripcion, "Click derecho: marcar como leído");
+        _toolTip.SetToolTip(lblTitulo, textoAyuda);
+        _toolTip.SetToolTip(lblDescripcion, textoAyuda);
 
         panelItem.Controls.Add(lblTitulo);
         panelItem.Controls.Add(lblDescripcion);
@@ -236,24 +244,38 @@ public class NotificationGroupBox : GroupBox
         return panelItem;
     }
 
-    private void BtnToggle_Click(object sender, EventArgs e)
+    // Cerrado: toda el área del grupo (50 px) es cabecera y abre. Abierto: solo la franja del
+    // título (el padding superior) cierra; el resto son los avisos, que tienen sus propios clicks.
+    private bool EsZonaCabecera(Point p)
     {
+        return !expanded || p.Y < this.Padding.Top;
+    }
+
+    private bool TieneAvisos => panelItems.Controls.Count > 0;
+
+    private void GroupBox_MouseClick(object sender, MouseEventArgs e)
+    {
+        if (e.Button != MouseButtons.Left || !TieneAvisos || !EsZonaCabecera(e.Location))
+            return;
+
         expanded = !expanded;
         AplicarEstado();
+    }
+
+    private void GroupBox_MouseMove(object sender, MouseEventArgs e)
+    {
+        this.Cursor = TieneAvisos && EsZonaCabecera(e.Location)
+            ? Cursors.Hand
+            : Cursors.Default;
     }
 
     private void AplicarEstado()
     {
         panelItems.Visible = expanded;
-        if (expanded)
-        {
-            btnToggle.Text = "▲";
-            this.Height = Math.Max(panelItems.Bottom + this.Padding.Bottom, 50);
-        }
-        else
-        {
-            btnToggle.Text = "▼";
-            this.Height = 50;
-        }
+        this.Height = expanded
+            ? Math.Max(panelItems.Bottom + this.Padding.Bottom, 50)
+            : 50;
+
+        this.Invalidate();
     }
 }
