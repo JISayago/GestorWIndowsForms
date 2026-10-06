@@ -116,59 +116,49 @@ namespace Presentacion
                 }
             }
 
+            //---------------------------------------------
+            // LICENCIA TRIAL
+            //---------------------------------------------
 
             if (licenciaActual != null &&
                 licenciaActual.Tipo == LicenseType.Trial)
             {
-                bool trialVigente =
-                    resultadoLicencia.Valida &&
-                    resultadoLicencia.Estado == LicenseStatus.Valida;
-
-
-                //---------------------------------------------
-                // TRIAL VIGENTE
-                //---------------------------------------------
-
-                if (trialVigente)
-                {
-                    using var formularioTrial =
-                        new FActualizacionLicencia(
-                            licenciaActual);
-
-                    formularioTrial.ShowDialog();
-
-                    //-----------------------------------------
-                    // SI CARGÓ UNA PERMANENTE
-                    //-----------------------------------------
-
-                    if (formularioTrial.LicenciaActualizada)
-                    {
-                        resultadoLicencia =
-                            StartupValidator.ValidarInicio();
-
-                        licenciaActual =
-                            new LicenseStorage().Leer();
-                    }
-                }
-
-
-                //---------------------------------------------
+                // ========================================================
                 // TRIAL VENCIDA
-                //---------------------------------------------
+                // ========================================================
 
-                else if (resultadoLicencia.Estado == LicenseStatus.Vencida)
+                if (resultadoLicencia.Estado == LicenseStatus.Vencida)
                 {
-                    using var formularioTrial =
+                    using var avisoTrial =
                         new FActualizacionLicencia(
-                            licenciaActual);
+                            licenciaActual,
+                            licenciaVencida: true);
 
-                    formularioTrial.ShowDialog();
+                    avisoTrial.ShowDialog();
 
-                    //-----------------------------------------
-                    // SI NO CARGÓ PERMANENTE, NO CONTINÚA
-                    //-----------------------------------------
+                    if (avisoTrial.DeseaCargarLicencia)
+                    {
+                        using var activacion =
+                            new FActivacion(
+                                primeraEjecucion: false,
+                                esRenovacionTrial: true);
 
-                    if (!formularioTrial.LicenciaActualizada)
+                        var resultado =
+                            activacion.ShowDialog();
+
+                        if (resultado == DialogResult.OK &&
+                            activacion.LicenciaValida)
+                        {
+                            resultadoLicencia =
+                                StartupValidator.ValidarInicio();
+
+                            licenciaActual =
+                                new LicenseStorage().Leer();
+                        }
+                    }
+
+                    // Si la Trial sigue vencida y no se cargó una permanente.
+                    if (!resultadoLicencia.Valida)
                     {
                         MessageBox.Show(
                             "La licencia de prueba ha vencido.\r\n\r\n" +
@@ -180,17 +170,41 @@ namespace Presentacion
 
                         return;
                     }
+                }
 
+                // ========================================================
+                // TRIAL VIGENTE
+                // ========================================================
 
-                    //-----------------------------------------
-                    // VOLVER A VALIDAR
-                    //-----------------------------------------
+                else if (resultadoLicencia.Valida)
+                {
+                    using var avisoTrial =
+                        new FActualizacionLicencia(
+                            licenciaActual,
+                            licenciaVencida: false);
 
-                    resultadoLicencia =
-                        StartupValidator.ValidarInicio();
+                    avisoTrial.ShowDialog();
 
-                    licenciaActual =
-                        new LicenseStorage().Leer();
+                    if (avisoTrial.DeseaCargarLicencia)
+                    {
+                        using var activacion =
+                            new FActivacion(
+                                primeraEjecucion: false,
+                                esRenovacionTrial: true);
+
+                        var resultado =
+                            activacion.ShowDialog();
+
+                        if (resultado == DialogResult.OK &&
+                            activacion.LicenciaValida)
+                        {
+                            resultadoLicencia =
+                                StartupValidator.ValidarInicio();
+
+                            licenciaActual =
+                                new LicenseStorage().Leer();
+                        }
+                    }
                 }
             }
 
