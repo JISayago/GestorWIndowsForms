@@ -234,12 +234,15 @@ namespace Presentacion
                 licenciaActual.Tipo == LicenseType.Trial;
 
             Conexion.UsarTrial = esTrial;
+            if (esTrial)
+            {
 
             try { PreparadorBase.Migrar(); }
             catch (Exception ex)
             {
                 MessageBox.Show("No se pudo preparar la base de datos:\n" + ex.Message, "Error");
                 return;
+            }
             }
 
             if (!PruebaConexion.ProbarConexion(out string error2))
