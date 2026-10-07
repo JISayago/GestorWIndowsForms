@@ -22,7 +22,7 @@ namespace Presentacion.Notificaciones
 
         private readonly TableLayoutPanel _layout;
         private readonly PestanasAvisos _pestanas;
-        private readonly ListaAvisos _lista;
+        private readonly ListaAvisosPanel _lista;
         private readonly CalendarioVencimientos _calendario;
 
         private TipoNotificacion? _seleccionada;
@@ -38,16 +38,16 @@ namespace Presentacion.Notificaciones
             _pestanas.Configurar(AvisosEstilo.Tipos);
             _pestanas.PestanaClick += Pestanas_PestanaClick;
 
-            _lista = new ListaAvisos
+            _lista = new ListaAvisosPanel
             {
                 Dock = DockStyle.Fill,
                 Margin = new Padding(0, 0, 0, Separacion),
                 Visible = false
             };
-            _lista.SizeChanged += (s, e) => AjustarAnchosItems();
 
             _calendario = new CalendarioVencimientos { Dock = DockStyle.Fill, Margin = Padding.Empty };
             _calendario.MesCambiado += (s, e) => RefrescarCalendario();
+            _calendario.DiaClick += Calendario_DiaClick;
 
             _layout = new TableLayoutPanel
             {
@@ -151,8 +151,6 @@ namespace Presentacion.Notificaciones
                 _layout.RowStyles[1].Height = 0F;
             }
             _layout.ResumeLayout(true);
-
-            AjustarAnchosItems();
         }
 
         /// <summary>Al cambiar el tamaño del panel solo se reacomoda el alto de la lista, sin reconstruir las tarjetas.</summary>
@@ -162,7 +160,6 @@ namespace Presentacion.Notificaciones
                 return;
 
             _layout.RowStyles[1].Height = AlturaLista() + Separacion;
-            AjustarAnchosItems();
         }
 
         private int AlturaLista()
@@ -175,62 +172,72 @@ namespace Presentacion.Notificaciones
 
         private void LlenarLista(TipoNotificacion tipo)
         {
-            _lista.SuspendLayout();
-            foreach (Control c in _lista.Controls.Cast<Control>().ToList())
-            {
-                _lista.Controls.Remove(c);
-                c.Dispose();
-            }
-
             string ayuda = "Click izquierdo: abrir la consulta\nClick derecho: marcar como leído";
+            var items = new List<AvisoItem>();
             foreach (var aviso in _avisos[tipo])
             {
                 var item = new AvisoItem(aviso, ayuda, _toolTip);
-                item.AvisoClick += (s, e) => Item_AvisoClick(tipo, item, e);
+                item.AvisoClick += (s, e) => NotificacionNavegador.Abrir(tipo, item.Aviso, _servicio);
+                item.MarcarLeidoSolicitado += (s, e) => MarcarLeido(tipo, item.Aviso);
                 item.MouseEntro += (s, e) => _lista.Focus();
-                _lista.Controls.Add(item);
+                items.Add(item);
             }
-            _lista.ResumeLayout(true);
-            _lista.AutoScrollPosition = new Point(0, 0);
+
+            _lista.SetItems(items);
         }
 
-        private void Item_AvisoClick(TipoNotificacion tipo, AvisoItem item, MouseEventArgs e)
+        /// <summary>Marca un aviso como leído y actualiza pestañas, lista y calendario.</summary>
+        private void MarcarLeido(TipoNotificacion tipo, NotificacionDTO aviso)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                NotificacionNavegador.Abrir(tipo, item.Aviso, _servicio);
-                return;
-            }
-
-            if (e.Button != MouseButtons.Right || item.Aviso.Leida)
+            if (aviso.Leida)
                 return;
 
-            item.Aviso.Leida = true;
-            _servicio.MarcarNotificacionComoLeida(item.Aviso.NotificacionId);
-            _avisos[tipo].Remove(item.Aviso);
+            aviso.Leida = true;
+            _servicio.MarcarNotificacionComoLeida(aviso.NotificacionId);
+            _avisos[tipo].RemoveAll(a => a.NotificacionId == aviso.NotificacionId);
 
-            if (_avisos[tipo].Count == 0)
+            if (_avisos[tipo].Count == 0 && _seleccionada == tipo)
                 _seleccionada = null;
 
             AplicarVista();
             RefrescarCalendario();   // el día deja de marcarse (y de estar en rojo) si ya no tiene avisos pendientes
         }
 
-        /// <summary>Calcula el ancho de las tarjetas reservando el lugar de la barra de scroll solo si hace falta.</summary>
-        private void AjustarAnchosItems()
+        private static TipoNotificacion TipoDe(TipoVencimientoCalendario tipo) => tipo switch
         {
-            if (!_lista.Visible || _lista.Controls.Count == 0)
+            TipoVencimientoCalendario.Lote => TipoNotificacion.LoteVencido,
+            TipoVencimientoCalendario.Oferta => TipoNotificacion.OfertaVencida,
+            _ => TipoNotificacion.CuentaCorrienteVencida
+        };
+
+        private void Calendario_DiaClick(object? sender, DiaCalendarioEventArgs e)
+        {
+            List<AvisoDelDiaDTO> avisos;
+            try
+            {
+                avisos = _servicio.ObtenerAvisosDelDia(e.Fecha);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"No se pudieron cargar los avisos del día: {ex.Message}");
                 return;
+            }
 
-            var items = _lista.Controls.OfType<AvisoItem>().ToList();
-            int anchoCompleto = Math.Max(_lista.Width, 100);
-            int barra = SystemInformation.VerticalScrollBarWidth;
+            if (avisos.Count == 0)
+            {
+                RefrescarCalendario();   // los avisos del día ya no estaban pendientes
+                return;
+            }
 
-            int Medir(int ancho) => items.Sum(i => i.AjustarAncho(ancho) + i.Margin.Vertical);
+            var popup = new DiaAvisosPopup(e.Fecha, avisos, _toolTip);
+            // Se difiere la acción para que el popup termine de cerrarse antes de abrir una consulta modal.
+            popup.AbrirAviso += (s, a) => BeginInvoke(new Action(() =>
+                NotificacionNavegador.Abrir(TipoDe(a.Tipo), a.Aviso, _servicio)));
+            popup.MarcarLeido += (s, a) => BeginInvoke(new Action(() =>
+                MarcarLeido(TipoDe(a.Tipo), a.Aviso)));
 
-            int total = Medir(anchoCompleto);
-            if (total > _lista.Height)
-                Medir(anchoCompleto - barra - 2);
+            var abajoIzquierda = new Point(e.Celda.Left, e.Celda.Bottom);
+            popup.Show(_calendario.PointToScreen(abajoIzquierda));
         }
 
         private void RefrescarCalendario()
@@ -254,20 +261,6 @@ namespace Presentacion.Notificaciones
             if (disposing)
                 _toolTip.Dispose();
             base.Dispose(disposing);
-        }
-
-        /// <summary>Lista vertical con scroll propio que puede tomar el foco, para responder a la rueda del mouse.</summary>
-        private sealed class ListaAvisos : FlowLayoutPanel
-        {
-            public ListaAvisos()
-            {
-                SetStyle(ControlStyles.Selectable, true);
-                TabStop = false;
-                AutoScroll = true;
-                FlowDirection = FlowDirection.TopDown;
-                WrapContents = false;
-                BackColor = Color.Transparent;
-            }
         }
     }
 }

@@ -16,4 +16,11 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal.DTO
         public DateTime Fecha { get; set; }
         public TipoVencimientoCalendario Tipo { get; set; }
     }
+
+    /// <summary>Un aviso pendiente con su tipo, para listar los vencimientos de un día del calendario.</summary>
+    public class AvisoDelDiaDTO
+    {
+        public TipoVencimientoCalendario Tipo { get; set; }
+        public NotificacionDTO Aviso { get; set; }
+    }
 }

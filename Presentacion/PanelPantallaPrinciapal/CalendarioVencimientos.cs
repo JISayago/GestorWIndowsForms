@@ -4,10 +4,24 @@ using System.Globalization;
 
 namespace Presentacion.Notificaciones
 {
+    /// <summary>Día del calendario clickeado (solo se produce en días con avisos pendientes).</summary>
+    public class DiaCalendarioEventArgs : EventArgs
+    {
+        public DateTime Fecha { get; }
+        /// <summary>Rectángulo de la celda en coordenadas del calendario.</summary>
+        public Rectangle Celda { get; }
+
+        public DiaCalendarioEventArgs(DateTime fecha, Rectangle celda)
+        {
+            Fecha = fecha;
+            Celda = celda;
+        }
+    }
+
     /// <summary>
     /// Calendario mensual de solo lectura. Marca con un punto de color (uno por tipo) los días con
     /// avisos pendientes; los días ya pasados con avisos pendientes llevan el número en rojo.
-    /// Las flechas del encabezado cambian de mes.
+    /// Las flechas del encabezado cambian de mes; un click en un día con avisos produce <see cref="DiaClick"/>.
     /// </summary>
     public class CalendarioVencimientos : Control
     {
@@ -27,6 +41,9 @@ namespace Presentacion.Notificaciones
 
         /// <summary>Se produce al cambiar el mes mostrado; hay que volver a cargar los vencimientos del rango visible.</summary>
         public event EventHandler? MesCambiado;
+
+        /// <summary>Se produce al hacer click en un día que tiene avisos pendientes.</summary>
+        public event EventHandler<DiaCalendarioEventArgs>? DiaClick;
 
         public CalendarioVencimientos()
         {
@@ -223,12 +240,35 @@ namespace Presentacion.Notificaciones
             }
         }
 
+        /// <summary>Celda de la grilla bajo el punto, si el punto cae dentro de la grilla.</summary>
+        private (DateTime Fecha, Rectangle Celda)? CeldaEn(Point p)
+        {
+            int yGrilla = AltoEncabezado + AltoDiasSemana;
+            int altoGrilla = Math.Max(ClientSize.Height - yGrilla - AltoLeyenda, 1);
+            if (p.Y < yGrilla || p.Y >= yGrilla + altoGrilla || p.X < 0 || p.X >= ClientSize.Width)
+                return null;
+
+            int semanas = Semanas;
+            float anchoCelda = ClientSize.Width / 7f;
+            float altoCelda = altoGrilla / (float)semanas;
+            int col = Math.Min((int)(p.X / anchoCelda), 6);
+            int fila = Math.Min((int)((p.Y - yGrilla) / altoCelda), semanas - 1);
+
+            DateTime fecha = PrimerDiaVisible.AddDays(fila * 7 + col);
+            var celda = Rectangle.Round(new RectangleF(col * anchoCelda, yGrilla + fila * altoCelda, anchoCelda, altoCelda));
+            return (fecha, celda);
+        }
+
+        private bool TieneAvisos(DateTime fecha) => _porDia.TryGetValue(fecha, out var tipos) && tipos.Count > 0;
+
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
-            Cursor = _rectAnterior.Contains(e.Location) || _rectSiguiente.Contains(e.Location)
-                ? Cursors.Hand
-                : Cursors.Default;
+            var celda = CeldaEn(e.Location);
+            bool mano = _rectAnterior.Contains(e.Location)
+                        || _rectSiguiente.Contains(e.Location)
+                        || (celda.HasValue && TieneAvisos(celda.Value.Fecha));
+            Cursor = mano ? Cursors.Hand : Cursors.Default;
         }
 
         protected override void OnMouseClick(MouseEventArgs e)
@@ -238,9 +278,19 @@ namespace Presentacion.Notificaciones
                 return;
 
             if (_rectAnterior.Contains(e.Location))
+            {
                 CambiarMes(-1);
-            else if (_rectSiguiente.Contains(e.Location))
+                return;
+            }
+            if (_rectSiguiente.Contains(e.Location))
+            {
                 CambiarMes(1);
+                return;
+            }
+
+            var celda = CeldaEn(e.Location);
+            if (celda.HasValue && TieneAvisos(celda.Value.Fecha))
+                DiaClick?.Invoke(this, new DiaCalendarioEventArgs(celda.Value.Fecha, celda.Value.Celda));
         }
 
         private void CambiarMes(int delta)

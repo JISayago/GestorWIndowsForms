@@ -421,6 +421,52 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
             return resultado;
         }
 
+        /// <summary>Avisos pendientes (no leídos) que vencen en la fecha indicada, de lotes, ofertas y cuentas corrientes.</summary>
+        public List<AvisoDelDiaDTO> ObtenerAvisosDelDia(DateTime fecha)
+        {
+            DateTime inicio = fecha.Date;
+            DateTime finExclusivo = inicio.AddDays(1);
+
+            List<Notificacion> notis;
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                notis = context.Notificaciones
+                    .AsNoTracking()
+                    .Where(n => n.EstaLeida != true
+                                && n.FechaVencimiento != null
+                                && n.FechaVencimiento >= inicio
+                                && n.FechaVencimiento < finExclusivo)
+                    .OrderBy(n => n.Titulo)
+                    .ToList();
+            }
+
+            var resultado = new List<AvisoDelDiaDTO>();
+            foreach (var n in notis)
+            {
+                TipoVencimientoCalendario? tipo = ClasificarPorTitulo(n.Titulo);
+                if (tipo == null)
+                    continue;
+
+                resultado.Add(new AvisoDelDiaDTO
+                {
+                    Tipo = tipo.Value,
+                    Aviso = new NotificacionDTO
+                    {
+                        NotificacionId = n.NotificacionId,
+                        Titulo = n.Titulo,
+                        Descripcion = n.Descripcion,
+                        Mensaje = n.Mensaje,
+                        FechaCreacion = n.FechaCreacion,
+                        Leida = n.EstaLeida,
+                        FechaNotificacion = n.FechaVencimiento ?? DateTime.Now,
+                        NivelUrgencia = CalcularNivelUrgencia(n.FechaVencimiento)
+                    }
+                });
+            }
+
+            return resultado;
+        }
+
         private static TipoVencimientoCalendario? ClasificarPorTitulo(string titulo)
         {
             if (string.IsNullOrEmpty(titulo))

@@ -6,7 +6,8 @@ namespace Presentacion.Notificaciones
 {
     /// <summary>
     /// Tarjeta de un aviso: franja de urgencia a la izquierda, título y descripción.
-    /// Avisa los clicks (izquierdo y derecho) sobre cualquier parte de la tarjeta.
+    /// Click izquierdo: avisa para abrir la consulta. Click derecho: despliega un menú con
+    /// "Marcar como leído", y recién al elegir esa opción se avisa (evita marcados accidentales).
     /// </summary>
     public class AvisoItem : Panel
     {
@@ -15,11 +16,15 @@ namespace Presentacion.Notificaciones
 
         private readonly Label _lblTitulo;
         private readonly Label _lblDescripcion;
+        private readonly ContextMenuStrip _menu = new ContextMenuStrip();
 
         public NotificacionDTO Aviso { get; }
 
-        /// <summary>Click (cualquier botón) sobre la tarjeta o sus textos.</summary>
-        public event EventHandler<MouseEventArgs>? AvisoClick;
+        /// <summary>Click izquierdo sobre la tarjeta o sus textos.</summary>
+        public event EventHandler? AvisoClick;
+
+        /// <summary>El usuario eligió "Marcar como leído" en el menú del click derecho.</summary>
+        public event EventHandler? MarcarLeidoSolicitado;
 
         /// <summary>El mouse entró a la tarjeta; sirve para que la lista tome el foco y responda a la rueda.</summary>
         public event EventHandler? MouseEntro;
@@ -56,9 +61,19 @@ namespace Presentacion.Notificaciones
             Controls.Add(_lblTitulo);
             Controls.Add(_lblDescripcion);
 
+            var opcionLeido = new ToolStripMenuItem("Marcar como leído");
+            opcionLeido.Click += (s, e) => MarcarLeidoSolicitado?.Invoke(this, EventArgs.Empty);
+            _menu.Items.Add(opcionLeido);
+
             foreach (Control c in new Control[] { this, _lblTitulo, _lblDescripcion })
             {
-                c.MouseClick += (s, e) => AvisoClick?.Invoke(this, e);
+                c.MouseClick += (s, e) =>
+                {
+                    if (e.Button == MouseButtons.Left)
+                        AvisoClick?.Invoke(this, EventArgs.Empty);
+                    else if (e.Button == MouseButtons.Right && !Aviso.Leida)
+                        _menu.Show(c, e.Location);
+                };
                 c.MouseEnter += (s, e) => MouseEntro?.Invoke(this, EventArgs.Empty);
                 toolTip.SetToolTip(c, textoAyuda);
             }
@@ -76,6 +91,13 @@ namespace Presentacion.Notificaciones
 
             Height = _lblDescripcion.Bottom + 9;
             return Height;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                _menu.Dispose();
+            base.Dispose(disposing);
         }
 
         protected override void OnPaint(PaintEventArgs e)

@@ -20,6 +20,7 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
         void NotificacionesCtaCteVencidas();
         void MarcarNotificacionComoLeida(long notificacionId);
         List<VencimientoCalendarioDTO> ObtenerVencimientosCalendario(DateTime desde, DateTime hasta);
+        List<AvisoDelDiaDTO> ObtenerAvisosDelDia(DateTime fecha);
         string ObtenerDniClientePorNombreCuentaCorriente(string nombreCuentaCorriente);
         string ObtenerCodigoOfertaDeAvisoBajoStock(string tituloAviso);
         DatosTurnoDTO ObtenerDatosTurno(long? cajaId, long usuarioId);
