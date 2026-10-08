@@ -241,14 +241,14 @@ public partial class FOfertaConsulta : FBaseConsulta
 
     #region BOTONES BASE
 
-    public override void EjecutarBtnNuevo()
-    {
-        var f = new FOfertaGrupoABM();
+    //public override void EjecutarBtnNuevo()
+    //{
+    //    var f = new FOfertaGrupoABM();
 
-        f.ShowDialog();
+    //    f.ShowDialog();
 
-        RefrescarGrilla();
-    }
+    //    RefrescarGrilla();
+    //}
 
     #endregion
 
