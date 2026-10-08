@@ -124,35 +124,35 @@
             // sTOCKToolStripMenuItem
             // 
             sTOCKToolStripMenuItem.Name = "sTOCKToolStripMenuItem";
-            sTOCKToolStripMenuItem.Size = new Size(150, 24);
-            sTOCKToolStripMenuItem.Text = "Stock";
+            sTOCKToolStripMenuItem.Size = new Size(199, 24);
+            sTOCKToolStripMenuItem.Text = "Listado Productos";
             sTOCKToolStripMenuItem.Click += sTOCKToolStripMenuItem_Click;
             // 
             // mARCASToolStripMenuItem
             // 
             mARCASToolStripMenuItem.Name = "mARCASToolStripMenuItem";
-            mARCASToolStripMenuItem.Size = new Size(150, 24);
+            mARCASToolStripMenuItem.Size = new Size(199, 24);
             mARCASToolStripMenuItem.Text = "Marcas";
             mARCASToolStripMenuItem.Click += mARCASToolStripMenuItem_Click;
             // 
             // cATEGORIASToolStripMenuItem
             // 
             cATEGORIASToolStripMenuItem.Name = "cATEGORIASToolStripMenuItem";
-            cATEGORIASToolStripMenuItem.Size = new Size(150, 24);
+            cATEGORIASToolStripMenuItem.Size = new Size(199, 24);
             cATEGORIASToolStripMenuItem.Text = "Categorias";
             cATEGORIASToolStripMenuItem.Click += cATEGORIASToolStripMenuItem_Click;
             // 
             // rUBROSToolStripMenuItem
             // 
             rUBROSToolStripMenuItem.Name = "rUBROSToolStripMenuItem";
-            rUBROSToolStripMenuItem.Size = new Size(150, 24);
+            rUBROSToolStripMenuItem.Size = new Size(199, 24);
             rUBROSToolStripMenuItem.Text = "Rubros";
             rUBROSToolStripMenuItem.Click += rUBROSToolStripMenuItem_Click;
             // 
             // lOTESToolStripMenuItem
             // 
             lOTESToolStripMenuItem.Name = "lOTESToolStripMenuItem";
-            lOTESToolStripMenuItem.Size = new Size(150, 24);
+            lOTESToolStripMenuItem.Size = new Size(199, 24);
             lOTESToolStripMenuItem.Text = "Lotes";
             lOTESToolStripMenuItem.Click += lOTESToolStripMenuItem_Click;
             // 
