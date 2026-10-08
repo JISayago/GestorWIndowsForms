@@ -41,7 +41,7 @@ namespace Presentacion.Core.Empleado.Rol
                 DesactivarControles(this);
             }
 
-            AgregarControlesObligatorios(txtNombre, "Nombre del Rol");
+            AgregarControlesObligatorios(txtNombre, "Nombre");
             AgregarControlesObligatorios(txtCodigoRol, "Código del Rol");
             AgregarControlesObligatorios(txtDescripcionRol, "Descripcion del Rol");
         }
