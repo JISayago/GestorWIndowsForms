@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
-
-using System.Net.Mail;
 
 namespace Presentacion.FBase.Helpers
 {
@@ -74,5 +74,66 @@ namespace Presentacion.FBase.Helpers
                 ? $"{nombre} debe tener {min} caracteres."
                 : $"{nombre} debe tener entre {min} y {max} caracteres.";
         };
+        // Acepta enteros y decimales, con coma o punto como separador (ej. 12, 12,50, 12.50)
+        public static string Decimal(Control c, string nombre)
+        {
+            var t = Texto(c);
+            if (t.Length == 0) return null;
+            return TryParseDecimal(t, out _)
+                ? null
+                : $"{nombre} debe ser un número válido (ej. 1234,50).";
+        }
+
+        public static string DecimalMayorACero(Control c, string nombre)
+        {
+            var t = Texto(c);
+            if (t.Length == 0) return null;
+            if (!TryParseDecimal(t, out var valor))
+                return $"{nombre} debe ser un número válido (ej. 1234,50).";
+            return valor > 0 ? null : $"{nombre} debe ser mayor a cero.";
+        }
+
+        // Fábrica: limita la cantidad de decimales (ej. 2 para importes)
+        public static ReglaValidacion DecimalConMaxDecimales(int maxDecimales) => (c, nombre) =>
+        {
+            var t = Texto(c);
+            if (t.Length == 0) return null;
+            if (!TryParseDecimal(t, out _))
+                return $"{nombre} debe ser un número válido (ej. 1234,50).";
+
+            int pos = t.IndexOfAny(new[] { ',', '.' });
+            int cantDecimales = pos < 0 ? 0 : t.Length - pos - 1;
+            return cantDecimales <= maxDecimales
+                ? null
+                : $"{nombre} admite como máximo {maxDecimales} decimales.";
+        };
+
+        // Fábrica: valida un rango (ej. descuento entre 0 y 100)
+        public static ReglaValidacion DecimalEntre(decimal min, decimal max) => (c, nombre) =>
+        {
+            var t = Texto(c);
+            if (t.Length == 0) return null;
+            if (!TryParseDecimal(t, out var valor))
+                return $"{nombre} debe ser un número válido (ej. 1234,50).";
+            return valor >= min && valor <= max
+                ? null
+                : $"{nombre} debe estar entre {min} y {max}.";
+        };
+
+        // Parser tolerante: acepta coma o punto como separador decimal
+        // y NO acepta separadores de miles (para evitar ambigüedad con "1.234").
+        public static bool TryParseDecimal(string texto, out decimal valor)
+        {
+            valor = 0;
+            texto = texto?.Trim();
+            if (string.IsNullOrEmpty(texto)) return false;
+
+            // Un solo separador permitido
+            if (texto.Count(ch => ch == ',' || ch == '.') > 1) return false;
+
+            texto = texto.Replace(',', '.');
+            return decimal.TryParse(texto, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint,
+                CultureInfo.InvariantCulture, out valor);
+        }
     }
 }
