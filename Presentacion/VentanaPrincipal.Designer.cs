@@ -58,7 +58,7 @@ namespace Presentacion
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
             tlpNotificaciones0 = new TableLayoutPanel();
-            flowLayoutNotificaciones = new FlowLayoutPanel();
+            panelAvisos = new Presentacion.Notificaciones.PanelAvisosCalendario();
             btnRefresh = new Button();
             flowLayoutPanel3 = new FlowLayoutPanel();
             panel1 = new Panel();
@@ -436,7 +436,7 @@ namespace Presentacion
             tlpNotificaciones0.BackColor = SystemColors.ButtonFace;
             tlpNotificaciones0.ColumnCount = 1;
             tlpNotificaciones0.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tlpNotificaciones0.Controls.Add(flowLayoutNotificaciones, 0, 1);
+            tlpNotificaciones0.Controls.Add(panelAvisos, 0, 1);
             tlpNotificaciones0.Controls.Add(btnRefresh, 0, 0);
             tlpNotificaciones0.Dock = DockStyle.Fill;
             tlpNotificaciones0.Location = new Point(784, 3);
@@ -448,17 +448,13 @@ namespace Presentacion
             tlpNotificaciones0.TabIndex = 1;
             tlpNotificaciones0.Paint += tlpNotificaciones0_Paint;
             // 
-            // flowLayoutNotificaciones
+            // panelAvisos
             // 
-            flowLayoutNotificaciones.AutoScroll = true;
-            flowLayoutNotificaciones.BackColor = SystemColors.ButtonFace;
-            flowLayoutNotificaciones.Dock = DockStyle.Fill;
-            flowLayoutNotificaciones.FlowDirection = FlowDirection.TopDown;
-            flowLayoutNotificaciones.Location = new Point(3, 34);
-            flowLayoutNotificaciones.Name = "flowLayoutNotificaciones";
-            flowLayoutNotificaciones.Size = new Size(446, 595);
-            flowLayoutNotificaciones.TabIndex = 0;
-            flowLayoutNotificaciones.WrapContents = false;
+            panelAvisos.Dock = DockStyle.Fill;
+            panelAvisos.Location = new Point(3, 34);
+            panelAvisos.Name = "panelAvisos";
+            panelAvisos.Size = new Size(446, 595);
+            panelAvisos.TabIndex = 0;
             // 
             // btnRefresh
             // 
@@ -549,7 +545,7 @@ namespace Presentacion
         private TabPage tabPage1;
         private TabPage tabPage2;
         private TableLayoutPanel tlpNotificaciones0;
-        private FlowLayoutPanel flowLayoutNotificaciones;
+        private Presentacion.Notificaciones.PanelAvisosCalendario panelAvisos;
         private TableLayoutPanel tblUsuario;
         private Button btnRefresh;
         private FlowLayoutPanel flpUsuarioLogeado;
