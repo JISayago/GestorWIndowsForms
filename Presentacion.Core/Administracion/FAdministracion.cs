@@ -43,8 +43,7 @@ namespace Presentacion.Core.Administracion
         // ==========================================
         // DEPENDENCIAS Y SERVICIOS DE CAPA DE NEGOCIO
         // ==========================================
-
-        private readonly long _logeadoId;
+                private readonly long _logeadoId;
         private readonly CajaServicio _cajaSerivicio;
         List<CajaDTO> todasLasCajas;
         private readonly AdministracionGraficosServicios _graficoServicio;
