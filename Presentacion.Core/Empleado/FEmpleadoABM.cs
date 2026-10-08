@@ -1,4 +1,5 @@
 ﻿using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Empleado.DTO;
@@ -45,14 +46,15 @@ namespace Presentacion.Core.Empleado
                 DesactivarControles(this);
             }
 
-            AgregarControlesObligatorios(txtApellido, "Apellido");
             AgregarControlesObligatorios(txtNombre, "Nombre");
-            AgregarControlesObligatorios(txtDni, "Dni");
-            //AgregarControlesObligatorios(txtLegajo, "Legajo");
-            //AgregarControlesObligatorios(txtTelefono, "Telefono");
-            //AgregarControlesObligatorios(txtCuil, "Cuil");
-            //AgregarControlesObligatorios(txtEmail, "Email");
-            //AgregarControlesObligatorios(txtDireccion, "Direccion");
+            AgregarControlesObligatorios(txtApellido, "Apellido");
+            AgregarControlesObligatorios(txtDni, "DNI", Validaciones.SoloNumeros, Validaciones.Longitud(7, 8));
+            AgregarControlesObligatorios(dtpFIngreso, "Fecha de ingreso", Validaciones.FechaNoFutura);
+            AgregarControlesObligatorios(dtpFNacimiento, "Fecha de nacimiento", Validaciones.FechaNoFutura);
+            AgregarValidacionOpcional(txtEmail, "Email", Validaciones.Email);
+            AgregarValidacionOpcional(txtTelefono, "Teléfono", Validaciones.SoloNumeros,Validaciones.MayorACero);
+            AgregarValidacionOpcional(txtCelular, "Celular", Validaciones.SoloNumeros,Validaciones.MayorACero);
+
         }
         public override void Inicializador(long? entidadId)
         {

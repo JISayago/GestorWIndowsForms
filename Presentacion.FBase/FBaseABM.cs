@@ -58,6 +58,7 @@ namespace Presentacion.FBase
                    MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 Limpiar(this);
+                LimpiarErroresVisuales();   // <-- nuevo
             }
         }
 
@@ -88,14 +89,16 @@ namespace Presentacion.FBase
         }
         public virtual void EjecutarComando()
         {
+            // Validación centralizada: los hijos ya no necesitan llamarla ellos
+            if (TipoOperacion != TipoOperacion.Eliminar && !VerificarDatosObligatorios())
+                return;
             switch (TipoOperacion)
             {
                 case TipoOperacion.Nuevo:
                     if (EjecutarComandoNuevo())
                     {
-                        //MessageBox.Show(@"Los datos se Guardaron Correctamente.", @"Atención", MessageBoxButtons.OK,
-                        //    MessageBoxIcon.Information);
                         Limpiar(this);
+                        LimpiarErroresVisuales();   // <-- nuevo
                         RealizoAlgunaOperacion = true;
                     }
                     break;

@@ -8,25 +8,35 @@ using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
 using System.Linq;
+using Presentacion.FBase.Helpers;
 
 namespace Presentacion.FBase
 {
+    public enum PosicionMensajeError { Abajo, Derecha }
     public partial class FBase : Form
-    {
-        //   private string ColorFondo = "#d4a925";Pensado para config
-        private readonly List<ControlDTO> _listaControlesObligatorios;
-        public FBase()
         {
-            InitializeComponent();
-            this.KeyPreview = true;
+            // ---- Configuración de validación (los hijos pueden cambiarla) ----
+            protected PosicionMensajeError PosicionMensaje { get; set; } = PosicionMensajeError.Abajo;
+            protected bool MostrarIconoErrorProvider { get; set; } = false;
+            protected Color ColorError { get; set; } = Color.Firebrick;
+            protected Color ColorFondoError { get; set; } = Color.FromArgb(255, 220, 220);
 
-            _listaControlesObligatorios = new List<ControlDTO>();
-            this.components = new System.ComponentModel.Container();
-            this.error = new System.Windows.Forms.ErrorProvider(this.components);
-            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-        }
+            private readonly List<CampoValidable> _campos = new List<CampoValidable>();
+            private readonly HashSet<Control> _padresConPaint = new HashSet<Control>();
 
-        protected override void OnLoad(EventArgs e)
+            public FBase()
+            {
+                InitializeComponent();
+                this.KeyPreview = true;
+
+                // Antes se pisaba "components" con uno nuevo, lo que descartaba el del designer.
+                if (components == null) components = new System.ComponentModel.Container();
+                if (error == null) error = new System.Windows.Forms.ErrorProvider(components);
+                error.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+
+                this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            }
+            protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
@@ -215,103 +225,337 @@ namespace Presentacion.FBase
             cmb.DisplayMember = propiedadMostrar;
             cmb.ValueMember = propiedadDevolver;
         }
-        public virtual void AgregarControlesObligatorios(object control, string nombreControl)
+        //public virtual void AgregarControlesObligatorios(object control, string nombreControl)
+        //{
+        //    _listaControlesObligatorios.Add(new ControlDTO
+        //    {
+        //        Control = control,
+        //        NombreControl = nombreControl
+        //    });
+
+        //    AsignarErrorProvider(control);
+        //}
+
+        //public virtual void LimpiarControlesObligatorios()
+        //{
+        //    _listaControlesObligatorios.Clear();
+        //    error.Clear();
+        //}
+        //public virtual bool VerificarDatosObligatorios()
+        //{
+        //    foreach (var objeto in _listaControlesObligatorios)
+        //    {
+        //        switch (objeto.Control)
+        //        {
+        //            case TextBox _:
+        //                if (string.IsNullOrEmpty(((TextBox)objeto.Control).Text)) return false;
+        //                break;
+        //            case RichTextBox _:
+        //                if (string.IsNullOrEmpty(((RichTextBox)objeto.Control).Text)) return false;
+        //                break;
+        //            case NumericUpDown _:
+        //                if (string.IsNullOrEmpty(((NumericUpDown)objeto.Control).Text)) return false;
+        //                break;
+        //            case ComboBox _:
+        //                if (((ComboBox)objeto.Control).Items.Count <= 0) return false;
+        //                break;
+        //        }
+        //    }
+
+        //    return true;
+        //}
+        //public virtual void AsignarErrorProvider(object control)
+        //{
+        //    if (control is TextBox)
+        //    {
+        //        ((TextBox)control).Validated += Control_Validated;
+        //    }
+
+        //    if (control is RichTextBox)
+        //    {
+        //        ((RichTextBox)control).Validated += Control_Validated;
+        //    }
+
+        //    if (control is ComboBox)
+        //    {
+        //        ((ComboBox)control).Validated += Control_Validated;
+        //    }
+        //}
+
+        //public virtual void Control_Validated(object sender, System.EventArgs e)
+        //{
+        //    if (sender is TextBox)
+        //    {
+        //        error.SetError(((TextBox)sender),
+        //            !string.IsNullOrEmpty(((TextBox)sender).Text)
+        //                ? string.Empty
+        //                : $"El campo es Obligatorio.");
+        //        return;
+        //    }
+
+        //    if (sender is RichTextBox)
+        //    {
+        //        error.SetError(((RichTextBox)sender),
+        //            !string.IsNullOrEmpty(((RichTextBox)sender).Text)
+        //                ? string.Empty
+        //                : $"El campo es Obligatorio.");
+
+        //        return;
+        //    }
+
+        //    if (sender is NumericUpDown)
+        //    {
+        //        error.SetError(((NumericUpDown)sender),
+        //            !string.IsNullOrEmpty(((NumericUpDown)sender).Text)
+        //                ? string.Empty
+        //                : $"El campo es Obligatorio.");
+
+        //        return;
+        //    }
+
+        //    if (sender is ComboBox)
+        //    {
+        //        error.SetError(((ComboBox)sender),
+        //            !string.IsNullOrEmpty(((ComboBox)sender).Text)
+        //                ? string.Empty
+        //                : $"El campo es Obligatorio.");
+        //    }
+        //}
+        // =====================================================================
+        //  VALIDACIÓN DE CAMPOS (reemplaza al ErrorProvider simple)
+        // =====================================================================
+
+        private class CampoValidable
         {
-            _listaControlesObligatorios.Add(new ControlDTO
+            public Control Control;
+            public string Nombre;
+            public List<ReglaValidacion> Reglas = new List<ReglaValidacion>();
+            public bool EnError;
+            public Label Mensaje;
+            public Color BackOriginal;
+            public bool BackGuardado;
+            public Action Desuscribir;
+        }
+
+        /// Campo obligatorio + reglas extra opcionales. Mantiene la firma vieja, así que los hijos no se rompen.
+        public virtual void AgregarControlesObligatorios(object control, string nombreControl,
+            params ReglaValidacion[] reglasExtra)
+        {
+            var reglas = new List<ReglaValidacion> { Validaciones.Obligatorio };
+            reglas.AddRange(reglasExtra);
+            Registrar(control as Control, nombreControl, reglas);
+        }
+
+        /// Campo NO obligatorio, pero que si se completa debe cumplir las reglas (ej. email).
+        public virtual void AgregarValidacionOpcional(Control control, string nombreCampo,
+            params ReglaValidacion[] reglas)
+        {
+            Registrar(control, nombreCampo, reglas);
+        }
+
+        private void Registrar(Control control, string nombre, IEnumerable<ReglaValidacion> reglas)
+        {
+            if (control == null) return;
+
+            var campo = _campos.FirstOrDefault(x => x.Control == control);
+            if (campo == null)
             {
-                Control = control,
-                NombreControl = nombreControl
-            });
-
-            AsignarErrorProvider(control);
+                campo = new CampoValidable { Control = control, Nombre = nombre };
+                _campos.Add(campo);
+                Suscribir(campo);
+            }
+            campo.Nombre = nombre;
+            campo.Reglas.Clear();
+            campo.Reglas.AddRange(reglas);
         }
 
-        public virtual void LimpiarControlesObligatorios()
+        private void Suscribir(CampoValidable campo)
         {
-            _listaControlesObligatorios.Clear();
-            error.Clear();
+            var c = campo.Control;
+            EventHandler alSalir = (s, e) => ValidarCampo(campo);
+            // Una vez que el campo está en error, se revalida mientras el usuario corrige
+            EventHandler alCambiar = (s, e) => { if (campo.EnError) ValidarCampo(campo); };
+
+            c.Validated += alSalir;
+            c.TextChanged += alCambiar;
+            Action desus = () => { c.Validated -= alSalir; c.TextChanged -= alCambiar; };
+
+            switch (c)
+            {
+                case ComboBox cmb:
+                    cmb.SelectedIndexChanged += alCambiar;
+                    desus += () => cmb.SelectedIndexChanged -= alCambiar;
+                    break;
+                case NumericUpDown nud:
+                    nud.ValueChanged += alCambiar;
+                    desus += () => nud.ValueChanged -= alCambiar;
+                    break;
+                case DateTimePicker dtp:
+                    dtp.ValueChanged += alCambiar;
+                    desus += () => dtp.ValueChanged -= alCambiar;
+                    break;
+            }
+            campo.Desuscribir = desus;
         }
+
+        /// Valida todos los campos registrados, los marca y enfoca el primero con error.
         public virtual bool VerificarDatosObligatorios()
         {
-            foreach (var objeto in _listaControlesObligatorios)
+            bool todoOk = true;
+            Control primero = null;
+
+            foreach (var campo in _campos)
             {
-                switch (objeto.Control)
+                if (!campo.Control.Enabled) continue; // campos desactivados no se validan
+                if (!ValidarCampo(campo))
                 {
-                    case TextBox _:
-                        if (string.IsNullOrEmpty(((TextBox)objeto.Control).Text)) return false;
-                        break;
-                    case RichTextBox _:
-                        if (string.IsNullOrEmpty(((RichTextBox)objeto.Control).Text)) return false;
-                        break;
-                    case NumericUpDown _:
-                        if (string.IsNullOrEmpty(((NumericUpDown)objeto.Control).Text)) return false;
-                        break;
-                    case ComboBox _:
-                        if (((ComboBox)objeto.Control).Items.Count <= 0) return false;
-                        break;
+                    todoOk = false;
+                    if (primero == null) primero = campo.Control;
                 }
             }
 
-            return true;
+            primero?.Focus();
+            return todoOk;
         }
-        public virtual void AsignarErrorProvider(object control)
+
+        /// Solo saca lo visual (rojo, labels, iconos). Mantiene los campos registrados.
+        public virtual void LimpiarErroresVisuales()
         {
-            if (control is TextBox)
-            {
-                ((TextBox)control).Validated += Control_Validated;
-            }
-
-            if (control is RichTextBox)
-            {
-                ((RichTextBox)control).Validated += Control_Validated;
-            }
-
-            if (control is ComboBox)
-            {
-                ((ComboBox)control).Validated += Control_Validated;
-            }
+            foreach (var campo in _campos) OcultarError(campo);
+            error.Clear();
         }
 
-        public virtual void Control_Validated(object sender, System.EventArgs e)
+        /// Saca todo: errores visuales y registro de campos (para reconfigurar desde cero).
+        public virtual void LimpiarControlesObligatorios()
         {
-            if (sender is TextBox)
+            foreach (var campo in _campos)
             {
-                error.SetError(((TextBox)sender),
-                    !string.IsNullOrEmpty(((TextBox)sender).Text)
-                        ? string.Empty
-                        : $"El campo es Obligatorio.");
-                return;
+                OcultarError(campo);
+                campo.Desuscribir?.Invoke();
+                if (campo.Mensaje != null)
+                {
+                    campo.Mensaje.Parent?.Controls.Remove(campo.Mensaje);
+                    campo.Mensaje.Dispose();
+                }
+            }
+            _campos.Clear();
+            error.Clear();
+        }
+
+        private bool ValidarCampo(CampoValidable campo)
+        {
+            string mensaje = null;
+            foreach (var regla in campo.Reglas)
+            {
+                mensaje = regla(campo.Control, campo.Nombre);
+                if (!string.IsNullOrEmpty(mensaje)) break; // primer error gana
             }
 
-            if (sender is RichTextBox)
+            if (string.IsNullOrEmpty(mensaje))
             {
-                error.SetError(((RichTextBox)sender),
-                    !string.IsNullOrEmpty(((RichTextBox)sender).Text)
-                        ? string.Empty
-                        : $"El campo es Obligatorio.");
-
-                return;
+                OcultarError(campo);
+                return true;
             }
 
-            if (sender is NumericUpDown)
-            {
-                error.SetError(((NumericUpDown)sender),
-                    !string.IsNullOrEmpty(((NumericUpDown)sender).Text)
-                        ? string.Empty
-                        : $"El campo es Obligatorio.");
+            MostrarError(campo, mensaje);
+            return false;
+        }
 
-                return;
+        private void MostrarError(CampoValidable campo, string mensaje)
+        {
+            var c = campo.Control;
+
+            // Guardamos el color con el tema ya aplicado, para poder restaurarlo después
+            if (!campo.BackGuardado)
+            {
+                campo.BackOriginal = c.BackColor;
+                campo.BackGuardado = true;
             }
+            campo.EnError = true;
 
-            if (sender is ComboBox)
+            if (c is TextBox || c is RichTextBox || c is ComboBox || c is NumericUpDown)
+                c.BackColor = ColorFondoError;
+
+            if (MostrarIconoErrorProvider)
+                error.SetError(c, mensaje);
+
+            MostrarMensajeLabel(campo, mensaje);
+
+            if (c.Parent != null)
             {
-                error.SetError(((ComboBox)sender),
-                    !string.IsNullOrEmpty(((ComboBox)sender).Text)
-                        ? string.Empty
-                        : $"El campo es Obligatorio.");
+                AsegurarPaintBorde(c.Parent);
+                c.Parent.Invalidate();
             }
         }
 
+        private void OcultarError(CampoValidable campo)
+        {
+            if (!campo.EnError) return;
+
+            var c = campo.Control;
+            campo.EnError = false;
+
+            if (campo.BackGuardado)
+            {
+                c.BackColor = campo.BackOriginal;
+                campo.BackGuardado = false;
+            }
+
+            error.SetError(c, string.Empty);
+            if (campo.Mensaje != null) campo.Mensaje.Visible = false;
+            c.Parent?.Invalidate();
+        }
+
+        private void MostrarMensajeLabel(CampoValidable campo, string mensaje)
+        {
+            var c = campo.Control;
+
+            // En un TableLayoutPanel, agregar un control "suelto" desacomoda las celdas.
+            // Ahí queda solo el borde rojo + el icono del ErrorProvider con el mensaje en el tooltip.
+            if (c.Parent == null || c.Parent is TableLayoutPanel) return;
+
+            if (campo.Mensaje == null)
+            {
+                campo.Mensaje = new Label
+                {
+                    AutoSize = true,
+                    ForeColor = ColorError,
+                    BackColor = Color.Transparent,
+                    Font = new Font("Segoe UI", 8F, FontStyle.Regular),
+                    Tag = "NoModificarConBase" // para que AplicarEstiloALabels no lo pise
+                };
+                c.Parent.Controls.Add(campo.Mensaje);
+            }
+
+            campo.Mensaje.Text = mensaje;
+            campo.Mensaje.Location = PosicionMensaje == PosicionMensajeError.Abajo
+                ? new Point(c.Left, c.Bottom + 2)
+                : new Point(c.Right + 6, c.Top + (c.Height - campo.Mensaje.Height) / 2);
+            campo.Mensaje.Visible = true;
+            campo.Mensaje.BringToFront();
+        }
+
+        // Borde rojo dibujado en el parent: funciona con CUALQUIER control (DateTimePicker incluido)
+        private void AsegurarPaintBorde(Control padre)
+        {
+            if (padre == null || !_padresConPaint.Add(padre)) return;
+            padre.Paint += PadreOnPaint;
+        }
+
+        private void PadreOnPaint(object sender, PaintEventArgs e)
+        {
+            var padre = (Control)sender;
+            using (var pen = new Pen(ColorError, 2))
+            {
+                foreach (var campo in _campos)
+                {
+                    if (!campo.EnError || campo.Control.Parent != padre || !campo.Control.Visible) continue;
+                    var r = campo.Control.Bounds;
+                    r.Inflate(2, 2);
+                    e.Graphics.DrawRectangle(pen, r);
+                }
+            }
+        }
         /*
                COMIENZO DE SECCION DE TEMA DEL SISTEMA. COLORES Y ASIGNACION DE ESTILOS A LOS CONTROLES
          */

@@ -1,6 +1,7 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.Core.CuentaCorriente;
 using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers.Cliente;
 using Servicios.LogicaNegocio.Articulo.Marca;
@@ -38,13 +39,13 @@ namespace Presentacion.Core.Cliente
                 DesactivarControles(this);
             }
 
-            AgregarControlesObligatorios(txtApellido, "Apellido");
             AgregarControlesObligatorios(txtNombre, "Nombre");
-            AgregarControlesObligatorios(txtDni, "Dni");
-            //AgregarControlesObligatorios(txtTelefono, "Telefono");
-            //AgregarControlesObligatorios(txtCuil, "Cuil");
-            //AgregarControlesObligatorios(txtEmail, "Email");
-            //AgregarControlesObligatorios(txtDireccion, "Direccion");
+            AgregarControlesObligatorios(txtApellido, "Apellido");
+            AgregarControlesObligatorios(txtDni, "DNI", Validaciones.SoloNumeros, Validaciones.Longitud(7, 8));
+            AgregarControlesObligatorios(dtpFNacimiento, "Fecha de nacimiento", Validaciones.FechaNoFutura);
+            AgregarValidacionOpcional(txtEmail, "Email", Validaciones.Email);
+            AgregarValidacionOpcional(txtTelefono, "Teléfono", Validaciones.SoloNumeros, Validaciones.MayorACero);
+            AgregarValidacionOpcional(txtCelular, "Celular", Validaciones.SoloNumeros, Validaciones.MayorACero);
         }
         public override void Inicializador(long? entidadId)
         {
