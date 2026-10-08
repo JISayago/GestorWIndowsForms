@@ -31,45 +31,61 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FCategoriaABM));
             lblCategoria = new Label();
             txtCategoria = new TextBox();
-            label3 = new Label();
+            label5 = new Label();
+            label6 = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
             // lblCategoria
             // 
             lblCategoria.AutoSize = true;
-            lblCategoria.Font = new Font("Segoe UI", 15.75F);
-            lblCategoria.Location = new Point(52, 114);
+            lblCategoria.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblCategoria.Location = new Point(30, 99);
             lblCategoria.Name = "lblCategoria";
-            lblCategoria.Size = new Size(102, 30);
+            lblCategoria.Size = new Size(77, 21);
             lblCategoria.TabIndex = 1;
             lblCategoria.Tag = "NoModificarConBase";
             lblCategoria.Text = "Categoria";
             // 
             // txtCategoria
             // 
-            txtCategoria.Font = new Font("Segoe UI", 15.75F);
-            txtCategoria.Location = new Point(165, 111);
+            txtCategoria.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtCategoria.Location = new Point(123, 96);
             txtCategoria.Name = "txtCategoria";
-            txtCategoria.Size = new Size(219, 35);
+            txtCategoria.Size = new Size(262, 29);
             txtCategoria.TabIndex = 2;
             // 
-            // label3
+            // label5
             // 
-            label3.AutoSize = true;
-            label3.ForeColor = Color.Red;
-            label3.Location = new Point(259, 149);
-            label3.Name = "label3";
-            label3.Size = new Size(124, 15);
-            label3.TabIndex = 4;
-            label3.Text = "Campo Obligatorio (*)";
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label5.ForeColor = Color.Red;
+            label5.Location = new Point(123, 67);
+            label5.Name = "label5";
+            label5.Size = new Size(260, 17);
+            label5.TabIndex = 48;
+            label5.Tag = "NoModificarConBase";
+            label5.Text = "El ícono  *  representa campo obligatorio.";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label6.ForeColor = Color.Red;
+            label6.Location = new Point(391, 100);
+            label6.Name = "label6";
+            label6.Size = new Size(16, 20);
+            label6.TabIndex = 49;
+            label6.Tag = "NoModificarConBase";
+            label6.Text = "*";
             // 
             // FCategoriaABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(464, 211);
-            Controls.Add(label3);
+            ClientSize = new Size(422, 147);
+            Controls.Add(label6);
+            Controls.Add(label5);
             Controls.Add(txtCategoria);
             Controls.Add(lblCategoria);
             ForeColor = Color.FromArgb(31, 26, 43);
@@ -78,7 +94,8 @@
             Text = "ABM Categoria";
             Controls.SetChildIndex(lblCategoria, 0);
             Controls.SetChildIndex(txtCategoria, 0);
-            Controls.SetChildIndex(label3, 0);
+            Controls.SetChildIndex(label5, 0);
+            Controls.SetChildIndex(label6, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -88,6 +105,7 @@
 
         private Label lblCategoria;
         private TextBox txtCategoria;
-        private Label label3;
+        private Label label5;
+        private Label label6;
     }
 }

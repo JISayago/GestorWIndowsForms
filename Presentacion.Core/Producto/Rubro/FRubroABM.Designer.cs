@@ -29,47 +29,63 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FRubroABM));
-            label3 = new Label();
             txtRubro = new TextBox();
             lblRubro = new Label();
+            label5 = new Label();
+            label6 = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.ForeColor = Color.Red;
-            label3.Location = new Point(253, 144);
-            label3.Name = "label3";
-            label3.Size = new Size(124, 15);
-            label3.TabIndex = 10;
-            label3.Text = "Campo Obligatorio (*)";
-            // 
             // txtRubro
             // 
-            txtRubro.Font = new Font("Segoe UI", 15.75F);
-            txtRubro.Location = new Point(159, 106);
+            txtRubro.Font = new Font("Segoe UI", 12F);
+            txtRubro.Location = new Point(80, 92);
             txtRubro.Name = "txtRubro";
-            txtRubro.Size = new Size(219, 35);
+            txtRubro.Size = new Size(262, 29);
             txtRubro.TabIndex = 9;
             // 
             // lblRubro
             // 
             lblRubro.AutoSize = true;
-            lblRubro.Font = new Font("Segoe UI", 15.75F);
-            lblRubro.Location = new Point(62, 109);
+            lblRubro.Font = new Font("Segoe UI", 12F);
+            lblRubro.Location = new Point(21, 95);
             lblRubro.Name = "lblRubro";
-            lblRubro.Size = new Size(69, 30);
+            lblRubro.Size = new Size(53, 21);
             lblRubro.TabIndex = 8;
             lblRubro.Tag = "NoModificarConBase";
             lblRubro.Text = "Rubro";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label5.ForeColor = Color.Red;
+            label5.Location = new Point(82, 62);
+            label5.Name = "label5";
+            label5.Size = new Size(260, 17);
+            label5.TabIndex = 49;
+            label5.Tag = "NoModificarConBase";
+            label5.Text = "El ícono  *  representa campo obligatorio.";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label6.ForeColor = Color.Red;
+            label6.Location = new Point(348, 101);
+            label6.Name = "label6";
+            label6.Size = new Size(16, 20);
+            label6.TabIndex = 51;
+            label6.Tag = "NoModificarConBase";
+            label6.Text = "*";
             // 
             // FRubroABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(464, 211);
-            Controls.Add(label3);
+            ClientSize = new Size(382, 141);
+            Controls.Add(label6);
+            Controls.Add(label5);
             Controls.Add(txtRubro);
             Controls.Add(lblRubro);
             ForeColor = Color.FromArgb(31, 26, 43);
@@ -78,16 +94,17 @@
             Text = "ABM Rubro";
             Controls.SetChildIndex(lblRubro, 0);
             Controls.SetChildIndex(txtRubro, 0);
-            Controls.SetChildIndex(label3, 0);
+            Controls.SetChildIndex(label5, 0);
+            Controls.SetChildIndex(label6, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-
-        private Label label3;
         private TextBox txtRubro;
         private Label lblRubro;
+        private Label label5;
+        private Label label6;
     }
 }
