@@ -382,6 +382,104 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
                 context.SaveChanges();
             }
         }
+        /// <summary>
+        /// Avisos pendientes (no leídos) con fecha de vencimiento dentro del rango, para marcar los días
+        /// del calendario. Los avisos de bajo stock no tienen fecha, así que no aparecen. Un aviso leído
+        /// deja de figurar: el calendario muestra lo mismo que las listas de avisos.
+        /// </summary>
+        public List<VencimientoCalendarioDTO> ObtenerVencimientosCalendario(DateTime desde, DateTime hasta)
+        {
+            DateTime inicio = desde.Date;
+            DateTime finExclusivo = hasta.Date.AddDays(1);
+
+            List<Notificacion> notis;
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                notis = context.Notificaciones
+                    .AsNoTracking()
+                    .Where(n => n.EstaLeida != true
+                                && n.FechaVencimiento != null
+                                && n.FechaVencimiento >= inicio
+                                && n.FechaVencimiento < finExclusivo)
+                    .ToList();
+            }
+
+            var resultado = new List<VencimientoCalendarioDTO>();
+            foreach (var n in notis)
+            {
+                TipoVencimientoCalendario? tipo = ClasificarPorTitulo(n.Titulo);
+                if (tipo == null || n.FechaVencimiento == null)
+                    continue;
+
+                resultado.Add(new VencimientoCalendarioDTO
+                {
+                    Fecha = n.FechaVencimiento.Value.Date,
+                    Tipo = tipo.Value
+                });
+            }
+
+            return resultado;
+        }
+
+        /// <summary>Avisos pendientes (no leídos) que vencen en la fecha indicada, de lotes, ofertas y cuentas corrientes.</summary>
+        public List<AvisoDelDiaDTO> ObtenerAvisosDelDia(DateTime fecha)
+        {
+            DateTime inicio = fecha.Date;
+            DateTime finExclusivo = inicio.AddDays(1);
+
+            List<Notificacion> notis;
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                notis = context.Notificaciones
+                    .AsNoTracking()
+                    .Where(n => n.EstaLeida != true
+                                && n.FechaVencimiento != null
+                                && n.FechaVencimiento >= inicio
+                                && n.FechaVencimiento < finExclusivo)
+                    .OrderBy(n => n.Titulo)
+                    .ToList();
+            }
+
+            var resultado = new List<AvisoDelDiaDTO>();
+            foreach (var n in notis)
+            {
+                TipoVencimientoCalendario? tipo = ClasificarPorTitulo(n.Titulo);
+                if (tipo == null)
+                    continue;
+
+                resultado.Add(new AvisoDelDiaDTO
+                {
+                    Tipo = tipo.Value,
+                    Aviso = new NotificacionDTO
+                    {
+                        NotificacionId = n.NotificacionId,
+                        Titulo = n.Titulo,
+                        Descripcion = n.Descripcion,
+                        Mensaje = n.Mensaje,
+                        FechaCreacion = n.FechaCreacion,
+                        Leida = n.EstaLeida,
+                        FechaNotificacion = n.FechaVencimiento ?? DateTime.Now,
+                        NivelUrgencia = CalcularNivelUrgencia(n.FechaVencimiento)
+                    }
+                });
+            }
+
+            return resultado;
+        }
+
+        private static TipoVencimientoCalendario? ClasificarPorTitulo(string titulo)
+        {
+            if (string.IsNullOrEmpty(titulo))
+                return null;
+            if (titulo.StartsWith("Lote por vencer:", StringComparison.Ordinal))
+                return TipoVencimientoCalendario.Lote;
+            if (titulo.StartsWith("Oferta vencida:", StringComparison.Ordinal))
+                return TipoVencimientoCalendario.Oferta;
+            if (titulo.StartsWith("CtaCte vencida:", StringComparison.Ordinal))
+                return TipoVencimientoCalendario.CuentaCorriente;
+            return null;
+        }
+
         public void MarcarNotificacionComoLeida(long notificacionId)
         {
             using (var context = new GestorContextDBFactory().CreateDbContext(null))
