@@ -1,5 +1,6 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
@@ -55,16 +56,11 @@ namespace Presentacion.Core.Producto
             {
                 DesactivarControles(this);
             }
-
-            AgregarControlesObligatorios(txtProducto, "Producto");
-            //AgregarControlesObligatorios(txtMedida, "Medida");
-            //AgregarControlesObligatorios(txtUnidadMedida, "Unidad Medida");
-            AgregarControlesObligatorios(txtPrecioCosto, "Precio Costo");
-            AgregarControlesObligatorios(txtPrecioVenta, "Precio Venta");
-            AgregarControlesObligatorios(txtCodigo, "Codigo");
-            AgregarControlesObligatorios(txtCodigoBarra, "Codigo Barra");
-            AgregarControlesObligatorios(cmbMarca, "Marca");
-            AgregarControlesObligatorios(cmbRubro, "Rubro");
+            AgregarControlesObligatorios(txtProducto, "Detalle del Producto");
+            AgregarControlesObligatorios(txtCodigo, "Detalle del Producto");
+            AgregarControlesObligatorios(txtCodigoBarra, "Detalle del Producto");
+            AgregarControlesObligatorios(txtPrecioCosto, "Precio Costo", Validaciones.DecimalMayorACero, Validaciones.DecimalConMaxDecimales(2));
+            AgregarControlesObligatorios(txtPrecioVenta, "Precio Venta", Validaciones.DecimalMayorACero, Validaciones.DecimalConMaxDecimales(2));
 
             var filtrosMarca = new FiltroConsulta
             {
