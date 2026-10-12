@@ -77,7 +77,7 @@
             lblInstallation.Name = "lblInstallation";
             lblInstallation.Size = new Size(620, 25);
             lblInstallation.TabIndex = 2;
-            lblInstallation.Text = "Identificador de Instalción:";
+            lblInstallation.Text = "Identificador de Instalación:";
             // 
             // txtInstallationId
             // 
@@ -98,7 +98,7 @@
             lblHardwareFingerprint.Name = "lblHardwareFingerprint";
             lblHardwareFingerprint.Size = new Size(620, 25);
             lblHardwareFingerprint.TabIndex = 3;
-            lblHardwareFingerprint.Text = "Datos de Pc:";
+            lblHardwareFingerprint.Text = "Dato de Pc:";
             // 
             // txtHardwareFingerprint
             // 
