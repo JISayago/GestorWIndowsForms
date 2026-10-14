@@ -98,7 +98,7 @@
             lblHardwareFingerprint.Name = "lblHardwareFingerprint";
             lblHardwareFingerprint.Size = new Size(620, 25);
             lblHardwareFingerprint.TabIndex = 3;
-            lblHardwareFingerprint.Text = "Dato de Pc:";
+            lblHardwareFingerprint.Text = "Info de Pc:";
             // 
             // txtHardwareFingerprint
             // 

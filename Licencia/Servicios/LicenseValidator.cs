@@ -13,6 +13,7 @@ namespace Stockeate.Licensing
     {
         private readonly LicenseStorage _storage = new();
         private readonly InstallationManager _installation = new();
+        private readonly ClockGuard _clock = new();
 
         public LicenseValidationResult Validar(
             string publicKeyPem)
@@ -137,6 +138,37 @@ namespace Stockeate.Licensing
                         "Firma digital inválida."
                 };
             }
+            // ========================================================
+            // 4b. COHERENCIA TIPO / VENCIMIENTO
+            // ========================================================
+
+            if (licencia.Tipo == LicenseType.Trial &&
+                !licencia.FechaVencimiento.HasValue)
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "La licencia Trial no tiene fecha de vencimiento.\r\n\r\n" +
+                        "Debe solicitar una nueva licencia."
+                };
+            }
+
+            if (licencia.Tipo == LicenseType.Perpetua &&
+                licencia.FechaVencimiento.HasValue)
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "La licencia Perpetua no debe tener fecha de vencimiento.\r\n\r\n" +
+                        "Debe solicitar una nueva licencia."
+                };
+            }
 
             // ========================================================
             // 5. INSTALLATION ID
@@ -218,6 +250,21 @@ namespace Stockeate.Licensing
                         "La licencia aún no es válida."
                 };
             }
+            if (licencia.FechaVencimiento.HasValue && _clock.RelojRetrocedido())
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = true,
+                    Tipo = licencia.Tipo,
+                    Mensaje =
+                        "Se detectó que la fecha del equipo es anterior a la " +
+                        "última fecha de uso registrada.\r\n\r\n" +
+                        "Corrija la fecha y hora del sistema. " +
+                        "Mientras tanto funcionará en modo consulta."
+                };
+            }
 
             // ========================================================
             // 9. FECHA DE VENCIMIENTO
@@ -242,7 +289,8 @@ namespace Stockeate.Licensing
             // ========================================================
             // 10. LICENCIA VALIDA
             // ========================================================
-
+            if (licencia.FechaVencimiento.HasValue)
+                _clock.Registrar();
             return new LicenseValidationResult
             {
                 Valida = true,
