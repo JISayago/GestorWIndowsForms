@@ -190,6 +190,8 @@ namespace Presentacion.Core.Administracion
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.ControlBox = false;
+            //this.ShowIcon = true;
+            //this.ShowInTaskbar = true; // opcional
         }
 
         /// <summary>

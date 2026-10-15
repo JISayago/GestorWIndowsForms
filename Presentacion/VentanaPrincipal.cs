@@ -94,8 +94,8 @@ namespace Presentacion
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.ControlBox = false;
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false; // opcional
+            //this.ShowIcon = false;
+            //this.ShowInTaskbar = false; // opcional
         }
 
         #endregion
