@@ -28,6 +28,7 @@ namespace Presentacion.Core.Caja
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FCajaAbrir));
             tlpRoot = new TableLayoutPanel();
             lblTitulo = new Label();
             lblUsuario = new Label();
@@ -60,6 +61,7 @@ namespace Presentacion.Core.Caja
             tlpRoot.Controls.Add(lblSaldoActual, 1, 4);
             tlpRoot.Controls.Add(pnlBotones, 0, 5);
             tlpRoot.Dock = DockStyle.Fill;
+            tlpRoot.Location = new Point(0, 0);
             tlpRoot.Name = "tlpRoot";
             tlpRoot.Padding = new Padding(20, 16, 20, 16);
             tlpRoot.RowCount = 6;
@@ -69,6 +71,7 @@ namespace Presentacion.Core.Caja
             tlpRoot.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
             tlpRoot.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
             tlpRoot.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            tlpRoot.Size = new Size(420, 300);
             tlpRoot.TabIndex = 0;
             // 
             // lblTitulo
@@ -76,7 +79,10 @@ namespace Presentacion.Core.Caja
             tlpRoot.SetColumnSpan(lblTitulo, 2);
             lblTitulo.Dock = DockStyle.Fill;
             lblTitulo.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            lblTitulo.Location = new Point(23, 16);
             lblTitulo.Name = "lblTitulo";
+            lblTitulo.Size = new Size(374, 40);
+            lblTitulo.TabIndex = 0;
             lblTitulo.Text = "Caja";
             lblTitulo.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -84,7 +90,10 @@ namespace Presentacion.Core.Caja
             // 
             lblUsuario.Dock = DockStyle.Fill;
             lblUsuario.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblUsuario.Location = new Point(23, 56);
             lblUsuario.Name = "lblUsuario";
+            lblUsuario.Size = new Size(134, 32);
+            lblUsuario.TabIndex = 1;
             lblUsuario.Text = "Usuario:";
             lblUsuario.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -93,7 +102,10 @@ namespace Presentacion.Core.Caja
             lblUsuarioLogeado.Dock = DockStyle.Fill;
             lblUsuarioLogeado.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             lblUsuarioLogeado.ForeColor = Color.FromArgb(46, 125, 50);
+            lblUsuarioLogeado.Location = new Point(163, 56);
             lblUsuarioLogeado.Name = "lblUsuarioLogeado";
+            lblUsuarioLogeado.Size = new Size(234, 32);
+            lblUsuarioLogeado.TabIndex = 2;
             lblUsuarioLogeado.Text = "-";
             lblUsuarioLogeado.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -102,7 +114,10 @@ namespace Presentacion.Core.Caja
             tlpRoot.SetColumnSpan(lblConfirmacion, 2);
             lblConfirmacion.Dock = DockStyle.Fill;
             lblConfirmacion.Font = new Font("Segoe UI", 10F);
+            lblConfirmacion.Location = new Point(23, 88);
             lblConfirmacion.Name = "lblConfirmacion";
+            lblConfirmacion.Size = new Size(374, 40);
+            lblConfirmacion.TabIndex = 3;
             lblConfirmacion.Text = "¿Confirma la operación?";
             lblConfirmacion.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -110,7 +125,10 @@ namespace Presentacion.Core.Caja
             // 
             lblMontoApertura.Dock = DockStyle.Fill;
             lblMontoApertura.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblMontoApertura.Location = new Point(23, 128);
             lblMontoApertura.Name = "lblMontoApertura";
+            lblMontoApertura.Size = new Size(134, 40);
+            lblMontoApertura.TabIndex = 4;
             lblMontoApertura.Text = "Monto apertura:";
             lblMontoApertura.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -118,10 +136,12 @@ namespace Presentacion.Core.Caja
             // 
             txtMontoApertura.Dock = DockStyle.Fill;
             txtMontoApertura.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            txtMontoApertura.Location = new Point(160, 134);
             txtMontoApertura.Margin = new Padding(0, 6, 0, 6);
             txtMontoApertura.Name = "txtMontoApertura";
-            txtMontoApertura.TextAlign = HorizontalAlignment.Right;
+            txtMontoApertura.Size = new Size(240, 27);
             txtMontoApertura.TabIndex = 0;
+            txtMontoApertura.TextAlign = HorizontalAlignment.Right;
             txtMontoApertura.TextChanged += txtMontoApertura_TextChanged;
             txtMontoApertura.KeyPress += txtMontoApertura_KeyPress;
             // 
@@ -129,7 +149,10 @@ namespace Presentacion.Core.Caja
             // 
             lblSaldoActualTitulo.Dock = DockStyle.Fill;
             lblSaldoActualTitulo.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblSaldoActualTitulo.Location = new Point(23, 168);
             lblSaldoActualTitulo.Name = "lblSaldoActualTitulo";
+            lblSaldoActualTitulo.Size = new Size(134, 36);
+            lblSaldoActualTitulo.TabIndex = 5;
             lblSaldoActualTitulo.Text = "Saldo en caja:";
             lblSaldoActualTitulo.TextAlign = ContentAlignment.MiddleLeft;
             lblSaldoActualTitulo.Visible = false;
@@ -138,7 +161,10 @@ namespace Presentacion.Core.Caja
             // 
             lblSaldoActual.Dock = DockStyle.Fill;
             lblSaldoActual.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblSaldoActual.Location = new Point(163, 168);
             lblSaldoActual.Name = "lblSaldoActual";
+            lblSaldoActual.Size = new Size(234, 36);
+            lblSaldoActual.TabIndex = 6;
             lblSaldoActual.Text = "$ 0";
             lblSaldoActual.TextAlign = ContentAlignment.MiddleLeft;
             lblSaldoActual.Visible = false;
@@ -149,15 +175,17 @@ namespace Presentacion.Core.Caja
             pnlBotones.Controls.Add(btnCancelar);
             pnlBotones.Controls.Add(btnAbrirCaja);
             pnlBotones.Dock = DockStyle.Fill;
+            pnlBotones.Location = new Point(23, 207);
             pnlBotones.Name = "pnlBotones";
             pnlBotones.Padding = new Padding(0, 8, 0, 0);
+            pnlBotones.Size = new Size(374, 74);
             pnlBotones.TabIndex = 1;
             // 
             // btnCancelar
             // 
             btnCancelar.Anchor = AnchorStyles.None;
             btnCancelar.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
-            btnCancelar.Location = new Point(0, 0);
+            btnCancelar.Location = new Point(87, -13);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(120, 36);
             btnCancelar.TabIndex = 2;
@@ -169,7 +197,7 @@ namespace Presentacion.Core.Caja
             // 
             btnAbrirCaja.Anchor = AnchorStyles.None;
             btnAbrirCaja.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
-            btnAbrirCaja.Location = new Point(0, 0);
+            btnAbrirCaja.Location = new Point(87, -13);
             btnAbrirCaja.Name = "btnAbrirCaja";
             btnAbrirCaja.Size = new Size(120, 36);
             btnAbrirCaja.TabIndex = 1;
@@ -185,12 +213,11 @@ namespace Presentacion.Core.Caja
             CancelButton = btnCancelar;
             ClientSize = new Size(420, 300);
             Controls.Add(tlpRoot);
+            ForeColor = Color.FromArgb(31, 26, 43);
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            MaximizeBox = false;
-            MinimizeBox = false;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MinimumSize = new Size(420, 300);
             Name = "FCajaAbrir";
-            StartPosition = FormStartPosition.CenterParent;
             Text = "Caja";
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             tlpRoot.ResumeLayout(false);

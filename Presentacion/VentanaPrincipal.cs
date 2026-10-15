@@ -496,6 +496,42 @@ namespace Presentacion
 
         }
 
+        /// <summary>
+        /// Escape cierra la ventana: se pasa por OnFormClosing, que pregunta antes de salir.
+        /// </summary>
+        protected override void EjecutarEscape()
+        {
+            Close();
+        }
+
+        /// <summary>
+        /// Cerrar la ventana principal (Escape, Alt+F4 o cualquier cierre iniciado por el usuario) ya no
+        /// sale del sistema sin avisar: pregunta y, si el usuario acepta, hace lo mismo que el botón
+        /// "Cerrar Sesión". Los cierres que provoca el propio sistema (Application.Restart, apagado de
+        /// Windows) no se interceptan.
+        /// </summary>
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+
+                var respuesta = MessageBox.Show(
+                    "¿Querés cerrar la sesión y salir del sistema?",
+                    "Cerrar sesión",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2);
+
+                if (respuesta == DialogResult.Yes)
+                    btnCerarSesion_Click(this, EventArgs.Empty);
+
+                return;
+            }
+
+            base.OnFormClosing(e);
+        }
+
         private void btnCerarSesion_Click(object sender, EventArgs e)
         {
             var respuesta = _accesoSistema.CerrarSesion(_usuarioLogeado.PersonaId);
