@@ -379,7 +379,7 @@ namespace Presentacion.Core.Producto
             {
                 if (fCategorias.ShowDialog() == DialogResult.OK)
                     _categoriasSeleccionadas = fCategorias.IdsSeleccionados;
-                MostrarDatosBoton(0, $"(Cantidad:{_categoriasSeleccionadas.Count()})", btnCategorias);
+                MostrarDatosBoton(0, $"Cantidad:{_categoriasSeleccionadas.Count()}", btnCategorias);
             }
         }
 
