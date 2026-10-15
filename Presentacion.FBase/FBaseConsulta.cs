@@ -547,8 +547,12 @@ namespace Presentacion.FBase
 
             chkUsarRango.CheckedChanged -= chkUsarRango_CheckedChanged;
             chkUsarRango.CheckedChanged += chkUsarRango_CheckedChanged;
+            
         }
-
+        protected virtual void ActivarRecargaCmbPorFechas()
+        {
+            // Sobrescribir en subclases si se requiere recargar combos al cambiar fechas.
+        }
         protected void ActivarCombo(ComboBox combo, Label label, object data, string display, string value, string textoLabel)
         {
             if (combo == null) return;
@@ -676,7 +680,7 @@ protected virtual string NormalizarTextoBusqueda(string texto)
         {
             if (!chkUsarFecha.Checked)
                 return null;
-
+            
             return dtpDesde.Value.Date;
         }
 
@@ -1098,6 +1102,7 @@ protected virtual string NormalizarTextoBusqueda(string texto)
             chkUsarRango.Enabled = true;
 
             dtpHasta.Enabled = chkUsarRango.Checked;
+            ActivarRecargaCmbPorFechas();
         }
 
         private void chkUsarRango_CheckedChanged(object sender, EventArgs e)
@@ -1106,6 +1111,7 @@ protected virtual string NormalizarTextoBusqueda(string texto)
                 return;
 
             dtpHasta.Enabled = chkUsarRango.Checked;
+            ActivarRecargaCmbPorFechas();
         }
 
         private void cbxFiltroOpcional_SelectedIndexChanged(object sender, EventArgs e)
