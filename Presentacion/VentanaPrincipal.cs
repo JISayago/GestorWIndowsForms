@@ -172,6 +172,29 @@ namespace Presentacion
             MyTimerDatos.Interval = 15000;
             MyTimerDatos.Tick += MyTimerDatos_Tick;
             MyTimerDatos.Start();
+
+            // Timer Avisos (recarga del panel de notificaciones y calendario cada 1 hora)
+            System.Windows.Forms.Timer timerAvisos = new System.Windows.Forms.Timer();
+            timerAvisos.Interval = 60 * 60 * 1000;
+            timerAvisos.Tick += TimerAvisos_Tick;
+            timerAvisos.Start();
+        }
+
+        private void TimerAvisos_Tick(object? sender, EventArgs e)
+        {
+            // Solo si la ventana principal está a la vista y activa (no minimizada ni con otra ventana,
+            // consulta o popup encima), para no interrumpir lo que el usuario esté haciendo.
+            if (!Visible || WindowState == FormWindowState.Minimized || ActiveForm != this)
+                return;
+
+            try
+            {
+                panelAvisos.Recargar();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"No se pudo recargar el panel de avisos: {ex.Message}");
+            }
         }
 
         #endregion
