@@ -70,7 +70,8 @@ public class DatosPantallaPrincipal
 
             TextoBuscar = string.Empty,
 
-            Bool1 = false // no eliminados
+            Bool1 = false, // no canceladas
+            SinLimiteFecha = true // "Últimas Ventas": las más recientes, aunque tengan más de 2 meses
         };
 
         var resultadoVentas = _ventaServicio.ObtenerVentas(filtroVentas);

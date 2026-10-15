@@ -471,7 +471,8 @@ namespace Presentacion.Notificaciones
             {
                 Page = _paginaActualV,
                 PageSize = _pageSizeV,
-                TextoBuscar = ""
+                TextoBuscar = "",
+                SinLimiteFecha = true   // "Últimas Ventas": las más recientes, aunque tengan más de 2 meses
             };
 
             var resultado = _ventaService.ObtenerVentas(filtroVentas);
