@@ -1130,7 +1130,7 @@ namespace Servicios.LogicaNegocio.Venta
                         v.FechaVenta < hasta);
                 }
             }
-            else
+            else if (!filtros.SinLimiteFecha)
             {
                 // 🔹 NORMAL = 2 meses
                 // 🔹 HISTORICO = 6 meses

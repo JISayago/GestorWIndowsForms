@@ -172,6 +172,29 @@ namespace Presentacion
             MyTimerDatos.Interval = 15000;
             MyTimerDatos.Tick += MyTimerDatos_Tick;
             MyTimerDatos.Start();
+
+            // Timer Avisos (recarga del panel de notificaciones y calendario cada 1 hora)
+            System.Windows.Forms.Timer timerAvisos = new System.Windows.Forms.Timer();
+            timerAvisos.Interval = 60 * 60 * 1000;
+            timerAvisos.Tick += TimerAvisos_Tick;
+            timerAvisos.Start();
+        }
+
+        private void TimerAvisos_Tick(object? sender, EventArgs e)
+        {
+            // Solo si la ventana principal está a la vista y activa (no minimizada ni con otra ventana,
+            // consulta o popup encima), para no interrumpir lo que el usuario esté haciendo.
+            if (!Visible || WindowState == FormWindowState.Minimized || ActiveForm != this)
+                return;
+
+            try
+            {
+                panelAvisos.Recargar();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"No se pudo recargar el panel de avisos: {ex.Message}");
+            }
         }
 
         #endregion
@@ -456,9 +479,21 @@ namespace Presentacion
 
         }
 
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprcUpdate, IntPtr hrgnUpdate, uint flags);
+
+        private const int WM_SETREDRAW = 0x000B;
+        private const uint RDW_INVALIDATE = 0x0001, RDW_ERASE = 0x0004, RDW_ALLCHILDREN = 0x0080, RDW_UPDATENOW = 0x0100;
+
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             Cursor = Cursors.WaitCursor;
+            // Se congela el dibujo solo del contenido (no de la ventana completa, para no tocar la barra
+            // de tareas de Windows) mientras se recarga; al terminar se repinta una sola vez.
+            SendMessage(panel1.Handle, WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
             try
             {
                 // 1) Notificaciones: regenerar + pintar (único lugar donde conviene rebuild completo)
@@ -487,6 +522,8 @@ namespace Presentacion
             }
             finally
             {
+                SendMessage(panel1.Handle, WM_SETREDRAW, (IntPtr)1, IntPtr.Zero);
+                RedrawWindow(panel1.Handle, IntPtr.Zero, IntPtr.Zero, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
                 Cursor = Cursors.Default;
             }
         }
@@ -494,6 +531,42 @@ namespace Presentacion
         private void flowHeaderUsuario_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        /// <summary>
+        /// Escape cierra la ventana: se pasa por OnFormClosing, que pregunta antes de salir.
+        /// </summary>
+        protected override void EjecutarEscape()
+        {
+            Close();
+        }
+
+        /// <summary>
+        /// Cerrar la ventana principal (Escape, Alt+F4 o cualquier cierre iniciado por el usuario) ya no
+        /// sale del sistema sin avisar: pregunta y, si el usuario acepta, hace lo mismo que el botón
+        /// "Cerrar Sesión". Los cierres que provoca el propio sistema (Application.Restart, apagado de
+        /// Windows) no se interceptan.
+        /// </summary>
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+
+                var respuesta = MessageBox.Show(
+                    "¿Querés cerrar la sesión y salir del sistema?",
+                    "Cerrar sesión",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2);
+
+                if (respuesta == DialogResult.Yes)
+                    btnCerarSesion_Click(this, EventArgs.Empty);
+
+                return;
+            }
+
+            base.OnFormClosing(e);
         }
 
         private void btnCerarSesion_Click(object sender, EventArgs e)
