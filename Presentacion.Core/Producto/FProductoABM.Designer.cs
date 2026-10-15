@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FProductoABM));
             lblDescripcion = new Label();
-            lblMarca = new Label();
             lblPrecioCosto = new Label();
             lblPrecioVenta = new Label();
             txtProducto = new TextBox();
@@ -38,15 +37,11 @@
             txtPrecioVenta = new TextBox();
             lblStock = new Label();
             txtStock = new TextBox();
-            lblCategoria = new Label();
             lblMedida = new Label();
             lblUnidadMedida = new Label();
             txtMedida = new TextBox();
             txtUnidadMedida = new TextBox();
-            cmbMarca = new ComboBox();
             btnCategorias = new Button();
-            cmbRubro = new ComboBox();
-            lblRubro = new Label();
             txtCodigo = new TextBox();
             txtCodigoBarra = new TextBox();
             lblCodigo = new Label();
@@ -62,6 +57,11 @@
             label1 = new Label();
             label3 = new Label();
             label4 = new Label();
+            btnRubro = new Button();
+            btnMarca = new Button();
+            label7 = new Label();
+            label8 = new Label();
+            label9 = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
@@ -73,15 +73,6 @@
             lblDescripcion.Size = new Size(70, 15);
             lblDescripcion.TabIndex = 1;
             lblDescripcion.Text = "Descripcion";
-            // 
-            // lblMarca
-            // 
-            lblMarca.AutoSize = true;
-            lblMarca.Location = new Point(615, 104);
-            lblMarca.Name = "lblMarca";
-            lblMarca.Size = new Size(40, 15);
-            lblMarca.TabIndex = 2;
-            lblMarca.Text = "Marca";
             // 
             // lblPrecioCosto
             // 
@@ -139,15 +130,6 @@
             txtStock.Size = new Size(273, 23);
             txtStock.TabIndex = 11;
             // 
-            // lblCategoria
-            // 
-            lblCategoria.AutoSize = true;
-            lblCategoria.Location = new Point(421, 104);
-            lblCategoria.Name = "lblCategoria";
-            lblCategoria.Size = new Size(62, 15);
-            lblCategoria.TabIndex = 15;
-            lblCategoria.Text = "Categorias";
-            // 
             // lblMedida
             // 
             lblMedida.AutoSize = true;
@@ -180,40 +162,15 @@
             txtUnidadMedida.Size = new Size(222, 23);
             txtUnidadMedida.TabIndex = 19;
             // 
-            // cmbMarca
-            // 
-            cmbMarca.FormattingEnabled = true;
-            cmbMarca.Location = new Point(663, 100);
-            cmbMarca.Name = "cmbMarca";
-            cmbMarca.Size = new Size(121, 23);
-            cmbMarca.TabIndex = 21;
-            // 
             // btnCategorias
             // 
-            btnCategorias.Location = new Point(502, 100);
+            btnCategorias.Location = new Point(562, 132);
             btnCategorias.Name = "btnCategorias";
             btnCategorias.Size = new Size(98, 23);
             btnCategorias.TabIndex = 22;
-            btnCategorias.Text = "Seleccionar..";
+            btnCategorias.Text = "Categorias";
             btnCategorias.UseVisualStyleBackColor = true;
             btnCategorias.Click += btnCategorias_Click;
-            // 
-            // cmbRubro
-            // 
-            cmbRubro.FormattingEnabled = true;
-            cmbRubro.Location = new Point(663, 142);
-            cmbRubro.Name = "cmbRubro";
-            cmbRubro.Size = new Size(121, 23);
-            cmbRubro.TabIndex = 24;
-            // 
-            // lblRubro
-            // 
-            lblRubro.AutoSize = true;
-            lblRubro.Location = new Point(616, 145);
-            lblRubro.Name = "lblRubro";
-            lblRubro.Size = new Size(39, 15);
-            lblRubro.TabIndex = 23;
-            lblRubro.Text = "Rubro";
             // 
             // txtCodigo
             // 
@@ -370,11 +327,63 @@
             label4.Tag = "NoModificarConBase";
             label4.Text = "*";
             // 
+            // btnRubro
+            // 
+            btnRubro.Location = new Point(686, 132);
+            btnRubro.Name = "btnRubro";
+            btnRubro.Size = new Size(98, 23);
+            btnRubro.TabIndex = 55;
+            btnRubro.Text = "Rubro";
+            btnRubro.UseVisualStyleBackColor = true;
+            btnRubro.Click += btnRubro_Click;
+            // 
+            // btnMarca
+            // 
+            btnMarca.Location = new Point(423, 132);
+            btnMarca.Name = "btnMarca";
+            btnMarca.Size = new Size(98, 23);
+            btnMarca.TabIndex = 56;
+            btnMarca.Text = "Marca";
+            btnMarca.UseVisualStyleBackColor = true;
+            btnMarca.Click += btnMarca_Click;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(452, 114);
+            label7.Name = "label7";
+            label7.Size = new Size(40, 15);
+            label7.TabIndex = 57;
+            label7.Text = "Marca";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(580, 114);
+            label8.Name = "label8";
+            label8.Size = new Size(62, 15);
+            label8.TabIndex = 58;
+            label8.Text = "Categorias";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(715, 114);
+            label9.Name = "label9";
+            label9.Size = new Size(39, 15);
+            label9.TabIndex = 59;
+            label9.Text = "Rubro";
+            // 
             // FProductoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(817, 423);
+            Controls.Add(label9);
+            Controls.Add(label8);
+            Controls.Add(label7);
+            Controls.Add(btnMarca);
+            Controls.Add(btnRubro);
             Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(label1);
@@ -390,15 +399,11 @@
             Controls.Add(lblCodigo);
             Controls.Add(txtCodigoBarra);
             Controls.Add(txtCodigo);
-            Controls.Add(cmbRubro);
-            Controls.Add(lblRubro);
             Controls.Add(btnCategorias);
-            Controls.Add(cmbMarca);
             Controls.Add(txtUnidadMedida);
             Controls.Add(txtMedida);
             Controls.Add(lblUnidadMedida);
             Controls.Add(lblMedida);
-            Controls.Add(lblCategoria);
             Controls.Add(txtStock);
             Controls.Add(lblStock);
             Controls.Add(txtPrecioVenta);
@@ -406,7 +411,6 @@
             Controls.Add(txtProducto);
             Controls.Add(lblPrecioVenta);
             Controls.Add(lblPrecioCosto);
-            Controls.Add(lblMarca);
             Controls.Add(lblDescripcion);
             ForeColor = Color.FromArgb(31, 26, 43);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -414,7 +418,6 @@
             Name = "FProductoABM";
             Text = "ABM Producto";
             Controls.SetChildIndex(lblDescripcion, 0);
-            Controls.SetChildIndex(lblMarca, 0);
             Controls.SetChildIndex(lblPrecioCosto, 0);
             Controls.SetChildIndex(lblPrecioVenta, 0);
             Controls.SetChildIndex(txtProducto, 0);
@@ -422,15 +425,11 @@
             Controls.SetChildIndex(txtPrecioVenta, 0);
             Controls.SetChildIndex(lblStock, 0);
             Controls.SetChildIndex(txtStock, 0);
-            Controls.SetChildIndex(lblCategoria, 0);
             Controls.SetChildIndex(lblMedida, 0);
             Controls.SetChildIndex(lblUnidadMedida, 0);
             Controls.SetChildIndex(txtMedida, 0);
             Controls.SetChildIndex(txtUnidadMedida, 0);
-            Controls.SetChildIndex(cmbMarca, 0);
             Controls.SetChildIndex(btnCategorias, 0);
-            Controls.SetChildIndex(lblRubro, 0);
-            Controls.SetChildIndex(cmbRubro, 0);
             Controls.SetChildIndex(txtCodigo, 0);
             Controls.SetChildIndex(txtCodigoBarra, 0);
             Controls.SetChildIndex(lblCodigo, 0);
@@ -446,6 +445,11 @@
             Controls.SetChildIndex(label1, 0);
             Controls.SetChildIndex(label3, 0);
             Controls.SetChildIndex(label4, 0);
+            Controls.SetChildIndex(btnRubro, 0);
+            Controls.SetChildIndex(btnMarca, 0);
+            Controls.SetChildIndex(label7, 0);
+            Controls.SetChildIndex(label8, 0);
+            Controls.SetChildIndex(label9, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -454,7 +458,6 @@
         #endregion
 
         private Label lblDescripcion;
-        private Label lblMarca;
         private Label lblPrecioCosto;
         private Label lblPrecioVenta;
         private TextBox txtProducto;
@@ -462,15 +465,11 @@
         private TextBox txtPrecioVenta;
         private Label lblStock;
         private TextBox txtStock;
-        private Label lblCategoria;
         private Label lblMedida;
         private Label lblUnidadMedida;
         private TextBox txtMedida;
         private TextBox txtUnidadMedida;
-        private ComboBox cmbMarca;
         private Button btnCategorias;
-        private ComboBox cmbRubro;
-        private Label lblRubro;
         private TextBox txtCodigo;
         private TextBox txtCodigoBarra;
         private Label lblCodigo;
@@ -486,5 +485,10 @@
         private Label label1;
         private Label label3;
         private Label label4;
+        private Button btnRubro;
+        private Button btnMarca;
+        private Label label7;
+        private Label label8;
+        private Label label9;
     }
 }

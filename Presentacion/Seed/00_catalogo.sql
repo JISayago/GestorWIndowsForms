@@ -228,7 +228,7 @@ INSERT INTO [dbo].[Marcas] ([MarcaId],[Nombre],[EstaEliminado]) VALUES (106, N'A
 INSERT INTO [dbo].[Marcas] ([MarcaId],[Nombre],[EstaEliminado]) VALUES (107, N'Puro Sabor', 0)
 INSERT INTO [dbo].[Marcas] ([MarcaId],[Nombre],[EstaEliminado]) VALUES (108, N'Casa Blanca', 0)
 INSERT INTO [dbo].[Marcas] ([MarcaId],[Nombre],[EstaEliminado]) VALUES (109, N'Tierra Fresca', 0)
-INSERT INTO [dbo].[Marcas] ([MarcaId],[Nombre],[EstaEliminado]) VALUES (110, N'Norteña', 0)
+INSERT INTO [dbo].[Marcas] ([MarcaId],[Nombre],[EstaEliminado]) VALUES (110, N'Mortera', 0)
 INSERT INTO [dbo].[Marcas] ([MarcaId],[Nombre],[EstaEliminado]) VALUES (111, N'Valle Verde', 0)
 INSERT INTO [dbo].[Marcas] ([MarcaId],[Nombre],[EstaEliminado]) VALUES (112, N'Cumbre Azul', 0)
 INSERT INTO [dbo].[Marcas] ([MarcaId],[Nombre],[EstaEliminado]) VALUES (113, N'Estrella Sur', 0)
