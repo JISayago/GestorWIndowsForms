@@ -203,7 +203,6 @@ namespace Presentacion.Notificaciones
                 g.DrawLine(p, 0, rect.Y, w, rect.Y);
 
             using var fuente = new Font("Segoe UI", 8.5f);
-            using var fuenteNegrita = new Font("Segoe UI", 8.5f, FontStyle.Bold);
             int x = 12;
             int cy = rect.Y + rect.Height / 2;
 
@@ -224,23 +223,8 @@ namespace Presentacion.Notificaciones
                     TemaSistema.TextoSecundario, TextFormatFlags.NoPadding);
                 x += medida.Width + 14;
             }
-
-            // Referencia del rojo, alineada a la derecha
-            const string explicacion = "vencido sin resolver";
-            Size mExp = TextRenderer.MeasureText(g, explicacion, fuente, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
-            Size mNum = TextRenderer.MeasureText(g, "12", fuenteNegrita, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
-            int xExp = w - 12 - mExp.Width;
-            int xNum = xExp - 5 - mNum.Width;
-            if (xNum > x)
-            {
-                TextRenderer.DrawText(g, "12", fuenteNegrita, new Point(xNum, cy - mNum.Height / 2),
-                    Color.Crimson, TextFormatFlags.NoPadding);
-                TextRenderer.DrawText(g, explicacion, fuente, new Point(xExp, cy - mExp.Height / 2),
-                    TemaSistema.TextoSecundario, TextFormatFlags.NoPadding);
-            }
         }
 
-        /// <summary>Celda de la grilla bajo el punto, si el punto cae dentro de la grilla.</summary>
         private (DateTime Fecha, Rectangle Celda)? CeldaEn(Point p)
         {
             int yGrilla = AltoEncabezado + AltoDiasSemana;
@@ -253,7 +237,6 @@ namespace Presentacion.Notificaciones
             float altoCelda = altoGrilla / (float)semanas;
             int col = Math.Min((int)(p.X / anchoCelda), 6);
             int fila = Math.Min((int)((p.Y - yGrilla) / altoCelda), semanas - 1);
-
             DateTime fecha = PrimerDiaVisible.AddDays(fila * 7 + col);
             var celda = Rectangle.Round(new RectangleF(col * anchoCelda, yGrilla + fila * altoCelda, anchoCelda, altoCelda));
             return (fecha, celda);

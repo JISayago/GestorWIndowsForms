@@ -26,7 +26,8 @@ namespace Presentacion.Notificaciones
         private readonly CalendarioVencimientos _calendario;
 
         private TipoNotificacion? _seleccionada;
-        private bool _primeraCarga = true;
+        // true si el usuario plegó la pestaña a propósito; en ese caso RECARGAR respeta que quede plegada.
+        private bool _plegadaPorUsuario;
 
         public PanelAvisosCalendario()
         {
@@ -92,16 +93,15 @@ namespace Presentacion.Notificaciones
             _avisos[TipoNotificacion.OfertaBajoStock] = Copiar(_servicio.ObtenerNotificacionesOfertasBajoStock());
             _avisos[TipoNotificacion.CuentaCorrienteVencida] = Copiar(_servicio.ObtenerNotificacionesCtaCteVencidas());
 
-            if (_primeraCarga)
+            if (_seleccionada.HasValue && Cantidad(_seleccionada.Value) == 0)
+                _seleccionada = null;
+
+            // Si no hay pestaña abierta y el usuario no la plegó a propósito (arranque, o se leyó el último
+            // aviso de la pestaña), queda elegida la primera que tenga avisos.
+            if (!_seleccionada.HasValue && !_plegadaPorUsuario)
             {
-                // Al abrir la pantalla queda elegida la primera pestaña que tenga avisos.
                 _seleccionada = AvisosEstilo.Tipos.Cast<TipoNotificacion?>()
                     .FirstOrDefault(t => Cantidad(t!.Value) > 0);
-                _primeraCarga = false;
-            }
-            else if (_seleccionada.HasValue && Cantidad(_seleccionada.Value) == 0)
-            {
-                _seleccionada = null;
             }
 
             AplicarVista();
@@ -122,9 +122,15 @@ namespace Presentacion.Notificaciones
         private void Pestanas_PestanaClick(object? sender, TipoNotificacion tipo)
         {
             if (_seleccionada == tipo)
+            {
                 _seleccionada = null;          // click sobre la activa: pliega la lista
+                _plegadaPorUsuario = true;
+            }
             else if (Cantidad(tipo) > 0)
+            {
                 _seleccionada = tipo;          // las pestañas sin avisos no se abren
+                _plegadaPorUsuario = false;
+            }
             else
                 return;
 

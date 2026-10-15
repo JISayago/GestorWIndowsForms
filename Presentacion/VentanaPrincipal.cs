@@ -456,9 +456,21 @@ namespace Presentacion
 
         }
 
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprcUpdate, IntPtr hrgnUpdate, uint flags);
+
+        private const int WM_SETREDRAW = 0x000B;
+        private const uint RDW_INVALIDATE = 0x0001, RDW_ERASE = 0x0004, RDW_ALLCHILDREN = 0x0080, RDW_UPDATENOW = 0x0100;
+
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             Cursor = Cursors.WaitCursor;
+            // Se congela el dibujo solo del contenido (no de la ventana completa, para no tocar la barra
+            // de tareas de Windows) mientras se recarga; al terminar se repinta una sola vez.
+            SendMessage(panel1.Handle, WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
             try
             {
                 // 1) Notificaciones: regenerar + pintar (único lugar donde conviene rebuild completo)
@@ -487,6 +499,8 @@ namespace Presentacion
             }
             finally
             {
+                SendMessage(panel1.Handle, WM_SETREDRAW, (IntPtr)1, IntPtr.Zero);
+                RedrawWindow(panel1.Handle, IntPtr.Zero, IntPtr.Zero, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
                 Cursor = Cursors.Default;
             }
         }
