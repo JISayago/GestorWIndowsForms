@@ -1,4 +1,5 @@
-﻿using Presentacion.FormulariosBase.Helpers;
+﻿using Presentacion.FBase.Helpers;
+using Presentacion.FormulariosBase.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,6 +21,7 @@ namespace Presentacion.FBase
         {
             InitializeComponent();
             btnSalir.Image = Constantes.Imagenes.ImgCerrar;
+            btnVolver.Image = Constantes.Imagenes.ImgVolver;
 
             BarraSuperiorBotones.ImageScalingSize = new Size(25, 25);
         }
@@ -85,7 +87,7 @@ namespace Presentacion.FBase
 
         public virtual void CargarDatos(long? entidadId)
         {
-            
+
         }
         public virtual void EjecutarComando()
         {
@@ -140,6 +142,11 @@ namespace Presentacion.FBase
         public virtual void Inicializador(long? entidadId)
         {
 
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            new VolverAlInicio(this).Volver();
         }
 
         //private void AplicarEstiloALabels(Control contenedor) ESTO SOLO ESTA POR LOS COMENTARIOS SE PUEDE BORRAR
@@ -207,5 +214,5 @@ namespace Presentacion.FBase
         //    }
         //}
     }
-    
+
 }
