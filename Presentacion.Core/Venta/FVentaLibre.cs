@@ -737,5 +737,10 @@ namespace Presentacion.Core.Venta
         {
 
         }
+
+        private void btnVolver_Click(object sender, EventArgs e)
+        {
+            new VolverAlInicio(this).Volver();
+        }
     }
 }

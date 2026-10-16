@@ -6,6 +6,7 @@ using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.Core.Producto;
 using Presentacion.Core.Producto.Rubro;
 using Presentacion.Core.Venta;
+using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Venta.Oferta;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
@@ -90,7 +91,7 @@ namespace Presentacion.Core.Oferta
             rbSinEspecificar.Checked = true;
             cbxCodigoAutomatico.Checked = generacionCodigoOferta;
             ActualizarModoOferta();
-            if(generacionCodigoOferta) 
+            if (generacionCodigoOferta)
             {
                 txtCodigo.Enabled = false;
             }
@@ -1807,7 +1808,7 @@ namespace Presentacion.Core.Oferta
                     btnCargarGrupoMarca.Enabled = false;
                     btnCargarGrupoRubro.Enabled = false;
                     btnCargarProductosAlcanzados.Enabled = false;
-                btnCargarProducto.Enabled = true;
+                    btnCargarProducto.Enabled = true;
                 }
 
                 ActualizarTipoOfertaRadios();
@@ -1913,6 +1914,11 @@ namespace Presentacion.Core.Oferta
 
             aplicarMontoFinalEnPesos = checkBox1.Checked;
             aplicarMontoFinalEnPorcentaje = checkBox2.Checked;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            new VolverAlInicio(this).Volver();
         }
     }
 }

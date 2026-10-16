@@ -31,6 +31,7 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FVentaLibre));
             txtAreaDetallesVenta = new TextBox();
             tableLayoutPanel10 = new TableLayoutPanel();
             flowLayoutPanel10 = new FlowLayoutPanel();
@@ -91,6 +92,9 @@
             lblVendedorAsignado = new Label();
             tableLayoutPanel18 = new TableLayoutPanel();
             tableLayoutPanel5 = new TableLayoutPanel();
+            flowLayoutPanel1 = new FlowLayoutPanel();
+            btnVolver = new Button();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             tableLayoutPanel10.SuspendLayout();
             flowLayoutPanel10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
@@ -120,6 +124,7 @@
             flowLayoutPanel2.SuspendLayout();
             tableLayoutPanel18.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // txtAreaDetallesVenta
@@ -139,11 +144,11 @@
             // 
             tableLayoutPanel10.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel10.ColumnCount = 3;
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 26.666666F));
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
             tableLayoutPanel10.Controls.Add(flowLayoutPanel10, 2, 0);
-            tableLayoutPanel10.Controls.Add(btnLimpiar, 0, 0);
+            tableLayoutPanel10.Controls.Add(flowLayoutPanel1, 0, 0);
             tableLayoutPanel10.Location = new Point(3, 729);
             tableLayoutPanel10.Name = "tableLayoutPanel10";
             tableLayoutPanel10.RowCount = 1;
@@ -872,6 +877,27 @@
             tableLayoutPanel5.Size = new Size(1154, 298);
             tableLayoutPanel5.TabIndex = 55;
             // 
+            // flowLayoutPanel1
+            // 
+            flowLayoutPanel1.Controls.Add(btnLimpiar);
+            flowLayoutPanel1.Controls.Add(btnVolver);
+            flowLayoutPanel1.Location = new Point(3, 3);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(455, 62);
+            flowLayoutPanel1.TabIndex = 48;
+            // 
+            // btnVolver
+            // 
+            btnVolver.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnVolver.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnVolver.Location = new Point(170, 3);
+            btnVolver.Name = "btnVolver";
+            btnVolver.Size = new Size(160, 44);
+            btnVolver.TabIndex = 33;
+            btnVolver.Text = "Volver al Inicio";
+            btnVolver.UseVisualStyleBackColor = true;
+            btnVolver.Click += btnVolver_Click;
+            // 
             // FVentaLibre
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -880,15 +906,14 @@
             AutoSize = true;
             ClientSize = new Size(1170, 816);
             Controls.Add(tableLayoutPanel18);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
-            KeyPreview = true;
-            MaximizeBox = false;
-            MinimizeBox = false;
+            ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FVentaLibre";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Venta Libre";
             WindowState = FormWindowState.Maximized;
             Load += FVentaLibre_Load;
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             tableLayoutPanel10.ResumeLayout(false);
             flowLayoutPanel10.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvProductos).EndInit();
@@ -933,6 +958,7 @@
             tableLayoutPanel18.ResumeLayout(false);
             tableLayoutPanel18.PerformLayout();
             tableLayoutPanel5.ResumeLayout(false);
+            flowLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -997,5 +1023,7 @@
         private Label lblVendedorAsignado;
         private TableLayoutPanel tableLayoutPanel18;
         private TableLayoutPanel tableLayoutPanel5;
+        private FlowLayoutPanel flowLayoutPanel1;
+        private Button btnVolver;
     }
 }

@@ -67,7 +67,7 @@ namespace Presentacion.Core.Venta
         public FVenta(long UsuarioLogeadoId, long? VentaId = null)
         {
             InitializeComponent();
-            
+
             _ventaServicio = new VentaServicio();
             _movimientoServicio = new MovimientoServicio();
             _usuarioLogeadoID = UsuarioLogeadoId;
@@ -149,8 +149,8 @@ namespace Presentacion.Core.Venta
                 consumidorFinal = _clienteServicio.ObtenerConsumidorFinal();
                 if (consumidorFinal != null)
                 {
-                idCliente = consumidorFinal.PersonaId;
-                   
+                    idCliente = consumidorFinal.PersonaId;
+
                 }
 
             }
@@ -183,7 +183,7 @@ namespace Presentacion.Core.Venta
             }
             else
             {
-                txtCliente.Text = _clienteVenta != null ? $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}" : consumidorFinal!=null ? consumidorFinal.NombreCompleto : "";
+                txtCliente.Text = _clienteVenta != null ? $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}" : consumidorFinal != null ? consumidorFinal.NombreCompleto : "";
                 lblVendedorAsignado.Text = esUsuarioLogeado
                     ? $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}"
                     : "";
@@ -243,7 +243,7 @@ namespace Presentacion.Core.Venta
                 Total = _totalVenta,
                 IncluirCtaCte = _incluirCtaCte,
                 DescuentoEfectivo = cbxDescEfectivo.Checked,
-                Cliente = _clienteVenta 
+                Cliente = _clienteVenta
             };
 
             var fSeleccionCantidad = new FSeleccionCantidadPagos();
@@ -859,7 +859,7 @@ namespace Presentacion.Core.Venta
         private EstadoOperacion CancelarVenta(long? VenId)
         {
             var respuesta = _ventaServicio.CancelacionVentaPorId((long)VenId);
-            return respuesta;   
+            return respuesta;
         }
 
         private void InicializarYLimpiarCampos(long? ventaId)
@@ -1021,7 +1021,7 @@ namespace Presentacion.Core.Venta
                 txtDescuentoEfectivo.Text = string.Empty;
                 txtDescuentoEfectivo.Enabled = false;
                 _suspendCbxDesc = false;
-                
+
                 MessageBox.Show("No se puede aplicar descuento por efectivo cuando hay ofertas en la venta.");
                 return;
             }
@@ -1044,7 +1044,7 @@ namespace Presentacion.Core.Venta
             if (porcentajeDesc < 0 || porcentajeDesc > 100)
             {
                 MessageBox.Show("Ingresar un número entre 1 y 100.");
-                if(porcentajeDesc > 100)
+                if (porcentajeDesc > 100)
                 {
                     txtDescuentoEfectivo.Text = "100";
                     porcentajeDesc = 100;
@@ -1054,7 +1054,7 @@ namespace Presentacion.Core.Venta
                     txtDescuentoEfectivo.Text = "0";
                     porcentajeDesc = 0;
                 }
-                    return;
+                return;
             }
 
             // 🔹 total de productos SIN oferta
@@ -1266,6 +1266,11 @@ namespace Presentacion.Core.Venta
             // permitir números
             if (!char.IsDigit(e.KeyChar))
                 e.Handled = true;
+        }
+
+        private void btnVolver_Click(object sender, EventArgs e)
+        {
+            new VolverAlInicio(this).Volver();
         }
     }
 }
