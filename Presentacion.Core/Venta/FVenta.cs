@@ -221,7 +221,8 @@ namespace Presentacion.Core.Venta
         {
             if (_totalVenta == 0)
             {
-                MessageBox.Show("Debe cargar al menos un producto antes de confirmar la venta.");
+                MostrarError("Debe cargar al menos un producto antes de confirmar la venta.");
+                //MessageBox.Show("Debe cargar al menos un producto antes de confirmar la venta.");
                 return;
             }
 
