@@ -40,7 +40,7 @@ namespace Presentacion.FBase
         protected virtual string TextoLblCbx3 => "Filtro 3";
         protected virtual string TextoTitular => "Aqui se describe que se esta mostrando";
 
-        
+
 
         public FBaseConsulta()
         {
@@ -56,6 +56,7 @@ namespace Presentacion.FBase
             btnImprimir.Image = Constantes.Imagenes.ImgImprimir;
             btnActualizar.Image = Constantes.Imagenes.ImgActualizar;
             btnSalir.Image = Constantes.Imagenes.ImgCerrar;
+            btnVolver.Image = Constantes.Imagenes.ImgVolver;
 
             entidadID = null;
             puedeEjecutarComando = false;
@@ -547,7 +548,7 @@ namespace Presentacion.FBase
 
             chkUsarRango.CheckedChanged -= chkUsarRango_CheckedChanged;
             chkUsarRango.CheckedChanged += chkUsarRango_CheckedChanged;
-            
+
         }
         protected virtual void ActivarRecargaCmbPorFechas()
         {
@@ -611,25 +612,25 @@ namespace Presentacion.FBase
         {
             return NormalizadorTextoBusqueda.NormalizarTextoParaBusqueda(texto);
         }
-protected virtual string NormalizarTextoBusqueda(string texto)
-    {
-        if (string.IsNullOrWhiteSpace(texto))
-            return string.Empty;
-
-        texto = texto.Trim().ToLowerInvariant().Normalize(NormalizationForm.FormD);
-
-        var sb = new StringBuilder();
-
-        foreach (var c in texto)
+        protected virtual string NormalizarTextoBusqueda(string texto)
         {
-            var categoria = CharUnicodeInfo.GetUnicodeCategory(c);
-            if (categoria != UnicodeCategory.NonSpacingMark)
-                sb.Append(c);
-        }
+            if (string.IsNullOrWhiteSpace(texto))
+                return string.Empty;
 
-        return sb.ToString().Normalize(NormalizationForm.FormC);
-    }
-    protected virtual FiltroConsulta ObtenerFiltros()
+            texto = texto.Trim().ToLowerInvariant().Normalize(NormalizationForm.FormD);
+
+            var sb = new StringBuilder();
+
+            foreach (var c in texto)
+            {
+                var categoria = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (categoria != UnicodeCategory.NonSpacingMark)
+                    sb.Append(c);
+            }
+
+            return sb.ToString().Normalize(NormalizationForm.FormC);
+        }
+        protected virtual FiltroConsulta ObtenerFiltros()
         {
             return new FiltroConsulta
             {
@@ -680,7 +681,7 @@ protected virtual string NormalizarTextoBusqueda(string texto)
         {
             if (!chkUsarFecha.Checked)
                 return null;
-            
+
             return dtpDesde.Value.Date;
         }
 
@@ -1224,6 +1225,63 @@ protected virtual string NormalizarTextoBusqueda(string texto)
                 dtpHasta.Value = DateTime.Now;
         }
 
-       
+        private void btnVolver_Click(object sender, EventArgs e)
+        {
+            var resp = MessageBox.Show(
+                "¿Desea volver a la ventana principal de Stockeate?",
+                "Stockeate",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (resp != DialogResult.Yes)
+                return;
+            if (resp == DialogResult.Yes)
+            {
+                // Buscar la instancia existente de la ventana principal.
+                Form principal = Application.OpenForms
+                    .Cast<Form>()
+                    .FirstOrDefault(f => f.GetType().Name == "VentanaPrincipal");
+
+                if (principal == null || principal.IsDisposed)
+                {
+                    MessageBox.Show(
+                        "No se encontró la ventana principal de Stockeate.",
+                        "Stockeate",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+
+                    return;
+                }
+
+                // Tomar una copia porque los formularios se van a cerrar.
+                Form[] ventanas = Application.OpenForms
+                    .Cast<Form>()
+                    .Where(f => f != principal && !f.IsDisposed)
+                    // Cerrar primero la ventana de consulta actual.
+                    .OrderBy(f => f == this ? 0 : 1)
+                    .ToArray();
+
+                foreach (Form ventana in ventanas)
+                {
+                    if (!ventana.IsDisposed)
+                    {
+                        ventana.Close();
+                    }
+                }
+
+                // Dejar visible y activa la ventana principal existente.
+                if (principal.IsDisposed)
+                    return;
+
+                if (principal.WindowState == FormWindowState.Minimized)
+                {
+                    principal.WindowState = FormWindowState.Normal;
+                }
+
+                principal.Show();
+                principal.BringToFront();
+                principal.Activate();
+            }
+        }
     }
 }

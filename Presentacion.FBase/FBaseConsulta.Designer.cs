@@ -41,8 +41,11 @@
             btnActualizar = new ToolStripButton();
             toolStripSeparator2 = new ToolStripSeparator();
             btnImprimir = new ToolStripButton();
-            toolStripSeparator3 = new ToolStripSeparator();
             btnSalir = new ToolStripButton();
+            toolStripSeparator5 = new ToolStripSeparator();
+            toolStripSeparator3 = new ToolStripSeparator();
+            btnVolver = new ToolStripButton();
+            toolStripSeparator4 = new ToolStripSeparator();
             panel1 = new Panel();
             tableLayoutPanel15 = new TableLayoutPanel();
             tableLayoutPanel18 = new TableLayoutPanel();
@@ -113,7 +116,7 @@
             BarraLateralBotones.BackColor = SystemColors.AppWorkspace;
             BarraLateralBotones.CanOverflow = false;
             BarraLateralBotones.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            BarraLateralBotones.Items.AddRange(new ToolStripItem[] { btnNuevo, btnEliminar, btnModificar, toolStripSeparator1, btnActualizar, toolStripSeparator2, btnImprimir, toolStripSeparator3, btnSalir });
+            BarraLateralBotones.Items.AddRange(new ToolStripItem[] { btnNuevo, btnEliminar, btnModificar, toolStripSeparator1, btnActualizar, toolStripSeparator2, btnImprimir, btnSalir, toolStripSeparator5, toolStripSeparator3, btnVolver, toolStripSeparator4 });
             BarraLateralBotones.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             BarraLateralBotones.Location = new Point(0, 0);
             BarraLateralBotones.Name = "BarraLateralBotones";
@@ -172,11 +175,6 @@
             btnImprimir.Text = "Imprimir";
             btnImprimir.TextImageRelation = TextImageRelation.TextAboveImage;
             // 
-            // toolStripSeparator3
-            // 
-            toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new Size(6, 27);
-            // 
             // btnSalir
             // 
             btnSalir.Alignment = ToolStripItemAlignment.Right;
@@ -185,6 +183,32 @@
             btnSalir.Text = "Salir";
             btnSalir.TextImageRelation = TextImageRelation.TextAboveImage;
             btnSalir.Click += btnSalir_Click;
+            // 
+            // toolStripSeparator5
+            // 
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new Size(6, 27);
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Alignment = ToolStripItemAlignment.Right;
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 27);
+            // 
+            // btnVolver
+            // 
+            btnVolver.Alignment = ToolStripItemAlignment.Right;
+            btnVolver.Name = "btnVolver";
+            btnVolver.Size = new Size(115, 24);
+            btnVolver.Text = "Volver al Inicio";
+            btnVolver.TextImageRelation = TextImageRelation.TextAboveImage;
+            btnVolver.Click += btnVolver_Click;
+            // 
+            // toolStripSeparator4
+            // 
+            toolStripSeparator4.Alignment = ToolStripItemAlignment.Right;
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new Size(6, 27);
             // 
             // panel1
             // 
@@ -863,7 +887,6 @@
         protected ToolStripButton btnActualizar;
         protected ToolStripSeparator toolStripSeparator2;
         protected ToolStripButton btnImprimir;
-        protected ToolStripSeparator toolStripSeparator3;
         protected ToolStripButton btnSalir;
         public Panel panel1;
         private TableLayoutPanel tableLayoutPanel1;
@@ -908,5 +931,9 @@
         private PictureBox pbxLogo;
         private TableLayoutPanel tableLayoutPanel18;
         private TableLayoutPanel tableLayoutPanel9;
+        private ToolStripSeparator toolStripSeparator5;
+        private ToolStripSeparator toolStripSeparator3;
+        protected ToolStripButton btnVolver;
+        private ToolStripSeparator toolStripSeparator4;
     }
 }
