@@ -35,7 +35,8 @@ namespace Presentacion.Core.CuentaCorriente
         {
             if (id == null)
             {
-                MessageBox.Show("No se ha seleccionado un cliente para ver su cuenta corriente.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MostrarError("No se ha seleccionado un cliente para ver su cuenta corriente.");
+                //MessageBox.Show("No se ha seleccionado un cliente para ver su cuenta corriente.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.Close();
                 return;
 
@@ -87,7 +88,8 @@ namespace Presentacion.Core.CuentaCorriente
             var montodeudaMaximo = "$0";
             if (_cuentaCorrienteDto == null)
             {
-                MessageBox.Show("No se pudo obtener la información de la cuenta corriente.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError("No se pudo obtener la información de la cuenta corriente.");
+                //MessageBox.Show("No se pudo obtener la información de la cuenta corriente.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Close();
                 return;
             }
@@ -355,7 +357,8 @@ namespace Presentacion.Core.CuentaCorriente
             {
                 if (_dnisAutorizadosLista.Contains(dni))
                 {
-                    MessageBox.Show("Este DNI ya está en la lista.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Informar("Este DNI ya está en la lista.", "Atención");)
+                    //MessageBox.Show("Este DNI ya está en la lista.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -365,7 +368,8 @@ namespace Presentacion.Core.CuentaCorriente
             }
             else
             {
-                MessageBox.Show("Por favor, ingrese un número de DNI válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError("Por favor, ingrese un número de DNI válido.");
+                //MessageBox.Show("Por favor, ingrese un número de DNI válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -379,7 +383,8 @@ namespace Presentacion.Core.CuentaCorriente
             }
             else
             {
-                MessageBox.Show("Seleccione un DNI de la lista para eliminarlo.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Informar("Seleccione un DNI de la lista para eliminarlo.", "Atención");
+                //MessageBox.Show("Seleccione un DNI de la lista para eliminarlo.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 

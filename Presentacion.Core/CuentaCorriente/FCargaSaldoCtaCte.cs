@@ -194,11 +194,12 @@ namespace Presentacion.Core.CuentaCorriente
         {
             if (!decimal.TryParse(txtMonto.Text, out decimal monto))
             {
-                MessageBox.Show(
-                    "Ingrese un importe válido.",
-                    "Atención",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                Informar("Ingrese un importe válido.","Atención");
+                //MessageBox.Show(
+                //    "Ingrese un importe válido.",
+                //    "Atención",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Warning);
 
                 txtMonto.Focus();
                 txtMonto.SelectAll();
@@ -207,12 +208,12 @@ namespace Presentacion.Core.CuentaCorriente
 
             if (monto <= 0)
             {
-                MessageBox.Show(
-                    "El importe debe ser mayor que cero.",
-                    "Atención",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-
+                Informar("El importe debe ser mayor que cero.","Atención");
+                //MessageBox.Show(
+                //    "El importe debe ser mayor que cero.",
+                //    "Atención",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Warning);
                 txtMonto.Focus();
                 txtMonto.SelectAll();
                 return;
