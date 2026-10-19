@@ -31,7 +31,8 @@ namespace Presentacion.Core.Caja
         {
             if (!AuthHelper.Tiene("Caja.Abrir"))
             {
-                MessageBox.Show("No Cuenta con las credenciales necesarias para abrir la caja");
+                MostrarError("No Cuenta con las credenciales necesarias para abrir la caja");
+                //MessageBox.Show("No Cuenta con las credenciales necesarias para abrir la caja");
                 return;
             }
             var FCajaAbrir = new FCajaAbrir(TipoOperacion.Abrir);
@@ -39,7 +40,8 @@ namespace Presentacion.Core.Caja
             var result = FCajaAbrir.ShowDialog();
             if (result == DialogResult.OK)
             {
-                MessageBox.Show($"Caja Abierta correctamente.\n Saldo Actual: ${FCajaAbrir.SaldoApertura} ");
+                Exito("Caja Abierta correctamente.\n Saldo Actual: $" + FCajaAbrir.SaldoApertura);
+                //MessageBox.Show($"Caja Abierta correctamente.\n Saldo Actual: ${FCajaAbrir.SaldoApertura} ");
                 InicializarEstadoCaja();
             }
         }
@@ -48,7 +50,8 @@ namespace Presentacion.Core.Caja
         {
             if (!AuthHelper.Tiene("Caja.Cerrar"))
             {
-                MessageBox.Show("No Cuenta con las credenciales necesarias para cerrar la caja");
+                MostrarError("No Cuenta con las credenciales necesarias para cerrar la caja");
+                //MessageBox.Show("No Cuenta con las credenciales necesarias para cerrar la caja");
                 return;
             }
             var FCerrarCaja = new FCajaAbrir(TipoOperacion.Cerrar);
@@ -56,7 +59,8 @@ namespace Presentacion.Core.Caja
             var result = FCerrarCaja.ShowDialog();
             if (result == DialogResult.OK)
             {
-                MessageBox.Show($"Caja Cerrada correctamente.\n Saldo Final: ${FCerrarCaja.SaldoFinal} ");
+                Exito($"Caja Cerrada correctamente.\n Saldo Final: ${FCerrarCaja.SaldoFinal}");
+                //MessageBox.Show($"Caja Cerrada correctamente.\n Saldo Final: ${FCerrarCaja.SaldoFinal} ");
                 InicializarEstadoCaja();
             }
         }
@@ -100,7 +104,8 @@ namespace Presentacion.Core.Caja
         {
             if (!AuthHelper.Tiene("Caja.VerMovimientos"))
             {
-                MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                MostrarError("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                //MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
                 return;
             }
             var formConsultaCajas = new FCajaConsulta();
@@ -111,7 +116,8 @@ namespace Presentacion.Core.Caja
         {
             if (!AuthHelper.Tiene("Caja.VerMovimientos"))
             {
-                MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                MostrarError("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                //MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
                 return;
             }
             var fmov = new FMovimientoConsulta();
