@@ -64,7 +64,7 @@ namespace Presentacion.Core.Venta.CancelacionVenta
                 //    "Atención",
                 //    MessageBoxButtons.OK,
                 //    MessageBoxIcon.Warning
-                );
+                
                 Close();
                 return;
             }

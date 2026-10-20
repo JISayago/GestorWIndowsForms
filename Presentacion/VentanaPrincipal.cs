@@ -324,7 +324,8 @@ namespace Presentacion
         {
             if (!AuthHelper.Tiene("Admin.Acceso"))
             {
-                MessageBox.Show("Acceso disponible sólo para Administradores");
+                Informar("Acceso disponible sólo para Administradores", "Acceso denegado");
+                //MessageBox.Show("Acceso disponible sólo para Administradores");
                 return;
             }
             var administracion = new FAdministracion(_usuarioLogeado.PersonaId);
@@ -335,7 +336,8 @@ namespace Presentacion
         {
             if (!AuthHelper.Tiene("Ventas.Crear"))
             {
-                MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                Informar("No Cuenta con las credenciales necesarias para realizar ventas", "Acceso denegado");
+                //MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
                 return;
             }
             var FVenta = new FVenta(_usuarioLogeado.PersonaId);
@@ -346,7 +348,8 @@ namespace Presentacion
         {
             if (!AuthHelper.Tiene("Caja.Ver"))
             {
-                MessageBox.Show("No Cuenta con las credenciales necesarias para acceder a la caja");
+                Informar("No Cuenta con las credenciales necesarias para acceder a la caja", "Acceso denegado");
+                //MessageBox.Show("No Cuenta con las credenciales necesarias para acceder a la caja");
                 return;
             }
             var fCaja = new FCaja();
@@ -357,7 +360,8 @@ namespace Presentacion
         {
             if (!AuthHelper.Tiene("Ventas.Contrasiento"))
             {
-                MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                Informar("No Cuenta con las credenciales necesarias para ver los movimientos de la caja","Acceso denegado");
+                //MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
                 return;
             }
             var NroCompr = new FNroComprobanteParaCancelacion(_usuarioLogeado.PersonaId);
@@ -369,11 +373,12 @@ namespace Presentacion
             var respuesta = _accesoSistema.CerrarSesion(_usuarioLogeado.PersonaId);
             if (!respuesta.Exitoso)
             {
-                MessageBox.Show(respuesta.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(respuesta.Mensaje);
+                //MessageBox.Show(respuesta.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
-            MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Exito(respuesta.Mensaje, "Información");
+            //MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Application.Restart();
         }
 
@@ -552,15 +557,20 @@ namespace Presentacion
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 e.Cancel = true;
-
-                var respuesta = MessageBox.Show(
-                    "¿Querés cerrar la sesión y salir del sistema?",
+                var result = Confirmar(
+                  "¿Querés cerrar la sesión y salir del sistema?",
                     "Cerrar sesión",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question,
-                    MessageBoxDefaultButton.Button2);
+                 si: "Aceptar",
+                 no: "Cancelar");
 
-                if (respuesta == DialogResult.Yes)
+                //var respuesta = MessageBox.Show(
+                //    "¿Querés cerrar la sesión y salir del sistema?",
+                //    "Cerrar sesión",
+                //    MessageBoxButtons.YesNo,
+                //    MessageBoxIcon.Question,
+                //    MessageBoxDefaultButton.Button2);
+
+                if (result)
                     btnCerarSesion_Click(this, EventArgs.Empty);
 
                 return;
@@ -574,11 +584,12 @@ namespace Presentacion
             var respuesta = _accesoSistema.CerrarSesion(_usuarioLogeado.PersonaId);
             if (!respuesta.Exitoso)
             {
-                MessageBox.Show(respuesta.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(respuesta.Mensaje);
+                //MessageBox.Show(respuesta.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
-            MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Exito(respuesta.Mensaje, "Exito");
+            //MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Application.Restart();
         }
     }

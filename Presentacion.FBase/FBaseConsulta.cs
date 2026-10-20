@@ -934,12 +934,14 @@ namespace Presentacion.FBase
         {
             if (dgvGrilla.RowCount == 0)
             {
-                MessageBox.Show("No hay datos cargados.");
+                Informar("No hay registros para seleccionar.","Atención");
+                //MessageBox.Show("No hay datos cargados.");
                 return false;
             }
 
             if (!entidadID.HasValue)
             {
+                Informar("Seleccione un registro.","Atención");
                 MessageBox.Show("Seleccione un registro.");
                 return false;
             }
@@ -991,7 +993,8 @@ namespace Presentacion.FBase
                 {
                     if (accion.RequiereSeleccion && !entidadID.HasValue)
                     {
-                        MessageBox.Show("Seleccione un registro.");
+                        Informar("Seleccione un registro.","Atención");
+                        //MessageBox.Show("Seleccione un registro.");
                         return;
                     }
 

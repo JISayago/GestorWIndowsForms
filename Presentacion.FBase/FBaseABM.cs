@@ -56,8 +56,11 @@ namespace Presentacion.FBase
 
         private void btnLimpiar_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show(@"Esta seguro de Limpiar los Datos", @"Atención", MessageBoxButtons.YesNo,
-                   MessageBoxIcon.Question) == DialogResult.Yes)
+            var result = Confirmar(
+               @"Esta seguro de Limpiar los Datos", @"Atención",
+                 si: "Aceptar",
+                 no: "Cancelar");
+            if (result)
             {
                 Limpiar(this);
                 LimpiarErroresVisuales();   // <-- nuevo
