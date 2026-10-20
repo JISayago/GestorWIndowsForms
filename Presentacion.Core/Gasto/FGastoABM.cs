@@ -81,19 +81,22 @@ namespace Presentacion.Core.Gasto
         {
             if (cmbCategoriaGasto.SelectedValue == null)
             {
-                MessageBox.Show("Seleccione una categoría.");
+                Informar("Seleccione una categoría.","Error");
+                //MessageBox.Show("Seleccione una categoría.");
                 return;
             }
 
             if (cmbEstado.SelectedValue == null)
             {
-                MessageBox.Show("Seleccione un estado.");
+                Informar("Seleccione un estado.","Error");
+                //MessageBox.Show("Seleccione un estado.");
                 return;
             }
 
             if (!decimal.TryParse(txtMontoPago.Text, out var monto))
             {
-                MessageBox.Show("Monto inválido.");
+                Informar("Monto inválido.","Error");
+                //MessageBox.Show("Monto inválido.");
                 return;
             }
 
@@ -133,22 +136,23 @@ namespace Presentacion.Core.Gasto
                 if (resultado.Exitoso)
                 {
                     RealizoAlgunaOperacion = true;
-
-                    MessageBox.Show(
-                        resultado.Mensaje,
-                        "Éxito",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    Exito($"{resultado.Mensaje}");
+                    //MessageBox.Show(
+                    //    resultado.Mensaje,
+                    //    "Éxito",
+                    //    MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Information);
 
                     Close();
                 }
                 else
                 {
-                    MessageBox.Show(
-                        resultado.Mensaje,
-                        "Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    MostrarError(resultado.Mensaje);
+                    //MessageBox.Show(
+                    //    resultado.Mensaje,
+                    //    "Error",
+                    //    MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Error);
                 }
             }
             finally
