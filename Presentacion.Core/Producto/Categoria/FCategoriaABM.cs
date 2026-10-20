@@ -67,7 +67,8 @@ namespace Presentacion.Core.Categoria
         {
             if (!entidadId.HasValue)
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("No se pudo encontrar la categoría seleccionada", "Error Grave");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 
                 this.Close();
             }
@@ -85,7 +86,8 @@ namespace Presentacion.Core.Categoria
             }
             else
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("No se pudo encontrar la categoría seleccionada", "Error Grave");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
 
         }
@@ -94,8 +96,9 @@ namespace Presentacion.Core.Categoria
         {
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("Por favor ingrese los campos Obligatorios.", "Atención");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
+                    //MessageBoxIcon.Error);
                 return false;
             }
 
@@ -110,14 +113,16 @@ namespace Presentacion.Core.Categoria
 
             if (response.Exitoso)
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Information);
+                Exito(response.Mensaje, "Éxito");
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                //   MessageBoxIcon.Information);
                 return true;
             }
             else
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
+                MostrarError(response.Mensaje);
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                //   MessageBoxIcon.Error);
                 return false;
             }
 
@@ -127,7 +132,8 @@ namespace Presentacion.Core.Categoria
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show(@"´Por favor seleccione una categoria válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("Por favor seleccione una categoria válida.", "Error");
+                //MessageBox.Show(@"´Por favor seleccione una categoria válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
 
             }
@@ -136,14 +142,16 @@ namespace Presentacion.Core.Categoria
                 var response = _CategoriaServicio.Eliminar((long)EntidadID);
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Information);
+                    Exito(response.Mensaje, "Éxito");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Error);
                     return false;
                 }
 
@@ -155,15 +163,17 @@ namespace Presentacion.Core.Categoria
         {
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("Por favor ingrese los campos Obligatorios.", "Atención");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
                 return false;
             }
             if (TipoOperacion == TipoOperacion.Modificar)
             {
                 if (!EntidadID.HasValue)
                 {
-                    MessageBox.Show(@"´Por favor seleccione un empleado válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    Informar("Por favor seleccione un empleado válido.", "Error");
+                    //MessageBox.Show(@"´Por favor seleccione un empleado válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return false;
 
                 }
@@ -176,14 +186,16 @@ namespace Presentacion.Core.Categoria
 
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    Exito(response.Mensaje, "Éxito");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Error);
                     return false;
                 }
 
