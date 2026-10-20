@@ -1,4 +1,5 @@
 ﻿using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.Empleado.DTO;
@@ -27,7 +28,7 @@ namespace Presentacion.Core.Empleado
             base.FBaseABM_Load(sender, e);
             Inicializador(EntidadID);
         }
-        public FEmpleadoABM(TipoOperacion tipoOperacion, long? entidadID = null) :base(tipoOperacion,entidadID)
+        public FEmpleadoABM(TipoOperacion tipoOperacion, long? entidadID = null) : base(tipoOperacion, entidadID)
         {
             InitializeComponent();
             _empleadoServicio = new EmpleadoServicio();
@@ -45,14 +46,15 @@ namespace Presentacion.Core.Empleado
                 DesactivarControles(this);
             }
 
-            AgregarControlesObligatorios(txtApellido, "Apellido");
             AgregarControlesObligatorios(txtNombre, "Nombre");
-            AgregarControlesObligatorios(txtLegajo, "Legajo");
-            AgregarControlesObligatorios(txtDni, "Dni");
-            AgregarControlesObligatorios(txtTelefono, "Telefono");
-            AgregarControlesObligatorios(txtCuil, "Cuil");
-            AgregarControlesObligatorios(txtEmail, "Email");
-            AgregarControlesObligatorios(txtDireccion, "Direccion");
+            AgregarControlesObligatorios(txtApellido, "Apellido");
+            AgregarControlesObligatorios(txtDni, "DNI", Validaciones.SoloNumeros, Validaciones.Longitud(7, 8));
+            AgregarControlesObligatorios(dtpFIngreso, "Fecha de ingreso", Validaciones.FechaNoFutura);
+            AgregarControlesObligatorios(dtpFNacimiento, "Fecha de nacimiento", Validaciones.FechaNoFutura);
+            AgregarValidacionOpcional(txtEmail, "Email", Validaciones.Email);
+            AgregarValidacionOpcional(txtTelefono, "Teléfono", Validaciones.SoloNumeros,Validaciones.MayorACero);
+            AgregarValidacionOpcional(txtCelular, "Celular", Validaciones.SoloNumeros,Validaciones.MayorACero);
+
         }
         public override void Inicializador(long? entidadId)
         {
@@ -99,8 +101,25 @@ namespace Presentacion.Core.Empleado
                     MessageBoxIcon.Error);
                 return false;
             }
-
-           var nuevoEmpleado = new EmpleadoDTO
+            if (txtDni.Text.Length > 15)
+            {
+                MessageBox.Show(@"El DNI no puede tener más de 15 caracteres.", @"Atención", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return false;
+            }
+            if(string.IsNullOrEmpty(txtLegajo.Text))
+            {
+                var respuesta = MessageBox.Show("El campo Legajo está vacío. ¿Desea que se complete automáticamente con el valor del DNI?", "Confirmación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if(respuesta == DialogResult.Yes)
+                {
+                    txtLegajo.Text = txtDni.Text;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            var nuevoEmpleado = new EmpleadoDTO
             {
                 Apellido = txtApellido.Text,
                 Nombre = txtNombre.Text,
@@ -122,7 +141,7 @@ namespace Presentacion.Core.Empleado
             {
                 MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                    MessageBoxIcon.Information);
-                return true; 
+                return true;
             }
             else
             {
@@ -142,7 +161,7 @@ namespace Presentacion.Core.Empleado
             }
             if (TipoOperacion == TipoOperacion.Eliminar)
             {
-               var response = _empleadoServicio.Eliminar((long)EntidadID);
+                var response = _empleadoServicio.Eliminar((long)EntidadID);
                 if (response.Exitoso)
                 {
                     MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
@@ -155,7 +174,7 @@ namespace Presentacion.Core.Empleado
                        MessageBoxIcon.Error);
                     return false;
                 }
-               
+
             }
             return false;
         }
@@ -186,23 +205,24 @@ namespace Presentacion.Core.Empleado
                     FechaIngreso = dtpFIngreso.Value
                 };
 
-                    var response = _empleadoServicio.Modificar(empleadoEditar,EntidadID);
+                var response = _empleadoServicio.Modificar(empleadoEditar, EntidadID);
 
-                    if (response.Exitoso)
-                    {
-                        MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                           MessageBoxIcon.Information);
-                        return true;
-                    }
-                    else
-                    {
-                        MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                           MessageBoxIcon.Error);
-                        return false;
-                    }
+                if (response.Exitoso)
+                {
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       MessageBoxIcon.Information);
+                    return true;
+                }
+                else
+                {
+                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       MessageBoxIcon.Error);
+                    return false;
+                }
 
             }
             return false;
         }
+
     }
 }

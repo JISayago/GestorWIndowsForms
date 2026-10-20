@@ -215,13 +215,12 @@ public partial class FOfertaConsulta : FBaseConsulta
             return;
         }
 
-        //var ofertaAD = _ofertaServicio.ActivarDesactivar(id.Value);
-        MessageBox.Show($"Funcionalidad de activar/desactivar oferta no implementada en el servicio.{entidadID}/{id}");
-
-        //if (ofertaAD.OfertaDescuentoId != null)
-        //    MessageBox.Show($"La oferta {ofertaAD.Codigo} cambió su estado.");
-        //else
-        //    MessageBox.Show("No se pudo cambiar el estado.");
+        var resp = _ofertaServicio.ActivarDesactivarOferta(id.Value);
+        
+        if (resp.Exitoso)
+            MessageBox.Show(resp.Mensaje);
+        else
+            MessageBox.Show(resp.Mensaje);
 
         RefrescarGrilla();
     }
@@ -242,14 +241,14 @@ public partial class FOfertaConsulta : FBaseConsulta
 
     #region BOTONES BASE
 
-    public override void EjecutarBtnNuevo()
-    {
-        var f = new FOfertaGrupoABM();
+    //public override void EjecutarBtnNuevo()
+    //{
+    //    var f = new FOfertaGrupoABM();
 
-        f.ShowDialog();
+    //    f.ShowDialog();
 
-        RefrescarGrilla();
-    }
+    //    RefrescarGrilla();
+    //}
 
     #endregion
 

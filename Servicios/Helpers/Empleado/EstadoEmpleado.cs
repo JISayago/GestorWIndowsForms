@@ -8,6 +8,7 @@ namespace Servicios.Helpers.Empleado
 {
     public enum EstadoEmpleado
     {
+        SinUsuario = 0, //valor por defecto inicio usuario primer ingreso.
         Inhablitado = 1, //valor por defecto inicio usuario primer ingreso.
         Habilitado = 2, // Activo
         SinPass = 3, // olvido pass

@@ -449,6 +449,7 @@ namespace Presentacion.Core.Cliente
             }
         }
 
+
         private void SeleccionarClienteParaCtaCte(long? id)
         {
             ControlCargaExistencaDatos();
@@ -471,7 +472,16 @@ namespace Presentacion.Core.Cliente
 
                 return;
             }
-
+            if(cliente.Telefono == "00000000" && cliente.Telefono2 == "00000000" && cliente.Email == "Sin Asignar")
+            {
+                MessageBox.Show(
+                    "El cliente seleccionado no tiene información de contacto válida. Agregar un medio de contacto por favor.", 
+                    "Advertencia",                                                          
+                    MessageBoxButtons.OK,                                    
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
             var fCtacte = new FCuentaCorrienteABM(TipoOperacion.Nuevo, clienteSeleccionado,null);
 
             if (fCtacte.ShowDialog() == DialogResult.OK &&

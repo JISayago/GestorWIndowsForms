@@ -1,6 +1,7 @@
 ﻿using Licencia.Criptografia;
 using Licencia.Modelos;
 using Licencia.Servicios;
+using Servicios.AccesoSistema.Seguridad;
 using System;
 using System.Globalization;
 using System.Text.Json;
@@ -12,6 +13,7 @@ namespace Stockeate.Licensing
     {
         private readonly LicenseStorage _storage = new();
         private readonly InstallationManager _installation = new();
+        private readonly ClockGuard _clock = new();
 
         public LicenseValidationResult Validar(
             string publicKeyPem)
@@ -82,60 +84,7 @@ namespace Stockeate.Licensing
             }
 
             // ========================================================
-            // 4. INSTALLATION ID
-            // ========================================================
-
-            if (licencia.InstallationId !=
-                instalacion.InstallationId)
-            {
-                return new LicenseValidationResult
-                {
-                    Valida = false,
-                    Estado = LicenseStatus.Invalida,
-                    SoloConsulta = false,
-                    Mensaje =
-                        "La licencia pertenece a otra instalación."
-                };
-            }
-
-            // ========================================================
-            // 5. FECHA DE INICIO
-            // ========================================================
-
-            if (licencia.FechaInicio.Date >
-                DateTime.Today)
-            {
-                return new LicenseValidationResult
-                {
-                    Valida = false,
-                    Estado = LicenseStatus.Invalida,
-                    SoloConsulta = false,
-                    Mensaje =
-                        "La licencia aún no es válida."
-                };
-            }
-
-            // ========================================================
-            // 6. FECHA DE VENCIMIENTO
-            // ========================================================
-
-            if (licencia.FechaVencimiento.HasValue &&
-                licencia.FechaVencimiento.Value.Date <
-                DateTime.Today)
-            {
-                return new LicenseValidationResult
-                {
-                    Valida = false,
-                    Estado = LicenseStatus.Vencida,
-                    SoloConsulta = true,
-                    Mensaje =
-                        "La licencia ha vencido. " +
-                        "El sistema funcionará en modo consulta."
-                };
-            }
-
-            // ========================================================
-            // 7. FIRMA
+            // 4. FIRMA
             // ========================================================
 
             string firmaOriginal =
@@ -151,6 +100,21 @@ namespace Stockeate.Licensing
                     SoloConsulta = false,
                     Mensaje =
                         "La licencia no contiene una firma digital."
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                    licencia.HardwareFingerprint))
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "La licencia no contiene la identificación " +
+                        "de hardware requerida.\r\n\r\n" +
+                        "Debe solicitar una nueva licencia."
                 };
             }
 
@@ -174,16 +138,165 @@ namespace Stockeate.Licensing
                         "Firma digital inválida."
                 };
             }
+            // ========================================================
+            // 4b. COHERENCIA TIPO / VENCIMIENTO
+            // ========================================================
+
+            if (licencia.Tipo == LicenseType.Trial &&
+                !licencia.FechaVencimiento.HasValue)
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "La licencia Trial no tiene fecha de vencimiento.\r\n\r\n" +
+                        "Debe solicitar una nueva licencia."
+                };
+            }
+
+            if (licencia.Tipo == LicenseType.Perpetua &&
+                licencia.FechaVencimiento.HasValue)
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "La licencia Perpetua no debe tener fecha de vencimiento.\r\n\r\n" +
+                        "Debe solicitar una nueva licencia."
+                };
+            }
 
             // ========================================================
-            // 8. LICENCIA VALIDA
+            // 5. INSTALLATION ID
             // ========================================================
 
+            if (licencia.InstallationId !=
+                instalacion.InstallationId)
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "La licencia pertenece a otra instalación."
+                };
+            }
+
+            // ========================================================
+            // 6. HARDWARE
+            // ========================================================
+
+            string hardwareActual;
+
+            try
+            {
+                hardwareActual =
+                    HardwareFingerprint.Obtener();
+            }
+            catch (Exception ex)
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "No se pudo obtener la identificación de hardware " +
+                        "del equipo.\r\n\r\n" +
+                        ex.Message
+                };
+            }
+
+            // ========================================================
+            // 7. COMPARAR HARDWARE
+            // ========================================================
+
+            if (!string.Equals(
+                    licencia.HardwareFingerprint,
+                    hardwareActual,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "La licencia pertenece a otro equipo.\r\n\r\n" +
+                        "El sistema no fue bloqueado ni se eliminó " +
+                        "ningún dato.\r\n\r\n" +
+                        "Debe solicitar una nueva licencia para este equipo."
+                };
+            }
+
+            // ========================================================
+            // 8. FECHA DE INICIO
+            // ========================================================
+
+            if (licencia.FechaInicio.Date >
+                DateTime.Today)
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = false,
+                    Mensaje =
+                        "La licencia aún no es válida."
+                };
+            }
+            if (licencia.FechaVencimiento.HasValue && _clock.RelojRetrocedido())
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Invalida,
+                    SoloConsulta = true,
+                    Tipo = licencia.Tipo,
+                    Mensaje =
+                        "Se detectó que la fecha del equipo es anterior a la " +
+                        "última fecha de uso registrada.\r\n\r\n" +
+                        "Corrija la fecha y hora del sistema. " +
+                        "Mientras tanto funcionará en modo consulta."
+                };
+            }
+
+            // ========================================================
+            // 9. FECHA DE VENCIMIENTO
+            // ========================================================
+
+            if (licencia.FechaVencimiento.HasValue &&
+                licencia.FechaVencimiento.Value.Date <
+                DateTime.Today)
+            {
+                return new LicenseValidationResult
+                {
+                    Valida = false,
+                    Estado = LicenseStatus.Vencida,
+                    SoloConsulta = true,
+                    Tipo = licencia.Tipo,
+                    Mensaje =
+                        "La licencia ha vencido. " +
+                        "El sistema funcionará en modo consulta."
+                };
+            }
+
+            // ========================================================
+            // 10. LICENCIA VALIDA
+            // ========================================================
+            if (licencia.FechaVencimiento.HasValue)
+                _clock.Registrar();
             return new LicenseValidationResult
             {
                 Valida = true,
                 Estado = LicenseStatus.Valida,
                 SoloConsulta = false,
+                Tipo = licencia.Tipo,
                 Mensaje = "Licencia válida."
             };
         }
@@ -205,6 +318,12 @@ namespace Stockeate.Licensing
 
                 InstallationId =
                     licencia.InstallationId.ToString("D"),
+
+                HardwareFingerprint =
+                    licencia.HardwareFingerprint
+                        ?.Trim()
+                        .ToUpperInvariant()
+                        ?? string.Empty,
 
                 Tipo =
                     licencia.Tipo.ToString(),

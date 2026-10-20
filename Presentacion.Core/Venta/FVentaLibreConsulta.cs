@@ -22,6 +22,10 @@ namespace Presentacion.Core.Venta
 
             _ventaLibreServicio = new VentaLibreServicio();
         }
+        protected override bool EsModoSoloLectura(FiltroConsulta filtro)
+        {
+            return true;
+        }
 
         #region 🔷 FILTROS
         protected override string TextoLblBuscar

@@ -62,7 +62,8 @@ namespace Presentacion.Core.Producto
                 new OpcionFiltro { Texto = "Producto", Valor = "Descripcion" },
                 new OpcionFiltro { Texto = "Marca", Valor = "MarcaNombre" },
                 new OpcionFiltro { Texto = "Rubro", Valor = "RubroNombre" },
-                new OpcionFiltro { Texto = "Código", Valor = "Codigo" }
+                new OpcionFiltro { Texto = "Código", Valor = "Codigo" },
+                new OpcionFiltro { Texto = "Código de oferta", Valor = "OfertaCodigo" }
             };
 
             ActivarCombo(
@@ -158,12 +159,7 @@ namespace Presentacion.Core.Producto
 
         protected override void ConfigurarAccionesPersonalizadas()
         {
-            AgregarAccion(
-                "Stock",
-                Constantes.Imagenes.ImgStock,
-                AbrirGestionStock,
-                true
-            );
+         
 
             if (vieneDeCargaProducto)
             {
@@ -173,6 +169,16 @@ namespace Presentacion.Core.Producto
                     SeleccionProducto,
                     true
                 );
+            }
+            else
+            {
+                AgregarAccion(
+             "Stock",
+             Constantes.Imagenes.ImgStock,
+             AbrirGestionStock,
+             true
+         );
+
             }
 
 

@@ -1,5 +1,8 @@
 ﻿using AccesoDatos.Entidades;
+using Presentacion.Core.Producto.Categoria;
+using Presentacion.Core.Producto.Marca;
 using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
@@ -26,6 +29,8 @@ namespace Presentacion.Core.Producto
         private readonly IRubroServicio _RubroServicio;
         protected long? EntidadID;
         private List<long> _categoriasSeleccionadas = new List<long>();
+        private long _marcaID = 0;
+        private long _rubroID = 0;
         private bool _cargandoDatos = false;
 
         public override void FBaseABM_Load(object sender, EventArgs e)
@@ -55,16 +60,11 @@ namespace Presentacion.Core.Producto
             {
                 DesactivarControles(this);
             }
-
-            AgregarControlesObligatorios(txtProducto, "Producto");
-            //AgregarControlesObligatorios(txtMedida, "Medida");
-            //AgregarControlesObligatorios(txtUnidadMedida, "Unidad Medida");
-            AgregarControlesObligatorios(txtPrecioCosto, "Precio Costo");
-            AgregarControlesObligatorios(txtPrecioVenta, "Precio Venta");
-            AgregarControlesObligatorios(txtCodigo, "Codigo");
-            AgregarControlesObligatorios(txtCodigoBarra, "Codigo Barra");
-            AgregarControlesObligatorios(cmbMarca, "Marca");
-            AgregarControlesObligatorios(cmbRubro, "Rubro");
+            AgregarControlesObligatorios(txtProducto, "Detalle del Producto");
+            AgregarControlesObligatorios(txtCodigo, "Detalle del Producto");
+            AgregarControlesObligatorios(txtCodigoBarra, "Detalle del Producto");
+            AgregarControlesObligatorios(txtPrecioCosto, "Precio Costo", Validaciones.DecimalMayorACero, Validaciones.DecimalConMaxDecimales(2));
+            AgregarControlesObligatorios(txtPrecioVenta, "Precio Venta", Validaciones.DecimalMayorACero, Validaciones.DecimalConMaxDecimales(2));
 
             var filtrosMarca = new FiltroConsulta
             {
@@ -79,13 +79,13 @@ namespace Presentacion.Core.Producto
                 .Items
                 .ToList();
 
-            cmbMarca.DisplayMember = "Nombre"; // lo que se muestra
-            cmbMarca.ValueMember = "Id";
-            cmbMarca.DataSource = marcas;
+            //cmbMarca.DisplayMember = "Nombre"; // lo que se muestra
+            //cmbMarca.ValueMember = "Id";
+            //cmbMarca.DataSource = marcas;
 
-            cmbMarca.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            cmbMarca.AutoCompleteSource = AutoCompleteSource.ListItems;
-            cmbMarca.DropDownStyle = ComboBoxStyle.DropDown;
+            //cmbMarca.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            //cmbMarca.AutoCompleteSource = AutoCompleteSource.ListItems;
+            //cmbMarca.DropDownStyle = ComboBoxStyle.DropDown;
 
             var filtrosRubros = new FiltroConsulta
             {
@@ -100,13 +100,13 @@ namespace Presentacion.Core.Producto
                 .Items
                 .ToList();
 
-            cmbRubro.DisplayMember = "Nombre"; // lo que se muestra
-            cmbRubro.ValueMember = "Id";
-            cmbRubro.DataSource = rubros;
+            //cmbRubro.DisplayMember = "Nombre"; // lo que se muestra
+            //cmbRubro.ValueMember = "Id";
+            //cmbRubro.DataSource = rubros;
 
-            cmbRubro.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            cmbRubro.AutoCompleteSource = AutoCompleteSource.ListItems;
-            cmbRubro.DropDownStyle = ComboBoxStyle.DropDown;
+            //cmbRubro.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            //cmbRubro.AutoCompleteSource = AutoCompleteSource.ListItems;
+            //cmbRubro.DropDownStyle = ComboBoxStyle.DropDown;
 
             EntidadID = entidadId;
             _cargandoDatos = false; // Fin de la carga de datos
@@ -161,14 +161,19 @@ namespace Presentacion.Core.Producto
                 txtCodigoBarra.Text = Producto.CodigoBarra;
                 chkIvaIncluido.Checked = Producto.IvaIncluidoPrecioFinal;
                 chkEsFraccionable.Checked = Producto.EsFraccionable;
-                cmbMarca.SelectedValue = Producto.IdMarca;
-                cmbRubro.SelectedValue = Producto.IdRubro;
                 chkControlPorLotes.Checked = Producto.ControlPorLote;
                 chkTieneVencimiento.Checked = Producto.TieneVencimiento;
 
                 // Precargamos las categorías que ya tiene asignadas el producto,
                 // para no perderlas si se guarda sin abrir el diálogo de Categorias.
                 _categoriasSeleccionadas = Producto.CategoriaIds?.ToList() ?? new List<long>();
+                var marca = Producto.IdMarca > 0 ? _MarcaServicio.ObtenerPorId(Producto.IdMarca) : null;
+                MostrarDatosBoton(Producto.IdMarca, marca?.Nombre ?? string.Empty, btnMarca);
+                var rubro = Producto.IdRubro > 0 ? _RubroServicio.ObtenerPorId(Producto.IdRubro) : null;
+                MostrarDatosBoton(Producto.IdRubro, rubro?.Nombre ?? string.Empty, btnRubro);
+                var categorias = _categoriasSeleccionadas.Any() ? $"Cantdidad:{_categoriasSeleccionadas.Count()}" : "Ninguna";
+                MostrarDatosBoton(0, categorias, btnCategorias);
+
             }
             else
             {
@@ -176,7 +181,26 @@ namespace Presentacion.Core.Producto
             }
 
         }
+        private void MostrarDatosBoton(long id, string nombre, Button btn)
+        {
+            
+            switch (btn.Name)
+            {
+                case "btnMarca":
+                    _marcaID = id;
+                    break;
+                case "btnRubro":
+                    _rubroID = id;
+                    break;
+                case "btnCategorias":
+                    // No hacemos nada con el ID aquí, ya que las categorías se manejan en la lista _categoriasSeleccionadas
+                    break;
+                default:
+                    throw new ArgumentException("Botón no reconocido");
+            }
 
+            btn.Text = nombre;
+        }
         public override bool EjecutarComandoNuevo()
         {
             if (!VerificarDatosObligatorios())
@@ -185,7 +209,16 @@ namespace Presentacion.Core.Producto
                     MessageBoxIcon.Error);
                 return false;
             }
-
+            if (_marcaID <= 0)
+            {
+                MessageBox.Show(@"Seleccione una marca.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            if (_rubroID <= 0)
+            {
+                MessageBox.Show(@"Seleccione un rubro.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
 
             var ProductoNueva = new ProductoDTO
             {
@@ -200,8 +233,8 @@ namespace Presentacion.Core.Producto
                 CodigoBarra = txtCodigoBarra.Text,
                 IvaIncluidoPrecioFinal = chkIvaIncluido.Checked,
                 EsFraccionable = chkEsFraccionable.Checked,
-                IdMarca = (long)cmbMarca.SelectedValue,
-                IdRubro = (long)cmbRubro.SelectedValue,
+                IdMarca = _marcaID,
+                IdRubro = _rubroID,
                 CategoriaIds = _categoriasSeleccionadas.ToList(),
                 EstaEliminado = false,
                 ControlPorLote = chkControlPorLotes.Checked,
@@ -264,6 +297,7 @@ namespace Presentacion.Core.Producto
                     MessageBoxIcon.Error);
                 return false;
             }
+
             if (TipoOperacion == TipoOperacion.Modificar)
             {
                 if (!EntidadID.HasValue)
@@ -271,6 +305,16 @@ namespace Presentacion.Core.Producto
                     MessageBox.Show(@"´Por favor seleccione un Producto válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return false;
 
+                }
+                if (_marcaID <= 0)
+                {
+                    MessageBox.Show(@"Seleccione una marca.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+                if (_rubroID <= 0)
+                {
+                    MessageBox.Show(@"Seleccione un rubro.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
                 }
                 //ARREGLAR LOS PARSE y TIPOS DE DATOS
                 var ProductoModificar = new ProductoDTO //completar con los datos del producto a modificar
@@ -286,8 +330,8 @@ namespace Presentacion.Core.Producto
                     CodigoBarra = txtCodigoBarra.Text,
                     IvaIncluidoPrecioFinal = chkIvaIncluido.Checked,
                     EsFraccionable = chkEsFraccionable.Checked,
-                    IdMarca = (long)cmbMarca.SelectedValue,
-                    IdRubro = (long)cmbRubro.SelectedValue,
+                    IdMarca = _marcaID,
+                    IdRubro = _rubroID,
                     CategoriaIds = _categoriasSeleccionadas.ToList(),
                     EstaEliminado = false,
                     ControlPorLote = chkControlPorLotes.Checked,
@@ -314,19 +358,28 @@ namespace Presentacion.Core.Producto
 
         }
 
+        //private void btnCategorias_Click(object sender, EventArgs e)
+        //{
+        //    //si existe el id recien entrar a fcategoriaProducto
+
+        //    var fCategoriaProducto = new Categoria.FAsignacionCategoriaProducto(EntidadID);
+
+        //    if (fCategoriaProducto.ShowDialog() == DialogResult.OK)
+        //    {
+        //        // Guardamos internamente las categorías elegidas por el usuario
+        //        _categoriasSeleccionadas = fCategoriaProducto.CategoriasSeleccionadas;
+
+        //        // Si querés mostrarlas en una textbox invisible o label:
+        //        //txtCategoria.Text = string.Join(",", _categoriasSeleccionadas);
+        //    }
+        //}
         private void btnCategorias_Click(object sender, EventArgs e)
         {
-            //si existe el id recien entrar a fcategoriaProducto
-
-            var fCategoriaProducto = new Categoria.FAsignacionCategoriaProducto(EntidadID);
-
-            if (fCategoriaProducto.ShowDialog() == DialogResult.OK)
+            using (var fCategorias = new FAsignacionCategoria(_categoriasSeleccionadas))
             {
-                // Guardamos internamente las categorías elegidas por el usuario
-                _categoriasSeleccionadas = fCategoriaProducto.CategoriasSeleccionadas;
-
-                // Si querés mostrarlas en una textbox invisible o label:
-                //txtCategoria.Text = string.Join(",", _categoriasSeleccionadas);
+                if (fCategorias.ShowDialog() == DialogResult.OK)
+                    _categoriasSeleccionadas = fCategorias.IdsSeleccionados;
+                MostrarDatosBoton(0, $"Cantidad:{_categoriasSeleccionadas.Count()}", btnCategorias);
             }
         }
 
@@ -359,6 +412,26 @@ namespace Presentacion.Core.Producto
                     _cargandoDatos = false; // Prendemos los eventos de nuevo
                 }
             }
+        }
+
+        private void btnMarca_Click(object sender, EventArgs e)
+        {
+            using (var f = new FAsignacionMarca(_marcaID > 0 ? _marcaID : (long?)null))
+            {
+                if (f.ShowDialog() == DialogResult.OK && f.IdSeleccionado.HasValue)
+                    MostrarDatosBoton(f.IdSeleccionado.Value, f.DescripcionSeleccionada,btnMarca);
+            }
+        }
+
+        private void btnRubro_Click(object sender, EventArgs e)
+        {
+
+            using (var f = new FAsignacionRubro(_rubroID > 0 ? _rubroID : (long?)null))
+            {
+                if (f.ShowDialog() == DialogResult.OK && f.IdSeleccionado.HasValue)
+                    MostrarDatosBoton(f.IdSeleccionado.Value, f.DescripcionSeleccionada, btnRubro);
+            }
+
         }
     }
 }

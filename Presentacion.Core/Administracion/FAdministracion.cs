@@ -43,7 +43,7 @@ namespace Presentacion.Core.Administracion
         // ==========================================
         // DEPENDENCIAS Y SERVICIOS DE CAPA DE NEGOCIO
         // ==========================================
-        private readonly long _logeadoId;
+                private readonly long _logeadoId;
         private readonly CajaServicio _cajaSerivicio;
         List<CajaDTO> todasLasCajas;
         private readonly AdministracionGraficosServicios _graficoServicio;
@@ -184,6 +184,14 @@ namespace Presentacion.Core.Administracion
             // Ejecutamos la carga inicial dinámica analizando la base de datos de manera segura
             //InicializarFiltrosCronologicos();
 
+            //VENTANA FULLSCREEN SIN BORDES NI BOTONES DE CIERRE
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.ControlBox = false;
+            //this.ShowIcon = true;
+            //this.ShowInTaskbar = true; // opcional
         }
 
         /// <summary>

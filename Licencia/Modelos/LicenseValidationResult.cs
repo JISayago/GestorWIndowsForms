@@ -15,5 +15,7 @@ namespace Licencia.Modelos
         public string Mensaje { get; set; } = "";
 
         public LicenseStatus Estado { get; set; }
+
+        public LicenseType? Tipo { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Gasto;
 using Servicios.LogicaNegocio.Gasto;
 using Servicios.LogicaNegocio.Gasto.DTO;
@@ -22,8 +23,11 @@ namespace Presentacion.Core.Gasto
             _gastoServicio = new GastoServicio();
             _logeadoId = logeadoId;
 
-            AgregarControlesObligatorios(txtDetalle, "Detalle");
-            AgregarControlesObligatorios(txtMontoPago, "Monto Pago");
+
+            AgregarControlesObligatorios(txtDetalle, "Detalle del Gasto");
+            AgregarControlesObligatorios(txtMontoPago, "Monto del Gasto", Validaciones.DecimalMayorACero, Validaciones.DecimalConMaxDecimales(2));
+            AgregarControlesObligatorios(cmbCategoriaGasto, "Categoría del Gasto", Validaciones.ComboSinPlaceholder);
+            AgregarControlesObligatorios(cmbEstado, "Estado del Gasto", Validaciones.ComboSinPlaceholder);
         }
 
         private void FGastoABM_Load(object sender, EventArgs e)
@@ -60,6 +64,7 @@ namespace Presentacion.Core.Gasto
             // 🔥 Default
             cmbEstado.SelectedValue = (int)EstadoGasto.Pagado;
             dtpDiaGasto.Enabled = true;
+
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -173,5 +178,6 @@ namespace Presentacion.Core.Gasto
                 dtpDiaGasto.Value = DateTime.Now;
             }
         }
+
     }
 }

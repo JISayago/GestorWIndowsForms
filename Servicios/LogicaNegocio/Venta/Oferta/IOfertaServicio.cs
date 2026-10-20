@@ -15,11 +15,12 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
     public interface IOfertaServicio
     {
         ResultadoPaginacion<OfertaDTO> ObtenerOfertas(FiltroConsulta filtros, bool vieneDeVenta);
-        public EstadoOperacion Insertar(OfertaDTO dto);
+        EstadoOperacion Insertar(OfertaDTO dto);
         //public OfertaDTO ObtenerOfertaActivaPorId(long idOFerta);
         ItemVentaDTO? ObtenerItemVentaOferta(long ofertaId);
         List<OfertaDTO> ObtenerOfertasVencidas(int diasHaciaAdelante);
         List<OfertaBajoStockDTO> ObtenerOfertasConBajoStock();
+        EstadoOperacion ActivarDesactivarOferta(long ofertaId);
 
         //public InfoOfertaDTO ObtenerInfoOferta();
         //public List<OfertaDTO> ObtenerOfertasActivas(string cadenaBuscar);

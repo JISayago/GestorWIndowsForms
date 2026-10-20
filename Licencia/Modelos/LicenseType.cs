@@ -9,8 +9,6 @@ namespace Licencia.Modelos
     public enum LicenseType
     {
         Trial,
-        Mensual,
-        Anual,
         Perpetua
     }
 }

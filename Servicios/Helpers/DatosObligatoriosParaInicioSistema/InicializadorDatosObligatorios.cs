@@ -41,6 +41,7 @@ namespace Servicios.Helpers.DatosObligatorios
             InicializarAdmin();
             InicializarPermisos();
             InicializarRoles();
+            InicializarConsumidorFinal();
         }
 
         public void InicializadorDatos(IProgress<(int progreso, string mensaje)> progress = null)

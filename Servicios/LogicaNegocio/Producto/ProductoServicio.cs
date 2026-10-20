@@ -584,6 +584,18 @@ namespace Servicios.LogicaNegocio.Producto
 
                         break;
 
+                    case "OfertaCodigo":
+
+                        // Productos que componen la oferta con ese código exacto (igual para
+                        // todos los tipos de oferta: todos guardan sus productos en la misma tabla).
+                        query = query.Where(e =>
+                            context.ProductosEnOfertasDescuentos.Any(pe =>
+                                pe.ProductoId == e.ProductoId &&
+                                pe.OfertaDescuento.Codigo != null &&
+                                EF.Functions.Collate(pe.OfertaDescuento.Codigo, collation) == texto));
+
+                        break;
+
                     case "Descripcion":
 
                         query = query.Where(e =>

@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FProductoABM));
             lblDescripcion = new Label();
-            lblMarca = new Label();
             lblPrecioCosto = new Label();
             lblPrecioVenta = new Label();
             txtProducto = new TextBox();
@@ -38,15 +37,11 @@
             txtPrecioVenta = new TextBox();
             lblStock = new Label();
             txtStock = new TextBox();
-            lblCategoria = new Label();
             lblMedida = new Label();
             lblUnidadMedida = new Label();
             txtMedida = new TextBox();
             txtUnidadMedida = new TextBox();
-            cmbMarca = new ComboBox();
             btnCategorias = new Button();
-            cmbRubro = new ComboBox();
-            lblRubro = new Label();
             txtCodigo = new TextBox();
             txtCodigoBarra = new TextBox();
             lblCodigo = new Label();
@@ -56,31 +51,33 @@
             chkControlPorLotes = new CheckBox();
             chkTieneVencimiento = new CheckBox();
             chkbProductoDiscontinuado = new CheckBox();
+            label5 = new Label();
+            label6 = new Label();
+            label2 = new Label();
+            label1 = new Label();
+            label3 = new Label();
+            label4 = new Label();
+            btnRubro = new Button();
+            btnMarca = new Button();
+            label7 = new Label();
+            label8 = new Label();
+            label9 = new Label();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
             // lblDescripcion
             // 
             lblDescripcion.AutoSize = true;
-            lblDescripcion.Location = new Point(12, 88);
+            lblDescripcion.Location = new Point(9, 104);
             lblDescripcion.Name = "lblDescripcion";
             lblDescripcion.Size = new Size(70, 15);
             lblDescripcion.TabIndex = 1;
             lblDescripcion.Text = "Descripcion";
             // 
-            // lblMarca
-            // 
-            lblMarca.AutoSize = true;
-            lblMarca.Location = new Point(415, 87);
-            lblMarca.Name = "lblMarca";
-            lblMarca.Size = new Size(40, 15);
-            lblMarca.TabIndex = 2;
-            lblMarca.Text = "Marca";
-            // 
             // lblPrecioCosto
             // 
             lblPrecioCosto.AutoSize = true;
-            lblPrecioCosto.Location = new Point(12, 177);
+            lblPrecioCosto.Location = new Point(9, 229);
             lblPrecioCosto.Name = "lblPrecioCosto";
             lblPrecioCosto.Size = new Size(73, 15);
             lblPrecioCosto.TabIndex = 3;
@@ -89,7 +86,7 @@
             // lblPrecioVenta
             // 
             lblPrecioVenta.AutoSize = true;
-            lblPrecioVenta.Location = new Point(218, 177);
+            lblPrecioVenta.Location = new Point(419, 229);
             lblPrecioVenta.Name = "lblPrecioVenta";
             lblPrecioVenta.Size = new Size(73, 15);
             lblPrecioVenta.TabIndex = 4;
@@ -97,29 +94,30 @@
             // 
             // txtProducto
             // 
-            txtProducto.Location = new Point(100, 84);
+            txtProducto.Location = new Point(117, 104);
+            txtProducto.Multiline = true;
             txtProducto.Name = "txtProducto";
-            txtProducto.Size = new Size(303, 23);
+            txtProducto.Size = new Size(222, 51);
             txtProducto.TabIndex = 5;
             // 
             // txtPrecioCosto
             // 
-            txtPrecioCosto.Location = new Point(96, 172);
+            txtPrecioCosto.Location = new Point(117, 225);
             txtPrecioCosto.Name = "txtPrecioCosto";
-            txtPrecioCosto.Size = new Size(100, 23);
+            txtPrecioCosto.Size = new Size(222, 23);
             txtPrecioCosto.TabIndex = 7;
             // 
             // txtPrecioVenta
             // 
-            txtPrecioVenta.Location = new Point(302, 172);
+            txtPrecioVenta.Location = new Point(511, 224);
             txtPrecioVenta.Name = "txtPrecioVenta";
-            txtPrecioVenta.Size = new Size(100, 23);
+            txtPrecioVenta.Size = new Size(273, 23);
             txtPrecioVenta.TabIndex = 8;
             // 
             // lblStock
             // 
             lblStock.AutoSize = true;
-            lblStock.Location = new Point(418, 179);
+            lblStock.Location = new Point(420, 274);
             lblStock.Name = "lblStock";
             lblStock.Size = new Size(37, 15);
             lblStock.TabIndex = 10;
@@ -127,24 +125,15 @@
             // 
             // txtStock
             // 
-            txtStock.Location = new Point(464, 175);
+            txtStock.Location = new Point(511, 267);
             txtStock.Name = "txtStock";
-            txtStock.Size = new Size(100, 23);
+            txtStock.Size = new Size(273, 23);
             txtStock.TabIndex = 11;
-            // 
-            // lblCategoria
-            // 
-            lblCategoria.AutoSize = true;
-            lblCategoria.Location = new Point(592, 88);
-            lblCategoria.Name = "lblCategoria";
-            lblCategoria.Size = new Size(62, 15);
-            lblCategoria.TabIndex = 15;
-            lblCategoria.Text = "Categorias";
             // 
             // lblMedida
             // 
             lblMedida.AutoSize = true;
-            lblMedida.Location = new Point(12, 133);
+            lblMedida.Location = new Point(420, 181);
             lblMedida.Name = "lblMedida";
             lblMedida.Size = new Size(47, 15);
             lblMedida.TabIndex = 16;
@@ -153,7 +142,7 @@
             // lblUnidadMedida
             // 
             lblUnidadMedida.AutoSize = true;
-            lblUnidadMedida.Location = new Point(207, 133);
+            lblUnidadMedida.Location = new Point(9, 181);
             lblUnidadMedida.Name = "lblUnidadMedida";
             lblUnidadMedida.Size = new Size(88, 15);
             lblUnidadMedida.TabIndex = 17;
@@ -161,71 +150,46 @@
             // 
             // txtMedida
             // 
-            txtMedida.Location = new Point(96, 128);
+            txtMedida.Location = new Point(511, 178);
             txtMedida.Name = "txtMedida";
-            txtMedida.Size = new Size(100, 23);
+            txtMedida.Size = new Size(273, 23);
             txtMedida.TabIndex = 18;
             // 
             // txtUnidadMedida
             // 
-            txtUnidadMedida.Location = new Point(304, 128);
+            txtUnidadMedida.Location = new Point(117, 178);
             txtUnidadMedida.Name = "txtUnidadMedida";
-            txtUnidadMedida.Size = new Size(100, 23);
+            txtUnidadMedida.Size = new Size(222, 23);
             txtUnidadMedida.TabIndex = 19;
-            // 
-            // cmbMarca
-            // 
-            cmbMarca.FormattingEnabled = true;
-            cmbMarca.Location = new Point(463, 83);
-            cmbMarca.Name = "cmbMarca";
-            cmbMarca.Size = new Size(100, 23);
-            cmbMarca.TabIndex = 21;
             // 
             // btnCategorias
             // 
-            btnCategorias.Location = new Point(661, 84);
+            btnCategorias.Location = new Point(562, 132);
             btnCategorias.Name = "btnCategorias";
-            btnCategorias.Size = new Size(91, 23);
+            btnCategorias.Size = new Size(98, 23);
             btnCategorias.TabIndex = 22;
-            btnCategorias.Text = "Seleccionar..";
+            btnCategorias.Text = "Categorias";
             btnCategorias.UseVisualStyleBackColor = true;
             btnCategorias.Click += btnCategorias_Click;
             // 
-            // cmbRubro
-            // 
-            cmbRubro.FormattingEnabled = true;
-            cmbRubro.Location = new Point(464, 129);
-            cmbRubro.Name = "cmbRubro";
-            cmbRubro.Size = new Size(99, 23);
-            cmbRubro.TabIndex = 24;
-            // 
-            // lblRubro
-            // 
-            lblRubro.AutoSize = true;
-            lblRubro.Location = new Point(415, 132);
-            lblRubro.Name = "lblRubro";
-            lblRubro.Size = new Size(39, 15);
-            lblRubro.TabIndex = 23;
-            lblRubro.Text = "Rubro";
-            // 
             // txtCodigo
             // 
-            txtCodigo.Location = new Point(96, 219);
+            txtCodigo.Location = new Point(117, 272);
             txtCodigo.Name = "txtCodigo";
-            txtCodigo.Size = new Size(100, 23);
+            txtCodigo.Size = new Size(222, 23);
             txtCodigo.TabIndex = 25;
             // 
             // txtCodigoBarra
             // 
-            txtCodigoBarra.Location = new Point(302, 221);
+            txtCodigoBarra.Location = new Point(117, 317);
             txtCodigoBarra.Name = "txtCodigoBarra";
-            txtCodigoBarra.Size = new Size(100, 23);
+            txtCodigoBarra.Size = new Size(222, 23);
             txtCodigoBarra.TabIndex = 26;
             // 
             // lblCodigo
             // 
             lblCodigo.AutoSize = true;
-            lblCodigo.Location = new Point(15, 224);
+            lblCodigo.Location = new Point(9, 273);
             lblCodigo.Name = "lblCodigo";
             lblCodigo.Size = new Size(45, 15);
             lblCodigo.TabIndex = 27;
@@ -234,7 +198,7 @@
             // lblCodigoBarra
             // 
             lblCodigoBarra.AutoSize = true;
-            lblCodigoBarra.Location = new Point(216, 224);
+            lblCodigoBarra.Location = new Point(9, 322);
             lblCodigoBarra.Name = "lblCodigoBarra";
             lblCodigoBarra.Size = new Size(75, 15);
             lblCodigoBarra.TabIndex = 28;
@@ -243,7 +207,7 @@
             // chkIvaIncluido
             // 
             chkIvaIncluido.AutoSize = true;
-            chkIvaIncluido.Location = new Point(588, 128);
+            chkIvaIncluido.Location = new Point(615, 365);
             chkIvaIncluido.Name = "chkIvaIncluido";
             chkIvaIncluido.Size = new Size(172, 19);
             chkIvaIncluido.TabIndex = 29;
@@ -253,7 +217,7 @@
             // chkEsFraccionable
             // 
             chkEsFraccionable.AutoSize = true;
-            chkEsFraccionable.Location = new Point(588, 157);
+            chkEsFraccionable.Location = new Point(615, 310);
             chkEsFraccionable.Name = "chkEsFraccionable";
             chkEsFraccionable.Size = new Size(107, 19);
             chkEsFraccionable.TabIndex = 30;
@@ -263,7 +227,7 @@
             // chkControlPorLotes
             // 
             chkControlPorLotes.AutoSize = true;
-            chkControlPorLotes.Location = new Point(588, 186);
+            chkControlPorLotes.Location = new Point(421, 310);
             chkControlPorLotes.Name = "chkControlPorLotes";
             chkControlPorLotes.Size = new Size(160, 19);
             chkControlPorLotes.TabIndex = 31;
@@ -274,7 +238,7 @@
             // chkTieneVencimiento
             // 
             chkTieneVencimiento.AutoSize = true;
-            chkTieneVencimiento.Location = new Point(588, 215);
+            chkTieneVencimiento.Location = new Point(421, 337);
             chkTieneVencimiento.Name = "chkTieneVencimiento";
             chkTieneVencimiento.Size = new Size(168, 19);
             chkTieneVencimiento.TabIndex = 32;
@@ -284,18 +248,148 @@
             // chkbProductoDiscontinuado
             // 
             chkbProductoDiscontinuado.AutoSize = true;
-            chkbProductoDiscontinuado.Location = new Point(588, 265);
+            chkbProductoDiscontinuado.Location = new Point(421, 365);
             chkbProductoDiscontinuado.Name = "chkbProductoDiscontinuado";
             chkbProductoDiscontinuado.Size = new Size(156, 19);
             chkbProductoDiscontinuado.TabIndex = 33;
             chkbProductoDiscontinuado.Text = "Producto Discontinuado";
             chkbProductoDiscontinuado.UseVisualStyleBackColor = true;
             // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label5.ForeColor = Color.Red;
+            label5.Location = new Point(527, 70);
+            label5.Name = "label5";
+            label5.Size = new Size(260, 17);
+            label5.TabIndex = 48;
+            label5.Tag = "NoModificarConBase";
+            label5.Text = "El ícono  *  representa campo obligatorio.";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label6.ForeColor = Color.Red;
+            label6.Location = new Point(345, 104);
+            label6.Name = "label6";
+            label6.Size = new Size(16, 20);
+            label6.TabIndex = 49;
+            label6.Tag = "NoModificarConBase";
+            label6.Text = "*";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.ForeColor = Color.Red;
+            label2.Location = new Point(345, 320);
+            label2.Name = "label2";
+            label2.Size = new Size(16, 20);
+            label2.TabIndex = 51;
+            label2.Tag = "NoModificarConBase";
+            label2.Text = "*";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.ForeColor = Color.Red;
+            label1.Location = new Point(345, 229);
+            label1.Name = "label1";
+            label1.Size = new Size(16, 20);
+            label1.TabIndex = 52;
+            label1.Tag = "NoModificarConBase";
+            label1.Text = "*";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label3.ForeColor = Color.Red;
+            label3.Location = new Point(790, 226);
+            label3.Name = "label3";
+            label3.Size = new Size(16, 20);
+            label3.TabIndex = 53;
+            label3.Tag = "NoModificarConBase";
+            label3.Text = "*";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label4.ForeColor = Color.Red;
+            label4.Location = new Point(345, 275);
+            label4.Name = "label4";
+            label4.Size = new Size(16, 20);
+            label4.TabIndex = 54;
+            label4.Tag = "NoModificarConBase";
+            label4.Text = "*";
+            // 
+            // btnRubro
+            // 
+            btnRubro.Location = new Point(686, 132);
+            btnRubro.Name = "btnRubro";
+            btnRubro.Size = new Size(98, 23);
+            btnRubro.TabIndex = 55;
+            btnRubro.Text = "Rubro";
+            btnRubro.UseVisualStyleBackColor = true;
+            btnRubro.Click += btnRubro_Click;
+            // 
+            // btnMarca
+            // 
+            btnMarca.Location = new Point(423, 132);
+            btnMarca.Name = "btnMarca";
+            btnMarca.Size = new Size(98, 23);
+            btnMarca.TabIndex = 56;
+            btnMarca.Text = "Marca";
+            btnMarca.UseVisualStyleBackColor = true;
+            btnMarca.Click += btnMarca_Click;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(452, 114);
+            label7.Name = "label7";
+            label7.Size = new Size(40, 15);
+            label7.TabIndex = 57;
+            label7.Text = "Marca";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(580, 114);
+            label8.Name = "label8";
+            label8.Size = new Size(62, 15);
+            label8.TabIndex = 58;
+            label8.Text = "Categorias";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(715, 114);
+            label9.Name = "label9";
+            label9.Size = new Size(39, 15);
+            label9.TabIndex = 59;
+            label9.Text = "Rubro";
+            // 
             // FProductoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(784, 307);
+            ClientSize = new Size(817, 423);
+            Controls.Add(label9);
+            Controls.Add(label8);
+            Controls.Add(label7);
+            Controls.Add(btnMarca);
+            Controls.Add(btnRubro);
+            Controls.Add(label4);
+            Controls.Add(label3);
+            Controls.Add(label1);
+            Controls.Add(label2);
+            Controls.Add(label6);
+            Controls.Add(label5);
             Controls.Add(chkbProductoDiscontinuado);
             Controls.Add(chkTieneVencimiento);
             Controls.Add(chkControlPorLotes);
@@ -305,15 +399,11 @@
             Controls.Add(lblCodigo);
             Controls.Add(txtCodigoBarra);
             Controls.Add(txtCodigo);
-            Controls.Add(cmbRubro);
-            Controls.Add(lblRubro);
             Controls.Add(btnCategorias);
-            Controls.Add(cmbMarca);
             Controls.Add(txtUnidadMedida);
             Controls.Add(txtMedida);
             Controls.Add(lblUnidadMedida);
             Controls.Add(lblMedida);
-            Controls.Add(lblCategoria);
             Controls.Add(txtStock);
             Controls.Add(lblStock);
             Controls.Add(txtPrecioVenta);
@@ -321,14 +411,13 @@
             Controls.Add(txtProducto);
             Controls.Add(lblPrecioVenta);
             Controls.Add(lblPrecioCosto);
-            Controls.Add(lblMarca);
             Controls.Add(lblDescripcion);
             ForeColor = Color.FromArgb(31, 26, 43);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximumSize = new Size(0, 0);
             Name = "FProductoABM";
             Text = "ABM Producto";
             Controls.SetChildIndex(lblDescripcion, 0);
-            Controls.SetChildIndex(lblMarca, 0);
             Controls.SetChildIndex(lblPrecioCosto, 0);
             Controls.SetChildIndex(lblPrecioVenta, 0);
             Controls.SetChildIndex(txtProducto, 0);
@@ -336,15 +425,11 @@
             Controls.SetChildIndex(txtPrecioVenta, 0);
             Controls.SetChildIndex(lblStock, 0);
             Controls.SetChildIndex(txtStock, 0);
-            Controls.SetChildIndex(lblCategoria, 0);
             Controls.SetChildIndex(lblMedida, 0);
             Controls.SetChildIndex(lblUnidadMedida, 0);
             Controls.SetChildIndex(txtMedida, 0);
             Controls.SetChildIndex(txtUnidadMedida, 0);
-            Controls.SetChildIndex(cmbMarca, 0);
             Controls.SetChildIndex(btnCategorias, 0);
-            Controls.SetChildIndex(lblRubro, 0);
-            Controls.SetChildIndex(cmbRubro, 0);
             Controls.SetChildIndex(txtCodigo, 0);
             Controls.SetChildIndex(txtCodigoBarra, 0);
             Controls.SetChildIndex(lblCodigo, 0);
@@ -354,6 +439,17 @@
             Controls.SetChildIndex(chkControlPorLotes, 0);
             Controls.SetChildIndex(chkTieneVencimiento, 0);
             Controls.SetChildIndex(chkbProductoDiscontinuado, 0);
+            Controls.SetChildIndex(label5, 0);
+            Controls.SetChildIndex(label6, 0);
+            Controls.SetChildIndex(label2, 0);
+            Controls.SetChildIndex(label1, 0);
+            Controls.SetChildIndex(label3, 0);
+            Controls.SetChildIndex(label4, 0);
+            Controls.SetChildIndex(btnRubro, 0);
+            Controls.SetChildIndex(btnMarca, 0);
+            Controls.SetChildIndex(label7, 0);
+            Controls.SetChildIndex(label8, 0);
+            Controls.SetChildIndex(label9, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -362,7 +458,6 @@
         #endregion
 
         private Label lblDescripcion;
-        private Label lblMarca;
         private Label lblPrecioCosto;
         private Label lblPrecioVenta;
         private TextBox txtProducto;
@@ -370,15 +465,11 @@
         private TextBox txtPrecioVenta;
         private Label lblStock;
         private TextBox txtStock;
-        private Label lblCategoria;
         private Label lblMedida;
         private Label lblUnidadMedida;
         private TextBox txtMedida;
         private TextBox txtUnidadMedida;
-        private ComboBox cmbMarca;
         private Button btnCategorias;
-        private ComboBox cmbRubro;
-        private Label lblRubro;
         private TextBox txtCodigo;
         private TextBox txtCodigoBarra;
         private Label lblCodigo;
@@ -388,5 +479,16 @@
         private CheckBox chkControlPorLotes;
         private CheckBox chkTieneVencimiento;
         private CheckBox chkbProductoDiscontinuado;
+        private Label label5;
+        private Label label6;
+        private Label label2;
+        private Label label1;
+        private Label label3;
+        private Label label4;
+        private Button btnRubro;
+        private Button btnMarca;
+        private Label label7;
+        private Label label8;
+        private Label label9;
     }
 }

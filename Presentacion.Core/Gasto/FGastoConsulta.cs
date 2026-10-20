@@ -426,6 +426,12 @@ namespace Presentacion.Core.Gasto
             return filtros;
         }
 
+        protected override void ActivarRecargaCmbPorFechas()
+        {
+            cbx3.SelectedIndex = 1;
+            var filtros = ObtenerFiltros();
+            ActualizarDatos(dgvGrilla, filtros);
+        }
         #endregion
 
         #region 🔥 ACTUALIZAR DATOS

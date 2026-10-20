@@ -73,16 +73,21 @@ namespace Servicios.LogicaNegocio.Cliente
                     Mensaje = "Ya existe una persona con el mismo DNI."
                 };
 
+            var tele = "00000000";
+            var email = "Sin Asignar";
+            var cuil = clienteDto.Dni;
+            var direccion = "Sin Asignar";
+
             var persona = new Persona
             {
                 Nombre = clienteDto.Nombre,
                 Apellido = clienteDto.Apellido,
                 Dni = clienteDto.Dni,
                 Cuil = clienteDto.Cuil,
-                Telefono = clienteDto.Telefono,
-                Telefono2 = clienteDto.Telefono2,
-                Email = clienteDto.Email,
-                Direccion = clienteDto.Direccion,
+                Telefono = string.IsNullOrEmpty(clienteDto.Telefono) ? tele : clienteDto.Telefono,
+                Telefono2 = string.IsNullOrEmpty(clienteDto.Telefono2) ? tele : clienteDto.Telefono2,
+                Email = string.IsNullOrEmpty(clienteDto.Email) ? email : clienteDto.Email,
+                Direccion = string.IsNullOrEmpty(clienteDto.Direccion) ? direccion : clienteDto.Direccion,
                 EstaEliminado = false,
                 FechaNacimiento = clienteDto.FechaNacimiento
             };
@@ -96,7 +101,7 @@ namespace Servicios.LogicaNegocio.Cliente
                 FechaAlta = DateTime.Now,
                 NumeroCliente = string.IsNullOrEmpty(clienteDto.NumeroCliente) ? $"{DateTime.Now:ddMMyyyyHHmmssfff}{persona.PersonaId}" : "0",
                 //CuentaCorriente = clienteDto != null ? context.CuentaCorriente.Find(clienteDto.CuentaCorrienteId) : null,
-                Estado = 1
+                Estado = (int)Helpers.Cliente.EstadoCliente.Activo
             };
 
             context.Cliente.Add(cliente);

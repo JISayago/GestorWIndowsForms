@@ -22,6 +22,12 @@ namespace Servicios.Helpers.Sistema.FiltrosConsulta
         public bool Bool1 { get; set; }
         public bool Bool2 { get; set; }
 
+        /// <summary>
+        /// Solo lo usa la consulta de ventas: si es true no se limita a los últimos meses y se
+        /// trae el listado completo (por ejemplo, "Últimas Ventas" de la pantalla principal).
+        /// </summary>
+        public bool SinLimiteFecha { get; set; }
+
         // Paginado
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 12;

@@ -43,7 +43,7 @@ namespace Presentacion.Core.Categoria
                 DesactivarControles(this);
             }
 
-            AgregarControlesObligatorios(txtCategoria, "Categoria");
+            AgregarControlesObligatorios(txtCategoria, "Categoría");
         }
 
         public override void Inicializador(long? entidadId)

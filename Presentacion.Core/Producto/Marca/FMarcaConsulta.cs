@@ -59,7 +59,7 @@ namespace Presentacion.Core.Articulo.Marca
             {
                 AgregarAccion(
                     "Seleccionar Marca",
-                    SystemIcons.Information.ToBitmap(),
+                    Constantes.Imagenes.ImgSumar,
                     SeleccionMarca,
                     true
                 );

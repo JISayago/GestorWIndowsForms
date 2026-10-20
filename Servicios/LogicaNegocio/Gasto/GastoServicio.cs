@@ -404,44 +404,68 @@ namespace Servicios.LogicaNegocio.Gasto
                 .AsQueryable();
 
             // =========================================================
-            // 🧠 CORE: ANULADOS + HISTORICO
+            // 📅 DETECCIÓN DEL FILTRO MANUAL DE FECHAS
             // =========================================================
+
+            bool usaFechas =
+                filtros.FechaDesde.HasValue ||
+                filtros.FechaHasta.HasValue;
+
+            bool hayFiltroManual =
+                usaFechas &&
+                filtros.Filtro3 != null &&
+                int.TryParse(filtros.Filtro3.ToString(), out _);
+
+            // =========================================================
+            // CORE: ANULADOS + HISTORICO
+            // =========================================================
+
+            int estadoFiltro = 0;
+
+            bool tieneFiltroEstado =
+                filtros.Filtro2 != null &&
+                int.TryParse(filtros.Filtro2.ToString(), out estadoFiltro);
 
             if (filtros.Bool2)
             {
-                // 👉 HISTORICO
-                // trae todos los estados
+                // HISTORICO
+                // Se mantiene el comportamiento actual.
+                // No se excluyen los anulados en esta rama.
             }
             else if (filtros.Bool1)
             {
-                // 👉 SOLO ANULADOS
+                // SOLO ANULADOS
                 query = query.Where(g =>
                     g.EstadoGasto == (int)EstadoGasto.Anulado);
             }
-            else
+            else if (!tieneFiltroEstado)
             {
-                // 👉 DEFAULT
-                // NO anulados + lógica pendiente/último mes
+                // =====================================================
+                // SIN ESTADO SELECCIONADO
+                // =====================================================
 
-                var desde = DateTime.Now.AddMonths(-1);
-
+                // Excluir anulados.
                 query = query.Where(g =>
-                    g.EstadoGasto != (int)EstadoGasto.Anulado &&
+                    g.EstadoGasto != (int)EstadoGasto.Anulado);
 
-                    (
+                // Aplicar el filtro predeterminado del último mes
+                // únicamente cuando NO hay un filtro manual de fechas.
+                if (!hayFiltroManual)
+                {
+                    var desde = DateTime.Now.AddMonths(-1);
+
+                    query = query.Where(g =>
                         g.EstadoGasto == (int)EstadoGasto.Pendiente
-
                         ||
-
                         (
                             g.FechaGasto.HasValue &&
                             g.FechaGasto.Value >= desde
-                        )
-                    ));
+                        ));
+                }
             }
 
             // =========================================================
-            // 🔍 BUSQUEDA
+            // BÚSQUEDA
             // =========================================================
 
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
@@ -454,8 +478,10 @@ namespace Servicios.LogicaNegocio.Gasto
 
                         query = query.Where(g =>
                             g.NumeroGasto != null &&
-                            EF.Functions.Collate(g.NumeroGasto, collation)
-                                .Contains(texto));
+                            EF.Functions.Collate(
+                                g.NumeroGasto,
+                                collation
+                            ).Contains(texto));
 
                         break;
 
@@ -472,9 +498,7 @@ namespace Servicios.LogicaNegocio.Gasto
                                         collation
                                     ).Contains(texto)
                                 )
-
                                 ||
-
                                 (
                                     g.Empleado.Persona.Apellido != null &&
                                     EF.Functions.Collate(
@@ -495,8 +519,8 @@ namespace Servicios.LogicaNegocio.Gasto
                             .Cast<CategoriaGasto>()
                             .Where(c =>
                                 c.ToString()
-                                 .ToLower()
-                                 .Contains(textoBusqueda))
+                                    .ToLower()
+                                    .Contains(textoBusqueda))
                             .Select(c => (int)c)
                             .ToList();
 
@@ -522,9 +546,7 @@ namespace Servicios.LogicaNegocio.Gasto
                                     collation
                                 ).Contains(texto)
                             )
-
                             ||
-
                             (
                                 g.Detalle != null &&
                                 EF.Functions.Collate(
@@ -538,33 +560,22 @@ namespace Servicios.LogicaNegocio.Gasto
             }
 
             // =========================================================
-            // 🔴 FILTRO ESTADO (cbx2)
+            // FILTRO ESTADO (cbx2)
             // =========================================================
 
-            if (filtros.Filtro2 != null &&
-                int.TryParse(filtros.Filtro2.ToString(), out var estado))
+            if (tieneFiltroEstado)
             {
                 query = query.Where(g =>
-                    g.EstadoGasto == estado);
+                    g.EstadoGasto == estadoFiltro);
             }
 
             // =========================================================
-            // 📅 FILTRO FECHAS
+            // FILTRO FECHAS
             // =========================================================
-
-            bool usaFechas =
-                filtros.FechaDesde.HasValue ||
-                filtros.FechaHasta.HasValue;
-
-            bool hayFiltroManual =
-                usaFechas &&
-                filtros.Filtro3 != null &&
-                int.TryParse(filtros.Filtro3.ToString(), out _);
 
             if (hayFiltroManual)
             {
-                int tipoFecha =
-                    int.Parse(filtros.Filtro3.ToString());
+                int tipoFecha = int.Parse(filtros.Filtro3.ToString());
 
                 switch ((TipoFiltroFechaGasto)tipoFecha)
                 {
@@ -609,7 +620,8 @@ namespace Servicios.LogicaNegocio.Gasto
             }
             else if (filtros.Bool2)
             {
-                // 👉 HISTORICO = últimos 6 meses
+                // HISTORICO = últimos 6 meses,
+                // siempre que no haya un filtro manual de fechas.
 
                 var desde = DateTime.Now.AddMonths(-6);
 
@@ -618,20 +630,18 @@ namespace Servicios.LogicaNegocio.Gasto
                         g.FechaGasto.HasValue &&
                         g.FechaGasto.Value >= desde
                     )
-
                     ||
-
                     g.FechaRegistro >= desde);
             }
 
             // =========================================================
-            // 📊 TOTAL
+            // TOTAL
             // =========================================================
 
             var total = query.Count();
 
             // =========================================================
-            // 🔴 PAGINACION
+            // PAGINACIÓN
             // =========================================================
 
             var totalPaginas =
@@ -647,7 +657,7 @@ namespace Servicios.LogicaNegocio.Gasto
                 filtros.Page = 1;
 
             // =========================================================
-            // 📌 ORDEN
+            // ORDEN
             // =========================================================
 
             query = query
@@ -659,7 +669,7 @@ namespace Servicios.LogicaNegocio.Gasto
                     g.FechaRegistro);
 
             // =========================================================
-            // 📄 DATA
+            // DATA
             // =========================================================
 
             var data = query
@@ -694,7 +704,7 @@ namespace Servicios.LogicaNegocio.Gasto
                 .ToList();
 
             // =========================================================
-            // 📄 RESULTADO
+            // RESULTADO
             // =========================================================
 
             return new ResultadoPaginacion<GastoDTO>
@@ -705,6 +715,5 @@ namespace Servicios.LogicaNegocio.Gasto
                 PageSize = filtros.PageSize
             };
         }
-
     }
 }

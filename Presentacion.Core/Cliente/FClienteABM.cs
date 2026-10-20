@@ -1,7 +1,9 @@
 ﻿using AccesoDatos.Entidades;
 using Presentacion.Core.CuentaCorriente;
 using Presentacion.FBase;
+using Presentacion.FBase.Helpers;
 using Presentacion.FormulariosBase.Helpers;
+using Servicios.Helpers.Cliente;
 using Servicios.LogicaNegocio.Articulo.Marca;
 using Servicios.LogicaNegocio.Cliente;
 using Servicios.LogicaNegocio.Cliente.DTO;
@@ -37,13 +39,13 @@ namespace Presentacion.Core.Cliente
                 DesactivarControles(this);
             }
 
-            AgregarControlesObligatorios(txtApellido, "Apellido");
             AgregarControlesObligatorios(txtNombre, "Nombre");
-            AgregarControlesObligatorios(txtDni, "Dni");
-            AgregarControlesObligatorios(txtTelefono, "Telefono");
-            AgregarControlesObligatorios(txtCuil, "Cuil");
-            AgregarControlesObligatorios(txtEmail, "Email");
-            AgregarControlesObligatorios(txtDireccion, "Direccion");
+            AgregarControlesObligatorios(txtApellido, "Apellido");
+            AgregarControlesObligatorios(txtDni, "DNI", Validaciones.SoloNumeros, Validaciones.Longitud(7, 8));
+            AgregarControlesObligatorios(dtpFNacimiento, "Fecha de nacimiento", Validaciones.FechaNoFutura);
+            AgregarValidacionOpcional(txtEmail, "Email", Validaciones.Email);
+            AgregarValidacionOpcional(txtTelefono, "Teléfono", Validaciones.SoloNumeros, Validaciones.MayorACero);
+            AgregarValidacionOpcional(txtCelular, "Celular", Validaciones.SoloNumeros, Validaciones.MayorACero);
         }
         public override void Inicializador(long? entidadId)
         {
@@ -63,7 +65,7 @@ namespace Presentacion.Core.Cliente
             {
                 btnLimpiar.Enabled = false;
             }
-
+           
             var cliente = _clienteServicio.ObtenerClientePorId(entidadId.Value);
 
             // Datos Personales
@@ -89,6 +91,15 @@ namespace Presentacion.Core.Cliente
                     MessageBoxIcon.Error);
                 return false;
             }
+            if (string.IsNullOrEmpty(txtEmail.Text) && string.IsNullOrEmpty(txtCelular.Text) && string.IsNullOrEmpty(txtTelefono.Text))
+            {
+                var respuesta = MessageBox.Show(@"Se recomienda al menos un medio de contacto(Telefono, Email, Celular, etc) para la apertura de una cuenta corriente", @"Atención", MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Warning);
+                if (respuesta != DialogResult.OK)
+                {
+                    return false;
+                }
+            }
 
             var nuevoCliente = new ClienteDTO
             {
@@ -102,7 +113,7 @@ namespace Presentacion.Core.Cliente
                 FechaNacimiento = dtpFNacimiento.Value,
                 Telefono2 = txtCelular.Text,
                 NumeroCliente = string.Empty, //Asignar un valor adecuado si es necesario
-                Estado = 1, //Activo por defecto pensar la logica de creacion si entra activa o no
+                Estado = (int)EstadoCliente.Activo, //Activo por defecto pensar la logica de creacion si entra activa o no
                 //CuentaCorrienteId = cmbCuentaCorriente.SelectedValue != null ? (long?)cmbCuentaCorriente.SelectedValue : null,
                 EstaEliminado = false,
             };
@@ -170,13 +181,13 @@ namespace Presentacion.Core.Cliente
                     Apellido = txtApellido.Text,
                     Nombre = txtNombre.Text,
                     Direccion = txtDireccion.Text,
-                    Telefono = txtCelular.Text,
+                    Telefono = txtTelefono.Text,
                     Cuil = txtCuil.Text,
                     Dni = txtDni.Text,
                     Email = txtEmail.Text,
                     FechaNacimiento = dtpFNacimiento.Value,
                     Telefono2 = txtCelular.Text,
-                    Estado = 0,
+                    Estado = (int)EstadoCliente.Activo,
                     EstaEliminado = false
                 };
 

@@ -54,9 +54,6 @@ namespace Presentacion
         private readonly List<ProductoDTO> _productosIniciales;
         private readonly List<VentaDTO> _ventasIniciales;
 
-        // Recuerda qué grupos de notificaciones estaban abiertos, para no colapsarlos
-        // cada vez que se reconstruye el panel (ej: al marcar una como leída).
-        private readonly Dictionary<string, bool> _estadoExpandidoNotificaciones = new Dictionary<string, bool>();
         #endregion
 
         #region Constructores
@@ -89,6 +86,16 @@ namespace Presentacion
             lblNombreUsuario.AutoSize = true;
             lblNombreUsuario.Dock = DockStyle.None;
             lblNombreUsuario.TextAlign = ContentAlignment.MiddleLeft;
+
+
+            //VENTANA FULLSCREEN SIN BORDES NI BOTONES DE CIERRE
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.ControlBox = false;
+            //this.ShowIcon = false;
+            //this.ShowInTaskbar = false; // opcional
         }
 
         #endregion
@@ -103,7 +110,6 @@ namespace Presentacion
             InicializarTimers();
 
             // 2. Suscribir eventos de Layout
-            flowLayoutNotificaciones.SizeChanged += FlowLayoutNotificaciones_SizeChanged;
             tlpPanelBaseTabControlYNotis.Layout += (_, __) => AlinearNotificacionesConUltimasVentas();
 
             // 3. Inicializar Panel de Turno y Datos
@@ -111,10 +117,7 @@ namespace Presentacion
             crearPanelDatosAdicionales();
 
             // 4. Cargar Notificaciones
-            crearNotificacionesLotes();
-            crearNotificacionesPromocionesVencidas();
-            crearNotificacionesPromocionesBajoStock();
-            crearNotificacionesCuentaCorriente();
+            panelAvisos.Recargar();
 
             // 5. Alinear top de notificaciones con la grilla de Últimas Ventas
             BeginInvoke(new Action(AlinearNotificacionesConUltimasVentas));
@@ -130,21 +133,20 @@ namespace Presentacion
             tlpPanelBaseTabControlYNotis.Padding = new Padding(padH, 0, padH, 0);
             PnlBotones.Padding = new Padding(padH, 0, padH, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Dock = DockStyle.Fill;
-            flowLayoutPanel2.Dock = DockStyle.Right;
-            flowLayoutPanel2.AutoSize = true;
-            flowLayoutPanel2.WrapContents = false;
-            flowLayoutPanel2.FlowDirection = FlowDirection.RightToLeft;
+            tblUsuario.Dock = DockStyle.Fill;
+            //flpDatosFechaHora.Dock = DockStyle.Right;
+            //flpDatosFechaHora.AutoSize = true;
+            //flpDatosFechaHora.WrapContents = false;
+            //flpDatosFechaHora.FlowDirection = FlowDirection.RightToLeft;
 
             tlpBaseInfo1.BackColor = fondo;
             tableLayoutPanel2.BackColor = fondo;
-            tableLayoutPanel3.BackColor = fondo;
-            flowHeaderUsuario.BackColor = fondo;
+            tblUsuario.BackColor = fondo;
+            flpUsuarioLogeado.BackColor = fondo;
             tlpPanelBaseTabControlYNotis.BackColor = fondo;
             tlpNotificaciones0.BackColor = fondo;
             PnlBotones.BackColor = fondo;
-            flowLayoutNotificaciones.BackColor = fondo;
-            flowLayoutPanel2.BackColor = fondo;
+            flpDatosFechaHora.BackColor = fondo;
             flowLayoutPanel3.BackColor = fondo;
 
             tcIzquierda.BackColor = fondo;
@@ -170,6 +172,29 @@ namespace Presentacion
             MyTimerDatos.Interval = 15000;
             MyTimerDatos.Tick += MyTimerDatos_Tick;
             MyTimerDatos.Start();
+
+            // Timer Avisos (recarga del panel de notificaciones y calendario cada 1 hora)
+            System.Windows.Forms.Timer timerAvisos = new System.Windows.Forms.Timer();
+            timerAvisos.Interval = 60 * 60 * 1000;
+            timerAvisos.Tick += TimerAvisos_Tick;
+            timerAvisos.Start();
+        }
+
+        private void TimerAvisos_Tick(object? sender, EventArgs e)
+        {
+            // Solo si la ventana principal está a la vista y activa (no minimizada ni con otra ventana,
+            // consulta o popup encima), para no interrumpir lo que el usuario esté haciendo.
+            if (!Visible || WindowState == FormWindowState.Minimized || ActiveForm != this)
+                return;
+
+            try
+            {
+                panelAvisos.Recargar();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"No se pudo recargar el panel de avisos: {ex.Message}");
+            }
         }
 
         #endregion
@@ -250,26 +275,6 @@ namespace Presentacion
             ActualizarInformacionTurno();
         }
 
-        private void FlowLayoutNotificaciones_SizeChanged(object sender, EventArgs e)
-        {
-            flowLayoutNotificaciones.SuspendLayout();
-            flowLayoutNotificaciones.AutoScroll = false;
-            flowLayoutNotificaciones.HorizontalScroll.Maximum = 0;
-            flowLayoutNotificaciones.HorizontalScroll.Visible = false;
-
-            int anchoSeguro = flowLayoutNotificaciones.ClientSize.Width - 35;
-
-            foreach (Control control in flowLayoutNotificaciones.Controls)
-            {
-                control.Width = anchoSeguro;
-                control.Margin = new Padding(control.Margin.Left, control.Margin.Top, 0, control.Margin.Bottom);
-            }
-
-            flowLayoutNotificaciones.AutoScroll = true;
-            flowLayoutNotificaciones.ResumeLayout();
-            flowLayoutNotificaciones.Refresh();
-        }
-
         /// <summary>
         /// Baja el bloque de notificaciones para que su contenido arranque
         /// a la misma altura que la grilla de Últimas Ventas.
@@ -282,7 +287,7 @@ namespace Presentacion
                 return;
 
             var gridVentas = _panelConsultasRapidas?.GridUltimasVentas;
-            if (gridVentas == null || !gridVentas.IsHandleCreated || !flowLayoutNotificaciones.IsHandleCreated)
+            if (gridVentas == null || !gridVentas.IsHandleCreated || !panelAvisos.IsHandleCreated)
                 return;
             if (gridVentas.Height <= 0 || !gridVentas.Visible)
                 return;
@@ -292,7 +297,7 @@ namespace Presentacion
                 _alineandoNotificaciones = true;
 
                 int yGrid = gridVentas.PointToScreen(Point.Empty).Y;
-                int yFlow = flowLayoutNotificaciones.PointToScreen(Point.Empty).Y;
+                int yFlow = panelAvisos.PointToScreen(Point.Empty).Y;
                 int diff = yGrid - yFlow;
 
                 if (Math.Abs(diff) < 2)
@@ -374,92 +379,6 @@ namespace Presentacion
 
         #endregion
 
-        #region Generación de Notificaciones
-
-        // Reabre un grupo si estaba abierto antes del refresco Y sigue teniendo
-        // notificaciones para mostrar (si quedó vacío, no tiene sentido abrirlo).
-        private void RestaurarEstadoExpandido(NotificationGroupBox grupo, int cantidadItems)
-        {
-            if (cantidadItems <= 0)
-                return;
-
-            if (_estadoExpandidoNotificaciones.TryGetValue(grupo.TituloBase, out bool estabaAbierto) && estabaAbierto)
-            {
-                grupo.Expanded = true;
-            }
-        }
-
-        // Recorre los grupos actuales (antes de destruirlos) y guarda si estaban
-        // abiertos o cerrados, para poder restaurarlo tras reconstruir el panel.
-        private void GuardarEstadoExpandidoNotificaciones()
-        {
-            foreach (Control ctrl in flowLayoutNotificaciones.Controls)
-            {
-                if (ctrl is NotificationGroupBox grupo && !string.IsNullOrEmpty(grupo.TituloBase))
-                {
-                    _estadoExpandidoNotificaciones[grupo.TituloBase] = grupo.Expanded;
-                }
-            }
-        }
-
-        private void crearNotificacionesLotes()
-        {
-            _pantallaPrincipalServicio.NotifiacionesProductosVencidos();
-
-            var notiProdVencidos = new NotificationGroupBox();
-            notiProdVencidos.Width = flowLayoutNotificaciones.Width - 25;
-
-            flowLayoutNotificaciones.Controls.Add(notiProdVencidos);
-
-            var listaLotesNotificar = _pantallaPrincipalServicio.ObtenerNotificacionesProdutosVencidos();
-            notiProdVencidos.SetData(listaLotesNotificar, "Lotes Vencidos");
-            RestaurarEstadoExpandido(notiProdVencidos, listaLotesNotificar?.Count ?? 0);
-        }
-
-        private void crearNotificacionesPromocionesVencidas()
-        {
-            _pantallaPrincipalServicio.NotificacionesOfertasVencidas();
-
-            var notifOferVencidas = new NotificationGroupBox();
-            notifOferVencidas.Width = flowLayoutNotificaciones.Width - 25;
-
-            flowLayoutNotificaciones.Controls.Add(notifOferVencidas);
-
-            var listaOfertasVencidas = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasVencidas();
-            notifOferVencidas.SetData(listaOfertasVencidas, "Ofertas Vencidas");
-            RestaurarEstadoExpandido(notifOferVencidas, listaOfertasVencidas?.Count ?? 0);
-        }
-
-        private void crearNotificacionesPromocionesBajoStock()
-        {
-            _pantallaPrincipalServicio.NotificacionesOfertasBajoStock();
-
-            var notifOfertasBajoStock = new NotificationGroupBox();
-            notifOfertasBajoStock.Width = flowLayoutNotificaciones.Width - 25;
-
-            flowLayoutNotificaciones.Controls.Add(notifOfertasBajoStock);
-
-            var listaOfertasBajoStock = _pantallaPrincipalServicio.ObtenerNotificacionesOfertasBajoStock();
-            notifOfertasBajoStock.SetData(listaOfertasBajoStock, "Ofertas con Bajo Stock");
-            RestaurarEstadoExpandido(notifOfertasBajoStock, listaOfertasBajoStock?.Count ?? 0);
-        }
-
-        private void crearNotificacionesCuentaCorriente()
-        {
-            _pantallaPrincipalServicio.NotificacionesCtaCteVencidas();
-
-            var notifCuentasCorrientesVencidas = new NotificationGroupBox();
-            notifCuentasCorrientesVencidas.Width = flowLayoutNotificaciones.Width - 25;
-
-            flowLayoutNotificaciones.Controls.Add(notifCuentasCorrientesVencidas);
-
-            var listaCuentasCorrientes = _pantallaPrincipalServicio.ObtenerNotificacionesCtaCteVencidas();
-            notifCuentasCorrientesVencidas.SetData(listaCuentasCorrientes, "Cuentas Corrientes Vencidas");
-            RestaurarEstadoExpandido(notifCuentasCorrientesVencidas, listaCuentasCorrientes?.Count ?? 0);
-        }
-
-        #endregion
-
         #region Mocks de Datos (Pruebas)
 
         public List<NotificacionDTO> mockDatosNotificaciones(string tipoDato)
@@ -528,7 +447,7 @@ namespace Presentacion
             //BOTON CAJA                //
             //========================= //
 
-            btnCaja.Image = Constantes.Imagenes.ImgVenta;
+            btnCaja.Image = Constantes.Imagenes.ImgCaja;
             // Alineamos la imagen arriba al centro
             btnCaja.ImageAlign = ContentAlignment.TopCenter;
             btnCaja.TextImageRelation = TextImageRelation.ImageAboveText;
@@ -560,20 +479,25 @@ namespace Presentacion
 
         }
 
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprcUpdate, IntPtr hrgnUpdate, uint flags);
+
+        private const int WM_SETREDRAW = 0x000B;
+        private const uint RDW_INVALIDATE = 0x0001, RDW_ERASE = 0x0004, RDW_ALLCHILDREN = 0x0080, RDW_UPDATENOW = 0x0100;
+
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             Cursor = Cursors.WaitCursor;
+            // Se congela el dibujo solo del contenido (no de la ventana completa, para no tocar la barra
+            // de tareas de Windows) mientras se recarga; al terminar se repinta una sola vez.
+            SendMessage(panel1.Handle, WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
             try
             {
                 // 1) Notificaciones: regenerar + pintar (único lugar donde conviene rebuild completo)
-                GuardarEstadoExpandidoNotificaciones();
-                flowLayoutNotificaciones.SuspendLayout();
-                flowLayoutNotificaciones.Controls.Clear();
-                crearNotificacionesLotes();
-                crearNotificacionesPromocionesVencidas();
-                crearNotificacionesPromocionesBajoStock();
-                crearNotificacionesCuentaCorriente();
-                flowLayoutNotificaciones.ResumeLayout(true);
+                panelAvisos.Recargar();
 
                 // 2) Turno fresco desde BD
                 var datosTurno = _pantallaPrincipalServicio.ObtenerDatosTurno(DatosSistema.CajaId, DatosSistema.UsuarioId);
@@ -598,20 +522,64 @@ namespace Presentacion
             }
             finally
             {
+                SendMessage(panel1.Handle, WM_SETREDRAW, (IntPtr)1, IntPtr.Zero);
+                RedrawWindow(panel1.Handle, IntPtr.Zero, IntPtr.Zero, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
                 Cursor = Cursors.Default;
             }
         }
 
-        private void RecargarSeccionNotificaciones()
+        private void flowHeaderUsuario_Paint(object sender, PaintEventArgs e)
         {
-            flowLayoutNotificaciones.SuspendLayout();
-            GuardarEstadoExpandidoNotificaciones();
-            flowLayoutNotificaciones.Controls.Clear();
-            crearNotificacionesLotes();
-            crearNotificacionesPromocionesVencidas();
-            crearNotificacionesPromocionesBajoStock();
-            crearNotificacionesCuentaCorriente();
-            flowLayoutNotificaciones.ResumeLayout(true);
+
+        }
+
+        /// <summary>
+        /// Escape cierra la ventana: se pasa por OnFormClosing, que pregunta antes de salir.
+        /// </summary>
+        protected override void EjecutarEscape()
+        {
+            Close();
+        }
+
+        /// <summary>
+        /// Cerrar la ventana principal (Escape, Alt+F4 o cualquier cierre iniciado por el usuario) ya no
+        /// sale del sistema sin avisar: pregunta y, si el usuario acepta, hace lo mismo que el botón
+        /// "Cerrar Sesión". Los cierres que provoca el propio sistema (Application.Restart, apagado de
+        /// Windows) no se interceptan.
+        /// </summary>
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+
+                var respuesta = MessageBox.Show(
+                    "¿Querés cerrar la sesión y salir del sistema?",
+                    "Cerrar sesión",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2);
+
+                if (respuesta == DialogResult.Yes)
+                    btnCerarSesion_Click(this, EventArgs.Empty);
+
+                return;
+            }
+
+            base.OnFormClosing(e);
+        }
+
+        private void btnCerarSesion_Click(object sender, EventArgs e)
+        {
+            var respuesta = _accesoSistema.CerrarSesion(_usuarioLogeado.PersonaId);
+            if (!respuesta.Exitoso)
+            {
+                MessageBox.Show(respuesta.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Application.Restart();
         }
     }
 }

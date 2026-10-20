@@ -3,6 +3,7 @@ using Presentacion.Core.Movimiento;
 using Presentacion.Core.Producto;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
+using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Producto;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Venta;
@@ -27,6 +28,7 @@ namespace Presentacion.Notificaciones
 
         private Button btnPrevProd, btnNextProd, btnVerMas;
         private Label lblPaginaInfo;
+        private Label? lblUltimaActualizacion;
         private TextBox txtBuscador;
 
         // Estado de la paginación Productos
@@ -73,6 +75,25 @@ namespace Presentacion.Notificaciones
 
             contenedorPadre.Controls.Add(mainLayout);
 
+            // "Última actualización": flota arriba a la derecha (a 16 px del borde), sobre la fila del título
+            // "Últimas Ventas", sin ocupar lugar en el layout para no mover las tablas.
+            lblUltimaActualizacion = new Label
+            {
+                Text = "Última actualización: —",
+                ForeColor = TemaSistema.TextoSecundario,
+                BackColor = Color.Transparent,
+                Font = new Font("Segoe UI", 9F, FontStyle.Italic),
+                AutoSize = false,
+                Size = new Size(260, 20),
+                TextAlign = ContentAlignment.MiddleRight
+            };
+            contenedorPadre.Controls.Add(lblUltimaActualizacion);
+            lblUltimaActualizacion.BringToFront();
+            void PosicionarUltimaActualizacion()
+                => lblUltimaActualizacion.Location = new Point(contenedorPadre.ClientSize.Width - 16 - lblUltimaActualizacion.Width, 10);
+            contenedorPadre.Resize += (s, e) => PosicionarUltimaActualizacion();
+            PosicionarUltimaActualizacion();
+
             ConfigurarEstiloGrid(dgvProds);
             ConfigurarEstiloGrid(dgvVentas);
 
@@ -86,7 +107,16 @@ namespace Presentacion.Notificaciones
             {
                 RefrescarProductos();
                 RefrescarVentas();
+                MarcarUltimaActualizacion(DateTime.Now);
             }
+        }
+
+        public void MarcarUltimaActualizacion(DateTime momento)
+        {
+            if (lblUltimaActualizacion == null || lblUltimaActualizacion.IsDisposed)
+                return;
+
+            lblUltimaActualizacion.Text = $"Última actualización: {momento:HH:mm:ss}";
         }
 
         /// <summary>
@@ -111,6 +141,8 @@ namespace Presentacion.Notificaciones
             if (btnPrevVenta != null) btnPrevVenta.Enabled = false;
             if (btnNextProd != null) btnNextProd.Enabled = true;
             if (btnNextVenta != null) btnNextVenta.Enabled = true;
+
+            MarcarUltimaActualizacion(DateTime.Now);
         }
 
         public void RefrescarTodoDesdeBd()
@@ -119,6 +151,7 @@ namespace Presentacion.Notificaciones
             _paginaActualV = 1;
             RefrescarProductos();
             RefrescarVentas();
+            MarcarUltimaActualizacion(DateTime.Now);
         }
 
         /// <summary>Grilla de Últimas Ventas (para alinear otros paneles).</summary>
@@ -147,6 +180,9 @@ namespace Presentacion.Notificaciones
             dgv.GridColor = TemaSistema.Borde;
             dgv.RowHeadersVisible = false;
             dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+            // Mismo fondo vacío que las consultas cuando hay menos filas que el tamaño de página.
+            FondoGrillaVacioHelper.Aplicar(dgv);
         }
 
         // ===========================================================================
@@ -240,6 +276,11 @@ namespace Presentacion.Notificaciones
             btnPrevVenta.Click += (s, e) => { if (_paginaActualV > 1) { _paginaActualV--; RefrescarVentas(); } };
             btnNextVenta.Click += (s, e) => { if (_paginaActualV < _totalPaginasV) { _paginaActualV++; RefrescarVentas(); } };
             btnVerMas.Click += (s, e) => {
+                if (!AuthHelper.Tiene("Admin.Movimientos"))
+                {
+                    MessageBox.Show("Acceso disponible sólo para Administradores");
+                    return;
+                }
                 var movimientosVenta = new FMovimientoConsulta();
                 movimientosVenta.ShowDialog();
             };
@@ -462,7 +503,8 @@ namespace Presentacion.Notificaciones
             {
                 Page = _paginaActualV,
                 PageSize = _pageSizeV,
-                TextoBuscar = ""
+                TextoBuscar = "",
+                SinLimiteFecha = true   // "Últimas Ventas": las más recientes, aunque tengan más de 2 meses
             };
 
             var resultado = _ventaService.ObtenerVentas(filtroVentas);

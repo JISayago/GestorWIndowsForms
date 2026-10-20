@@ -2,6 +2,7 @@
 using AccesoDatos.Entidades;
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
+using Servicios.Helpers.Producto;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Admin;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
@@ -1166,6 +1167,300 @@ namespace Servicios.LogicaNegocio.Venta.Oferta
                 .ToList();
 
             return resultado;
+        }
+
+public EstadoOperacion ActivarDesactivarOferta(long ofertaId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            using var transaction = context.Database.BeginTransaction();
+
+            try
+            {
+                // =========================================================
+                // 🔎 OBTENER OFERTA
+                // =========================================================
+
+                var oferta = context.OfertasDescuentos
+                    .Include(o => o.Productos)
+                        .ThenInclude(po => po.Producto)
+                    .FirstOrDefault(o => o.OfertaDescuentoId == ofertaId);
+
+                if (oferta == null)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "La oferta no existe."
+                    };
+                }
+
+                // =========================================================
+                // 🔴 DESACTIVAR
+                // =========================================================
+                // Desactivar no necesita validar fechas ni stock.
+                // Simplemente quitamos la oferta de circulación.
+
+                if (oferta.EstaActiva)
+                {
+                    oferta.EstaActiva = false;
+
+                    context.SaveChanges();
+                    transaction.Commit();
+
+                    return new EstadoOperacion
+                    {
+                        Exitoso = true,
+                        Mensaje = "La oferta fue desactivada correctamente.",
+                        EntidadId = oferta.OfertaDescuentoId
+                    };
+                }
+
+                // =========================================================
+                // 🟢 ACTIVAR
+                // =========================================================
+
+                var hoy = DateTime.Today;
+
+                // =========================================================
+                // 📅 VALIDAR FECHAS
+                // =========================================================
+
+                if (oferta.FechaFin.HasValue &&
+                    oferta.FechaFin.Value < hoy)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje =
+                            $"La oferta no puede activarse porque finalizó el " +
+                            $"{oferta.FechaFin.Value:dd/MM/yyyy}."
+                    };
+                }
+
+                if (oferta.FechaFin.HasValue &&
+                    oferta.FechaInicio > oferta.FechaFin.Value)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje =
+                            "La oferta tiene un rango de fechas inválido."
+                    };
+                }
+
+                // =========================================================
+                // 📦 VALIDAR PRODUCTOS
+                // =========================================================
+
+                if (oferta.Productos == null || !oferta.Productos.Any())
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje =
+                            "La oferta no puede activarse porque no tiene productos asociados."
+                    };
+                }
+
+                // =========================================================
+                // 📦 VALIDAR STOCK Y PRODUCTOS
+                // =========================================================
+
+                foreach (var productoOferta in oferta.Productos)
+                {
+                    var producto = productoOferta.Producto;
+
+                    if (producto == null)
+                    {
+                        return new EstadoOperacion
+                        {
+                            Exitoso = false,
+                            Mensaje =
+                                $"Uno de los productos asociados a la oferta no existe."
+                        };
+                    }
+
+                    if (producto.EstaEliminado)
+                    {
+                        return new EstadoOperacion
+                        {
+                            Exitoso = false,
+                            Mensaje =
+                                $"El producto '{producto.Descripcion}' fue eliminado " +
+                                $"y no puede utilizarse en una oferta activa."
+                        };
+                    }
+
+                    if (producto.Estado == (int)EstadoProducto.Discontinuado)
+                    {
+                        return new EstadoOperacion
+                        {
+                            Exitoso = false,
+                            Mensaje =
+                                $"El producto '{producto.Descripcion}' está discontinuado " +
+                                $"y no puede utilizarse en una oferta activa."
+                        };
+                    }
+
+                    if (producto.Estado == (int)EstadoProducto.Vencido)
+                    {
+                        return new EstadoOperacion
+                        {
+                            Exitoso = false,
+                            Mensaje =
+                                $"El producto '{producto.Descripcion}' está vencido " +
+                                $"y no puede utilizarse en una oferta activa."
+                        };
+                    }
+
+                    // La oferta debe poder vender al menos UNA vez.
+                    if (producto.Stock < productoOferta.CantidadRequerida)
+                    {
+                        return new EstadoOperacion
+                        {
+                            Exitoso = false,
+                            Mensaje =
+                                $"Stock insuficiente para activar la oferta. " +
+                                $"El producto '{producto.Descripcion}' requiere " +
+                                $"{productoOferta.CantidadRequerida} unidades y dispone de " +
+                                $"{producto.Stock}."
+                        };
+                    }
+
+                    // =====================================================
+                    // 🔢 VALIDAR LÍMITE DE VENTA
+                    // =====================================================
+
+                    if (productoOferta.LimiteVentaProducto.HasValue)
+                    {
+                        var estadistica = context.OfertaProductoEstadisticas
+                            .FirstOrDefault(x =>
+                                x.OfertaDescuentoId == oferta.OfertaDescuentoId &&
+                                x.ProductoId == productoOferta.ProductoId);
+
+                        decimal cantidadVendida =
+                            estadistica?.CantidadVendida ?? 0m;
+
+                        decimal limite =
+                            productoOferta.LimiteVentaProducto.Value;
+
+                        if (limite <= 0)
+                        {
+                            return new EstadoOperacion
+                            {
+                                Exitoso = false,
+                                Mensaje =
+                                    $"El producto '{producto.Descripcion}' tiene un " +
+                                    $"límite de venta inválido."
+                            };
+                        }
+
+                        // La oferta necesita al menos una operación completa.
+                        if (limite - cantidadVendida <
+                            productoOferta.CantidadRequerida)
+                        {
+                            var disponible = limite - cantidadVendida;
+
+                            return new EstadoOperacion
+                            {
+                                Exitoso = false,
+                                Mensaje =
+                                    $"La oferta no tiene límite suficiente para vender " +
+                                    $"el producto '{producto.Descripcion}'. " +
+                                    $"Disponible en el límite: {disponible}, " +
+                                    $"requerido: {productoOferta.CantidadRequerida}."
+                            };
+                        }
+                    }
+                }
+
+                // =========================================================
+                // ⚠️ VALIDAR SUPERPOSICIÓN CON OTRAS OFERTAS
+                // =========================================================
+                // Un producto no puede pertenecer simultáneamente a dos
+                // ofertas activas durante el mismo rango de fechas.
+
+                var productosIds = oferta.Productos
+                    .Select(x => x.ProductoId)
+                    .Distinct()
+                    .ToList();
+
+                var otrasOfertas = context.ProductosEnOfertasDescuentos
+                    .Where(x =>
+                        x.OfertaDescuentoId != oferta.OfertaDescuentoId &&
+                        productosIds.Contains(x.ProductoId))
+                    .Select(x => new
+                    {
+                        x.ProductoId,
+                        x.OfertaDescuentoId,
+                        Oferta = x.OfertaDescuento
+                    })
+                    .Where(x =>
+                        x.Oferta != null &&
+                        x.Oferta.EstaActiva)
+                    .ToList();
+
+                foreach (var productoId in productosIds)
+                {
+                    var conflicto = otrasOfertas
+                        .FirstOrDefault(x =>
+                            x.ProductoId == productoId &&
+
+                            // Inicio de la otra oferta antes o igual
+                            // al fin de esta oferta
+                            x.Oferta.FechaInicio <=
+                                (oferta.FechaFin ?? DateTime.MaxValue) &&
+
+                            // Fin de la otra oferta inexistente o
+                            // mayor o igual al inicio de esta oferta
+                            (
+                                !x.Oferta.FechaFin.HasValue ||
+                                x.Oferta.FechaFin.Value >= oferta.FechaInicio
+                            ));
+
+                    if (conflicto != null)
+                    {
+                        var producto = oferta.Productos
+                            .First(x => x.ProductoId == productoId)
+                            .Producto;
+
+                        return new EstadoOperacion
+                        {
+                            Exitoso = false,
+                            Mensaje =
+                                $"No se puede activar la oferta porque el producto " +
+                                $"'{producto.Descripcion}' ya pertenece a otra oferta activa " +
+                                $"durante el mismo período."
+                        };
+                    }
+                }
+
+                // =========================================================
+                // ✅ ACTIVAR
+                // =========================================================
+
+                oferta.EstaActiva = true;
+
+                context.SaveChanges();
+                transaction.Commit();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "La oferta fue activada correctamente.",
+                    EntidadId = oferta.OfertaDescuentoId
+                };
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = $"Error al activar/desactivar la oferta. {ex.Message}"
+                };
+            }
         }
     }
 }

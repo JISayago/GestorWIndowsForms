@@ -382,6 +382,104 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
                 context.SaveChanges();
             }
         }
+        /// <summary>
+        /// Avisos pendientes (no leídos) con fecha de vencimiento dentro del rango, para marcar los días
+        /// del calendario. Los avisos de bajo stock no tienen fecha, así que no aparecen. Un aviso leído
+        /// deja de figurar: el calendario muestra lo mismo que las listas de avisos.
+        /// </summary>
+        public List<VencimientoCalendarioDTO> ObtenerVencimientosCalendario(DateTime desde, DateTime hasta)
+        {
+            DateTime inicio = desde.Date;
+            DateTime finExclusivo = hasta.Date.AddDays(1);
+
+            List<Notificacion> notis;
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                notis = context.Notificaciones
+                    .AsNoTracking()
+                    .Where(n => n.EstaLeida != true
+                                && n.FechaVencimiento != null
+                                && n.FechaVencimiento >= inicio
+                                && n.FechaVencimiento < finExclusivo)
+                    .ToList();
+            }
+
+            var resultado = new List<VencimientoCalendarioDTO>();
+            foreach (var n in notis)
+            {
+                TipoVencimientoCalendario? tipo = ClasificarPorTitulo(n.Titulo);
+                if (tipo == null || n.FechaVencimiento == null)
+                    continue;
+
+                resultado.Add(new VencimientoCalendarioDTO
+                {
+                    Fecha = n.FechaVencimiento.Value.Date,
+                    Tipo = tipo.Value
+                });
+            }
+
+            return resultado;
+        }
+
+        /// <summary>Avisos pendientes (no leídos) que vencen en la fecha indicada, de lotes, ofertas y cuentas corrientes.</summary>
+        public List<AvisoDelDiaDTO> ObtenerAvisosDelDia(DateTime fecha)
+        {
+            DateTime inicio = fecha.Date;
+            DateTime finExclusivo = inicio.AddDays(1);
+
+            List<Notificacion> notis;
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                notis = context.Notificaciones
+                    .AsNoTracking()
+                    .Where(n => n.EstaLeida != true
+                                && n.FechaVencimiento != null
+                                && n.FechaVencimiento >= inicio
+                                && n.FechaVencimiento < finExclusivo)
+                    .OrderBy(n => n.Titulo)
+                    .ToList();
+            }
+
+            var resultado = new List<AvisoDelDiaDTO>();
+            foreach (var n in notis)
+            {
+                TipoVencimientoCalendario? tipo = ClasificarPorTitulo(n.Titulo);
+                if (tipo == null)
+                    continue;
+
+                resultado.Add(new AvisoDelDiaDTO
+                {
+                    Tipo = tipo.Value,
+                    Aviso = new NotificacionDTO
+                    {
+                        NotificacionId = n.NotificacionId,
+                        Titulo = n.Titulo,
+                        Descripcion = n.Descripcion,
+                        Mensaje = n.Mensaje,
+                        FechaCreacion = n.FechaCreacion,
+                        Leida = n.EstaLeida,
+                        FechaNotificacion = n.FechaVencimiento ?? DateTime.Now,
+                        NivelUrgencia = CalcularNivelUrgencia(n.FechaVencimiento)
+                    }
+                });
+            }
+
+            return resultado;
+        }
+
+        private static TipoVencimientoCalendario? ClasificarPorTitulo(string titulo)
+        {
+            if (string.IsNullOrEmpty(titulo))
+                return null;
+            if (titulo.StartsWith("Lote por vencer:", StringComparison.Ordinal))
+                return TipoVencimientoCalendario.Lote;
+            if (titulo.StartsWith("Oferta vencida:", StringComparison.Ordinal))
+                return TipoVencimientoCalendario.Oferta;
+            if (titulo.StartsWith("CtaCte vencida:", StringComparison.Ordinal))
+                return TipoVencimientoCalendario.CuentaCorriente;
+            return null;
+        }
+
         public void MarcarNotificacionComoLeida(long notificacionId)
         {
             using (var context = new GestorContextDBFactory().CreateDbContext(null))
@@ -393,6 +491,57 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
                     context.SaveChanges();
                 }
             }
+        }
+
+        /// <summary>
+        /// Devuelve el DNI del cliente dueño de la cuenta corriente con ese nombre (el que figura en
+        /// el título del aviso), o null si no se encuentra. Sirve para abrir la consulta de clientes
+        /// filtrada por ese cliente.
+        /// </summary>
+        public string ObtenerDniClientePorNombreCuentaCorriente(string nombreCuentaCorriente)
+        {
+            if (string.IsNullOrWhiteSpace(nombreCuentaCorriente))
+                return null;
+
+            var nombre = nombreCuentaCorriente.Trim();
+
+            using (var context = new GestorContextDBFactory().CreateDbContext(null))
+            {
+                return context.CuentaCorriente
+                    .AsNoTracking()
+                    .Where(c => c.NombreCuentaCorriente == nombre)
+                    .Select(c => c.Cliente.Persona.Dni)
+                    .FirstOrDefault();
+            }
+        }
+
+        /// <summary>
+        /// Devuelve el código de la oferta de un aviso de bajo stock. El título tiene la forma
+        /// "Oferta con bajo stock: {Codigo} - {Producto}"; como el código puede escribirse a mano y
+        /// contener " - ", primero se lo busca entre las ofertas que hoy tienen bajo stock y, si ya
+        /// no figura ahí, se toma lo que está antes del primer " - ".
+        /// </summary>
+        public string ObtenerCodigoOfertaDeAvisoBajoStock(string tituloAviso)
+        {
+            const string prefijo = "Oferta con bajo stock:";
+
+            if (string.IsNullOrWhiteSpace(tituloAviso) ||
+                !tituloAviso.StartsWith(prefijo, StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            var resto = tituloAviso.Substring(prefijo.Length).Trim();
+            if (resto.Length == 0)
+                return null;
+
+            var coincidencia = _ofertaServicio.ObtenerOfertasConBajoStock()
+                .FirstOrDefault(o => $"{o.Codigo} - {o.NombreProducto}" == resto);
+
+            if (coincidencia != null)
+                return coincidencia.Codigo;
+
+            var corte = resto.IndexOf(" - ", StringComparison.Ordinal);
+            var codigo = corte > 0 ? resto.Substring(0, corte) : resto;
+            return string.IsNullOrWhiteSpace(codigo) ? null : codigo.Trim();
         }
 
         public DatosTurnoDTO ObtenerDatosTurno(long? cajaId, long usuarioId)

@@ -39,6 +39,7 @@
             // 
             // chkBool1
             // 
+            chkBool1.Font = new Font("Segoe UI", 9.75F);
             chkBool1.ForeColor = Color.FromArgb(31, 26, 43);
             chkBool1.Location = new Point(666, 90);
             chkBool1.Size = new Size(17, 1);
@@ -47,15 +48,17 @@
             // 
             btnBuscar.BackColor = Color.FromArgb(220, 199, 255);
             btnBuscar.FlatAppearance.BorderColor = Color.Black;
+            btnBuscar.FlatAppearance.MouseOverBackColor = Color.FromArgb(95, 48, 163);
             btnBuscar.FlatStyle = FlatStyle.Flat;
+            btnBuscar.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
             btnBuscar.ForeColor = Color.Black;
-            btnBuscar.Location = new Point(27, 3);
-            btnBuscar.Size = new Size(305, 28);
-            btnBuscar.UseVisualStyleBackColor = false;
             // 
             // lblTotalRegistros
             // 
-            lblTotalRegistros.Location = new Point(145, 10);
+            lblTotalRegistros.Font = new Font("Segoe UI Semibold", 10.25F, FontStyle.Bold);
+            lblTotalRegistros.ForeColor = Color.FromArgb(31, 26, 43);
+            lblTotalRegistros.Location = new Point(293, 39);
+            lblTotalRegistros.Size = new Size(55, 19);
             // 
             // FProductoConsulta
             // 
