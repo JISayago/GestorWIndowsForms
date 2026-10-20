@@ -142,7 +142,8 @@ namespace Presentacion.Core.Producto
         {
             if (!entidadId.HasValue)
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("No se pudo obtener el lote a modificar/eliminar.","Error");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 
                 this.Close();
             }
@@ -182,7 +183,8 @@ namespace Presentacion.Core.Producto
             }
             else
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("No se pudo obtener el lote a modificar/eliminar.", "Error");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
 
         }
@@ -191,15 +193,17 @@ namespace Presentacion.Core.Producto
         {
             if (!VerificarDatosObligatorios()) //no la estoy usando
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("Por favor ingrese los campos Obligatorios.", "Atención");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
                 return false;
             }
 
             if (nudStockActual.Value > nudStockInicial.Value)
             {
-                MessageBox.Show(@"El Stock Actual no puede ser mayor al Stock Inicial.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("El Stock Actual no puede ser mayor al Stock Inicial.", "Atención");
+                //MessageBox.Show(@"El Stock Actual no puede ser mayor al Stock Inicial.", @"Atención", MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
                 return false;
             }
 
@@ -221,13 +225,18 @@ namespace Presentacion.Core.Producto
             if (response.Exitoso)
             {
                 //_productoServicio.ModificarEstadoStockProductos();
-
-                var respuesta = MessageBox.Show($"{response.Mensaje}\n ¿Quieres cargar un lote de mismo producto?",
+                var result = Confirmar(
+                 $"{response.Mensaje}\n ¿Quieres cargar un lote de mismo producto?",
                     "Confirmar acción",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+                 si: "Sumar cantidad",
+                 no: "Cancelar");
 
-                if(respuesta == DialogResult.Yes)
+                //var respuesta = MessageBox.Show($"{response.Mensaje}\n ¿Quieres cargar un lote de mismo producto?",
+                //    "Confirmar acción",
+                //    MessageBoxButtons.YesNo,
+                //    MessageBoxIcon.Question);
+
+                if(result)
                 {
                     RealizoOperacion = true;
                     reabrirForm = true;
@@ -243,8 +252,9 @@ namespace Presentacion.Core.Producto
             }
             else
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
+                MostrarError(response.Mensaje);
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                //   MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -253,7 +263,8 @@ namespace Presentacion.Core.Producto
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show(@"´Por favor seleccione una marca válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("Por favor seleccione un lote válido.", "Error");
+                //MessageBox.Show(@"´Por favor seleccione una marca válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
 
             }
@@ -263,15 +274,16 @@ namespace Presentacion.Core.Producto
                 if (response.Exitoso)
                 {
                     //_productoServicio.ModificarEstadoStockProductos();
-
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Information);
+                    Exito(response.Mensaje,"Atención");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Error);
                     return false;
                 }
 
@@ -284,15 +296,17 @@ namespace Presentacion.Core.Producto
         {
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("Por favor ingrese los campos Obligatorios.", "Atención");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
+                    //MessageBoxIcon.Error);
                 return false;
             }
             if (TipoOperacion == TipoOperacion.Modificar)
             {
                 if (!EntidadID.HasValue)
                 {
-                    MessageBox.Show(@"´Por favor seleccione un marca válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    Informar("Por favor seleccione un lote válido.", "Error");
+                    //MessageBox.Show(@"´Por favor seleccione un marca válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return false;
 
                 }
@@ -313,15 +327,16 @@ namespace Presentacion.Core.Producto
                 if (response.Exitoso)
                 {
                     //_productoServicio.ModificarEstadoStockProductos();
-
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    Exito(response.Mensaje, "Atención");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Error);
                     return false;
                 }
 

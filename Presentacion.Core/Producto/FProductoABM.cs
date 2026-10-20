@@ -134,7 +134,8 @@ namespace Presentacion.Core.Producto
         {
             if (!entidadId.HasValue)
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("No se pudo encontrar el producto Seleccionado", "Error");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 
                 this.Close();
             }
@@ -177,7 +178,8 @@ namespace Presentacion.Core.Producto
             }
             else
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("No se pudo encontrar el producto Seleccionado", "Error");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
 
         }
@@ -196,6 +198,7 @@ namespace Presentacion.Core.Producto
                     // No hacemos nada con el ID aquí, ya que las categorías se manejan en la lista _categoriasSeleccionadas
                     break;
                 default:
+                    Informar("No se pudieron cargar algunos datos. Inténtelo nuevamente", "Error");
                     throw new ArgumentException("Botón no reconocido");
             }
 
@@ -205,18 +208,21 @@ namespace Presentacion.Core.Producto
         {
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("Por favor ingrese los campos Obligatorios", "Atención");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
                 return false;
             }
             if (_marcaID <= 0)
             {
-                MessageBox.Show(@"Seleccione una marca.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Informar("Seleccione una marca", "Atención");
+                //MessageBox.Show(@"Seleccione una marca.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
             if (_rubroID <= 0)
             {
-                MessageBox.Show(@"Seleccione un rubro.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Informar("Seleccione un rubro", "Atención");
+                //MessageBox.Show(@"Seleccione un rubro.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
@@ -247,14 +253,16 @@ namespace Presentacion.Core.Producto
 
             if (response.Exitoso)
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Information);
+                Exito("Producto creado con éxito", "Éxito");
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                   //MessageBoxIcon.Information);
                 return true;
             }
             else
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
+                MostrarError(response.Mensaje);
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                   //MessageBoxIcon.Error);
                 return false;
             }
 
@@ -264,7 +272,8 @@ namespace Presentacion.Core.Producto
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show(@"´Por favor seleccione una Producto válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("Por favor seleccione un Producto válido", "Error");
+                //MessageBox.Show(@"´Por favor seleccione una Producto válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
 
             }
@@ -273,14 +282,16 @@ namespace Presentacion.Core.Producto
                 var response = _ProductoServicio.Eliminar((long)EntidadID);
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Information);
+                    Exito("Producto eliminado con éxito", "Éxito");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       //MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       //MessageBoxIcon.Error);
                     return false;
                 }
 
@@ -293,8 +304,9 @@ namespace Presentacion.Core.Producto
         {
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("Por favor ingrese los campos Obligatorios", "Atención");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
+                    //MessageBoxIcon.Error);
                 return false;
             }
 
@@ -302,18 +314,21 @@ namespace Presentacion.Core.Producto
             {
                 if (!EntidadID.HasValue)
                 {
-                    MessageBox.Show(@"´Por favor seleccione un Producto válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    Informar("Por favor seleccione un Producto válido", "Error");
+                    //MessageBox.Show(@"´Por favor seleccione un Producto válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return false;
 
                 }
                 if (_marcaID <= 0)
                 {
-                    MessageBox.Show(@"Seleccione una marca.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Informar("Seleccione una marca", "Atención");
+                    //MessageBox.Show(@"Seleccione una marca.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
                 if (_rubroID <= 0)
                 {
-                    MessageBox.Show(@"Seleccione un rubro.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Informar("Seleccione un rubro", "Atención");
+                    //MessageBox.Show(@"Seleccione un rubro.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
                 //ARREGLAR LOS PARSE y TIPOS DE DATOS
@@ -342,14 +357,16 @@ namespace Presentacion.Core.Producto
 
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    Exito("Producto modificado con éxito", "Éxito");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                        //MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                        //MessageBoxIcon.Error);
                     return false;
                 }
 
@@ -395,9 +412,16 @@ namespace Presentacion.Core.Producto
                     ? "Al activar el control por lotes, se reiniciara el stock actual del producto. ¿Desea continuar?"
                     : "Al desactivar el control por lotes, se reiniciara el stock del producto y se deben deshabilitar los lotes asociados. ¿Desea continuar?";
 
-                var mensajeConfirmacion = MessageBox.Show(mensaje, "Confirmación", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 
-                if (mensajeConfirmacion == DialogResult.OK)
+                var mensajeConfirmacion = Confirmar(
+                mensaje,"Confirmación",
+                 si: "Aceptar",
+                 no: "Cancelar");
+
+                //var mensajeConfirmacion = MessageBox.Show(mensaje, "Confirmación", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
+
+                if (mensajeConfirmacion)
                 {
                     // Si acepta, ejecutamos la lógica
                     txtStock.Enabled = !checkbox.Checked;
