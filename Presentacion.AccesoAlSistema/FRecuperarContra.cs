@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Presentacion.AccesoAlSistema
 {
-    public partial class FRecuperarContra : Form
+    public partial class FRecuperarContra : FBase.FBase
     {
         public bool recuperar { get; private set; }
         public bool esAdmin { get; private set; }
@@ -37,16 +37,19 @@ namespace Presentacion.AccesoAlSistema
             Usuario = txtUsuario.Text;
             if (string.IsNullOrWhiteSpace(Usuario))
             {
-                MessageBox.Show("Ingrese un usuario.");
+             Informar("Ingrese un usuario.");
+                //MessageBox.Show("Ingrese un usuario.");
                 return;
             }
             if (string.IsNullOrWhiteSpace(Nro))
             {
+                Informar("Ingrese un legajo o DNI.");
                 MessageBox.Show("Ingrese un legajo o DNI.");
                 return;
             }
             var respuesta = _usuarioServicio.DeshabilitarUsuarioYRecuperarContra(Usuario, Nro);
-            MessageBox.Show(respuesta.Mensaje);
+            Informar(respuesta.Mensaje,"Atención");
+            //MessageBox.Show(respuesta.Mensaje);
             recuperar = respuesta.Exitoso;
             esAdmin = respuesta.EntidadId != 0;
             this.DialogResult = DialogResult.OK;
