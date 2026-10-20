@@ -110,7 +110,8 @@ namespace Presentacion.Core.Venta.TipoPago
         {
             if (!PuedeSeleccionar(tp, out int permitido, out int yaUsados))
             {
-                MessageBox.Show($"No se puede seleccionar '{tp}'. Solo se permiten {permitido} de este tipo y ya hay {yaUsados}.", "Límite alcanzado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar($"No se puede seleccionar '{tp}'. Solo se permiten {permitido} de este tipo y ya hay {yaUsados}.", "Límite alcanzado");
+                //MessageBox.Show($"No se puede seleccionar '{tp}'. Solo se permiten {permitido} de este tipo y ya hay {yaUsados}.", "Límite alcanzado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 

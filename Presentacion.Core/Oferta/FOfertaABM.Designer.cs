@@ -104,6 +104,7 @@
             tableLayoutPanel22 = new TableLayoutPanel();
             tableLayoutPanel23 = new TableLayoutPanel();
             txtTitulo = new Label();
+            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -1070,6 +1071,7 @@
             tableLayoutPanel22.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel22.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel22.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel22.Controls.Add(button1, 1, 0);
             tableLayoutPanel22.Controls.Add(btnCancelarYSalir, 0, 0);
             tableLayoutPanel22.Controls.Add(btnLimpiarCampos, 2, 0);
             tableLayoutPanel22.Controls.Add(btnCrearOferta, 3, 0);
@@ -1114,6 +1116,18 @@
             txtTitulo.TabIndex = 156;
             txtTitulo.Text = "Creacion y Armado de Ofertas";
             txtTitulo.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // button1
+            // 
+            button1.Anchor = AnchorStyles.Left;
+            button1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button1.Location = new Point(315, 13);
+            button1.Name = "button1";
+            button1.Size = new Size(140, 49);
+            button1.TabIndex = 127;
+            button1.Text = "Volver al Inicio";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // FOfertaABM
             // 
@@ -1257,5 +1271,6 @@
         private RadioButton rbCombo;
         private RadioButton rbDosPorUno;
         private Label txtTitulo;
+        private Button button1;
     }
 }

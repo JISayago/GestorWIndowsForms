@@ -23,8 +23,8 @@ public partial class FOfertaConsulta : FBaseConsulta
     {
         _vieneDeVenta = vieneDeVenta;
         activarDesactivar = !vieneDeVenta;
-
-        MessageBox.Show("Seleccione la oferta que desea aplicar a la venta.");
+        Informar("Seleccione la oferta que desea aplicar a la venta.");
+        //MessageBox.Show("Seleccione la oferta que desea aplicar a la venta.");
     }
 
     #region INIT
@@ -211,16 +211,19 @@ public partial class FOfertaConsulta : FBaseConsulta
     {
         if (!id.HasValue)
         {
-            MessageBox.Show("Seleccione una oferta.");
+            Informar("Seleccione una oferta.");
+            //MessageBox.Show("Seleccione una oferta.");
             return;
         }
 
         var resp = _ofertaServicio.ActivarDesactivarOferta(id.Value);
         
         if (resp.Exitoso)
-            MessageBox.Show(resp.Mensaje);
+            Exito(resp.Mensaje);
+            //MessageBox.Show(resp.Mensaje);
         else
-            MessageBox.Show(resp.Mensaje);
+            MostrarError(resp.Mensaje);
+        //MessageBox.Show(resp.Mensaje);
 
         RefrescarGrilla();
     }

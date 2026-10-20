@@ -90,7 +90,8 @@ namespace TuProyecto.Presentacion
 
                 if (datos == null)
                 {
-                    MessageBox.Show("No se encontró información del movimiento.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Informar("No se encontró información del movimiento.", "Atención");
+                    //MessageBox.Show("No se encontró información del movimiento.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     this.Close();
                     return;
                 }
@@ -106,7 +107,8 @@ namespace TuProyecto.Presentacion
                 // Antes solo se mostraba el error y la ventana quedaba abierta con el panel general
                 // vacío (sin datos cargados) — daba la sensación de que el sistema se colgó. Ahora se
                 // cierra igual que en el caso "datos == null", que es el otro camino de fallo esperado.
-                MessageBox.Show("Error al cargar datos: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError("Error al cargar datos del movimiento. La ventana se cerrará.");
+                //MessageBox.Show("Error al cargar datos: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Close();
             }
         }

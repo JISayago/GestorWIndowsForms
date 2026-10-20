@@ -67,7 +67,7 @@ namespace Presentacion.Core.Venta
         public FVenta(long UsuarioLogeadoId, long? VentaId = null)
         {
             InitializeComponent();
-            
+
             _ventaServicio = new VentaServicio();
             _movimientoServicio = new MovimientoServicio();
             _usuarioLogeadoID = UsuarioLogeadoId;
@@ -94,7 +94,8 @@ namespace Presentacion.Core.Venta
 
                 if (ventaCargada == null)
                 {
-                    MessageBox.Show("No se pudo cargar la venta.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MostrarError("No se pudo cargar la venta.");
+                    //MessageBox.Show("No se pudo cargar la venta.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -149,8 +150,8 @@ namespace Presentacion.Core.Venta
                 consumidorFinal = _clienteServicio.ObtenerConsumidorFinal();
                 if (consumidorFinal != null)
                 {
-                idCliente = consumidorFinal.PersonaId;
-                   
+                    idCliente = consumidorFinal.PersonaId;
+
                 }
 
             }
@@ -183,7 +184,7 @@ namespace Presentacion.Core.Venta
             }
             else
             {
-                txtCliente.Text = _clienteVenta != null ? $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}" : consumidorFinal!=null ? consumidorFinal.NombreCompleto : "";
+                txtCliente.Text = _clienteVenta != null ? $"{_clienteVenta.Nombre} {_clienteVenta.Apellido}" : consumidorFinal != null ? consumidorFinal.NombreCompleto : "";
                 lblVendedorAsignado.Text = esUsuarioLogeado
                     ? $"{_usuarioLogeado.Nombre} {_usuarioLogeado.Apellido}"
                     : "";
@@ -221,13 +222,15 @@ namespace Presentacion.Core.Venta
         {
             if (_totalVenta == 0)
             {
-                MessageBox.Show("Debe cargar al menos un producto antes de confirmar la venta.");
+                MostrarError("Debe cargar al menos un producto antes de confirmar la venta.");
+                //MessageBox.Show("Debe cargar al menos un producto antes de confirmar la venta.");
                 return;
             }
 
             if (!DatosSistema.CajaId.HasValue)
             {
-                MessageBox.Show("No hay una caja abierta. No se puede registrar la venta.");
+                MostrarError("No hay una caja abierta. No se puede registrar la venta.");
+                //MessageBox.Show("No hay una caja abierta. No se puede registrar la venta.");
                 return;
             }
 
@@ -243,7 +246,7 @@ namespace Presentacion.Core.Venta
                 Total = _totalVenta,
                 IncluirCtaCte = _incluirCtaCte,
                 DescuentoEfectivo = cbxDescEfectivo.Checked,
-                Cliente = _clienteVenta 
+                Cliente = _clienteVenta
             };
 
             var fSeleccionCantidad = new FSeleccionCantidadPagos();
@@ -268,7 +271,8 @@ namespace Presentacion.Core.Venta
 
                 if (pagosSeleccionados == null || pagosSeleccionados.Count == 0)
                 {
-                    MessageBox.Show("Debe ingresar al menos un pago válido.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Advertir("Debe ingresar al menos un pago válido.");
+                    //MessageBox.Show("Debe ingresar al menos un pago válido.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -307,7 +311,8 @@ namespace Presentacion.Core.Venta
 
                 if (tipoPagosSeleccionados == null || tipoPagosSeleccionados.Count == 0)
                 {
-                    MessageBox.Show("Debe seleccionar al menos un tipo de pago.");
+                    Advertir("Debe seleccionar al menos un tipo de pago.");
+                    //MessageBox.Show("Debe seleccionar al menos un tipo de pago.");
                     return;
                 }
 
@@ -402,22 +407,24 @@ namespace Presentacion.Core.Venta
 
                 if (m.Exitoso)
                 {
-                    MessageBox.Show(
-                        "Venta confirmada exitosamente.",
-                        "Éxito",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    Exito("Venta confirmada exitosamente.");
+                    //MessageBox.Show(
+                    //    "Venta confirmada exitosamente.",
+                    //    "Éxito",
+                    //    MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Information);
 
                     DialogResult = DialogResult.OK;
                     Close();
                 }
                 else
                 {
-                    MessageBox.Show(
-                        $"Hubo un error al finalizar la venta: {m.Mensaje}",
-                        "Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    MostrarError($"Hubo un error al finalizar la venta: {m.Mensaje}");
+                    //MessageBox.Show(
+                    //    $"Hubo un error al finalizar la venta: {m.Mensaje}",
+                    //    "Error",
+                    //    MessageBoxButtons.OK,
+                    //MessageBoxIcon.Error);
                 }
             }
             finally
@@ -479,11 +486,12 @@ namespace Presentacion.Core.Venta
 
             if (itemVenta == null)
             {
-                MessageBox.Show("El producto seleccionado no está disponible.");
+                Advertir("El producto seleccionado no está disponible.");
+                //MessageBox.Show("El producto seleccionado no está disponible.");
                 return;
             }
 
-            var fCantidad = new FCantidadItem();
+            var fCantidad = new FCantidadItem("2");
 
             if (fCantidad.ShowDialog() != DialogResult.OK ||
                 fCantidad.cantidad <= 0)
@@ -497,27 +505,32 @@ namespace Presentacion.Core.Venta
 
             if (itemExistente != null)
             {
-                var respuesta = MessageBox.Show(
+
+
+                if (!Confirmar(
                     $"'{itemVenta.Descripcion}' ya fue agregado.\n\n" +
                     "¿Desea sumar la cantidad ingresada a la existente?",
                     "Elemento repetido",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (respuesta == DialogResult.No)
+                    si: "Sumar cantidad",
+                    no: "Cancelar"))
                     return;
 
                 var nuevaCantidad = itemExistente.Cantidad + cantidadSolicitada;
 
                 if (nuevaCantidad > itemVenta.Stock)
                 {
-                    MessageBox.Show(
+                    Advertir(
                         $"No hay stock suficiente.\n" +
                         $"Stock disponible: {itemVenta.Stock}.\n" +
                         $"La cantidad será ajustada al máximo disponible.",
-                        "Stock insuficiente",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
+                        "Stock insuficiente");
+                    //MessageBox.Show(
+                    //    $"No hay stock suficiente.\n" +
+                    //    $"Stock disponible: {itemVenta.Stock}.\n" +
+                    //    $"La cantidad será ajustada al máximo disponible.",
+                    ////    "Stock insuficiente",
+                    //    MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Warning);
 
                     nuevaCantidad = itemVenta.Stock;
                 }
@@ -528,11 +541,14 @@ namespace Presentacion.Core.Venta
             {
                 if (cantidadSolicitada > itemVenta.Stock)
                 {
-                    MessageBox.Show(
+                    Advertir(
                         $"Stock insuficiente. Se ajusta a {itemVenta.Stock}.",
-                        "Advertencia",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
+                        "Advertencia");
+                    //MessageBox.Show(
+                    //    $"Stock insuficiente. Se ajusta a {itemVenta.Stock}.",
+                    //    "Advertencia",
+                    //    MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Warning);
 
                     cantidadSolicitada = itemVenta.Stock;
                 }
@@ -821,14 +837,19 @@ namespace Presentacion.Core.Venta
         {
             if (VENTAID != null)
             {
-                var result = MessageBox.Show(
-                    "¿Está seguro que desea cancelar esta venta?\n\nEsta acción no se puede deshacer.",
-                    "Confirmar cancelación",
-                    MessageBoxButtons.OKCancel,
-                    MessageBoxIcon.Warning
-                );
+                var result = !Confirmar(
+                  "¿Está seguro que desea cancelar esta venta?\n\nEsta acción no se puede deshacer.", "Confirmar cancelación",
+                  si: "Sumar cantidad",
+                  no: "Cancelar");
+                    
+                //var result = MessageBox.Show(
+                //    "¿Está seguro que desea cancelar esta venta?\n\nEsta acción no se puede deshacer.",
+                //    "Confirmar cancelación",
+                //    MessageBoxButtons.OKCancel,
+                //    MessageBoxIcon.Warning
+                //);
 
-                if (result == DialogResult.OK)
+                if (result)
                 {
                     using var frmProcesando = new FProcesando();
                     frmProcesando.Show();
@@ -840,12 +861,14 @@ namespace Presentacion.Core.Venta
 
                     if (respuesta.Exitoso)
                     {
-                        MessageBox.Show("Venta cancelada con éxito.");
+                        Confirmar("Venta cancelada con éxito.");
+                        //MessageBox.Show("Venta cancelada con éxito.");
                         this.Close();
                     }
                     else
                     {
-                        MessageBox.Show(respuesta.Mensaje);
+                        MostrarError(respuesta.Mensaje);
+                        //MessageBox.Show(respuesta.Mensaje);
                     }
                 }
             }
@@ -859,7 +882,7 @@ namespace Presentacion.Core.Venta
         private EstadoOperacion CancelarVenta(long? VenId)
         {
             var respuesta = _ventaServicio.CancelacionVentaPorId((long)VenId);
-            return respuesta;   
+            return respuesta;
         }
 
         private void InicializarYLimpiarCampos(long? ventaId)
@@ -1009,7 +1032,8 @@ namespace Presentacion.Core.Venta
                 _suspendCbxDesc = true;
                 cbxDescEfectivo.Checked = false;               // no volverá a ejecutar la lógica porque la bandera lo evita
                 _suspendCbxDesc = false;
-                MessageBox.Show("Debe cargar al menos un producto para aplicar un descuento.");
+                Advertir("Debe cargar al menos un producto para aplicar un descuento.");
+                //MessageBox.Show("Debe cargar al menos un producto para aplicar un descuento.");
                 return;
             }
 
@@ -1021,8 +1045,9 @@ namespace Presentacion.Core.Venta
                 txtDescuentoEfectivo.Text = string.Empty;
                 txtDescuentoEfectivo.Enabled = false;
                 _suspendCbxDesc = false;
-                
-                MessageBox.Show("No se puede aplicar descuento por efectivo cuando hay ofertas en la venta.");
+
+                Advertir("No se puede aplicar descuento por efectivo cuando hay ofertas en la venta.");
+                //MessageBox.Show("No se puede aplicar descuento por efectivo cuando hay ofertas en la venta.");
                 return;
             }
             else
@@ -1043,8 +1068,9 @@ namespace Presentacion.Core.Venta
 
             if (porcentajeDesc < 0 || porcentajeDesc > 100)
             {
-                MessageBox.Show("Ingresar un número entre 1 y 100.");
-                if(porcentajeDesc > 100)
+                Advertir("Ingresar un número entre 1 y 100.");
+                //MessageBox.Show("Ingresar un número entre 1 y 100.");
+                if (porcentajeDesc > 100)
                 {
                     txtDescuentoEfectivo.Text = "100";
                     porcentajeDesc = 100;
@@ -1054,7 +1080,7 @@ namespace Presentacion.Core.Venta
                     txtDescuentoEfectivo.Text = "0";
                     porcentajeDesc = 0;
                 }
-                    return;
+                return;
             }
 
             // 🔹 total de productos SIN oferta
@@ -1106,7 +1132,8 @@ namespace Presentacion.Core.Venta
 
             if (itemVenta == null)
             {
-                MessageBox.Show("La oferta seleccionada ya no se encuentra activa.");
+                Advertir("La oferta seleccionada ya no se encuentra activa.");
+                //MessageBox.Show("La oferta seleccionada ya no se encuentra activa.");
                 return;
             }
 
@@ -1126,15 +1153,20 @@ namespace Presentacion.Core.Venta
 
             if (ofertaExistente != null)
             {
-                var respuesta = MessageBox.Show(
-                    $"La oferta '{itemVenta.Descripcion}' ya fue agregada.\n\n" +
-                    "¿Desea sumar la cantidad ingresada a la existente?",
-                    "Oferta repetida",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (respuesta == DialogResult.No)
+                if (!Confirmar($"La oferta '{itemVenta.Descripcion}' ya fue agregada.\n\n" +
+                    "¿Desea sumar la cantidad ingresada a la existente?", "Oferta repetida",
+                    si: "Sumar cantidad",
+                    no: "Cancelar"))
                     return;
+                //var respuesta = MessageBox.Show(
+                //    $"La oferta '{itemVenta.Descripcion}' ya fue agregada.\n\n" +
+                //    "¿Desea sumar la cantidad ingresada a la existente?",
+                //    "Oferta repetida",
+                //    MessageBoxButtons.YesNo,
+                //    MessageBoxIcon.Question);
+
+                //if (respuesta == DialogResult.No)
+                //    return;
 
                 var nuevaCantidad = ofertaExistente.Cantidad + cantidadSolicitada;
 
@@ -1226,14 +1258,19 @@ namespace Presentacion.Core.Venta
         }
         private void EliminarItem(ItemVentaDTO item)
         {
-            var confirm = MessageBox.Show(
-                $"¿Eliminar {item.Descripcion}?",
-                "Confirmar",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            );
+            var confirm = !Confirmar(
+                 $"¿Está seguro que desea Eliminar {item.Descripcion}?", "Confirmar cancelación",
+                 si: "Eliminar",
+                 no: "Cancelar");
 
-            if (confirm == DialogResult.Yes)
+            //var confirm = MessageBox.Show(
+            //    $"¿Eliminar {item.Descripcion}?",
+            //    "Confirmar",
+            //    MessageBoxButtons.YesNo,
+            //    MessageBoxIcon.Question
+            //);
+
+            if (confirm)
             {
                 itemsVenta.Remove(item);   // lista bindada
                 dgvProductos.Refresh();
@@ -1266,6 +1303,11 @@ namespace Presentacion.Core.Venta
             // permitir números
             if (!char.IsDigit(e.KeyChar))
                 e.Handled = true;
+        }
+
+        private void btnVolver_Click(object sender, EventArgs e)
+        {
+            new VolverAlInicio(this).Volver();
         }
     }
 }

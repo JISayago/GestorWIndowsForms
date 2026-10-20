@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading;
 
 namespace Presentacion
 {
@@ -29,6 +30,24 @@ namespace Presentacion
         [STAThread]
         static void Main()
         {
+            // Impide ejecutar más de una instancia de Stockeate
+            // en las sesiones de Windows que compartan este mutex.
+            using Mutex mutex = new Mutex(
+                initiallyOwned: true,
+                name: @"Global\Stockeate_UnicaInstancia",
+                createdNew: out bool esPrimeraInstancia);
+
+            if (!esPrimeraInstancia)
+            {
+                MessageBox.Show(
+                    "Stockeate ya se encuentra abierto en esta computadora.",
+                    "Stockeate",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                return;
+            }
+
             ApplicationConfiguration.Initialize();
 
             Application.ThreadException += (s, e) =>

@@ -61,14 +61,16 @@ namespace Presentacion.Core.CuentaCorriente
             var response = _ctacteServicio.PuedeComprar(ctaCte.CuentaCorrienteId, monto);
             if (!response.Exitoso)
             {
-                MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(response.Mensaje);
+                //MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             var dniIngresado = NormalizarDni(txtDni.Text);
             if (string.IsNullOrEmpty(dniIngresado))
             {
-                MessageBox.Show("Por favor, ingrese un DNI válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Informar("Por favor, ingrese un DNI válido.", "Error");
+                //MessageBox.Show("Por favor, ingrese un DNI válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 txtDni.Focus();
                 return;
             }
@@ -77,7 +79,8 @@ namespace Presentacion.Core.CuentaCorriente
             // DNI que no coincidía y después igual podía cerrar OK si otro sí coincidía.
             if (!dniAutorizadosNormalizados.Contains(dniIngresado))
             {
-                MessageBox.Show("DNI no autorizado para cuenta corriente.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Informar("DNI no autorizado para cuenta corriente.", "Error");
+                //MessageBox.Show("DNI no autorizado para cuenta corriente.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 txtDni.Focus();
                 txtDni.SelectAll();
                 return;

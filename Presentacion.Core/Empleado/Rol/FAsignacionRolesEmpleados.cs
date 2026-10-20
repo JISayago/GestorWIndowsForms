@@ -100,7 +100,8 @@ namespace Presentacion.Core.Empleado.Rol
         {
             if (!entidadId.HasValue)
             {
-                MessageBox.Show(@"Por favor seleccione un usuario válido", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MostrarError("Por favor seleccione un usuario válido");
+                //MessageBox.Show(@"Por favor seleccione un usuario válido", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 
             }
             if (entidadId.HasValue)
@@ -110,7 +111,8 @@ namespace Presentacion.Core.Empleado.Rol
                 //txtNombre.Text = rol.Nombre;
                 //txtCodigoRol.Text = Convert.ToString(rol.CodigoRol);
                 //txtDescripcionRol.Text = Convert.ToString(rol.DetalleRol);
-                MessageBox.Show($"Cargar Datos de Empelado {empleado.Apellido}", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                //MessageBox.Show($"Cargar Datos de Empelado {empleado.Apellido}", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
         }
@@ -201,7 +203,8 @@ namespace Presentacion.Core.Empleado.Rol
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show("No hay empleado seleccionado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError("Por favor seleccione un empleado válido.");
+                //MessageBox.Show("No hay empleado seleccionado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -210,7 +213,8 @@ namespace Presentacion.Core.Empleado.Rol
 
             if (rolDisponibleSeleccionado == null)
             {
-                MessageBox.Show("Por favor seleccione un rol disponible para asignar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MostrarError("Por favor seleccione un rol disponible para asignar.");
+                //MessageBox.Show("Por favor seleccione un rol disponible para asignar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
@@ -227,23 +231,31 @@ namespace Presentacion.Core.Empleado.Rol
             if ((esRolSAdmin || tienePermisoAdmin) &&
                 (AuthHelper.UsuarioActual == null || !AuthHelper.UsuarioActual.EsSuperAdmin))
             {
-                MessageBox.Show("Solo un Super Administrador puede asignar roles con permisos de administración",
-                    "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Solo un Super Administrador puede asignar roles con permisos de administración");
+                //MessageBox.Show("Solo un Super Administrador puede asignar roles con permisos de administración",
+                    //"Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            var respuesta = MessageBox.Show(
-                $"¿Está seguro que desea asignar el rol {rolDisponibleSeleccionado.Nombre.ToUpper()} del empleado {empleado.Nombre} {empleado.Apellido} (usuario: {empleado.Username})?",
-                "Confirmar acción",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
+            if (!Confirmar(
+                   $"¿Está seguro que desea asignar el rol {rolDisponibleSeleccionado.Nombre.ToUpper()} del empleado {empleado.Nombre} {empleado.Apellido} (usuario: {empleado.Username})?",
+                    "Confirmar acción",
+                   si: "Sumar cantidad",
+                   no: "Cancelar"))
+                return;
+            //var respuesta = MessageBox.Show(
+            //    $"¿Está seguro que desea asignar el rol {rolDisponibleSeleccionado.Nombre.ToUpper()} del empleado {empleado.Nombre} {empleado.Apellido} (usuario: {empleado.Username})?",
+            //    "Confirmar acción",
+            //    MessageBoxButtons.YesNo,
+            //    MessageBoxIcon.Question);
 
-            if (respuesta != DialogResult.Yes) return;
+            //if (respuesta != DialogResult.Yes) return;
 
             if (_rolesDisponibles == null || _rolesAsignados == null)
             {
-                MessageBox.Show("No se pudieron cargar los roles. Reabrí la ventana.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError("No se pudieron cargar los roles. Reabrí la ventana.");
+                //MessageBox.Show("No se pudieron cargar los roles. Reabrí la ventana.", "Error",
+                //    MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -266,7 +278,8 @@ namespace Presentacion.Core.Empleado.Rol
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show("No hay empleado seleccionado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Informar("Por favor seleccione un empleado válido.");
+                //MessageBox.Show("No hay empleado seleccionado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -275,22 +288,30 @@ namespace Presentacion.Core.Empleado.Rol
 
             if (rolQuitableSeleccionado == null)
             {
-                MessageBox.Show("Por favor seleccione un rol asignado para quitar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                Informar("Por favor seleccione un rol asignado para quitar.");
+                //MessageBox.Show("Por favor seleccione un rol asignado para quitar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
-            var respuesta = MessageBox.Show(
-                $"¿Está seguro que desea quitar el rol {rolQuitableSeleccionado.Nombre.ToUpper()} del empleado {empleado.Nombre} {empleado.Apellido} (usuario: {empleado.Username})?",
-                "Confirmar acción",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
+            if (!Confirmar(
+                  $"¿Está seguro que desea quitar el rol {rolQuitableSeleccionado.Nombre.ToUpper()} del empleado {empleado.Nombre} {empleado.Apellido} (usuario: {empleado.Username})?",
+                    "Confirmar acción",
+                  si: "Sumar cantidad",
+                  no: "Cancelar"))
+                return;
+            //var respuesta = MessageBox.Show(
+            //    $"¿Está seguro que desea quitar el rol {rolQuitableSeleccionado.Nombre.ToUpper()} del empleado {empleado.Nombre} {empleado.Apellido} (usuario: {empleado.Username})?",
+            //    "Confirmar acción",
+            //    MessageBoxButtons.YesNo,
+            //    MessageBoxIcon.Question);
 
-            if (respuesta != DialogResult.Yes) return;
+            //if (respuesta != DialogResult.Yes) return;
 
             if (_rolesDisponibles == null || _rolesAsignados == null)
             {
-                MessageBox.Show("No se pudieron cargar los roles. Reabrí la ventana.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError("No se pudieron cargar los roles. Reabrí la ventana.");
+                //MessageBox.Show("No se pudieron cargar los roles. Reabrí la ventana.", "Error",
+                //    MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -310,8 +331,9 @@ namespace Presentacion.Core.Empleado.Rol
 
             if (sonIguales)
             {
-                MessageBox.Show("Al no haber cambios, no se han realizado cambios en los roles asignados.",
-                    "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Informar("Al no haber cambios, no se han realizado cambios en los roles asignados.");
+                //MessageBox.Show("Al no haber cambios, no se han realizado cambios en los roles asignados.",
+                //    "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -321,8 +343,9 @@ namespace Presentacion.Core.Empleado.Rol
 
             if (contieneSAdmin && (AuthHelper.UsuarioActual == null || !AuthHelper.UsuarioActual.EsSuperAdmin))
             {
-                MessageBox.Show("Solo un Super Administrador puede asignar el rol SADMIN",
-                    "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Solo un Super Administrador puede asignar el rol SADMIN","Acceso denegado");
+                //MessageBox.Show("Solo un Super Administrador puede asignar el rol SADMIN",
+                //    "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -337,18 +360,21 @@ namespace Presentacion.Core.Empleado.Rol
                 if (response.Exitoso)
                 {
                     RealizoAlgunaOperacion = true;
-                    MessageBox.Show(response.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Informar(response.Mensaje, "Información");
+                    //MessageBox.Show(response.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.Close();
                 }
                 else
                 {
-                    MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }
             else
             {
-                MessageBox.Show("Surgió un problema al obtener el empleado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError("Surgió un problema al obtener el empleado.");
+                //MessageBox.Show("Surgió un problema al obtener el empleado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
         }

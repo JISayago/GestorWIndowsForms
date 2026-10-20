@@ -325,7 +325,8 @@ namespace Presentacion.Core.CuentaCorriente
         {
             if (CuentaCorrienteId == null)
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MostrarError("No se encontró la cuenta corriente.");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 this.Close();
                 return;
             }
@@ -376,23 +377,26 @@ namespace Presentacion.Core.CuentaCorriente
         {
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Informar("Por favor ingrese los campos Obligatorios.", "Atención");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
             if (!ClienteID.HasValue)
             {
-                MessageBox.Show(
-                    "No se encontró el cliente.",
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MostrarError("No se encontró el cliente.");
+                //MessageBox.Show(
+                //    "No se encontró el cliente.",
+                //    "Error",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
 
                 return false;
             }
             if (_dnisAutorizadosLista.Count < 1)
             {
-                MessageBox.Show(@"Debe ingresar al menos un DNI autorizado.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Debe ingresar al menos un DNI autorizado.", "Atención");
+                //MessageBox.Show(@"Debe ingresar al menos un DNI autorizado.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
             var tipoVencimiento = rbVencimientoAutomatico.Checked
@@ -429,7 +433,8 @@ namespace Presentacion.Core.CuentaCorriente
 
             if (response.Exitoso)
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Exito("Cuenta corriente creada con éxito.", "Atención");
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 RealizoAlgunaOperacion = true;
                 DialogResult = DialogResult.OK;
                 this.Close();
@@ -438,7 +443,8 @@ namespace Presentacion.Core.CuentaCorriente
             }
             else
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError("Ocurrió un error al crear la cuenta corriente.");
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 RealizoAlgunaOperacion = false;
                 DialogResult = DialogResult.Cancel;
                 this.Close();
@@ -451,7 +457,8 @@ namespace Presentacion.Core.CuentaCorriente
         {
             if (CuentaCorrienteId == null)
             {
-                MessageBox.Show(@"´Por favor seleccione un cuentacorriente válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("Por favor seleccion una cuenta corriente válida.", "Atención");
+                //MessageBox.Show(@"´Por favor seleccione un cuentacorriente válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
             }
             if (TipoOperacion == TipoOperacion.Eliminar)
@@ -459,12 +466,14 @@ namespace Presentacion.Core.CuentaCorriente
                 var response = _cuentacorrienteServicio.Eliminar(CuentaCorrienteId.Value);
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Exito(response.Mensaje, "Éxito");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
             }
@@ -475,7 +484,8 @@ namespace Presentacion.Core.CuentaCorriente
         {
             if (CuentaCorrienteId == null)
             {
-                MessageBox.Show(@"´Por favor seleccione un cuentacorriente válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("Por favor seleccione una cuenta corriente válida.", "Atención");
+                //MessageBox.Show(@"´Por favor seleccione un cuentacorriente válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
             }
             if (!VerificarDatosObligatorios())
@@ -534,12 +544,14 @@ namespace Presentacion.Core.CuentaCorriente
 
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Exito(response.Mensaje, "Éxito");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
             }
@@ -552,14 +564,16 @@ namespace Presentacion.Core.CuentaCorriente
             var dni = txtNuevoDni.Text.Trim();
             if (string.IsNullOrWhiteSpace(dni))
             {
-                MessageBox.Show("Ingrese un DNI.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Ingrese un DNI.", "Atención");
+                //MessageBox.Show("Ingrese un DNI.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtNuevoDni.Focus();
                 return;
             }
 
             if (_dnisAutorizadosLista.Contains(dni))
             {
-                MessageBox.Show("Este DNI ya está en la lista.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Este DNI ya está en la lista.", "Atención");
+                //MessageBox.Show("Este DNI ya está en la lista.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -573,7 +587,8 @@ namespace Presentacion.Core.CuentaCorriente
         {
             if (lstDnis.SelectedItem == null)
             {
-                MessageBox.Show("Seleccione un DNI de la lista para eliminarlo.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Informar("Seleccione un DNI de la lista para eliminarlo.", "Atención");
+                //MessageBox.Show("Seleccione un DNI de la lista para eliminarlo.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -581,8 +596,9 @@ namespace Presentacion.Core.CuentaCorriente
             if (!string.IsNullOrWhiteSpace(_dniDueno) &&
                 string.Equals(dniSeleccionado, _dniDueno, StringComparison.OrdinalIgnoreCase))
             {
-                MessageBox.Show("No se puede quitar el DNI del titular de la cuenta.", "Atención",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("No se puede quitar el DNI del titular de la cuenta.", "Atención");
+                //MessageBox.Show("No se puede quitar el DNI del titular de la cuenta.", "Atención",
+                //    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -802,11 +818,12 @@ namespace Presentacion.Core.CuentaCorriente
             // No permite una cuenta sin saldo y sin deuda.
             if (!chkLimiteDeuda.Checked && saldo <= 0)
             {
-                MessageBox.Show(
-                    "La cuenta debe tener saldo a favor o permitir deuda.",
-                    "Atención",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                Informar("La cuenta debe tener saldo a favor o permitir deuda.", "Atención");
+                //MessageBox.Show(
+                //    "La cuenta debe tener saldo a favor o permitir deuda.",
+                //    "Atención",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Warning);
 
                 return false;
             }
@@ -820,11 +837,12 @@ namespace Presentacion.Core.CuentaCorriente
                 saldo < 0 &&
                 Math.Abs(saldo) > limite)
             {
-                MessageBox.Show(
-                    "La deuda inicial supera el límite permitido.",
-                    "Atención",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                Informar("La deuda inicial supera el límite permitido.", "Atención");
+                //MessageBox.Show(
+                //    "La deuda inicial supera el límite permitido.",
+                //    "Atención",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Warning);
 
                 return false;
             }
@@ -868,13 +886,14 @@ namespace Presentacion.Core.CuentaCorriente
 
                 if (!respuesta.Exitoso)
                 {
-                    MessageBox.Show(respuesta.Mensaje, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MostrarError(respuesta.Mensaje);
+                    //MessageBox.Show(respuesta.Mensaje, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 lblSaldo.Text = $"Saldo: {respuesta.DatoExtra}";
-
-                MessageBox.Show(respuesta.Mensaje, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Exito(respuesta.Mensaje, "Atención");
+                //MessageBox.Show(respuesta.Mensaje, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 CargarDatosCuenta();
                 ActualizarPantalla();
@@ -1162,19 +1181,27 @@ namespace Presentacion.Core.CuentaCorriente
                 return;
             if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Activa)
                 return;
-            var msjee = MessageBox.Show("¿Está seguro que desea Activar la cuenta corriente? Esta acción no se puede deshacer.", "Confirmar cierre", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (msjee != DialogResult.Yes)
+            if (!Confirmar(
+                 "¿Está seguro que desea Activar la cuenta corriente? Esta acción no se puede deshacer.",
+                  "Confirmar cierre",
+                  si: "Sumar cantidad",
+                  no: "Cancelar"))
                 return;
+            //var msjee = MessageBox.Show("¿Está seguro que desea Activar la cuenta corriente? Esta acción no se puede deshacer.", "Confirmar cierre", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            //if (msjee != DialogResult.Yes)
+            //    return;
             var respuesta = _cuentacorrienteServicio.ActivarCuentaCorriente(CuentaCorrienteId.Value);
             if (respuesta.Exitoso)
             {
-                MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Exito(respuesta.Mensaje, "Atención");
+                //MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 CargarDatosCuenta();
                 ActualizarPantalla();
             }
             else
             {
-                MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(respuesta.Mensaje);
+                //MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
 
@@ -1186,36 +1213,51 @@ namespace Presentacion.Core.CuentaCorriente
                 return;
             if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Cerrada)
             {
-                var msje = MessageBox.Show("¿Esta seguro que desea reabrir la cuenta corriente?", "Confirmar reapertura", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (msje == DialogResult.Yes)
+                var result = !Confirmar(
+                  "¿Esta seguro que desea reabrir la cuenta corriente?", "Confirmar reapertura",
+                  si: "Yes",
+                  no: "No");
+                //var msje = MessageBox.Show("¿Esta seguro que desea reabrir la cuenta corriente?", "Confirmar reapertura", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result)
                 {
                     var res = _cuentacorrienteServicio.ReabrirCuentaCorriente(CuentaCorrienteId.Value);
                     if (res.Exitoso)
                     {
-                        MessageBox.Show($"{res.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        Exito(res.Mensaje, "Atención");
+                        //MessageBox.Show($"{res.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         CargarDatosCuenta();
                         ActualizarPantalla();
                     }
                     else
                     {
-                        MessageBox.Show($"{res.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MostrarError(res.Mensaje);
+                        //MessageBox.Show($"{res.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 return;
             }
-            var msjee = MessageBox.Show("¿Está seguro que desea cerrar la cuenta corriente? Esta acción no se puede deshacer.", "Confirmar cierre", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (msjee != DialogResult.Yes)
+
+            if (!Confirmar(
+                  "¿Está seguro que desea cerrar la cuenta corriente? Esta acción no se puede deshacer.", "Confirmar cierre",
+                  si: "Cerrar cuenta",
+                  no: "Cancelar"))
                 return;
+            //var msjee = MessageBox.Show("¿Está seguro que desea cerrar la cuenta corriente? Esta acción no se puede deshacer.", "Confirmar cierre", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            //if (msjee != DialogResult.Yes)
+
+            //    return;
             var respuesta = _cuentacorrienteServicio.CerrarCuentaCorriente(CuentaCorrienteId.Value);
             if (respuesta.Exitoso)
             {
-                MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Exito(respuesta.Mensaje, "Atención");
+                //MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 CargarDatosCuenta();
                 ActualizarPantalla();
             }
             else
             {
-                MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(respuesta.Mensaje);
+                //MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
         }

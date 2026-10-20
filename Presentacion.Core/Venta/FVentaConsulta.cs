@@ -206,7 +206,8 @@ namespace Presentacion.Core.Venta
         {
             if (!id.HasValue)
             {
-                MessageBox.Show("Seleccione una venta.");
+                Informar("Seleccione una venta.", "Atención");
+                //MessageBox.Show("Seleccione una venta.");
 
                 return;
             }
@@ -215,7 +216,8 @@ namespace Presentacion.Core.Venta
                 _ventaServicio.ObtenerVentasPorIds(new List<long> { id.Value });
             if (resultado[0].Estado == (int)EstadoVenta.CancelacionVenta || resultado[0].Estado == (int)EstadoVenta.Cancelada)
             {
-                MessageBox.Show("Por favor selecione una venta que no haya sido cancelada.");
+                Informar("Por favor seleccione una venta que no haya sido cancelada.", "Atención");
+                //MessageBox.Show("Por favor selecione una venta que no haya sido cancelada.");
                 return;
 
             }
@@ -360,7 +362,8 @@ namespace Presentacion.Core.Venta
         {
             if (!entidadID.HasValue)
             {
-                MessageBox.Show("Seleccione una venta.");
+                Informar("Seleccione una venta.", "Atención");
+                //MessageBox.Show("Seleccione una venta.");
 
                 return;
             }

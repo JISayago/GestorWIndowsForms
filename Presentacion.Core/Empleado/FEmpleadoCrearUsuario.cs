@@ -45,7 +45,8 @@ namespace Presentacion.Core.Empleado
 
             if (!string.IsNullOrEmpty(_empleadoDto.Username))
             {
-                MessageBox.Show($"El empleado {_empleadoDto.Nombre} {_empleadoDto.Apellido} ya cuenta con el usuario asignado: {_empleadoDto.Username}", "Usuario Existente", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Informar($"El empleado {_empleadoDto.Nombre} {_empleadoDto.Apellido} ya cuenta con el usuario asignado: {_empleadoDto.Username}", "Usuario Existente");
+                //MessageBox.Show($"El empleado {_empleadoDto.Nombre} {_empleadoDto.Apellido} ya cuenta con el usuario asignado: {_empleadoDto.Username}", "Usuario Existente", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.Close();
             }
 
@@ -70,12 +71,14 @@ namespace Presentacion.Core.Empleado
         {
             if (string.IsNullOrEmpty(txtNombreUsuario.Text))
             {
-                MessageBox.Show("Por favor ingrese un nombre de usuario.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Por favor ingrese un nombre de usuario.", "Validación");
+                //MessageBox.Show("Por favor ingrese un nombre de usuario.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             if (_usuarioServicio.ExisteUsuario(txtNombreUsuario.Text))
             {
-                MessageBox.Show("El nombre de usuario ya existe. Por favor, elija otro.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("El nombre de usuario ya existe. Por favor, elija otro.", "Validación");
+                //MessageBox.Show("El nombre de usuario ya existe. Por favor, elija otro.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             var usuarioDto = new UsuarioDTO
@@ -89,13 +92,16 @@ namespace Presentacion.Core.Empleado
             if (estadoOperacion.Exitoso)
             {
                 RealizoAlgunaOperacion = true;
-                MessageBox.Show("Usuario creado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                MessageBox.Show("Recuerde que debe actualizar la contraseña en el primer ingreso!.", "Recordatorio", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Exito("Usuario creado exitosamente.", "Éxito");
+                //MessageBox.Show("Usuario creado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Informar("Recuerde que debe actualizar la contraseña en el primer ingreso!.", "Recordatorio");
+                //MessageBox.Show("Recuerde que debe actualizar la contraseña en el primer ingreso!.", "Recordatorio", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.Close();
             }
             else
             {
-                MessageBox.Show(estadoOperacion.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError($"{estadoOperacion.Mensaje}");
+                //MessageBox.Show(estadoOperacion.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

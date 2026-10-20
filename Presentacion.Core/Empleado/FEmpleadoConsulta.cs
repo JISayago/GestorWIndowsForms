@@ -128,14 +128,21 @@ namespace Presentacion.Core.Empleado
             if (!id.HasValue)
                 return;
 
-            var resultado = MessageBox.Show(
-                "¿Confirma que desea resetear la contraseña del usuario?",
+            if (!Confirmar(
+                     "¿Confirma que desea resetear la contraseña del usuario?",
                 "Confirmar acción",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            if (resultado != DialogResult.Yes)
+                   si: "Aceptar",
+                   no: "Cancelar"))
                 return;
+
+            //var resultado = MessageBox.Show(
+            //    "¿Confirma que desea resetear la contraseña del usuario?",
+            //    "Confirmar acción",
+            //    MessageBoxButtons.YesNo,
+            //    MessageBoxIcon.Question);
+
+            //if (resultado != DialogResult.Yes)
+            //    return;
 
             var adminId = logeadoID;
 
@@ -145,13 +152,15 @@ namespace Presentacion.Core.Empleado
                 adminId,
                 usuarioDesbloquearID);
 
-            MessageBox.Show(resp.Mensaje);
+            Informar(resp.Mensaje,"Atención");
+            //MessageBox.Show(resp.Mensaje);
         }
 
         private void AsignarVendedor(long? id)
         {
             if (!entidadID.HasValue)
             {
+                Informar("Seleccione un empleado.");
                 MessageBox.Show("Seleccione un empleado.");
                 return;
             }

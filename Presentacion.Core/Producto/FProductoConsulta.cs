@@ -191,7 +191,8 @@ namespace Presentacion.Core.Producto
 
             if (dgvGrilla.CurrentRow == null)
             {
-                MessageBox.Show("Seleccione un producto.");
+                Informar("Seleccione un producto.");
+                //MessageBox.Show("Seleccione un producto.");
                 return;
             }
 
@@ -280,7 +281,8 @@ namespace Presentacion.Core.Producto
         {
             if (!id.HasValue)
             {
-                MessageBox.Show("Seleccione un registro.");
+                Informar("Seleccione un registro.");
+                //MessageBox.Show("Seleccione un registro.");
                 return;
             }
 

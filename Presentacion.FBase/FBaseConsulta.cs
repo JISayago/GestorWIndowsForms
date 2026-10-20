@@ -40,7 +40,7 @@ namespace Presentacion.FBase
         protected virtual string TextoLblCbx3 => "Filtro 3";
         protected virtual string TextoTitular => "Aqui se describe que se esta mostrando";
 
-        
+
 
         public FBaseConsulta()
         {
@@ -56,6 +56,7 @@ namespace Presentacion.FBase
             btnImprimir.Image = Constantes.Imagenes.ImgImprimir;
             btnActualizar.Image = Constantes.Imagenes.ImgActualizar;
             btnSalir.Image = Constantes.Imagenes.ImgCerrar;
+            btnVolver.Image = Constantes.Imagenes.ImgVolver;
 
             entidadID = null;
             puedeEjecutarComando = false;
@@ -547,7 +548,7 @@ namespace Presentacion.FBase
 
             chkUsarRango.CheckedChanged -= chkUsarRango_CheckedChanged;
             chkUsarRango.CheckedChanged += chkUsarRango_CheckedChanged;
-            
+
         }
         protected virtual void ActivarRecargaCmbPorFechas()
         {
@@ -611,25 +612,25 @@ namespace Presentacion.FBase
         {
             return NormalizadorTextoBusqueda.NormalizarTextoParaBusqueda(texto);
         }
-protected virtual string NormalizarTextoBusqueda(string texto)
-    {
-        if (string.IsNullOrWhiteSpace(texto))
-            return string.Empty;
-
-        texto = texto.Trim().ToLowerInvariant().Normalize(NormalizationForm.FormD);
-
-        var sb = new StringBuilder();
-
-        foreach (var c in texto)
+        protected virtual string NormalizarTextoBusqueda(string texto)
         {
-            var categoria = CharUnicodeInfo.GetUnicodeCategory(c);
-            if (categoria != UnicodeCategory.NonSpacingMark)
-                sb.Append(c);
-        }
+            if (string.IsNullOrWhiteSpace(texto))
+                return string.Empty;
 
-        return sb.ToString().Normalize(NormalizationForm.FormC);
-    }
-    protected virtual FiltroConsulta ObtenerFiltros()
+            texto = texto.Trim().ToLowerInvariant().Normalize(NormalizationForm.FormD);
+
+            var sb = new StringBuilder();
+
+            foreach (var c in texto)
+            {
+                var categoria = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (categoria != UnicodeCategory.NonSpacingMark)
+                    sb.Append(c);
+            }
+
+            return sb.ToString().Normalize(NormalizationForm.FormC);
+        }
+        protected virtual FiltroConsulta ObtenerFiltros()
         {
             return new FiltroConsulta
             {
@@ -680,7 +681,7 @@ protected virtual string NormalizarTextoBusqueda(string texto)
         {
             if (!chkUsarFecha.Checked)
                 return null;
-            
+
             return dtpDesde.Value.Date;
         }
 
@@ -933,12 +934,14 @@ protected virtual string NormalizarTextoBusqueda(string texto)
         {
             if (dgvGrilla.RowCount == 0)
             {
-                MessageBox.Show("No hay datos cargados.");
+                Informar("No hay registros para seleccionar.","Atención");
+                //MessageBox.Show("No hay datos cargados.");
                 return false;
             }
 
             if (!entidadID.HasValue)
             {
+                Informar("Seleccione un registro.","Atención");
                 MessageBox.Show("Seleccione un registro.");
                 return false;
             }
@@ -990,7 +993,8 @@ protected virtual string NormalizarTextoBusqueda(string texto)
                 {
                     if (accion.RequiereSeleccion && !entidadID.HasValue)
                     {
-                        MessageBox.Show("Seleccione un registro.");
+                        Informar("Seleccione un registro.","Atención");
+                        //MessageBox.Show("Seleccione un registro.");
                         return;
                     }
 
@@ -1224,6 +1228,9 @@ protected virtual string NormalizarTextoBusqueda(string texto)
                 dtpHasta.Value = DateTime.Now;
         }
 
-       
+        private void btnVolver_Click(object sender, EventArgs e)
+        {
+            new VolverAlInicio(this).Volver();
+        }
     }
 }

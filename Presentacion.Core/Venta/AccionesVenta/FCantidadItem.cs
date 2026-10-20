@@ -15,10 +15,13 @@ namespace Presentacion.Core.Venta
     public partial class FCantidadItem : FBase.FBase
     {
         public decimal cantidad;
-        public FCantidadItem()
+        public FCantidadItem(string cantMinima = "")
         {
             InitializeComponent();
-            txtCantidad.Text = "1";
+            if (!string.IsNullOrEmpty(cantMinima))
+                txtCantidad.Text = cantMinima;
+            else
+                txtCantidad.Text = "1";
         }
 
         private void btnAceptar_Click(object sender, EventArgs e)
@@ -39,7 +42,9 @@ namespace Presentacion.Core.Venta
             }
             else
             {
-                MessageBox.Show("Ingrese un número válido.");
+                Informar("Ingrese un número válido.");
+                //Advertir("Ingrese un número válido.");
+                //MessageBox.Show("Ingrese un número válido.");
                 txtCantidad.Focus();
             }
         }

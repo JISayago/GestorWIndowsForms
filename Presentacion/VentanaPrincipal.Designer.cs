@@ -139,7 +139,7 @@ namespace Presentacion
             btnContraVenta.Name = "btnContraVenta";
             btnContraVenta.Size = new Size(236, 63);
             btnContraVenta.TabIndex = 16;
-            btnContraVenta.Text = "DEVOLUCIÓN / CONTRAASIENTO";
+            btnContraVenta.Text = "CANCELACION DE VENTA";
             btnContraVenta.UseVisualStyleBackColor = true;
             btnContraVenta.Click += btnContraVenta_Click;
             // 
@@ -450,9 +450,11 @@ namespace Presentacion
             // 
             // panelAvisos
             // 
+            panelAvisos.BackColor = Color.FromArgb(234, 234, 234);
             panelAvisos.Dock = DockStyle.Fill;
             panelAvisos.Location = new Point(3, 34);
             panelAvisos.Name = "panelAvisos";
+            panelAvisos.Padding = new Padding(14);
             panelAvisos.Size = new Size(446, 595);
             panelAvisos.TabIndex = 0;
             // 

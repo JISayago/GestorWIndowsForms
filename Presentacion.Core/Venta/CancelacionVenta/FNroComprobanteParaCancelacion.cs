@@ -35,7 +35,8 @@ namespace Presentacion.Core.Venta
 
             if (!comprobantes.Any())
             {
-                MessageBox.Show("No se encontraron ventas para la fecha seleccionada.");
+                Informar("No se encontraron ventas para la fecha seleccionada.", "Atención");
+                //MessageBox.Show("No se encontraron ventas para la fecha seleccionada.");
                 return;
             }
 

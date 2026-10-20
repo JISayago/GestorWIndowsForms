@@ -161,12 +161,15 @@ namespace Stockeate
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
+                MostrarError(
                     "No se pudo obtener la información de instalación.\r\n\r\n" +
-                    ex.Message,
-                    "Stockeate - Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    ex.Message);
+                //MessageBox.Show(
+                //    "No se pudo obtener la información de instalación.\r\n\r\n" +
+                //    ex.Message,
+                //    "Stockeate - Error",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
 
                 DialogResult =
                     DialogResult.Cancel;

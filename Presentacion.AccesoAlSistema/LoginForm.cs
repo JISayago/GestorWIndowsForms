@@ -52,8 +52,8 @@ namespace Presentacion.AccesoAlSistema
         {
             if (string.IsNullOrWhiteSpace(txtUsuario.Text) || string.IsNullOrWhiteSpace(txtPass.Text))
             {
-                MessageBox.Show("Por favor el usuario y la contraseña son obligatorios",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Por favor el usuario y la contraseña son obligatorios", "Error");
+                //MessageBox.Show( MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -68,8 +68,9 @@ namespace Presentacion.AccesoAlSistema
                 // 🔸 Primer ingreso
                 if (estadoUsuario.Mensaje.Contains("Primer ingreso"))
                 {
-                    MessageBox.Show(estadoUsuario.Mensaje,
-                        "Acción requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Informar(estadoUsuario.Mensaje, "Acción requerida");
+                    //MessageBox.Show(estadoUsuario.Mensaje,
+                        //"Acción requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                     var form = new ActualizarPass((long)estadoUsuario.EntidadId);
                     form.ShowDialog();
@@ -82,8 +83,9 @@ namespace Presentacion.AccesoAlSistema
 
             if (!response.Exitoso)
             {
-                MessageBox.Show(response.Mensaje,
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(response.Mensaje);
+                //MessageBox.Show(response.Mensaje,
+                    //"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -141,8 +143,9 @@ namespace Presentacion.AccesoAlSistema
                 {
                     if (estadoUsuario.Mensaje.Contains("recuperación"))
                     {
-                        MessageBox.Show(estadoUsuario.Mensaje,
-                            "Recuperación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        Informar(estadoUsuario.Mensaje, "Recuperación");
+                        //MessageBox.Show(estadoUsuario.Mensaje,
+                            //"Recuperación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         var X = estadoUsuario.DatoExtra;
 
                         var form = new FCodigoRecuperacion(estadoUsuario.DatoExtra);

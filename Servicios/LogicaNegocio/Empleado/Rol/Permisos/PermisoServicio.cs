@@ -94,7 +94,7 @@ public class PermisoServicio : IPermisoServicio
             return new EstadoOperacion
             {
                 Exitoso = false,
-                Mensaje = ex.Message
+                Mensaje = "Hubo un Error inesperado y no se pudieron actualizar los permisos."
             };
         }
     }

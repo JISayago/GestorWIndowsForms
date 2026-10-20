@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Presentacion.AccesoAlSistema
 {
-    public partial class ActualizarPass : Form
+    public partial class ActualizarPass : FBase.FBase
     {
         private readonly IUsuarioServicio _usuarioServicio;
         public UsuarioDTO _usuario;
@@ -26,7 +26,8 @@ namespace Presentacion.AccesoAlSistema
             _usuario = _usuarioServicio.ObtenerUsuarioPorId(EntidadId);
             if (_usuario == null)
             {
-                MessageBox.Show("Error al obtener el usuario", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Informar("Error al obtener el usuario", "Error");
+                //MessageBox.Show("Error al obtener el usuario", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Close();
             }
 
@@ -50,21 +51,25 @@ namespace Presentacion.AccesoAlSistema
                     var response = _usuarioServicio.ActualziarPassPrimerIngreso(_usuario.PersonaId, txtNuevaPass.Text);
                     if (!response.Exitoso)
                     {
-                        MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MostrarError(response.Mensaje);
+                        //MessageBox.Show(response.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     else
                     {
-                        MessageBox.Show("Contraseña actualizada correctamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        Exito("Contraseña actualizada correctamente", "Éxito");
+                        //MessageBox.Show("Contraseña actualizada correctamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         this.Close();
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Las contraseñas no coinciden", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Informar("Las contraseñas no coinciden","Error");
+                    //MessageBox.Show("Las contraseñas no coinciden", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
+                Informar("Debe ingresar una contraseña", "Error");
                 MessageBox.Show("Debe ingresar una contraseña", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }

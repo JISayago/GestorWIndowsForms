@@ -154,19 +154,26 @@ namespace Presentacion.Core.Caja
                 {
                     if (!cajaServicio.ObtenerEstadoCaja())
                     {
-                        MessageBox.Show("No hay una caja abierta para cerrar.", "Atención",
-                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        Informar("No hay una caja abierta para cerrar.");
+                        //MessageBox.Show("No hay una caja abierta para cerrar.", "Atención",
+                        //    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
-                    var confirmar = MessageBox.Show(
-                        $"¿Confirmás el cierre de caja?\nSaldo actual: {lblSaldoActual.Text}",
+                    if (!Confirmar(
+                      $"¿Confirmás el cierre de caja?\nSaldo actual: {lblSaldoActual.Text}",
                         "Cerrar caja",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question);
-
-                    if (confirmar != DialogResult.Yes)
+                        si: "Aceptar",
+                        no: "Cancelar"))
                         return;
+                    //var confirmar = MessageBox.Show(
+                    //    $"¿Confirmás el cierre de caja?\nSaldo actual: {lblSaldoActual.Text}",
+                    //    "Cerrar caja",
+                    //    MessageBoxButtons.YesNo,
+                    //    MessageBoxIcon.Question);
+
+                    //if (confirmar != DialogResult.Yes)
+                    //    return;
 
                     cajaServicio.CerrarCaja(DatosSistema.UsuarioId);
                     DatosSistema.EstaCajaAbierta = false;
@@ -179,16 +186,18 @@ namespace Presentacion.Core.Caja
 
                 if (cajaServicio.ObtenerEstadoCaja())
                 {
-                    MessageBox.Show("Ya hay una caja abierta. Cerrala antes de abrir otra.", "Atención",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Informar("Ya hay una caja abierta. Cerrala antes de abrir otra.");
+                    //MessageBox.Show("Ya hay una caja abierta. Cerrala antes de abrir otra.", "Atención",
+                    //    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 decimal montoApertura = ParsearMonto(txtMontoApertura.Text);
                 if (montoApertura < 0)
                 {
-                    MessageBox.Show("El monto de apertura no puede ser negativo.", "Atención",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Informar("El monto de apertura no puede ser negativo.");
+                    //MessageBox.Show("El monto de apertura no puede ser negativo.", "Atención",
+                    //    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     txtMontoApertura.Focus();
                     return;
                 }
@@ -205,7 +214,8 @@ namespace Presentacion.Core.Caja
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError("Surgio un Error Inesperado");
+                //MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

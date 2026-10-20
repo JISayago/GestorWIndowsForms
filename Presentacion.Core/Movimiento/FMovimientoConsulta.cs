@@ -50,6 +50,13 @@ namespace Presentacion.Core.Movimiento
         {
             return true;
         }
+
+        protected override void ActivarRecargaCmbPorFechas()
+        {
+            cbx3.SelectedIndex = 1;
+            var filtros = ObtenerFiltros();
+            ActualizarDatos(dgvGrilla, filtros);
+        }
         protected override void ConfigurarFiltrosUI()
         {
             base.ConfigurarFiltrosUI();

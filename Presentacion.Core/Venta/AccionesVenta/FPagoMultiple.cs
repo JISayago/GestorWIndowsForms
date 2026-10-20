@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace Presentacion.Core.Venta
 {
-    public partial class FPagoMultiple : Form
+    public partial class FPagoMultiple : FBase.FBase
     {
         // Resultado final accesible por el caller
         public List<FormaPago> ResultPagos { get; private set; } = new List<FormaPago>();
@@ -136,14 +136,17 @@ namespace Presentacion.Core.Venta
             // Validaciones de cantidad:
             if (CantidadPagos > 7)
             {
-                MessageBox.Show("No se permiten más de 7 formas de pago. Operación cancelada.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Advertir("No se permiten más de 7 formas de pago. Operación cancelada.");
+                //MessageBox.Show("No se permiten más de 7 formas de pago. Operación cancelada.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.DialogResult = DialogResult.Cancel;
                 this.Close();
                 return;
             }
             else if (CantidadPagos > 3)
             {
-                MessageBox.Show("No es recomendable usar más de 3 formas de pago. ¿Desea continuar?", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                Advertir("No es recomendable usar más de 3 formas de pago. ¿Desea continuar?");
+                //MessageBox.Show("No es recomendable usar más de 3 formas de pago. ¿Desea continuar?", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
             // Mostrar total
@@ -377,7 +380,8 @@ namespace Presentacion.Core.Venta
                 var tipo = fTipo.tipoPagoSeleccionado;
                 if (index < 0 || index >= _tipoSeleccionado.Count)
                 {
-                    MessageBox.Show("Índice inválido al asignar forma de pago.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MostrarError("No se permiten más de 7 formas de pago. Operación cancelada.");
+                    //MessageBox.Show("Índice inválido al asignar forma de pago.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                 _tipoSeleccionado[index] = tipo;
@@ -421,12 +425,14 @@ namespace Presentacion.Core.Venta
 
             if (suma <= 0m)
             {
-                MessageBox.Show("Ingrese al menos un monto mayor a cero.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Advertir("Ingrese al menos un monto mayor a cero.");
+                //MessageBox.Show("Ingrese al menos un monto mayor a cero.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (suma > TotalVenta)
             {
+                Advertir("La suma de los montos no puede superar el total de la venta.");
                 MessageBox.Show("La suma de los montos no puede superar el total de la venta.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -441,7 +447,8 @@ namespace Presentacion.Core.Venta
                 // Si monto > 0, debo tener forma de pago asignada
                 if (monto > 0 && (_tipoSeleccionado.Count <= i || _tipoSeleccionado[i] == null))
                 {
-                    MessageBox.Show($"Debe seleccionar una forma de pago para el Pago {i + 1} (monto {monto:C2}).", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Advertir($"Debe seleccionar una forma de pago para el Pago {i + 1} (monto {monto:C2}).");
+                    //MessageBox.Show($"Debe seleccionar una forma de pago para el Pago {i + 1} (monto {monto:C2}).", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
