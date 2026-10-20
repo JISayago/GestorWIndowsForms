@@ -42,7 +42,8 @@ namespace Presentacion.Core.Venta
             }
             else
             {
-                Advertir("Ingrese un número válido.");
+                Informar("Ingrese un número válido.");
+                //Advertir("Ingrese un número válido.");
                 //MessageBox.Show("Ingrese un número válido.");
                 txtCantidad.Focus();
             }

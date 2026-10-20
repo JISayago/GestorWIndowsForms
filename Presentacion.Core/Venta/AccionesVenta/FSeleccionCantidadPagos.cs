@@ -101,7 +101,8 @@ namespace Presentacion.Core.Venta
                     // Asegurar que la cantidad sea al menos 2
                     if (CantidadPagos < 2)
                     {
-                        MessageBox.Show("La cantidad debe ser al menos 2 para pagos múltiples.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        Informar("La cantidad debe ser al menos 2 para pagos múltiples.", "Atención");
+                        //MessageBox.Show("La cantidad debe ser al menos 2 para pagos múltiples.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
@@ -112,7 +113,8 @@ namespace Presentacion.Core.Venta
                 else
                 {
                     // Usuario canceló el diálogo de cantidad: volvemos al form sin cerrar
-                    MessageBox.Show("Operación cancelada. Por favor, seleccione nuevamente la cantidad de pagos.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Informar("Operación cancelada. Por favor, seleccione nuevamente la cantidad de pagos.", "Atención");
+                    //MessageBox.Show("Operación cancelada. Por favor, seleccione nuevamente la cantidad de pagos.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
             }
