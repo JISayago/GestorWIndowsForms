@@ -67,7 +67,8 @@ namespace Presentacion.Core.Articulo.Marca
         {
             if (!entidadId.HasValue)
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("No se encontro la marca seleccionada", "Error");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 
                 this.Close();
             }
@@ -85,7 +86,8 @@ namespace Presentacion.Core.Articulo.Marca
             }
             else
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("No se encontro la marca seleccionada", "Error");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
 
         }
@@ -94,8 +96,9 @@ namespace Presentacion.Core.Articulo.Marca
         {
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("Por favor ingrese los campos Obligatorios.", "Atención");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
                 return false;
             }
             var marcaNueva = new MarcaDTO
@@ -108,14 +111,16 @@ namespace Presentacion.Core.Articulo.Marca
 
             if (response.Exitoso)
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Information);
+                Exito(response.Mensaje, "Éxito");
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                //   MessageBoxIcon.Information);
                 return true;
             }
             else
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
+                MostrarError(response.Mensaje);
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                //   MessageBoxIcon.Error);
                 return false;
             }
 
@@ -125,7 +130,8 @@ namespace Presentacion.Core.Articulo.Marca
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show(@"´Por favor seleccione una marca válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("Por favor seleccione una marca válida.", "Error");
+                //MessageBox.Show(@"´Por favor seleccione una marca válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
 
             }
@@ -134,14 +140,16 @@ namespace Presentacion.Core.Articulo.Marca
                 var response = _marcaServicio.Eliminar((long)EntidadID);
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Information);
+                    Exito(response.Mensaje, "Éxito");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Error);
                     return false;
                 }
 
@@ -154,15 +162,17 @@ namespace Presentacion.Core.Articulo.Marca
         {
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("Por favor ingrese los campos Obligatorios.", "Atención");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
                 return false;
             }
             if (TipoOperacion == TipoOperacion.Modificar)
             {
                 if (!EntidadID.HasValue)
                 {
-                    MessageBox.Show(@"´Por favor seleccione un marca válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    Informar("Por favor seleccione una marca válida.", "Error");
+                    //MessageBox.Show(@"´Por favor seleccione un marca válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return false;
 
                 }
@@ -176,14 +186,16 @@ namespace Presentacion.Core.Articulo.Marca
 
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    Exito(response.Mensaje, "Éxito");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Error);
                     return false;
                 }
 
