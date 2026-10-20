@@ -58,11 +58,12 @@ namespace Presentacion.Core.Venta.CancelacionVenta
 
             if (!ventas.Any())
             {
-                MessageBox.Show(
-                    "No se encontraron comprobantes.",
-                    "Atención",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
+                Informar("No se encontraron comprobantes.","Atención");
+                //MessageBox.Show(
+                //    "No se encontraron comprobantes.",
+                //    "Atención",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Warning
                 );
                 Close();
                 return;
