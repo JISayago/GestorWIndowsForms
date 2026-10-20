@@ -65,7 +65,8 @@ namespace Presentacion.Core.Empleado
         {
             if (!entidadId.HasValue)
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("Error al cargar los datos del empleado.");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 
                 this.Close();
             }
@@ -97,20 +98,27 @@ namespace Presentacion.Core.Empleado
 
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("Por favor ingrese los campos Obligatorios.");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
+                    //MessageBoxIcon.Error);
                 return false;
             }
             if (txtDni.Text.Length > 15)
             {
-                MessageBox.Show(@"El DNI no puede tener más de 15 caracteres.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("El DNI no puede tener más de 15 caracteres.");
+                //MessageBox.Show(@"El DNI no puede tener más de 15 caracteres.", @"Atención", MessageBoxButtons.OK,
+                    //MessageBoxIcon.Error);
                 return false;
             }
             if(string.IsNullOrEmpty(txtLegajo.Text))
             {
-                var respuesta = MessageBox.Show("El campo Legajo está vacío. ¿Desea que se complete automáticamente con el valor del DNI?", "Confirmación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if(respuesta == DialogResult.Yes)
+                var result = !Confirmar(
+               "El campo Legajo está vacío. ¿Desea que se complete automáticamente con el valor del DNI?", "Confirmación",
+                 si: "Sumar cantidad",
+                 no: "Cancelar");
+
+                //var respuesta = MessageBox.Show("El campo Legajo está vacío. ¿Desea que se complete automáticamente con el valor del DNI?", "Confirmación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if(result)
                 {
                     txtLegajo.Text = txtDni.Text;
                 }
@@ -139,14 +147,16 @@ namespace Presentacion.Core.Empleado
 
             if (response.Exitoso)
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Information);
+                Exito("Empleado agregado correctamente.");
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                //   MessageBoxIcon.Information);
                 return true;
             }
             else
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
+                MostrarError($"{response.Mensaje}");
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                //   MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -155,7 +165,8 @@ namespace Presentacion.Core.Empleado
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show(@"´Por favor seleccione un empleado válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("Por favor seleccione un empleado válido.");
+                //MessageBox.Show(@"´Por favor seleccione un empleado válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
 
             }
@@ -164,13 +175,15 @@ namespace Presentacion.Core.Empleado
                 var response = _empleadoServicio.Eliminar((long)EntidadID);
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Information);
+                    Exito($"{response.Mensaje}");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    MostrarError($"{response.Mensaje}");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
                        MessageBoxIcon.Error);
                     return false;
                 }
@@ -182,7 +195,8 @@ namespace Presentacion.Core.Empleado
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show(@"´Por favor seleccione un empleado válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("Por favor seleccione un empleado válido.");
+                //MessageBox.Show(@"´Por favor seleccione un empleado válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
 
             }
@@ -209,14 +223,16 @@ namespace Presentacion.Core.Empleado
 
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Information);
+                    Exito($"{response.Mensaje}");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       //MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                    MostrarError($"{response.Mensaje}");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Error);
                     return false;
                 }
 

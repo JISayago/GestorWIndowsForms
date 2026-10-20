@@ -361,8 +361,9 @@ namespace Presentacion.Core.Empleado.Rol.Permisos
         {
             if (_permisosDisponibles == null || _permisosAsignados == null)
             {
-                MessageBox.Show("No se pudieron cargar los permisos. Reabrí la ventana.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError("No se pudieron cargar los permisos. Reabrí la ventana.");)
+                //MessageBox.Show("No se pudieron cargar los permisos. Reabrí la ventana.", "Error",
+                //    MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -385,14 +386,16 @@ namespace Presentacion.Core.Empleado.Rol.Permisos
         {
             if (!RolId.HasValue)
             {
-                MessageBox.Show("No hay rol seleccionado");
+                Informar("No hay rol seleccionado","Error");
+                //MessageBox.Show("No hay rol seleccionado");
                 return;
             }
 
             if (_permisosControl == null || _permisosAsignados == null)
             {
-                MessageBox.Show("No se pudieron cargar los permisos. Reabrí la ventana.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError("No se pudieron cargar los permisos. Reabrí la ventana.");
+                //MessageBox.Show("No se pudieron cargar los permisos. Reabrí la ventana.", "Error",
+                //    MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -401,7 +404,8 @@ namespace Presentacion.Core.Empleado.Rol.Permisos
 
             if (sonIguales)
             {
-                MessageBox.Show("Sin cambios");
+                Informar("Sin cambios", "Información");
+                //MessageBox.Show("Sin cambios");
                 return;
             }
 
@@ -410,8 +414,9 @@ namespace Presentacion.Core.Empleado.Rol.Permisos
 
             if (contieneAdmin && (AuthHelper.UsuarioActual == null || !AuthHelper.UsuarioActual.EsSuperAdmin))
             {
-                MessageBox.Show("Solo un Super Administrador puede asignar permisos de administración",
-                    "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Solo un Super Administrador puede asignar permisos de administración", "Acceso denegado");
+                //MessageBox.Show("Solo un Super Administrador puede asignar permisos de administración",
+                //    "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 _permisosAsignados.Clear();
                 foreach (var p in _permisosControl)
@@ -425,11 +430,12 @@ namespace Presentacion.Core.Empleado.Rol.Permisos
 
             if (response != null && response.Exitoso)
             {
-                MessageBox.Show(string.IsNullOrWhiteSpace(response.Mensaje)
-                        ? "Permisos actualizados correctamente"
-                        : response.Mensaje,
-                    "Información",
-                    MessageBoxButtons.OK,
+                Exito(response.Mensaje, "Actualización");
+                //MessageBox.Show(string.IsNullOrWhiteSpace(response.Mensaje)
+                //        ? "Permisos actualizados correctamente"
+                //        : response.Mensaje,
+                //    "Información",
+                //    MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
 
                 _permisosControl = new BindingList<PermisoDTO>(
@@ -442,10 +448,11 @@ namespace Presentacion.Core.Empleado.Rol.Permisos
             }
             else
             {
-                MessageBox.Show(response?.Mensaje ?? "No se pudieron actualizar los permisos.",
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MostrarError(response?.Mensaje);
+                //MessageBox.Show(response?.Mensaje ?? "No se pudieron actualizar los permisos.",
+                //    "Error",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
             }
         }
 
