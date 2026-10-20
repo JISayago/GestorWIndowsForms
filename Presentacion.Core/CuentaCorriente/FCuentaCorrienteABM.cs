@@ -377,7 +377,7 @@ namespace Presentacion.Core.CuentaCorriente
         {
             if (!VerificarDatosObligatorios())
             {
-                Informar("Por favor ingrese los campos Obligatorios.", "Atención")
+                Informar("Por favor ingrese los campos Obligatorios.", "Atención");
                 //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }

@@ -361,7 +361,7 @@ namespace Presentacion.Core.Empleado.Rol.Permisos
         {
             if (_permisosDisponibles == null || _permisosAsignados == null)
             {
-                MostrarError("No se pudieron cargar los permisos. Reabrí la ventana.");)
+                MostrarError("No se pudieron cargar los permisos. Reabrí la ventana.");
                 //MessageBox.Show("No se pudieron cargar los permisos. Reabrí la ventana.", "Error",
                 //    MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -436,7 +436,7 @@ namespace Presentacion.Core.Empleado.Rol.Permisos
                 //        : response.Mensaje,
                 //    "Información",
                 //    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                    //MessageBoxIcon.Information);
 
                 _permisosControl = new BindingList<PermisoDTO>(
                     _permisosAsignados.Select(t => new PermisoDTO

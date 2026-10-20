@@ -357,7 +357,7 @@ namespace Presentacion.Core.CuentaCorriente
             {
                 if (_dnisAutorizadosLista.Contains(dni))
                 {
-                    Informar("Este DNI ya está en la lista.", "Atención");)
+                    Informar("Este DNI ya está en la lista.", "Atención");
                     //MessageBox.Show("Este DNI ya está en la lista.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }

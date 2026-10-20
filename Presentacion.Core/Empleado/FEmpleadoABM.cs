@@ -184,7 +184,7 @@ namespace Presentacion.Core.Empleado
                 {
                     MostrarError($"{response.Mensaje}");
                     //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                       //MessageBoxIcon.Error);
                     return false;
                 }
 

@@ -192,7 +192,8 @@ namespace Presentacion.Core.Oferta
         {
             if (_filtroGrupos.IdMarca == null && _filtroGrupos.IdRubro == null && (_filtroGrupos.IdCategorias == null || !_filtroGrupos.IdCategorias.Any()))
             {
-                MessageBox.Show("Debe seleccionar al menos un filtro para cargar productos.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Debe seleccionar al menos un filtro para cargar productos.", "Atención");
+                //MessageBox.Show("Debe seleccionar al menos un filtro para cargar productos.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -325,16 +326,24 @@ namespace Presentacion.Core.Oferta
             if (!TieneCargaManualProductos())
                 return true;
 
-            var respuesta = MessageBox.Show(
-                "La oferta posee productos cargados manualmente.\n\n" +
+            if (!Confirmar(
+                   "La oferta posee productos cargados manualmente.\n\n" +
                 "Si continúa, se eliminarán los productos actualmente agregados y se reemplazarán por la carga por grupo.\n\n" +
                 "¿Desea continuar?",
                 "Confirmar acción",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
-
-            if (respuesta != DialogResult.Yes)
+                   si: "Aceptar",
+                   no: "Cancelar"))
                 return false;
+            //var respuesta = MessageBox.Show(
+            //    "La oferta posee productos cargados manualmente.\n\n" +
+            //    "Si continúa, se eliminarán los productos actualmente agregados y se reemplazarán por la carga por grupo.\n\n" +
+            //    "¿Desea continuar?",
+            //    "Confirmar acción",
+            //    MessageBoxButtons.YesNo,
+            //    MessageBoxIcon.Warning);
+
+            //if (respuesta != DialogResult.Yes)
+            //    return false;
 
             LimpiarDatosGrilla();
             LimpiarCodigoYDescripcion();
@@ -380,17 +389,26 @@ namespace Presentacion.Core.Oferta
                 || _filtroGrupos.IdMarca.HasValue
                 || _filtroGrupos.IdCategorias.Any())
             {
-                var respuesta = MessageBox.Show(
-                    "La oferta posee productos cargados por grupo.\n\n" +
+                if (!Confirmar(
+                  "La oferta posee productos cargados por grupo.\n\n" +
                     "Si continúa, se eliminarán los filtros de Marca, Rubro y Categorías, " +
                     "junto con los productos actualmente alcanzados.\n\n" +
                     "¿Desea continuar con la carga manual del producto?",
                     "Confirmar acción",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
-
-                if (respuesta == DialogResult.No)
+                   si: "Sumar cantidad",
+                   no: "Cancelar"))
                     return;
+                //var respuesta = MessageBox.Show(
+                //    "La oferta posee productos cargados por grupo.\n\n" +
+                //    "Si continúa, se eliminarán los filtros de Marca, Rubro y Categorías, " +
+                //    "junto con los productos actualmente alcanzados.\n\n" +
+                //    "¿Desea continuar con la carga manual del producto?",
+                //    "Confirmar acción",
+                //    MessageBoxButtons.YesNo,
+                //    MessageBoxIcon.Warning);
+
+                //if (respuesta == DialogResult.No)
+                //    return;
 
                 LimpiarCargaPorGrupo();
                 LimpiarDatosGrilla();
@@ -443,7 +461,8 @@ namespace Presentacion.Core.Oferta
             };
             if (_productosParaOfertaDTO.Count() < 2)
             {
-                MessageBox.Show("Recuerde que se debe cargar al menos 2 unidades del mismo producto o un producto extra para poder crear la oferta.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Recuerde que se debe cargar al menos 2 unidades del mismo producto o un producto extra para poder crear la oferta.", "Información");
+                //MessageBox.Show("Recuerde que se debe cargar al menos 2 unidades del mismo producto o un producto extra para poder crear la oferta.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else
             {
@@ -451,7 +470,8 @@ namespace Presentacion.Core.Oferta
                 {
                     if (_productosParaOfertaDTO.First().CantidadItemEnOferta < 2)
                     {
-                        MessageBox.Show("Recuerde que se debe cargar al menos 2 unidades del mismo producto o un producto extra para poder crear la oferta.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        Informar("Recuerde que se debe cargar al menos 2 unidades del mismo producto o un producto extra para poder crear la oferta.", "Información");
+                        //MessageBox.Show("Recuerde que se debe cargar al menos 2 unidades del mismo producto o un producto extra para poder crear la oferta.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                     else
                     {
@@ -469,15 +489,22 @@ namespace Presentacion.Core.Oferta
 
             if (existente != null)
             {
-                var respuesta = MessageBox.Show(
-                    $"El producto '{productoOfertaDto.Descripcion}' ya se encuentra en la oferta.\n\n" +
+                if (!Confirmar(
+                  $"El producto '{productoOfertaDto.Descripcion}' ya se encuentra en la oferta.\n\n" +
                     "¿Desea sumar la cantidad ingresada a la existente?",
                     "Producto existente",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (respuesta == DialogResult.No)
+                   si: "Sumar cantidad",
+                   no: "Cancelar"))
                     return;
+                //var respuesta = MessageBox.Show(
+                //    $"El producto '{productoOfertaDto.Descripcion}' ya se encuentra en la oferta.\n\n" +
+                //    "¿Desea sumar la cantidad ingresada a la existente?",
+                //    "Producto existente",
+                //    MessageBoxButtons.YesNo,
+                //    MessageBoxIcon.Question);
+
+                //if (respuesta == DialogResult.No)
+                //    return;
 
                 existente.CantidadItemEnOferta += cantidad;
             }
@@ -490,15 +517,23 @@ namespace Presentacion.Core.Oferta
 
                 if (productosDistintos >= 2)
                 {
-                    var respuesta = MessageBox.Show(
-                        "La oferta ya posee 2 productos distintos.\n\n" +
+                    if (!Confirmar(
+                     "La oferta ya posee 2 productos distintos.\n\n" +
                         "¿Está seguro que desea agregar un tercero?",
-                        "Advertencia",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Warning);
-
-                    if (respuesta == DialogResult.No)
+                        "Atención",
+                   si: "Sumar cantidad",
+                   no: "Cancelar"))
                         return;
+
+                    //var respuesta = MessageBox.Show(
+                    //    "La oferta ya posee 2 productos distintos.\n\n" +
+                    //    "¿Está seguro que desea agregar un tercero?",
+                    //    "Advertencia",
+                    //    MessageBoxButtons.YesNo,
+                    //    MessageBoxIcon.Warning);
+
+                    //if (respuesta == DialogResult.No)
+                    //    return;
                 }
             }
 
@@ -802,16 +837,24 @@ namespace Presentacion.Core.Oferta
             var productoSeleccionado = ObtenerProducto(dgvProductos);
             if (productoSeleccionado == null)
             {
-                MessageBox.Show("Por favor seleccione un producto disponible para quitar de la oferta.", "Atención!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                Informar("Por favor seleccione un producto disponible para quitar de la oferta.", "Atención!");
+                //MessageBox.Show("Por favor seleccione un producto disponible para quitar de la oferta.", "Atención!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
-            var respuesta = MessageBox.Show($"¿Esta seguro que desea quitar el producto {productoSeleccionado.Descripcion.ToUpper()} del alcance de la oferta?",
+            if (!Confirmar(
+                  $"¿Esta seguro que desea quitar el producto {productoSeleccionado.Descripcion.ToUpper()} del alcance de la oferta?",
            "Confirmar acción",
-            MessageBoxButtons.YesNo,
-            MessageBoxIcon.Question);
+                   si: "Sumar cantidad",
+                   no: "Cancelar"))
+                return;
 
-            if (respuesta != DialogResult.Yes) return;
+            //var respuesta = MessageBox.Show($"¿Esta seguro que desea quitar el producto {productoSeleccionado.Descripcion.ToUpper()} del alcance de la oferta?",
+           //"Confirmar acción",
+           // MessageBoxButtons.YesNo,
+           // MessageBoxIcon.Question);
+
+           // if (respuesta != DialogResult.Yes) return;
 
             // Buscar el elemento real en la lista por ID (evita problemas de referencia)
             var productoEnLista = _productosParaOfertaDTO
@@ -820,7 +863,8 @@ namespace Presentacion.Core.Oferta
 
             if (productoEnLista == null)
             {
-                MessageBox.Show("No se encontró el producto en la lista principal (probable problema de referencia).", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("No se encontró el producto en la lista principal (probable problema de referencia).", "Atención");
+                //MessageBox.Show("No se encontró el producto en la lista principal (probable problema de referencia).", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1032,11 +1076,12 @@ namespace Presentacion.Core.Oferta
             {
                 if (!decimal.TryParse(txtPorcentajeDescuento.Text, out var porcentaje))
                 {
-                    MessageBox.Show(
-                        "El porcentaje de descuento debe ser un valor numérico.",
-                        "Validación",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
+                    Informar("El porcentaje de descuento debe ser un valor numérico.", "Validación");
+                    //MessageBox.Show(
+                    //    "El porcentaje de descuento debe ser un valor numérico.",
+                    //    "Validación",
+                    //    MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Warning);
 
                     _actualizandoDescuento = true;
                     txtPorcentajeDescuento.Clear();
@@ -1046,11 +1091,12 @@ namespace Presentacion.Core.Oferta
 
                 if (porcentaje < 1 || porcentaje > 100)
                 {
-                    MessageBox.Show(
-                        "El porcentaje de descuento debe estar entre 1 y 100.",
-                        "Validación",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
+                    Informar("El porcentaje de descuento debe estar entre 1 y 100.", "Validación");
+                    //MessageBox.Show(
+                    //    "El porcentaje de descuento debe estar entre 1 y 100.",
+                    //    "Validación",
+                    //    MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Warning);
 
                     _actualizandoDescuento = true;
                     txtPorcentajeDescuento.Clear();
@@ -1117,11 +1163,12 @@ namespace Presentacion.Core.Oferta
             // No puede ser igual o menor que la fecha de inicio
             if (FFin <= dtpFechaInicio.Value.Date)
             {
-                MessageBox.Show(
-                    "La fecha de fin debe ser al menos 1 día posterior a la fecha de inicio.",
-                    "Fecha inválida",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                Informar("La fecha de fin debe ser al menos 1 día posterior a la fecha de inicio.", "Fecha inválida");
+                //MessageBox.Show(
+                //    "La fecha de fin debe ser al menos 1 día posterior a la fecha de inicio.",
+                //    "Fecha inválida",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Warning);
 
                 dtpFechaFin.Value = dtpFechaInicio.Value.Date.AddDays(1);
                 FFin = dtpFechaFin.Value.Date;
@@ -1168,7 +1215,8 @@ namespace Presentacion.Core.Oferta
         {
             if (!decimal.TryParse(txtLimiteStock.Text, out var limite) || limite <= 0)
             {
-                MessageBox.Show("Ingrese un límite válido.");
+                Informar("Ingrese un límite válido.", "Validación");
+                //MessageBox.Show("Ingrese un límite válido.");
                 return;
             }
 
@@ -1195,12 +1243,16 @@ namespace Presentacion.Core.Oferta
 
             if (productosAjustados.Any())
             {
-                MessageBox.Show(
+                Informar(
                     "Algunos productos no tenían stock suficiente y se asignó automáticamente el máximo disponible.\n\n" +
                     string.Join("\n", productosAjustados),
-                    "Límites ajustados",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                    "Límites ajustados");
+                //MessageBox.Show(
+                //    "Algunos productos no tenían stock suficiente y se asignó automáticamente el máximo disponible.\n\n" +
+                //    string.Join("\n", productosAjustados),
+                //    "Límites ajustados",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Information);
             }
         }
         private void AsignarLimiteParticular_Click(object sender, EventArgs e)
@@ -1219,11 +1271,14 @@ namespace Presentacion.Core.Oferta
 
             if (limite > producto.Stock)
             {
-                MessageBox.Show(
+                Informar(
                     $"El producto posee solamente {producto.Stock} unidades disponibles.",
-                    "Stock insuficiente",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    "Stock insuficiente");
+                //MessageBox.Show(
+                //    $"El producto posee solamente {producto.Stock} unidades disponibles.",
+                //    "Stock insuficiente",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Warning);
 
                 limite = producto.Stock;
             }
@@ -1278,11 +1333,14 @@ namespace Presentacion.Core.Oferta
 
             if (tienePorcentaje && tienePrecioFinal)
             {
-                MessageBox.Show(
+                Informar(
                     "La oferta no puede tener un porcentaje de descuento y un precio final fijo al mismo tiempo.",
-                    "Validación",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    "Validación");
+                //MessageBox.Show(
+                //    "La oferta no puede tener un porcentaje de descuento y un precio final fijo al mismo tiempo.",
+                //    "Validación",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Warning);
 
                 return false;
             }
@@ -1301,22 +1359,28 @@ namespace Presentacion.Core.Oferta
         {
             if (!_productosParaOfertaDTO.Any())
             {
-                MessageBox.Show(
+                Informar(
                     "Debe agregar al menos un producto a la oferta.",
-                    "Validación",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    "Validación");
+                //MessageBox.Show(
+                //    "Debe agregar al menos un producto a la oferta.",
+                //    "Validación",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Warning);
 
                 return;
             }
             if (string.IsNullOrWhiteSpace(txtPorcentajeDescuento.Text) &&
      string.IsNullOrWhiteSpace(txtPrecioFinal.Text))
             {
-                MessageBox.Show(
+                Informar(
                     "Debe ingresar un porcentaje de descuento o un precio final.",
-                    "Validación",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    "Validación");
+                //MessageBox.Show(
+                //    "Debe ingresar un porcentaje de descuento o un precio final.",
+                //    "Validación",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Warning);
 
                 return;
             }
@@ -1324,11 +1388,14 @@ namespace Presentacion.Core.Oferta
             if (!string.IsNullOrWhiteSpace(txtPorcentajeDescuento.Text) &&
                 !decimal.TryParse(txtPorcentajeDescuento.Text, out _))
             {
-                MessageBox.Show(
+                Informar(
                     "El porcentaje de descuento debe ser un valor numérico.",
-                    "Validación",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    "Validación");
+                //MessageBox.Show(
+                //    "El porcentaje de descuento debe ser un valor numérico.",
+                //    "Validación",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Warning);
 
                 txtPorcentajeDescuento.Focus();
                 return;
@@ -1337,11 +1404,14 @@ namespace Presentacion.Core.Oferta
             if (!string.IsNullOrWhiteSpace(txtPrecioFinal.Text) &&
                 !decimal.TryParse(txtPrecioFinal.Text, out _))
             {
-                MessageBox.Show(
+                Informar(
                     "El precio final debe ser un valor numérico.",
-                    "Validación",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    "Validación");
+                //MessageBox.Show(
+                //    "El precio final debe ser un valor numérico.",
+                //    "Validación",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Warning);
 
                 txtPrecioFinal.Focus();
                 return;
@@ -1403,14 +1473,20 @@ namespace Presentacion.Core.Oferta
 
             if (productosConLimiteAutomatico.Any())
             {
-                MessageBox.Show(
+                Informar(
                     "Algunos productos no tenían un límite configurado o el límite superaba el stock disponible.\n\n" +
                     "Se utilizará automáticamente el stock máximo disponible para dichos productos:\n\n" +
                     string.Join(Environment.NewLine, productosConLimiteAutomatico) +
                     "\n\nSi desea limitar una cantidad menor para alguno de ellos, asígnela manualmente desde la opción 'Asignar límite particular'.",
-                    "Límites de stock ajustados",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                    "Límites de stock ajustados");
+                //MessageBox.Show(
+                //    "Algunos productos no tenían un límite configurado o el límite superaba el stock disponible.\n\n" +
+                //    "Se utilizará automáticamente el stock máximo disponible para dichos productos:\n\n" +
+                //    string.Join(Environment.NewLine, productosConLimiteAutomatico) +
+                //    "\n\nSi desea limitar una cantidad menor para alguno de ellos, asígnela manualmente desde la opción 'Asignar límite particular'.",
+                //    "Límites de stock ajustados",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Information);
             }
         }
         private void CrearOferta()
@@ -1466,7 +1542,8 @@ namespace Presentacion.Core.Oferta
             };
             if (_productosParaOfertaDTO.Count() == 1 && _productosParaOfertaDTO.First().CantidadItemEnOferta < 2)
             {
-                MessageBox.Show("Recuerde que se debe cargar al menos 2 unidades del mismo producto o un producto extra para poder crear la oferta.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Recuerde que se debe cargar al menos 2 unidades del mismo producto o un producto extra para poder crear la oferta.", "Advertencia");
+                //MessageBox.Show("Recuerde que se debe cargar al menos 2 unidades del mismo producto o un producto extra para poder crear la oferta.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1476,21 +1553,23 @@ namespace Presentacion.Core.Oferta
 
             if (resultado.Exitoso)
             {
-                MessageBox.Show(
-                    resultado.Mensaje,
-                    "Información",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                Exito("La oferta se ha creado correctamente.", "Éxito");
+                //MessageBox.Show(
+                //    resultado.Mensaje,
+                //    "Información",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Information);
 
                 Close();
             }
             else
             {
-                MessageBox.Show(
-                    resultado.Mensaje,
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MostrarError(resultado.Mensaje);
+                //MessageBox.Show(
+                //    resultado.Mensaje,
+                //    "Error",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
             }
         }
         private bool ValidarOfertaAntesDeGuardar()
@@ -1513,11 +1592,14 @@ namespace Presentacion.Core.Oferta
             {
                 if (productosDistintos != 1 || cantidadTotal < 2)
                 {
-                    MessageBox.Show(
+                    Informar(
                         "Un 2x1 debe contener un único producto con una cantidad mínima de 2 unidades.",
-                        "Validación",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
+                        "Validación");
+                    //MessageBox.Show(
+                    //    "Un 2x1 debe contener un único producto con una cantidad mínima de 2 unidades.",
+                    //    "Validación",
+                    //    MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Warning);
 
                     return false;
                 }
@@ -1530,11 +1612,14 @@ namespace Presentacion.Core.Oferta
             {
                 if (productosDistintos < 2)
                 {
-                    MessageBox.Show(
+                    Informar(
                         "Un combo debe estar compuesto por al menos dos productos distintos.",
-                        "Validación",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
+                        "Validación");
+                    //MessageBox.Show(
+                    //    "Un combo debe estar compuesto por al menos dos productos distintos.",
+                    //    "Validación",
+                    //    MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Warning);
 
                     return false;
                 }
@@ -1569,14 +1654,20 @@ namespace Presentacion.Core.Oferta
         }
         private void btnLimpiarCampos_Click(object sender, EventArgs e)
         {
-            var respuesta = MessageBox.Show(
-                "Se perderán todos los datos cargados.\n\n¿Desea continuar?",
+            if (!Confirmar(
+                    "Se perderán todos los datos cargados.\n\n¿Desea continuar?",
                 "Limpiar formulario",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            if (respuesta != DialogResult.Yes)
+                   si: "Aceptar",
+                   no: "Cancelar"))
                 return;
+            //var respuesta = MessageBox.Show(
+            //    "Se perderán todos los datos cargados.\n\n¿Desea continuar?",
+            //    "Limpiar formulario",
+            //    MessageBoxButtons.YesNo,
+            //    MessageBoxIcon.Question);
+
+            //if (respuesta != DialogResult.Yes)
+            //    return;
 
             LimpiarFormulario();
         }
@@ -1818,12 +1909,17 @@ namespace Presentacion.Core.Oferta
         {
             if (cbxCodigoAutomatico.Checked) return;
 
-            var opcion = MessageBox.Show(
-                "Si Desactiva la generación automática de código, se reemplazará por el código ingresado manualmente.\n\n¿Desea continuar?",
+            var result = Confirmar(
+                 "Si Desactiva la generación automática de código, se reemplazará por el código ingresado manualmente.\n\n¿Desea continuar?",
                 "Generación automática de código",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-            if (opcion == DialogResult.Yes)
+                 si: "Aceptar",
+                 no: "Cancelar");
+            //var opcion = MessageBox.Show(
+            //    "Si Desactiva la generación automática de código, se reemplazará por el código ingresado manualmente.\n\n¿Desea continuar?",
+            //    "Generación automática de código",
+            //    MessageBoxButtons.YesNo,
+            //    MessageBoxIcon.Question);
+            if (result)
             {
 
                 generacionCodigoOferta = cbxCodigoAutomatico.Checked;
