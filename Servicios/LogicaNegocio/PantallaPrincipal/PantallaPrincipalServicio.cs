@@ -585,33 +585,26 @@ namespace Servicios.LogicaNegocio.PantallaPrincipal
 
         public DatosTurnoDTO ObtenerActualizarDatosCaja(long? cajaId, DatosTurnoDTO datosTurno)
         {
-            if (!cajaId.HasValue)
-            {
-                return new DatosTurnoDTO
-                {
-                    MontoInicial = 0,
-                    Ingresos = 0,
-                    TotalCaja = 0,
-                    CajaAbierta = false
-                };
-            }
-            else
+            var resultado = new DatosTurnoDTO();   // sin caja: montos en 0 y CajaAbierta = false
+
+            if (cajaId.HasValue)
             {
                 var cajaDTO = caja.ObtenerCajaAbierta(cajaId);
-                return new DatosTurnoDTO
-                {
-                    CajaId = cajaDTO.CajaId,
-                    MontoInicial = cajaDTO.SaldoInicial,
-                    Ingresos = cajaDTO.TotalIngresos,
-                    Egresos = cajaDTO.TotalEgresos,
-                    TotalCaja = cajaDTO.SaldoActual,
-                    CajaAbierta = !cajaDTO.EstaCerrada,
-                    UsuarioId = datosTurno.UsuarioId,
-                    UsuarioLogeado = datosTurno.UsuarioLogeado,
-                    HoraIngresoUsuario = datosTurno.HoraIngresoUsuario,
-                    NotasTurno = datosTurno.NotasTurno
-                };
+                resultado.CajaId = cajaDTO.CajaId;
+                resultado.MontoInicial = cajaDTO.SaldoInicial;
+                resultado.Ingresos = cajaDTO.TotalIngresos;
+                resultado.Egresos = cajaDTO.TotalEgresos;
+                resultado.TotalCaja = cajaDTO.SaldoActual;
+                resultado.CajaAbierta = !cajaDTO.EstaCerrada;
             }
+
+            // Datos del usuario: se copian SIEMPRE, haya o no caja
+            resultado.UsuarioId = datosTurno.UsuarioId;
+            resultado.UsuarioLogeado = datosTurno.UsuarioLogeado;
+            resultado.HoraIngresoUsuario = datosTurno.HoraIngresoUsuario;
+            resultado.NotasTurno = datosTurno.NotasTurno;
+
+            return resultado;
         }
 
         public void GuardarNotasRapidas(string textoLimpio, string nombreUsuario)

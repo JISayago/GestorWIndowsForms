@@ -163,7 +163,7 @@ namespace Presentacion.Core.Caja
                     if (!Confirmar(
                       $"¿Confirmás el cierre de caja?\nSaldo actual: {lblSaldoActual.Text}",
                         "Cerrar caja",
-                        si: "Sumar cantidad",
+                        si: "Aceptar",
                         no: "Cancelar"))
                         return;
                     //var confirmar = MessageBox.Show(
