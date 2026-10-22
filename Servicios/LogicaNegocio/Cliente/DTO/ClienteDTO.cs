@@ -1,4 +1,5 @@
 ﻿using Servicios.Helpers.Cliente;
+using Servicios.Helpers.Cliente.CtaCte;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace Servicios.LogicaNegocio.Cliente.DTO
         public long PersonaId { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
+        public string NombreCompleto => $"{Nombre} {Apellido}";
         public string Dni { get; set; }
         public string Cuil { get; set; }
         public string Telefono { get; set; }
@@ -21,7 +23,6 @@ namespace Servicios.LogicaNegocio.Cliente.DTO
         public string? Direccion { get; set; }
         public DateTime? FechaNacimiento { get; set; }
         public bool EstaEliminado { get; set; }
-
         //Datos CLIENTE
         public string NumeroCliente { get; set; } //Borrarlo????
         public DateTime FechaAlta { get; set; } //Cargar al crear entidad
@@ -46,15 +47,37 @@ namespace Servicios.LogicaNegocio.Cliente.DTO
         }
         public long? CuentaCorrienteId { get; set; } // Puede ser null si no tiene cuenta corriente asociada
 
-        public string NombreCompleto => $"{Nombre} {Apellido}";
         public string TieneCuentaCorriente
         {
             get
             {
                 if(CuentaCorrienteId != null)
-                    return "Activa";
+                    return "Asignada";
 
                 return "Sin Asignar";
+            }
+        }
+
+        public int EstadoCtaCte { get; set; } = -1;
+
+        public string DescripcionEstadoCtaCte
+        {
+            get
+            {
+                switch (EstadoCtaCte)
+                {
+                    case (int)EstadoCuentaCorriente.Activa:
+                        return "Activa";
+
+                    case (int)EstadoCuentaCorriente.Cerrada:
+                        return "Cerrada";
+
+                    case (int)EstadoCuentaCorriente.Suspendida:
+                        return "Suspendida";
+
+                    default:
+                        return "Sin Asignar";
+                }
             }
         }
 
