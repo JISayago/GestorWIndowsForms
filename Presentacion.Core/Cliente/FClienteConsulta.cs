@@ -426,7 +426,8 @@ namespace Presentacion.Core.Cliente
             clienteSeleccionado = id;
             if(clienteSeleccionado == null)
             {
-                MessageBox.Show("Seleccione un cliente para ver los detalles de su cuenta corriente.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Seleccione un cliente para ver los detalles de su cuenta corriente.","Atención");
+                //MessageBox.Show("Seleccione un cliente para ver los detalles de su cuenta corriente.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             else
@@ -435,7 +436,8 @@ namespace Presentacion.Core.Cliente
                 var response = _clienteServicio.ObtenerCtaCteIdPorClienteId((long)clienteSeleccionado);
             if(!response.Exitoso)
             {
-                MessageBox.Show("El cliente seleccionado no tiene una cuenta corriente asociada.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Informar("El cliente seleccionado no tiene una cuenta corriente asociada.","Atención");
+                    //MessageBox.Show("El cliente seleccionado no tiene una cuenta corriente asociada.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             else
@@ -463,23 +465,25 @@ namespace Presentacion.Core.Cliente
 
             if(cliente.CuentaCorrienteId != null)
             {
-                MessageBox.Show(
-                    "El cliente seleccionado ya tiene una cuenta corriente asociada.", 
-                    "Advertencia",                                                          
-                    MessageBoxButtons.OK,                                    
-                    MessageBoxIcon.Warning
+                 Informar("El cliente seleccionado ya tiene una cuenta corriente asociada.", "Advertencia");
+                //MessageBox.Show(
+                //    "El cliente seleccionado ya tiene una cuenta corriente asociada.", 
+                //    "Advertencia",                                                          
+                //    MessageBoxButtons.OK,                                    
+                //    MessageBoxIcon.Warning
                 );
 
                 return;
             }
             if(cliente.Telefono == "00000000" && cliente.Telefono2 == "00000000" && cliente.Email == "Sin Asignar")
             {
-                MessageBox.Show(
-                    "El cliente seleccionado no tiene información de contacto válida. Agregar un medio de contacto por favor.", 
-                    "Advertencia",                                                          
-                    MessageBoxButtons.OK,                                    
-                    MessageBoxIcon.Warning
-                );
+                Informar("El cliente seleccionado no tiene información de contacto válida. Agregar un medio de contacto por favor.", "Advertencia");
+                //MessageBox.Show(
+                //    "El cliente seleccionado no tiene información de contacto válida. Agregar un medio de contacto por favor.", 
+                //    "Advertencia",                                                          
+                //    MessageBoxButtons.OK,                                    
+                //    MessageBoxIcon.Warning
+                //);
                 return;
             }
             var fCtacte = new FCuentaCorrienteABM(TipoOperacion.Nuevo, clienteSeleccionado,null);
@@ -499,7 +503,8 @@ namespace Presentacion.Core.Cliente
         {
             if (dgvGrilla.RowCount == 0)
             {
-                MessageBox.Show("No hay datos cargados.");
+                Informar("No hay datos cargados.", "Error");
+                //MessageBox.Show("No hay datos cargados.");
 
                 puedeEjecutarComando = false;
 
@@ -508,7 +513,8 @@ namespace Presentacion.Core.Cliente
 
             if (!entidadID.HasValue)
             {
-                MessageBox.Show("Seleccione un registro.");
+                Informar("Seleccione un registro.", "Error");
+                //MessageBox.Show("Seleccione un registro.");
 
                 puedeEjecutarComando = false;
 
