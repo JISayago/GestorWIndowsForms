@@ -491,7 +491,7 @@ namespace Presentacion.Core.Venta
                 return;
             }
 
-            var fCantidad = new FCantidadItem("2");
+            var fCantidad = new FCantidadItem("1");
 
             if (fCantidad.ShowDialog() != DialogResult.OK ||
                 fCantidad.cantidad <= 0)

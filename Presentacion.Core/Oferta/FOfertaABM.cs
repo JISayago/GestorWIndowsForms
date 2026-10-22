@@ -429,7 +429,7 @@ namespace Presentacion.Core.Oferta
             if (producto == null)
                 return;
 
-            var fCantidad = new FCantidadItem();
+            var fCantidad = new FCantidadItem("1");
 
             if (fCantidad.ShowDialog() != DialogResult.OK ||
                 fCantidad.cantidad <= 0)
