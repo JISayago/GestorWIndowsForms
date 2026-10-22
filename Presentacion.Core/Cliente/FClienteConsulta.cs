@@ -471,7 +471,7 @@ namespace Presentacion.Core.Cliente
                 //    "Advertencia",                                                          
                 //    MessageBoxButtons.OK,                                    
                 //    MessageBoxIcon.Warning
-                );
+                //);
 
                 return;
             }
