@@ -161,7 +161,7 @@ namespace Presentacion.Core.Empleado
             if (!entidadID.HasValue)
             {
                 Informar("Seleccione un empleado.");
-                MessageBox.Show("Seleccione un empleado.");
+                //MessageBox.Show("Seleccione un empleado.");
                 return;
             }
 

@@ -82,6 +82,9 @@ namespace Presentacion.Core.Venta
             this.ControlBox = false;
             this.ShowIcon = false;
             this.ShowInTaskbar = false; // opcional
+            AgregarControlesObligatorios(txtDescripcion, "Nombre del Producto");
+            AgregarControlesObligatorios(txtCantidad, "Cantidad", Validaciones.DecimalMayorACero, Validaciones.DecimalConMaxDecimales(2));
+            AgregarControlesObligatorios(txtPrecio, "Precio", Validaciones.DecimalMayorACero, Validaciones.DecimalConMaxDecimales(2));
         }
         private void MyTimer_Tick(object sender, EventArgs e)
         {
@@ -95,6 +98,24 @@ namespace Presentacion.Core.Venta
         }
         private void btnAgregarProducto_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(txtDescripcion.Text))
+            {
+                Informar("Debe ingresar una descripción para el producto.", "Atención");
+                //MessageBox.Show("Debe ingresar una descripción para el producto.");
+                return;
+            }
+            if (!decimal.TryParse(txtCantidad.Text, out decimal cantidad) || cantidad <= 0)
+            {
+                Informar("Debe ingresar una cantidad válida mayor a cero.", "Atención");
+                //MessageBox.Show("Debe ingresar una cantidad válida mayor a cero.");
+                return;
+            }
+            if (!decimal.TryParse(txtPrecio.Text, out decimal precio) || precio <= 0)
+            {
+                Informar("Debe ingresar un precio válido mayor a cero.", "Atención");
+                //MessageBox.Show("Debe ingresar un precio válido mayor a cero.");
+                return;
+            }
             var itemVenta = new ItemVentaDTO()
             {
                 ItemId = 1,
@@ -713,15 +734,15 @@ namespace Presentacion.Core.Venta
         }
         private void EditarCantidad(ItemVentaDTO item)
         {
-            var input = Microsoft.VisualBasic.Interaction.InputBox(
-                "Ingrese nueva cantidad:",
-                "Modificar cantidad",
-                item.Cantidad.ToString()
-            );
-
-            if (int.TryParse(input, out int nuevaCantidad) && nuevaCantidad > 0)
+            using (var frm = new FCantidadItem(item.Cantidad.ToString("0.##")))
             {
-                item.Cantidad = nuevaCantidad;
+                if (frm.ShowDialog(this) != DialogResult.OK)
+                    return;
+
+                if (frm.cantidad <= 0)
+                    return;
+
+                item.Cantidad = frm.cantidad;
                 dgvProductos.Refresh();
                 CalcularTotal();
             }
