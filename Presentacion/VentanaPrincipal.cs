@@ -360,7 +360,7 @@ namespace Presentacion
         {
             if (!AuthHelper.Tiene("Ventas.Contrasiento"))
             {
-                Informar("No Cuenta con las credenciales necesarias para ver los movimientos de la caja","Acceso denegado");
+                Informar("No Cuenta con las credenciales necesarias para ver los movimientos de la caja", "Acceso denegado");
                 //MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
                 return;
             }
@@ -591,6 +591,11 @@ namespace Presentacion
             Exito(respuesta.Mensaje, "Exito");
             //MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Application.Restart();
+        }
+
+        private void btnCambioUsuario_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
