@@ -1280,15 +1280,15 @@ namespace Presentacion.Core.Venta
         }
         private void EditarCantidad(ItemVentaDTO item)
         {
-            var input = Microsoft.VisualBasic.Interaction.InputBox(
-                "Ingrese nueva cantidad:",
-                "Modificar cantidad",
-                item.Cantidad.ToString()
-            );
-
-            if (int.TryParse(input, out int nuevaCantidad) && nuevaCantidad > 0)
+            using (var frm = new FCantidadItem(item.Cantidad.ToString("0.##")))
             {
-                item.Cantidad = nuevaCantidad;
+                if (frm.ShowDialog(this) != DialogResult.OK)
+                    return;
+
+                if (frm.cantidad <= 0)
+                    return;
+
+                item.Cantidad = frm.cantidad;
                 dgvProductos.Refresh();
                 CalcularTotal();
             }

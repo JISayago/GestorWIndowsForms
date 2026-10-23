@@ -28,10 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FCantidadItem));
             btnAceptar = new Button();
             lblCantidad = new Label();
             txtCantidad = new TextBox();
             btnCancelar = new Button();
+            ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
             // btnAceptar
@@ -68,6 +70,7 @@
             btnCancelar.TabIndex = 3;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
+            btnCancelar.Click += btnCancelar_Click;
             // 
             // FCantidadItem
             // 
@@ -78,10 +81,12 @@
             Controls.Add(txtCantidad);
             Controls.Add(lblCantidad);
             Controls.Add(btnAceptar);
+            ForeColor = Color.FromArgb(31, 26, 43);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FCantidadItem";
-            StartPosition = FormStartPosition.CenterParent;
             Text = "FCantidadItem";
             Load += FCantidadItem_Load;
+            ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
