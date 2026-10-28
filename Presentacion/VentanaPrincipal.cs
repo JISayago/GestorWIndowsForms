@@ -18,6 +18,7 @@ using Presentacion.FBase.Helpers;
 using Presentacion.Notificaciones;
 using ServicioAccesoSistema.AccesoSistema;
 using Servicios.Helpers.DatosObligatoriosParaInicioSistema;
+using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Caja.DTO;
 using Servicios.LogicaNegocio.Empleado;
@@ -28,7 +29,6 @@ using Servicios.LogicaNegocio.Producto.Lote;
 using Servicios.LogicaNegocio.Sistema;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta;
-using Servicios.Helpers.Sistema;
 using Stockeate;
 using System;
 using System.Collections.Generic;
@@ -654,20 +654,46 @@ namespace Presentacion
             // 2) La secundaria pudo abrir/cerrar la caja: se relee (el ctor sin parámetros no toca el usuario).
             new DatosSistema();
 
-            // 3) Durante la secundaria pudieron bloquear a este usuario o cambiarle los permisos.
-            if (_accesoSistema.VerificarSiUsuarioEstaBloqueado(_usuarioLogeado.Username))
+            // 3) El admin pudo cambiarle roles, permisos o datos a este usuario, o bloquearlo/eliminarlo.
+            if (!RecargarUsuarioLogeado())
             {
-                Informar("Tu usuario fue deshabilitado durante la sesión secundaria. Se cerrará tu sesión.", "Acceso");
-                btnCerarSesion_Click(this, EventArgs.Empty);
+                Informar("Tu usuario fue modificado o deshabilitado durante la sesión secundaria. Se cerrará tu sesión.", "Acceso");
+                _accesoSistema.CerrarSesion(_usuarioLogeado.PersonaId);
+                SalirDeSesion();
                 return;
             }
 
+            // 4) Turno, avisos y grillas frescos desde la BD.
+            btnRefresh_Click(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Vuelve a leer de la BD al usuario logueado y actualiza el MISMO objeto (_usuarioLogeado), que es el que
+        /// consulta AuthHelper. Los permisos se evalúan al hacer clic en cada botón (AuthHelper.Tiene), así que
+        /// los cambios rigen desde el próximo clic. Devuelve false si el usuario ya no puede operar.
+        /// </summary>
+        private bool RecargarUsuarioLogeado()
+        {
+            var empleado = new EmpleadoServicio().ObtenerEmpleadoPorId(_usuarioLogeado.PersonaId);
+            if (empleado == null || empleado.PersonaId == null)
+                return false;                                   // eliminado
+
+            // Se valida con el username NUEVO: si el admin lo renombró, el viejo ya no existe.
+            if (_accesoSistema.VerificarSiUsuarioEstaBloqueado(empleado.Username))
+                return false;                                   // bloqueado / deshabilitado
+
             var usuarioServicio = new UsuarioServicio();
+            _usuarioLogeado.Nombre = empleado.Nombre;
+            _usuarioLogeado.Apellido = empleado.Apellido;
+            _usuarioLogeado.Username = empleado.Username;
             _usuarioLogeado.Permisos = usuarioServicio.ObtenerPermisosPorUsuario(_usuarioLogeado.PersonaId);
             _usuarioLogeado.EsSuperAdmin = usuarioServicio.EsSuperAdmin(_usuarioLogeado.PersonaId);
 
-            // 4) Turno, avisos y grillas frescos desde la BD.
-            btnRefresh_Click(this, EventArgs.Empty);
+            // Se reasigna por si AuthHelper arma algún caché de permisos al setear UsuarioActual.
+            AuthHelper.UsuarioActual = _usuarioLogeado;
+
+            lblNombreUsuario.Text = _usuarioLogeado.Username.ToUpper();
+            return true;
         }
 
         private static void SalirDeSesion()
