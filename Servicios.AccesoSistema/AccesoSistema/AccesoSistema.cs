@@ -39,8 +39,10 @@ namespace ServicioAccesoSistema.AccesoSistema
             return true;
         }
 
-        public EstadoOperacion LogeoAlSistema(string username, string pass)
+        public EstadoOperacion LogeoAlSistema(string username, string pass, long? sesionPrincipalId = null)
         {
+            bool esSecundaria = sesionPrincipalId.HasValue;
+
             if (!VerificarSiExisteUsuario(username))
             {
                 return new EstadoOperacion
@@ -73,9 +75,21 @@ namespace ServicioAccesoSistema.AccesoSistema
                 };
             }
 
-            // Cerrar sesiones activas previas del usuario (seguridad)
+            // La secundaria solo es válida si la sesión principal que la lanzó sigue activa
+            if (esSecundaria &&
+                !context.Usuarios.Any(s => s.UsuarioSesionId == sesionPrincipalId.Value && s.Activa && !s.EsSecundaria))
+            {
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "La sesión principal ya no está activa. Cerrá la sesión secundaria y volvé a abrirla."
+                };
+            }
+
+            // Cerrar sesiones activas previas del usuario (seguridad).
+            // Una secundaria no cierra la principal del mismo usuario (ni al revés).
             var sesionesActivas = context.Usuarios
-                .Where(s => s.UsuarioId == empleado.PersonaId && s.Activa)
+                .Where(s => s.UsuarioId == empleado.PersonaId && s.Activa && s.EsSecundaria == esSecundaria)
                 .ToList();
 
             foreach (var sesion in sesionesActivas)
@@ -89,7 +103,9 @@ namespace ServicioAccesoSistema.AccesoSistema
             {
                 UsuarioId = empleado.PersonaId,
                 FechaLogin = DateTime.Now,
-                Activa = true
+                Activa = true,
+                EsSecundaria = esSecundaria,
+                SesionPrincipalId = sesionPrincipalId
             };
 
             context.Usuarios.Add(nuevaSesion);
@@ -101,11 +117,12 @@ namespace ServicioAccesoSistema.AccesoSistema
             {
                 Exitoso = true,
                 Mensaje = "Ingreso Exitoso!",
-                EntidadId = empleado.PersonaId
+                EntidadId = empleado.PersonaId,
+                DatoExtra = nuevaSesion.UsuarioSesionId.ToString()
             };
         }
 
-      
+
         public EstadoOperacion CerrarSesion(long usuarioId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -133,6 +150,41 @@ namespace ServicioAccesoSistema.AccesoSistema
                 Mensaje = "Sesión cerrada correctamente."
             };
         }
+        /// <summary>Id de la sesión principal activa del usuario (null si no hay).</summary>
+        public long? ObtenerSesionActivaId(long usuarioId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            return context.Usuarios
+                .Where(s => s.UsuarioId == usuarioId && s.Activa && !s.EsSecundaria)
+                .OrderByDescending(s => s.FechaLogin)
+                .Select(s => (long?)s.UsuarioSesionId)
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Cierra las sesiones secundarias colgadas de una sesión principal. La principal lo llama al volver:
+        /// si la secundaria cayó sin cerrar sesión, queda "Activa" en la BD y esto la regulariza.
+        /// </summary>
+        public void CerrarSesionesSecundarias(long sesionPrincipalId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            var secundarias = context.Usuarios
+                .Where(s => s.SesionPrincipalId == sesionPrincipalId && s.Activa)
+                .ToList();
+
+            if (secundarias.Count == 0) return;
+
+            foreach (var sesion in secundarias)
+            {
+                sesion.Activa = false;
+                sesion.FechaLogout = DateTime.Now;
+            }
+
+            context.SaveChanges();
+        }
+
         public EstadoOperacion PrimerIngreso(string nombreUsuario, string pass)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);

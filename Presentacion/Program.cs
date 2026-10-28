@@ -12,6 +12,7 @@ using Servicios.Helpers;
 using Servicios.Helpers.DatosObligatorios;
 using Servicios.Helpers.DatosObligatoriosParaInicioSistema;
 using Servicios.LogicaNegocio.Producto.DTO;
+using Servicios.Helpers.Sistema;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.Seguridad;
 using Stockeate;
@@ -25,28 +26,40 @@ using System.Threading;
 
 namespace Presentacion
 {
-   internal static class Program
+    internal static class Program
     {
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            // Impide ejecutar más de una instancia de Stockeate
-            // en las sesiones de Windows que compartan este mutex.
+            // Sesión secundaria: segunda copia de Stockeate lanzada desde la principal
+            // (ej. un admin que necesita hacer un cambio o una venta puntual).
+            bool esSecundaria = args.Contains(SesionSecundaria.Argumento);
+
+            // Un mutex por rol: como máximo una principal y una secundaria por computadora
+            // (en las sesiones de Windows que compartan el mutex).
             using Mutex mutex = new Mutex(
                 initiallyOwned: true,
-                name: @"Global\Stockeate_UnicaInstancia",
+                name: esSecundaria
+                    ? @"Global\Stockeate_Secundaria"
+                    : @"Global\Stockeate_UnicaInstancia",
                 createdNew: out bool esPrimeraInstancia);
 
             if (!esPrimeraInstancia)
             {
                 MessageBox.Show(
-                    "Stockeate ya se encuentra abierto en esta computadora.",
+                    esSecundaria
+                        ? "Ya hay una sesión secundaria abierta en esta computadora."
+                        : "Stockeate ya se encuentra abierto en esta computadora.",
                     "Stockeate",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
 
                 return;
             }
+
+            // La secundaria solo es válida si la lanzó una principal viva.
+            if (esSecundaria && !SesionSecundaria.Inicializar(args))
+                return;
 
             ApplicationConfiguration.Initialize();
 
@@ -90,7 +103,7 @@ namespace Presentacion
             // NO EXISTE LICENCIA O ES INVÁLIDA
             //---------------------------------------------
 
-            if (!resultadoLicencia.Valida &&
+            if (!esSecundaria && !resultadoLicencia.Valida &&
                 (resultadoLicencia.Estado == LicenseStatus.NoExiste ||
                  resultadoLicencia.Estado == LicenseStatus.Invalida))
             {
@@ -139,7 +152,9 @@ namespace Presentacion
             // LICENCIA TRIAL
             //---------------------------------------------
 
-            if (licenciaActual != null &&
+            // (la secundaria no muestra avisos de trial: ya los vio la principal)
+            if (!esSecundaria &&
+                licenciaActual != null &&
                 licenciaActual.Tipo == LicenseType.Trial)
             {
                 // ========================================================
@@ -253,15 +268,15 @@ namespace Presentacion
                 licenciaActual.Tipo == LicenseType.Trial;
 
             Conexion.UsarTrial = esTrial;
-            if (esTrial)
+            if (esTrial && !esSecundaria)
             {
 
-            try { PreparadorBase.Migrar(); }
-            catch (Exception ex)
-            {
-                MessageBox.Show("No se pudo preparar la base de datos:\n" + ex.Message, "Error");
-                return;
-            }
+                try { PreparadorBase.Migrar(); }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("No se pudo preparar la base de datos:\n" + ex.Message, "Error");
+                    return;
+                }
             }
 
             if (!PruebaConexion.ProbarConexion(out string error2))
@@ -275,9 +290,10 @@ namespace Presentacion
                 return;
             }
 
-            new InicializadorDatosObligatorios().InicializarBaseMinima();
+            if (!esSecundaria)
+                new InicializadorDatosObligatorios().InicializarBaseMinima();
 
-            if (esTrial)
+            if (esTrial && !esSecundaria)
             {
                 var estado = SeedTrial.Estado();
                 if (estado != EstadoSeed.Completa)
@@ -332,7 +348,8 @@ namespace Presentacion
             var inicializadorBase =
                 new InicializadorDatosObligatorios();
 
-            inicializadorBase.InicializarBaseMinima();
+            if (!esSecundaria)
+                inicializadorBase.InicializarBaseMinima();
 
 
             //---------------------------------------------
@@ -457,7 +474,8 @@ namespace Presentacion
             // MENSAJES
             //---------------------------------------------
 
-            if (mensajesOfertas != null &&
+            if (!esSecundaria &&
+                mensajesOfertas != null &&
                 mensajesOfertas.Count > 0)
             {
                 MessageBox.Show(

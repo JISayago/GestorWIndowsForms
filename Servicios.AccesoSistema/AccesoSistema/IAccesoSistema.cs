@@ -10,12 +10,15 @@ namespace ServicioAccesoSistema.AccesoSistema
 {
     public interface IAccesoSistema
     {
-        EstadoOperacion LogeoAlSistema(string username, string pass);
+        // sesionPrincipalId != null => es un login de sesión secundaria. Devuelve en DatoExtra el id de la sesión creada.
+        EstadoOperacion LogeoAlSistema(string username, string pass, long? sesionPrincipalId = null);
+        long? ObtenerSesionActivaId(long usuarioId);
+        void CerrarSesionesSecundarias(long sesionPrincipalId);
         EstadoOperacion CerrarSesion(long usuarioId);
         bool VerificarSiExisteUsuario(string username);
         bool VerificarSiUsuarioEstaBloqueado(string nombreUsuario);
         EstadoOperacion PrimerIngreso(string nombreUsuario, string pass);
         EstadoOperacion ValidarEstadoUsuario(string username);
-        
+
     }
 }

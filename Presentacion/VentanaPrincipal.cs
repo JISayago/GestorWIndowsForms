@@ -20,6 +20,7 @@ using ServicioAccesoSistema.AccesoSistema;
 using Servicios.Helpers.DatosObligatoriosParaInicioSistema;
 using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Caja.DTO;
+using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.PantallaPrincipal;
 using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using Servicios.LogicaNegocio.Producto.DTO;
@@ -27,8 +28,11 @@ using Servicios.LogicaNegocio.Producto.Lote;
 using Servicios.LogicaNegocio.Sistema;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta;
+using Servicios.Helpers.Sistema;
+using Stockeate;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -86,6 +90,14 @@ namespace Presentacion
             lblNombreUsuario.AutoSize = true;
             lblNombreUsuario.Dock = DockStyle.None;
             lblNombreUsuario.TextAlign = ContentAlignment.MiddleLeft;
+
+            if (SesionSecundaria.EsSecundaria)
+            {
+                lblNombreUsuario.Text += "  ·  SESIÓN SECUNDARIA";
+                lblNombreUsuario.ForeColor = Color.Firebrick;
+                btnCambioUsuario.Visible = false;            // las sesiones no se anidan
+                btnCerarSesion.Text = "Volver a principal";
+            }
 
 
             //VENTANA FULLSCREEN SIN BORDES NI BOTONES DE CIERRE
@@ -379,7 +391,7 @@ namespace Presentacion
             }
             Exito(respuesta.Mensaje, "Información");
             //MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            Application.Restart();
+            SalirDeSesion();
         }
 
         #endregion
@@ -558,7 +570,9 @@ namespace Presentacion
             {
                 e.Cancel = true;
                 var result = Confirmar(
-                  "¿Querés cerrar la sesión y salir del sistema?",
+                  SesionSecundaria.EsSecundaria
+                    ? "¿Querés cerrar la sesión secundaria y volver a la principal?"
+                    : "¿Querés cerrar la sesión y salir del sistema?",
                     "Cerrar sesión",
                  si: "Aceptar",
                  no: "Cancelar");
@@ -590,12 +604,80 @@ namespace Presentacion
             }
             Exito(respuesta.Mensaje, "Exito");
             //MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            Application.Restart();
+            SalirDeSesion();
         }
 
+        /// <summary>
+        /// Abre una sesión secundaria: otra copia de Stockeate (otro proceso) donde otro usuario, ej. un admin,
+        /// hace un cambio o una venta puntual. Esta ventana queda bloqueada hasta que la secundaria termina.
+        /// </summary>
         private void btnCambioUsuario_Click(object sender, EventArgs e)
         {
+            var sesionId = _accesoSistema.ObtenerSesionActivaId(_usuarioLogeado.PersonaId);
+            if (sesionId == null)
+            {
+                MostrarError("No se encontró tu sesión activa. Cerrá sesión y volvé a ingresar.");
+                return;
+            }
 
+            Process proceso;
+            try
+            {
+                proceso = Process.Start(SesionSecundaria.CrearInicio(sesionId.Value, _usuarioLogeado.Username));
+            }
+            catch (Exception ex)
+            {
+                MostrarError("No se pudo abrir la sesión secundaria:\n" + ex.Message);
+                return;
+            }
+
+            if (proceso == null)
+            {
+                MostrarError("No se pudo abrir la sesión secundaria.");
+                return;
+            }
+
+            using (proceso)
+            using (var bloqueo = new FSesionSecundariaEnCurso(proceso))
+            {
+                bloqueo.ShowDialog(this);   // modal: nada de esta ventana responde hasta que la secundaria termina
+            }
+
+            VolverDeSesionSecundaria(sesionId.Value);
+        }
+
+        private void VolverDeSesionSecundaria(long sesionPrincipalId)
+        {
+            // 1) Si la secundaria cayó sin cerrar sesión, queda "Activa" en la BD: se regulariza.
+            _accesoSistema.CerrarSesionesSecundarias(sesionPrincipalId);
+
+            // 2) La secundaria pudo abrir/cerrar la caja: se relee (el ctor sin parámetros no toca el usuario).
+            new DatosSistema();
+
+            // 3) Durante la secundaria pudieron bloquear a este usuario o cambiarle los permisos.
+            if (_accesoSistema.VerificarSiUsuarioEstaBloqueado(_usuarioLogeado.Username))
+            {
+                Informar("Tu usuario fue deshabilitado durante la sesión secundaria. Se cerrará tu sesión.", "Acceso");
+                btnCerarSesion_Click(this, EventArgs.Empty);
+                return;
+            }
+
+            var usuarioServicio = new UsuarioServicio();
+            _usuarioLogeado.Permisos = usuarioServicio.ObtenerPermisosPorUsuario(_usuarioLogeado.PersonaId);
+            _usuarioLogeado.EsSuperAdmin = usuarioServicio.EsSuperAdmin(_usuarioLogeado.PersonaId);
+
+            // 4) Turno, avisos y grillas frescos desde la BD.
+            btnRefresh_Click(this, EventArgs.Empty);
+        }
+
+        private static void SalirDeSesion()
+        {
+            // Application.Restart() relanza el exe con los mismos argumentos: en la secundaria
+            // reabriría otra secundaria, por eso ahí solo se sale.
+            if (SesionSecundaria.EsSecundaria)
+                Application.Exit();
+            else
+                Application.Restart();
         }
     }
 }
