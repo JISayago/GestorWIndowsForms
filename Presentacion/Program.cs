@@ -11,6 +11,7 @@ using Presentacion.FBase.Helpers;
 using Servicios.Helpers;
 using Servicios.Helpers.DatosObligatorios;
 using Servicios.Helpers.DatosObligatoriosParaInicioSistema;
+using Servicios.Helpers.Sistema;
 using Servicios.LogicaNegocio.Producto.DTO;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.Seguridad;
@@ -18,29 +19,61 @@ using Stockeate;
 using Stockeate.Licensing;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Presentacion
 {
-   internal static class Program
+    internal static class Program
     {
+          private  const string ArgumentoReinicioSesion = "--reinicio-sesion";
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            // Impide ejecutar más de una instancia de Stockeate
-            // en las sesiones de Windows que compartan este mutex.
+            // Identificar el tipo de instancia.
+
+        bool esSecundaria = args.Contains(SesionSecundaria.Argumento);
+
+            bool esReinicioSesion = args.Contains(ArgumentoReinicioSesion);
+
+            // Un mutex por rol: una principal y una secundaria como máximo.
             using Mutex mutex = new Mutex(
                 initiallyOwned: true,
-                name: @"Global\Stockeate_UnicaInstancia",
+                name: esSecundaria
+                    ? @"Global\Stockeate_Secundaria"
+                    : @"Global\Stockeate_UnicaInstancia",
                 createdNew: out bool esPrimeraInstancia);
 
-            if (!esPrimeraInstancia)
+            bool mutexAdquirido = esPrimeraInstancia;
+
+            // Si esta instancia fue lanzada para reiniciar Stockeate,
+            // esperar a que la instancia anterior libere el mutex.
+            if (!mutexAdquirido && esReinicioSesion)
+            {
+                try
+                {
+                    mutex.WaitOne();
+                    mutexAdquirido = true;
+                }
+                catch (AbandonedMutexException)
+                {
+                    // La instancia anterior terminó inesperadamente.
+                    // WaitOne adquiere el mutex igualmente en este caso.
+                    mutexAdquirido = true;
+                }
+            }
+
+            // Si no es un reinicio solicitado y ya existe una instancia,
+            // mantener el comportamiento actual.
+            if (!mutexAdquirido)
             {
                 MessageBox.Show(
-                    "Stockeate ya se encuentra abierto en esta computadora.",
+                    esSecundaria
+                        ? "Ya hay una sesión secundaria abierta en esta computadora."
+                        : "Stockeate ya se encuentra abierto en esta computadora.",
                     "Stockeate",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
@@ -48,449 +81,525 @@ namespace Presentacion
                 return;
             }
 
-            ApplicationConfiguration.Initialize();
-
-            Application.ThreadException += (s, e) =>
+            try
             {
-                MessageBox.Show(
-                    $"Excepción no manejada (UI thread):\n{e.Exception}",
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            };
-
-            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
-            {
-                var ex = e.ExceptionObject as Exception;
-
-                MessageBox.Show(
-                    $"Excepción no manejada (otro thread):\n{ex}",
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            };
-
-            //---------------------------------------------
-            // PRIMERA EJECUCIÓN
-            //---------------------------------------------
-
-            bool primeraEjecucion =
-                !File.Exists(LicensePaths.Installation);
 
 
-            //---------------------------------------------
-            // VALIDACIÓN DE LICENCIA
-            //---------------------------------------------
+                //if (!esPrimeraInstancia)
+                //{
+                //    MessageBox.Show(
+                //        esSecundaria
+                //            ? "Ya hay una sesión secundaria abierta en esta computadora."
+                //            : "Stockeate ya se encuentra abierto en esta computadora.",
+                //        "Stockeate",
+                //        MessageBoxButtons.OK,
+                //        MessageBoxIcon.Information);
 
-            var resultadoLicencia =
-                StartupValidator.ValidarInicio();
+                //    return;
+                //}
 
+                // La secundaria solo es válida si la lanzó una principal viva.
+                if (esSecundaria && !SesionSecundaria.Inicializar(args))
+                    return;
 
-            //---------------------------------------------
-            // NO EXISTE LICENCIA O ES INVÁLIDA
-            //---------------------------------------------
+                ApplicationConfiguration.Initialize();
 
-            if (!resultadoLicencia.Valida &&
-                (resultadoLicencia.Estado == LicenseStatus.NoExiste ||
-                 resultadoLicencia.Estado == LicenseStatus.Invalida))
-            {
-                using (var activacion =
-                       new FActivacion(primeraEjecucion))
+                Application.ThreadException += (s, e) =>
                 {
-                    var resultadoFormulario =
-                        activacion.ShowDialog();
+                    MessageBox.Show(
+                        $"Excepción no manejada (UI thread):\n{e.Exception}",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                };
 
-                    if (resultadoFormulario != DialogResult.OK ||
-                        !activacion.LicenciaValida)
-                    {
-                        return;
-                    }
-                }
+                AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+                {
+                    var ex = e.ExceptionObject as Exception;
+
+                    MessageBox.Show(
+                        $"Excepción no manejada (otro thread):\n{ex}",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                };
 
                 //---------------------------------------------
-                // VOLVER A VALIDAR
+                // PRIMERA EJECUCIÓN
                 //---------------------------------------------
 
-                resultadoLicencia =
+                bool primeraEjecucion =
+                    !File.Exists(LicensePaths.Installation);
+
+
+                //---------------------------------------------
+                // VALIDACIÓN DE LICENCIA
+                //---------------------------------------------
+
+                var resultadoLicencia =
                     StartupValidator.ValidarInicio();
-            }
 
 
-            //---------------------------------------------
-            // ¿HAY UNA LICENCIA TRIAL?
-            //---------------------------------------------
+                //---------------------------------------------
+                // NO EXISTE LICENCIA O ES INVÁLIDA
+                //---------------------------------------------
 
-            LicenseInfo? licenciaActual = null;
-
-            if (File.Exists(LicensePaths.License))
-            {
-                try
+                if (!esSecundaria && !resultadoLicencia.Valida &&
+                    (resultadoLicencia.Estado == LicenseStatus.NoExiste ||
+                     resultadoLicencia.Estado == LicenseStatus.Invalida))
                 {
-                    licenciaActual =
-                        new LicenseStorage().Leer();
-                }
-                catch
-                {
-                    // La validación posterior se encargará del error.
-                }
-            }
-
-            //---------------------------------------------
-            // LICENCIA TRIAL
-            //---------------------------------------------
-
-            if (licenciaActual != null &&
-                licenciaActual.Tipo == LicenseType.Trial)
-            {
-                // ========================================================
-                // TRIAL VENCIDA
-                // ========================================================
-
-                if (resultadoLicencia.Estado == LicenseStatus.Vencida)
-                {
-                    using var avisoTrial =
-                        new FActualizacionLicencia(
-                            licenciaActual,
-                            licenciaVencida: true);
-
-                    avisoTrial.ShowDialog();
-
-                    if (avisoTrial.DeseaCargarLicencia)
+                    using (var activacion =
+                           new FActivacion(primeraEjecucion))
                     {
-                        using var activacion =
-                            new FActivacion(
-                                primeraEjecucion: false,
-                                esRenovacionTrial: true);
-
-                        var resultado =
+                        var resultadoFormulario =
                             activacion.ShowDialog();
 
-                        if (resultado == DialogResult.OK &&
-                            activacion.LicenciaValida)
+                        if (resultadoFormulario != DialogResult.OK ||
+                            !activacion.LicenciaValida)
                         {
-                            resultadoLicencia =
-                                StartupValidator.ValidarInicio();
-
-                            licenciaActual =
-                                new LicenseStorage().Leer();
+                            return;
                         }
                     }
 
-                    // Si la Trial sigue vencida y no se cargó una permanente.
-                    if (!resultadoLicencia.Valida)
-                    {
-                        MessageBox.Show(
-                            "La licencia de prueba ha vencido.\r\n\r\n" +
-                            "Para continuar utilizando Stockeate debe " +
-                            "cargar una licencia permanente.",
-                            "Stockeate",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning);
+                    //---------------------------------------------
+                    // VOLVER A VALIDAR
+                    //---------------------------------------------
 
-                        return;
-                    }
+                    resultadoLicencia =
+                        StartupValidator.ValidarInicio();
                 }
 
-                // ========================================================
-                // TRIAL VIGENTE
-                // ========================================================
 
-                else if (resultadoLicencia.Valida)
-                {
-                    using var avisoTrial =
-                        new FActualizacionLicencia(
-                            licenciaActual,
-                            licenciaVencida: false);
+                //---------------------------------------------
+                // ¿HAY UNA LICENCIA TRIAL?
+                //---------------------------------------------
 
-                    avisoTrial.ShowDialog();
+                LicenseInfo? licenciaActual = null;
 
-                    if (avisoTrial.DeseaCargarLicencia)
-                    {
-                        using var activacion =
-                            new FActivacion(
-                                primeraEjecucion: false,
-                                esRenovacionTrial: true);
-
-                        var resultado =
-                            activacion.ShowDialog();
-
-                        if (resultado == DialogResult.OK &&
-                            activacion.LicenciaValida)
-                        {
-                            resultadoLicencia =
-                                StartupValidator.ValidarInicio();
-
-                            licenciaActual =
-                                new LicenseStorage().Leer();
-                        }
-                    }
-                }
-            }
-
-
-            //---------------------------------------------
-            // LICENCIA NO VÁLIDA
-            //---------------------------------------------
-
-            if (!resultadoLicencia.Valida)
-            {
-                MessageBox.Show(
-                    resultadoLicencia.Mensaje,
-                    "Licencia",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-
-                return;
-            }
-
-
-            //---------------------------------------------
-            // DETERMINAR SI ES TRIAL
-            //---------------------------------------------
-
-            bool esTrial =
-                licenciaActual != null &&
-                licenciaActual.Tipo == LicenseType.Trial;
-
-            Conexion.UsarTrial = esTrial;
-            if (esTrial)
-            {
-
-            try { PreparadorBase.Migrar(); }
-            catch (Exception ex)
-            {
-                MessageBox.Show("No se pudo preparar la base de datos:\n" + ex.Message, "Error");
-                return;
-            }
-            }
-
-            if (!PruebaConexion.ProbarConexion(out string error2))
-            {
-                MessageBox.Show(
-                    $"No se pudo establecer conexión con la base de datos.\n\n{error2}",
-                    "Error de conexión",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-
-                return;
-            }
-
-            new InicializadorDatosObligatorios().InicializarBaseMinima();
-
-            if (esTrial)
-            {
-                var estado = SeedTrial.Estado();
-                if (estado != EstadoSeed.Completa)
-                {
-                    Exception? errorSeed = null;
-                    using var pantalla = new PantallaCargaEspera("Preparando la versión de prueba (puede demorar unos minutos)...");
-                    pantalla.Shown += async (s, e) =>
-                    {
-                        try
-                        {
-                            var runner = new SeedRunner(Path.Combine(AppContext.BaseDirectory, "Seed"));
-                            var progreso = new Progress<SeedProgreso>(p =>
-                            {
-                                pantalla.SetProgress(p.Paso * 100 / p.Total);
-                                pantalla.SetMensaje($"Cargando datos de ejemplo ({p.Paso}/{p.Total})");
-                            });
-                            await Task.Run(() => runner.EjecutarAsync(estado == EstadoSeed.Parcial, progreso));
-                        }
-                        catch (Exception ex) { errorSeed = ex; }
-                        finally { pantalla.Close(); }
-                    };
-                    Application.Run(pantalla);
-
-                    if (errorSeed != null)
-                    {
-                        MessageBox.Show("No se pudieron cargar los datos de prueba:\n" + errorSeed.Message, "Error");
-                        return;
-                    }
-                }
-            }
-
-            //---------------------------------------------
-            // CONEXIÓN
-            //---------------------------------------------
-
-            if (!PruebaConexion.ProbarConexion(out string error))
-            {
-                MessageBox.Show(
-                    $"No se pudo establecer conexión con la base de datos.\n\n{error}",
-                    "Error de conexión",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-
-                return;
-            }
-
-
-            //---------------------------------------------
-            // DATOS MÍNIMOS
-            //---------------------------------------------
-
-            var inicializadorBase =
-                new InicializadorDatosObligatorios();
-
-            inicializadorBase.InicializarBaseMinima();
-
-
-            //---------------------------------------------
-            // LOGIN
-            //---------------------------------------------
-
-            var login = new LoginForm();
-
-            login.ShowDialog();
-
-            if (!login.PuedeAccederAlSistema)
-                return;
-
-            if (login._usuarioLogeado == null ||
-                string.IsNullOrWhiteSpace(
-                    login._usuarioLogeado.Username))
-            {
-                MessageBox.Show(
-                    "Error: usuario no válido.");
-
-                return;
-            }
-
-
-            //---------------------------------------------
-            // DATOS DEL SISTEMA
-            //---------------------------------------------
-
-            new DatosSistema(
-                login._usuarioLogeado.PersonaId,
-                login._usuarioLogeado.Nombre,
-                login._usuarioLogeado.Apellido);
-
-            var personaId =
-                DatosSistema.UsuarioId;
-
-            var cajaId =
-                DatosSistema.CajaId;
-
-
-            //---------------------------------------------
-            // CARGA DE DATOS
-            //---------------------------------------------
-
-            var inicializador =
-                new InicializadorDatosObligatorios(
-                    personaId,
-                    cajaId);
-
-            List<string> mensajesOfertas = null;
-            ElementoDePanelesPantallaPrincipal datosPantalla = null;
-            List<ProductoDTO> productos = null;
-            List<VentaDTO> ventas = null;
-
-
-            using (var pantallaCarga =
-                   new PantallaCargaEspera(
-                       "Preparando todo lo necesario..."))
-            {
-                pantallaCarga.Shown += async (s, e) =>
+                if (File.Exists(LicensePaths.License))
                 {
                     try
                     {
-                        var progreso =
-                            new Progress<(int, string)>(
-                                p =>
-                                {
-                                    pantallaCarga.SetProgress(
-                                        p.Item1);
-
-                                    pantallaCarga.SetMensaje(
-                                        p.Item2);
-                                });
-
-
-                        await Task.Run(() =>
-                        {
-                            inicializador.InicializadorDatos(
-                                progreso);
-                        });
-
-
-                        mensajesOfertas =
-                            inicializador.mensajes;
-
-                        datosPantalla =
-                            inicializador.DatosPantallaPrincipal;
-
-                        productos =
-                            inicializador.Productos;
-
-                        ventas =
-                            inicializador.Ventas;
-
-
-                        pantallaCarga.SetProgress(100);
-
-                        pantallaCarga.SetMensaje("Listo");
-
-                        await Task.Delay(300);
+                        licenciaActual =
+                            new LicenseStorage().Leer();
                     }
+                    catch
+                    {
+                        // La validación posterior se encargará del error.
+                    }
+                }
+
+                //---------------------------------------------
+                // LICENCIA TRIAL
+                //---------------------------------------------
+
+                // (la secundaria no muestra avisos de trial: ya los vio la principal)
+                if (!esSecundaria &&
+                    licenciaActual != null &&
+                    licenciaActual.Tipo == LicenseType.Trial)
+                {
+                    // ========================================================
+                    // TRIAL VENCIDA
+                    // ========================================================
+
+                    if (resultadoLicencia.Estado == LicenseStatus.Vencida)
+                    {
+                        using var avisoTrial =
+                            new FActualizacionLicencia(
+                                licenciaActual,
+                                licenciaVencida: true);
+
+                        avisoTrial.ShowDialog();
+
+                        if (avisoTrial.DeseaCargarLicencia)
+                        {
+                            using var activacion =
+                                new FActivacion(
+                                    primeraEjecucion: false,
+                                    esRenovacionTrial: true);
+
+                            var resultado =
+                                activacion.ShowDialog();
+
+                            if (resultado == DialogResult.OK &&
+                                activacion.LicenciaValida)
+                            {
+                                resultadoLicencia =
+                                    StartupValidator.ValidarInicio();
+
+                                licenciaActual =
+                                    new LicenseStorage().Leer();
+                            }
+                        }
+
+                        // Si la Trial sigue vencida y no se cargó una permanente.
+                        if (!resultadoLicencia.Valida)
+                        {
+                            MessageBox.Show(
+                                "La licencia de prueba ha vencido.\r\n\r\n" +
+                                "Para continuar utilizando Stockeate debe " +
+                                "cargar una licencia permanente.",
+                                "Stockeate",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+
+                            return;
+                        }
+                    }
+
+                    // ========================================================
+                    // TRIAL VIGENTE
+                    // ========================================================
+
+                    else if (resultadoLicencia.Valida)
+                    {
+                        using var avisoTrial =
+                            new FActualizacionLicencia(
+                                licenciaActual,
+                                licenciaVencida: false);
+
+                        avisoTrial.ShowDialog();
+
+                        if (avisoTrial.DeseaCargarLicencia)
+                        {
+                            using var activacion =
+                                new FActivacion(
+                                    primeraEjecucion: false,
+                                    esRenovacionTrial: true);
+
+                            var resultado =
+                                activacion.ShowDialog();
+
+                            if (resultado == DialogResult.OK &&
+                                activacion.LicenciaValida)
+                            {
+                                resultadoLicencia =
+                                    StartupValidator.ValidarInicio();
+
+                                licenciaActual =
+                                    new LicenseStorage().Leer();
+                            }
+                        }
+                    }
+                }
+
+
+                //---------------------------------------------
+                // LICENCIA NO VÁLIDA
+                //---------------------------------------------
+
+                if (!resultadoLicencia.Valida)
+                {
+                    MessageBox.Show(
+                        resultadoLicencia.Mensaje,
+                        "Licencia",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+
+                    return;
+                }
+
+
+                //---------------------------------------------
+                // DETERMINAR SI ES TRIAL
+                //---------------------------------------------
+
+                bool esTrial =
+                    licenciaActual != null &&
+                    licenciaActual.Tipo == LicenseType.Trial;
+
+                Conexion.UsarTrial = esTrial;
+                if (esTrial && !esSecundaria)
+                {
+
+                    try { PreparadorBase.Migrar(); }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(
-                            ex.Message,
-                            "Error",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
+                        MessageBox.Show("No se pudo preparar la base de datos:\n" + ex.Message, "Error");
+                        return;
                     }
-                    finally
+                }
+
+                if (!PruebaConexion.ProbarConexion(out string error2))
+                {
+                    MessageBox.Show(
+                        $"No se pudo establecer conexión con la base de datos.\n\n{error2}",
+                        "Error de conexión",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+
+                    return;
+                }
+
+                if (!esSecundaria)
+                    new InicializadorDatosObligatorios().InicializarBaseMinima();
+
+                if (esTrial && !esSecundaria)
+                {
+                    var estado = SeedTrial.Estado();
+                    if (estado != EstadoSeed.Completa)
                     {
-                        pantallaCarga.Close();
+                        Exception? errorSeed = null;
+                        using var pantalla = new PantallaCargaEspera("Preparando la versión de prueba (puede demorar unos minutos)...");
+                        pantalla.Shown += async (s, e) =>
+                        {
+                            try
+                            {
+                                var runner = new SeedRunner(Path.Combine(AppContext.BaseDirectory, "Seed"));
+                                var progreso = new Progress<SeedProgreso>(p =>
+                                {
+                                    pantalla.SetProgress(p.Paso * 100 / p.Total);
+                                    pantalla.SetMensaje($"Cargando datos de ejemplo ({p.Paso}/{p.Total})");
+                                });
+                                await Task.Run(() => runner.EjecutarAsync(estado == EstadoSeed.Parcial, progreso));
+                            }
+                            catch (Exception ex) { errorSeed = ex; }
+                            finally { pantalla.Close(); }
+                        };
+                        Application.Run(pantalla);
+
+                        if (errorSeed != null)
+                        {
+                            MessageBox.Show("No se pudieron cargar los datos de prueba:\n" + errorSeed.Message, "Error");
+                            return;
+                        }
                     }
+                }
+
+                //---------------------------------------------
+                // CONEXIÓN
+                //---------------------------------------------
+
+                if (!PruebaConexion.ProbarConexion(out string error))
+                {
+                    MessageBox.Show(
+                        $"No se pudo establecer conexión con la base de datos.\n\n{error}",
+                        "Error de conexión",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+
+                    return;
+                }
+
+
+                //---------------------------------------------
+                // DATOS MÍNIMOS
+                //---------------------------------------------
+
+                var inicializadorBase =
+                    new InicializadorDatosObligatorios();
+
+                if (!esSecundaria)
+                    inicializadorBase.InicializarBaseMinima();
+
+
+                //---------------------------------------------
+                // LOGIN
+                //---------------------------------------------
+
+                var login = new LoginForm();
+
+                login.ShowDialog();
+
+                if (!login.PuedeAccederAlSistema)
+                    return;
+
+                if (login._usuarioLogeado == null ||
+                    string.IsNullOrWhiteSpace(
+                        login._usuarioLogeado.Username))
+                {
+                    MessageBox.Show(
+                        "Error: usuario no válido.");
+
+                    return;
+                }
+
+
+                //---------------------------------------------
+                // DATOS DEL SISTEMA
+                //---------------------------------------------
+
+                new DatosSistema(
+                    login._usuarioLogeado.PersonaId,
+                    login._usuarioLogeado.Nombre,
+                    login._usuarioLogeado.Apellido);
+
+                var personaId =
+                    DatosSistema.UsuarioId;
+
+                var cajaId =
+                    DatosSistema.CajaId;
+
+
+                //---------------------------------------------
+                // CARGA DE DATOS
+                //---------------------------------------------
+
+                var inicializador =
+                    new InicializadorDatosObligatorios(
+                        personaId,
+                        cajaId);
+
+                List<string> mensajesOfertas = null;
+                ElementoDePanelesPantallaPrincipal datosPantalla = null;
+                List<ProductoDTO> productos = null;
+                List<VentaDTO> ventas = null;
+
+
+                using (var pantallaCarga =
+                       new PantallaCargaEspera(
+                           "Preparando todo lo necesario..."))
+                {
+                    pantallaCarga.Shown += async (s, e) =>
+                    {
+                        try
+                        {
+                            var progreso =
+                                new Progress<(int, string)>(
+                                    p =>
+                                    {
+                                        pantallaCarga.SetProgress(
+                                            p.Item1);
+
+                                        pantallaCarga.SetMensaje(
+                                            p.Item2);
+                                    });
+
+
+                            await Task.Run(() =>
+                            {
+                                inicializador.InicializadorDatos(
+                                    progreso);
+                            });
+
+
+                            mensajesOfertas =
+                                inicializador.mensajes;
+
+                            datosPantalla =
+                                inicializador.DatosPantallaPrincipal;
+
+                            productos =
+                                inicializador.Productos;
+
+                            ventas =
+                                inicializador.Ventas;
+
+
+                            pantallaCarga.SetProgress(100);
+
+                            pantallaCarga.SetMensaje("Listo");
+
+                            await Task.Delay(300);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(
+                                ex.Message,
+                                "Error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                        }
+                        finally
+                        {
+                            pantallaCarga.Close();
+                        }
+                    };
+
+
+                    Application.Run(pantallaCarga);
+                }
+
+
+                //---------------------------------------------
+                // MENSAJES
+                //---------------------------------------------
+
+                if (!esSecundaria &&
+                    mensajesOfertas != null &&
+                    mensajesOfertas.Count > 0)
+                {
+                    MessageBox.Show(
+                        "Se realizaron las siguientes modificaciones:\n\n" +
+                        string.Join(
+                            "\n",
+                            mensajesOfertas),
+                        "Información",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+
+
+
+                if (datosPantalla == null)
+                {
+                    MessageBox.Show(
+                        "No se pudieron cargar los datos.");
+
+                    return;
+                }
+
+
+                //---------------------------------------------
+                // SISTEMA
+                //---------------------------------------------
+
+                Application.Run(
+                    new VentanaPrincipal(
+                        login._usuarioLogeado,
+                        datosPantalla,
+                        productos,
+                        ventas));
+            }
+            finally
+            {
+                // Liberar el mutex incluso si hubo un return
+                // o una excepción durante el inicio del sistema.
+                if (mutexAdquirido)
+                    mutex.ReleaseMutex();
+            }
+        }
+        internal static void ReiniciarAplicacion()
+        {
+            try
+            {
+                var inicio = new ProcessStartInfo
+                {
+                    FileName = Application.ExecutablePath,
+                    WorkingDirectory = AppContext.BaseDirectory,
+                    UseShellExecute = false
                 };
 
+                // Conservar los argumentos originales de Stockeate.
+                foreach (string argumento in Environment.GetCommandLineArgs().Skip(1))
+                {
+                    if (!string.Equals(
+                            argumento,
+                            ArgumentoReinicioSesion,
+                            StringComparison.OrdinalIgnoreCase))
+                    {
+                        inicio.ArgumentList.Add(argumento);
+                    }
+                }
 
-                Application.Run(pantallaCarga);
+                // Indicarle a la nueva instancia que debe esperar
+                // a que la anterior libere el mutex.
+                inicio.ArgumentList.Add(ArgumentoReinicioSesion);
+
+                Process.Start(inicio);
+
+                // Cerrar la instancia actual.
+                // Al finalizar Main(), se libera el mutex.
+                Application.Exit();
             }
-
-
-            //---------------------------------------------
-            // MENSAJES
-            //---------------------------------------------
-
-            if (mensajesOfertas != null &&
-                mensajesOfertas.Count > 0)
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Se realizaron las siguientes modificaciones:\n\n" +
-                    string.Join(
-                        "\n",
-                        mensajesOfertas),
-                    "Información",
+                    $"No se pudo reiniciar Stockeate.\r\n\r\n{ex.Message}",
+                    "Stockeate",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                    MessageBoxIcon.Error);
             }
-
-
-
-            if (datosPantalla == null)
-            {
-                MessageBox.Show(
-                    "No se pudieron cargar los datos.");
-
-                return;
-            }
-
-
-            //---------------------------------------------
-            // SISTEMA
-            //---------------------------------------------
-
-            Application.Run(
-                new VentanaPrincipal(
-                    login._usuarioLogeado,
-                    datosPantalla,
-                    productos,
-                    ventas));
         }
     }
 }

@@ -1089,16 +1089,24 @@ namespace AccesoDatos.Migrations
                     b.Property<bool>("Activa")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("EsSecundaria")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("FechaLogin")
                         .HasColumnType("datetime");
 
                     b.Property<DateTime?>("FechaLogout")
                         .HasColumnType("datetime");
 
+                    b.Property<long?>("SesionPrincipalId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("UsuarioId")
                         .HasColumnType("bigint");
 
                     b.HasKey("UsuarioSesionId");
+
+                    b.HasIndex("SesionPrincipalId");
 
                     b.HasIndex("UsuarioId");
 
@@ -1630,6 +1638,11 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.UsuarioSesion", b =>
                 {
+                    b.HasOne("AccesoDatos.Entidades.UsuarioSesion", null)
+                        .WithMany()
+                        .HasForeignKey("SesionPrincipalId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("AccesoDatos.Entidades.Empleado", "Usuario")
                         .WithMany("Sesiones")
                         .HasForeignKey("UsuarioId")

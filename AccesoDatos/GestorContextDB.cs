@@ -1214,29 +1214,41 @@ namespace AccesoDatos
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-                modelBuilder.Entity<UsuarioSesion>(entity =>
-                {
-                    entity.ToTable("Usuarios_Sesiones");
+            modelBuilder.Entity<UsuarioSesion>(entity =>
+            {
+                entity.ToTable("Usuarios_Sesiones");
 
-                    entity.HasKey(e => e.UsuarioSesionId);
+                entity.HasKey(e => e.UsuarioSesionId);
 
-                    entity.Property(e => e.FechaLogin)
-                          .HasColumnType("datetime");
+                entity.Property(e => e.FechaLogin)
+                      .HasColumnType("datetime");
 
-                    entity.Property(e => e.FechaLogout)
-                          .HasColumnType("datetime");
+                entity.Property(e => e.FechaLogout)
+                      .HasColumnType("datetime");
 
-                    entity.Property(e => e.Activa)
-                          .IsRequired();
+                entity.Property(e => e.Activa)
+                      .IsRequired();
 
-                    entity.HasOne(e => e.Usuario)
-                          .WithMany(u => u.Sesiones)
-                          .HasForeignKey(e => e.UsuarioId)
-                          .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(e => e.EsSecundaria)
+                      .IsRequired();
 
-                });
+                entity.Property(e => e.SesionPrincipalId)
+                      .IsRequired(false);
 
-                modelBuilder.Entity<DetalleVentaLote>(entity =>
+                // Relación con el empleado propietario de la sesión.
+                entity.HasOne(e => e.Usuario)
+                      .WithMany(u => u.Sesiones)
+                      .HasForeignKey(e => e.UsuarioId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                // Relación opcional con la sesión principal.
+                entity.HasOne<UsuarioSesion>()
+                      .WithMany()
+                      .HasForeignKey(e => e.SesionPrincipalId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<DetalleVentaLote>(entity =>
                 {
                     entity.ToTable("DetalleVentaLote");
 
