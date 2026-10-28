@@ -240,7 +240,7 @@ namespace Presentacion.Core.Empleado.Rol
             if (!Confirmar(
                    $"¿Está seguro que desea asignar el rol {rolDisponibleSeleccionado.Nombre.ToUpper()} del empleado {empleado.Nombre} {empleado.Apellido} (usuario: {empleado.Username})?",
                     "Confirmar acción",
-                   si: "Sumar cantidad",
+                   si: "Asignar",
                    no: "Cancelar"))
                 return;
             //var respuesta = MessageBox.Show(

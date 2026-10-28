@@ -83,7 +83,7 @@ namespace Presentacion
             this.Bounds = Screen.PrimaryScreen.WorkingArea;
 
             // Formato de nombre de usuario (junto a "Usuario Logeado:")
-            var font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
+            var font = new Font("Segoe UI", 13.75F, FontStyle.Bold);
             lblNombreUsuario.Font = font;
             lblNombreUsuario.ForeColor = TemaSistema.Primario;
             lblNombreUsuario.Text = _usuarioLogeado.Username.ToUpper();
@@ -93,10 +93,11 @@ namespace Presentacion
 
             if (SesionSecundaria.EsSecundaria)
             {
-                lblNombreUsuario.Text += "  ·  SESIÓN SECUNDARIA";
+                //lblNombreUsuario.Text += "- Secundaria";
+                lblUsuario.Text = "Usuario secundario:";
                 lblNombreUsuario.ForeColor = Color.Firebrick;
                 btnCambioUsuario.Visible = false;            // las sesiones no se anidan
-                btnCerarSesion.Text = "Volver a principal";
+                btnCerarSesion.Text = "Cerrar Secundaria";
             }
 
 
