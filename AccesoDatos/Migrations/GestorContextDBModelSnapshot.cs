@@ -513,6 +513,10 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("numero_gasto");
 
+                    b.Property<int?>("OrigenPago")
+                        .HasColumnType("int")
+                        .HasColumnName("origen_pago");
+
                     b.HasKey("GastoId");
 
                     b.HasIndex("CategoriaGasto");
@@ -619,6 +623,14 @@ namespace AccesoDatos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("MovimientoId"));
 
+                    b.Property<bool>("AfectaCaja")
+                        .HasColumnType("bit")
+                        .HasColumnName("afecta_caja");
+
+                    b.Property<long?>("CajaId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_caja");
+
                     b.Property<long?>("EntidadId")
                         .HasColumnType("bigint")
                         .HasColumnName("entidad_id");
@@ -634,6 +646,10 @@ namespace AccesoDatos.Migrations
                     b.Property<decimal>("Monto")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("monto");
+
+                    b.Property<long?>("MovimientoOrigenId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_movimiento_origen");
 
                     b.Property<string>("NumeroMovimiento")
                         .IsRequired()
@@ -653,11 +669,28 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("int")
                         .HasColumnName("tipo_movimiento_detalle");
 
+                    b.Property<long?>("TipoPagoId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_TipoPago");
+
                     b.HasKey("MovimientoId");
 
                     b.HasIndex("FechaMovimiento")
                         .IsDescending()
                         .HasDatabaseName("IX_Movimientos_FechaMovimiento_Desc");
+
+                    b.HasIndex("MovimientoOrigenId");
+
+                    b.HasIndex("TipoPagoId");
+
+                    b.HasIndex("CajaId", "FechaMovimiento")
+                        .HasDatabaseName("IX_Movimientos_CajaId_FechaMovimiento");
+
+                    b.HasIndex("TipoEntidad", "EntidadId")
+                        .HasDatabaseName("IX_Movimientos_TipoEntidad_EntidadId");
+
+                    b.HasIndex("TipoMovimientoDetalle", "FechaMovimiento")
+                        .HasDatabaseName("IX_Movimientos_Operacion_FechaMovimiento");
 
                     b.ToTable("Movimientos", (string)null);
                 });
@@ -1166,6 +1199,10 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("total_sin_descuento");
 
+                    b.Property<long?>("VentaOriginalId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_VentaOriginal");
+
                     b.HasKey("VentaId");
 
                     b.HasIndex("FechaVenta")
@@ -1182,6 +1219,11 @@ namespace AccesoDatos.Migrations
 
                     b.HasIndex("NumeroVenta")
                         .HasDatabaseName("IX_Ventas_NumeroVenta");
+
+                    b.HasIndex("VentaOriginalId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Ventas_VentaOriginalId")
+                        .HasFilter("[id_VentaOriginal] IS NOT NULL");
 
                     b.HasIndex("Estado", "FechaVenta")
                         .HasDatabaseName("IX_Ventas_Estado_FechaVenta");
@@ -1242,6 +1284,10 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("total");
 
+                    b.Property<long?>("VentaOriginalId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_VentaOriginal");
+
                     b.HasKey("VentaLibreId");
 
                     b.HasIndex("FechaVenta")
@@ -1255,6 +1301,11 @@ namespace AccesoDatos.Migrations
                     b.HasIndex("IdEmpleado");
 
                     b.HasIndex("IdVendedor");
+
+                    b.HasIndex("VentaOriginalId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_VentasLibres_VentaOriginalId")
+                        .HasFilter("[id_VentaOriginal] IS NOT NULL");
 
                     b.ToTable("VentasLibres", (string)null);
                 });
@@ -1561,6 +1612,30 @@ namespace AccesoDatos.Migrations
                     b.Navigation("Producto");
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.Movimiento", b =>
+                {
+                    b.HasOne("AccesoDatos.Entidades.Caja", "Caja")
+                        .WithMany()
+                        .HasForeignKey("CajaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("AccesoDatos.Entidades.Movimiento", "MovimientoOrigen")
+                        .WithMany()
+                        .HasForeignKey("MovimientoOrigenId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("AccesoDatos.Entidades.TipoPago", "TipoPago")
+                        .WithMany()
+                        .HasForeignKey("TipoPagoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Caja");
+
+                    b.Navigation("MovimientoOrigen");
+
+                    b.Navigation("TipoPago");
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.Notificacion", b =>
                 {
                     b.HasOne("AccesoDatos.Entidades.Empleado", "Empleado")
@@ -1658,6 +1733,11 @@ namespace AccesoDatos.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("AccesoDatos.Entidades.Venta", null)
+                        .WithMany()
+                        .HasForeignKey("VentaOriginalId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Cliente");
 
                     b.Navigation("Empleado");
@@ -1683,6 +1763,11 @@ namespace AccesoDatos.Migrations
                         .HasForeignKey("IdVendedor")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("AccesoDatos.Entidades.VentaLibre", null)
+                        .WithMany()
+                        .HasForeignKey("VentaOriginalId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Cliente");
 

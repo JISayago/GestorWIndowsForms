@@ -29,6 +29,9 @@ namespace AccesoDatos.Entidades
 
         public string Detalle { get; set; }
 
+        /// <summary>De dónde salió la plata al pagar: OrigenPagoGasto (Caja=1, Otro=2). Null mientras está pendiente.</summary>
+        public int? OrigenPago { get; set; }
+
         public ICollection<VentaPagoDetalle> VentaPagoDetalles { get; set; }
     }
 

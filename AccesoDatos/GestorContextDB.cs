@@ -287,6 +287,21 @@ namespace AccesoDatos
 
                     entity.HasKey(e => e.VentaId);
 
+                    // Contraventa: una sola por venta original (índice único filtrado)
+                    entity.Property(e => e.VentaOriginalId)
+                        .HasColumnName("id_VentaOriginal")
+                        .IsRequired(false);
+
+                    entity.HasOne<Venta>()
+                        .WithMany()
+                        .HasForeignKey(e => e.VentaOriginalId)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    entity.HasIndex(e => e.VentaOriginalId)
+                        .IsUnique()
+                        .HasFilter("[id_VentaOriginal] IS NOT NULL")
+                        .HasDatabaseName("UX_Ventas_VentaOriginalId");
+
                     entity.Property(e => e.VentaId)
                         .HasColumnName("id_Venta");
 
@@ -403,6 +418,21 @@ namespace AccesoDatos
                     entity.ToTable("VentasLibres");
 
                     entity.HasKey(e => e.VentaLibreId);
+
+                    // Contraventa: una sola por venta libre original (índice único filtrado)
+                    entity.Property(e => e.VentaOriginalId)
+                        .HasColumnName("id_VentaOriginal")
+                        .IsRequired(false);
+
+                    entity.HasOne<VentaLibre>()
+                        .WithMany()
+                        .HasForeignKey(e => e.VentaOriginalId)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    entity.HasIndex(e => e.VentaOriginalId)
+                        .IsUnique()
+                        .HasFilter("[id_VentaOriginal] IS NOT NULL")
+                        .HasDatabaseName("UX_VentasLibres_VentaOriginalId");
 
                     entity.Property(e => e.VentaLibreId)
                         .HasColumnName("id_VentaLibre");
@@ -1060,6 +1090,50 @@ namespace AccesoDatos
                         .HasColumnName("tipo_entidad")
                         .IsRequired(false);
 
+                    // --- Etapa 1 refactor Movimientos ---
+                    entity.Property(e => e.AfectaCaja)
+                        .HasColumnName("afecta_caja")
+                        .IsRequired();
+
+                    entity.Property(e => e.CajaId)
+                        .HasColumnName("id_caja")
+                        .IsRequired(false);
+
+                    entity.Property(e => e.TipoPagoId)
+                        .HasColumnName("id_TipoPago")
+                        .IsRequired(false);
+
+                    entity.Property(e => e.MovimientoOrigenId)
+                        .HasColumnName("id_movimiento_origen")
+                        .IsRequired(false);
+
+                    entity.HasOne(e => e.Caja)
+                        .WithMany()
+                        .HasForeignKey(e => e.CajaId)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    entity.HasOne(e => e.TipoPago)
+                        .WithMany()
+                        .HasForeignKey(e => e.TipoPagoId)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    entity.HasOne(e => e.MovimientoOrigen)
+                        .WithMany()
+                        .HasForeignKey(e => e.MovimientoOrigenId)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    // Libro por caja (y por día dentro de la caja)
+                    entity.HasIndex(e => new { e.CajaId, e.FechaMovimiento })
+                        .HasDatabaseName("IX_Movimientos_CajaId_FechaMovimiento");
+
+                    // Historial por entidad (cuenta corriente, gasto, venta...)
+                    entity.HasIndex(e => new { e.TipoEntidad, e.EntidadId })
+                        .HasDatabaseName("IX_Movimientos_TipoEntidad_EntidadId");
+
+                    // Consultas por tipo de operación (hoy la columna se llama TipoMovimientoDetalle)
+                    entity.HasIndex(e => new { e.TipoMovimientoDetalle, e.FechaMovimiento })
+                        .HasDatabaseName("IX_Movimientos_Operacion_FechaMovimiento");
+
                     // Mismo patrón: consulta de movimientos ordena por FechaMovimiento DESC
                     entity.HasIndex(e => e.FechaMovimiento)
                         .HasDatabaseName("IX_Movimientos_FechaMovimiento_Desc")
@@ -1072,6 +1146,10 @@ namespace AccesoDatos
                     entity.ToTable("Gastos");
 
                     entity.HasKey(e => e.GastoId);
+
+                    entity.Property(e => e.OrigenPago)
+                        .HasColumnName("origen_pago")
+                        .IsRequired(false);
 
                     entity.Property(e => e.GastoId)
                         .HasColumnName("id_Gasto");
