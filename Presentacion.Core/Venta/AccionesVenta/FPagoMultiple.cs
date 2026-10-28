@@ -1,4 +1,5 @@
-﻿using Presentacion.Core.Venta.HelpersVenta;
+﻿
+using Presentacion.Core.Venta.HelpersVenta;
 using Presentacion.Core.Venta.TipoPago;
 using Servicios.Helpers.OpcionesPagos;
 using System;
@@ -16,37 +17,37 @@ namespace Presentacion.Core.Venta
 {
     public partial class FPagoMultiple : FBase.FBase
     {
+        private const int MaxPagos = 7;
+        private const int PagosRecomendados = 3;
+        private const int AlturaFila = 36;
+        private const int MargenFila = 6;
+        private const int AlturaMaxForm = 600;
+        private const int AnchoMinForm = 600;
+
         // Resultado final accesible por el caller
         public List<FormaPago> ResultPagos { get; private set; } = new List<FormaPago>();
 
         public int CantidadPagos { get; private set; } = 0;
         private decimal TotalVenta { get; set; } = 0m;
 
-        // Para reutilizar el selector de forma de pago si lo necesitás (como en tu proyecto)
+        // Para reutilizar el selector de forma de pago
         private readonly bool _incluirCtaCte;
         private readonly long? _idCliente;
         private DatosVenta _dv;
 
-        // Contenedores dinámicos de controles por índice (0..CantidadPagos-1)
+        // Controles dinámicos por índice (0..CantidadPagos-1)
         private readonly List<TextBox> _txtMontos = new List<TextBox>();
         private readonly List<Button> _btnTipoPago = new List<Button>();
         private readonly List<Label> _lblTipoPago = new List<Label>();
         private readonly List<TipoDePago?> _tipoSeleccionado = new List<TipoDePago?>();
         private readonly List<string> _datosExtra = new List<string>();
 
-        // Panel donde se agregan las filas
-        private FlowLayoutPanel flowPanel;
-
-        // Controles fijos
-        private Label lblTotal;
-        private Label lblRestante;
-        private Button btnAceptar;
-        private Button btnCancelar;
-        private System.Windows.Forms.Panel panelBottom;
+        // Los controles fijos (flowPanel, panelBottom, lblTotal, lblRestante,
+        // btnAceptar, btnCancelar) se declaran en FPagoMultiple.Designer.cs
 
         public FPagoMultiple()
         {
-            InitializerComponent();
+            InitializeComponent();
         }
 
         // Constructor recomendado: pasá cantidad y total
@@ -59,146 +60,79 @@ namespace Presentacion.Core.Venta
             _idCliente = idCliente;
         }
 
-        private void InitializerComponent()
+        // ------------------------------------------------------------------
+        // Teclas (FBase intercepta Escape/Enter y delega en estos métodos)
+        // ------------------------------------------------------------------
+        protected override void EjecutarEnter()
         {
-            // Configuración básica del form
-            this.Text = "Pagos múltiples";
-            this.StartPosition = FormStartPosition.CenterParent;
-            this.FormBorderStyle = FormBorderStyle.Sizable;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.AutoScaleMode = AutoScaleMode.Font;
-
-            flowPanel = new FlowLayoutPanel
+            // En un monto: pasar al siguiente control para que dispare el Leave (formateo y autocompletado)
+            if (ActiveControl is TextBox txt && _txtMontos.Contains(txt))
             {
-                Dock = DockStyle.Top,
-                AutoSize = false,
-                FlowDirection = FlowDirection.TopDown,
-                WrapContents = false,
-                Padding = new Padding(8),
-                AutoScroll = true
-            };
-            this.Controls.Add(flowPanel);
-
-            // Panel inferior para totales y botones
-            panelBottom = new System.Windows.Forms.Panel
-            {
-                Dock = DockStyle.Bottom,
-                Height = 64,
-                Padding = new Padding(8),
-                BackColor = SystemColors.ControlLight
-            };
-
-            lblTotal = new Label
-            {
-                AutoSize = true,
-                Font = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold),
-                Location = new Point(8, 12)
-            };
-            panelBottom.Controls.Add(lblTotal);
-
-            lblRestante = new Label
-            {
-                AutoSize = true,
-                Font = new Font(FontFamily.GenericSansSerif, 9),
-                Location = new Point(200, 12)
-            };
-            panelBottom.Controls.Add(lblRestante);
-
-            btnAceptar = new Button
-            {
-                Text = "Aceptar",
-                Width = 100,
-                Height = 30
-            };
-            btnAceptar.Click += BtnAceptar_Click;
-            panelBottom.Controls.Add(btnAceptar);
-
-            btnCancelar = new Button
-            {
-                Text = "Cancelar",
-                Width = 100,
-                Height = 30
-            };
-            btnCancelar.Click += BtnCancelar_Click;
-            panelBottom.Controls.Add(btnCancelar);
-
-            this.Controls.Add(panelBottom);
-
-            // Eventos de layout
-            this.Load += FPagoMultiple_Load;
-            this.Resize += FPagoMultiple_Resize;
-            panelBottom.Resize += PanelBottom_Resize;
-        }
-
-        private void FPagoMultiple_Load(object sender, EventArgs e)
-        {
-            // Validaciones de cantidad:
-            if (CantidadPagos > 7)
-            {
-                Advertir("No se permiten más de 7 formas de pago. Operación cancelada.");
-                //MessageBox.Show("No se permiten más de 7 formas de pago. Operación cancelada.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.DialogResult = DialogResult.Cancel;
-                this.Close();
+                SelectNextControl(txt, true, true, true, false);
                 return;
             }
-            else if (CantidadPagos > 3)
-            {
 
-                Advertir("No es recomendable usar más de 3 formas de pago. ¿Desea continuar?");
-                //MessageBox.Show("No es recomendable usar más de 3 formas de pago. ¿Desea continuar?", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // En un botón: pulsarlo
+            if (ActiveControl is Button btn)
+            {
+                btn.PerformClick();
+                return;
             }
 
-            // Mostrar total
+            BtnAceptar_Click(btnAceptar, EventArgs.Empty);
+        }
+
+        // ------------------------------------------------------------------
+        // Load / layout
+        // ------------------------------------------------------------------
+        private void FPagoMultiple_Load(object sender, EventArgs e)
+        {
+            if (CantidadPagos > MaxPagos)
+            {
+                Advertir($"No se permiten más de {MaxPagos} formas de pago. Operación cancelada.");
+                DialogResult = DialogResult.Cancel;
+                Close();
+                return;
+            }
+
+            if (CantidadPagos > PagosRecomendados &&
+                !Confirmar($"No es recomendable usar más de {PagosRecomendados} formas de pago. ¿Desea continuar?"))
+            {
+                DialogResult = DialogResult.Cancel;
+                Close();
+                return;
+            }
+
             lblTotal.Text = $"Total: {TotalVenta.ToString("C2")}";
-            // Inicial restante
-            lblRestante.Text = $"Restante: {TotalVenta.ToString("C2")}";
 
-            // Construir filas dinámicas
             BuildRows();
-
-            // Ajuste de tamaño para intentar mostrar todas las filas sin cortar.
-            // Calculamos altura necesaria y limitamos a un máximo razonable (por ejemplo 600px).
-            int filaAltura = 42;
-            int neededHeight = Math.Min(600, 120 + CantidadPagos * filaAltura);
-            int bottomPanelHeight = panelBottom.Height + 16;
-            this.ClientSize = new Size(Math.Max(600, this.ClientSize.Width), neededHeight + bottomPanelHeight);
-
-            // Ajusto la altura del flowPanel para ocupar el espacio superior
-            flowPanel.Height = this.ClientSize.Height - bottomPanelHeight - 8;
-
-            // Alinear botones
-            PositionButtons();
-
+            AjustarTamanio();
             UpdateRestante();
         }
 
-        private void PanelBottom_Resize(object sender, EventArgs e)
+        private void AjustarTamanio()
         {
-            PositionButtons();
+            // Altura necesaria para mostrar todas las filas sin scroll (con tope razonable)
+            int altoFilas = CantidadPagos * (AlturaFila + MargenFila);
+            int alto = Math.Min(AlturaMaxForm, flowPanel.Padding.Vertical + altoFilas + panelBottom.Height);
+
+            ClientSize = new Size(Math.Max(AnchoMinForm, ClientSize.Width), alto);
+            AjustarAnchoFilas();
+            CenterToParent();
         }
 
-        private void FPagoMultiple_Resize(object sender, EventArgs e)
+        private void flowPanel_SizeChanged(object sender, EventArgs e)
         {
-            // Ajusta el ancho de cada fila para que coincida con el cliente
+            AjustarAnchoFilas();
+        }
+
+        private void AjustarAnchoFilas()
+        {
+            int ancho = flowPanel.ClientSize.Width - flowPanel.Padding.Horizontal;
+            if (ancho <= 0) return;
+
             foreach (Control row in flowPanel.Controls)
-            {
-                row.Width = this.ClientSize.Width - 24;
-            }
-
-            // Reposicionar botones también
-            PositionButtons();
-        }
-
-        private void PositionButtons()
-        {
-            // Coloco los botones alineados a la derecha dentro del panelBottom
-            int paddingRight = 12;
-            int gap = 8;
-            int x = panelBottom.ClientSize.Width - paddingRight - btnCancelar.Width;
-            btnCancelar.Location = new Point(x, (panelBottom.ClientSize.Height - btnCancelar.Height) / 2);
-            x -= (btnAceptar.Width + gap);
-            btnAceptar.Location = new Point(x, (panelBottom.ClientSize.Height - btnAceptar.Height) / 2);
+                row.Width = ancho;
         }
 
         private void BuildRows()
@@ -207,19 +141,20 @@ namespace Presentacion.Core.Venta
             _btnTipoPago.Clear();
             _lblTipoPago.Clear();
             _tipoSeleccionado.Clear();
+            _datosExtra.Clear();
 
+            flowPanel.SuspendLayout();
             flowPanel.Controls.Clear();
 
             for (int i = 0; i < CantidadPagos; i++)
             {
-                int idx = i; // <<--- captura local obligatoria
+                int idx = i; // captura local obligatoria para las lambdas
 
-                // Panel fila
+                // Panel fila (el tema de FBase lo pinta en OnLoad)
                 var panelRow = new System.Windows.Forms.Panel
                 {
-                    Width = this.ClientSize.Width - 24,
-                    Height = 36,
-                    Margin = new Padding(0, 0, 0, 6)
+                    Height = AlturaFila,
+                    Margin = new Padding(0, 0, 0, MargenFila)
                 };
 
                 // Etiqueta "Pago X"
@@ -237,11 +172,10 @@ namespace Presentacion.Core.Venta
                     Name = $"txtMonto_{idx}",
                     Width = 120,
                     Location = new Point(80, 4),
-                    Text = "0.00",
+                    Text = 0m.ToString("N2"),
                     TextAlign = HorizontalAlignment.Right
                 };
-                // Usar idx en las lambdas
-                txtMonto.TextChanged += (s, e) => TxtMonto_TextChanged(s, e, idx);
+                txtMonto.TextChanged += (s, e) => UpdateRestante();
                 txtMonto.Leave += (s, e) => TxtMonto_Leave_AutoFillLast(s, e, idx);
                 panelRow.Controls.Add(txtMonto);
                 _txtMontos.Add(txtMonto);
@@ -255,7 +189,7 @@ namespace Presentacion.Core.Venta
                     Height = 24,
                     Location = new Point(210, 6)
                 };
-                btnTipo.Click += (s, e) => BtnTipo_Click(s, e, idx); // uso de idx
+                btnTipo.Click += (s, e) => BtnTipo_Click(s, e, idx);
                 panelRow.Controls.Add(btnTipo);
                 _btnTipoPago.Add(btnTipo);
 
@@ -270,13 +204,19 @@ namespace Presentacion.Core.Venta
                 panelRow.Controls.Add(lblTipo);
                 _lblTipoPago.Add(lblTipo);
 
-                // Inicializamos sel tipo como nulo
+                // Forma de pago inicial: sin asignar
                 _tipoSeleccionado.Add(null);
                 _datosExtra.Add(null);
 
                 flowPanel.Controls.Add(panelRow);
             }
+
+            flowPanel.ResumeLayout(true);
         }
+
+        // ------------------------------------------------------------------
+        // Montos
+        // ------------------------------------------------------------------
         private void TxtMonto_Leave_AutoFillLast(object sender, EventArgs e, int index)
         {
             var txt = sender as TextBox;
@@ -305,12 +245,12 @@ namespace Presentacion.Core.Venta
             decimal sumaParcial = valores.Sum();
             if (sumaParcial > TotalVenta)
             {
-                // Reducir el valor del textbox editado para que la suma quede en TotalVenta
                 decimal excedente = sumaParcial - TotalVenta;
                 decimal nuevoValor = valores[index] - excedente;
                 if (nuevoValor < 0) nuevoValor = 0m;
                 valores[index] = nuevoValor;
                 _txtMontos[index].Text = nuevoValor.ToString("N2");
+
                 // Recalcular ceros/último índice (posible que nuevoValor sea 0)
                 ceros = 0;
                 ultimoIndiceCero = -1;
@@ -318,79 +258,27 @@ namespace Presentacion.Core.Venta
                     if (valores[i] == 0m) { ceros++; ultimoIndiceCero = i; }
             }
 
-            // SI queda exactamente 1 cero y ese cero es el ÚLTIMO índice -> autocompletar
+            // Si queda exactamente 1 cero y ese cero es el ÚLTIMO índice -> autocompletar
             if (ceros == 1 && ultimoIndiceCero == _txtMontos.Count - 1)
             {
                 decimal sumaSinUltimo = valores.Sum() - valores[ultimoIndiceCero];
                 decimal restante = TotalVenta - sumaSinUltimo;
                 if (restante < 0) restante = 0m;
 
-                // Asignar al último textbox
                 _txtMontos[ultimoIndiceCero].Text = restante.ToString("N2");
             }
 
-            // Actualizar restante y UI
-            UpdateRestante();
-        }
-        private void TxtMonto_TextChanged(object sender, EventArgs e, int index)
-        {
-            // Intentar parsear; no lanzar excepción
-            decimal monto = 0m;
-            var txt = sender as TextBox;
-            if (txt == null) return;
-
-            var ok = decimal.TryParse(txt.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out monto);
-            if (!ok)
-            {
-                // si no es válido, no hacemos nada por ahora; al perder foco se formateará
-            }
-
-            // Actualizamos restante
             UpdateRestante();
         }
 
         private void FormatTextBoxDecimal(TextBox txt)
         {
             if (txt == null) return;
-            if (decimal.TryParse(txt.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out var v))
-            {
-                txt.Text = v.ToString("N2");
-            }
-            else
-            {
-                txt.Text = "0.00";
-            }
-        }
 
-        private void BtnTipo_Click(object sender, EventArgs e, int index)
-        {
-            // Prepara la lista actual de pagos para pasar al selector si lo necesitás
-            var tmpPagos = new List<FormaPago>();
-            for (int i = 0; i < CantidadPagos; i++)
-            {
-                decimal monto = 0m;
-                decimal.TryParse(_txtMontos[i].Text, NumberStyles.Number, CultureInfo.CurrentCulture, out monto);
-                var fp = new FormaPago { Numero = i + 1, Monto = monto, TipoDePago = null, DatosExtra = "Sin especificar" };
-                tmpPagos.Add(fp);
-            }
-            // Abrir selector (reutiliza tu dialog existente). Ajustá el constructor si lo tenés distinto.
-            using var fTipo = new FTipoPagoSeleccionEnVenta(_dv, tmpPagos, index, _idCliente);
-            if (fTipo.ShowDialog() == DialogResult.OK)
-            {
-                var tipo = fTipo.tipoPagoSeleccionado;
-                if (index < 0 || index >= _tipoSeleccionado.Count)
-                {
-                    MostrarError("No se permiten más de 7 formas de pago. Operación cancelada.");
-                    //MessageBox.Show("Índice inválido al asignar forma de pago.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                _tipoSeleccionado[index] = tipo;
-                _datosExtra[index] = fTipo.datosExtra ?? "Sin especificar";
-                // Pongo el texto en label
-                _lblTipoPago[index].Text = $"{tipo.ToString()} ({_datosExtra[index]})";
-                // Mantengo el botón como "Cambiar"
-                _btnTipoPago[index].Text = "Cambiar forma";
-            }
+            if (decimal.TryParse(txt.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out var v))
+                txt.Text = v.ToString("N2");
+            else
+                txt.Text = 0m.ToString("N2");
         }
 
         private void UpdateRestante()
@@ -403,18 +291,52 @@ namespace Presentacion.Core.Venta
             }
 
             var restante = TotalVenta - suma;
-            // Permitimos restante negativo en cálculo (lo mostramos como 0 para evitar signos raros)
+            // Se muestra 0 en vez de negativo para evitar signos raros
             if (restante < 0) restante = 0m;
 
             lblRestante.Text = $"Restante: {restante.ToString("C2")}";
         }
 
+        // ------------------------------------------------------------------
+        // Forma de pago
+        // ------------------------------------------------------------------
+        private void BtnTipo_Click(object sender, EventArgs e, int index)
+        {
+            // Lista actual de pagos para pasar al selector
+            var tmpPagos = new List<FormaPago>();
+            for (int i = 0; i < CantidadPagos; i++)
+            {
+                decimal monto = 0m;
+                decimal.TryParse(_txtMontos[i].Text, NumberStyles.Number, CultureInfo.CurrentCulture, out monto);
+                tmpPagos.Add(new FormaPago { Numero = i + 1, Monto = monto, TipoDePago = null, DatosExtra = "Sin especificar" });
+            }
+
+            using var fTipo = new FTipoPagoSeleccionEnVenta(_dv, tmpPagos, index, _idCliente);
+            if (fTipo.ShowDialog(this) != DialogResult.OK) return;
+
+            if (index < 0 || index >= _tipoSeleccionado.Count)
+            {
+                MostrarError("Índice inválido al asignar la forma de pago.");
+                return;
+            }
+
+            var tipo = fTipo.tipoPagoSeleccionado;
+            _tipoSeleccionado[index] = tipo;
+            _datosExtra[index] = fTipo.datosExtra ?? "Sin especificar";
+
+            _lblTipoPago[index].Text = $"{tipo.ToString()} ({_datosExtra[index]})";
+            _btnTipoPago[index].Text = "Cambiar forma";
+        }
+
+        // ------------------------------------------------------------------
+        // Aceptar / Cancelar
+        // ------------------------------------------------------------------
         private void BtnAceptar_Click(object sender, EventArgs e)
         {
             // Validaciones:
             // - Suma de montos no puede superar total
             // - Debe existir al menos un monto > 0
-            // - Para cada monto > 0, debe existir forma de pago asignada (label != "No asignada")
+            // - Para cada monto > 0, debe existir forma de pago asignada
 
             decimal suma = 0m;
             for (int i = 0; i < _txtMontos.Count; i++)
@@ -426,14 +348,12 @@ namespace Presentacion.Core.Venta
             if (suma <= 0m)
             {
                 Advertir("Ingrese al menos un monto mayor a cero.");
-                //MessageBox.Show("Ingrese al menos un monto mayor a cero.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (suma > TotalVenta)
             {
                 Advertir("La suma de los montos no puede superar el total de la venta.");
-                MessageBox.Show("La suma de los montos no puede superar el total de la venta.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -444,34 +364,30 @@ namespace Presentacion.Core.Venta
                 decimal monto = 0m;
                 decimal.TryParse(_txtMontos[i].Text, NumberStyles.Number, CultureInfo.CurrentCulture, out monto);
 
-                // Si monto > 0, debo tener forma de pago asignada
                 if (monto > 0 && (_tipoSeleccionado.Count <= i || _tipoSeleccionado[i] == null))
                 {
+                    ResultPagos.Clear();
                     Advertir($"Debe seleccionar una forma de pago para el Pago {i + 1} (monto {monto:C2}).");
-                    //MessageBox.Show($"Debe seleccionar una forma de pago para el Pago {i + 1} (monto {monto:C2}).", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                var forma = new FormaPago
+                ResultPagos.Add(new FormaPago
                 {
                     Numero = i + 1,
                     Monto = monto,
                     TipoDePago = _tipoSeleccionado[i] ?? default,
                     DatosExtra = _datosExtra[i] ?? "Sin especificar"
-                };
-
-                ResultPagos.Add(forma);
+                });
             }
 
-            // Todo ok
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void BtnCancelar_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         // Si por alguna razón tenés que mapear desde label, lo dejo por compatibilidad:

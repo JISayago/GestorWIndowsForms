@@ -69,6 +69,10 @@ namespace Presentacion.FBase
 
         private void btnSalir_Click(object sender, EventArgs e)
         {
+            if (RealizoAlgunaOperacion)
+            {
+                this.DialogResult = DialogResult.OK;
+            }
             this.Close();
         }
 

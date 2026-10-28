@@ -88,7 +88,7 @@ namespace Presentacion.Core.Venta
             }
 
             // Si es múltiples, abrimos el formulario que pide la cantidad
-            using (var fCantidad = new FCantidadItem())
+            using (var fCantidad = new FCantidadItem("2"))
             {
                 // Opcional: ajustar límites predeterminados del dialog desde aquí si quisieras:
                 // fCantidad.MaxCantidad = 12; fCantidad.MinCantidad = 2;

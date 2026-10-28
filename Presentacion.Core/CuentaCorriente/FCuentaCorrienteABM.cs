@@ -34,6 +34,7 @@ namespace Presentacion.Core.CuentaCorriente
         private long? movimientoId;
         private bool EsCuentaNueva =>
       TipoOperacion == TipoOperacion.Nuevo;
+        //public bool RealizoAlgunaOperacion { get; private set; } = false;
 
         private bool CuentaCreada =>
             CuentaCorrienteId.HasValue;
@@ -163,7 +164,7 @@ namespace Presentacion.Core.CuentaCorriente
             //    lblNombreCliente2.ForeColor = TemaSistema.Primario;
 
             //EstilarBotonPrimario(btnActivar);
-            EstilarBotonPeligro(btnCerrarCtacte);
+            ActualizarBotonesEstado();
             EstilarBotonSecundario(btnCargarSaldoCtaCte);
             EstilarBotonSecundario(btnCargarLimite);
             EstilarBotonPrimario(btnAgregarDni);
@@ -354,11 +355,6 @@ namespace Presentacion.Core.CuentaCorriente
 
             rbVencimientoAutomatico.Checked = _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Automatico;
             rbVencimientoManual.Checked = _cuentaCorriente.TipoVencimiento == (int)TipoVencimientoCuentaCorriente.Manual;
-            if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Activa)
-            {
-                btnActivar.Enabled = false;
-                btnActivar.ForeColor = System.Drawing.Color.Gray;
-            }
             nudCantidadMeses.Value =
                 _cuentaCorriente.CantidadMesesVencimiento;
             // 🔹 Mapeo directo a la lista del ListBox sin dar vueltas con celdas
@@ -467,12 +463,14 @@ namespace Presentacion.Core.CuentaCorriente
                 if (response.Exitoso)
                 {
                     Exito(response.Mensaje, "Éxito");
+                    RealizoAlgunaOperacion = true;
                     //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
                     MostrarError(response.Mensaje);
+                    RealizoAlgunaOperacion = false;
                     //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
@@ -545,12 +543,14 @@ namespace Presentacion.Core.CuentaCorriente
                 if (response.Exitoso)
                 {
                     Exito(response.Mensaje, "Éxito");
+                    RealizoAlgunaOperacion = true;
                     //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
                     MostrarError(response.Mensaje);
+                    RealizoAlgunaOperacion = false;
                     //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
@@ -705,7 +705,7 @@ namespace Presentacion.Core.CuentaCorriente
             ActualizarProximoVencimiento();
 
             ActualizarBotones();
-            
+
         }
 
         private void ActualizarLimite()
@@ -763,29 +763,7 @@ namespace Presentacion.Core.CuentaCorriente
                 return;
 
             if (CuentaCreada)
-            {
-                if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Activa)
-                {
-                    btnCerrarCtacte.Text = "Cerrar Cuenta";
-                    btnCerrarCtacte.BackColor = System.Drawing.Color.FromArgb(160, 40, 40);
-                    btnActivar.Enabled = false;
-                    btnActivar.ForeColor = System.Drawing.Color.Gray;
-                }
-                else if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Cerrada)
-                {
-                    btnActivar.Enabled = false;
-                    btnActivar.ForeColor = System.Drawing.Color.Gray;
-                    btnCerrarCtacte.BackColor = System.Drawing.Color.Green;
-                    btnCerrarCtacte.Text = "Reabrir Cuenta";
-                }
-                else
-                {
-                    btnActivar.Enabled = true;
-                    btnActivar.ForeColor = System.Drawing.Color.White;
-                    btnCerrarCtacte.Text = "Cerrar Cuenta";
-                    btnCerrarCtacte.BackColor = System.Drawing.Color.FromArgb(160, 40, 40);
-                }
-            }
+                ActualizarBotonesEstado();
 
             lblEstado.Text = _cuentaCorriente.EstadoDescripcionCtaCte;
 
@@ -803,6 +781,56 @@ namespace Presentacion.Core.CuentaCorriente
                     ? _cuentaCorriente.FechaActivacion.Value.ToString("dd/MM/yyyy")
                     : "-";
         }
+        // Pinta btnActivar / btnCerrarCtacte según el estado de la cuenta.
+        // Se fuerza FlatStyle y UseVisualStyleBackColor=false porque con el estilo
+        // estándar de Windows el BackColor/ForeColor se ignora y los colores no cambian.
+        private void ActualizarBotonesEstado()
+        {
+            if (_cuentaCorriente == null || !CuentaCreada)
+                return;
+
+            var rojo = System.Drawing.Color.FromArgb(160, 40, 40);
+            var verde = System.Drawing.Color.FromArgb(40, 140, 60);
+            var gris = System.Drawing.Color.FromArgb(200, 200, 200);
+
+            if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Activa)
+            {
+                PintarBotonEstado(btnActivar, "Activar", gris, System.Drawing.Color.Gray, false);
+                PintarBotonEstado(btnCerrarCtacte, "Cerrar Cuenta", rojo, System.Drawing.Color.White, true);
+            }
+            else if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Cerrada)
+            {
+                PintarBotonEstado(btnActivar, "Activar", gris, System.Drawing.Color.Gray, false);
+                PintarBotonEstado(btnCerrarCtacte, "Reabrir Cuenta", verde, System.Drawing.Color.White, true);
+            }
+            else
+            {
+                PintarBotonEstado(btnActivar, "Activar", TemaSistema.Primario, System.Drawing.Color.White, true);
+                PintarBotonEstado(btnCerrarCtacte, "Cerrar Cuenta", rojo, System.Drawing.Color.White, true);
+            }
+        }
+
+        private static void PintarBotonEstado(Button btn, string texto, System.Drawing.Color back, System.Drawing.Color fore, bool habilitado)
+        {
+            if (btn == null) return;
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 0;
+            btn.UseVisualStyleBackColor = false;
+            btn.Text = texto;
+            btn.BackColor = back;
+            btn.ForeColor = fore;
+            btn.Cursor = habilitado ? Cursors.Hand : Cursors.Default;
+            btn.Enabled = habilitado;
+            btn.Invalidate();
+        }
+
+        // El tema se puede aplicar después del Load y pisar los colores: se reaplican al mostrar.
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            ActualizarBotonesEstado();
+        }
+
         private string GenerarNombreCuentaCorriente(ClienteDTO cliente)
         {
             var inicial = cliente.Nombre.Trim()[0].ToString().ToUpper();
@@ -893,7 +921,7 @@ namespace Presentacion.Core.CuentaCorriente
 
                 lblSaldo.Text = $"Saldo: {respuesta.DatoExtra}";
                 Exito(respuesta.Mensaje, "Atención");
-                //MessageBox.Show(respuesta.Mensaje, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                RealizoAlgunaOperacion = true;
 
                 CargarDatosCuenta();
                 ActualizarPantalla();
@@ -1183,8 +1211,8 @@ namespace Presentacion.Core.CuentaCorriente
                 return;
             if (!Confirmar(
                  "¿Está seguro que desea Activar la cuenta corriente? Esta acción no se puede deshacer.",
-                  "Confirmar cierre",
-                  si: "Sumar cantidad",
+                  "Confirmar activación",
+                  si: "Activar cuenta",
                   no: "Cancelar"))
                 return;
             //var msjee = MessageBox.Show("¿Está seguro que desea Activar la cuenta corriente? Esta acción no se puede deshacer.", "Confirmar cierre", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -1194,7 +1222,7 @@ namespace Presentacion.Core.CuentaCorriente
             if (respuesta.Exitoso)
             {
                 Exito(respuesta.Mensaje, "Atención");
-                //MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                RealizoAlgunaOperacion = true;
                 CargarDatosCuenta();
                 ActualizarPantalla();
             }
@@ -1213,10 +1241,10 @@ namespace Presentacion.Core.CuentaCorriente
                 return;
             if (_cuentaCorriente.EstadoCtaCte == (int)EstadoCuentaCorriente.Cerrada)
             {
-                var result = !Confirmar(
+                var result = Confirmar(
                   "¿Esta seguro que desea reabrir la cuenta corriente?", "Confirmar reapertura",
-                  si: "Yes",
-                  no: "No");
+                  si: "Reabrir",
+                  no: "Cancelar");
                 //var msje = MessageBox.Show("¿Esta seguro que desea reabrir la cuenta corriente?", "Confirmar reapertura", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result)
                 {
@@ -1224,7 +1252,7 @@ namespace Presentacion.Core.CuentaCorriente
                     if (res.Exitoso)
                     {
                         Exito(res.Mensaje, "Atención");
-                        //MessageBox.Show($"{res.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        RealizoAlgunaOperacion = true;
                         CargarDatosCuenta();
                         ActualizarPantalla();
                     }
@@ -1250,7 +1278,7 @@ namespace Presentacion.Core.CuentaCorriente
             if (respuesta.Exitoso)
             {
                 Exito(respuesta.Mensaje, "Atención");
-                //MessageBox.Show($"{respuesta.Mensaje}", @"Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                RealizoAlgunaOperacion = true;
                 CargarDatosCuenta();
                 ActualizarPantalla();
             }

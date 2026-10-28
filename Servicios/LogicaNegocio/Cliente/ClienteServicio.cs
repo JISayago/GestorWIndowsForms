@@ -419,6 +419,7 @@ namespace Servicios.LogicaNegocio.Cliente
 
                     Nombre = c.Persona.Nombre,
                     Apellido = c.Persona.Apellido,
+                    
 
                     Dni = c.Persona.Dni,
                     Cuil = c.Persona.Cuil,
@@ -440,7 +441,9 @@ namespace Servicios.LogicaNegocio.Cliente
 
                     Estado = c.Estado,
 
-                    CuentaCorrienteId = c.CuentaCorrienteId
+                    CuentaCorrienteId = c.CuentaCorrienteId,
+
+                    EstadoCtaCte = c.CuentaCorriente != null  ? (int)c.CuentaCorriente.EstadoCuentaCorriente : -1
                 })
                 .ToList();
 
