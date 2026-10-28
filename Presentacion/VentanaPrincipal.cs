@@ -696,15 +696,26 @@ namespace Presentacion
             lblNombreUsuario.Text = _usuarioLogeado.Username.ToUpper();
             return true;
         }
-
         private static void SalirDeSesion()
         {
-            // Application.Restart() relanza el exe con los mismos argumentos: en la secundaria
-            // reabriría otra secundaria, por eso ahí solo se sale.
+            // La secundaria simplemente se cierra.
             if (SesionSecundaria.EsSecundaria)
+            {
                 Application.Exit();
-            else
-                Application.Restart();
+                return;
+            }
+
+            // La principal se reinicia desde el comienzo.
+            Program.ReiniciarAplicacion();
         }
+        //private static void SalirDeSesion()
+        //{
+        //    // Application.Restart() relanza el exe con los mismos argumentos: en la secundaria
+        //    // reabriría otra secundaria, por eso ahí solo se sale.
+        //    if (SesionSecundaria.EsSecundaria)
+        //        Application.Exit();
+        //    else
+        //        Application.Restart();
+        //}
     }
 }

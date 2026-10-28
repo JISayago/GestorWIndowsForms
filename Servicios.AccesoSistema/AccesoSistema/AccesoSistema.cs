@@ -5,6 +5,7 @@ using Servicios.Helpers.Empleado;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Extras;
 using Servicios.LogicaNegocio.Empleado;
+using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -183,6 +184,34 @@ namespace ServicioAccesoSistema.AccesoSistema
             }
 
             context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Devuelve la sesión principal indicada y todas las secundarias lanzadas desde ella.
+        /// Orden: principal primero, después las secundarias activas y por último las cerradas (más recientes antes).
+        /// </summary>
+        public List<SesionInfoDTO> ObtenerSesionesDelTerminal(long sesionPrincipalId)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+            return context.Usuarios
+                .Where(s => s.UsuarioSesionId == sesionPrincipalId || s.SesionPrincipalId == sesionPrincipalId)
+                .OrderBy(s => s.EsSecundaria)
+                .ThenByDescending(s => s.Activa)
+                .ThenByDescending(s => s.FechaLogin)
+                .Take(20)
+                .Select(s => new SesionInfoDTO
+                {
+                    UsuarioSesionId = s.UsuarioSesionId,
+                    UsuarioId = s.UsuarioId,
+                    Username = s.Usuario != null ? s.Usuario.Username : "",
+                    FechaLogin = s.FechaLogin,
+                    FechaLogout = s.FechaLogout,
+                    Activa = s.Activa,
+                    EsSecundaria = s.EsSecundaria,
+                    SesionPrincipalId = s.SesionPrincipalId
+                })
+                .ToList();
         }
 
         public EstadoOperacion PrimerIngreso(string nombreUsuario, string pass)
