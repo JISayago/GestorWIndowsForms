@@ -180,7 +180,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     Mensaje = "Por favor abra una caja para continuar con la transacción."
                 };
             cajaServicio.RegistrarTransaccion(context, diferencia, TipoMovimiento.Ingreso, cajaId.Value);
-            CrearMovimientoCargaSaldoCuentaCorriente(cuenta.CuentaCorrienteId, diferencia, context);
+            _movimientoServicio.CrearMovimientoCtaCte(Math.Abs(diferencia), cajaId.Value, cuenta.CuentaCorrienteId, TipoMovimientoDetalle.CuentaCorriente, true, context);
 
 
             context.SaveChanges();
@@ -194,27 +194,6 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 DatoExtra = cuenta.Saldo.ToString("C")
             };
         }
-
-        public void CrearMovimientoCargaSaldoCuentaCorriente(long cuentaCorrienteId,decimal monto,GestorContextDB context)
-        {
-            if (cuentaCorrienteId <= 0)
-                throw new Exception("No puede crearse el movimiento porque la cuenta corriente no posee un Id válido.");
-
-            var movimiento = new AccesoDatos.Entidades.Movimiento
-            {
-                NumeroMovimiento = $"MOV-CTACTE-{cuentaCorrienteId}-{DateTime.Now:yyyyMMddHHmmss}",
-                EntidadId = cuentaCorrienteId,
-                TipoEntidad = (int)TipoEntidadMovimiento.CuentaCorriente,
-                TipoMovimiento = (int)TipoMovimiento.Ingreso,
-                TipoMovimientoDetalle = (int)TipoMovimientoDetalle.CuentaCorriente,
-                Monto = Math.Abs(monto),
-                FechaMovimiento = DateTime.Now,
-                EstaEliminado = false
-            };
-
-            context.Movimientos.Add(movimiento);
-        }
-
 
         public EstadoOperacion Modificar(CuentaCorrienteDTO cuentacorrienteDto, long? cuentacorrienteId)
         {

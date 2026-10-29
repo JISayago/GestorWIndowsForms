@@ -1134,6 +1134,11 @@ namespace AccesoDatos
                     entity.HasIndex(e => new { e.TipoMovimientoDetalle, e.FechaMovimiento })
                         .HasDatabaseName("IX_Movimientos_Operacion_FechaMovimiento");
 
+                    // Número de movimiento único (lo genera MovimientoServicio.Registrar)
+                    entity.HasIndex(e => e.NumeroMovimiento)
+                        .IsUnique()
+                        .HasDatabaseName("UX_Movimientos_NumeroMovimiento");
+
                     // Mismo patrón: consulta de movimientos ordena por FechaMovimiento DESC
                     entity.HasIndex(e => e.FechaMovimiento)
                         .HasDatabaseName("IX_Movimientos_FechaMovimiento_Desc")

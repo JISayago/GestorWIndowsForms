@@ -681,6 +681,10 @@ namespace AccesoDatos.Migrations
 
                     b.HasIndex("MovimientoOrigenId");
 
+                    b.HasIndex("NumeroMovimiento")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Movimientos_NumeroMovimiento");
+
                     b.HasIndex("TipoPagoId");
 
                     b.HasIndex("CajaId", "FechaMovimiento")
