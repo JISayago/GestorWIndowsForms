@@ -32,8 +32,17 @@ namespace Servicios.LogicaNegocio.Movimiento
         /// <summary>Carga de saldo: afecta la caja, en efectivo. Una diferencia negativa es un Egreso.</summary>
         void RegistrarCargaSaldo(GestorContextDB context, long cuentaCorrienteId, long cajaId, decimal diferencia);
 
-        /// <summary>Se reemplaza en la Etapa 3b (gastos).</summary>
-        void CrearMovimientoGasto(long gastoId, decimal monto, GestorContextDB context);
+        /// <summary>Gasto pagado: Egreso. Con origen Caja afecta la caja (siempre en efectivo); con otro origen no.</summary>
+        AccesoDatos.Entidades.Movimiento? RegistrarPagoGasto(GestorContextDB context, long gastoId, bool afectaCaja, long? cajaId, TipoDePago tipoPago, decimal monto);
+
+        /// <summary>
+        /// Contramovimiento de uno existente: tipo contrario, mismo monto, mismo tipo de pago y mismo AfectaCaja,
+        /// con MovimientoOrigenId apuntando al original. <c>cajaId</c> es la caja abierta actual (solo si el original afectaba la caja).
+        /// </summary>
+        AccesoDatos.Entidades.Movimiento? RegistrarReversa(GestorContextDB context, AccesoDatos.Entidades.Movimiento original, TipoEntidadMovimiento entidad, long entidadId, long? cajaId, string prefijo);
+
+        /// <summary>Efectivo disponible en una caja: saldo inicial + cobros en efectivo - pagos en efectivo (según el libro).</summary>
+        decimal ObtenerEfectivoDisponible(GestorContextDB context, long cajaId);
 
         ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros);
         MovimientoHelperDTO ObtenerDatosParaMovimientoConsulta(long movimientoId);

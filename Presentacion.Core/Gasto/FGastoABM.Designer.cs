@@ -46,6 +46,12 @@
             label7 = new Label();
             label8 = new Label();
             label9 = new Label();
+            lblOrigen = new Label();
+            cmbOrigen = new ComboBox();
+            lblTipoPago = new Label();
+            cmbTipoPago = new ComboBox();
+            lblExtraPago = new Label();
+            txtExtraPago = new TextBox();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             SuspendLayout();
             // 
@@ -93,20 +99,20 @@
             // 
             // btnRegistrarGasto
             // 
-            btnRegistrarGasto.Location = new Point(140, 286);
+            btnRegistrarGasto.Location = new Point(140, 384);
             btnRegistrarGasto.Name = "btnRegistrarGasto";
             btnRegistrarGasto.Size = new Size(126, 40);
-            btnRegistrarGasto.TabIndex = 6;
+            btnRegistrarGasto.TabIndex = 8;
             btnRegistrarGasto.Text = "Registrar Gasto";
             btnRegistrarGasto.UseVisualStyleBackColor = true;
             btnRegistrarGasto.Click += btnRegistrarGasto_Click;
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(363, 286);
+            btnCancelar.Location = new Point(363, 384);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(127, 40);
-            btnCancelar.TabIndex = 7;
+            btnCancelar.TabIndex = 9;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
             btnCancelar.Click += btnCancelar_Click;
@@ -213,11 +219,71 @@
             label9.Tag = "NoModificarConBase";
             label9.Text = "*";
             // 
+            // lblOrigen
+            // 
+            lblOrigen.AutoSize = true;
+            lblOrigen.Location = new Point(58, 289);
+            lblOrigen.Name = "lblOrigen";
+            lblOrigen.Size = new Size(42, 15);
+            lblOrigen.TabIndex = 52;
+            lblOrigen.Text = "Origen";
+            // 
+            // cmbOrigen
+            // 
+            cmbOrigen.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbOrigen.FormattingEnabled = true;
+            cmbOrigen.Location = new Point(118, 281);
+            cmbOrigen.Name = "cmbOrigen";
+            cmbOrigen.Size = new Size(115, 23);
+            cmbOrigen.TabIndex = 5;
+            cmbOrigen.SelectedIndexChanged += cmbOrigen_SelectedIndexChanged;
+            // 
+            // lblTipoPago
+            // 
+            lblTipoPago.AutoSize = true;
+            lblTipoPago.Location = new Point(285, 289);
+            lblTipoPago.Name = "lblTipoPago";
+            lblTipoPago.Size = new Size(73, 15);
+            lblTipoPago.TabIndex = 53;
+            lblTipoPago.Text = "Tipo de pago";
+            // 
+            // cmbTipoPago
+            // 
+            cmbTipoPago.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbTipoPago.FormattingEnabled = true;
+            cmbTipoPago.Location = new Point(369, 281);
+            cmbTipoPago.Name = "cmbTipoPago";
+            cmbTipoPago.Size = new Size(194, 23);
+            cmbTipoPago.TabIndex = 6;
+            // 
+            // lblExtraPago
+            // 
+            lblExtraPago.AutoSize = true;
+            lblExtraPago.Location = new Point(21, 339);
+            lblExtraPago.Name = "lblExtraPago";
+            lblExtraPago.Size = new Size(88, 15);
+            lblExtraPago.TabIndex = 54;
+            lblExtraPago.Text = "Detalle del pago";
+            // 
+            // txtExtraPago
+            // 
+            txtExtraPago.Location = new Point(118, 331);
+            txtExtraPago.MaxLength = 100;
+            txtExtraPago.Name = "txtExtraPago";
+            txtExtraPago.Size = new Size(445, 23);
+            txtExtraPago.TabIndex = 7;
+            // 
             // FGastoABM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(620, 341);
+            ClientSize = new Size(620, 439);
+            Controls.Add(txtExtraPago);
+            Controls.Add(lblExtraPago);
+            Controls.Add(cmbTipoPago);
+            Controls.Add(lblTipoPago);
+            Controls.Add(cmbOrigen);
+            Controls.Add(lblOrigen);
             Controls.Add(label9);
             Controls.Add(label8);
             Controls.Add(label7);
@@ -257,6 +323,12 @@
             Controls.SetChildIndex(label7, 0);
             Controls.SetChildIndex(label8, 0);
             Controls.SetChildIndex(label9, 0);
+            Controls.SetChildIndex(lblOrigen, 0);
+            Controls.SetChildIndex(cmbOrigen, 0);
+            Controls.SetChildIndex(lblTipoPago, 0);
+            Controls.SetChildIndex(cmbTipoPago, 0);
+            Controls.SetChildIndex(lblExtraPago, 0);
+            Controls.SetChildIndex(txtExtraPago, 0);
             ((System.ComponentModel.ISupportInitialize)error).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -280,5 +352,11 @@
         private Label label7;
         private Label label8;
         private Label label9;
+        private Label lblOrigen;
+        private ComboBox cmbOrigen;
+        private Label lblTipoPago;
+        private ComboBox cmbTipoPago;
+        private Label lblExtraPago;
+        private TextBox txtExtraPago;
     }
 }

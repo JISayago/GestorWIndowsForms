@@ -3,6 +3,7 @@ using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Gasto;
 using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.OpcionesPagos;
 using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Extras;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
@@ -46,59 +47,80 @@ namespace Servicios.LogicaNegocio.Gasto
                 _pdf.GenerarGastoAnulado(gastoCompleto);
             }
         }
-        public EstadoOperacion AnularGasto(long gastoId)
+        private static EstadoOperacion Error(string mensaje) =>
+            new EstadoOperacion { Exitoso = false, Mensaje = mensaje };
+
+        /// <summary>
+        /// Paga un gasto dentro de la transacción del llamador: valida origen y tipo de pago, descuenta la caja si el
+        /// origen es Caja (bloquea si supera el efectivo disponible), registra el movimiento y el tipo de pago.
+        /// Devuelve null si salió bien, o el error a informar.
+        /// </summary>
+        private EstadoOperacion? RegistrarPago(GestorContextDB context, AccesoDatos.Entidades.Gasto gasto, int? origen, int? tipoPago, string? extra)
         {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            if (!origen.HasValue || !Enum.IsDefined(typeof(OrigenPagoGasto), origen.Value))
+                return Error("Debe indicar el origen del pago (Caja u Otro).");
 
-            var gasto = context.Gastos.FirstOrDefault(g => g.GastoId == gastoId);
+            var origenPago = (OrigenPagoGasto)origen.Value;
+            var movimientoServicio = new MovimientoServicio();
+            var cajaServicio = new Caja.CajaServicio();
 
-            if (gasto == null)
+            TipoDePago tipo;
+            long? cajaId = null;
+
+            if (origenPago == OrigenPagoGasto.Caja)
             {
-                return new EstadoOperacion
-                {
-                    Exitoso = false,
-                    Mensaje = "El gasto no existe."
-                };
+                // Plata de la caja: siempre efectivo.
+                tipo = TipoDePago.Efectivo;
+
+                cajaId = cajaServicio.ObtenerIdDeUltimaCajaAbierta(context);
+                if (!cajaId.HasValue)
+                    return Error("Debe haber una caja abierta para pagar un gasto con dinero de la caja.");
+
+                var disponible = movimientoServicio.ObtenerEfectivoDisponible(context, cajaId.Value);
+                if (gasto.MontoTotal > disponible)
+                    return Error($"El efectivo disponible en la caja ({disponible:C}) no alcanza para pagar este gasto ({gasto.MontoTotal:C}).");
+            }
+            else
+            {
+                if (!tipoPago.HasValue || !Enum.IsDefined(typeof(TipoDePago), tipoPago.Value))
+                    return Error("Debe indicar el tipo de pago.");
+
+                tipo = (TipoDePago)tipoPago.Value;
+
+                if (tipo == TipoDePago.CtaCte)
+                    return Error("La cuenta corriente no se puede usar para pagar gastos.");
             }
 
-            if (gasto.EstadoGasto == 3)
+            gasto.OrigenPago = (int)origenPago;
+            gasto.MontoPagado = gasto.MontoTotal;
+            gasto.EstadoGasto = (int)EstadoGasto.Pagado;
+
+            var movimiento = movimientoServicio.RegistrarPagoGasto(
+                context,
+                gasto.GastoId,
+                origenPago == OrigenPagoGasto.Caja,
+                cajaId,
+                tipo,
+                gasto.MontoPagado);
+
+            if (movimiento == null)
+                return Error("El monto del gasto debe ser mayor a cero.");
+
+            if (origenPago == OrigenPagoGasto.Caja)
+                cajaServicio.RegistrarTransaccion(context, gasto.MontoPagado, TipoMovimiento.Egreso, cajaId!.Value);
+
+            context.VentaPagosDetalles.Add(new VentaPagoDetalle
             {
-                return new EstadoOperacion
-                {
-                    Exitoso = false,
-                    Mensaje = "El gasto ya se encuentra anulado."
-                };
-            }
+                IdGasto = gasto.GastoId,
+                IdTipoPago = movimiento.TipoPagoId!.Value,
+                Monto = gasto.MontoPagado,
+                ExtraDescripcionPago = string.IsNullOrWhiteSpace(extra) ? "Sin especificar" : extra.Trim()
+            });
 
-
-            var estabaPagado = gasto.MontoPagado > 0;
-
-            gasto.EstadoGasto = (int)EstadoGasto.Anulado;
-
-            context.SaveChanges();
-
-            if (estabaPagado)
-            {
-                try
-                {
-                    GeneracionComprobanteGasto(context, gasto);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("Error generando PDF gasto anulado: " + ex.Message);
-                }
-            }
-
-            return new EstadoOperacion
-            {
-                Exitoso = true,
-                Mensaje = "Gasto anulado correctamente.",
-                EntidadId = gasto.GastoId
-            };
+            return null;
         }
 
-
-        public EstadoOperacion ConfirmarPago(long gastoId)
+        public EstadoOperacion AnularGasto(long gastoId)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
             using var transaction = context.Database.BeginTransaction();
@@ -108,47 +130,111 @@ namespace Servicios.LogicaNegocio.Gasto
                 var gasto = context.Gastos.FirstOrDefault(g => g.GastoId == gastoId);
 
                 if (gasto == null)
-                {
-                    return new EstadoOperacion
-                    {
-                        Exitoso = false,
-                        Mensaje = "El gasto no existe."
-                    };
-                }
+                    return Error("El gasto no existe.");
 
-                // ya pagado
-                if (gasto.EstadoGasto == (int)EstadoGasto.Pagado)
-                {
-                    return new EstadoOperacion
-                    {
-                        Exitoso = false,
-                        Mensaje = "El gasto ya se encuentra pagado."
-                    };
-                }
-
-                // anulado
                 if (gasto.EstadoGasto == (int)EstadoGasto.Anulado)
+                    return Error("El gasto ya se encuentra anulado.");
+
+                var estabaPagado = gasto.EstadoGasto == (int)EstadoGasto.Pagado || gasto.MontoPagado > 0;
+
+                if (estabaPagado)
                 {
-                    return new EstadoOperacion
+                    // Un gasto pagado se anula con una reversa del pago original.
+                    var original = context.Movimientos.FirstOrDefault(m =>
+                        m.TipoEntidad == (int)TipoEntidadMovimiento.Gasto &&
+                        m.EntidadId == gastoId &&
+                        m.TipoMovimientoDetalle == (int)Operacion.PagoGasto &&
+                        m.MovimientoOrigenId == null);
+
+                    if (original != null)
                     {
-                        Exitoso = false,
-                        Mensaje = "No se puede pagar un gasto anulado."
-                    };
+                        var cajaServicio = new Caja.CajaServicio();
+                        long? cajaId = null;
+
+                        if (original.AfectaCaja)
+                        {
+                            // El dinero vuelve a la caja abierta actual.
+                            cajaId = cajaServicio.ObtenerIdDeUltimaCajaAbierta(context);
+                            if (!cajaId.HasValue)
+                                return Error("Debe haber una caja abierta para anular un gasto pagado con dinero de la caja.");
+                        }
+
+                        new MovimientoServicio().RegistrarReversa(
+                            context,
+                            original,
+                            TipoEntidadMovimiento.Gasto,
+                            gastoId,
+                            cajaId,
+                            "REV-GASTO");
+
+                        if (original.AfectaCaja)
+                            cajaServicio.RegistrarTransaccion(context, original.Monto, TipoMovimiento.Ingreso, cajaId!.Value);
+                    }
                 }
 
-                // 🔥 actualizar montos por consistencia
-                gasto.MontoPagado = gasto.MontoTotal;
-                gasto.EstadoGasto = (int)EstadoGasto.Pagado;
-
-                context.SaveChanges(); // guardo cambio de estado
-
-                // 🔥 crear movimiento
-                var movimientoServicio = new MovimientoServicio();
-
-                movimientoServicio.CrearMovimientoGasto(gasto.GastoId, gasto.MontoPagado, context);
+                gasto.EstadoGasto = (int)EstadoGasto.Anulado;
 
                 context.SaveChanges();
+                transaction.Commit();
 
+                if (estabaPagado)
+                {
+                    try
+                    {
+                        GeneracionComprobanteGasto(context, gasto);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Error generando PDF gasto anulado: " + ex.Message);
+                    }
+                }
+
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "Gasto anulado correctamente.",
+                    EntidadId = gasto.GastoId
+                };
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
+                return Error($"Error al anular gasto: {ex.Message}");
+            }
+        }
+
+        public EstadoOperacion ConfirmarPago(long gastoId, GastoDTO datosPago)
+        {
+            using var context = new GestorContextDBFactory().CreateDbContext(null);
+            using var transaction = context.Database.BeginTransaction();
+
+            try
+            {
+                if (datosPago == null)
+                    return Error("Datos de pago inválidos.");
+
+                var gasto = context.Gastos.FirstOrDefault(g => g.GastoId == gastoId);
+
+                if (gasto == null)
+                    return Error("El gasto no existe.");
+
+                if (gasto.EstadoGasto == (int)EstadoGasto.Pagado)
+                    return Error("El gasto ya se encuentra pagado.");
+
+                if (gasto.EstadoGasto == (int)EstadoGasto.Anulado)
+                    return Error("No se puede pagar un gasto anulado.");
+
+                if (!datosPago.FechaGasto.HasValue)
+                    return Error("Debe ingresar la fecha del pago.");
+
+                gasto.FechaGasto = datosPago.FechaGasto.Value.Date;
+
+                var errorPago = RegistrarPago(context, gasto, datosPago.OrigenPago, datosPago.TipoPago, datosPago.ExtraDescripcionPago);
+                if (errorPago != null)
+                    return errorPago;
+
+                context.SaveChanges();
                 transaction.Commit();
 
                 try
@@ -171,11 +257,7 @@ namespace Servicios.LogicaNegocio.Gasto
             {
                 transaction.Rollback();
 
-                return new EstadoOperacion
-                {
-                    Exitoso = false,
-                    Mensaje = $"Error al pagar gasto: {ex.Message}"
-                };
+                return Error($"Error al pagar gasto: {ex.Message}");
             }
         }
 
@@ -280,9 +362,9 @@ namespace Servicios.LogicaNegocio.Gasto
 
                 if (gasto.EstadoGasto == (int)EstadoGasto.Pagado)
                 {
-                    var movimientoServicio = new MovimientoServicio();
-
-                    movimientoServicio.CrearMovimientoGasto(gasto.GastoId, gasto.MontoPagado, context);
+                    var errorPago = RegistrarPago(context, gasto, gastoDto.OrigenPago, gastoDto.TipoPago, gastoDto.ExtraDescripcionPago);
+                    if (errorPago != null)
+                        return errorPago;
                 }
 
                 context.SaveChanges();
@@ -338,7 +420,8 @@ namespace Servicios.LogicaNegocio.Gasto
                     MontoTotal = g.MontoTotal,
                     MontoPagado = g.MontoPagado,
                     EstadoGasto = g.EstadoGasto,
-                    Detalle = g.Detalle
+                    Detalle = g.Detalle,
+                    OrigenPago = g.OrigenPago
                 })
                 .FirstOrDefault();
 

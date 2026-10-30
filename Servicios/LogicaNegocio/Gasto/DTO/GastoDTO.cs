@@ -65,6 +65,15 @@ namespace Servicios.LogicaNegocio.Gasto.DTO
         }
 
         public string? Detalle { get; set; }
+
+        /// <summary>OrigenPagoGasto (Caja=1, Otro=2). Se informa al pagar; null mientras está pendiente.</summary>
+        public int? OrigenPago { get; set; }
+
+        /// <summary>TipoDePago con el que se paga (solo se usa con origen Otro; con origen Caja es siempre Efectivo).</summary>
+        public int? TipoPago { get; set; }
+
+        /// <summary>Texto libre opcional del pago (por ejemplo, el banco).</summary>
+        public string? ExtraDescripcionPago { get; set; }
     }
 
 }

@@ -204,21 +204,65 @@ namespace Servicios.LogicaNegocio.Movimiento
             });
         }
 
-        public void CrearMovimientoGasto(long gastoId, decimal monto, GestorContextDB context)
+        public AccesoDatos.Entidades.Movimiento? RegistrarPagoGasto(GestorContextDB context, long gastoId, bool afectaCaja, long? cajaId, TipoDePago tipoPago, decimal monto)
         {
             if (gastoId <= 0)
                 throw new Exception("El movimiento no puede crearse porque el gasto no tiene un ID válido.");
 
-            // Hasta la Etapa 3b los gastos no afectan la caja ni guardan tipo de pago.
-            Registrar(context, new NuevoMovimiento
+            return Registrar(context, new NuevoMovimiento
             {
                 Prefijo = "MOV-GASTO",
                 Tipo = TipoMovimiento.Egreso,
                 Operacion = Operacion.PagoGasto,
                 Entidad = TipoEntidadMovimiento.Gasto,
                 EntidadId = gastoId,
-                Monto = monto
+                Monto = monto,
+                AfectaCaja = afectaCaja,
+                CajaId = afectaCaja ? cajaId : null,
+                TipoPagoId = ObtenerTipoPagoId(context, tipoPago)
             });
+        }
+
+        public AccesoDatos.Entidades.Movimiento? RegistrarReversa(GestorContextDB context, AccesoDatos.Entidades.Movimiento original, TipoEntidadMovimiento entidad, long entidadId, long? cajaId, string prefijo)
+        {
+            if (original == null) throw new ArgumentNullException(nameof(original));
+
+            return Registrar(context, new NuevoMovimiento
+            {
+                Prefijo = prefijo,
+                Tipo = original.TipoMovimiento == (int)TipoMovimiento.Ingreso ? TipoMovimiento.Egreso : TipoMovimiento.Ingreso,
+                Operacion = Operacion.Reversa,
+                Entidad = entidad,
+                EntidadId = entidadId,
+                Monto = original.Monto,
+                AfectaCaja = original.AfectaCaja,
+                CajaId = original.AfectaCaja ? cajaId : null,
+                TipoPagoId = original.TipoPagoId,
+                MovimientoOrigenId = original.MovimientoId
+            });
+        }
+
+        public decimal ObtenerEfectivoDisponible(GestorContextDB context, long cajaId)
+        {
+            var efectivoId = ObtenerTipoPagoId(context, TipoDePago.Efectivo);
+
+            var saldoInicial = context.Cajas
+                .Where(c => c.CajaId == cajaId)
+                .Select(c => c.SaldoInicial)
+                .FirstOrDefault();
+
+            var enEfectivo = context.Movimientos
+                .Where(m => m.AfectaCaja && m.CajaId == cajaId && m.TipoPagoId == efectivoId);
+
+            var ingresos = enEfectivo
+                .Where(m => m.TipoMovimiento == (int)TipoMovimiento.Ingreso)
+                .Sum(m => (decimal?)m.Monto) ?? 0m;
+
+            var egresos = enEfectivo
+                .Where(m => m.TipoMovimiento == (int)TipoMovimiento.Egreso)
+                .Sum(m => (decimal?)m.Monto) ?? 0m;
+
+            return saldoInicial + ingresos - egresos;
         }
 
         private static long ObtenerTipoPagoId(GestorContextDB context, TipoDePago tipoPago)

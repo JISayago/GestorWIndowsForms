@@ -67,20 +67,12 @@ namespace Presentacion.Core.Gasto
                 return;
             }
 
-            var resultado = _gastoServicio.ConfirmarPago(id.Value);
+            // Abre el formulario del gasto para elegir fecha, origen y tipo de pago.
+            using var f = new FGastoABM(_logeadoId, id.Value);
+            f.ShowDialog();
 
-            if (resultado.Exitoso)
-            {
+            if (f.RealizoAlgunaOperacion)
                 Recargar();
-                Exito(resultado.Mensaje);
-                //MessageBox.Show(resultado.Mensaje, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else
-            {
-                Recargar();
-                MostrarError(resultado.Mensaje);
-                //MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         private void AnularGasto(long? id)
