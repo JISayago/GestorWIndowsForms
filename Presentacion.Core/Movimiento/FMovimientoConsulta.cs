@@ -85,13 +85,12 @@ namespace Presentacion.Core.Movimiento
                  new OpcionFiltro { Texto = "Egresos", Valor = "TM_" + ((int)TipoMovimiento.Egreso) },
              
                  // 🔹 TipoMovimientoDetalle
-                 new OpcionFiltro { Texto = "Cancelación", Valor = "TMD_" + ((int)TipoMovimientoDetalle.Cancelacion) },
-                 new OpcionFiltro { Texto = "Cuenta Corriente", Valor = "TMD_" + ((int)TipoMovimientoDetalle.CuentaCorriente) },
-                 new OpcionFiltro { Texto = "Stock", Valor = "TMD_" + ((int)TipoMovimientoDetalle.Stock) },
-                 new OpcionFiltro { Texto = "Venta", Valor = "TMD_" + ((int)TipoMovimientoDetalle.Venta) },
-                 new OpcionFiltro { Texto = "Compra", Valor = "TMD_" + ((int)TipoMovimientoDetalle.Compra) },
-                 new OpcionFiltro { Texto = "Servicios", Valor = "TMD_" + ((int)TipoMovimientoDetalle.Servicios) },
-                 new OpcionFiltro { Texto = "Venta Libre", Valor = "TMD_" + ((int)TipoMovimientoDetalle.VentaLibre) },
+                 new OpcionFiltro { Texto = "Cobro", Valor = "TMD_" + ((int)Operacion.Cobro) },
+                 new OpcionFiltro { Texto = "Reversa", Valor = "TMD_" + ((int)Operacion.Reversa) },
+                 new OpcionFiltro { Texto = "Carga de saldo", Valor = "TMD_" + ((int)Operacion.CargaSaldo) },
+                 new OpcionFiltro { Texto = "Cargo cuenta corriente", Valor = "TMD_" + ((int)Operacion.CargoCuentaCorriente) },
+                 new OpcionFiltro { Texto = "Crédito cuenta corriente", Valor = "TMD_" + ((int)Operacion.CreditoCuentaCorriente) },
+                 new OpcionFiltro { Texto = "Pago de gasto", Valor = "TMD_" + ((int)Operacion.PagoGasto) },
              
                  // 📅 Fecha
              };

@@ -41,10 +41,7 @@ namespace Servicios.LogicaNegocio.Movimiento.DTO
         {
             get
             {
-                if (!Enum.IsDefined(typeof(TipoMovimientoDetalle), TipoMovimientoDetalle))
-                    return "Desconocido";
-
-                return ((TipoMovimientoDetalle)TipoMovimientoDetalle).ToString();
+                return OperacionDescripcion.De(TipoMovimientoDetalle);
             }
         }
     }

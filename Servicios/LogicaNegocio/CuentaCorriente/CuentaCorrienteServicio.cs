@@ -179,8 +179,9 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     Exitoso = false,
                     Mensaje = "Por favor abra una caja para continuar con la transacción."
                 };
-            cajaServicio.RegistrarTransaccion(context, diferencia, TipoMovimiento.Ingreso, cajaId.Value);
-            _movimientoServicio.CrearMovimientoCtaCte(Math.Abs(diferencia), cajaId.Value, cuenta.CuentaCorrienteId, TipoMovimientoDetalle.CuentaCorriente, true, context);
+            // Subir el saldo es plata que entra a la caja; bajarlo, plata que sale.
+            cajaServicio.RegistrarTransaccion(context, Math.Abs(diferencia), diferencia > 0 ? TipoMovimiento.Ingreso : TipoMovimiento.Egreso, cajaId.Value);
+            _movimientoServicio.RegistrarCargaSaldo(context, cuenta.CuentaCorrienteId, cajaId.Value, diferencia);
 
 
             context.SaveChanges();
@@ -518,7 +519,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 // EVALUAMOS EL ESTADO DE ESTA CUENTA ACÁ (por si la compra la dejó vencida/en deuda)
                 VerificarYActualizarEstadoInstancia(cuenta);
 
-                _movimientoServicio.CrearMovimientoCtaCte(monto, cajaId, cuenta.CuentaCorrienteId, TipoMovimientoDetalle.CuentaCorriente, false, context);
+                _movimientoServicio.RegistrarCargoCuentaCorriente(context, cuenta.CuentaCorrienteId, monto);
 
                 context.SaveChanges(); // Dentro de la tx de venta si contextExterno viene de ahí.
 
@@ -529,27 +530,6 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 if (ownsContext)
                     context.Dispose();
             }
-        }
-
-        public EstadoOperacion RegistrarPago(long cuentaId, decimal monto, long cajaId, string descripcion = "Pago")
-        {
-            if (monto <= 0) return new EstadoOperacion { Exitoso = false, Mensaje = "El monto debe ser mayor a cero." };
-
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-            var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId);
-
-            if (cuenta == null) throw new Exception("Cuenta corriente no encontrada");
-
-            cuenta.Saldo += monto;
-
-            // EVALUAMOS EL ESTADO DE ESTA CUENTA ACÁ (si pagó la deuda, se reactiva sola)
-            VerificarYActualizarEstadoInstancia(cuenta);
-
-            _movimientoServicio.CrearMovimientoCtaCte(monto, cajaId, cuenta.CuentaCorrienteId, TipoMovimientoDetalle.CuentaCorriente, true, context);
-
-            context.SaveChanges(); // Guarda todo en una sola transacción limpia
-
-            return new EstadoOperacion { Exitoso = true, Mensaje = "Pago registrado correctamente" };
         }
 
         // =========================================================================
@@ -575,7 +555,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 VerificarYActualizarEstadoInstancia(cuenta);
 
                 // Impactamos el histórico con 'true' ya que incrementa el saldo a favor/reduce saldo deudor
-                _movimientoServicio.CrearMovimientoCtaCte(monto, cajaId, cuenta.CuentaCorrienteId, TipoMovimientoDetalle.CuentaCorriente, true, context);
+                _movimientoServicio.RegistrarCreditoCuentaCorriente(context, cuenta.CuentaCorrienteId, monto);
 
                 context.SaveChanges();
 
@@ -707,7 +687,6 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             var query = context.Movimientos
             .Where(x =>
-                x.TipoMovimientoDetalle == (int)TipoMovimientoDetalle.CuentaCorriente &&
                 x.TipoEntidad == (int)TipoEntidadMovimiento.CuentaCorriente &&
                 x.EntidadId == cuentaCorrienteId)
             .AsNoTracking()

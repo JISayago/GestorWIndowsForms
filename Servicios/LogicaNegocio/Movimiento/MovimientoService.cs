@@ -2,6 +2,7 @@
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.OpcionesPagos;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.Helpers.VentaEnum;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
@@ -63,7 +64,7 @@ namespace Servicios.LogicaNegocio.Movimiento
             {
                 NumeroMovimiento = GenerarNumero(context, datos.Prefijo),
                 TipoMovimiento = (int)datos.Tipo,
-                TipoMovimientoDetalle = (int)datos.Detalle,
+                TipoMovimientoDetalle = (int)datos.Operacion, // columna tipo_movimiento_detalle: guarda la Operación
                 Monto = monto,
                 FechaMovimiento = DateTime.Now,
                 EstaEliminado = false,
@@ -122,83 +123,118 @@ namespace Servicios.LogicaNegocio.Movimiento
         }
 
         // =====================================================================
-        // CREADORES ACTUALES (se reemplazan por métodos por caso en la Etapa 3).
-        // Mismo comportamiento de hoy, pero pasando por Registrar.
+        // CREADORES POR CASO (usan Registrar)
         // =====================================================================
 
-        public void CrearMovimientoVenta(
-            long ventaId,
-            decimal monto,
-            int estado,
-            TipoMovimientoDetalle detalleTipo,
-            TipoEntidadMovimiento tipoEntidad,
-            GestorContextDB context)
+        public void RegistrarCobros(
+            GestorContextDB context,
+            TipoEntidadMovimiento entidad,
+            long entidadId,
+            bool esCancelacion,
+            long cajaId,
+            decimal montoCaja,
+            IEnumerable<FormaPago>? pagos)
         {
-            if (ventaId <= 0)
+            if (entidad != TipoEntidadMovimiento.Venta && entidad != TipoEntidadMovimiento.VentaLibre)
+                throw new Exception("Tipo de entidad no válido para movimientos de venta.");
+
+            if (entidadId <= 0)
                 throw new Exception("El movimiento no puede crearse porque la venta no tiene un ID válido.");
 
-            var esEgreso = estado == (int)EstadoVenta.CancelacionVenta;
+            var prefijo = $"{(esCancelacion ? "CAN" : "MOV")}-{(entidad == TipoEntidadMovimiento.Venta ? "VENTA" : "VENTALIBRE")}";
 
-            string prefijoEntidad;
-
-            switch (tipoEntidad)
+            foreach (var (tipoPago, monto) in DistribucionCobros.Distribuir(montoCaja, pagos))
             {
-                case TipoEntidadMovimiento.Venta:
-                    prefijoEntidad = "VENTA";
-                    break;
-
-                case TipoEntidadMovimiento.VentaLibre:
-                    prefijoEntidad = "VENTALIBRE";
-                    break;
-
-                default:
-                    throw new Exception("Tipo de entidad no válido para movimientos de venta.");
+                Registrar(context, new NuevoMovimiento
+                {
+                    Prefijo = prefijo,
+                    Tipo = esCancelacion ? TipoMovimiento.Egreso : TipoMovimiento.Ingreso,
+                    Operacion = esCancelacion ? Operacion.Reversa : Operacion.Cobro,
+                    Entidad = entidad,
+                    EntidadId = entidadId,
+                    Monto = monto,
+                    AfectaCaja = true,
+                    CajaId = cajaId,
+                    TipoPagoId = ObtenerTipoPagoId(context, tipoPago)
+                });
             }
-
-            Registrar(context, new NuevoMovimiento
-            {
-                Prefijo = $"{(esEgreso ? "CAN" : "MOV")}-{prefijoEntidad}",
-                Tipo = esEgreso ? TipoMovimiento.Egreso : TipoMovimiento.Ingreso,
-                Detalle = detalleTipo,
-                Entidad = tipoEntidad,
-                EntidadId = ventaId,
-                Monto = monto
-            });
         }
 
-        public void CrearMovimientoCtaCte(decimal total, long cajaId, long cuentaCorrienteId, TipoMovimientoDetalle detalleTipo, bool esPago, GestorContextDB context)
+        public void RegistrarCargoCuentaCorriente(GestorContextDB context, long cuentaCorrienteId, decimal monto)
         {
-            // cajaId no se usa todavía: los movimientos de cuenta corriente no afectan la caja.
-            // Ingreso = pago/crédito de cuenta corriente, Egreso = compra con cuenta corriente.
             Registrar(context, new NuevoMovimiento
             {
-                Prefijo = "MOV-CTACTE",
-                Tipo = esPago ? TipoMovimiento.Ingreso : TipoMovimiento.Egreso,
-                Detalle = detalleTipo,
+                Prefijo = "CARGO-CTACTE",
+                Tipo = TipoMovimiento.Egreso,
+                Operacion = Operacion.CargoCuentaCorriente,
                 Entidad = TipoEntidadMovimiento.CuentaCorriente,
                 EntidadId = cuentaCorrienteId,
-                Monto = total
+                Monto = monto,
+                TipoPagoId = ObtenerTipoPagoId(context, TipoDePago.CtaCte)
             });
         }
 
-        public void CrearMovimientoGasto(
-            long gastoId,
-            decimal monto,
-            TipoMovimientoDetalle detalleTipo,
-            GestorContextDB context)
+        public void RegistrarCreditoCuentaCorriente(GestorContextDB context, long cuentaCorrienteId, decimal monto)
+        {
+            Registrar(context, new NuevoMovimiento
+            {
+                Prefijo = "CREDITO-CTACTE",
+                Tipo = TipoMovimiento.Ingreso,
+                Operacion = Operacion.CreditoCuentaCorriente,
+                Entidad = TipoEntidadMovimiento.CuentaCorriente,
+                EntidadId = cuentaCorrienteId,
+                Monto = monto,
+                TipoPagoId = ObtenerTipoPagoId(context, TipoDePago.CtaCte)
+            });
+        }
+
+        public void RegistrarCargaSaldo(GestorContextDB context, long cuentaCorrienteId, long cajaId, decimal diferencia)
+        {
+            Registrar(context, new NuevoMovimiento
+            {
+                Prefijo = "CARGA-CTACTE",
+                Tipo = diferencia >= 0 ? TipoMovimiento.Ingreso : TipoMovimiento.Egreso,
+                Operacion = Operacion.CargaSaldo,
+                Entidad = TipoEntidadMovimiento.CuentaCorriente,
+                EntidadId = cuentaCorrienteId,
+                Monto = diferencia,
+                AfectaCaja = true,
+                CajaId = cajaId,
+                TipoPagoId = ObtenerTipoPagoId(context, TipoDePago.Efectivo)
+            });
+        }
+
+        public void CrearMovimientoGasto(long gastoId, decimal monto, GestorContextDB context)
         {
             if (gastoId <= 0)
                 throw new Exception("El movimiento no puede crearse porque el gasto no tiene un ID válido.");
 
+            // Hasta la Etapa 3b los gastos no afectan la caja ni guardan tipo de pago.
             Registrar(context, new NuevoMovimiento
             {
                 Prefijo = "MOV-GASTO",
                 Tipo = TipoMovimiento.Egreso,
-                Detalle = detalleTipo,
+                Operacion = Operacion.PagoGasto,
                 Entidad = TipoEntidadMovimiento.Gasto,
                 EntidadId = gastoId,
                 Monto = monto
             });
+        }
+
+        private static long ObtenerTipoPagoId(GestorContextDB context, TipoDePago tipoPago)
+        {
+            var numero = (int)tipoPago;
+
+            var id = context.TiposPago
+                .AsNoTracking()
+                .Where(t => t.NumeroReferencia == numero && !t.EstaEliminado)
+                .Select(t => (long?)t.TipoPagoId)
+                .FirstOrDefault();
+
+            if (!id.HasValue)
+                throw new Exception($"No se encontró el tipo de pago '{tipoPago}'.");
+
+            return id.Value;
         }
 
         public ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros)

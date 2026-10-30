@@ -12,7 +12,7 @@ namespace Servicios.LogicaNegocio.Movimiento.DTO
         public string Prefijo { get; set; } = string.Empty;
 
         public TipoMovimiento Tipo { get; set; }
-        public TipoMovimientoDetalle Detalle { get; set; }
+        public Operacion Operacion { get; set; }
 
         public TipoEntidadMovimiento Entidad { get; set; }
         public long EntidadId { get; set; }

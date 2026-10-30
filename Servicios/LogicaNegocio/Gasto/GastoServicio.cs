@@ -145,12 +145,7 @@ namespace Servicios.LogicaNegocio.Gasto
                 // 🔥 crear movimiento
                 var movimientoServicio = new MovimientoServicio();
 
-                movimientoServicio.CrearMovimientoGasto(
-                    gasto.GastoId,
-                    gasto.MontoPagado,
-                    TipoMovimientoDetalle.Servicios,
-                    context
-                );
+                movimientoServicio.CrearMovimientoGasto(gasto.GastoId, gasto.MontoPagado, context);
 
                 context.SaveChanges();
 
@@ -287,12 +282,7 @@ namespace Servicios.LogicaNegocio.Gasto
                 {
                     var movimientoServicio = new MovimientoServicio();
 
-                    movimientoServicio.CrearMovimientoGasto(
-                        gasto.GastoId,
-                        gasto.MontoPagado,
-                        TipoMovimientoDetalle.Servicios,
-                        context
-                    );
+                    movimientoServicio.CrearMovimientoGasto(gasto.GastoId, gasto.MontoPagado, context);
                 }
 
                 context.SaveChanges();

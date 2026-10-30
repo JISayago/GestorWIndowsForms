@@ -115,11 +115,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 };
 
                 // 🔥 CAPTURAR CONTRAVENTA
-                var ventaCancelacion = CrearVentaLibreInterna(
-                    context,
-                    dto,
-                    TipoMovimientoDetalle.Cancelacion
-                );
+                var ventaCancelacion = CrearVentaLibreInterna(context, dto);
 
                 context.SaveChanges();
                 transaction.Commit();
@@ -158,11 +154,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 
             try
             {
-                var venta = CrearVentaLibreInterna(
-                    context,
-                    dto,
-                    TipoMovimientoDetalle.VentaLibre
-                );
+                var venta = CrearVentaLibreInterna(context, dto);
 
                 context.SaveChanges();
                 transaction.Commit();
@@ -197,8 +189,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 
         public AccesoDatos.Entidades.VentaLibre CrearVentaLibreInterna(
        GestorContextDB context,
-       VentaLibreDTO dto,
-       TipoMovimientoDetalle movimientoDetalle)
+       VentaLibreDTO dto)
         {
             try
             {
@@ -247,14 +238,15 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 // 🔁 Movimiento
                 var movimientoServicio = new Movimiento.MovimientoServicio();
 
-                movimientoServicio.CrearMovimientoVenta(
-                    venta.VentaLibreId,
-                    venta.Total,
-                    venta.Estado,
-                    esCancelacion ? TipoMovimientoDetalle.Cancelacion : movimientoDetalle,
+                // Un movimiento por tipo de pago (sin cuenta corriente)
+                movimientoServicio.RegistrarCobros(
+                    context,
                     TipoEntidadMovimiento.VentaLibre,
-                    context
-                );
+                    venta.VentaLibreId,
+                    esCancelacion,
+                    cajaId.Value,
+                    venta.MontoPagado,
+                    dto.TiposDePagoSeleccionado);
 
                 // 🏦 Caja solo el monto no-CtaCte
                 if (venta.MontoPagado != 0)

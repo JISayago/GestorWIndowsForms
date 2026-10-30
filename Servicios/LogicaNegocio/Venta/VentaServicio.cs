@@ -47,7 +47,7 @@ namespace Servicios.LogicaNegocio.Venta
                 _ => _pdf.GenerarVenta(venta)
             };
         }
-        public AccesoDatos.Entidades.Venta CrearVentaInterna( GestorContextDB context, VentaDTO ventaDto, TipoMovimientoDetalle movimientoDetalle,long? ventaIdOriginalParaCancelar = null)
+        public AccesoDatos.Entidades.Venta CrearVentaInterna(GestorContextDB context, VentaDTO ventaDto, long? ventaIdOriginalParaCancelar = null)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace Servicios.LogicaNegocio.Venta
 
                 GuardarCabeceraVenta(venta, context);
 
-                RegistrarMovimientoVenta( venta, movimientoDetalle,context);
+                RegistrarMovimientoVenta(venta, ventaDto, cajaId, context);
 
                 RegistrarMovimientoCaja(venta, cajaId, context);
 
@@ -133,11 +133,19 @@ namespace Servicios.LogicaNegocio.Venta
             context.Ventas.Add(venta);
             context.SaveChanges();
         }
-        private void RegistrarMovimientoVenta(AccesoDatos.Entidades.Venta venta,TipoMovimientoDetalle movimientoDetalle,GestorContextDB context)
+        private void RegistrarMovimientoVenta(AccesoDatos.Entidades.Venta venta, VentaDTO ventaDto, long cajaId, GestorContextDB context)
         {
             var movimientoServicio = new Movimiento.MovimientoServicio();
 
-            movimientoServicio.CrearMovimientoVenta(venta.VentaId,venta.Total,venta.Estado,movimientoDetalle,TipoEntidadMovimiento.Venta,context);
+            // Un movimiento por tipo de pago (sin cuenta corriente); la parte fiada la registra cuenta corriente.
+            movimientoServicio.RegistrarCobros(
+                context,
+                TipoEntidadMovimiento.Venta,
+                venta.VentaId,
+                venta.Estado == (int)EstadoVenta.CancelacionVenta,
+                cajaId,
+                venta.MontoPagado,
+                ventaDto.TiposDePagoSeleccionado);
         }
         private void RegistrarMovimientoCaja(AccesoDatos.Entidades.Venta venta,long cajaId, GestorContextDB context)
         {
@@ -950,7 +958,7 @@ namespace Servicios.LogicaNegocio.Venta
 
             try
             {
-                var venta = CrearVentaInterna(context,ventaDto,TipoMovimientoDetalle.Venta);
+                var venta = CrearVentaInterna(context, ventaDto);
 
                 transaction.Commit();
 
@@ -1583,7 +1591,7 @@ namespace Servicios.LogicaNegocio.Venta
                     }).ToList()
                 }; //AGREGAR DETALLEVENTALOTE EN EL CASO QUE EXISTA if(ventaOriginal.DetallesVentasLotes.any()), cargar en el dto 
 
-                var ventaCancelacion = CrearVentaInterna(context, ventaCancelacionDto, TipoMovimientoDetalle.Cancelacion, ventaId);
+                var ventaCancelacion = CrearVentaInterna(context, ventaCancelacionDto, ventaId);
 
                 _productoServicio.ModificarEstadoStockProductos(context);
                 context.SaveChanges();
