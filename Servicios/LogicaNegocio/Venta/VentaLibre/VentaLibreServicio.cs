@@ -90,6 +90,25 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     };
                 }
 
+                if (venta.Estado == (int)EstadoVenta.CancelacionVenta)
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "Una contraventa no se puede anular."
+                    };
+                }
+
+                // Solo una contraventa por venta (también lo garantiza un índice único en la base).
+                if (context.VentasLibres.Any(v => v.VentaOriginalId == ventaLibreId))
+                {
+                    return new EstadoOperacion
+                    {
+                        Exitoso = false,
+                        Mensaje = "La venta ya tiene una contraventa."
+                    };
+                }
+
                 venta.Estado = (int)EstadoVenta.Cancelada;
 
                 var dto = new VentaLibreDTO
@@ -115,7 +134,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 };
 
                 // 🔥 CAPTURAR CONTRAVENTA
-                var ventaCancelacion = CrearVentaLibreInterna(context, dto);
+                var ventaCancelacion = CrearVentaLibreInterna(context, dto, ventaLibreId);
 
                 context.SaveChanges();
                 transaction.Commit();
@@ -189,7 +208,8 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
 
         public AccesoDatos.Entidades.VentaLibre CrearVentaLibreInterna(
        GestorContextDB context,
-       VentaLibreDTO dto)
+       VentaLibreDTO dto,
+       long? ventaLibreOriginalId = null)
         {
             try
             {
@@ -198,10 +218,13 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 var cajaServicio = new Caja.CajaServicio();
                 var cajaId = cajaServicio.ObtenerIdDeUltimaCajaAbierta(context);
 
-                if (!cajaId.HasValue)
-                    throw new Exception("No hay una caja abierta.");
-
                 bool esCancelacion = dto.Estado == (int)EstadoVenta.CancelacionVenta;
+
+                // Una cancelación sin dinero que devolver (ej. todo en cuenta corriente) no necesita caja abierta.
+                if (!cajaId.HasValue && !(esCancelacion && montos.MontoCaja == 0))
+                    throw new Exception(esCancelacion
+                        ? "No hay una caja abierta. Abrí una caja para devolver el dinero de la cancelación."
+                        : "No hay una caja abierta.");
 
                 // 🔢 Número comprobante
                 var fecha = DateTime.Today;
@@ -230,6 +253,7 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     Detalle = dto.Detalle,
                     MontoPagado = montos.MontoCaja,
                     MontoAdeudado = montos.MontoCtaCte,
+                    VentaOriginalId = ventaLibreOriginalId,
                 };
 
                 context.VentasLibres.Add(venta);
@@ -238,15 +262,33 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 // 🔁 Movimiento
                 var movimientoServicio = new Movimiento.MovimientoServicio();
 
-                // Un movimiento por tipo de pago (sin cuenta corriente)
-                movimientoServicio.RegistrarCobros(
-                    context,
-                    TipoEntidadMovimiento.VentaLibre,
-                    venta.VentaLibreId,
-                    esCancelacion,
-                    cajaId.Value,
-                    venta.MontoPagado,
-                    dto.TiposDePagoSeleccionado);
+                if (venta.MontoPagado != 0)
+                {
+                    // Cancelación: reversas que apuntan a cada cobro original; si la venta es anterior
+                    // al libro nuevo (sin cobros registrados) se cae al cálculo por tipo de pago.
+                    var revertido = esCancelacion
+                        && ventaLibreOriginalId.HasValue
+                        && movimientoServicio.RegistrarReversasDeCobros(
+                            context,
+                            TipoEntidadMovimiento.VentaLibre,
+                            ventaLibreOriginalId.Value,
+                            venta.VentaLibreId,
+                            cajaId,
+                            "CAN-VENTALIBRE");
+
+                    if (!revertido)
+                    {
+                        // Un movimiento por tipo de pago (sin cuenta corriente)
+                        movimientoServicio.RegistrarCobros(
+                            context,
+                            TipoEntidadMovimiento.VentaLibre,
+                            venta.VentaLibreId,
+                            esCancelacion,
+                            cajaId!.Value,
+                            venta.MontoPagado,
+                            dto.TiposDePagoSeleccionado);
+                    }
+                }
 
                 // 🏦 Caja solo el monto no-CtaCte
                 if (venta.MontoPagado != 0)
@@ -259,11 +301,11 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                         context,
                         venta.MontoPagado,
                         tipoMovimientoCaja,
-                        cajaId.Value
+                        cajaId!.Value
                     );
                 }
 
-                RegistrarMovimientoCuentaCorriente(venta, dto, cajaId.Value, context);
+                RegistrarMovimientoCuentaCorriente(venta, dto, cajaId ?? 0, context);
 
                 // 💳 Pagos (SIEMPRE POSITIVOS)
                 if (dto.TiposDePagoSeleccionado != null && dto.TiposDePagoSeleccionado.Any())
@@ -308,7 +350,15 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     "No se puede registrar un movimiento de Cuenta Corriente sin un Cliente asignado.");
 
             var servicio = new CuentaCorrienteServicio();
-            var cuenta = servicio.ObtenerCuentaCorrientePorClienteId(venta.IdCliente.Value);
+            Servicios.LogicaNegocio.CuentaCorriente.DTO.CuentaCorrienteDTO cuenta;
+            try
+            {
+                cuenta = servicio.ObtenerCuentaCorrientePorClienteId(venta.IdCliente.Value);
+            }
+            catch (Exception) when (dto.Estado != (int)EstadoVenta.Confirmada)
+            {
+                throw new Exception("No se puede anular: la cuenta corriente del cliente fue eliminada o no existe.");
+            }
 
             if (dto.Estado == (int)EstadoVenta.Confirmada)
             {

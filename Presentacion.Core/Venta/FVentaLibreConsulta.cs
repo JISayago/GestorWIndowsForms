@@ -202,6 +202,14 @@ namespace Presentacion.Core.Venta
                 return;
             }
 
+            if (!Confirmar(
+                "¿Confirmás la anulación de la venta libre?
+Se generará una contraventa y se revertirán los cobros registrados.",
+                "Anular venta libre",
+                si: "Anular",
+                no: "Cancelar"))
+                return;
+
             var resultado =
                 _ventaLibreServicio.AnularVentaLibre(id.Value);
 

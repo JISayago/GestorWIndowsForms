@@ -53,15 +53,19 @@ namespace Servicios.LogicaNegocio.Venta
             {
                 var montos = VentaMontosHelper.Calcular(ventaDto.Total, ventaDto.TiposDePagoSeleccionado);
 
-                var cajaId = ObtenerCajaAbierta(context);
+                var esCancelacion = ventaDto.Estado == (int)EstadoVenta.CancelacionVenta;
+
+                // Una cancelación sin dinero que devolver (ej. todo en cuenta corriente) no necesita caja abierta.
+                var cajaId = ObtenerCajaAbierta(context, esCancelacion, montos.MontoCaja) ?? 0;
 
                 GenerarNumeroVenta(context, ventaDto);
 
                 var venta = CrearEntidadVenta(ventaDto, montos.MontoCaja, montos.MontoCtaCte);
+                venta.VentaOriginalId = ventaIdOriginalParaCancelar;
 
                 GuardarCabeceraVenta(venta, context);
 
-                RegistrarMovimientoVenta(venta, ventaDto, cajaId, context);
+                RegistrarMovimientoVenta(venta, ventaDto, cajaId, context, ventaIdOriginalParaCancelar);
 
                 RegistrarMovimientoCaja(venta, cajaId, context);
 
@@ -84,17 +88,22 @@ namespace Servicios.LogicaNegocio.Venta
                 throw;
             }
         }
-        private long ObtenerCajaAbierta(GestorContextDB context)
+        private long? ObtenerCajaAbierta(GestorContextDB context, bool esCancelacion = false, decimal montoCaja = 0)
         {
             var cajaServicio = new Caja.CajaServicio();
 
             var cajaId = cajaServicio.ObtenerIdDeUltimaCajaAbierta(context);
 
-            if (!cajaId.HasValue)
-                throw new Exception(
-                    "No hay una caja abierta. No se puede registrar la venta.");
+            if (cajaId.HasValue)
+                return cajaId;
 
-            return cajaId.Value;
+            // Cancelación sin dinero que devolver: se permite sin caja.
+            if (esCancelacion && montoCaja == 0)
+                return null;
+
+            throw new Exception(esCancelacion
+                ? "No hay una caja abierta. Abrí una caja para devolver el dinero de la cancelación."
+                : "No hay una caja abierta. No se puede registrar la venta.");
         }
         private void GenerarNumeroVenta(GestorContextDB context, VentaDTO ventaDto)
         {
@@ -133,9 +142,28 @@ namespace Servicios.LogicaNegocio.Venta
             context.Ventas.Add(venta);
             context.SaveChanges();
         }
-        private void RegistrarMovimientoVenta(AccesoDatos.Entidades.Venta venta, VentaDTO ventaDto, long cajaId, GestorContextDB context)
+        private void RegistrarMovimientoVenta(AccesoDatos.Entidades.Venta venta, VentaDTO ventaDto, long cajaId, GestorContextDB context, long? ventaIdOriginal = null)
         {
+            if (venta.MontoPagado == 0)
+                return;
+
             var movimientoServicio = new Movimiento.MovimientoServicio();
+
+            // Cancelación: reversas que apuntan a cada cobro original (libro inmutable, nada se borra ni se edita).
+            // Si la venta es anterior al libro nuevo (sin cobros registrados) se cae al cálculo por tipo de pago.
+            if (venta.Estado == (int)EstadoVenta.CancelacionVenta && ventaIdOriginal.HasValue)
+            {
+                var revertido = movimientoServicio.RegistrarReversasDeCobros(
+                    context,
+                    TipoEntidadMovimiento.Venta,
+                    ventaIdOriginal.Value,
+                    venta.VentaId,
+                    cajaId,
+                    "CAN-VENTA");
+
+                if (revertido)
+                    return;
+            }
 
             // Un movimiento por tipo de pago (sin cuenta corriente); la parte fiada la registra cuenta corriente.
             movimientoServicio.RegistrarCobros(
@@ -168,8 +196,15 @@ namespace Servicios.LogicaNegocio.Venta
 
             var servicio = new CuentaCorrienteServicio();
 
-            var cuenta =
-                servicio.ObtenerCuentaCorrientePorClienteId(venta.IdCliente.Value);
+            Servicios.LogicaNegocio.CuentaCorriente.DTO.CuentaCorrienteDTO cuenta;
+            try
+            {
+                cuenta = servicio.ObtenerCuentaCorrientePorClienteId(venta.IdCliente.Value);
+            }
+            catch (Exception) when (ventaDto.Estado != (int)EstadoVenta.Confirmada)
+            {
+                throw new Exception("No se puede cancelar: la cuenta corriente del cliente fue eliminada o no existe.");
+            }
 
             if (cuenta == null)
                 throw new Exception(
@@ -1504,6 +1539,13 @@ namespace Servicios.LogicaNegocio.Venta
 
                 if (ventaOriginal.Estado == (int)EstadoVenta.Cancelada)
                     return new EstadoOperacion { Exitoso = false, Mensaje = "La venta ya está cancelada." };
+
+                if (ventaOriginal.Estado == (int)EstadoVenta.CancelacionVenta)
+                    return new EstadoOperacion { Exitoso = false, Mensaje = "Una contraventa no se puede cancelar." };
+
+                // Solo una contraventa por venta (también lo garantiza un índice único en la base).
+                if (context.Ventas.Any(v => v.VentaOriginalId == ventaId))
+                    return new EstadoOperacion { Exitoso = false, Mensaje = "La venta ya tiene una contraventa." };
 
                 ventaOriginal.Estado = (int)EstadoVenta.Cancelada;
 

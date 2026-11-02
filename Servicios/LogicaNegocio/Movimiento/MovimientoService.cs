@@ -242,6 +242,44 @@ namespace Servicios.LogicaNegocio.Movimiento
             });
         }
 
+        public bool RegistrarReversasDeCobros(GestorContextDB context, TipoEntidadMovimiento entidad, long entidadOriginalId, long entidadNuevaId, long? cajaId, string prefijo)
+        {
+            var originales = context.Movimientos
+                .Include(m => m.TipoPago)
+                .Where(m => m.TipoEntidad == (int)entidad
+                         && m.EntidadId == entidadOriginalId
+                         && m.AfectaCaja
+                         && m.MovimientoOrigenId == null
+                         && m.TipoMovimientoDetalle == (int)Operacion.Cobro)
+                .OrderBy(m => m.MovimientoId)
+                .ToList();
+
+            if (originales.Count == 0)
+                return false;
+
+            if (!cajaId.HasValue)
+                throw new Exception("No hay una caja abierta. Abrí una caja para devolver el dinero de la cancelación.");
+
+            var efectivoADevolver = originales
+                .Where(m => m.TipoPago != null && m.TipoPago.NumeroReferencia == (int)TipoDePago.Efectivo)
+                .Sum(m => m.Monto);
+
+            if (efectivoADevolver > 0)
+            {
+                var disponible = ObtenerEfectivoDisponible(context, cajaId.Value);
+
+                if (efectivoADevolver > disponible)
+                    throw new Exception(
+                        $"La caja abierta no tiene efectivo suficiente para devolver {efectivoADevolver:N2} " +
+                        $"(disponible: {disponible:N2}). Verificá el efectivo de la caja antes de cancelar.");
+            }
+
+            foreach (var original in originales)
+                RegistrarReversa(context, original, entidad, entidadNuevaId, cajaId, prefijo);
+
+            return true;
+        }
+
         public decimal ObtenerEfectivoDisponible(GestorContextDB context, long cajaId)
         {
             var efectivoId = ObtenerTipoPagoId(context, TipoDePago.Efectivo);

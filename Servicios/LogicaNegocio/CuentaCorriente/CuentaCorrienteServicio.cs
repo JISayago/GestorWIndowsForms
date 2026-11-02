@@ -548,11 +548,17 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
                 if (cuenta == null) throw new Exception("Cuenta corriente no encontrada");
 
+                // Una cancelación no puede acreditar sobre una cuenta que ya no está en uso.
+                if (cuenta.EstaEliminado)
+                    return new EstadoOperacion { Exitoso = false, Mensaje = "No se puede cancelar: la cuenta corriente del cliente fue eliminada." };
+
+                if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Cerrada)
+                    return new EstadoOperacion { Exitoso = false, Mensaje = "No se puede cancelar: la cuenta corriente del cliente está cerrada." };
+
                 // En tu Modelo de Saldo Negativo, revertir una compra SUMA al saldo (lo acerca a 0 o a positivo)
                 cuenta.Saldo += monto;
 
-                // Evaluamos el estado en memoria antes de guardar (por si la cuenta sale de la suspensión)
-                VerificarYActualizarEstadoInstancia(cuenta);
+                // La cancelación NO reevalúa el estado ni el vencimiento de la cuenta: el crédito queda como saldo a favor.
 
                 // Impactamos el histórico con 'true' ya que incrementa el saldo a favor/reduce saldo deudor
                 _movimientoServicio.RegistrarCreditoCuentaCorriente(context, cuenta.CuentaCorrienteId, monto);

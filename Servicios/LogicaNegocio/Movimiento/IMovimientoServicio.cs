@@ -41,6 +41,13 @@ namespace Servicios.LogicaNegocio.Movimiento
         /// </summary>
         AccesoDatos.Entidades.Movimiento? RegistrarReversa(GestorContextDB context, AccesoDatos.Entidades.Movimiento original, TipoEntidadMovimiento entidad, long entidadId, long? cajaId, string prefijo);
 
+        /// <summary>
+        /// Cancelación: revierte uno a uno los cobros (que afectaron la caja) de la entidad original, apuntando cada reversa a su original.
+        /// Devuelve false si la entidad original no tiene cobros en el libro nuevo (ventas anteriores al refactor): el llamador usa entonces <see cref="RegistrarCobros"/>.
+        /// Lanza una excepción si hay dinero que devolver y no hay caja abierta, o si el efectivo a devolver supera el efectivo disponible de la caja.
+        /// </summary>
+        bool RegistrarReversasDeCobros(GestorContextDB context, TipoEntidadMovimiento entidad, long entidadOriginalId, long entidadNuevaId, long? cajaId, string prefijo);
+
         /// <summary>Efectivo disponible en una caja: saldo inicial + cobros en efectivo - pagos en efectivo (según el libro).</summary>
         decimal ObtenerEfectivoDisponible(GestorContextDB context, long cajaId);
 
