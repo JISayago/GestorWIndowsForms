@@ -635,10 +635,6 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("entidad_id");
 
-                    b.Property<bool>("EstaEliminado")
-                        .HasColumnType("bit")
-                        .HasColumnName("esta_eliminado");
-
                     b.Property<DateTime>("FechaMovimiento")
                         .HasColumnType("datetime")
                         .HasColumnName("fecha_movimiento");
@@ -657,6 +653,10 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("numero_movimiento");
 
+                    b.Property<int>("Operacion")
+                        .HasColumnType("int")
+                        .HasColumnName("tipo_movimiento_detalle");
+
                     b.Property<int?>("TipoEntidad")
                         .HasColumnType("int")
                         .HasColumnName("tipo_entidad");
@@ -664,10 +664,6 @@ namespace AccesoDatos.Migrations
                     b.Property<int>("TipoMovimiento")
                         .HasColumnType("int")
                         .HasColumnName("tipo_movimiento");
-
-                    b.Property<int>("TipoMovimientoDetalle")
-                        .HasColumnType("int")
-                        .HasColumnName("tipo_movimiento_detalle");
 
                     b.Property<long?>("TipoPagoId")
                         .HasColumnType("bigint")
@@ -690,11 +686,11 @@ namespace AccesoDatos.Migrations
                     b.HasIndex("CajaId", "FechaMovimiento")
                         .HasDatabaseName("IX_Movimientos_CajaId_FechaMovimiento");
 
+                    b.HasIndex("Operacion", "FechaMovimiento")
+                        .HasDatabaseName("IX_Movimientos_Operacion_FechaMovimiento");
+
                     b.HasIndex("TipoEntidad", "EntidadId")
                         .HasDatabaseName("IX_Movimientos_TipoEntidad_EntidadId");
-
-                    b.HasIndex("TipoMovimientoDetalle", "FechaMovimiento")
-                        .HasDatabaseName("IX_Movimientos_Operacion_FechaMovimiento");
 
                     b.ToTable("Movimientos", (string)null);
                 });

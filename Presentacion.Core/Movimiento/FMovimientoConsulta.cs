@@ -18,11 +18,11 @@ namespace Presentacion.Core.Movimiento
 
         public FMovimientoConsulta() : this(new MovimientoServicio())
         {
-            InitializeComponent();
         }
 
         public FMovimientoConsulta(IMovimientoServicio movimientoServicio)
         {
+            InitializeComponent();
             _movimientoServicio = movimientoServicio;
         }
 
@@ -45,7 +45,7 @@ namespace Presentacion.Core.Movimiento
         #region FILTROS
 
         protected override bool UsarCheck1 => true;
-        protected override bool UsarCheck2 => true;
+        protected override bool UsarCheck2 => false;
         protected override bool EsModoSoloLectura(FiltroConsulta filtro)
         {
             return true;
@@ -84,7 +84,7 @@ namespace Presentacion.Core.Movimiento
                  new OpcionFiltro { Texto = "Ingresos", Valor = "TM_" + ((int)TipoMovimiento.Ingreso) },
                  new OpcionFiltro { Texto = "Egresos", Valor = "TM_" + ((int)TipoMovimiento.Egreso) },
              
-                 // 🔹 TipoMovimientoDetalle
+                 // 🔹 Operación
                  new OpcionFiltro { Texto = "Cobro", Valor = "TMD_" + ((int)Operacion.Cobro) },
                  new OpcionFiltro { Texto = "Reversa", Valor = "TMD_" + ((int)Operacion.Reversa) },
                  new OpcionFiltro { Texto = "Carga de saldo", Valor = "TMD_" + ((int)Operacion.CargaSaldo) },
@@ -118,8 +118,7 @@ namespace Presentacion.Core.Movimiento
                 "Fecha"
             );
             ActivarFiltroFechas("Filtrar por fecha");
-            ActivarCheck(chkBool1, "Ver eliminados");
-            ActivarCheck(chkBool2, "Ver movimientos (últimos 6 meses)");
+            ActivarCheck(chkBool1, "Ver todo el historial");
             cbx1.SelectedValue = "";
             cbx2.SelectedValue = "";
             cbx3.SelectedValue = "";
@@ -140,30 +139,12 @@ namespace Presentacion.Core.Movimiento
         protected override string TextoTitular
     => "Listado de Movimientos";
 
-        protected override void AccionCheck2()
-        {
-            if (chkBool2.Checked)
-            {
-                _actualizandoFiltros = true;
-                chkBool1.Checked = false;
-                _actualizandoFiltros = false;
-
-                LimpiarFiltrosParaTodos();
-            }
-            paginaActual = 1;
-        }
-
         protected override void AccionCheck1()
         {
             if (chkBool1.Checked)
-            {
-                _actualizandoFiltros = true;
-                chkBool2.Checked = false;
-                _actualizandoFiltros = false;
-
                 LimpiarFiltrosParaTodos();
-                paginaActual = 1;
-            }
+
+            paginaActual = 1;
         }
         private void LimpiarFiltrosParaTodos()
         {
@@ -313,9 +294,9 @@ namespace Presentacion.Core.Movimiento
             // =========================================
             // TIPO DETALLE (MEDIO)
             // =========================================
-            if (grilla.Columns.Contains("TipoMovimientoDetalleDescripcion"))
+            if (grilla.Columns.Contains("OperacionDescripcion"))
             {
-                var col = grilla.Columns["TipoMovimientoDetalleDescripcion"];
+                var col = grilla.Columns["OperacionDescripcion"];
 
                 col.Visible = true;
                 col.HeaderText = "Tipo";
@@ -324,9 +305,9 @@ namespace Presentacion.Core.Movimiento
                 col.MinimumWidth = 120;
             }
 
-            if (grilla.Columns.Contains("TipoMovimientoDetalle"))
+            if (grilla.Columns.Contains("Operacion"))
             {
-                grilla.Columns["TipoMovimientoDetalle"].Visible = false;
+                grilla.Columns["Operacion"].Visible = false;
             }
 
             // =========================================
@@ -360,8 +341,6 @@ namespace Presentacion.Core.Movimiento
             if (grilla.Columns.Contains("TipoEntidad"))
                 grilla.Columns["TipoEntidad"].Visible = false;
 
-            if (grilla.Columns.Contains("EstaEliminado"))
-                grilla.Columns["EstaEliminado"].Visible = false;
         }
 
         private void DgvGrilla_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)

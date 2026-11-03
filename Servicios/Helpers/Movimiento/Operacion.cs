@@ -2,8 +2,8 @@ namespace Servicios.Helpers.Movimiento
 {
     /// <summary>
     /// Qué pasó en el movimiento (el "de dónde viene" lo dan TipoEntidad + EntidadId).
-    /// Reemplaza al antiguo TipoMovimientoDetalle. Hasta la Etapa 5 se guarda en la columna
-    /// tipo_movimiento_detalle (propiedad TipoMovimientoDetalle).
+    /// Reemplaza al antiguo TipoMovimientoDetalle. Se guarda en la propiedad Movimiento.Operacion,
+    /// cuya columna sigue llamándose tipo_movimiento_detalle.
     /// </summary>
     public enum Operacion
     {

@@ -1,4 +1,5 @@
-﻿using Presentacion.Core.Presentacion.Core.Helpers;
+﻿using AccesoDatos.Entidades;
+using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
@@ -201,10 +202,10 @@ namespace Presentacion.Core.Venta
 
                 return;
             }
-
+           
             if (!Confirmar(
-                "¿Confirmás la anulación de la venta libre?
-Se generará una contraventa y se revertirán los cobros registrados.",
+                "¿Confirmás la anulación de la venta libre? " +
+                "Se generará una contraventa y se revertirán los cobros registrados.",
                 "Anular venta libre",
                 si: "Anular",
                 no: "Cancelar"))

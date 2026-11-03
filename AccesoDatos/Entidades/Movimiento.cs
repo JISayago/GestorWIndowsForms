@@ -16,14 +16,12 @@ namespace AccesoDatos.Entidades
 
         public int TipoMovimiento { get; set; } // Ingreso - Egreso, se puede utilizar un enum para definir los tipos de movimiento, esto es importante para el manejo de caja y reportes financieros.
 
-        // Hoy guarda el valor del enum Operacion (se renombra a Operacion en la Etapa 5, junto con las pantallas).
-        public int TipoMovimientoDetalle { get; set; } // Para aclarar el Area del movimiento. principalmente para filtrar el tipo de movimiento.
+        /// <summary>Qué pasó (enum Operacion: Cobro, Reversa, CargaSaldo...). La columna sigue llamándose tipo_movimiento_detalle.</summary>
+        public int Operacion { get; set; }
 
         public decimal Monto { get; set; }
 
         public DateTime FechaMovimiento { get; set; }
-
-        public bool EstaEliminado { get; set; }
 
         // referencia genérica a cualquier entidad del sistema
         public int? TipoEntidad { get; set; } // TipoEntidadMovimiento enum, para identificar a que entidad se refiere el movimiento nombre representativo de la carpeta de entidades. (venta, producto, caja, etc)

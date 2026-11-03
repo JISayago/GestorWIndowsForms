@@ -699,23 +699,6 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             .AsQueryable();
 
             //==========================================
-            // ELIMINADOS
-            //==========================================
-
-            if (filtros.Bool2)
-            {
-                // Histórico
-            }
-            else if (filtros.Bool1)
-            {
-                query = query.Where(x => x.EstaEliminado);
-            }
-            else
-            {
-                query = query.Where(x => !x.EstaEliminado);
-            }
-
-            //==========================================
             // BUSQUEDA
             //==========================================
 
@@ -753,12 +736,14 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             }
             else
             {
-                var fechaLimite = filtros.Bool2
-                    ? DateTime.Now.AddMonths(-6)
-                    : DateTime.Now.AddMonths(-2);
+                // Sin filtro de fechas: últimos 2 meses (Bool1 = ver todo el historial).
+                if (!filtros.Bool1)
+                {
+                    var fechaLimite = DateTime.Now.AddMonths(-2);
 
-                query = query.Where(x =>
-                    x.FechaMovimiento >= fechaLimite);
+                    query = query.Where(x =>
+                        x.FechaMovimiento >= fechaLimite);
+                }
             }
 
             //==========================================
@@ -785,6 +770,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             var data = query
                 .OrderByDescending(x => x.FechaMovimiento)
+                .ThenByDescending(x => x.MovimientoId)
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)
                 .Select(x => new MovimientoDTO
@@ -792,10 +778,9 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     MovimientoId = x.MovimientoId,
                     NumeroMovimiento = x.NumeroMovimiento,
                     TipoMovimiento = x.TipoMovimiento,
-                    TipoMovimientoDetalle = x.TipoMovimientoDetalle,
+                    Operacion = x.Operacion,
                     Monto = x.Monto,
                     FechaMovimiento = x.FechaMovimiento,
-                    EstaEliminado = x.EstaEliminado,
                     EntidadId = x.EntidadId,
                     TipoEntidad = x.TipoEntidad
                 })

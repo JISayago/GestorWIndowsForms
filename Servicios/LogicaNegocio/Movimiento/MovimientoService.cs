@@ -64,10 +64,9 @@ namespace Servicios.LogicaNegocio.Movimiento
             {
                 NumeroMovimiento = GenerarNumero(context, datos.Prefijo),
                 TipoMovimiento = (int)datos.Tipo,
-                TipoMovimientoDetalle = (int)datos.Operacion, // columna tipo_movimiento_detalle: guarda la Operación
+                Operacion = (int)datos.Operacion,
                 Monto = monto,
                 FechaMovimiento = DateTime.Now,
-                EstaEliminado = false,
                 TipoEntidad = (int)datos.Entidad,
                 EntidadId = datos.EntidadId,
                 AfectaCaja = datos.AfectaCaja,
@@ -250,7 +249,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                          && m.EntidadId == entidadOriginalId
                          && m.AfectaCaja
                          && m.MovimientoOrigenId == null
-                         && m.TipoMovimientoDetalle == (int)Operacion.Cobro)
+                         && m.Operacion == (int)Operacion.Cobro)
                 .OrderBy(m => m.MovimientoId)
                 .ToList();
 
@@ -341,46 +340,6 @@ namespace Servicios.LogicaNegocio.Movimiento
                 filtros.Filtro3?.ToString() == "FECHA";
 
             // =========================================================
-            // CORE: ELIMINADOS + HISTORICO
-            // =========================================================
-
-            if (filtros.Bool2)
-            {
-                // HISTORICO
-                // Trae eliminados y no eliminados.
-                // La ventana de 6 meses se aplica más abajo (sección FECHAS),
-                // siempre que no haya un filtro manual de fechas.
-            }
-            else if (filtros.Bool1)
-            {
-                // SOLO ELIMINADOS
-                // Igual que "solo anulados" en gastos: sin ventana de fecha,
-                // se ven todos los eliminados salvo que haya filtro manual.
-                query = query.Where(x =>
-                    x.EstaEliminado);
-            }
-            else
-            {
-                // =====================================================
-                // NORMAL
-                // =====================================================
-
-                // Excluir eliminados.
-                query = query.Where(x =>
-                    !x.EstaEliminado);
-
-                // Ventana predeterminada de 2 meses
-                // únicamente cuando NO hay un filtro manual de fechas.
-                if (!hayFiltroManual)
-                {
-                    var desde = DateTime.Now.AddMonths(-2);
-
-                    query = query.Where(x =>
-                        x.FechaMovimiento >= desde);
-                }
-            }
-
-            // =========================================================
             // BÚSQUEDA (sin distinguir mayúsculas ni acentos)
             // =========================================================
 
@@ -414,7 +373,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                          int.TryParse(filtroTipo.Substring(4), out var detalle))
                 {
                     query = query.Where(x =>
-                        x.TipoMovimientoDetalle == detalle);
+                        x.Operacion == detalle);
                 }
             }
 
@@ -440,12 +399,10 @@ namespace Servicios.LogicaNegocio.Movimiento
                         x.FechaMovimiento < hasta);
                 }
             }
-            else if (filtros.Bool2)
+            else if (!filtros.Bool1)
             {
-                // HISTORICO = últimos 6 meses,
-                // siempre que no haya un filtro manual de fechas.
-
-                var desde = DateTime.Now.AddMonths(-6);
+                // Sin filtro manual: ventana de 2 meses. Bool1 = "Ver todo el historial".
+                var desde = DateTime.Now.AddMonths(-2);
 
                 query = query.Where(x =>
                     x.FechaMovimiento >= desde);
@@ -498,13 +455,12 @@ namespace Servicios.LogicaNegocio.Movimiento
 
                     TipoMovimiento = x.TipoMovimiento,
 
-                    TipoMovimientoDetalle = x.TipoMovimientoDetalle,
+                    Operacion = x.Operacion,
 
                     Monto = x.Monto,
 
                     FechaMovimiento = x.FechaMovimiento,
 
-                    EstaEliminado = x.EstaEliminado,
 
                     EntidadId = x.EntidadId,
 
@@ -539,9 +495,8 @@ namespace Servicios.LogicaNegocio.Movimiento
                     NumeroMovimiento = m.NumeroMovimiento,
                     Monto = m.Monto,
                     TipoMovimiento = m.TipoMovimiento,
-                    TipoMovimientoDetalle = m.TipoMovimientoDetalle,
+                    Operacion = m.Operacion,
                     FechaMovimiento = m.FechaMovimiento,
-                    EstaEliminado = m.EstaEliminado,
                     EntidadId = m.EntidadId,
                     TipoEntidad = m.TipoEntidad,
 
@@ -630,7 +585,6 @@ namespace Servicios.LogicaNegocio.Movimiento
                         HistorialReciente = context.Movimientos
                             .Where(mh => mh.TipoEntidad == (int)TipoEntidadMovimiento.CuentaCorriente
                                       && mh.EntidadId == cc.CuentaCorrienteId
-                                      && !mh.EstaEliminado
                                       && mh.MovimientoId != m.MovimientoId)
                             .OrderByDescending(mh => mh.FechaMovimiento)
                             .Take(5)

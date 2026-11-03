@@ -78,18 +78,19 @@ namespace TuProyecto.Presentacion.Paneles
             lblMonto.Text = (esIngreso ? "+ " : "- ") + mov.Monto.ToString("C2");
             lblMonto.ForeColor = esIngreso ? Color.SeaGreen : Color.Firebrick;
 
-            if (mov.EstaEliminado)
+            // El libro es inmutable: un movimiento no se elimina, se contrarresta con una reversa.
+            if (mov.Operacion == (int)Operacion.Reversa)
             {
-                lblEstado.Text = "ELIMINADO";
-                lblEstado.ForeColor = Color.Red;
+                lblEstado.Text = "REVERSA";
+                lblEstado.ForeColor = Color.Firebrick;
             }
             else
             {
-                lblEstado.Text = "ACTIVO";
+                lblEstado.Text = "REGISTRADO";
                 lblEstado.ForeColor = Color.SeaGreen;
             }
 
-            lblTipoMovimiento.Text = $"Tipo: {mov.TipoMovimientoDescripcion} | Detalle: {mov.TipoMovimientoDetalleDescripcion}";
+            lblTipoMovimiento.Text = $"Tipo: {mov.TipoMovimientoDescripcion} | Operación: {mov.OperacionDescripcion}";
         }
     }
 }

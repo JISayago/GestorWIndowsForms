@@ -143,7 +143,7 @@ namespace Servicios.LogicaNegocio.Gasto
                     var original = context.Movimientos.FirstOrDefault(m =>
                         m.TipoEntidad == (int)TipoEntidadMovimiento.Gasto &&
                         m.EntidadId == gastoId &&
-                        m.TipoMovimientoDetalle == (int)Operacion.PagoGasto &&
+                        m.Operacion == (int)Operacion.PagoGasto &&
                         m.MovimientoOrigenId == null);
 
                     if (original != null)

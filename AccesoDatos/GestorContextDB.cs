@@ -1064,7 +1064,7 @@ namespace AccesoDatos
                         .HasColumnName("tipo_movimiento")
                         .IsRequired();
 
-                    entity.Property(e => e.TipoMovimientoDetalle)
+                    entity.Property(e => e.Operacion)
                         .HasColumnName("tipo_movimiento_detalle")
                         .IsRequired();
 
@@ -1076,10 +1076,6 @@ namespace AccesoDatos
                     entity.Property(e => e.FechaMovimiento)
                         .HasColumnName("fecha_movimiento")
                         .HasColumnType("datetime")
-                        .IsRequired();
-
-                    entity.Property(e => e.EstaEliminado)
-                        .HasColumnName("esta_eliminado")
                         .IsRequired();
 
                     entity.Property(e => e.EntidadId)
@@ -1130,8 +1126,8 @@ namespace AccesoDatos
                     entity.HasIndex(e => new { e.TipoEntidad, e.EntidadId })
                         .HasDatabaseName("IX_Movimientos_TipoEntidad_EntidadId");
 
-                    // Consultas por tipo de operación (hoy la columna se llama TipoMovimientoDetalle)
-                    entity.HasIndex(e => new { e.TipoMovimientoDetalle, e.FechaMovimiento })
+                    // Consultas por tipo de operación (la columna se sigue llamando tipo_movimiento_detalle)
+                    entity.HasIndex(e => new { e.Operacion, e.FechaMovimiento })
                         .HasDatabaseName("IX_Movimientos_Operacion_FechaMovimiento");
 
                     // Número de movimiento único (lo genera MovimientoServicio.Registrar)
