@@ -1653,7 +1653,21 @@ namespace Presentacion.Core.Administracion
         private void lISTADOCLIENTESToolStripMenuItem_Click(object sender, EventArgs e) => new FClienteConsulta().Show();
         private void lISTADOOFERTASToolStripMenuItem_Click(object sender, EventArgs e) => new FOfertaConsulta().Show();
         private void lOTESToolStripMenuItem_Click(object sender, EventArgs e) => new FLoteConsulta().Show();
-        private void btnMovimientos_Click(object sender, EventArgs e) => new FMovimientoConsulta().Show();
+        private void btnMovimientos_Click(object sender, EventArgs e)
+        {
+            var menu = new ContextMenuStrip();
+            menu.Items.Add("Libro de caja", null, (s, a) => new FMovimientoLibroCaja().Show());
+            menu.Items.Add("Cuentas corrientes", null, (s, a) => new FMovimientoCuentaCorrienteConsulta().Show());
+            menu.Items.Add("Gastos", null, (s, a) => new FMovimientoGastoConsulta().Show());
+            menu.Items.Add(new ToolStripSeparator());
+            menu.Items.Add("Todos los movimientos", null, (s, a) => new FMovimientoConsulta().Show());
+
+            var boton = sender as Control;
+            if (boton != null)
+                menu.Show(boton, new Point(0, boton.Height));
+            else
+                menu.Show(Control.MousePosition);
+        }
         private void tIPOPAGOToolStripMenuItem_Click(object sender, EventArgs e) => new FTipoPagoConsulta().Show();
         private void rOLESToolStripMenuItem_Click(object sender, EventArgs e) => new FRolConsulta().Show();
         private void nUEVAOFERTAToolStripMenuItem_Click(object sender, EventArgs e) => new FOfertaABM().ShowDialog();
