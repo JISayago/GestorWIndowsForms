@@ -13,6 +13,8 @@ namespace Presentacion.FBase.Helpers
         public static readonly Color Oscuro = ColorTranslator.FromHtml("#020014");
         public static readonly Color Acento = ColorTranslator.FromHtml("#F4E2B6");
 
+        public static readonly Color IntermedioVioleta = ColorTranslator.FromHtml("#906EC3");
+
 
         // Apoyo
         public static readonly Color Fondo = ColorTranslator.FromHtml("#EAEAEA");
