@@ -50,13 +50,28 @@ namespace AccesoDatos.Database
         private readonly string _carpeta;
         public SeedRunner(string carpetaScripts) => _carpeta = carpetaScripts;
 
-        public static List<string> Orden(bool limpiarParcial)
+        // Orden de ejecucion. Los meses se toman de lo que realmente hay en la subcarpeta "meses"
+        // (ordenados por nombre yyyy-MM.sql), asi no depende de cuantos meses se publiquen.
+        public static List<string> Orden(bool limpiarParcial, string? carpeta = null)
         {
             var l = new List<string>();
             if (limpiarParcial) l.Add("LIMPIAR_DB_PEGAR.sql");
             l.Add("00_catalogo.sql");
-            for (var m = new DateTime(2024, 8, 1); m <= new DateTime(2026, 8, 1); m = m.AddMonths(1))
-                l.Add(Path.Combine("meses", $"{m:yyyy-MM}.sql"));
+
+            var dirMeses = carpeta is null ? null : Path.Combine(carpeta, "meses");
+            if (dirMeses is not null && Directory.Exists(dirMeses))
+            {
+                foreach (var f in Directory.GetFiles(dirMeses, "????-??.sql")
+                                           .Select(Path.GetFileName)
+                                           .OrderBy(n => n, StringComparer.Ordinal))
+                    l.Add(Path.Combine("meses", f!));
+            }
+            else
+            {
+                l.Add(Path.Combine("meses", "2024-08.sql"));   // seed trial de 1 mes
+            }
+
+            l.Add("96_fechas_relativas.sql");   // corre las fechas del seed para que terminen en AYER
             l.Add("98_ctacte_final.sql");
             l.Add("97_demo_presentacion.sql");
             return l;
@@ -64,7 +79,7 @@ namespace AccesoDatos.Database
 
         public async Task EjecutarAsync(bool limpiarParcial, IProgress<SeedProgreso> progreso, CancellationToken ct = default)
         {
-            var archivos = Orden(limpiarParcial);
+            var archivos = Orden(limpiarParcial, _carpeta);
             foreach (var a in archivos)
             {
                 var ruta = Path.Combine(_carpeta, a);
