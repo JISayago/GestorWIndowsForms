@@ -210,6 +210,11 @@ namespace Presentacion
                                 licenciaVencida: true);
 
                         avisoTrial.ShowDialog();
+                        if(avisoTrial.CortarInicio)
+                        {
+                           
+                            return;
+                        }
 
                         if (avisoTrial.DeseaCargarLicencia)
                         {
@@ -221,14 +226,15 @@ namespace Presentacion
                             var resultado =
                                 activacion.ShowDialog();
 
-                            if (resultado == DialogResult.OK &&
-                                activacion.LicenciaValida)
+                            if (resultado == DialogResult.OK && activacion.LicenciaValida)
                             {
-                                resultadoLicencia =
-                                    StartupValidator.ValidarInicio();
+                                resultadoLicencia = StartupValidator.ValidarInicio();
 
-                                licenciaActual =
-                                    new LicenseStorage().Leer();
+                                licenciaActual = new LicenseStorage().Leer();
+                            }
+                            else
+                            {
+                                return;
                             }
                         }
 
@@ -259,6 +265,10 @@ namespace Presentacion
                                 licenciaVencida: false);
 
                         avisoTrial.ShowDialog();
+                        if (avisoTrial.CortarInicio)
+                        {
+                            return;
+                        }
 
                         if (avisoTrial.DeseaCargarLicencia)
                         {

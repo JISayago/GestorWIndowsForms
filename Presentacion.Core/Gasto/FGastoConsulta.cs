@@ -135,7 +135,7 @@ namespace Presentacion.Core.Gasto
             }
 
             // 🔥 🔹 Fecha (AHORA USA DESCRIPCIÓN)
-            if (grilla.Columns.Contains("FechaGastoDescripcion"))
+            if (grilla.Columns.Contains("FechaGastoDescripcion")) // se agrega en el dto el formato "dd/MM/yyyy HH:mm"
             {
                 grilla.Columns["FechaGastoDescripcion"].Visible = true;
                 grilla.Columns["FechaGastoDescripcion"].HeaderText = "Fecha";
@@ -146,6 +146,7 @@ namespace Presentacion.Core.Gasto
             if (grilla.Columns.Contains("FechaGasto"))
             {
                 grilla.Columns["FechaGasto"].Visible = false;
+                grilla.Columns["FechaGasto"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
             }
 
             // 🔹 Empleado

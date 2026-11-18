@@ -22,7 +22,8 @@ namespace Presentacion.Notificaciones
         public Color ColorTextoSecundario { get; set; } = TemaSistema.TextoSecundario;
         public Color ColorTextoGrisClaro { get; set; } = Color.Gray;
         public Color ColorIndicadorCaja { get; set; } = TemaSistema.Primario;
-        public Color ColorIndicadorSesion { get; set; } = TemaSistema.Acento;
+        public Color ColorIndicadorSesion { get; set; } = TemaSistema.IntermedioVioleta;
+        //public Color ColorIndicadorSesion { get; set; } = TemaSistema.Acento;
         public Color ColorIndicadorSesionSecundaria { get; set; } = TemaSistema.Seleccion;
         public Color ColorBotonGuardarFondo { get; set; } = TemaSistema.Seleccion;
         public Color ColorBotonGuardarTexto { get; set; } = Color.Black;
