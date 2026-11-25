@@ -42,6 +42,20 @@ namespace Presentacion.Core.Administracion.Configuracion
                     seccion.Dispose();
             };
         }
+        protected override void EjecutarEscape()
+        {
+            Form formularioContenedor = this.Parent?.FindForm();
+
+            if (formularioContenedor != null && formularioContenedor != this)
+            {
+                formularioContenedor.Close();
+                return;
+            }
+
+            // Si FConfiguracion se abre independientemente,
+            // cerrar solamente este formulario.
+            this.Close();
+        }
         private void ConfigurarBarraAcciones()
         {
             pnlAcciones.SuspendLayout();

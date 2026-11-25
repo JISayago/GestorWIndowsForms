@@ -22,15 +22,15 @@ namespace Presentacion.Core.Administracion.Configuracion
         private void InitializeComponent()
         {
             ComponentResourceManager resources = new ComponentResourceManager(typeof(FConfiguracion));
-
             pnlMarco = new Panel();
+            layoutGeneral = new TableLayoutPanel();
+            layoutEncabezado = new TableLayoutPanel();
+            lblTituloConfiguracion = new Label();
+            lblSubtituloConfiguracion = new Label();
             layoutPrincipal = new TableLayoutPanel();
             pnlNavegacion = new Panel();
             layoutNavegacion = new TableLayoutPanel();
-            lblTituloConfiguracion = new Label();
-            lblSubtituloConfiguracion = new Label();
             lblTituloSecciones = new Label();
-            lblSubtituloSecciones = new Label();
             lstSecciones = new ListBox();
             layoutContenido = new TableLayoutPanel();
             lblSeccionTitulo = new Label();
@@ -39,17 +39,15 @@ namespace Presentacion.Core.Administracion.Configuracion
             pnlAcciones = new Panel();
             lblCambios = new Label();
             btnGuardarCambios = new Button();
-            layoutGeneral = new TableLayoutPanel();
-            layoutEncabezado = new TableLayoutPanel();
             ((ISupportInitialize)error).BeginInit();
             pnlMarco.SuspendLayout();
+            layoutGeneral.SuspendLayout();
+            layoutEncabezado.SuspendLayout();
             layoutPrincipal.SuspendLayout();
             pnlNavegacion.SuspendLayout();
             layoutNavegacion.SuspendLayout();
             layoutContenido.SuspendLayout();
             pnlAcciones.SuspendLayout();
-            layoutGeneral.SuspendLayout();
-            layoutEncabezado.SuspendLayout();
             SuspendLayout();
             // 
             // pnlMarco
@@ -62,6 +60,62 @@ namespace Presentacion.Core.Administracion.Configuracion
             pnlMarco.Padding = new Padding(12);
             pnlMarco.Size = new Size(900, 600);
             pnlMarco.TabIndex = 0;
+            // 
+            // layoutGeneral
+            // 
+            layoutGeneral.ColumnCount = 1;
+            layoutGeneral.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutGeneral.Controls.Add(layoutEncabezado, 0, 0);
+            layoutGeneral.Controls.Add(layoutPrincipal, 0, 1);
+            layoutGeneral.Dock = DockStyle.Fill;
+            layoutGeneral.Location = new Point(12, 12);
+            layoutGeneral.Margin = new Padding(0);
+            layoutGeneral.Name = "layoutGeneral";
+            layoutGeneral.RowCount = 2;
+            layoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 82F));
+            layoutGeneral.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            layoutGeneral.Size = new Size(874, 574);
+            layoutGeneral.TabIndex = 0;
+            // 
+            // layoutEncabezado
+            // 
+            layoutEncabezado.ColumnCount = 1;
+            layoutEncabezado.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            layoutEncabezado.Controls.Add(lblTituloConfiguracion, 0, 0);
+            layoutEncabezado.Controls.Add(lblSubtituloConfiguracion, 0, 1);
+            layoutEncabezado.Dock = DockStyle.Fill;
+            layoutEncabezado.Location = new Point(0, 0);
+            layoutEncabezado.Margin = new Padding(0);
+            layoutEncabezado.Name = "layoutEncabezado";
+            layoutEncabezado.RowCount = 2;
+            layoutEncabezado.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
+            layoutEncabezado.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            layoutEncabezado.Size = new Size(874, 82);
+            layoutEncabezado.TabIndex = 0;
+            // 
+            // lblTituloConfiguracion
+            // 
+            lblTituloConfiguracion.Dock = DockStyle.Fill;
+            lblTituloConfiguracion.Font = new Font("Segoe UI Semibold", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTituloConfiguracion.Location = new Point(3, 0);
+            lblTituloConfiguracion.Name = "lblTituloConfiguracion";
+            lblTituloConfiguracion.Size = new Size(868, 36);
+            lblTituloConfiguracion.TabIndex = 0;
+            lblTituloConfiguracion.Text = "Configuración";
+            lblTituloConfiguracion.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lblSubtituloConfiguracion
+            // 
+            lblSubtituloConfiguracion.Dock = DockStyle.Fill;
+            lblSubtituloConfiguracion.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSubtituloConfiguracion.ForeColor = Color.Gray;
+            lblSubtituloConfiguracion.Location = new Point(10, 41);
+            lblSubtituloConfiguracion.Margin = new Padding(10, 5, 3, 0);
+            lblSubtituloConfiguracion.Name = "lblSubtituloConfiguracion";
+            lblSubtituloConfiguracion.Padding = new Padding(5, 0, 0, 0);
+            lblSubtituloConfiguracion.Size = new Size(861, 41);
+            lblSubtituloConfiguracion.TabIndex = 1;
+            lblSubtituloConfiguracion.Text = "Administrá las preferencias y los parámetros del sistema.";
             // 
             // layoutPrincipal
             // 
@@ -95,7 +149,6 @@ namespace Presentacion.Core.Administracion.Configuracion
             layoutNavegacion.ColumnCount = 1;
             layoutNavegacion.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             layoutNavegacion.Controls.Add(lblTituloSecciones, 0, 0);
-            layoutNavegacion.Controls.Add(lblSubtituloSecciones, 0, 1);
             layoutNavegacion.Controls.Add(lstSecciones, 0, 2);
             layoutNavegacion.Dock = DockStyle.Fill;
             layoutNavegacion.Location = new Point(0, 0);
@@ -103,70 +156,37 @@ namespace Presentacion.Core.Administracion.Configuracion
             layoutNavegacion.Name = "layoutNavegacion";
             layoutNavegacion.Padding = new Padding(10, 0, 10, 0);
             layoutNavegacion.RowCount = 3;
-            layoutNavegacion.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
-            layoutNavegacion.RowStyles.Add(new RowStyle(SizeType.Absolute, 38F));
+            layoutNavegacion.RowStyles.Add(new RowStyle(SizeType.Absolute, 47F));
+            layoutNavegacion.RowStyles.Add(new RowStyle(SizeType.Absolute, 21F));
             layoutNavegacion.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             layoutNavegacion.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             layoutNavegacion.Size = new Size(227, 490);
             layoutNavegacion.TabIndex = 0;
             // 
-            // lblTituloConfiguracion
-            // 
-            lblTituloConfiguracion.Dock = DockStyle.Fill;
-            lblTituloConfiguracion.Font = new Font("Segoe UI Semibold", 15F, FontStyle.Bold);
-            lblTituloConfiguracion.Location = new Point(3, 0);
-            lblTituloConfiguracion.Name = "lblTituloConfiguracion";
-            lblTituloConfiguracion.Size = new Size(868, 36);
-            lblTituloConfiguracion.TabIndex = 0;
-            lblTituloConfiguracion.Text = "Configuración";
-            lblTituloConfiguracion.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lblSubtituloConfiguracion
-            // 
-            lblSubtituloConfiguracion.Dock = DockStyle.Fill;
-            lblSubtituloConfiguracion.Font = new Font("Segoe UI", 9F);
-            lblSubtituloConfiguracion.Location = new Point(3, 36);
-            lblSubtituloConfiguracion.Name = "lblSubtituloConfiguracion";
-            lblSubtituloConfiguracion.Size = new Size(868, 46);
-            lblSubtituloConfiguracion.TabIndex = 1;
-            lblSubtituloConfiguracion.Text = "Administrá las preferencias y los parámetros del sistema.";
-            // 
             // lblTituloSecciones
             // 
             lblTituloSecciones.Dock = DockStyle.Fill;
-            lblTituloSecciones.Font = new Font("Segoe UI Semibold", 14F, FontStyle.Bold);
+            lblTituloSecciones.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblTituloSecciones.Location = new Point(13, 0);
             lblTituloSecciones.Name = "lblTituloSecciones";
-            lblTituloSecciones.Size = new Size(201, 30);
+            lblTituloSecciones.Size = new Size(201, 47);
             lblTituloSecciones.TabIndex = 2;
             lblTituloSecciones.Tag = "Titulo";
-            lblTituloSecciones.Text = "Opciones";
+            lblTituloSecciones.Text = "Opciones Disponibles";
             lblTituloSecciones.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lblSubtituloSecciones
-            // 
-            lblSubtituloSecciones.Dock = DockStyle.Fill;
-            lblSubtituloSecciones.Font = new Font("Segoe UI", 8.5F);
-            lblSubtituloSecciones.Location = new Point(13, 30);
-            lblSubtituloSecciones.Name = "lblSubtituloSecciones";
-            lblSubtituloSecciones.Padding = new Padding(3);
-            lblSubtituloSecciones.Size = new Size(201, 38);
-            lblSubtituloSecciones.TabIndex = 3;
-            lblSubtituloSecciones.Text = "Seleccioná una sección para modificarla.";
-            lblSubtituloSecciones.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // lstSecciones
             // 
             lstSecciones.BorderStyle = BorderStyle.FixedSingle;
             lstSecciones.DisplayMember = "Titulo";
             lstSecciones.Dock = DockStyle.Fill;
-            lstSecciones.Font = new Font("Segoe UI", 9.5F);
+            lstSecciones.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lstSecciones.IntegralHeight = false;
             lstSecciones.ItemHeight = 17;
-            lstSecciones.Location = new Point(10, 74);
-            lstSecciones.Margin = new Padding(0, 6, 0, 0);
+            lstSecciones.Location = new Point(10, 68);
+            lstSecciones.Margin = new Padding(0);
             lstSecciones.Name = "lstSecciones";
-            lstSecciones.Size = new Size(207, 416);
+            lstSecciones.Size = new Size(207, 422);
             lstSecciones.TabIndex = 1;
             lstSecciones.SelectedIndexChanged += OnSeccionSeleccionada;
             // 
@@ -193,7 +213,7 @@ namespace Presentacion.Core.Administracion.Configuracion
             // lblSeccionTitulo
             // 
             lblSeccionTitulo.Dock = DockStyle.Fill;
-            lblSeccionTitulo.Font = new Font("Segoe UI Semibold", 14F, FontStyle.Bold);
+            lblSeccionTitulo.Font = new Font("Segoe UI Semibold", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblSeccionTitulo.Location = new Point(3, 0);
             lblSeccionTitulo.Name = "lblSeccionTitulo";
             lblSeccionTitulo.Size = new Size(623, 38);
@@ -260,38 +280,6 @@ namespace Presentacion.Core.Administracion.Configuracion
             btnGuardarCambios.UseVisualStyleBackColor = true;
             btnGuardarCambios.Click += OnGuardarCambiosClick;
             // 
-            // layoutGeneral
-            // 
-            layoutGeneral.ColumnCount = 1;
-            layoutGeneral.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            layoutGeneral.Controls.Add(layoutEncabezado, 0, 0);
-            layoutGeneral.Controls.Add(layoutPrincipal, 0, 1);
-            layoutGeneral.Dock = DockStyle.Fill;
-            layoutGeneral.Location = new Point(12, 12);
-            layoutGeneral.Margin = new Padding(0);
-            layoutGeneral.Name = "layoutGeneral";
-            layoutGeneral.RowCount = 2;
-            layoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 82F));
-            layoutGeneral.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            layoutGeneral.Size = new Size(874, 574);
-            layoutGeneral.TabIndex = 0;
-            // 
-            // layoutEncabezado
-            // 
-            layoutEncabezado.ColumnCount = 1;
-            layoutEncabezado.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            layoutEncabezado.Controls.Add(lblTituloConfiguracion, 0, 0);
-            layoutEncabezado.Controls.Add(lblSubtituloConfiguracion, 0, 1);
-            layoutEncabezado.Dock = DockStyle.Fill;
-            layoutEncabezado.Location = new Point(0, 0);
-            layoutEncabezado.Margin = new Padding(0);
-            layoutEncabezado.Name = "layoutEncabezado";
-            layoutEncabezado.RowCount = 2;
-            layoutEncabezado.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
-            layoutEncabezado.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            layoutEncabezado.Size = new Size(874, 82);
-            layoutEncabezado.TabIndex = 0;
-            // 
             // FConfiguracion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -305,13 +293,13 @@ namespace Presentacion.Core.Administracion.Configuracion
             Text = "Configuración del sistema";
             ((ISupportInitialize)error).EndInit();
             pnlMarco.ResumeLayout(false);
+            layoutGeneral.ResumeLayout(false);
+            layoutEncabezado.ResumeLayout(false);
             layoutPrincipal.ResumeLayout(false);
             pnlNavegacion.ResumeLayout(false);
             layoutNavegacion.ResumeLayout(false);
             layoutContenido.ResumeLayout(false);
             pnlAcciones.ResumeLayout(false);
-            layoutGeneral.ResumeLayout(false);
-            layoutEncabezado.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -325,7 +313,6 @@ namespace Presentacion.Core.Administracion.Configuracion
         private Label lblTituloConfiguracion;
         private Label lblSubtituloConfiguracion;
         private Label lblTituloSecciones;
-        private Label lblSubtituloSecciones;
         private TableLayoutPanel layoutGeneral;
         private TableLayoutPanel layoutEncabezado;
         private TableLayoutPanel layoutContenido;
