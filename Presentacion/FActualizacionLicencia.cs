@@ -37,6 +37,11 @@ namespace Presentacion
         // MOSTRAR INFORMACIÓN DE LA TRIAL
         // ============================================================
 
+        protected override void EjecutarEscape()
+        {
+
+            CerrarTodoYCortarInicio();
+        }
         private void MostrarInformacionTrial()
         {
             // --------------------------------------------------------
@@ -168,17 +173,19 @@ namespace Presentacion
         // CERRAR
         // ============================================================
 
+        private void CerrarTodoYCortarInicio()
+        {
+            DeseaCargarLicencia = false;
+            CortarInicio = true;
+            DialogResult =
+                DialogResult.Cancel;
+            Close();
+        }
         private void btnCerrar_Click(
             object sender,
             EventArgs e)
         {
-            DeseaCargarLicencia = false;
-            CortarInicio = true;
-
-            DialogResult =
-                DialogResult.Cancel;
-
-            Close();
+            CerrarTodoYCortarInicio();
         }
     }
 }
