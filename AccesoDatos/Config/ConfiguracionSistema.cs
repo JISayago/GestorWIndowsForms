@@ -17,6 +17,8 @@ namespace AccesoDatos.Config
 
         public ConfiguracionComprobantes Comprobantes { get; set; } = new();
 
+        public ConfiguracionApariencia Apariencia { get; set; } = new();
+
         public ConfiguracionBaseDatos? BaseDatosTrial { get; set; }
     }
 }
