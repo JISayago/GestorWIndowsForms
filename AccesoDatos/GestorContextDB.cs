@@ -306,6 +306,21 @@ namespace AccesoDatos
 
                     entity.HasKey(e => e.VentaId);
 
+                    // Contraventa: una sola por venta original (índice único filtrado)
+                    entity.Property(e => e.VentaOriginalId)
+                        .HasColumnName("id_VentaOriginal")
+                        .IsRequired(false);
+
+                    entity.HasOne<Venta>()
+                        .WithMany()
+                        .HasForeignKey(e => e.VentaOriginalId)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    entity.HasIndex(e => e.VentaOriginalId)
+                        .IsUnique()
+                        .HasFilter("[id_VentaOriginal] IS NOT NULL")
+                        .HasDatabaseName("UX_Ventas_VentaOriginalId");
+
                     entity.Property(e => e.VentaId)
                         .HasColumnName("id_Venta");
 
@@ -422,6 +437,21 @@ namespace AccesoDatos
                     entity.ToTable("VentasLibres");
 
                     entity.HasKey(e => e.VentaLibreId);
+
+                    // Contraventa: una sola por venta libre original (índice único filtrado)
+                    entity.Property(e => e.VentaOriginalId)
+                        .HasColumnName("id_VentaOriginal")
+                        .IsRequired(false);
+
+                    entity.HasOne<VentaLibre>()
+                        .WithMany()
+                        .HasForeignKey(e => e.VentaOriginalId)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    entity.HasIndex(e => e.VentaOriginalId)
+                        .IsUnique()
+                        .HasFilter("[id_VentaOriginal] IS NOT NULL")
+                        .HasDatabaseName("UX_VentasLibres_VentaOriginalId");
 
                     entity.Property(e => e.VentaLibreId)
                         .HasColumnName("id_VentaLibre");
@@ -1053,7 +1083,7 @@ namespace AccesoDatos
                         .HasColumnName("tipo_movimiento")
                         .IsRequired();
 
-                    entity.Property(e => e.TipoMovimientoDetalle)
+                    entity.Property(e => e.Operacion)
                         .HasColumnName("tipo_movimiento_detalle")
                         .IsRequired();
 
@@ -1067,10 +1097,6 @@ namespace AccesoDatos
                         .HasColumnType("datetime")
                         .IsRequired();
 
-                    entity.Property(e => e.EstaEliminado)
-                        .HasColumnName("esta_eliminado")
-                        .IsRequired();
-
                     entity.Property(e => e.EntidadId)
                         .HasColumnName("entidad_id")
                         .IsRequired(false);
@@ -1078,6 +1104,61 @@ namespace AccesoDatos
                     entity.Property(e => e.TipoEntidad)
                         .HasColumnName("tipo_entidad")
                         .IsRequired(false);
+
+                    // --- Etapa 1 refactor Movimientos ---
+                    entity.Property(e => e.AfectaCaja)
+                        .HasColumnName("afecta_caja")
+                        .IsRequired();
+
+                    entity.Property(e => e.CajaId)
+                        .HasColumnName("id_caja")
+                        .IsRequired(false);
+
+                    entity.Property(e => e.TipoPagoId)
+                        .HasColumnName("id_TipoPago")
+                        .IsRequired(false);
+
+                    entity.Property(e => e.MovimientoOrigenId)
+                        .HasColumnName("id_movimiento_origen")
+                        .IsRequired(false);
+
+                    // Texto libre (ej. motivo de un agregado de saldo a la caja)
+                    entity.Property(e => e.Detalle)
+                        .HasColumnName("detalle")
+                        .HasMaxLength(200)
+                        .IsRequired(false);
+
+                    entity.HasOne(e => e.Caja)
+                        .WithMany()
+                        .HasForeignKey(e => e.CajaId)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    entity.HasOne(e => e.TipoPago)
+                        .WithMany()
+                        .HasForeignKey(e => e.TipoPagoId)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    entity.HasOne(e => e.MovimientoOrigen)
+                        .WithMany()
+                        .HasForeignKey(e => e.MovimientoOrigenId)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    // Libro por caja (y por día dentro de la caja)
+                    entity.HasIndex(e => new { e.CajaId, e.FechaMovimiento })
+                        .HasDatabaseName("IX_Movimientos_CajaId_FechaMovimiento");
+
+                    // Historial por entidad (cuenta corriente, gasto, venta...)
+                    entity.HasIndex(e => new { e.TipoEntidad, e.EntidadId })
+                        .HasDatabaseName("IX_Movimientos_TipoEntidad_EntidadId");
+
+                    // Consultas por tipo de operación (la columna se sigue llamando tipo_movimiento_detalle)
+                    entity.HasIndex(e => new { e.Operacion, e.FechaMovimiento })
+                        .HasDatabaseName("IX_Movimientos_Operacion_FechaMovimiento");
+
+                    // Número de movimiento único (lo genera MovimientoServicio.Registrar)
+                    entity.HasIndex(e => e.NumeroMovimiento)
+                        .IsUnique()
+                        .HasDatabaseName("UX_Movimientos_NumeroMovimiento");
 
                     // Mismo patrón: consulta de movimientos ordena por FechaMovimiento DESC
                     entity.HasIndex(e => e.FechaMovimiento)
@@ -1091,6 +1172,10 @@ namespace AccesoDatos
                     entity.ToTable("Gastos");
 
                     entity.HasKey(e => e.GastoId);
+
+                    entity.Property(e => e.OrigenPago)
+                        .HasColumnName("origen_pago")
+                        .IsRequired(false);
 
                     entity.Property(e => e.GastoId)
                         .HasColumnName("id_Gasto");

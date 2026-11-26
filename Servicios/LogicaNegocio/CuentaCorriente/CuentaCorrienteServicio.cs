@@ -179,8 +179,9 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     Exitoso = false,
                     Mensaje = "Por favor abra una caja para continuar con la transacción."
                 };
-            cajaServicio.RegistrarTransaccion(context, diferencia, TipoMovimiento.Ingreso, cajaId.Value);
-            CrearMovimientoCargaSaldoCuentaCorriente(cuenta.CuentaCorrienteId, diferencia, context);
+            // Subir el saldo es plata que entra a la caja; bajarlo, plata que sale.
+            cajaServicio.RegistrarTransaccion(context, Math.Abs(diferencia), diferencia > 0 ? TipoMovimiento.Ingreso : TipoMovimiento.Egreso, cajaId.Value);
+            _movimientoServicio.RegistrarCargaSaldo(context, cuenta.CuentaCorrienteId, cajaId.Value, diferencia);
 
 
             context.SaveChanges();
@@ -194,27 +195,6 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 DatoExtra = cuenta.Saldo.ToString("C")
             };
         }
-
-        public void CrearMovimientoCargaSaldoCuentaCorriente(long cuentaCorrienteId,decimal monto,GestorContextDB context)
-        {
-            if (cuentaCorrienteId <= 0)
-                throw new Exception("No puede crearse el movimiento porque la cuenta corriente no posee un Id válido.");
-
-            var movimiento = new AccesoDatos.Entidades.Movimiento
-            {
-                NumeroMovimiento = $"MOV-CTACTE-{cuentaCorrienteId}-{DateTime.Now:yyyyMMddHHmmss}",
-                EntidadId = cuentaCorrienteId,
-                TipoEntidad = (int)TipoEntidadMovimiento.CuentaCorriente,
-                TipoMovimiento = (int)TipoMovimiento.Ingreso,
-                TipoMovimientoDetalle = (int)TipoMovimientoDetalle.CuentaCorriente,
-                Monto = Math.Abs(monto),
-                FechaMovimiento = DateTime.Now,
-                EstaEliminado = false
-            };
-
-            context.Movimientos.Add(movimiento);
-        }
-
 
         public EstadoOperacion Modificar(CuentaCorrienteDTO cuentacorrienteDto, long? cuentacorrienteId)
         {
@@ -539,7 +519,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 // EVALUAMOS EL ESTADO DE ESTA CUENTA ACÁ (por si la compra la dejó vencida/en deuda)
                 VerificarYActualizarEstadoInstancia(cuenta);
 
-                _movimientoServicio.CrearMovimientoCtaCte(monto, cajaId, cuenta.CuentaCorrienteId, TipoMovimientoDetalle.CuentaCorriente, false, context);
+                _movimientoServicio.RegistrarCargoCuentaCorriente(context, cuenta.CuentaCorrienteId, monto);
 
                 context.SaveChanges(); // Dentro de la tx de venta si contextExterno viene de ahí.
 
@@ -550,27 +530,6 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                 if (ownsContext)
                     context.Dispose();
             }
-        }
-
-        public EstadoOperacion RegistrarPago(long cuentaId, decimal monto, long cajaId, string descripcion = "Pago")
-        {
-            if (monto <= 0) return new EstadoOperacion { Exitoso = false, Mensaje = "El monto debe ser mayor a cero." };
-
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-            var cuenta = context.CuentaCorriente.FirstOrDefault(c => c.CuentaCorrienteId == cuentaId);
-
-            if (cuenta == null) throw new Exception("Cuenta corriente no encontrada");
-
-            cuenta.Saldo += monto;
-
-            // EVALUAMOS EL ESTADO DE ESTA CUENTA ACÁ (si pagó la deuda, se reactiva sola)
-            VerificarYActualizarEstadoInstancia(cuenta);
-
-            _movimientoServicio.CrearMovimientoCtaCte(monto, cajaId, cuenta.CuentaCorrienteId, TipoMovimientoDetalle.CuentaCorriente, true, context);
-
-            context.SaveChanges(); // Guarda todo en una sola transacción limpia
-
-            return new EstadoOperacion { Exitoso = true, Mensaje = "Pago registrado correctamente" };
         }
 
         // =========================================================================
@@ -589,14 +548,20 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
                 if (cuenta == null) throw new Exception("Cuenta corriente no encontrada");
 
+                // Una cancelación no puede acreditar sobre una cuenta que ya no está en uso.
+                if (cuenta.EstaEliminado)
+                    return new EstadoOperacion { Exitoso = false, Mensaje = "No se puede cancelar: la cuenta corriente del cliente fue eliminada." };
+
+                if (cuenta.EstadoCuentaCorriente == (int)EstadoCuentaCorriente.Cerrada)
+                    return new EstadoOperacion { Exitoso = false, Mensaje = "No se puede cancelar: la cuenta corriente del cliente está cerrada." };
+
                 // En tu Modelo de Saldo Negativo, revertir una compra SUMA al saldo (lo acerca a 0 o a positivo)
                 cuenta.Saldo += monto;
 
-                // Evaluamos el estado en memoria antes de guardar (por si la cuenta sale de la suspensión)
-                VerificarYActualizarEstadoInstancia(cuenta);
+                // La cancelación NO reevalúa el estado ni el vencimiento de la cuenta: el crédito queda como saldo a favor.
 
                 // Impactamos el histórico con 'true' ya que incrementa el saldo a favor/reduce saldo deudor
-                _movimientoServicio.CrearMovimientoCtaCte(monto, cajaId, cuenta.CuentaCorrienteId, TipoMovimientoDetalle.CuentaCorriente, true, context);
+                _movimientoServicio.RegistrarCreditoCuentaCorriente(context, cuenta.CuentaCorrienteId, monto);
 
                 context.SaveChanges();
 
@@ -728,28 +693,10 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             var query = context.Movimientos
             .Where(x =>
-                x.TipoMovimientoDetalle == (int)TipoMovimientoDetalle.CuentaCorriente &&
                 x.TipoEntidad == (int)TipoEntidadMovimiento.CuentaCorriente &&
                 x.EntidadId == cuentaCorrienteId)
             .AsNoTracking()
             .AsQueryable();
-
-            //==========================================
-            // ELIMINADOS
-            //==========================================
-
-            if (filtros.Bool2)
-            {
-                // Histórico
-            }
-            else if (filtros.Bool1)
-            {
-                query = query.Where(x => x.EstaEliminado);
-            }
-            else
-            {
-                query = query.Where(x => !x.EstaEliminado);
-            }
 
             //==========================================
             // BUSQUEDA
@@ -789,12 +736,14 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
             }
             else
             {
-                var fechaLimite = filtros.Bool2
-                    ? DateTime.Now.AddMonths(-6)
-                    : DateTime.Now.AddMonths(-2);
+                // Sin filtro de fechas: últimos 2 meses (Bool1 = ver todo el historial).
+                if (!filtros.Bool1)
+                {
+                    var fechaLimite = DateTime.Now.AddMonths(-2);
 
-                query = query.Where(x =>
-                    x.FechaMovimiento >= fechaLimite);
+                    query = query.Where(x =>
+                        x.FechaMovimiento >= fechaLimite);
+                }
             }
 
             //==========================================
@@ -821,6 +770,7 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
 
             var data = query
                 .OrderByDescending(x => x.FechaMovimiento)
+                .ThenByDescending(x => x.MovimientoId)
                 .Skip((filtros.Page - 1) * filtros.PageSize)
                 .Take(filtros.PageSize)
                 .Select(x => new MovimientoDTO
@@ -828,10 +778,9 @@ namespace Servicios.LogicaNegocio.CuentaCorriente
                     MovimientoId = x.MovimientoId,
                     NumeroMovimiento = x.NumeroMovimiento,
                     TipoMovimiento = x.TipoMovimiento,
-                    TipoMovimientoDetalle = x.TipoMovimientoDetalle,
+                    Operacion = x.Operacion,
                     Monto = x.Monto,
                     FechaMovimiento = x.FechaMovimiento,
-                    EstaEliminado = x.EstaEliminado,
                     EntidadId = x.EntidadId,
                     TipoEntidad = x.TipoEntidad
                 })

@@ -2,6 +2,7 @@
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.OpcionesPagos;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.Helpers.VentaEnum;
 using Servicios.LogicaNegocio.Articulo.Marca.DTO;
@@ -27,345 +28,344 @@ namespace Servicios.LogicaNegocio.Movimiento
 {
     public class MovimientoServicio : IMovimientoServicio
     {
-        public void CrearMovimientoVenta(
-            long ventaId,
-            decimal monto,
-            int estado,
-            TipoMovimientoDetalle detalleTipo,
-            TipoEntidadMovimiento tipoEntidad,
-            GestorContextDB context)
+        // =====================================================================
+        // ALTA DE MOVIMIENTOS (punto único)
+        // Reglas: monto siempre positivo, número único, CajaId solo si AfectaCaja,
+        // MovimientoOrigenId solo en reversas. No abre transacciones ni guarda:
+        // el que llama es dueño del contexto, de la transacción y de SaveChanges.
+        // =====================================================================
+
+        public AccesoDatos.Entidades.Movimiento? Registrar(GestorContextDB context, NuevoMovimiento datos)
         {
-            if (ventaId <= 0)
-                throw new Exception("El movimiento no puede crearse porque la venta no tiene un ID válido.");
+            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (datos == null) throw new ArgumentNullException(nameof(datos));
 
-            try
-            {
-                // 🔥 1. Tipo de movimiento (Ingreso / Egreso)
-                var esEgreso = estado == (int)EstadoVenta.CancelacionVenta;
+            if (string.IsNullOrWhiteSpace(datos.Prefijo))
+                throw new ArgumentException("El movimiento necesita un prefijo para generar su número.", nameof(datos));
 
-                var tipoMovimiento = esEgreso
-                    ? TipoMovimiento.Egreso
-                    : TipoMovimiento.Ingreso;
+            if (datos.EntidadId <= 0)
+                throw new Exception("El movimiento no puede crearse porque la entidad de origen no tiene un ID válido.");
 
-                // 🔥 2. Prefijo de operación
-                var prefijoOperacion = esEgreso ? "CAN" : "MOV";
-
-                // 🔥 3. Prefijo de entidad
-                string prefijoEntidad;
-
-                switch (tipoEntidad)
-                {
-                    case TipoEntidadMovimiento.Venta:
-                        prefijoEntidad = "VENTA";
-                        break;
-
-                    case TipoEntidadMovimiento.VentaLibre:
-                        prefijoEntidad = "VENTALIBRE";
-                        break;
-
-                    default:
-                        throw new Exception("Tipo de entidad no válido para movimientos de venta.");
-                }
-
-                // 🔥 4. Número de movimiento
-                var numeroMovimiento = $"{prefijoOperacion}-{prefijoEntidad}-{ventaId}-{DateTime.Now:yyyyMMddHHmmss}";
-
-                // 🔥 5. Crear movimiento
-                var movimiento = new AccesoDatos.Entidades.Movimiento
-                {
-                    NumeroMovimiento = numeroMovimiento,
-                    EntidadId = ventaId,
-                    TipoEntidad = (int)tipoEntidad,
-                    TipoMovimiento = (int)tipoMovimiento,
-                    TipoMovimientoDetalle = (int)detalleTipo,
-                    Monto = Math.Abs(monto), // siempre positivo
-                    FechaMovimiento = DateTime.Now,
-                    EstaEliminado = false
-                };
-
-                context.Movimientos.Add(movimiento);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al crear movimiento de venta: {ex}");
-                throw;
-            }
-        }
-
-        public void CrearMovimientoCtaCte(decimal total, long cajaId, long cuentaCorrienteId, TipoMovimientoDetalle detalleTipo, bool esPago, GestorContextDB context = null)
-        {
-            //el return del id lo puse para caja pero al fnal no se usa, podria no devolver nada
-
-            bool crearContextoLocal = (context == null);
-
-            if (crearContextoLocal)
-                context = new GestorContextDBFactory().CreateDbContext(null);
-
-            try
-            {
-                var movimiento = new AccesoDatos.Entidades.Movimiento
-                {
-                    NumeroMovimiento = $"MOV{total}CTACTE",
-                    TipoMovimiento = esPago ? (int)TipoMovimiento.Ingreso : (int)TipoMovimiento.Egreso, //Ingreso es pago de ctacte, Egreso es compra con ctacte
-                    TipoMovimientoDetalle = (int)detalleTipo,
-                    Monto = total,
-                    FechaMovimiento = DateTime.Now,
-                    EstaEliminado = false,
-                    EntidadId = cuentaCorrienteId,
-                    TipoEntidad = (int)TipoEntidadMovimiento.CuentaCorriente
-                };
-
-                context.Movimientos.Add(movimiento);
-
-                //Si el contexto es local, guardamos los cambios directamente
-                if (crearContextoLocal)
-                    context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al crear movimiento: {ex.Message}");
-                throw; // Re-lanzamos para que el servicio que lo llame lo maneje
-            }
-            finally
-            {
-                if (crearContextoLocal)
-                    context.Dispose();
-            }
-        }
-
-
-        public MovimientoDTO ObtenerMovimientoPorId(long movimientoId)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var movimiento = context.Movimientos
-                .FirstOrDefault(m => m.MovimientoId == movimientoId && !m.EstaEliminado);
-
-            if (movimiento == null)
+            // Un movimiento de monto cero no aporta nada al libro: no se crea.
+            var monto = Math.Abs(datos.Monto);
+            if (monto == 0)
                 return null;
 
-            return new MovimientoDTO
+            if (datos.AfectaCaja && !datos.CajaId.HasValue)
+                throw new Exception("Un movimiento que afecta la caja debe indicar la caja.");
+
+            if (!datos.AfectaCaja && datos.CajaId.HasValue)
+                throw new Exception("Un movimiento que no afecta la caja no debe indicar una caja.");
+
+            if (datos.MovimientoOrigenId.HasValue)
+                ValidarReversa(context, datos);
+
+            var movimiento = new AccesoDatos.Entidades.Movimiento
             {
-                MovimientoId = movimiento.MovimientoId,
-                NumeroMovimiento = movimiento.NumeroMovimiento,
-                EntidadId = movimiento.EntidadId,
-                TipoEntidad = movimiento.TipoEntidad,
-                TipoMovimiento = movimiento.TipoMovimiento,
-                TipoMovimientoDetalle = movimiento.TipoMovimientoDetalle,
-                Monto = movimiento.Monto,
-                FechaMovimiento = movimiento.FechaMovimiento,
-                EstaEliminado = movimiento.EstaEliminado
+                NumeroMovimiento = GenerarNumero(context, datos.Prefijo),
+                TipoMovimiento = (int)datos.Tipo,
+                Operacion = (int)datos.Operacion,
+                Monto = monto,
+                FechaMovimiento = DateTime.Now,
+                TipoEntidad = (int)datos.Entidad,
+                EntidadId = datos.EntidadId,
+                AfectaCaja = datos.AfectaCaja,
+                CajaId = datos.CajaId,
+                TipoPagoId = datos.TipoPagoId,
+                MovimientoOrigenId = datos.MovimientoOrigenId,
+                Detalle = string.IsNullOrWhiteSpace(datos.Detalle) ? null : datos.Detalle.Trim()
             };
+
+            context.Movimientos.Add(movimiento);
+            return movimiento;
         }
-        public void CrearMovimientoGasto(
-    long gastoId,
-    decimal monto,
-    TipoMovimientoDetalle detalleTipo,
-    GestorContextDB context)
+
+        private static void ValidarReversa(GestorContextDB context, NuevoMovimiento datos)
+        {
+            var origenId = datos.MovimientoOrigenId!.Value;
+
+            var original = context.Movimientos.FirstOrDefault(m => m.MovimientoId == origenId);
+
+            if (original == null)
+                throw new Exception("El movimiento que se quiere revertir no existe.");
+
+            if (original.MovimientoOrigenId.HasValue)
+                throw new Exception("No se puede revertir un movimiento que ya es una reversa.");
+
+            if (original.TipoMovimiento == (int)datos.Tipo)
+                throw new Exception("Una reversa debe ser del tipo contrario al movimiento original.");
+
+            var yaRevertido =
+                context.Movimientos.Any(m => m.MovimientoOrigenId == origenId) ||
+                context.ChangeTracker.Entries<AccesoDatos.Entidades.Movimiento>()
+                    .Any(e => e.State == EntityState.Added && e.Entity.MovimientoOrigenId == origenId);
+
+            if (yaRevertido)
+                throw new Exception("El movimiento ya fue revertido.");
+        }
+
+        /// <summary>
+        /// Número único: PREFIJO-yyyyMMdd-000001. Cuenta lo ya guardado del día y lo agregado
+        /// al contexto sin guardar, así varios movimientos de una misma operación no se pisan.
+        /// </summary>
+        private static string GenerarNumero(GestorContextDB context, string prefijo)
+        {
+            var baseNumero = $"{prefijo}-{DateTime.Now:yyyyMMdd}-";
+
+            var guardados = context.Movimientos
+                .Count(m => m.NumeroMovimiento.StartsWith(baseNumero));
+
+            var pendientes = context.ChangeTracker.Entries<AccesoDatos.Entidades.Movimiento>()
+                .Count(e => e.State == EntityState.Added &&
+                            e.Entity.NumeroMovimiento.StartsWith(baseNumero, StringComparison.Ordinal));
+
+            return $"{baseNumero}{guardados + pendientes + 1:D6}";
+        }
+
+        // =====================================================================
+        // CREADORES POR CASO (usan Registrar)
+        // =====================================================================
+
+        public void RegistrarCobros(
+            GestorContextDB context,
+            TipoEntidadMovimiento entidad,
+            long entidadId,
+            bool esCancelacion,
+            long cajaId,
+            decimal montoCaja,
+            IEnumerable<FormaPago>? pagos)
+        {
+            if (entidad != TipoEntidadMovimiento.Venta && entidad != TipoEntidadMovimiento.VentaLibre)
+                throw new Exception("Tipo de entidad no válido para movimientos de venta.");
+
+            if (entidadId <= 0)
+                throw new Exception("El movimiento no puede crearse porque la venta no tiene un ID válido.");
+
+            var prefijo = $"{(esCancelacion ? "CAN" : "MOV")}-{(entidad == TipoEntidadMovimiento.Venta ? "VENTA" : "VENTALIBRE")}";
+
+            var distribucion = DistribucionCobros.Distribuir(montoCaja, pagos);
+
+            // Cancelación de una venta anterior al libro nuevo (no hay cobros originales que revertir):
+            // el efectivo que sale también tiene que existir en la caja.
+            if (esCancelacion)
+            {
+                var efectivoADevolver = distribucion
+                    .Where(d => d.Tipo == TipoDePago.Efectivo)
+                    .Sum(d => d.Monto);
+
+                ValidarEfectivoParaDevolucion(context, cajaId, efectivoADevolver);
+            }
+
+            foreach (var (tipoPago, monto) in distribucion)
+            {
+                Registrar(context, new NuevoMovimiento
+                {
+                    Prefijo = prefijo,
+                    Tipo = esCancelacion ? TipoMovimiento.Egreso : TipoMovimiento.Ingreso,
+                    Operacion = esCancelacion ? Operacion.Reversa : Operacion.Cobro,
+                    Entidad = entidad,
+                    EntidadId = entidadId,
+                    Monto = monto,
+                    AfectaCaja = true,
+                    CajaId = cajaId,
+                    TipoPagoId = ObtenerTipoPagoId(context, tipoPago)
+                });
+            }
+        }
+
+        public void RegistrarCargoCuentaCorriente(GestorContextDB context, long cuentaCorrienteId, decimal monto)
+        {
+            Registrar(context, new NuevoMovimiento
+            {
+                Prefijo = "CARGO-CTACTE",
+                Tipo = TipoMovimiento.Egreso,
+                Operacion = Operacion.CargoCuentaCorriente,
+                Entidad = TipoEntidadMovimiento.CuentaCorriente,
+                EntidadId = cuentaCorrienteId,
+                Monto = monto,
+                TipoPagoId = ObtenerTipoPagoId(context, TipoDePago.CtaCte)
+            });
+        }
+
+        public void RegistrarCreditoCuentaCorriente(GestorContextDB context, long cuentaCorrienteId, decimal monto)
+        {
+            Registrar(context, new NuevoMovimiento
+            {
+                Prefijo = "CREDITO-CTACTE",
+                Tipo = TipoMovimiento.Ingreso,
+                Operacion = Operacion.CreditoCuentaCorriente,
+                Entidad = TipoEntidadMovimiento.CuentaCorriente,
+                EntidadId = cuentaCorrienteId,
+                Monto = monto,
+                TipoPagoId = ObtenerTipoPagoId(context, TipoDePago.CtaCte)
+            });
+        }
+
+        public void RegistrarCargaSaldo(GestorContextDB context, long cuentaCorrienteId, long cajaId, decimal diferencia)
+        {
+            Registrar(context, new NuevoMovimiento
+            {
+                Prefijo = "CARGA-CTACTE",
+                Tipo = diferencia >= 0 ? TipoMovimiento.Ingreso : TipoMovimiento.Egreso,
+                Operacion = Operacion.CargaSaldo,
+                Entidad = TipoEntidadMovimiento.CuentaCorriente,
+                EntidadId = cuentaCorrienteId,
+                Monto = diferencia,
+                AfectaCaja = true,
+                CajaId = cajaId,
+                TipoPagoId = ObtenerTipoPagoId(context, TipoDePago.Efectivo)
+            });
+        }
+
+        public AccesoDatos.Entidades.Movimiento? RegistrarPagoGasto(GestorContextDB context, long gastoId, bool afectaCaja, long? cajaId, TipoDePago tipoPago, decimal monto)
         {
             if (gastoId <= 0)
                 throw new Exception("El movimiento no puede crearse porque el gasto no tiene un ID válido.");
 
-            try
+            return Registrar(context, new NuevoMovimiento
             {
-                var numeroMovimiento = $"MOV-GASTO-{gastoId}-{DateTime.Now:yyyyMMddHHmmss}";
-
-                var movimiento = new AccesoDatos.Entidades.Movimiento
-                {
-                    NumeroMovimiento = numeroMovimiento,
-                    EntidadId = gastoId,
-                    TipoEntidad = (int)TipoEntidadMovimiento.Gasto,
-                    TipoMovimiento = (int)TipoMovimiento.Egreso, // 🔴 importante
-                    TipoMovimientoDetalle = (int)detalleTipo,
-                    Monto = monto,
-                    FechaMovimiento = DateTime.Now,
-                    EstaEliminado = false
-                };
-
-                context.Movimientos.Add(movimiento);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al crear movimiento de gasto: {ex}");
-                throw;
-            }
+                Prefijo = "MOV-GASTO",
+                Tipo = TipoMovimiento.Egreso,
+                Operacion = Operacion.PagoGasto,
+                Entidad = TipoEntidadMovimiento.Gasto,
+                EntidadId = gastoId,
+                Monto = monto,
+                AfectaCaja = afectaCaja,
+                CajaId = afectaCaja ? cajaId : null,
+                TipoPagoId = ObtenerTipoPagoId(context, tipoPago)
+            });
         }
-        //public ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros)
-        //{
-        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
 
-        //    var query = context.Movimientos
-        //        .AsNoTracking()
-        //        .AsQueryable();
+        public AccesoDatos.Entidades.Movimiento? RegistrarReversa(GestorContextDB context, AccesoDatos.Entidades.Movimiento original, TipoEntidadMovimiento entidad, long entidadId, long? cajaId, string prefijo)
+        {
+            if (original == null) throw new ArgumentNullException(nameof(original));
 
-        //    // =========================================================
-        //    // 🔴 HISTORICO / ELIMINADOS
-        //    // =========================================================
+            return Registrar(context, new NuevoMovimiento
+            {
+                Prefijo = prefijo,
+                Tipo = original.TipoMovimiento == (int)TipoMovimiento.Ingreso ? TipoMovimiento.Egreso : TipoMovimiento.Ingreso,
+                Operacion = Operacion.Reversa,
+                Entidad = entidad,
+                EntidadId = entidadId,
+                Monto = original.Monto,
+                AfectaCaja = original.AfectaCaja,
+                CajaId = original.AfectaCaja ? cajaId : null,
+                TipoPagoId = original.TipoPagoId,
+                MovimientoOrigenId = original.MovimientoId
+            });
+        }
 
-        //    if (filtros.Bool2)
-        //    {
-        //        // 👉 HISTORICO
-        //        // trae eliminados y no eliminados
-        //    }
-        //    else if (filtros.Bool1)
-        //    {
-        //        // 👉 SOLO ELIMINADOS
-        //        query = query.Where(x =>
-        //            x.EstaEliminado);
-        //    }
-        //    else
-        //    {
-        //        // 👉 NORMAL
-        //        query = query.Where(x =>
-        //            !x.EstaEliminado);
-        //    }
+        public bool RegistrarReversasDeCobros(GestorContextDB context, TipoEntidadMovimiento entidad, long entidadOriginalId, long entidadNuevaId, long? cajaId, string prefijo)
+        {
+            var originales = context.Movimientos
+                .Include(m => m.TipoPago)
+                .Where(m => m.TipoEntidad == (int)entidad
+                         && m.EntidadId == entidadOriginalId
+                         && m.AfectaCaja
+                         && m.MovimientoOrigenId == null
+                         && m.Operacion == (int)Operacion.Cobro)
+                .OrderBy(m => m.MovimientoId)
+                .ToList();
 
-        //    // =========================================================
-        //    // 🔍 BUSQUEDA
-        //    // =========================================================
+            if (originales.Count == 0)
+                return false;
 
-        //    if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
-        //    {
-        //        var texto = filtros.TextoBuscar.Trim();
+            if (!cajaId.HasValue)
+                throw new Exception("No hay una caja abierta. Abrí una caja para devolver el dinero de la cancelación.");
 
-        //        query = query.Where(x =>
-        //            x.NumeroMovimiento.Contains(texto));
-        //    }
+            var efectivoADevolver = originales
+                .Where(m => m.TipoPago != null && m.TipoPago.NumeroReferencia == (int)TipoDePago.Efectivo)
+                .Sum(m => m.Monto);
 
-        //    // =========================================================
-        //    // 📌 TIPO MOVIMIENTO / DETALLE (cbx2)
-        //    // =========================================================
+            ValidarEfectivoParaDevolucion(context, cajaId.Value, efectivoADevolver);
 
-        //    var filtroTipo = filtros.Filtro2?.ToString();
+            foreach (var original in originales)
+                RegistrarReversa(context, original, entidad, entidadNuevaId, cajaId, prefijo);
 
-        //    if (!string.IsNullOrWhiteSpace(filtroTipo))
-        //    {
-        //        if (filtroTipo.StartsWith("TM_"))
-        //        {
-        //            var valor = int.Parse(
-        //                filtroTipo.Replace("TM_", ""));
+            return true;
+        }
 
-        //            query = query.Where(x =>
-        //                x.TipoMovimiento == valor);
-        //        }
-        //        else if (filtroTipo.StartsWith("TMD_"))
-        //        {
-        //            var valor = int.Parse(
-        //                filtroTipo.Replace("TMD_", ""));
+        /// <summary>
+        /// Una devolución en efectivo no puede dejar la caja en negativo: si el efectivo a devolver supera
+        /// el disponible lanza <see cref="CajaSinEfectivoException"/> (los servicios de venta la convierten en un aviso).
+        /// </summary>
+        private void ValidarEfectivoParaDevolucion(GestorContextDB context, long cajaId, decimal efectivoADevolver)
+        {
+            if (efectivoADevolver <= 0)
+                return;
 
-        //            query = query.Where(x =>
-        //                x.TipoMovimientoDetalle == valor);
-        //        }
-        //    }
+            var disponible = ObtenerEfectivoDisponible(context, cajaId);
 
-        //    // =========================================================
-        //    // 📅 FILTRO FECHA (cbx3)
-        //    // =========================================================
+            if (efectivoADevolver > disponible)
+                throw new CajaSinEfectivoException(efectivoADevolver, disponible);
+        }
 
-        //    var filtroFecha = filtros.Filtro3?.ToString();
+        /// <summary>
+        /// Se suma efectivo a la caja abierta: Ingreso en efectivo que afecta la caja.
+        /// El motivo queda guardado en <c>Movimiento.Detalle</c>.
+        /// </summary>
+        public AccesoDatos.Entidades.Movimiento? RegistrarAgregadoSaldoCaja(GestorContextDB context, long cajaId, decimal monto, string motivo)
+        {
+            if (cajaId <= 0)
+                throw new Exception("El movimiento no puede crearse porque la caja no tiene un ID válido.");
 
-        //    bool hayFiltroFechaManual =
-        //        filtroFecha == "FECHA" &&
-        //        (
-        //            filtros.FechaDesde.HasValue ||
-        //            filtros.FechaHasta.HasValue
-        //        );
+            if (string.IsNullOrWhiteSpace(motivo))
+                throw new Exception("El agregado de saldo necesita un motivo.");
 
-        //    if (hayFiltroFechaManual)
-        //    {
-        //        if (filtros.FechaDesde.HasValue)
-        //        {
-        //            query = query.Where(x =>
-        //                x.FechaMovimiento >= filtros.FechaDesde.Value);
-        //        }
+            return Registrar(context, new NuevoMovimiento
+            {
+                Prefijo = "SALDO-CAJA",
+                Tipo = TipoMovimiento.Ingreso,
+                Operacion = Operacion.AgregadoSaldoCaja,
+                Entidad = TipoEntidadMovimiento.Caja,
+                EntidadId = cajaId,
+                Monto = monto,
+                AfectaCaja = true,
+                CajaId = cajaId,
+                TipoPagoId = ObtenerTipoPagoId(context, TipoDePago.Efectivo),
+                Detalle = motivo
+            });
+        }
 
-        //        if (filtros.FechaHasta.HasValue)
-        //        {
-        //            var hasta = filtros.FechaHasta.Value.AddDays(1);
+        public decimal ObtenerEfectivoDisponible(GestorContextDB context, long cajaId)
+        {
+            var efectivoId = ObtenerTipoPagoId(context, TipoDePago.Efectivo);
 
-        //            query = query.Where(x =>
-        //                x.FechaMovimiento < hasta);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        // 🔹 NORMAL = 2 meses
-        //        // 🔹 HISTORICO = 6 meses
+            var saldoInicial = context.Cajas
+                .Where(c => c.CajaId == cajaId)
+                .Select(c => c.SaldoInicial)
+                .FirstOrDefault();
 
-        //        var fechaLimite = filtros.Bool2
-        //            ? DateTime.Now.AddMonths(-6)
-        //            : DateTime.Now.AddMonths(-2);
+            var enEfectivo = context.Movimientos
+                .Where(m => m.AfectaCaja && m.CajaId == cajaId && m.TipoPagoId == efectivoId);
 
-        //        query = query.Where(x =>
-        //            x.FechaMovimiento >= fechaLimite);
-        //    }
+            var ingresos = enEfectivo
+                .Where(m => m.TipoMovimiento == (int)TipoMovimiento.Ingreso)
+                .Sum(m => (decimal?)m.Monto) ?? 0m;
 
-        //    // =========================================================
-        //    // 📊 TOTAL
-        //    // =========================================================
+            var egresos = enEfectivo
+                .Where(m => m.TipoMovimiento == (int)TipoMovimiento.Egreso)
+                .Sum(m => (decimal?)m.Monto) ?? 0m;
 
-        //    var total = query.Count();
+            return saldoInicial + ingresos - egresos;
+        }
 
-        //    // =========================================================
-        //    // 📄 PAGINACION
-        //    // =========================================================
+        private static long ObtenerTipoPagoId(GestorContextDB context, TipoDePago tipoPago)
+        {
+            var numero = (int)tipoPago;
 
-        //    var totalPaginas =
-        //        (int)Math.Ceiling((double)total / filtros.PageSize);
+            var id = context.TiposPago
+                .AsNoTracking()
+                .Where(t => t.NumeroReferencia == numero && !t.EstaEliminado)
+                .Select(t => (long?)t.TipoPagoId)
+                .FirstOrDefault();
 
-        //    if (totalPaginas <= 0)
-        //        totalPaginas = 1;
+            if (!id.HasValue)
+                throw new Exception($"No se encontró el tipo de pago '{tipoPago}'.");
 
-        //    if (filtros.Page > totalPaginas)
-        //        filtros.Page = totalPaginas;
+            return id.Value;
+        }
 
-        //    if (filtros.Page < 1)
-        //        filtros.Page = 1;
-
-        //    // =========================================================
-        //    // 📌 ORDEN
-        //    // =========================================================
-
-        //    query = query
-        //        .OrderByDescending(x => x.FechaMovimiento);
-
-        //    // =========================================================
-        //    // 📦 DATA
-        //    // =========================================================
-
-        //    var data = query
-        //        .Skip((filtros.Page - 1) * filtros.PageSize)
-        //        .Take(filtros.PageSize)
-        //        .Select(x => new MovimientoDTO
-        //        {
-        //            MovimientoId = x.MovimientoId,
-
-        //            NumeroMovimiento = x.NumeroMovimiento,
-
-        //            TipoMovimiento = x.TipoMovimiento,
-
-        //            TipoMovimientoDetalle = x.TipoMovimientoDetalle,
-
-        //            Monto = x.Monto,
-
-        //            FechaMovimiento = x.FechaMovimiento,
-
-        //            EstaEliminado = x.EstaEliminado,
-
-        //            EntidadId = x.EntidadId,
-
-        //            TipoEntidad = x.TipoEntidad
-        //        })
-        //        .ToList();
-
-        //    return new ResultadoPaginacion<MovimientoDTO>
-        //    {
-        //        Items = data,
-        //        TotalRegistros = total,
-        //        Page = filtros.Page,
-        //        PageSize = filtros.PageSize
-        //    };
-        //}
         public ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
@@ -386,46 +386,6 @@ namespace Servicios.LogicaNegocio.Movimiento
             bool hayFiltroManual =
                 usaFechas &&
                 filtros.Filtro3?.ToString() == "FECHA";
-
-            // =========================================================
-            // CORE: ELIMINADOS + HISTORICO
-            // =========================================================
-
-            if (filtros.Bool2)
-            {
-                // HISTORICO
-                // Trae eliminados y no eliminados.
-                // La ventana de 6 meses se aplica más abajo (sección FECHAS),
-                // siempre que no haya un filtro manual de fechas.
-            }
-            else if (filtros.Bool1)
-            {
-                // SOLO ELIMINADOS
-                // Igual que "solo anulados" en gastos: sin ventana de fecha,
-                // se ven todos los eliminados salvo que haya filtro manual.
-                query = query.Where(x =>
-                    x.EstaEliminado);
-            }
-            else
-            {
-                // =====================================================
-                // NORMAL
-                // =====================================================
-
-                // Excluir eliminados.
-                query = query.Where(x =>
-                    !x.EstaEliminado);
-
-                // Ventana predeterminada de 2 meses
-                // únicamente cuando NO hay un filtro manual de fechas.
-                if (!hayFiltroManual)
-                {
-                    var desde = DateTime.Now.AddMonths(-2);
-
-                    query = query.Where(x =>
-                        x.FechaMovimiento >= desde);
-                }
-            }
 
             // =========================================================
             // BÚSQUEDA (sin distinguir mayúsculas ni acentos)
@@ -461,7 +421,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                          int.TryParse(filtroTipo.Substring(4), out var detalle))
                 {
                     query = query.Where(x =>
-                        x.TipoMovimientoDetalle == detalle);
+                        x.Operacion == detalle);
                 }
             }
 
@@ -487,12 +447,10 @@ namespace Servicios.LogicaNegocio.Movimiento
                         x.FechaMovimiento < hasta);
                 }
             }
-            else if (filtros.Bool2)
+            else if (!filtros.Bool1)
             {
-                // HISTORICO = últimos 6 meses,
-                // siempre que no haya un filtro manual de fechas.
-
-                var desde = DateTime.Now.AddMonths(-6);
+                // Sin filtro manual: ventana de 2 meses. Bool1 = "Ver todo el historial".
+                var desde = DateTime.Now.AddMonths(-2);
 
                 query = query.Where(x =>
                     x.FechaMovimiento >= desde);
@@ -545,13 +503,12 @@ namespace Servicios.LogicaNegocio.Movimiento
 
                     TipoMovimiento = x.TipoMovimiento,
 
-                    TipoMovimientoDetalle = x.TipoMovimientoDetalle,
+                    Operacion = x.Operacion,
 
                     Monto = x.Monto,
 
                     FechaMovimiento = x.FechaMovimiento,
 
-                    EstaEliminado = x.EstaEliminado,
 
                     EntidadId = x.EntidadId,
 
@@ -571,107 +528,6 @@ namespace Servicios.LogicaNegocio.Movimiento
                 PageSize = filtros.PageSize
             };
         }
-        public MovimientoHelperDTO ObtenerDatosParaMovimientoConsultaVenta(long movimientoId)
-        {
-            var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var movimientoService = new MovimientoServicio();
-
-            var movimiento = context.Movimientos
-            .AsNoTracking()
-            .Where(m => m.MovimientoId == movimientoId)
-            .Select(m => new MovimientoHelperDTO
-            {
-                MovimientoId = m.MovimientoId,
-                NumeroMovimiento = m.NumeroMovimiento,
-                Monto = m.Monto,
-                TipoMovimiento = m.TipoMovimiento,
-                TipoMovimientoDetalle = m.TipoMovimientoDetalle,
-                FechaMovimiento = m.FechaMovimiento,
-                EstaEliminado = m.EstaEliminado,
-                EntidadId = m.EntidadId,
-                TipoEntidad = m.TipoEntidad,
-
-                Venta = m.TipoEntidad == (int)TipoEntidadMovimiento.Venta
-                    ? context.Ventas
-                        .Where(v => v.VentaId == m.EntidadId)
-                        .Select(v => new VentaDTO
-                        {
-                            VentaId = v.VentaId,
-                            NumeroVenta = v.NumeroVenta,
-                            FechaVenta = v.FechaVenta,
-                            Total = v.Total,
-                            TotalSinDescuento = v.TotalSinDescuento,
-                            Descuento = v.Descuento,
-                            IdCliente = v.IdCliente,
-                            Estado = v.Estado,
-                            Detalle = v.Detalle,
-
-                            Items = v.DetallesVentas.Select(i => new ItemVentaDTO
-                            {
-                                ItemId = i.DetalleVentaId,
-                                Cantidad = i.Cantidad,
-                                // Mapeamos los precios según tus entidades de DetallesVenta
-                                PrecioVenta = i.PrecioUnitarioOriginal,
-                                PrecioOferta = i.PrecioUnitarioFinal,
-                                Descripcion = i.Descripcion,
-                                EsOferta = i.EsOferta,
-                                //EsOfertaPorGrupo = i.EsOfertaPorGrupo
-                                // Nota: Si 'Medida' o 'UnidadMedida' están en Producto, 
-                                // deberías acceder via i.Producto.Medida si tienes el Include o la relación.
-                            }).ToList()
-                        }).FirstOrDefault()
-                    : null
-            })
-            .FirstOrDefault();
-
-            return movimiento;
-        }
-
-        public MovimientoHelperDTO ObtenerDatosParaMovimientoConsultaGasto(long movimientoId)
-        {
-            using var context = new GestorContextDBFactory().CreateDbContext(null);
-
-            var movimiento = context.Movimientos
-                .AsNoTracking()
-                .Where(m => m.MovimientoId == movimientoId)
-                .Select(m => new MovimientoHelperDTO
-                {
-                    MovimientoId = m.MovimientoId,
-                    NumeroMovimiento = m.NumeroMovimiento,
-                    Monto = m.Monto,
-                    TipoMovimiento = m.TipoMovimiento,
-                    TipoMovimientoDetalle = m.TipoMovimientoDetalle,
-                    FechaMovimiento = m.FechaMovimiento,
-                    EstaEliminado = m.EstaEliminado,
-                    EntidadId = m.EntidadId,
-                    TipoEntidad = m.TipoEntidad,
-
-                    // Mapeo dinámico según el DTO proporcionado
-                    Gasto = m.TipoEntidad == (int)TipoEntidadMovimiento.Gasto && m.EntidadId.HasValue
-                        ? context.Gastos
-                            .Where(g => g.GastoId == m.EntidadId.Value)
-                            .Select(g => new GastoDTO
-                            {
-                                GastoId = g.GastoId,
-                                NumeroGasto = g.NumeroGasto, // Nueva propiedad
-                                IdEmpleado = g.IdEmpleado,
-                                NombreEmpleado = $"{g.Empleado.Persona.Nombre} {g.Empleado.Persona.Apellido}" ?? "NO NAME",
-                                CategoriaGasto = g.CategoriaGasto,
-                                FechaGasto = g.FechaGasto,
-                                FechaRegistro = g.FechaRegistro,
-                                MontoTotal = g.MontoTotal, // Cambio de g.mon a g.MontoTotal
-                                MontoPagado = g.MontoPagado,
-                                EstadoGasto = g.EstadoGasto,
-                                Detalle = g.Detalle ?? "Sin Detalle"
-                            }).FirstOrDefault()
-                        : null
-                })
-                .FirstOrDefault();
-
-            return movimiento;
-        }
-
         public MovimientoHelperDTO ObtenerDatosParaMovimientoConsulta(long movimientoId)
         {
             // Usamos 'using' para asegurar que la conexión se libere correctamente
@@ -687,11 +543,11 @@ namespace Servicios.LogicaNegocio.Movimiento
                     NumeroMovimiento = m.NumeroMovimiento,
                     Monto = m.Monto,
                     TipoMovimiento = m.TipoMovimiento,
-                    TipoMovimientoDetalle = m.TipoMovimientoDetalle,
+                    Operacion = m.Operacion,
                     FechaMovimiento = m.FechaMovimiento,
-                    EstaEliminado = m.EstaEliminado,
                     EntidadId = m.EntidadId,
                     TipoEntidad = m.TipoEntidad,
+                    Detalle = m.Detalle,
 
                     // --- 2. MAPEO CONDICIONAL PARA VENTA ---
                     Venta = m.TipoEntidad == (int)TipoEntidadMovimiento.Venta && m.EntidadId.HasValue
@@ -778,7 +634,6 @@ namespace Servicios.LogicaNegocio.Movimiento
                         HistorialReciente = context.Movimientos
                             .Where(mh => mh.TipoEntidad == (int)TipoEntidadMovimiento.CuentaCorriente
                                       && mh.EntidadId == cc.CuentaCorrienteId
-                                      && !mh.EstaEliminado
                                       && mh.MovimientoId != m.MovimientoId)
                             .OrderByDescending(mh => mh.FechaMovimiento)
                             .Take(5)

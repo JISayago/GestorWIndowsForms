@@ -33,6 +33,7 @@
             btnConsultarCajas = new Button();
             btnCerrarCaja = new Button();
             btnAbrirCaja = new Button();
+            btnAgregarSaldo = new Button();
             lblEstadoCaja = new Label();
             lblSaldoCaja = new Label();
             pbEstadoCaja = new PictureBox();
@@ -91,9 +92,21 @@
             btnAbrirCaja.Text = "Abrir Caja";
             btnAbrirCaja.UseVisualStyleBackColor = true;
             btnAbrirCaja.Click += btnAbrirCaja_Click;
-            // 
+            //
+            // btnAgregarSaldo
+            //
+            btnAgregarSaldo.Anchor = AnchorStyles.Top;
+            btnAgregarSaldo.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnAgregarSaldo.Location = new Point(51, 113);
+            btnAgregarSaldo.Name = "btnAgregarSaldo";
+            btnAgregarSaldo.Size = new Size(218, 42);
+            btnAgregarSaldo.TabIndex = 13;
+            btnAgregarSaldo.Text = "Agregar saldo a la caja";
+            btnAgregarSaldo.UseVisualStyleBackColor = true;
+            btnAgregarSaldo.Click += btnAgregarSaldo_Click;
+            //
             // lblEstadoCaja
-            // 
+            //
             lblEstadoCaja.Anchor = AnchorStyles.Top;
             lblEstadoCaja.AutoSize = true;
             lblEstadoCaja.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
@@ -130,21 +143,23 @@
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 3);
-            tableLayoutPanel1.Controls.Add(btnConsultarMovimientos, 0, 5);
+            tableLayoutPanel1.Controls.Add(btnConsultarMovimientos, 0, 6);
             tableLayoutPanel1.Controls.Add(lblEstadoCaja, 0, 0);
             tableLayoutPanel1.Controls.Add(pbEstadoCaja, 0, 1);
-            tableLayoutPanel1.Controls.Add(btnConsultarCajas, 0, 4);
+            tableLayoutPanel1.Controls.Add(btnConsultarCajas, 0, 5);
+            tableLayoutPanel1.Controls.Add(btnAgregarSaldo, 0, 4);
             tableLayoutPanel1.Controls.Add(lblSaldoCaja, 0, 2);
             tableLayoutPanel1.Location = new Point(12, 12);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 6;
+            tableLayoutPanel1.RowCount = 7;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.Size = new Size(320, 316);
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.Size = new Size(320, 371);
             tableLayoutPanel1.TabIndex = 10;
             // 
             // tableLayoutPanel2
@@ -166,7 +181,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(344, 340);
+            ClientSize = new Size(344, 395);
             Controls.Add(tableLayoutPanel1);
             ForeColor = Color.FromArgb(31, 26, 43);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -188,6 +203,7 @@
         private Button btnConsultarCajas;
         private Button btnCerrarCaja;
         private Button btnAbrirCaja;
+        private Button btnAgregarSaldo;
         private Label lblEstadoCaja;
         private Label lblSaldoCaja;
         private PictureBox pbEstadoCaja;

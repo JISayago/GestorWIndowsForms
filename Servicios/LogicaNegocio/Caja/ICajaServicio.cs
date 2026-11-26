@@ -14,6 +14,7 @@ namespace Servicios.LogicaNegocio.Caja
     {
         public void AbrirCaja(decimal montoInicial, long empleadoId);
         public void CerrarCaja(long empleadoId);
+        public Servicios.Helpers.Sistema.EstadoOperacion AgregarSaldo(decimal monto, string motivo);
         public CajaDTO ObtenerCaja(long cajaId);
         public long? ObtenerIdCajaAbierta(GestorContextDB context = null);
         public long? ObtenerIdDeUltimaCajaAbierta(GestorContextDB context);

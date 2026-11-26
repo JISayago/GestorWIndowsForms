@@ -839,7 +839,7 @@ namespace Presentacion.Core.Venta
             {
                 var result = !Confirmar(
                   "¿Está seguro que desea cancelar esta venta?\n\nEsta acción no se puede deshacer.", "Confirmar cancelación",
-                  si: "Sumar cantidad",
+                  si: "Confirmar",
                   no: "Cancelar");
                     
                 //var result = MessageBox.Show(
@@ -849,7 +849,7 @@ namespace Presentacion.Core.Venta
                 //    MessageBoxIcon.Warning
                 //);
 
-                if (result)
+                if (!result)
                 {
                     using var frmProcesando = new FProcesando();
                     frmProcesando.Show();
@@ -864,6 +864,11 @@ namespace Presentacion.Core.Venta
                         Confirmar("Venta cancelada con éxito.");
                         //MessageBox.Show("Venta cancelada con éxito.");
                         this.Close();
+                    }
+                    else if (respuesta.EsAdvertencia)
+                    {
+                        // Caja sin efectivo suficiente para devolver: se avisa y la venta queda sin cancelar.
+                        Informar(respuesta.Mensaje, "Caja sin efectivo suficiente");
                     }
                     else
                     {

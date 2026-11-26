@@ -29,6 +29,33 @@ namespace AccesoDatos.Database
 
             return $"Server={db.Servidor};Database={nombre};User Id={db.Usuario};Password={db.Password};TrustServerCertificate=True;";
         }
-    }
 
+
+
+        /// <summary>
+        /// Solo para tests de integración. Evita tocar el .enc de producción.
+        /// </summary>
+
+        private static readonly object _sync = new();
+        private static string? _cadenaConexionCache;
+
+        public static void ConfigurarCadenaConexionParaTests(string cadenaConexion)
+        {
+            if (string.IsNullOrWhiteSpace(cadenaConexion))
+                throw new ArgumentException("La cadena de conexión de test no puede estar vacía.", nameof(cadenaConexion));
+
+            lock (_sync)
+            {
+                _cadenaConexionCache = cadenaConexion;
+            }
+        }
+
+        public static void LimpiarCacheCadenaConexion()
+        {
+            lock (_sync)
+            {
+                _cadenaConexionCache = null;
+            }
+        }
+    }
 }

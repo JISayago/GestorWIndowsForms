@@ -33,6 +33,10 @@ namespace Presentacion.FBase
 
         protected virtual string TextoLblBuscar => "Buscar:";
 
+        /// <summary>Texto opcional que se muestra junto al total del pie (ej. totales de ingresos y egresos).</summary>
+        protected string ResumenPie { get; set; } = string.Empty;
+        private Font _fuenteTotalOriginal;
+
         protected virtual string TextoLblCbx1 => "Filtro 1";
 
         protected virtual string TextoLblCbx2 => "Filtro 2";
@@ -1029,7 +1033,19 @@ namespace Presentacion.FBase
             totalPaginas = resultado.TotalPaginas;
 
             lblPagina.Text = $"Página {paginaActual} de {totalPaginas}";
-            lblTotalRegistros.Text = $"Total: {resultado.CantidadRegistros}";
+            _fuenteTotalOriginal ??= lblTotalRegistros.Font;
+
+            if (string.IsNullOrEmpty(ResumenPie))
+            {
+                lblTotalRegistros.Font = _fuenteTotalOriginal;
+                lblTotalRegistros.Text = $"Total: {resultado.CantidadRegistros}";
+            }
+            else
+            {
+                // Con resumen el texto es más largo: letra más chica para que entre en el pie.
+                lblTotalRegistros.Font = new Font(_fuenteTotalOriginal.FontFamily, 10.5F, FontStyle.Bold);
+                lblTotalRegistros.Text = $"Total: {resultado.CantidadRegistros}   |   {ResumenPie}";
+            }
 
             btnAnterior.Enabled = paginaActual > 1;
             btnSiguiente.Enabled = paginaActual < totalPaginas;

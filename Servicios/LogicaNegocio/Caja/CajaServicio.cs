@@ -2,6 +2,7 @@
 using AccesoDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Servicios.Helpers.Movimiento;
+using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
 using Servicios.LogicaNegocio.Caja.DTO;
 using System;
@@ -55,6 +56,69 @@ namespace Servicios.LogicaNegocio.Caja
                 saldoFinalAlCierre = caja.BalanceFinal;
                 // Asignar otros valores finales como TotalIngresos, TotalEgresos, BalanceFinal si es necesario
                 context.SaveChanges();
+            }
+        }
+
+        /// <summary>Largo máximo del motivo (coincide con la columna Movimientos.detalle).</summary>
+        public const int LargoMaximoMotivoAgregadoSaldo = 200;
+
+        /// <summary>
+        /// Suma efectivo a la caja abierta. Genera un movimiento (Ingreso, en efectivo, afecta la caja) con el motivo
+        /// como detalle y actualiza los totales de la caja, todo en una misma transacción.
+        /// <c>DatoExtra</c> del resultado trae el número del movimiento y <c>EntidadId</c> el id de la caja.
+        /// </summary>
+        public EstadoOperacion AgregarSaldo(decimal monto, string motivo)
+        {
+            if (monto <= 0)
+                return new EstadoOperacion { Exitoso = false, Mensaje = "El monto a agregar debe ser mayor que cero." };
+
+            motivo = (motivo ?? string.Empty).Trim();
+
+            if (motivo.Length == 0)
+                return new EstadoOperacion { Exitoso = false, Mensaje = "Indicá el motivo del agregado de saldo." };
+
+            if (motivo.Length > LargoMaximoMotivoAgregadoSaldo)
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = $"El motivo no puede superar los {LargoMaximoMotivoAgregadoSaldo} caracteres."
+                };
+
+            using var context = new AccesoDatos.GestorContextDBFactory().CreateDbContext(null);
+            using var transaction = context.Database.BeginTransaction();
+
+            try
+            {
+                var cajaId = ObtenerIdDeUltimaCajaAbierta(context);
+
+                if (!cajaId.HasValue)
+                    return new EstadoOperacion { Exitoso = false, Mensaje = "No hay una caja abierta. Abrí una caja para agregar saldo." };
+
+                var movimiento = new Servicios.LogicaNegocio.Movimiento.MovimientoServicio()
+                    .RegistrarAgregadoSaldoCaja(context, cajaId.Value, monto, motivo);
+
+                RegistrarTransaccion(context, monto, TipoMovimiento.Ingreso, cajaId.Value);
+
+                context.SaveChanges();
+                transaction.Commit();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = true,
+                    Mensaje = "Saldo agregado a la caja correctamente.",
+                    EntidadId = cajaId.Value,
+                    DatoExtra = movimiento?.NumeroMovimiento ?? string.Empty
+                };
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    Mensaje = "No se pudo agregar el saldo a la caja: " + ex.Message
+                };
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using Presentacion.Core.Presentacion.Core.Helpers;
+﻿using AccesoDatos.Entidades;
+using Presentacion.Core.Presentacion.Core.Helpers;
 using Presentacion.FBase;
 using Presentacion.FBase.Helpers;
 using Servicios.Helpers.Sistema.FiltrosConsulta;
@@ -201,6 +202,14 @@ namespace Presentacion.Core.Venta
 
                 return;
             }
+           
+            if (!Confirmar(
+                "¿Confirmás la anulación de la venta libre? " +
+                "Se generará una contraventa y se revertirán los cobros registrados.",
+                "Anular venta libre",
+                si: "Anular",
+                no: "Cancelar"))
+                return;
 
             var resultado =
                 _ventaLibreServicio.AnularVentaLibre(id.Value);
@@ -215,6 +224,11 @@ namespace Presentacion.Core.Venta
                 //    "Éxito",
                 //    MessageBoxButtons.OK,
                 //    MessageBoxIcon.Information);
+            }
+            else if (resultado.EsAdvertencia)
+            {
+                // Caja sin efectivo suficiente para devolver: se avisa y la venta queda sin anular.
+                Informar(resultado.Mensaje, "Caja sin efectivo suficiente");
             }
             else
             {

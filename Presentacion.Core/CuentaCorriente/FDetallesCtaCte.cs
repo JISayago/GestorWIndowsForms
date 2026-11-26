@@ -242,14 +242,14 @@ namespace Presentacion.Core.CuentaCorriente
             // =========================================
             // TIPO DETALLE (MEDIO)
             // =========================================
-            if (grilla.Columns.Contains("TipoMovimientoDetalleDescripcion"))
+            if (grilla.Columns.Contains("OperacionDescripcion"))
             {
-                grilla.Columns["TipoMovimientoDetalleDescripcion"].Visible = false;
+                grilla.Columns["OperacionDescripcion"].Visible = false;
             }
 
-            if (grilla.Columns.Contains("TipoMovimientoDetalle"))
+            if (grilla.Columns.Contains("Operacion"))
             {
-                grilla.Columns["TipoMovimientoDetalle"].Visible = false;
+                grilla.Columns["Operacion"].Visible = false;
             }
 
             // =========================================

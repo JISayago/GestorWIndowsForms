@@ -1,4 +1,5 @@
 ﻿using Presentacion.Core.Movimiento;
+using Presentacion.Core.Movimiento;
 using Presentacion.FormulariosBase.Helpers;
 using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Caja;
@@ -65,9 +66,34 @@ namespace Presentacion.Core.Caja
             }
         }
 
+        private void btnAgregarSaldo_Click(object sender, EventArgs e)
+        {
+            if (!AuthHelper.Tiene("Caja.AgregarSaldo"))
+            {
+                MostrarError("No Cuenta con las credenciales necesarias para agregar saldo a la caja");
+                return;
+            }
+
+            if (!cajaServicio.ObtenerEstadoCaja())
+            {
+                Informar("No hay una caja abierta. Abrí una caja para agregar saldo.");
+                InicializarEstadoCaja();
+                return;
+            }
+
+            using var formAgregarSaldo = new FCajaAgregarSaldo();
+
+            if (formAgregarSaldo.ShowDialog(this) == DialogResult.OK)
+            {
+                Exito($"Se agregaron {formAgregarSaldo.MontoAgregado:C0} a la caja.\nMotivo: {formAgregarSaldo.Motivo}");
+                InicializarEstadoCaja();
+            }
+        }
+
         private void InicializarEstadoCaja()
         {
             var cajaInicial = cajaServicio.EstadoInicioCaja();
+            btnAgregarSaldo.Enabled = !cajaInicial.EstaCerrada;
             if (!cajaInicial.EstaCerrada)
             {
                 btnAbrirCaja.Enabled = false;
@@ -120,9 +146,9 @@ namespace Presentacion.Core.Caja
                 //MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
                 return;
             }
-            var fmov = new FMovimientoConsulta();
+            // Libro de caja: abre con la caja más reciente (la abierta, si hay una).
+            var fmov = new FMovimientoLibroCaja();
             fmov.ShowDialog();
-            // debería abrir un formulario específico para consultar movimientos de caja, pero por ahora reutilizo el de movimientos generales
         }
     }
 }

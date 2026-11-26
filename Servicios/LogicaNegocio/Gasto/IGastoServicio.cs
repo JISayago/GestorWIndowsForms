@@ -18,6 +18,7 @@ namespace Servicios.LogicaNegocio.Gasto
         //List<GastoDTO> ObtenerGastos(int? estadoGasto);
         ResultadoPaginacion<GastoDTO> ObtenerGastos(FiltroConsulta filtros);
         EstadoOperacion AnularGasto(long gastoId);
-        EstadoOperacion ConfirmarPago(long gastoId);
+        /// <summary>Paga un gasto pendiente. Usa OrigenPago, TipoPago, ExtraDescripcionPago y FechaGasto (fecha del pago) de datosPago.</summary>
+        EstadoOperacion ConfirmarPago(long gastoId, GastoDTO datosPago);
     }
 }

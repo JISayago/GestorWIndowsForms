@@ -25,6 +25,9 @@ namespace AccesoDatos.Entidades
         public decimal MontoAdeudado { get; set; }
         public decimal MontoPagado { get; set; }
 
+        /// <summary>En una contraventa (cancelación): la venta original que cancela. Una venta solo puede tener una.</summary>
+        public long? VentaOriginalId { get; set; }
+
         public ICollection<VentaPagoDetalle> VentaPagoDetalles { get; set; }
     }
 }

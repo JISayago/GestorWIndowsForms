@@ -13,11 +13,10 @@ namespace Servicios.LogicaNegocio.Movimiento.DTO
         public string NumeroMovimiento { get; set; }
 
         public int TipoMovimiento { get; set; }
-        public int TipoMovimientoDetalle { get; set; }
+        public int Operacion { get; set; }
 
         public decimal Monto { get; set; }
         public DateTime FechaMovimiento { get; set; }
-        public bool EstaEliminado { get; set; }
 
         public long? EntidadId { get; set; }
         public int? TipoEntidad { get; set; }
@@ -37,14 +36,11 @@ namespace Servicios.LogicaNegocio.Movimiento.DTO
             }
         }
 
-        public string TipoMovimientoDetalleDescripcion
+        public string OperacionDescripcion
         {
             get
             {
-                if (!Enum.IsDefined(typeof(TipoMovimientoDetalle), TipoMovimientoDetalle))
-                    return "Desconocido";
-
-                return ((TipoMovimientoDetalle)TipoMovimientoDetalle).ToString();
+                return Servicios.Helpers.Movimiento.OperacionDescripcion.De(Operacion);
             }
         }
     }

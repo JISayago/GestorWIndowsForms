@@ -173,6 +173,12 @@ namespace TuProyecto.Presentacion
                     }
                     break;
 
+                case TipoEntidadMovimiento.Caja:
+                    MostrarAvisoSinDetalle(string.IsNullOrWhiteSpace(datos.Detalle)
+                        ? "Movimiento de caja."
+                        : $"Agregado de saldo a la caja.\nMotivo: {datos.Detalle}");
+                    break;
+
                 default:
                     MostrarAvisoSinDetalle($"Tipo de entidad '{(TipoEntidadMovimiento)datos.TipoEntidad.Value}' sin panel de detalle asociado.");
                     break;
