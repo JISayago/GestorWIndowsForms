@@ -155,6 +155,18 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                     Mensaje = "Venta anulada y contraventa generada correctamente."
                 };
             }
+            catch (CajaSinEfectivoException ex)
+            {
+                // La caja no tiene efectivo para devolver: no es un error del sistema, es un aviso para el usuario.
+                transaction.Rollback();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    EsAdvertencia = true,
+                    Mensaje = ex.Message
+                };
+            }
             catch (Exception ex)
             {
                 transaction.Rollback();
@@ -162,7 +174,8 @@ namespace Servicios.LogicaNegocio.Venta.VentaLibre
                 return new EstadoOperacion
                 {
                     Exitoso = false,
-                    Mensaje = ex.ToString()
+                    // Antes devolvía ex.ToString() (stack trace completo) y eso es lo que veía el usuario.
+                    Mensaje = ex.Message
                 };
             }
         }

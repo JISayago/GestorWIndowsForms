@@ -189,7 +189,8 @@ namespace Servicios.LogicaNegocio.Movimiento
                     CajaId = m.CajaId,
                     TipoEntidad = m.TipoEntidad,
                     EntidadId = m.EntidadId,
-                    MovimientoOrigenId = m.MovimientoOrigenId
+                    MovimientoOrigenId = m.MovimientoOrigenId,
+                    Detalle = m.Detalle
                 })
                 .ToList();
 
@@ -266,6 +267,8 @@ namespace Servicios.LogicaNegocio.Movimiento
                     (int)TipoEntidadMovimiento.VentaLibre => libres.TryGetValue(id, out var l) ? $"Venta libre {l}" : "Venta libre",
                     (int)TipoEntidadMovimiento.Gasto => gastos.TryGetValue(id, out var g) ? $"Gasto {g}" : "Gasto",
                     (int)TipoEntidadMovimiento.CuentaCorriente => cuentas.TryGetValue(id, out var c) ? $"Cta. cte. {c}" : "Cuenta corriente",
+                    // Agregado de saldo a la caja: la referencia es el motivo que cargó el usuario.
+                    (int)TipoEntidadMovimiento.Caja => string.IsNullOrWhiteSpace(item.Detalle) ? "Caja" : item.Detalle,
                     _ => string.Empty
                 };
             }

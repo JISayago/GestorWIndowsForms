@@ -66,9 +66,34 @@ namespace Presentacion.Core.Caja
             }
         }
 
+        private void btnAgregarSaldo_Click(object sender, EventArgs e)
+        {
+            if (!AuthHelper.Tiene("Caja.AgregarSaldo"))
+            {
+                MostrarError("No Cuenta con las credenciales necesarias para agregar saldo a la caja");
+                return;
+            }
+
+            if (!cajaServicio.ObtenerEstadoCaja())
+            {
+                Informar("No hay una caja abierta. Abrí una caja para agregar saldo.");
+                InicializarEstadoCaja();
+                return;
+            }
+
+            using var formAgregarSaldo = new FCajaAgregarSaldo();
+
+            if (formAgregarSaldo.ShowDialog(this) == DialogResult.OK)
+            {
+                Exito($"Se agregaron {formAgregarSaldo.MontoAgregado:C0} a la caja.\nMotivo: {formAgregarSaldo.Motivo}");
+                InicializarEstadoCaja();
+            }
+        }
+
         private void InicializarEstadoCaja()
         {
             var cajaInicial = cajaServicio.EstadoInicioCaja();
+            btnAgregarSaldo.Enabled = !cajaInicial.EstaCerrada;
             if (!cajaInicial.EstaCerrada)
             {
                 btnAbrirCaja.Enabled = false;

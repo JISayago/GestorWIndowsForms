@@ -72,7 +72,8 @@ namespace Servicios.LogicaNegocio.Movimiento
                 AfectaCaja = datos.AfectaCaja,
                 CajaId = datos.CajaId,
                 TipoPagoId = datos.TipoPagoId,
-                MovimientoOrigenId = datos.MovimientoOrigenId
+                MovimientoOrigenId = datos.MovimientoOrigenId,
+                Detalle = string.IsNullOrWhiteSpace(datos.Detalle) ? null : datos.Detalle.Trim()
             };
 
             context.Movimientos.Add(movimiento);
@@ -142,7 +143,20 @@ namespace Servicios.LogicaNegocio.Movimiento
 
             var prefijo = $"{(esCancelacion ? "CAN" : "MOV")}-{(entidad == TipoEntidadMovimiento.Venta ? "VENTA" : "VENTALIBRE")}";
 
-            foreach (var (tipoPago, monto) in DistribucionCobros.Distribuir(montoCaja, pagos))
+            var distribucion = DistribucionCobros.Distribuir(montoCaja, pagos);
+
+            // Cancelación de una venta anterior al libro nuevo (no hay cobros originales que revertir):
+            // el efectivo que sale también tiene que existir en la caja.
+            if (esCancelacion)
+            {
+                var efectivoADevolver = distribucion
+                    .Where(d => d.Tipo == TipoDePago.Efectivo)
+                    .Sum(d => d.Monto);
+
+                ValidarEfectivoParaDevolucion(context, cajaId, efectivoADevolver);
+            }
+
+            foreach (var (tipoPago, monto) in distribucion)
             {
                 Registrar(context, new NuevoMovimiento
                 {
@@ -263,20 +277,54 @@ namespace Servicios.LogicaNegocio.Movimiento
                 .Where(m => m.TipoPago != null && m.TipoPago.NumeroReferencia == (int)TipoDePago.Efectivo)
                 .Sum(m => m.Monto);
 
-            if (efectivoADevolver > 0)
-            {
-                var disponible = ObtenerEfectivoDisponible(context, cajaId.Value);
-
-                if (efectivoADevolver > disponible)
-                    throw new Exception(
-                        $"La caja abierta no tiene efectivo suficiente para devolver {efectivoADevolver:N2} " +
-                        $"(disponible: {disponible:N2}). Verificá el efectivo de la caja antes de cancelar.");
-            }
+            ValidarEfectivoParaDevolucion(context, cajaId.Value, efectivoADevolver);
 
             foreach (var original in originales)
                 RegistrarReversa(context, original, entidad, entidadNuevaId, cajaId, prefijo);
 
             return true;
+        }
+
+        /// <summary>
+        /// Una devolución en efectivo no puede dejar la caja en negativo: si el efectivo a devolver supera
+        /// el disponible lanza <see cref="CajaSinEfectivoException"/> (los servicios de venta la convierten en un aviso).
+        /// </summary>
+        private void ValidarEfectivoParaDevolucion(GestorContextDB context, long cajaId, decimal efectivoADevolver)
+        {
+            if (efectivoADevolver <= 0)
+                return;
+
+            var disponible = ObtenerEfectivoDisponible(context, cajaId);
+
+            if (efectivoADevolver > disponible)
+                throw new CajaSinEfectivoException(efectivoADevolver, disponible);
+        }
+
+        /// <summary>
+        /// Se suma efectivo a la caja abierta: Ingreso en efectivo que afecta la caja.
+        /// El motivo queda guardado en <c>Movimiento.Detalle</c>.
+        /// </summary>
+        public AccesoDatos.Entidades.Movimiento? RegistrarAgregadoSaldoCaja(GestorContextDB context, long cajaId, decimal monto, string motivo)
+        {
+            if (cajaId <= 0)
+                throw new Exception("El movimiento no puede crearse porque la caja no tiene un ID válido.");
+
+            if (string.IsNullOrWhiteSpace(motivo))
+                throw new Exception("El agregado de saldo necesita un motivo.");
+
+            return Registrar(context, new NuevoMovimiento
+            {
+                Prefijo = "SALDO-CAJA",
+                Tipo = TipoMovimiento.Ingreso,
+                Operacion = Operacion.AgregadoSaldoCaja,
+                Entidad = TipoEntidadMovimiento.Caja,
+                EntidadId = cajaId,
+                Monto = monto,
+                AfectaCaja = true,
+                CajaId = cajaId,
+                TipoPagoId = ObtenerTipoPagoId(context, TipoDePago.Efectivo),
+                Detalle = motivo
+            });
         }
 
         public decimal ObtenerEfectivoDisponible(GestorContextDB context, long cajaId)
@@ -499,6 +547,7 @@ namespace Servicios.LogicaNegocio.Movimiento
                     FechaMovimiento = m.FechaMovimiento,
                     EntidadId = m.EntidadId,
                     TipoEntidad = m.TipoEntidad,
+                    Detalle = m.Detalle,
 
                     // --- 2. MAPEO CONDICIONAL PARA VENTA ---
                     Venta = m.TipoEntidad == (int)TipoEntidadMovimiento.Venta && m.EntidadId.HasValue

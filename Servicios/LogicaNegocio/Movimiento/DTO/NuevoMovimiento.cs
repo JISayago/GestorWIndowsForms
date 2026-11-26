@@ -28,5 +28,8 @@ namespace Servicios.LogicaNegocio.Movimiento.DTO
 
         /// <summary>Solo para reversas: el movimiento original que se revierte.</summary>
         public long? MovimientoOrigenId { get; set; }
+
+        /// <summary>Texto libre opcional (ej. el motivo de un agregado de saldo a la caja). Máximo 200 caracteres.</summary>
+        public string? Detalle { get; set; }
     }
 }

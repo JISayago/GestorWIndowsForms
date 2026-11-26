@@ -44,5 +44,8 @@ namespace AccesoDatos.Entidades
         public long? MovimientoOrigenId { get; set; }
         public Movimiento? MovimientoOrigen { get; set; }
 
+        /// <summary>Texto libre opcional (ej. el motivo de un agregado de saldo a la caja). Máximo 200 caracteres.</summary>
+        public string? Detalle { get; set; }
+
     }
 }

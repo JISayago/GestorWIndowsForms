@@ -1658,6 +1658,18 @@ namespace Servicios.LogicaNegocio.Venta
                     Mensaje = "Venta cancelada y contraventa generada correctamente."
                 };
             }
+            catch (CajaSinEfectivoException ex)
+            {
+                // La caja no tiene efectivo para devolver: no es un error del sistema, es un aviso para el usuario.
+                transaction.Rollback();
+
+                return new EstadoOperacion
+                {
+                    Exitoso = false,
+                    EsAdvertencia = true,
+                    Mensaje = ex.Message
+                };
+            }
             catch (Exception ex)
             {
                 transaction.Rollback();

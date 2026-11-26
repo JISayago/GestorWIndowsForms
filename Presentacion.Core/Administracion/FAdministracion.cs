@@ -1653,20 +1653,35 @@ namespace Presentacion.Core.Administracion
         private void lISTADOCLIENTESToolStripMenuItem_Click(object sender, EventArgs e) => new FClienteConsulta().Show();
         private void lISTADOOFERTASToolStripMenuItem_Click(object sender, EventArgs e) => new FOfertaConsulta().Show();
         private void lOTESToolStripMenuItem_Click(object sender, EventArgs e) => new FLoteConsulta().Show();
+        private ContextMenuStrip? _menuMovimientos;
+
         private void btnMovimientos_Click(object sender, EventArgs e)
         {
-            var menu = new ContextMenuStrip();
-            menu.Items.Add("Libro de caja", null, (s, a) => new FMovimientoLibroCaja().Show());
-            menu.Items.Add("Cuentas corrientes", null, (s, a) => new FMovimientoCuentaCorrienteConsulta().Show());
-            menu.Items.Add("Gastos", null, (s, a) => new FMovimientoGastoConsulta().Show());
-            menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add("Todos los movimientos", null, (s, a) => new FMovimientoConsulta().Show());
+            // Se arma una sola vez y se reutiliza en los clicks siguientes.
+            if (_menuMovimientos == null)
+            {
+                var menu = new ContextMenuStrip();
+                menu.Items.Add("Libro de caja", null, (s, a) => new FMovimientoLibroCaja().Show());
+                menu.Items.Add("Cuentas corrientes", null, (s, a) => new FMovimientoCuentaCorrienteConsulta().Show());
+                menu.Items.Add("Gastos", null, (s, a) => new FMovimientoGastoConsulta().Show());
+                menu.Items.Add(new ToolStripSeparator());
+                menu.Items.Add("Todos los movimientos", null, (s, a) => new FMovimientoConsulta().Show());
+
+                // Mismo estilo que la barra de menú (fondo oscuro, texto crema, hover lila)
+                FBase.Helpers.EstiloMenuContextual.Aplicar(menu);
+
+                _menuMovimientos = menu;
+            }
 
             var boton = sender as Control;
             if (boton != null)
-                menu.Show(boton, new Point(0, boton.Height));
+            {
+                // El desplegable nunca es más angosto que el botón que lo abre.
+                _menuMovimientos.MinimumSize = new Size(boton.Width, 0);
+                _menuMovimientos.Show(boton, new Point(0, boton.Height));
+            }
             else
-                menu.Show(Control.MousePosition);
+                _menuMovimientos.Show(Control.MousePosition);
         }
         private void tIPOPAGOToolStripMenuItem_Click(object sender, EventArgs e) => new FTipoPagoConsulta().Show();
         private void rOLESToolStripMenuItem_Click(object sender, EventArgs e) => new FRolConsulta().Show();

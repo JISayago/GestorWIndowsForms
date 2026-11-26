@@ -21,6 +21,9 @@ namespace Servicios.LogicaNegocio.Movimiento.DTO
         public long? EntidadId { get; set; }
         public int? TipoEntidad { get; set; }
 
+        /// <summary>Texto libre del movimiento (ej. el motivo de un agregado de saldo a la caja).</summary>
+        public string? Detalle { get; set; }
+
         // =========================================
         // AUTOCALCULADOS (mismo criterio que MovimientoDTO)
         // =========================================

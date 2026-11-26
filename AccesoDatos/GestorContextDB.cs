@@ -1103,6 +1103,12 @@ namespace AccesoDatos
                         .HasColumnName("id_movimiento_origen")
                         .IsRequired(false);
 
+                    // Texto libre (ej. motivo de un agregado de saldo a la caja)
+                    entity.Property(e => e.Detalle)
+                        .HasColumnName("detalle")
+                        .HasMaxLength(200)
+                        .IsRequired(false);
+
                     entity.HasOne(e => e.Caja)
                         .WithMany()
                         .HasForeignKey(e => e.CajaId)

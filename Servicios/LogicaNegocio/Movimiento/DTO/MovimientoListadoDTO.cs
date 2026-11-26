@@ -26,6 +26,9 @@ namespace Servicios.LogicaNegocio.Movimiento.DTO
 
         public long? MovimientoOrigenId { get; set; }
 
+        /// <summary>Texto libre del movimiento (ej. el motivo de un agregado de saldo a la caja).</summary>
+        public string? Detalle { get; set; }
+
         /// <summary>Saldo después de este movimiento. Solo si la consulta se filtró por una caja o una cuenta.</summary>
         public decimal? Saldo { get; set; }
 

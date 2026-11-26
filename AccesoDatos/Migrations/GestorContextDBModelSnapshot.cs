@@ -631,6 +631,11 @@ namespace AccesoDatos.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_caja");
 
+                    b.Property<string>("Detalle")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("detalle");
+
                     b.Property<long?>("EntidadId")
                         .HasColumnType("bigint")
                         .HasColumnName("entidad_id");

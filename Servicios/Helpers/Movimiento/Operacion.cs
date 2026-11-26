@@ -12,7 +12,8 @@ namespace Servicios.Helpers.Movimiento
         CargaSaldo = 3,             // el cliente carga saldo o paga su deuda
         CargoCuentaCorriente = 4,   // compra fiada: aumenta la deuda
         CreditoCuentaCorriente = 5, // devolución por cancelación: reduce la deuda
-        PagoGasto = 6               // gasto pagado
+        PagoGasto = 6,              // gasto pagado
+        AgregadoSaldoCaja = 7       // se suma efectivo a la caja abierta (el motivo queda en Movimiento.Detalle)
     }
 
     public static class OperacionDescripcion
@@ -30,6 +31,7 @@ namespace Servicios.Helpers.Movimiento
                 Operacion.CargoCuentaCorriente => "Cargo cuenta corriente",
                 Operacion.CreditoCuentaCorriente => "Crédito cuenta corriente",
                 Operacion.PagoGasto => "Pago de gasto",
+                Operacion.AgregadoSaldoCaja => "Agregado de saldo",
                 _ => "Desconocido"
             };
         }

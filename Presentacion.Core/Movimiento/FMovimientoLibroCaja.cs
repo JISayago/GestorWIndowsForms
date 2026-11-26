@@ -51,7 +51,8 @@ namespace Presentacion.Core.Movimiento
                 OpcionOperacion(Operacion.Cobro),
                 OpcionOperacion(Operacion.Reversa),
                 OpcionOperacion(Operacion.CargaSaldo),
-                OpcionOperacion(Operacion.PagoGasto)
+                OpcionOperacion(Operacion.PagoGasto),
+                OpcionOperacion(Operacion.AgregadoSaldoCaja)
             };
 
             ActivarCombo(cbx2, lblcbx2, tipos, "Texto", "Valor", "Tipo / Operación");

@@ -225,6 +225,11 @@ namespace Presentacion.Core.Venta
                 //    MessageBoxButtons.OK,
                 //    MessageBoxIcon.Information);
             }
+            else if (resultado.EsAdvertencia)
+            {
+                // Caja sin efectivo suficiente para devolver: se avisa y la venta queda sin anular.
+                Informar(resultado.Mensaje, "Caja sin efectivo suficiente");
+            }
             else
             {
                 MostrarError(resultado.Mensaje);
