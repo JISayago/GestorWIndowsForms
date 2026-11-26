@@ -45,11 +45,30 @@ namespace AccesoDatos
         public DbSet<RolPermiso> RolesPermisos { get; set; }
         public DbSet<Notificacion> Notificaciones { get; set; }
 
+        public DbSet<ParametroSistema> ParametrosSistema { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
             base.OnModelCreating(modelBuilder);
-
+            modelBuilder.Entity<ParametroSistema>(entity =>
+            {
+                entity.ToTable("ParametrosSistema");
+                entity.HasKey(p => p.ParametroSistemaId);
+                entity.Property(p => p.ParametroSistemaId)
+                      .ValueGeneratedOnAdd();
+                entity.Property(p => p.Clave)
+                      .HasMaxLength(100)
+                      .IsRequired();
+                entity.Property(p => p.Valor)
+                      .HasMaxLength(1000);
+                entity.Property(p => p.ValorBinario);
+                entity.Property(p => p.FechaModificacion)
+                      .HasColumnType("datetime2")
+                      .IsRequired();
+                entity.HasIndex(p => p.Clave)
+                      .IsUnique();
+            });
             // PERSONA
             modelBuilder.Entity<Persona>(entity =>
             {

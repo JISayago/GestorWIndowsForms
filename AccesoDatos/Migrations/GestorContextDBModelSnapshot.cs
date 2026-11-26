@@ -743,6 +743,37 @@ namespace AccesoDatos.Migrations
                     b.ToTable("Notificaciones", (string)null);
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.ParametroSistema", b =>
+                {
+                    b.Property<long>("ParametroSistemaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ParametroSistemaId"));
+
+                    b.Property<string>("Clave")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Valor")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<byte[]>("ValorBinario")
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("ParametroSistemaId");
+
+                    b.HasIndex("Clave")
+                        .IsUnique();
+
+                    b.ToTable("ParametrosSistema", (string)null);
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.Permiso", b =>
                 {
                     b.Property<long>("PermisoId")

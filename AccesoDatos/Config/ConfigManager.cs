@@ -63,6 +63,7 @@ namespace AccesoDatos.Config
                 ?? throw new Exception("No se pudo leer la configuración.");
 
             _config.Comprobantes ??= new ConfiguracionComprobantes();
+            _config.Apariencia ??= new ConfiguracionApariencia();
         }
     }
 }
