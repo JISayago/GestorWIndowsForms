@@ -35,7 +35,7 @@ namespace Presentacion.FBase
                 error.BlinkStyle = ErrorBlinkStyle.NeverBlink;
 
                 this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-            }
+        }
             protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -60,7 +60,39 @@ namespace Presentacion.FBase
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Space)
+            {
+                Control controlActivo = ObtenerControlConFoco(this);
 
+                // Permitir espacios cuando se está escribiendo texto.
+                bool permiteEscritura =
+                    controlActivo is TextBoxBase ||
+                    (controlActivo is ComboBox combo &&
+                     combo.DropDownStyle == ComboBoxStyle.DropDown);
+
+                if (!permiteEscritura)
+                {
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+                    return;
+                }
+            }
+
+            base.OnKeyDown(e);
+        }
+
+        private static Control ObtenerControlConFoco(Control contenedor)
+        {
+            foreach (Control hijo in contenedor.Controls)
+            {
+                if (hijo.ContainsFocus)
+                    return ObtenerControlConFoco(hijo);
+            }
+
+            return contenedor;
+        }
         protected virtual void EjecutarEscape()
         {
             this.Close();

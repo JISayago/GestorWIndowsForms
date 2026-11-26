@@ -42,6 +42,7 @@ namespace Presentacion
             tableLayoutPanel2 = new TableLayoutPanel();
             tableLayoutPanel4 = new TableLayoutPanel();
             tblUsuario = new TableLayoutPanel();
+            btnCambioUsuario = new Button();
             btnCerarSesion = new Button();
             flpUsuarioLogeado = new FlowLayoutPanel();
             lblNombreUsuario = new Label();
@@ -192,8 +193,8 @@ namespace Presentacion
             // tableLayoutPanel2
             // 
             tableLayoutPanel2.ColumnCount = 2;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55.85366F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 34.94668F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 49.3847427F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.6152573F));
             tableLayoutPanel2.Controls.Add(tableLayoutPanel4, 1, 0);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel5, 0, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
@@ -211,19 +212,21 @@ namespace Presentacion
             tableLayoutPanel4.ColumnCount = 1;
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel4.Controls.Add(tblUsuario, 0, 0);
-            tableLayoutPanel4.Location = new Point(772, 3);
+            tableLayoutPanel4.Location = new Point(625, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 8F));
-            tableLayoutPanel4.Size = new Size(464, 69);
+            tableLayoutPanel4.Size = new Size(611, 69);
             tableLayoutPanel4.TabIndex = 29;
             // 
             // tblUsuario
             // 
-            tblUsuario.ColumnCount = 2;
-            tblUsuario.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.6666641F));
-            tblUsuario.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
+            tblUsuario.ColumnCount = 3;
+            tblUsuario.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tblUsuario.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tblUsuario.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tblUsuario.Controls.Add(btnCambioUsuario, 2, 1);
             tblUsuario.Controls.Add(btnCerarSesion, 1, 1);
             tblUsuario.Controls.Add(flpUsuarioLogeado, 0, 1);
             tblUsuario.Dock = DockStyle.Fill;
@@ -232,14 +235,24 @@ namespace Presentacion
             tblUsuario.RowCount = 2;
             tblUsuario.RowStyles.Add(new RowStyle(SizeType.Percent, 10.4712086F));
             tblUsuario.RowStyles.Add(new RowStyle(SizeType.Percent, 89.52879F));
-            tblUsuario.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tblUsuario.Size = new Size(458, 55);
+            tblUsuario.Size = new Size(605, 55);
             tblUsuario.TabIndex = 1;
+            // 
+            // btnCambioUsuario
+            // 
+            btnCambioUsuario.Anchor = AnchorStyles.None;
+            btnCambioUsuario.Location = new Point(468, 14);
+            btnCambioUsuario.Name = "btnCambioUsuario";
+            btnCambioUsuario.Size = new Size(121, 31);
+            btnCambioUsuario.TabIndex = 30;
+            btnCambioUsuario.Text = "Cambio Usuario";
+            btnCambioUsuario.UseVisualStyleBackColor = true;
+            btnCambioUsuario.Click += btnCambioUsuario_Click;
             // 
             // btnCerarSesion
             // 
-            btnCerarSesion.Anchor = AnchorStyles.None;
-            btnCerarSesion.Location = new Point(321, 14);
+            btnCerarSesion.Anchor = AnchorStyles.Right;
+            btnCerarSesion.Location = new Point(329, 14);
             btnCerarSesion.Name = "btnCerarSesion";
             btnCerarSesion.Size = new Size(121, 31);
             btnCerarSesion.TabIndex = 29;
@@ -255,7 +268,7 @@ namespace Presentacion
             flpUsuarioLogeado.FlowDirection = FlowDirection.RightToLeft;
             flpUsuarioLogeado.Location = new Point(3, 14);
             flpUsuarioLogeado.Name = "flpUsuarioLogeado";
-            flpUsuarioLogeado.Size = new Size(299, 31);
+            flpUsuarioLogeado.Size = new Size(296, 31);
             flpUsuarioLogeado.TabIndex = 0;
             flpUsuarioLogeado.WrapContents = false;
             // 
@@ -264,7 +277,7 @@ namespace Presentacion
             lblNombreUsuario.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             lblNombreUsuario.AutoSize = true;
             lblNombreUsuario.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblNombreUsuario.Location = new Point(227, 0);
+            lblNombreUsuario.Location = new Point(224, 0);
             lblNombreUsuario.Margin = new Padding(0);
             lblNombreUsuario.Name = "lblNombreUsuario";
             lblNombreUsuario.Size = new Size(72, 30);
@@ -277,7 +290,7 @@ namespace Presentacion
             lblUsuario.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             lblUsuario.AutoSize = true;
             lblUsuario.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblUsuario.Location = new Point(47, 0);
+            lblUsuario.Location = new Point(44, 0);
             lblUsuario.Margin = new Padding(0, 0, 6, 0);
             lblUsuario.Name = "lblUsuario";
             lblUsuario.Size = new Size(174, 30);
@@ -295,7 +308,7 @@ namespace Presentacion
             tableLayoutPanel5.Name = "tableLayoutPanel5";
             tableLayoutPanel5.RowCount = 1;
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel5.Size = new Size(743, 69);
+            tableLayoutPanel5.Size = new Size(596, 69);
             tableLayoutPanel5.TabIndex = 30;
             // 
             // tlpTopLeft
@@ -310,7 +323,7 @@ namespace Presentacion
             tlpTopLeft.RowStyles.Add(new RowStyle(SizeType.Percent, 85F));
             tlpTopLeft.RowStyles.Add(new RowStyle(SizeType.Percent, 15F));
             tlpTopLeft.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tlpTopLeft.Size = new Size(668, 63);
+            tlpTopLeft.Size = new Size(590, 63);
             tlpTopLeft.TabIndex = 1;
             // 
             // flpDatosFechaHora
@@ -557,5 +570,6 @@ namespace Presentacion
         private TableLayoutPanel tableLayoutPanel5;
         private TableLayoutPanel tlpTopLeft;
         private Button btnCerarSesion;
+        private Button btnCambioUsuario;
     }
 }

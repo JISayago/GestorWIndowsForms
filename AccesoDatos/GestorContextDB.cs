@@ -45,11 +45,30 @@ namespace AccesoDatos
         public DbSet<RolPermiso> RolesPermisos { get; set; }
         public DbSet<Notificacion> Notificaciones { get; set; }
 
+        public DbSet<ParametroSistema> ParametrosSistema { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
             base.OnModelCreating(modelBuilder);
-
+            modelBuilder.Entity<ParametroSistema>(entity =>
+            {
+                entity.ToTable("ParametrosSistema");
+                entity.HasKey(p => p.ParametroSistemaId);
+                entity.Property(p => p.ParametroSistemaId)
+                      .ValueGeneratedOnAdd();
+                entity.Property(p => p.Clave)
+                      .HasMaxLength(100)
+                      .IsRequired();
+                entity.Property(p => p.Valor)
+                      .HasMaxLength(1000);
+                entity.Property(p => p.ValorBinario);
+                entity.Property(p => p.FechaModificacion)
+                      .HasColumnType("datetime2")
+                      .IsRequired();
+                entity.HasIndex(p => p.Clave)
+                      .IsUnique();
+            });
             // PERSONA
             modelBuilder.Entity<Persona>(entity =>
             {
@@ -1299,29 +1318,41 @@ namespace AccesoDatos
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-                modelBuilder.Entity<UsuarioSesion>(entity =>
-                {
-                    entity.ToTable("Usuarios_Sesiones");
+            modelBuilder.Entity<UsuarioSesion>(entity =>
+            {
+                entity.ToTable("Usuarios_Sesiones");
 
-                    entity.HasKey(e => e.UsuarioSesionId);
+                entity.HasKey(e => e.UsuarioSesionId);
 
-                    entity.Property(e => e.FechaLogin)
-                          .HasColumnType("datetime");
+                entity.Property(e => e.FechaLogin)
+                      .HasColumnType("datetime");
 
-                    entity.Property(e => e.FechaLogout)
-                          .HasColumnType("datetime");
+                entity.Property(e => e.FechaLogout)
+                      .HasColumnType("datetime");
 
-                    entity.Property(e => e.Activa)
-                          .IsRequired();
+                entity.Property(e => e.Activa)
+                      .IsRequired();
 
-                    entity.HasOne(e => e.Usuario)
-                          .WithMany(u => u.Sesiones)
-                          .HasForeignKey(e => e.UsuarioId)
-                          .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(e => e.EsSecundaria)
+                      .IsRequired();
 
-                });
+                entity.Property(e => e.SesionPrincipalId)
+                      .IsRequired(false);
 
-                modelBuilder.Entity<DetalleVentaLote>(entity =>
+                // Relación con el empleado propietario de la sesión.
+                entity.HasOne(e => e.Usuario)
+                      .WithMany(u => u.Sesiones)
+                      .HasForeignKey(e => e.UsuarioId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                // Relación opcional con la sesión principal.
+                entity.HasOne<UsuarioSesion>()
+                      .WithMany()
+                      .HasForeignKey(e => e.SesionPrincipalId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<DetalleVentaLote>(entity =>
                 {
                     entity.ToTable("DetalleVentaLote");
 

@@ -10,6 +10,7 @@ namespace Presentacion
         private readonly bool _licenciaVencida;
 
         public bool DeseaCargarLicencia { get; private set; }
+        public bool CortarInicio { get; private set; }
 
 
         // ============================================================
@@ -26,6 +27,7 @@ namespace Presentacion
             _licenciaVencida = licenciaVencida;
 
             DeseaCargarLicencia = false;
+            CortarInicio = false;
 
             MostrarInformacionTrial();
         }
@@ -35,6 +37,11 @@ namespace Presentacion
         // MOSTRAR INFORMACIÓN DE LA TRIAL
         // ============================================================
 
+        protected override void EjecutarEscape()
+        {
+
+            CerrarTodoYCortarInicio();
+        }
         private void MostrarInformacionTrial()
         {
             // --------------------------------------------------------
@@ -152,6 +159,8 @@ namespace Presentacion
             EventArgs e)
         {
             DeseaCargarLicencia = false;
+            CortarInicio = false;
+
 
             DialogResult =
                 DialogResult.Cancel;
@@ -164,16 +173,19 @@ namespace Presentacion
         // CERRAR
         // ============================================================
 
+        private void CerrarTodoYCortarInicio()
+        {
+            DeseaCargarLicencia = false;
+            CortarInicio = true;
+            DialogResult =
+                DialogResult.Cancel;
+            Close();
+        }
         private void btnCerrar_Click(
             object sender,
             EventArgs e)
         {
-            DeseaCargarLicencia = false;
-
-            DialogResult =
-                DialogResult.Cancel;
-
-            Close();
+            CerrarTodoYCortarInicio();
         }
     }
 }

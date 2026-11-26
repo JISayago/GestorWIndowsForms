@@ -267,6 +267,7 @@ namespace Presentacion.Core.Venta
             {
                 grilla.Columns["FechaVenta"].Visible = true;
                 grilla.Columns["FechaVenta"].HeaderText = "Fecha";
+                grilla.Columns["FechaVenta"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
                 grilla.Columns["FechaVenta"].AutoSizeMode =
                     DataGridViewAutoSizeColumnMode.AllCells;
             }

@@ -40,7 +40,7 @@ namespace Servicios.LogicaNegocio.Gasto.DTO
             get
             {
                 return FechaGasto.HasValue
-                    ? FechaGasto.Value.ToString("dd/MM/yyyy")
+                    ? FechaGasto.Value.ToString("dd/MM/yyyy HH:mm")
                     : "Pendiente";
             }
         }

@@ -781,6 +781,37 @@ namespace AccesoDatos.Migrations
                     b.ToTable("Notificaciones", (string)null);
                 });
 
+            modelBuilder.Entity("AccesoDatos.Entidades.ParametroSistema", b =>
+                {
+                    b.Property<long>("ParametroSistemaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ParametroSistemaId"));
+
+                    b.Property<string>("Clave")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Valor")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<byte[]>("ValorBinario")
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("ParametroSistemaId");
+
+                    b.HasIndex("Clave")
+                        .IsUnique();
+
+                    b.ToTable("ParametrosSistema", (string)null);
+                });
+
             modelBuilder.Entity("AccesoDatos.Entidades.Permiso", b =>
                 {
                     b.Property<long>("PermisoId")
@@ -1127,16 +1158,24 @@ namespace AccesoDatos.Migrations
                     b.Property<bool>("Activa")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("EsSecundaria")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("FechaLogin")
                         .HasColumnType("datetime");
 
                     b.Property<DateTime?>("FechaLogout")
                         .HasColumnType("datetime");
 
+                    b.Property<long?>("SesionPrincipalId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("UsuarioId")
                         .HasColumnType("bigint");
 
                     b.HasKey("UsuarioSesionId");
+
+                    b.HasIndex("SesionPrincipalId");
 
                     b.HasIndex("UsuarioId");
 
@@ -1710,6 +1749,11 @@ namespace AccesoDatos.Migrations
 
             modelBuilder.Entity("AccesoDatos.Entidades.UsuarioSesion", b =>
                 {
+                    b.HasOne("AccesoDatos.Entidades.UsuarioSesion", null)
+                        .WithMany()
+                        .HasForeignKey("SesionPrincipalId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("AccesoDatos.Entidades.Empleado", "Usuario")
                         .WithMany("Sesiones")
                         .HasForeignKey("UsuarioId")
