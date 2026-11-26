@@ -190,38 +190,245 @@ namespace Servicios.LogicaNegocio.Movimiento
                 throw;
             }
         }
+        //public ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros)
+        //{
+        //    using var context = new GestorContextDBFactory().CreateDbContext(null);
+
+        //    var query = context.Movimientos
+        //        .AsNoTracking()
+        //        .AsQueryable();
+
+        //    // =========================================================
+        //    // 🔴 HISTORICO / ELIMINADOS
+        //    // =========================================================
+
+        //    if (filtros.Bool2)
+        //    {
+        //        // 👉 HISTORICO
+        //        // trae eliminados y no eliminados
+        //    }
+        //    else if (filtros.Bool1)
+        //    {
+        //        // 👉 SOLO ELIMINADOS
+        //        query = query.Where(x =>
+        //            x.EstaEliminado);
+        //    }
+        //    else
+        //    {
+        //        // 👉 NORMAL
+        //        query = query.Where(x =>
+        //            !x.EstaEliminado);
+        //    }
+
+        //    // =========================================================
+        //    // 🔍 BUSQUEDA
+        //    // =========================================================
+
+        //    if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
+        //    {
+        //        var texto = filtros.TextoBuscar.Trim();
+
+        //        query = query.Where(x =>
+        //            x.NumeroMovimiento.Contains(texto));
+        //    }
+
+        //    // =========================================================
+        //    // 📌 TIPO MOVIMIENTO / DETALLE (cbx2)
+        //    // =========================================================
+
+        //    var filtroTipo = filtros.Filtro2?.ToString();
+
+        //    if (!string.IsNullOrWhiteSpace(filtroTipo))
+        //    {
+        //        if (filtroTipo.StartsWith("TM_"))
+        //        {
+        //            var valor = int.Parse(
+        //                filtroTipo.Replace("TM_", ""));
+
+        //            query = query.Where(x =>
+        //                x.TipoMovimiento == valor);
+        //        }
+        //        else if (filtroTipo.StartsWith("TMD_"))
+        //        {
+        //            var valor = int.Parse(
+        //                filtroTipo.Replace("TMD_", ""));
+
+        //            query = query.Where(x =>
+        //                x.TipoMovimientoDetalle == valor);
+        //        }
+        //    }
+
+        //    // =========================================================
+        //    // 📅 FILTRO FECHA (cbx3)
+        //    // =========================================================
+
+        //    var filtroFecha = filtros.Filtro3?.ToString();
+
+        //    bool hayFiltroFechaManual =
+        //        filtroFecha == "FECHA" &&
+        //        (
+        //            filtros.FechaDesde.HasValue ||
+        //            filtros.FechaHasta.HasValue
+        //        );
+
+        //    if (hayFiltroFechaManual)
+        //    {
+        //        if (filtros.FechaDesde.HasValue)
+        //        {
+        //            query = query.Where(x =>
+        //                x.FechaMovimiento >= filtros.FechaDesde.Value);
+        //        }
+
+        //        if (filtros.FechaHasta.HasValue)
+        //        {
+        //            var hasta = filtros.FechaHasta.Value.AddDays(1);
+
+        //            query = query.Where(x =>
+        //                x.FechaMovimiento < hasta);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // 🔹 NORMAL = 2 meses
+        //        // 🔹 HISTORICO = 6 meses
+
+        //        var fechaLimite = filtros.Bool2
+        //            ? DateTime.Now.AddMonths(-6)
+        //            : DateTime.Now.AddMonths(-2);
+
+        //        query = query.Where(x =>
+        //            x.FechaMovimiento >= fechaLimite);
+        //    }
+
+        //    // =========================================================
+        //    // 📊 TOTAL
+        //    // =========================================================
+
+        //    var total = query.Count();
+
+        //    // =========================================================
+        //    // 📄 PAGINACION
+        //    // =========================================================
+
+        //    var totalPaginas =
+        //        (int)Math.Ceiling((double)total / filtros.PageSize);
+
+        //    if (totalPaginas <= 0)
+        //        totalPaginas = 1;
+
+        //    if (filtros.Page > totalPaginas)
+        //        filtros.Page = totalPaginas;
+
+        //    if (filtros.Page < 1)
+        //        filtros.Page = 1;
+
+        //    // =========================================================
+        //    // 📌 ORDEN
+        //    // =========================================================
+
+        //    query = query
+        //        .OrderByDescending(x => x.FechaMovimiento);
+
+        //    // =========================================================
+        //    // 📦 DATA
+        //    // =========================================================
+
+        //    var data = query
+        //        .Skip((filtros.Page - 1) * filtros.PageSize)
+        //        .Take(filtros.PageSize)
+        //        .Select(x => new MovimientoDTO
+        //        {
+        //            MovimientoId = x.MovimientoId,
+
+        //            NumeroMovimiento = x.NumeroMovimiento,
+
+        //            TipoMovimiento = x.TipoMovimiento,
+
+        //            TipoMovimientoDetalle = x.TipoMovimientoDetalle,
+
+        //            Monto = x.Monto,
+
+        //            FechaMovimiento = x.FechaMovimiento,
+
+        //            EstaEliminado = x.EstaEliminado,
+
+        //            EntidadId = x.EntidadId,
+
+        //            TipoEntidad = x.TipoEntidad
+        //        })
+        //        .ToList();
+
+        //    return new ResultadoPaginacion<MovimientoDTO>
+        //    {
+        //        Items = data,
+        //        TotalRegistros = total,
+        //        Page = filtros.Page,
+        //        PageSize = filtros.PageSize
+        //    };
+        //}
         public ResultadoPaginacion<MovimientoDTO> ObtenerMovimientos(FiltroConsulta filtros)
         {
             using var context = new GestorContextDBFactory().CreateDbContext(null);
+            string collation = "Latin1_General_CI_AI";
 
             var query = context.Movimientos
                 .AsNoTracking()
                 .AsQueryable();
 
             // =========================================================
-            // 🔴 HISTORICO / ELIMINADOS
+            // 📅 DETECCIÓN DEL FILTRO MANUAL DE FECHAS
+            // =========================================================
+
+            bool usaFechas =
+                filtros.FechaDesde.HasValue ||
+                filtros.FechaHasta.HasValue;
+
+            bool hayFiltroManual =
+                usaFechas &&
+                filtros.Filtro3?.ToString() == "FECHA";
+
+            // =========================================================
+            // CORE: ELIMINADOS + HISTORICO
             // =========================================================
 
             if (filtros.Bool2)
             {
-                // 👉 HISTORICO
-                // trae eliminados y no eliminados
+                // HISTORICO
+                // Trae eliminados y no eliminados.
+                // La ventana de 6 meses se aplica más abajo (sección FECHAS),
+                // siempre que no haya un filtro manual de fechas.
             }
             else if (filtros.Bool1)
             {
-                // 👉 SOLO ELIMINADOS
+                // SOLO ELIMINADOS
+                // Igual que "solo anulados" en gastos: sin ventana de fecha,
+                // se ven todos los eliminados salvo que haya filtro manual.
                 query = query.Where(x =>
                     x.EstaEliminado);
             }
             else
             {
-                // 👉 NORMAL
+                // =====================================================
+                // NORMAL
+                // =====================================================
+
+                // Excluir eliminados.
                 query = query.Where(x =>
                     !x.EstaEliminado);
+
+                // Ventana predeterminada de 2 meses
+                // únicamente cuando NO hay un filtro manual de fechas.
+                if (!hayFiltroManual)
+                {
+                    var desde = DateTime.Now.AddMonths(-2);
+
+                    query = query.Where(x =>
+                        x.FechaMovimiento >= desde);
+                }
             }
 
             // =========================================================
-            // 🔍 BUSQUEDA
+            // BÚSQUEDA (sin distinguir mayúsculas ni acentos)
             // =========================================================
 
             if (!string.IsNullOrWhiteSpace(filtros.TextoBuscar))
@@ -229,85 +436,76 @@ namespace Servicios.LogicaNegocio.Movimiento
                 var texto = filtros.TextoBuscar.Trim();
 
                 query = query.Where(x =>
-                    x.NumeroMovimiento.Contains(texto));
+                    x.NumeroMovimiento != null &&
+                    EF.Functions.Collate(
+                        x.NumeroMovimiento,
+                        collation
+                    ).Contains(texto));
             }
 
             // =========================================================
-            // 📌 TIPO MOVIMIENTO / DETALLE (cbx2)
+            // TIPO MOVIMIENTO / DETALLE (cbx2)
             // =========================================================
 
             var filtroTipo = filtros.Filtro2?.ToString();
 
             if (!string.IsNullOrWhiteSpace(filtroTipo))
             {
-                if (filtroTipo.StartsWith("TM_"))
+                if (filtroTipo.StartsWith("TM_") &&
+                    int.TryParse(filtroTipo.Substring(3), out var tipo))
                 {
-                    var valor = int.Parse(
-                        filtroTipo.Replace("TM_", ""));
-
                     query = query.Where(x =>
-                        x.TipoMovimiento == valor);
+                        x.TipoMovimiento == tipo);
                 }
-                else if (filtroTipo.StartsWith("TMD_"))
+                else if (filtroTipo.StartsWith("TMD_") &&
+                         int.TryParse(filtroTipo.Substring(4), out var detalle))
                 {
-                    var valor = int.Parse(
-                        filtroTipo.Replace("TMD_", ""));
-
                     query = query.Where(x =>
-                        x.TipoMovimientoDetalle == valor);
+                        x.TipoMovimientoDetalle == detalle);
                 }
             }
 
             // =========================================================
-            // 📅 FILTRO FECHA (cbx3)
+            // FILTRO FECHAS
             // =========================================================
 
-            var filtroFecha = filtros.Filtro3?.ToString();
-
-            bool hayFiltroFechaManual =
-                filtroFecha == "FECHA" &&
-                (
-                    filtros.FechaDesde.HasValue ||
-                    filtros.FechaHasta.HasValue
-                );
-
-            if (hayFiltroFechaManual)
+            if (hayFiltroManual)
             {
                 if (filtros.FechaDesde.HasValue)
                 {
+                    var desde = filtros.FechaDesde.Value.Date;
+
                     query = query.Where(x =>
-                        x.FechaMovimiento >= filtros.FechaDesde.Value);
+                        x.FechaMovimiento >= desde);
                 }
 
                 if (filtros.FechaHasta.HasValue)
                 {
-                    var hasta = filtros.FechaHasta.Value.AddDays(1);
+                    var hasta = filtros.FechaHasta.Value.Date.AddDays(1);
 
                     query = query.Where(x =>
                         x.FechaMovimiento < hasta);
                 }
             }
-            else
+            else if (filtros.Bool2)
             {
-                // 🔹 NORMAL = 2 meses
-                // 🔹 HISTORICO = 6 meses
+                // HISTORICO = últimos 6 meses,
+                // siempre que no haya un filtro manual de fechas.
 
-                var fechaLimite = filtros.Bool2
-                    ? DateTime.Now.AddMonths(-6)
-                    : DateTime.Now.AddMonths(-2);
+                var desde = DateTime.Now.AddMonths(-6);
 
                 query = query.Where(x =>
-                    x.FechaMovimiento >= fechaLimite);
+                    x.FechaMovimiento >= desde);
             }
 
             // =========================================================
-            // 📊 TOTAL
+            // TOTAL
             // =========================================================
 
             var total = query.Count();
 
             // =========================================================
-            // 📄 PAGINACION
+            // PAGINACIÓN
             // =========================================================
 
             var totalPaginas =
@@ -323,14 +521,17 @@ namespace Servicios.LogicaNegocio.Movimiento
                 filtros.Page = 1;
 
             // =========================================================
-            // 📌 ORDEN
+            // ORDEN
             // =========================================================
 
+            // El desempate por id mantiene estable la paginación
+            // cuando hay varios movimientos con la misma fecha.
             query = query
-                .OrderByDescending(x => x.FechaMovimiento);
+                .OrderByDescending(x => x.FechaMovimiento)
+                .ThenByDescending(x => x.MovimientoId);
 
             // =========================================================
-            // 📦 DATA
+            // DATA
             // =========================================================
 
             var data = query
@@ -357,6 +558,10 @@ namespace Servicios.LogicaNegocio.Movimiento
                     TipoEntidad = x.TipoEntidad
                 })
                 .ToList();
+
+            // =========================================================
+            // RESULTADO
+            // =========================================================
 
             return new ResultadoPaginacion<MovimientoDTO>
             {

@@ -18,8 +18,10 @@ using Presentacion.FBase.Helpers;
 using Presentacion.Notificaciones;
 using ServicioAccesoSistema.AccesoSistema;
 using Servicios.Helpers.DatosObligatoriosParaInicioSistema;
+using Servicios.Helpers.Sistema;
 using Servicios.Helpers.Sistema.Rol;
 using Servicios.LogicaNegocio.Caja.DTO;
+using Servicios.LogicaNegocio.Empleado;
 using Servicios.LogicaNegocio.PantallaPrincipal;
 using Servicios.LogicaNegocio.PantallaPrincipal.DTO;
 using Servicios.LogicaNegocio.Producto.DTO;
@@ -27,8 +29,10 @@ using Servicios.LogicaNegocio.Producto.Lote;
 using Servicios.LogicaNegocio.Sistema;
 using Servicios.LogicaNegocio.Venta.DTO;
 using Servicios.LogicaNegocio.Venta.Oferta;
+using Stockeate;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -79,13 +83,22 @@ namespace Presentacion
             this.Bounds = Screen.PrimaryScreen.WorkingArea;
 
             // Formato de nombre de usuario (junto a "Usuario Logeado:")
-            var font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
+            var font = new Font("Segoe UI", 13.75F, FontStyle.Bold);
             lblNombreUsuario.Font = font;
             lblNombreUsuario.ForeColor = TemaSistema.Primario;
             lblNombreUsuario.Text = _usuarioLogeado.Username.ToUpper();
             lblNombreUsuario.AutoSize = true;
             lblNombreUsuario.Dock = DockStyle.None;
             lblNombreUsuario.TextAlign = ContentAlignment.MiddleLeft;
+
+            if (SesionSecundaria.EsSecundaria)
+            {
+                //lblNombreUsuario.Text += "- Secundaria";
+                lblUsuario.Text = "Usuario secundario:";
+                lblNombreUsuario.ForeColor = Color.Firebrick;
+                btnCambioUsuario.Visible = false;            // las sesiones no se anidan
+                btnCerarSesion.Text = "Cerrar Secundaria";
+            }
 
 
             //VENTANA FULLSCREEN SIN BORDES NI BOTONES DE CIERRE
@@ -324,7 +337,8 @@ namespace Presentacion
         {
             if (!AuthHelper.Tiene("Admin.Acceso"))
             {
-                MessageBox.Show("Acceso disponible sólo para Administradores");
+                Informar("Acceso disponible sólo para Administradores", "Acceso denegado");
+                //MessageBox.Show("Acceso disponible sólo para Administradores");
                 return;
             }
             var administracion = new FAdministracion(_usuarioLogeado.PersonaId);
@@ -335,7 +349,8 @@ namespace Presentacion
         {
             if (!AuthHelper.Tiene("Ventas.Crear"))
             {
-                MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                Informar("No Cuenta con las credenciales necesarias para realizar ventas", "Acceso denegado");
+                //MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
                 return;
             }
             var FVenta = new FVenta(_usuarioLogeado.PersonaId);
@@ -346,7 +361,8 @@ namespace Presentacion
         {
             if (!AuthHelper.Tiene("Caja.Ver"))
             {
-                MessageBox.Show("No Cuenta con las credenciales necesarias para acceder a la caja");
+                Informar("No Cuenta con las credenciales necesarias para acceder a la caja", "Acceso denegado");
+                //MessageBox.Show("No Cuenta con las credenciales necesarias para acceder a la caja");
                 return;
             }
             var fCaja = new FCaja();
@@ -357,7 +373,8 @@ namespace Presentacion
         {
             if (!AuthHelper.Tiene("Ventas.Contrasiento"))
             {
-                MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
+                Informar("No Cuenta con las credenciales necesarias para ver los movimientos de la caja", "Acceso denegado");
+                //MessageBox.Show("No Cuenta con las credenciales necesarias para ver los movimientos de la caja");
                 return;
             }
             var NroCompr = new FNroComprobanteParaCancelacion(_usuarioLogeado.PersonaId);
@@ -369,12 +386,13 @@ namespace Presentacion
             var respuesta = _accesoSistema.CerrarSesion(_usuarioLogeado.PersonaId);
             if (!respuesta.Exitoso)
             {
-                MessageBox.Show(respuesta.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(respuesta.Mensaje);
+                //MessageBox.Show(respuesta.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
-            MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            Application.Restart();
+            Exito(respuesta.Mensaje, "Información");
+            //MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            SalirDeSesion();
         }
 
         #endregion
@@ -552,15 +570,22 @@ namespace Presentacion
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 e.Cancel = true;
-
-                var respuesta = MessageBox.Show(
-                    "¿Querés cerrar la sesión y salir del sistema?",
+                var result = Confirmar(
+                  SesionSecundaria.EsSecundaria
+                    ? "¿Querés cerrar la sesión secundaria y volver a la principal?"
+                    : "¿Querés cerrar la sesión y salir del sistema?",
                     "Cerrar sesión",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question,
-                    MessageBoxDefaultButton.Button2);
+                 si: "Aceptar",
+                 no: "Cancelar");
 
-                if (respuesta == DialogResult.Yes)
+                //var respuesta = MessageBox.Show(
+                //    "¿Querés cerrar la sesión y salir del sistema?",
+                //    "Cerrar sesión",
+                //    MessageBoxButtons.YesNo,
+                //    MessageBoxIcon.Question,
+                //    MessageBoxDefaultButton.Button2);
+
+                if (result)
                     btnCerarSesion_Click(this, EventArgs.Empty);
 
                 return;
@@ -574,12 +599,123 @@ namespace Presentacion
             var respuesta = _accesoSistema.CerrarSesion(_usuarioLogeado.PersonaId);
             if (!respuesta.Exitoso)
             {
-                MessageBox.Show(respuesta.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(respuesta.Mensaje);
+                //MessageBox.Show(respuesta.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            Exito(respuesta.Mensaje, "Exito");
+            //MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            SalirDeSesion();
+        }
+
+        /// <summary>
+        /// Abre una sesión secundaria: otra copia de Stockeate (otro proceso) donde otro usuario, ej. un admin,
+        /// hace un cambio o una venta puntual. Esta ventana queda bloqueada hasta que la secundaria termina.
+        /// </summary>
+        private void btnCambioUsuario_Click(object sender, EventArgs e)
+        {
+            var sesionId = _accesoSistema.ObtenerSesionActivaId(_usuarioLogeado.PersonaId);
+            if (sesionId == null)
+            {
+                MostrarError("No se encontró tu sesión activa. Cerrá sesión y volvé a ingresar.");
                 return;
             }
 
-            MessageBox.Show(respuesta.Mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            Application.Restart();
+            Process proceso;
+            try
+            {
+                proceso = Process.Start(SesionSecundaria.CrearInicio(sesionId.Value, _usuarioLogeado.Username));
+            }
+            catch (Exception ex)
+            {
+                MostrarError("No se pudo abrir la sesión secundaria:\n" + ex.Message);
+                return;
+            }
+
+            if (proceso == null)
+            {
+                MostrarError("No se pudo abrir la sesión secundaria.");
+                return;
+            }
+
+            using (proceso)
+            using (var bloqueo = new FSesionSecundariaEnCurso(proceso))
+            {
+                bloqueo.ShowDialog(this);   // modal: nada de esta ventana responde hasta que la secundaria termina
+            }
+
+            VolverDeSesionSecundaria(sesionId.Value);
         }
+
+        private void VolverDeSesionSecundaria(long sesionPrincipalId)
+        {
+            // 1) Si la secundaria cayó sin cerrar sesión, queda "Activa" en la BD: se regulariza.
+            _accesoSistema.CerrarSesionesSecundarias(sesionPrincipalId);
+
+            // 2) La secundaria pudo abrir/cerrar la caja: se relee (el ctor sin parámetros no toca el usuario).
+            new DatosSistema();
+
+            // 3) El admin pudo cambiarle roles, permisos o datos a este usuario, o bloquearlo/eliminarlo.
+            if (!RecargarUsuarioLogeado())
+            {
+                Informar("Tu usuario fue modificado o deshabilitado durante la sesión secundaria. Se cerrará tu sesión.", "Acceso");
+                _accesoSistema.CerrarSesion(_usuarioLogeado.PersonaId);
+                SalirDeSesion();
+                return;
+            }
+
+            // 4) Turno, avisos y grillas frescos desde la BD.
+            btnRefresh_Click(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Vuelve a leer de la BD al usuario logueado y actualiza el MISMO objeto (_usuarioLogeado), que es el que
+        /// consulta AuthHelper. Los permisos se evalúan al hacer clic en cada botón (AuthHelper.Tiene), así que
+        /// los cambios rigen desde el próximo clic. Devuelve false si el usuario ya no puede operar.
+        /// </summary>
+        private bool RecargarUsuarioLogeado()
+        {
+            var empleado = new EmpleadoServicio().ObtenerEmpleadoPorId(_usuarioLogeado.PersonaId);
+            if (empleado == null || empleado.PersonaId == null)
+                return false;                                   // eliminado
+
+            // Se valida con el username NUEVO: si el admin lo renombró, el viejo ya no existe.
+            if (_accesoSistema.VerificarSiUsuarioEstaBloqueado(empleado.Username))
+                return false;                                   // bloqueado / deshabilitado
+
+            var usuarioServicio = new UsuarioServicio();
+            _usuarioLogeado.Nombre = empleado.Nombre;
+            _usuarioLogeado.Apellido = empleado.Apellido;
+            _usuarioLogeado.Username = empleado.Username;
+            _usuarioLogeado.Permisos = usuarioServicio.ObtenerPermisosPorUsuario(_usuarioLogeado.PersonaId);
+            _usuarioLogeado.EsSuperAdmin = usuarioServicio.EsSuperAdmin(_usuarioLogeado.PersonaId);
+
+            // Se reasigna por si AuthHelper arma algún caché de permisos al setear UsuarioActual.
+            AuthHelper.UsuarioActual = _usuarioLogeado;
+
+            lblNombreUsuario.Text = _usuarioLogeado.Username.ToUpper();
+            return true;
+        }
+        private static void SalirDeSesion()
+        {
+            // La secundaria simplemente se cierra.
+            if (SesionSecundaria.EsSecundaria)
+            {
+                Application.Exit();
+                return;
+            }
+
+            // La principal se reinicia desde el comienzo.
+            Program.ReiniciarAplicacion();
+        }
+        //private static void SalirDeSesion()
+        //{
+        //    // Application.Restart() relanza el exe con los mismos argumentos: en la secundaria
+        //    // reabriría otra secundaria, por eso ahí solo se sale.
+        //    if (SesionSecundaria.EsSecundaria)
+        //        Application.Exit();
+        //    else
+        //        Application.Restart();
+        //}
     }
 }

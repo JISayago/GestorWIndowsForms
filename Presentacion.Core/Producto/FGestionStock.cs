@@ -66,12 +66,14 @@ namespace Presentacion.Core.Producto
         {
             if (string.IsNullOrEmpty(txtCantidad.Text) || Convert.ToDecimal(txtCantidad.Text) <= 0)
             {
-                MessageBox.Show("Ingrese una cantidad válida mayor a cero.");
+                Informar("Ingrese una cantidad válida mayor a cero.","Error");
+                //MessageBox.Show("Ingrese una cantidad válida mayor a cero.");
                 return;
             }
             if(string.IsNullOrEmpty(txtMotivo.Text))
             {
-                MessageBox.Show("Ingrese un motivo para la modificación de stock.");
+                Informar("Ingrese un motivo para la modificación de stock.","Error");
+                //MessageBox.Show("Ingrese un motivo para la modificación de stock.");
                 return;
             }
             var mstock = new MovilizacionStockDTO
@@ -85,19 +87,22 @@ namespace Presentacion.Core.Producto
             
             if (tipoMovimientoStock == 0)
             {
-                MessageBox.Show("Seleccione una acción: Agregar o Quitar Stock.");
+                Informar("Seleccione una acción: Agregar o Quitar Stock.","Error");
+                //MessageBox.Show("Seleccione una acción: Agregar o Quitar Stock.");
                 return;
             }
             var respuesta = _productoServicio.AgregarQuitarStock(mstock);
             if (respuesta.Exitoso)
             {
-                MessageBox.Show($"{respuesta.Mensaje}", "Operación Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Exito(respuesta.Mensaje, "Éxito");
+                //MessageBox.Show($"{respuesta.Mensaje}", "Operación Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 RealizoOperacion = true;
                 this.Close();
             }
             else
             {
-                MessageBox.Show($"{respuesta.Mensaje}", "Operación Fallida", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(respuesta.Mensaje);
+                //MessageBox.Show($"{respuesta.Mensaje}", "Operación Fallida", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

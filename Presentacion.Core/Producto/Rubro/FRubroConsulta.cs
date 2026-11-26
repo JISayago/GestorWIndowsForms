@@ -247,7 +247,8 @@ namespace Presentacion.Core.Producto.Rubro
         {
             if (!entidadID.HasValue)
             {
-                MessageBox.Show("Seleccione un rubro.");
+                Informar("Seleccione un rubro.", "Atención");
+                //MessageBox.Show("Seleccione un rubro.");
                 return;
             }
 

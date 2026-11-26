@@ -57,7 +57,8 @@ namespace Presentacion.Core.Producto.Rubro
         {
             if (!entidadId.HasValue)
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("No se puedo obtener el Rubro seleccionado. Por favor intente nuevamente.", "Atención");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 
                 this.Close();
             }
@@ -75,7 +76,8 @@ namespace Presentacion.Core.Producto.Rubro
             }
             else
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("No se puedo obtener el Rubro seleccionado. Por favor intente nuevamente.", "Atención");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
 
         }
@@ -84,8 +86,9 @@ namespace Presentacion.Core.Producto.Rubro
         {
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("Por favor ingrese los campos Obligatorios.", "Atención");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
                 return false;
             }
             var rubroNueva = new RubroDTO
@@ -98,14 +101,16 @@ namespace Presentacion.Core.Producto.Rubro
 
             if (response.Exitoso)
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Information);
+                Exito(response.Mensaje, "Éxito");
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                //   MessageBoxIcon.Information);
                 return true;
             }
             else
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
+                MostrarError(response.Mensaje);
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                //   MessageBoxIcon.Error);
                 return false;
             }
 
@@ -115,7 +120,8 @@ namespace Presentacion.Core.Producto.Rubro
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show(@"´Por favor seleccione una rubro válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("Por favor seleccione un rubro válido.", "Error");
+                //MessageBox.Show(@"´Por favor seleccione una rubro válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
 
             }
@@ -124,14 +130,16 @@ namespace Presentacion.Core.Producto.Rubro
                 var response = _rubroServicio.Eliminar((long)EntidadID);
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Information);
+                    Exito(response.Mensaje, "Éxito");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Error);
                     return false;
                 }
 
@@ -144,15 +152,17 @@ namespace Presentacion.Core.Producto.Rubro
         {
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("Por favor ingrese los campos Obligatorios.", "Atención");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
                 return false;
             }
             if (TipoOperacion == TipoOperacion.Modificar)
             {
                 if (!EntidadID.HasValue)
                 {
-                    MessageBox.Show(@"´Por favor seleccione un rubro válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    Informar("Por favor seleccione un rubro válido.", "Error");
+                    //MessageBox.Show(@"´Por favor seleccione un rubro válida.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return false;
 
                 }
@@ -166,14 +176,16 @@ namespace Presentacion.Core.Producto.Rubro
 
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    Exito(response.Mensaje, "Éxito");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Error);
                     return false;
                 }
 

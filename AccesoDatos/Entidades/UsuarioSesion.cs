@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace AccesoDatos.Entidades
 {
     public class UsuarioSesion
@@ -17,6 +12,11 @@ namespace AccesoDatos.Entidades
         public DateTime? FechaLogout { get; set; }
 
         public bool Activa { get; set; }
+
+        // Sesión secundaria: otro usuario (ej. un admin) que opera en el equipo de la sesión
+        // principal sin cerrarla. SesionPrincipalId = UsuarioSesionId de la sesión que la lanzó.
+        public bool EsSecundaria { get; set; }
+        public long? SesionPrincipalId { get; set; }
         public Empleado Usuario { get; set; }
     }
 }

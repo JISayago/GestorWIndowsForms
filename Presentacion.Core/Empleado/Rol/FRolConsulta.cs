@@ -46,7 +46,8 @@ namespace Presentacion.Core.Empleado.Rol
 
             if (soloSeleccion)
             {
-                MessageBox.Show("Seleccione el rol con doble click");
+
+                //MessageBox.Show("Seleccione el rol con doble click");
             }
         }
 
@@ -78,7 +79,8 @@ namespace Presentacion.Core.Empleado.Rol
         {
             if (!id.HasValue)
             {
-                MessageBox.Show("Seleccione un rol.");
+                Informar("Seleccione un rol.");
+                //MessageBox.Show("Seleccione un rol.");
                 return;
             }
 

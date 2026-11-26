@@ -170,7 +170,8 @@ namespace Presentacion.Core.Categoria
         {
             if (!id.HasValue)
             {
-                MessageBox.Show("Seleccione una categoria");
+                Informar("Seleccione una categoria", "Atención");
+                //MessageBox.Show("Seleccione una categoria");
                 return;
             }
 

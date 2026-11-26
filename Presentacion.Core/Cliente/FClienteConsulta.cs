@@ -113,7 +113,7 @@ namespace Presentacion.Core.Cliente
             var estado = new List<OpcionFiltro>
              {
                  new OpcionFiltro { Texto = "Todas", Valor = "" },
-             
+
                  new OpcionFiltro
                  {
                      Texto = "Activos",
@@ -124,19 +124,19 @@ namespace Presentacion.Core.Cliente
                      Texto = "Baja",
                      Valor = ((int)TipoFiltroCliente.Baja).ToString()
                  },
-             
+
                  new OpcionFiltro
                  {
                      Texto = "Inhabilitado",
                      Valor = ((int)TipoFiltroCliente.Inhabilitado).ToString()
                  },
-             
+
                  new OpcionFiltro
                  {
                      Texto = "Con Cuenta Corriente",
                      Valor = ((int)TipoFiltroCliente.ConCtaCte).ToString()
                  },
-             
+
                  new OpcionFiltro
                  {
                      Texto = "Sin Cuenta Corriente",
@@ -169,14 +169,14 @@ namespace Presentacion.Core.Cliente
                     Valor = ((int)TipoFiltroCliente.FechaBaja).ToString()
                 },
             };
-             ActivarCombo(
-                cbx3,
-                lblcbx3,
-                fechaFiltro,
-                "Texto",
-                "Valor",
-                "Tipo de Fecha:"
-            );
+            ActivarCombo(
+               cbx3,
+               lblcbx3,
+               fechaFiltro,
+               "Texto",
+               "Valor",
+               "Tipo de Fecha:"
+           );
 
             // =========================
             // CHECK ELIMINADOS
@@ -309,25 +309,35 @@ namespace Presentacion.Core.Cliente
             }
 
             if (grilla.Columns.Contains("Nombre"))
-                ColumnaFill(grilla.Columns["Nombre"], 140, 110);
+                //ColumnaFill(grilla.Columns["Nombre"], 100, 70);
+                grilla.Columns["Nombre"].Visible = false;
 
             if (grilla.Columns.Contains("Apellido"))
-                ColumnaFill(grilla.Columns["Apellido"], 140, 110);
+                //ColumnaFill(grilla.Columns["Apellido"], 100, 70);
+                grilla.Columns["Apellido"].Visible = false;
+
+            if(grilla.Columns.Contains("Nombre") && grilla.Columns.Contains("Apellido"))
+                grilla.Columns["NombreCompleto"].HeaderText = "Nombre";
+                ColumnaFill(grilla.Columns["NombreCompleto"], 90, 80);
 
             if (grilla.Columns.Contains("Dni"))
-                ColumnaFill(grilla.Columns["Dni"], 85, 90, "DNI");
+                ColumnaFill(grilla.Columns["Dni"], 70, 60, "DNI");
 
             if (grilla.Columns.Contains("Email"))
-                ColumnaFill(grilla.Columns["Email"], 200, 160);
+                ColumnaFill(grilla.Columns["Email"], 90, 80);
 
             if (grilla.Columns.Contains("Telefono"))
-                ColumnaFill(grilla.Columns["Telefono"], 95, 95, "Teléfono");
+                ColumnaFill(grilla.Columns["Telefono"], 40, 30, "Teléfono");
 
             if (grilla.Columns.Contains("EstadoDescripcion"))
-                ColumnaFill(grilla.Columns["EstadoDescripcion"], 80, 90, "Estado");
+                ColumnaFill(grilla.Columns["EstadoDescripcion"], 70, 60, "Estado Cliente");
 
             if (grilla.Columns.Contains("TieneCuentaCorriente"))
-                ColumnaFill(grilla.Columns["TieneCuentaCorriente"], 70, 80, "CtaCte");
+                ColumnaFill(grilla.Columns["TieneCuentaCorriente"], 70, 60, "Cuenta Corriente");
+
+            if (grilla.Columns.Contains("DescripcionEstadoCtaCte"))
+                ColumnaFill(grilla.Columns["DescripcionEstadoCtaCte"], 80, 60, "Estado Cuenta Corriente");
+            
 
             if (grilla.Columns.Contains("Estado"))
                 grilla.Columns["Estado"].Visible = false;
@@ -344,7 +354,7 @@ namespace Presentacion.Core.Cliente
             var f = new FClienteABM(TipoOperacion.Nuevo);
             f.ShowDialog();
             if (f.RealizoAlgunaOperacion)
-            RefrescarGrilla();
+                RefrescarGrilla();
         }
 
         public override void EjecutarBtnModificar()
@@ -375,7 +385,7 @@ namespace Presentacion.Core.Cliente
 
             if (f.RealizoAlgunaOperacion)
                 f.Close();
-                RefrescarGrilla();
+            RefrescarGrilla();
         }
 
         #endregion
@@ -424,27 +434,32 @@ namespace Presentacion.Core.Cliente
         private void AbrirDetalleCtaCte(long? id)
         {
             clienteSeleccionado = id;
-            if(clienteSeleccionado == null)
+            if (clienteSeleccionado == null)
             {
-                MessageBox.Show("Seleccione un cliente para ver los detalles de su cuenta corriente.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Seleccione un cliente para ver los detalles de su cuenta corriente.", "Atención");
+                //MessageBox.Show("Seleccione un cliente para ver los detalles de su cuenta corriente.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             else
             {
 
                 var response = _clienteServicio.ObtenerCtaCteIdPorClienteId((long)clienteSeleccionado);
-            if(!response.Exitoso)
-            {
-                MessageBox.Show("El cliente seleccionado no tiene una cuenta corriente asociada.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            else
-            {
-                    using (var f = new FCuentaCorrienteABM(
-             TipoOperacion.Modificar,null,response.EntidadId))
-                    {
-                        f.ShowDialog();
-                    }
+                if (!response.Exitoso)
+                {
+                    Informar("El cliente seleccionado no tiene una cuenta corriente asociada.", "Atención");
+                    //MessageBox.Show("El cliente seleccionado no tiene una cuenta corriente asociada.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                else
+                {
+
+                    var f = new FCuentaCorrienteABM(TipoOperacion.Modificar, null, response.EntidadId);
+                    f.ShowDialog();
+
+                    // Activar / cerrar / reabrir cambian datos sin pasar por "Modificar":
+                    // se refresca siempre al volver de la cuenta corriente.
+                    RefrescarGrilla();
+
                 }
             }
         }
@@ -456,33 +471,35 @@ namespace Presentacion.Core.Cliente
 
             if (!puedeEjecutarComando)
                 return;
-            
+
             clienteSeleccionado = id;
 
             var cliente = _clienteServicio.ObtenerClientePorId(id.Value);
 
-            if(cliente.CuentaCorrienteId != null)
+            if (cliente.CuentaCorrienteId != null)
             {
-                MessageBox.Show(
-                    "El cliente seleccionado ya tiene una cuenta corriente asociada.", 
-                    "Advertencia",                                                          
-                    MessageBoxButtons.OK,                                    
-                    MessageBoxIcon.Warning
-                );
+                Informar("El cliente seleccionado ya tiene una cuenta corriente asociada.", "Advertencia");
+                //MessageBox.Show(
+                //    "El cliente seleccionado ya tiene una cuenta corriente asociada.", 
+                //    "Advertencia",                                                          
+                //    MessageBoxButtons.OK,                                    
+                //    MessageBoxIcon.Warning
+                //);
 
                 return;
             }
-            if(cliente.Telefono == "00000000" && cliente.Telefono2 == "00000000" && cliente.Email == "Sin Asignar")
+            if (cliente.Telefono == "00000000" && cliente.Telefono2 == "00000000" && cliente.Email == "Sin Asignar")
             {
-                MessageBox.Show(
-                    "El cliente seleccionado no tiene información de contacto válida. Agregar un medio de contacto por favor.", 
-                    "Advertencia",                                                          
-                    MessageBoxButtons.OK,                                    
-                    MessageBoxIcon.Warning
-                );
+                Informar("El cliente seleccionado no tiene información de contacto válida. Agregar un medio de contacto por favor.", "Advertencia");
+                //MessageBox.Show(
+                //    "El cliente seleccionado no tiene información de contacto válida. Agregar un medio de contacto por favor.", 
+                //    "Advertencia",                                                          
+                //    MessageBoxButtons.OK,                                    
+                //    MessageBoxIcon.Warning
+                //);
                 return;
             }
-            var fCtacte = new FCuentaCorrienteABM(TipoOperacion.Nuevo, clienteSeleccionado,null);
+            var fCtacte = new FCuentaCorrienteABM(TipoOperacion.Nuevo, clienteSeleccionado, null);
 
             if (fCtacte.ShowDialog() == DialogResult.OK &&
                 fCtacte.RealizoAlgunaOperacion)
@@ -499,7 +516,8 @@ namespace Presentacion.Core.Cliente
         {
             if (dgvGrilla.RowCount == 0)
             {
-                MessageBox.Show("No hay datos cargados.");
+                Informar("No hay datos cargados.", "Error");
+                //MessageBox.Show("No hay datos cargados.");
 
                 puedeEjecutarComando = false;
 
@@ -508,7 +526,8 @@ namespace Presentacion.Core.Cliente
 
             if (!entidadID.HasValue)
             {
-                MessageBox.Show("Seleccione un registro.");
+                Informar("Seleccione un registro.", "Error");
+                //MessageBox.Show("Seleccione un registro.");
 
                 puedeEjecutarComando = false;
 

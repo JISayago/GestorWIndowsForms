@@ -85,6 +85,8 @@
             flowLayoutPanel7 = new FlowLayoutPanel();
             flowLayoutPanel6 = new FlowLayoutPanel();
             txtAreaDetallesVenta = new TextBox();
+            btnVolver = new Button();
+            flowLayoutPanel1 = new FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)error).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
             tableLayoutPanel5.SuspendLayout();
@@ -113,6 +115,7 @@
             flowLayoutPanel12.SuspendLayout();
             flowLayoutPanel7.SuspendLayout();
             flowLayoutPanel6.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // lblFechaHoy
@@ -128,7 +131,7 @@
             // btnLimpiar
             // 
             btnLimpiar.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnLimpiar.Location = new Point(17, 3);
+            btnLimpiar.Location = new Point(3, 3);
             btnLimpiar.Name = "btnLimpiar";
             btnLimpiar.Size = new Size(161, 45);
             btnLimpiar.TabIndex = 7;
@@ -622,8 +625,8 @@
             // 
             tableLayoutPanel10.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel10.ColumnCount = 3;
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 26.666666F));
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
             tableLayoutPanel10.Controls.Add(tableLayoutPanel12, 0, 0);
             tableLayoutPanel10.Controls.Add(tableLayoutPanel13, 2, 0);
@@ -640,12 +643,12 @@
             tableLayoutPanel12.ColumnCount = 2;
             tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 4.99886942F));
             tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 95.00113F));
-            tableLayoutPanel12.Controls.Add(btnLimpiar, 1, 0);
+            tableLayoutPanel12.Controls.Add(flowLayoutPanel1, 1, 0);
             tableLayoutPanel12.Location = new Point(3, 3);
             tableLayoutPanel12.Name = "tableLayoutPanel12";
             tableLayoutPanel12.RowCount = 1;
             tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel12.Size = new Size(286, 70);
+            tableLayoutPanel12.Size = new Size(432, 70);
             tableLayoutPanel12.TabIndex = 46;
             // 
             // tableLayoutPanel13
@@ -790,6 +793,27 @@
             txtAreaDetallesVenta.Size = new Size(1095, 161);
             txtAreaDetallesVenta.TabIndex = 47;
             // 
+            // btnVolver
+            // 
+            btnVolver.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnVolver.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnVolver.Location = new Point(170, 3);
+            btnVolver.Name = "btnVolver";
+            btnVolver.Size = new Size(160, 44);
+            btnVolver.TabIndex = 32;
+            btnVolver.Text = "Volver al Inicio";
+            btnVolver.UseVisualStyleBackColor = true;
+            btnVolver.Click += btnVolver_Click;
+            // 
+            // flowLayoutPanel1
+            // 
+            flowLayoutPanel1.Controls.Add(btnLimpiar);
+            flowLayoutPanel1.Controls.Add(btnVolver);
+            flowLayoutPanel1.Location = new Point(24, 3);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(405, 64);
+            flowLayoutPanel1.TabIndex = 46;
+            // 
             // FVenta
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -844,6 +868,7 @@
             flowLayoutPanel7.PerformLayout();
             flowLayoutPanel6.ResumeLayout(false);
             flowLayoutPanel6.PerformLayout();
+            flowLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -902,5 +927,7 @@
         private TextBox txtSubtotalSinDescuento;
         private TableLayoutPanel tableLayoutPanel12;
         private TableLayoutPanel tableLayoutPanel13;
+        private FlowLayoutPanel flowLayoutPanel1;
+        private Button btnVolver;
     }
 }

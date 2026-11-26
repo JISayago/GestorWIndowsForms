@@ -62,7 +62,8 @@ namespace Presentacion.Core.Gasto
         {
             if (!id.HasValue)
             {
-                MessageBox.Show("Seleccione un gasto.");
+                Informar("Seleccione un gasto.");
+                //MessageBox.Show("Seleccione un gasto.");
                 return;
             }
 
@@ -71,12 +72,14 @@ namespace Presentacion.Core.Gasto
             if (resultado.Exitoso)
             {
                 Recargar();
-                MessageBox.Show(resultado.Mensaje, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Exito(resultado.Mensaje);
+                //MessageBox.Show(resultado.Mensaje, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
                 Recargar();
-                MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(resultado.Mensaje);
+                //MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -84,7 +87,8 @@ namespace Presentacion.Core.Gasto
         {
             if (!id.HasValue)
             {
-                MessageBox.Show("Seleccione un gasto.");
+                Informar("Seleccione un gasto.", "Atención");
+                //MessageBox.Show("Seleccione un gasto.");
                 return;
             }
 
@@ -93,12 +97,14 @@ namespace Presentacion.Core.Gasto
             if (resultado.Exitoso)
             {
                 Recargar();
-                MessageBox.Show(resultado.Mensaje, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Exito(resultado.Mensaje);
+                //MessageBox.Show(resultado.Mensaje, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
                 Recargar();
-                MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(resultado.Mensaje);
+                //MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -129,7 +135,7 @@ namespace Presentacion.Core.Gasto
             }
 
             // 🔥 🔹 Fecha (AHORA USA DESCRIPCIÓN)
-            if (grilla.Columns.Contains("FechaGastoDescripcion"))
+            if (grilla.Columns.Contains("FechaGastoDescripcion")) // se agrega en el dto el formato "dd/MM/yyyy HH:mm"
             {
                 grilla.Columns["FechaGastoDescripcion"].Visible = true;
                 grilla.Columns["FechaGastoDescripcion"].HeaderText = "Fecha";
@@ -140,6 +146,7 @@ namespace Presentacion.Core.Gasto
             if (grilla.Columns.Contains("FechaGasto"))
             {
                 grilla.Columns["FechaGasto"].Visible = false;
+                grilla.Columns["FechaGasto"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
             }
 
             // 🔹 Empleado
@@ -250,7 +257,8 @@ namespace Presentacion.Core.Gasto
         {
             if (!entidadID.HasValue)
             {
-                MessageBox.Show("Seleccione un gasto.");
+                Informar("Seleccione un gasto.", "Atención");
+                //MessageBox.Show("Seleccione un gasto.");
                 return;
             }
 

@@ -49,8 +49,9 @@ namespace Presentacion.Core.TipoPago
 
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Informar("No se pudo encontar el tipo de pago seleccionado","Error");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
+                    //MessageBoxIcon.Error);
                 return false;
             }
 
@@ -66,14 +67,16 @@ namespace Presentacion.Core.TipoPago
 
             if (response.Exitoso)
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Information);
+                Exito(response.Mensaje,"Éxito");
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                   //MessageBoxIcon.Information);
                 return true;
             }
             else
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
+                MostrarError(response.Mensaje);
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                   //MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -86,7 +89,8 @@ namespace Presentacion.Core.TipoPago
         {
             if (!entidadId.HasValue)
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("No se pudo encontrar el tipo de pago seleccionado", "Error");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 
                 this.Close();
             }
@@ -110,7 +114,8 @@ namespace Presentacion.Core.TipoPago
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show(@"´Por favor seleccione un Rol válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("No se pudo encontrar el tipo de pago seleccionado", "Error");
+                //MessageBox.Show(@"´Por favor seleccione un Rol válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
 
             }
@@ -119,14 +124,16 @@ namespace Presentacion.Core.TipoPago
                 var response = _tipoPagoServicio.Eliminar((long)EntidadID);
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Information);
+                    Exito(response.Mensaje, "Éxito");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       //MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       //MessageBoxIcon.Error);
                     return false;
                 }
 
@@ -137,7 +144,8 @@ namespace Presentacion.Core.TipoPago
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show(@"´Por favor seleccione un Rol válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Informar("No se pudo encontrar el tipo de pago seleccionado", "Error");
+                //MessageBox.Show(@"´Por favor seleccione un Rol válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
 
             }
@@ -155,14 +163,16 @@ namespace Presentacion.Core.TipoPago
 
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Information);
+                    Exito(response.Mensaje, "Éxito");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       //MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                    MostrarError(response.Mensaje);
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                       //MessageBoxIcon.Error);
                     return false;
                 }
 

@@ -56,7 +56,8 @@ namespace Presentacion.Core.Cliente
         {
             if (!entidadId.HasValue)
             {
-                MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MostrarError("No se pudo obtener el Cliente para cargar los datos.");
+                //MessageBox.Show(@"Ocurrio un Error Grave", @"Error Grave", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 
                 this.Close();
             }
@@ -87,18 +88,23 @@ namespace Presentacion.Core.Cliente
 
             if (!VerificarDatosObligatorios())
             {
-                MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                Advertir("Por favor ingrese los campos Obligatorios.");
+                //MessageBox.Show(@"Por favor ingrese los campos Obligatorios.", @"Atención", MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
                 return false;
             }
             if (string.IsNullOrEmpty(txtEmail.Text) && string.IsNullOrEmpty(txtCelular.Text) && string.IsNullOrEmpty(txtTelefono.Text))
             {
-                var respuesta = MessageBox.Show(@"Se recomienda al menos un medio de contacto(Telefono, Email, Celular, etc) para la apertura de una cuenta corriente", @"Atención", MessageBoxButtons.OKCancel,
-                    MessageBoxIcon.Warning);
-                if (respuesta != DialogResult.OK)
-                {
+                if (!Confirmar("Se recomienda al menos un medio de contacto(Telefono, Email, Celular, etc) para la apertura de una cuenta corriente", "Atención",
+                si: "Sumar cantidad",
+                no: "Cancelar"))
                     return false;
-                }
+                //var respuesta = MessageBox.Show(@"Se recomienda al menos un medio de contacto(Telefono, Email, Celular, etc) para la apertura de una cuenta corriente", @"Atención", MessageBoxButtons.OKCancel,
+                //    MessageBoxIcon.Warning);
+                //if (respuesta != DialogResult.OK)
+                //{
+                //    return false;
+                //}
             }
 
             var nuevoCliente = new ClienteDTO
@@ -122,16 +128,18 @@ namespace Presentacion.Core.Cliente
 
             if (response.Exitoso)
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Information);
+                Exito($"{response.Mensaje}");
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                //   MessageBoxIcon.Information);
                 RealizoAlgunaOperacion = true;
                 this.Close();
                 return true;
             }
             else
             {
-                MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
+                MostrarError($"{response.Mensaje}");
+                //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                //   MessageBoxIcon.Error);
                 RealizoAlgunaOperacion  = false;
                 this.Close();
                 return false;
@@ -142,7 +150,8 @@ namespace Presentacion.Core.Cliente
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show(@"´Por favor seleccione un cliente válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MostrarError("Por favor seleccione un cliente válido.");
+                //MessageBox.Show(@"´Por favor seleccione un cliente válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
 
             }
@@ -151,14 +160,16 @@ namespace Presentacion.Core.Cliente
                 var response = _clienteServicio.Eliminar((long)EntidadID);
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Information);
+                    Exito($"{response.Mensaje}");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                    MostrarError($"{response.Mensaje}");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Error);
                     return false;
                 }
 
@@ -169,7 +180,8 @@ namespace Presentacion.Core.Cliente
         {
             if (!EntidadID.HasValue)
             {
-                MessageBox.Show(@"´Por favor seleccione un cliente válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MostrarError("Por favor seleccione un cliente válido.");
+                //MessageBox.Show(@"´Por favor seleccione un cliente válido.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
 
             }
@@ -195,14 +207,16 @@ namespace Presentacion.Core.Cliente
 
                 if (response.Exitoso)
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Information);
+                    Exito($"{response.Mensaje}");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Information);
                     return true;
                 }
                 else
                 {
-                    MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
-                       MessageBoxIcon.Error);
+                    MostrarError($"{response.Mensaje}");
+                    //MessageBox.Show($"{response.Mensaje}", @"Atención", MessageBoxButtons.OK,
+                    //   MessageBoxIcon.Error);
                     return false;
                 }
 

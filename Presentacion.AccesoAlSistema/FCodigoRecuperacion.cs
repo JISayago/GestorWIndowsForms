@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace Presentacion.AccesoAlSistema
 {
-    public partial class FCodigoRecuperacion : Form
+    public partial class FCodigoRecuperacion : FBase.FBase
     {
         private readonly IUsuarioServicio _usuarioServicio;
         public string _cod { get; private set; } = string.Empty;
@@ -29,8 +29,9 @@ namespace Presentacion.AccesoAlSistema
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(codigo))
             {
-                MessageBox.Show("Debe ingresar usuario y código.",
-                    "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Debe ingresar usuario y código.", "Validación");
+                //MessageBox.Show("Debe ingresar usuario y código.",
+                    //"Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -38,13 +39,14 @@ namespace Presentacion.AccesoAlSistema
 
             if (!resp.Exitoso)
             {
-                MessageBox.Show(resp.Mensaje,
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(resp.Mensaje);
+                //MessageBox.Show(resp.Mensaje,
+                    //"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
-            MessageBox.Show(resp.Mensaje,
-                "Correcto", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Exito(resp.Mensaje, "Éxito");
+            //MessageBox.Show(resp.Mensaje,
+                //"Correcto", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             var f = new ActualizarPass((long)resp.EntidadId);
             f.ShowDialog();

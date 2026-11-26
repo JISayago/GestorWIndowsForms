@@ -32,7 +32,8 @@ namespace Presentacion.Core.TipoPago
             _tipoPagoServicio = new TipoPagoServicio();
 
             if (soloSeleccion)
-                MessageBox.Show("Seleccione el tipo de pago con doble click");
+                Informar("Seleccione el tipo de pago con doble click", "Atención");
+            //MessageBox.Show("Seleccione el tipo de pago con doble click");
         }
 
         #region 🔥 ACCIONES DINAMICAS (opcional migrar botones acá)

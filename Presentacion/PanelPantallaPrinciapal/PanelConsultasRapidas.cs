@@ -268,6 +268,7 @@ namespace Presentacion.Notificaciones
             dgvVentas = ConfigurarGridSimple();
             dgvVentas.Columns.Add("Id", "Comprobante");
             dgvVentas.Columns.Add("Fecha", "Fecha/Hora");
+            dgvVentas.Columns["Fecha"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
             dgvVentas.Columns.Add("Detalle", "Detalle");
             dgvVentas.Columns.Add("Total", "Total $");
 

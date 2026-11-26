@@ -196,7 +196,8 @@ namespace Presentacion.Core.Venta
         {
             if (!id.HasValue)
             {
-                MessageBox.Show("Seleccione una venta.");
+                Informar("Seleccione una venta", "Atención");
+                //MessageBox.Show("Seleccione una venta.");
 
                 return;
             }
@@ -208,19 +209,21 @@ namespace Presentacion.Core.Venta
 
             if (resultado.Exitoso)
             {
-                MessageBox.Show(
-                    resultado.Mensaje,
-                    "Éxito",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                Exito("Venta anulada correctamente.","Éxito");
+                //MessageBox.Show(
+                //    resultado.Mensaje,
+                //    "Éxito",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Information);
             }
             else
             {
-                MessageBox.Show(
-                    resultado.Mensaje,
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MostrarError(resultado.Mensaje);
+                //MessageBox.Show(
+                //    resultado.Mensaje,
+                //    "Error",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Error);
             }
         }
 
@@ -250,6 +253,7 @@ namespace Presentacion.Core.Venta
             {
                 grilla.Columns["FechaVenta"].Visible = true;
                 grilla.Columns["FechaVenta"].HeaderText = "Fecha";
+                grilla.Columns["FechaVenta"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
                 grilla.Columns["FechaVenta"].AutoSizeMode =
                     DataGridViewAutoSizeColumnMode.AllCells;
             }
@@ -367,7 +371,8 @@ namespace Presentacion.Core.Venta
         {
             if (!entidadID.HasValue)
             {
-                MessageBox.Show("Seleccione una venta.");
+                Informar("Seleccione una venta.", "Atención");
+                //MessageBox.Show("Seleccione una venta.");
 
                 return;
             }

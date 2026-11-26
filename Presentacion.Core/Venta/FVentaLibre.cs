@@ -82,6 +82,9 @@ namespace Presentacion.Core.Venta
             this.ControlBox = false;
             this.ShowIcon = false;
             this.ShowInTaskbar = false; // opcional
+            AgregarControlesObligatorios(txtDescripcion, "Nombre del Producto");
+            AgregarControlesObligatorios(txtCantidad, "Cantidad", Validaciones.DecimalMayorACero, Validaciones.DecimalConMaxDecimales(2));
+            AgregarControlesObligatorios(txtPrecio, "Precio", Validaciones.DecimalMayorACero, Validaciones.DecimalConMaxDecimales(2));
         }
         private void MyTimer_Tick(object sender, EventArgs e)
         {
@@ -95,6 +98,24 @@ namespace Presentacion.Core.Venta
         }
         private void btnAgregarProducto_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(txtDescripcion.Text))
+            {
+                Informar("Debe ingresar una descripción para el producto.", "Atención");
+                //MessageBox.Show("Debe ingresar una descripción para el producto.");
+                return;
+            }
+            if (!decimal.TryParse(txtCantidad.Text, out decimal cantidad) || cantidad <= 0)
+            {
+                Informar("Debe ingresar una cantidad válida mayor a cero.", "Atención");
+                //MessageBox.Show("Debe ingresar una cantidad válida mayor a cero.");
+                return;
+            }
+            if (!decimal.TryParse(txtPrecio.Text, out decimal precio) || precio <= 0)
+            {
+                Informar("Debe ingresar un precio válido mayor a cero.", "Atención");
+                //MessageBox.Show("Debe ingresar un precio válido mayor a cero.");
+                return;
+            }
             var itemVenta = new ItemVentaDTO()
             {
                 ItemId = 1,
@@ -430,12 +451,14 @@ namespace Presentacion.Core.Venta
         {
             if (_totalVenta == 0)
             {
-                MessageBox.Show("Debe cargar al menos un producto antes de confirmar la venta.");
+                Informar("Debe cargar al menos un producto antes de confirmar la venta.", "Atención");
+                //MessageBox.Show("Debe cargar al menos un producto antes de confirmar la venta.");
                 return;
             }
             if (!DatosSistema.CajaId.HasValue)
             {
-                MessageBox.Show("No hay una caja abierta. No se puede registrar la venta.");
+                Informar("No hay una caja abierta. No se puede registrar la venta.", "Atención");
+                //MessageBox.Show("No hay una caja abierta. No se puede registrar la venta.");
                 return;
             }
             // Si ya se confirmó antes, registrar la venta directamente
@@ -474,6 +497,7 @@ namespace Presentacion.Core.Venta
                 var pagosSeleccionados = fPagoMultiple.ResultPagos;
                 if (pagosSeleccionados == null || pagosSeleccionados.Count == 0)
                 {
+                    Informar("Debe ingresar al menos un pago válido.", "Atención");
                     MessageBox.Show("Debe ingresar al menos un pago válido.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -509,7 +533,8 @@ namespace Presentacion.Core.Venta
                 var tipoPagosSeleccionados = fConfirmarVenta.pagos;
                 if (tipoPagosSeleccionados == null || tipoPagosSeleccionados.Count == 0)
                 {
-                    MessageBox.Show("Debe seleccionar al menos un tipo de pago.");
+                    Informar("Debe seleccionar al menos un tipo de pago.", "Atención");
+                    //MessageBox.Show("Debe seleccionar al menos un tipo de pago.");
                     return;
                 }
 
@@ -579,22 +604,24 @@ namespace Presentacion.Core.Venta
 
                 if (resultado.Exitoso)
                 {
-                    MessageBox.Show(
-                        "Venta confirmada exitosamente.",
-                        "Éxito",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    Exito("Venta confirmada exitosamente.","Éxito");
+                    //MessageBox.Show(
+                    //    "Venta confirmada exitosamente.",
+                    //    "Éxito",
+                    //    MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Information);
 
                     DialogResult = DialogResult.OK;
                     Close();
                 }
                 else
                 {
-                    MessageBox.Show(
-                        $"Error al finalizar la venta: {resultado.Mensaje}",
-                        "Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    MostrarError($"{resultado.Mensaje}");
+                    //MessageBox.Show(
+                    //    $"Error al finalizar la venta: {resultado.Mensaje}",
+                    //    "Error",
+                    //    MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Error);
                 }
             }
             finally
@@ -649,7 +676,8 @@ namespace Presentacion.Core.Venta
 
             if (porcentajeDesc < 0 || porcentajeDesc > 100)
             {
-                MessageBox.Show("Ingresar un número entre 1 y 100.");
+                Informar("Ingresar un número entre 1 y 100.", "Atención");
+                //MessageBox.Show("Ingresar un número entre 1 y 100.");
                 if (porcentajeDesc > 100)
                 {
                     txtDescuentoEfectivo.Text = "100";
@@ -685,14 +713,19 @@ namespace Presentacion.Core.Venta
 
         private void EliminarItem(ItemVentaDTO item)
         {
-            var confirm = MessageBox.Show(
-                $"¿Eliminar {item.Descripcion}?",
+            var result = Confirmar(
+               $"¿Eliminar {item.Descripcion}?",
                 "Confirmar",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            );
+                 si: "Aceptar",
+                 no: "Cancelar");
+            //var confirm = MessageBox.Show(
+            //    $"¿Eliminar {item.Descripcion}?",
+            //    "Confirmar",
+            //    MessageBoxButtons.YesNo,
+            //    MessageBoxIcon.Question
+            //);
 
-            if (confirm == DialogResult.Yes)
+            if (result)
             {
                 _itemsVenta.Remove(item);   // lista bindada
                 dgvProductos.Refresh();
@@ -701,15 +734,15 @@ namespace Presentacion.Core.Venta
         }
         private void EditarCantidad(ItemVentaDTO item)
         {
-            var input = Microsoft.VisualBasic.Interaction.InputBox(
-                "Ingrese nueva cantidad:",
-                "Modificar cantidad",
-                item.Cantidad.ToString()
-            );
-
-            if (int.TryParse(input, out int nuevaCantidad) && nuevaCantidad > 0)
+            using (var frm = new FCantidadItem(item.Cantidad.ToString("0.##")))
             {
-                item.Cantidad = nuevaCantidad;
+                if (frm.ShowDialog(this) != DialogResult.OK)
+                    return;
+
+                if (frm.cantidad <= 0)
+                    return;
+
+                item.Cantidad = frm.cantidad;
                 dgvProductos.Refresh();
                 CalcularTotal();
             }
@@ -736,6 +769,11 @@ namespace Presentacion.Core.Venta
         private void tableLayoutPanel5_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void btnVolver_Click(object sender, EventArgs e)
+        {
+            new VolverAlInicio(this).Volver();
         }
     }
 }

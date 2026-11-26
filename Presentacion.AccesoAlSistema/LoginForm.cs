@@ -1,6 +1,7 @@
 ﻿using Presentacion.FBase;
 using ServicioAccesoSistema.AccesoSistema;
 using Servicios.Helpers.Sistema.Rol;
+using Servicios.Helpers.Sistema;
 using Servicios.LogicaNegocio.Empleado;
 using System;
 using System.Collections.Generic;
@@ -52,14 +53,22 @@ namespace Presentacion.AccesoAlSistema
         {
             if (string.IsNullOrWhiteSpace(txtUsuario.Text) || string.IsNullOrWhiteSpace(txtPass.Text))
             {
-                MessageBox.Show("Por favor el usuario y la contraseña son obligatorios",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Informar("Por favor el usuario y la contraseña son obligatorios", "Error");
+                //MessageBox.Show( MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             var username = txtUsuario.Text.Trim();
             var pass = txtPass.Text;
 
+            // Sesión secundaria: no se puede entrar con el mismo usuario de la principal.
+            // Se valida ANTES de LogeoAlSistema para no tocar la sesión de la principal en la BD.
+            if (SesionSecundaria.EsSecundaria &&
+                string.Equals(username, SesionSecundaria.UsernamePrincipal, StringComparison.OrdinalIgnoreCase))
+            {
+                Informar("Ese usuario ya tiene la sesión principal abierta. Ingresá con otro usuario.", "Sesión secundaria");
+                return;
+            }
 
             var estadoUsuario = _accesoSistema.ValidarEstadoUsuario(username);
 
@@ -68,8 +77,9 @@ namespace Presentacion.AccesoAlSistema
                 // 🔸 Primer ingreso
                 if (estadoUsuario.Mensaje.Contains("Primer ingreso"))
                 {
-                    MessageBox.Show(estadoUsuario.Mensaje,
-                        "Acción requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Informar(estadoUsuario.Mensaje, "Acción requerida");
+                    //MessageBox.Show(estadoUsuario.Mensaje,
+                    //"Acción requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                     var form = new ActualizarPass((long)estadoUsuario.EntidadId);
                     form.ShowDialog();
@@ -78,12 +88,16 @@ namespace Presentacion.AccesoAlSistema
 
                 var permisos = _usuarioServicio.ObtenerPermisosPorUsuario((long)estadoUsuario.EntidadId);
             }
-            var response = _accesoSistema.LogeoAlSistema(username, pass);
+            var response = _accesoSistema.LogeoAlSistema(
+                username,
+                pass,
+                SesionSecundaria.EsSecundaria ? SesionSecundaria.SesionPrincipalId : (long?)null);
 
             if (!response.Exitoso)
             {
-                MessageBox.Show(response.Mensaje,
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(response.Mensaje);
+                //MessageBox.Show(response.Mensaje,
+                //"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -141,8 +155,9 @@ namespace Presentacion.AccesoAlSistema
                 {
                     if (estadoUsuario.Mensaje.Contains("recuperación"))
                     {
-                        MessageBox.Show(estadoUsuario.Mensaje,
-                            "Recuperación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        Informar(estadoUsuario.Mensaje, "Recuperación");
+                        //MessageBox.Show(estadoUsuario.Mensaje,
+                        //"Recuperación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         var X = estadoUsuario.DatoExtra;
 
                         var form = new FCodigoRecuperacion(estadoUsuario.DatoExtra);
@@ -162,6 +177,15 @@ namespace Presentacion.AccesoAlSistema
 
         private void LoginForm_Load(object sender, EventArgs e)
         {
+            if (SesionSecundaria.EsSecundaria)
+            {
+                Text = "Ingreso - Sesión secundaria";
+                // El designer trae usuario/contraseña de desarrollo precargados: en la secundaria
+                // se limpian para que nadie entre como admin con solo apretar Enter.
+                txtUsuario.Clear();
+                txtPass.Clear();
+            }
+
             txtUsuario.Focus();
             CargarLogoEnBase();
         }

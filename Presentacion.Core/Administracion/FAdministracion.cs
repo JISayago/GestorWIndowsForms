@@ -1672,7 +1672,8 @@ namespace Presentacion.Core.Administracion
 
             if (!Directory.Exists(carpeta))
             {
-                MessageBox.Show("La carpeta de comprobantes todavía no existe.", "Comprobantes", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Informar("La carpeta de comprobantes todavía no existe.", "Comprobantes");
+                //MessageBox.Show("La carpeta de comprobantes todavía no existe.", "Comprobantes", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 

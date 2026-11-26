@@ -10,6 +10,7 @@ namespace Presentacion
         private readonly bool _licenciaVencida;
 
         public bool DeseaCargarLicencia { get; private set; }
+        public bool CortarInicio { get; private set; }
 
 
         // ============================================================
@@ -26,6 +27,7 @@ namespace Presentacion
             _licenciaVencida = licenciaVencida;
 
             DeseaCargarLicencia = false;
+            CortarInicio = false;
 
             MostrarInformacionTrial();
         }
@@ -152,6 +154,8 @@ namespace Presentacion
             EventArgs e)
         {
             DeseaCargarLicencia = false;
+            CortarInicio = false;
+
 
             DialogResult =
                 DialogResult.Cancel;
@@ -169,6 +173,7 @@ namespace Presentacion
             EventArgs e)
         {
             DeseaCargarLicencia = false;
+            CortarInicio = true;
 
             DialogResult =
                 DialogResult.Cancel;
